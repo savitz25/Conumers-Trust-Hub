@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
-import { CrossPromoBanner } from '@/components/cross-promo-banner';
+import { WelcomeBanner } from '@/components/welcome-banner';
+import { ConciergeFab } from '@/components/concierge-fab';
 import { ThemeProvider } from '@/components/theme-provider';
 import { GoogleAnalytics } from '@/components/analytics';
 import { QueryProvider } from '@/providers/query-provider';
@@ -20,9 +22,7 @@ export const metadata: Metadata = rootLayoutMetadata;
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const gaId = process.env.NEXT_PUBLIC_GA4_ID;
 
   return (
@@ -39,9 +39,12 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <Navbar />
-            <CrossPromoBanner />
+            <Suspense fallback={null}>
+              <WelcomeBanner />
+            </Suspense>
             <main className="min-h-[calc(100vh-5rem)]">{children}</main>
             <Footer />
+            <ConciergeFab />
             <GoogleAnalytics />
             <Analytics />
           </QueryProvider>

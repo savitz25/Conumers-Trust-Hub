@@ -1,49 +1,35 @@
 import type { Metadata } from 'next';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? CONSUMERS_TRUST_HUB.url;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
 export const rootLayoutMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Consumers Trust Hub • Moving, Lending & Insurance – Shop with Confidence',
-    template: '%s | Consumers Trust Hub',
+    default: `${BRAND.name} • ${BRAND.coachTagline}`,
+    template: `%s | ${BRAND.name}`,
   },
   description:
-    'One trusted hub to discover, compare, and shop for moving companies, mortgage lenders, and insurance agents. FMCSA, NMLS & DOI verified. Zero paid placements.',
+    'One trusted home for your entire move. FMCSA, NMLS & DOI verified directories, AI concierge, checklist, and document vault.',
   keywords: [
-    'consumers trust hub',
-    'moving companies',
-    'mortgage lenders',
-    'insurance agents',
-    'FMCSA verified movers',
+    'consumer trust hub',
+    'moving checklist',
+    'FMCSA movers',
     'NMLS lenders',
-    'compare insurance',
+    'insurance agents',
+    'relocation planner',
   ],
-  authors: [{ name: 'Consumers Trust Hub' }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    siteName: CONSUMERS_TRUST_HUB.name,
-    title: 'Consumers Trust Hub – One Trusted Hub for Moving, Lending & Insurance',
-    description: CONSUMERS_TRUST_HUB.tagline,
-    images: [{ url: '/brand/og-image.png', width: 1200, height: 630, alt: 'Consumers Trust Hub' }],
+    siteName: BRAND.name,
+    title: BRAND.name,
+    description: BRAND.tagline,
+    images: [{ url: '/brand/og-image.png', width: 1200, height: 630, alt: BRAND.name }],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Consumers Trust Hub',
-    description: CONSUMERS_TRUST_HUB.tagline,
-    images: ['/brand/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true },
-  },
-  alternates: {
-    canonical: siteUrl,
-  },
+  robots: { index: true, follow: true },
+  alternates: { canonical: siteUrl },
 };
 
 export function createPageMetadata({
@@ -60,10 +46,6 @@ export function createPageMetadata({
     title,
     description,
     alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-    },
+    openGraph: { title, description, url },
   };
 }

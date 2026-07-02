@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Send } from 'lucide-react';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +46,7 @@ export default function ContactPage() {
 
         <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
           <Mail className="h-4 w-4" />
-          {CONSUMERS_TRUST_HUB.email}
+          {BRAND.email}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-10 space-y-5" noValidate>

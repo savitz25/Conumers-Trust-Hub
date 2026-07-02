@@ -1,39 +1,33 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { BRAND } from '@/lib/brand';
 
 interface BrandLogoProps {
   className?: string;
   priority?: boolean;
-  variant?: 'default' | 'stacked';
 }
 
-export function BrandLogo({ className, priority = false, variant = 'default' }: BrandLogoProps) {
-  if (variant === 'stacked') {
-    return (
-      <Link href="/" className={cn('inline-flex flex-col items-start gap-0.5', className)} aria-label="Consumers Trust Hub home">
-        <Image
-          src="/brand/logo.svg"
-          alt="Consumers Trust Hub"
-          width={200}
-          height={48}
-          priority={priority}
-          className="h-10 w-auto"
-        />
-      </Link>
-    );
-  }
-
+export function BrandLogo({ className, priority = false }: BrandLogoProps) {
   return (
-    <Link href="/" className={cn('inline-flex items-center', className)} aria-label="Consumers Trust Hub home">
+    <Link
+      href="/"
+      className={cn('inline-flex items-center gap-2 group', className)}
+      aria-label={`${BRAND.name} home`}
+    >
       <Image
         src="/brand/logo.svg"
-        alt="Consumers Trust Hub"
-        width={220}
-        height={48}
+        alt=""
+        width={36}
+        height={36}
         priority={priority}
-        className="h-9 w-auto md:h-10"
+        className="h-9 w-9 transition-transform group-hover:scale-105"
+        aria-hidden
       />
+      <div className="flex flex-col leading-none">
+        <span className="text-sm font-bold tracking-tight text-foreground">ConsumerTrust</span>
+        <span className="text-[11px] font-semibold text-trust">Hub</span>
+      </div>
     </Link>
   );
 }

@@ -1,4 +1,5 @@
-import { SISTER_SITES } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
+import { HUB_SITES } from '@/lib/sites';
 
 export const AGGREGATE_TRUST_STATS = [
   {
@@ -65,11 +66,11 @@ export const TESTIMONIALS = [
 ] as const;
 
 export function getCombinedStats() {
-  return Object.values(SISTER_SITES).flatMap((site) =>
+  return Object.values(HUB_SITES).flatMap((site) =>
     site.stats.map((stat) => ({
       ...stat,
       site: site.shortName,
-      siteUrl: site.url,
+      siteUrl: `${BRAND.url}${site.path}`,
     }))
   );
 }

@@ -16,8 +16,8 @@ import Script from 'next/script';
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
 
 const CROSS_DOMAIN_LINKS = [
-  'consumerstrusthub.com',
-  'www.consumerstrusthub.com',
+  'consumertrusthub.com',
+  'www.consumertrusthub.com',
   'movetrusthub.com',
   'www.movetrusthub.com',
   'lendertrusthub.com',

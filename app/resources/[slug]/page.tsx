@@ -5,7 +5,8 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/seo/schemas';
 import { ARTICLES, getArticleBySlug } from '@/lib/resources/articles';
-import { SISTER_SITES, CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
+import { HUB_SITES } from '@/lib/sites';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -74,7 +75,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
   const article = getArticleBySlug(slug);
   if (!article) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? CONSUMERS_TRUST_HUB.url;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
   const paragraphs = ARTICLE_CONTENT[slug] ?? [article.excerpt];
 
   return (
@@ -119,12 +120,12 @@ export default async function ResourceArticlePage({ params }: PageProps) {
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           {article.relatedSites.map((vertical) => {
-            const site = SISTER_SITES[vertical];
+            const site = HUB_SITES[vertical];
             return (
               <Button key={vertical} variant="outline" size="sm" asChild>
-                <a href={site.url} target="_blank" rel="noopener noreferrer" className="gap-1">
-                  {site.name} <ExternalLink className="h-3.5 w-3.5" />
-                </a>
+                <Link href={site.path} className="gap-1">
+                  {site.subBrand} <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
               </Button>
             );
           })}

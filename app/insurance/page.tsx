@@ -1,59 +1,22 @@
-import { ServicePageLayout } from '@/components/service-page-layout';
-import { JsonLd } from '@/lib/seo/json-ld';
+import { HubLanding } from '@/components/hub-landing';
 import { createPageMetadata } from '@/lib/seo/metadata';
-import { SISTER_SITES } from '@/lib/sites';
-
-const PAGE_DESCRIPTION =
-  'Compare state-licensed insurance agents with DOI verification, health hubs, and premium calculators via Insurance Trust Hub.';
+import { HUB_SITES } from '@/lib/sites';
 
 export const metadata = createPageMetadata({
-  title: 'Insurance Agents — DOI Verified Directory',
-  description: PAGE_DESCRIPTION,
+  title: 'InsuranceTrust Hub — DOI Verified Agents',
+  description: 'Compare state-licensed insurance agents. Health hubs, calculators, and SEP guidance — powered by ConsumerTrust Hub.',
   path: '/insurance',
 });
 
-const site = SISTER_SITES.insurance;
+const site = HUB_SITES.insurance;
 
-const hubTools = [
-  {
-    title: 'Agent Directory',
-    description: 'Browse verified agents and agencies across all 50 states.',
-    href: `${site.url}/directory`,
-    external: true,
-  },
-  {
-    title: 'Health Insurance Hubs',
-    description: '54 market hubs with ACA, Medicare, and employer plan specialists.',
-    href: `${site.url}/hubs`,
-    external: true,
-  },
-  {
-    title: 'Premium Calculators',
-    description: 'ACA subsidy, Medicare gap, and premium estimator tools.',
-    href: `${site.url}/calculators`,
-    external: true,
-  },
-  {
-    title: 'License Verification',
-    description: 'Verify agent licensing against state DOI public records.',
-    href: `${site.url}/tools/license-verification`,
-    external: true,
-  },
+const tools = [
+  { title: 'Agent Directory', description: 'Verified agents in all 50 states.', href: '/insurance/directory', icon: 'search' as const },
+  { title: 'Compare Plans', description: 'Side-by-side policy comparison.', href: '/insurance/compare', icon: 'search' as const },
+  { title: 'Health Hubs', description: '54 MSAs with ACA & Medicare specialists.', href: '/insurance/hubs', icon: 'book' as const },
+  { title: 'Calculators', description: 'Premium & subsidy estimators.', href: '/insurance/calculators', icon: 'calculator' as const },
 ];
 
 export default function InsurancePage() {
-  return (
-    <>
-      <JsonLd
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'WebPage',
-          name: 'Insurance Agents Hub',
-          description: PAGE_DESCRIPTION,
-          url: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.consumerstrusthub.com'}/insurance`,
-        }}
-      />
-      <ServicePageLayout site={site} hubTools={hubTools} />
-    </>
-  );
+  return <HubLanding site={site} tools={tools} journeyProgress={10} coachMessage="Coverage that travels with you — let's find it!" />;
 }

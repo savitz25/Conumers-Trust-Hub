@@ -1,112 +1,141 @@
+'use client';
+
 import Link from 'next/link';
-import { Shield, ArrowRight, BookOpen } from 'lucide-react';
-import { UnifiedSearch } from '@/components/unified-search';
-import { ServiceCard } from '@/components/service-card';
-import { TrustStats } from '@/components/trust-stats';
-import { HowItWorks } from '@/components/how-it-works';
-import { TestimonialsCarousel } from '@/components/testimonials-carousel';
-import { CtaSection } from '@/components/cta-section';
-import { JsonLd } from '@/lib/seo/json-ld';
-import { buildHomepageGraph } from '@/lib/seo/schemas';
-import { SISTER_SITES } from '@/lib/sites';
-import { ARTICLES } from '@/lib/resources/articles';
+import { motion } from 'framer-motion';
+import { ArrowRight, Sparkles, Shield, Route } from 'lucide-react';
+import { ZipSearchBar } from '@/components/zip-search-bar';
+import { HubSwitcher } from '@/components/hub-switcher';
+import { TrustBadge, TrustProofRow } from '@/components/trust-badge';
+import { ProgressRing } from '@/components/progress-ring';
+import { HUB_SITES } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
+import { VERIFICATION_SOURCES } from '@/lib/stats';
+import { fadeUp, staggerContainer } from '@/lib/animations';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { JsonLd } from '@/lib/seo/json-ld';
+import { buildHomepageGraph } from '@/lib/seo/schemas';
 
+/**
+ * Homepage — logged-out hero entry.
+ * Delightful coach tone, journey metaphor, hub discovery cards.
+ */
 export default function HomePage() {
-  const featuredArticles = ARTICLES.filter((a) => a.category === 'cross-category').slice(0, 3);
-
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
 
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-background to-trust/5">
-        <div className="container mx-auto px-4 py-16 md:py-24">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-trust/20 bg-trust/10 px-4 py-1.5 text-sm font-semibold text-trust">
-              <Shield className="h-4 w-4" aria-hidden="true" />
-              FMCSA · NMLS · DOI VERIFIED · ZERO PAID PLACEMENTS
-            </div>
+      {/* Hero */}
+      <section className="relative overflow-hidden fun-gradient-bg">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-trust/10 via-transparent to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 py-16 md:py-28 relative">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="mx-auto max-w-4xl text-center"
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <TrustBadge type="independent" className="mb-6" />
+            </motion.div>
 
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl">
-              One Trusted Hub for Moving, Lending & Insurance
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Discover, compare, and shop with confidence. Three specialized directories —
-              one convenient starting point.
+            <motion.h1 variants={fadeUp} custom={1} className="section-heading">
+              {BRAND.coachTagline}
+            </motion.h1>
+
+            <motion.p variants={fadeUp} custom={2} className="coach-copy mx-auto mt-5 max-w-2xl">
+              Moving, insurance, and lending — finally in one friendly place. We verify every
+              provider so you can focus on the exciting part: your new chapter.
+            </motion.p>
+
+            <motion.div variants={fadeUp} custom={3} className="mt-10 mx-auto max-w-xl">
+              <ZipSearchBar variant="hero" />
+            </motion.div>
+
+            <motion.div variants={fadeUp} custom={4} className="mt-8 flex flex-wrap justify-center gap-3">
+              <Button size="lg" variant="trust" asChild className="rounded-xl gap-2">
+                <Link href="/onboarding">
+                  Start your journey <Sparkles className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="rounded-xl">
+                <Link href="/dashboard">See your dashboard</Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Journey teaser */}
+      <section className="border-y bg-card py-14">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-10">
+          <ProgressRing progress={8} label="Your move" sublabel="8% — let's build momentum!" />
+          <div className="max-w-md text-center md:text-left">
+            <h2 className="text-2xl font-bold flex items-center gap-2 justify-center md:justify-start">
+              <Route className="h-6 w-6 text-trust" />
+              Your relocation journey
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Every checklist item you complete unlocks progress. No boring spreadsheets — just
+              small wins that add up to a stress-free move.
             </p>
-
-            <div className="mx-auto mt-10 max-w-lg">
-              <UnifiedSearch />
-            </div>
-
-            <p className="mt-4 text-sm text-muted-foreground">
-              Shop with Confidence · Independent · Data-Driven · Location-Based
-            </p>
+            <Link href="/checklist" className="mt-4 inline-flex items-center gap-1 font-semibold text-trust hover:underline">
+              Open your checklist <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      <TrustStats />
-
-      <section className="py-16 md:py-20">
+      {/* Hub cards */}
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="mb-10 text-center">
-            <h2 className="section-heading">Explore Our Verified Directories</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Each sister site remains fully operational. Start here or dive deep into any vertical.
-            </p>
+          <div className="text-center mb-12">
+            <HubSwitcher className="mb-6" />
+            <h2 className="text-3xl font-bold">Three hubs. One happy ending.</h2>
+            <p className="mt-3 text-muted-foreground">Pick a lane — or explore them all. We&apos;ll remember your ZIP.</p>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
-            {Object.values(SISTER_SITES).map((site, index) => (
-              <ServiceCard key={site.id} site={site} index={index} />
+            {Object.values(HUB_SITES).map((hub, i) => (
+              <motion.div
+                key={hub.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link href={hub.path}>
+                  <Card
+                    className="hub-card h-full"
+                    style={{ borderTopColor: hub.accent, borderTopWidth: 3 }}
+                  >
+                    <CardContent className="pt-6">
+                      <span className="text-3xl" role="img" aria-hidden>{hub.emoji}</span>
+                      <p className="text-xs font-semibold text-muted-foreground mt-3">{hub.poweredBy}</p>
+                      <h3 className="text-xl font-bold mt-1" style={{ color: hub.accent }}>
+                        {hub.subBrand}
+                      </h3>
+                      <p className="mt-2 text-sm text-muted-foreground">{hub.coachLine}</p>
+                      <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-trust">
+                        Explore <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <HowItWorks />
-
-      <section className="border-y bg-muted/30 py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <h2 className="section-heading">Complete Move Package Guides</h2>
-              <p className="mt-2 max-w-xl text-muted-foreground">
-                Cross-category resources connecting moving, mortgage, and insurance decisions.
-              </p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/resources" className="gap-2">
-                All Resources <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredArticles.map((article) => (
-              <Link key={article.slug} href={`/resources/${article.slug}`}>
-                <Card className="h-full transition-shadow hover:shadow-trust-lg">
-                  <CardContent className="pt-6">
-                    <Badge variant="trust" className="mb-3">Cross-Category</Badge>
-                    <h3 className="font-semibold text-lg leading-snug">{article.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{article.excerpt}</p>
-                    <p className="mt-3 flex items-center gap-1 text-xs font-medium text-trust">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      {article.readTime} read
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+      {/* Trust proof */}
+      <section className="border-t py-12 bg-muted/30">
+        <div className="container mx-auto px-4 text-center">
+          <Shield className="h-8 w-8 text-trust mx-auto mb-4" aria-hidden />
+          <h2 className="text-xl font-bold mb-6">Verified across every vertical</h2>
+          <TrustProofRow items={[...VERIFICATION_SOURCES.slice(0, 5)]} />
         </div>
       </section>
-
-      <TestimonialsCarousel />
-      <CtaSection />
     </>
   );
 }

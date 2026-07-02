@@ -1,36 +1,50 @@
 import type { MetadataRoute } from 'next';
+import { BRAND } from '@/lib/brand';
 import { ARTICLES } from '@/lib/resources/articles';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? CONSUMERS_TRUST_HUB.url;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
 const STATIC_ROUTES = [
   '',
   '/moving',
-  '/lending',
   '/insurance',
+  '/lending',
+  '/dashboard',
+  '/onboarding',
+  '/concierge',
+  '/checklist',
+  '/vault',
+  '/account',
+  '/pricing',
+  '/community',
   '/resources',
   '/about',
   '/trust',
   '/contact',
   '/privacy',
   '/terms',
+  '/moving/companies',
+  '/moving/calculator',
+  '/lending/lenders',
+  '/lending/calculators',
+  '/insurance/directory',
+  '/insurance/calculators',
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
+  const staticEntries = STATIC_ROUTES.map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '' ? 'weekly' : 'monthly',
+    changeFrequency: (route === '' ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
     priority: route === '' ? 1 : 0.8,
   }));
 
-  const articleEntries: MetadataRoute.Sitemap = ARTICLES.map((article) => ({
-    url: `${siteUrl}/resources/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
-    changeFrequency: 'monthly',
+  const articles = ARTICLES.map((a) => ({
+    url: `${siteUrl}/resources/${a.slug}`,
+    lastModified: new Date(a.publishedAt),
+    changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...articleEntries];
+  return [...staticEntries, ...articles];
 }

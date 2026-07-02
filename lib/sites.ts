@@ -1,47 +1,47 @@
+import { BRAND } from '@/lib/brand';
+import { HUB_ACCENTS, HUB_CALCULATOR_PATHS, HUB_SEARCH_PATHS } from '@/lib/hubs';
+
 export type ServiceVertical = 'moving' | 'lending' | 'insurance';
 
-export interface SisterSite {
+export interface HubSite {
   id: ServiceVertical;
   name: string;
   shortName: string;
-  domain: string;
-  url: string;
+  subBrand: string;
+  poweredBy: string;
+  path: string;
   tagline: string;
   verificationBadge: string;
-  primaryColor: string;
+  accent: string;
   searchPath: string;
-  calculatorPath?: string;
+  calculatorPath: string;
   directoryPath: string;
   ctaLabel: string;
-  stats: {
-    label: string;
-    value: string;
-  }[];
+  coachLine: string;
+  emoji: string;
+  stats: { label: string; value: string }[];
   features: string[];
 }
 
-export const CONSUMERS_TRUST_HUB = {
-  name: 'Consumers Trust Hub',
-  domain: 'consumerstrusthub.com',
-  url: 'https://www.consumerstrusthub.com',
-  tagline: 'One Trusted Hub for Moving, Lending & Insurance – Shop with Confidence.',
-  email: 'hello@consumerstrusthub.com',
-} as const;
+export const CONSUMER_TRUST_HUB = BRAND;
 
-export const SISTER_SITES: Record<ServiceVertical, SisterSite> = {
+export const HUB_SITES: Record<ServiceVertical, HubSite> = {
   moving: {
     id: 'moving',
-    name: 'Move Trust Hub',
+    name: 'MoveTrust Hub',
     shortName: 'Moving',
-    domain: 'movetrusthub.com',
-    url: 'https://www.movetrusthub.com',
+    subBrand: HUB_ACCENTS.moving.subBrand,
+    poweredBy: HUB_ACCENTS.moving.poweredBy,
+    path: '/moving',
     tagline: 'Compare FMCSA-licensed interstate movers with verified reviews.',
-    verificationBadge: 'FMCSA Verified',
-    primaryColor: '#0A2540',
-    searchPath: '/companies',
-    calculatorPath: '/moving-calculator',
-    directoryPath: '/companies',
+    verificationBadge: HUB_ACCENTS.moving.verification,
+    accent: HUB_ACCENTS.moving.accent,
+    searchPath: HUB_SEARCH_PATHS.moving,
+    calculatorPath: HUB_CALCULATOR_PATHS.moving,
+    directoryPath: '/moving/companies',
     ctaLabel: 'Explore Movers',
+    coachLine: HUB_ACCENTS.moving.coachLine,
+    emoji: HUB_ACCENTS.moving.emoji,
     stats: [
       { label: 'Directory Movers', value: '25+' },
       { label: 'Reviews Analyzed', value: '9+' },
@@ -56,17 +56,20 @@ export const SISTER_SITES: Record<ServiceVertical, SisterSite> = {
   },
   lending: {
     id: 'lending',
-    name: 'Lender Trust Hub',
+    name: 'LenderTrust Hub',
     shortName: 'Lending',
-    domain: 'lendertrusthub.com',
-    url: 'https://www.lendertrusthub.com',
+    subBrand: HUB_ACCENTS.lending.subBrand,
+    poweredBy: HUB_ACCENTS.lending.poweredBy,
+    path: '/lending',
     tagline: 'Discover honest lenders in your county with NMLS verification.',
-    verificationBadge: 'NMLS Verified',
-    primaryColor: '#0A2540',
-    searchPath: '/local-lenders',
-    calculatorPath: '/calculators',
-    directoryPath: '/local-lenders',
+    verificationBadge: HUB_ACCENTS.lending.verification,
+    accent: HUB_ACCENTS.lending.accent,
+    searchPath: HUB_SEARCH_PATHS.lending,
+    calculatorPath: HUB_CALCULATOR_PATHS.lending,
+    directoryPath: '/lending/lenders',
     ctaLabel: 'Find Lenders',
+    coachLine: HUB_ACCENTS.lending.coachLine,
+    emoji: HUB_ACCENTS.lending.emoji,
     stats: [
       { label: 'Verified Lenders', value: '12,450+' },
       { label: 'Reviews Analyzed', value: '2.8M' },
@@ -81,17 +84,20 @@ export const SISTER_SITES: Record<ServiceVertical, SisterSite> = {
   },
   insurance: {
     id: 'insurance',
-    name: 'Insurance Trust Hub',
+    name: 'InsuranceTrust Hub',
     shortName: 'Insurance',
-    domain: 'insurancetrusthub.com',
-    url: 'https://www.insurancetrusthub.com',
+    subBrand: HUB_ACCENTS.insurance.subBrand,
+    poweredBy: HUB_ACCENTS.insurance.poweredBy,
+    path: '/insurance',
     tagline: 'Compare state-licensed insurance agents with DOI verification.',
-    verificationBadge: 'DOI Verified',
-    primaryColor: '#0A2540',
-    searchPath: '/directory',
-    calculatorPath: '/calculators',
-    directoryPath: '/directory',
+    verificationBadge: HUB_ACCENTS.insurance.verification,
+    accent: HUB_ACCENTS.insurance.accent,
+    searchPath: HUB_SEARCH_PATHS.insurance,
+    calculatorPath: HUB_CALCULATOR_PATHS.insurance,
+    directoryPath: '/insurance/directory',
     ctaLabel: 'Compare Insurance',
+    coachLine: HUB_ACCENTS.insurance.coachLine,
+    emoji: HUB_ACCENTS.insurance.emoji,
     stats: [
       { label: 'Verified Agents', value: '8,200+' },
       { label: 'States Covered', value: '50' },
@@ -106,14 +112,13 @@ export const SISTER_SITES: Record<ServiceVertical, SisterSite> = {
   },
 };
 
-export const ALL_SITES = [
-  CONSUMERS_TRUST_HUB,
-  ...Object.values(SISTER_SITES),
-];
+/** @deprecated Use HUB_SITES */
+export const SISTER_SITES = HUB_SITES;
+/** @deprecated Use CONSUMER_TRUST_HUB */
+export const CONSUMERS_TRUST_HUB = CONSUMER_TRUST_HUB;
 
-export function getSearchUrl(vertical: ServiceVertical, zip?: string): string {
-  const site = SISTER_SITES[vertical];
-  const base = site.url + site.searchPath;
+export function getInternalSearchUrl(vertical: ServiceVertical, zip?: string): string {
+  const base = HUB_SEARCH_PATHS[vertical];
   if (!zip) return base;
   return `${base}?zip=${encodeURIComponent(zip)}`;
 }

@@ -1,5 +1,5 @@
 import { createPageMetadata } from '@/lib/seo/metadata';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
 
 export const metadata = createPageMetadata({
   title: 'Terms of Service',
@@ -16,7 +16,7 @@ export default function TermsPage() {
 
         <h2>Agreement</h2>
         <p>
-          By using {CONSUMERS_TRUST_HUB.name} at consumerstrusthub.com, you agree to these terms.
+          By using {BRAND.name} at {BRAND.domain}, you agree to these terms.
           If you do not agree, please do not use our services.
         </p>
 
@@ -43,14 +43,14 @@ export default function TermsPage() {
 
         <h2>Limitation of Liability</h2>
         <p>
-          {CONSUMERS_TRUST_HUB.name} and its operators are not liable for damages arising from
+          {BRAND.name} and its operators are not liable for damages arising from
           decisions made based on directory information, third-party site content, or provider
           interactions initiated through our platform.
         </p>
 
         <h2>Contact</h2>
         <p>
-          Questions about these terms: <a href={`mailto:${CONSUMERS_TRUST_HUB.email}`}>{CONSUMERS_TRUST_HUB.email}</a>
+          Questions about these terms: <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
         </p>
       </div>
     </div>

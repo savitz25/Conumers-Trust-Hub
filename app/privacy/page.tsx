@@ -1,5 +1,5 @@
 import { createPageMetadata } from '@/lib/seo/metadata';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
 
 export const metadata = createPageMetadata({
   title: 'Privacy Policy',
@@ -16,8 +16,8 @@ export default function PrivacyPage() {
 
         <h2>Overview</h2>
         <p>
-          {CONSUMERS_TRUST_HUB.name} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates
-          consumerstrusthub.com and connects users to Move Trust Hub, Lender Trust Hub, and Insurance
+          {BRAND.name} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates{' '}
+          {BRAND.domain} and unifies MoveTrust Hub, LenderTrust Hub, and InsuranceTrust Hub
           Trust Hub. This policy describes how we collect, use, and protect information across our
           umbrella platform.
         </p>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
 
         <h2>Cross-Domain Analytics</h2>
         <p>
-          We use Google Analytics 4 with cross-domain tracking across consumerstrusthub.com,
+          We use Google Analytics 4 with cross-domain tracking across {BRAND.domain},
           movetrusthub.com, lendertrusthub.com, and insurancetrusthub.com to understand how users
           navigate the Trust Hub family. You may opt out via Google&apos;s Ads Settings or browser
           extensions that block analytics.
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
 
         <h2>Contact</h2>
         <p>
-          Privacy questions: <a href={`mailto:${CONSUMERS_TRUST_HUB.email}`}>{CONSUMERS_TRUST_HUB.email}</a>
+          Privacy questions: <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
         </p>
       </div>
     </div>

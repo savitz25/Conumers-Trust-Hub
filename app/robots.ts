@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
-import { CONSUMERS_TRUST_HUB } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? CONSUMERS_TRUST_HUB.url;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
 export default function robots(): MetadataRoute.Robots {
   return {

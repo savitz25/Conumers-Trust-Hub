@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Shield, ExternalLink } from 'lucide-react';
 import { createPageMetadata } from '@/lib/seo/metadata';
-import { CONSUMERS_TRUST_HUB, SISTER_SITES } from '@/lib/sites';
+import { BRAND } from '@/lib/brand';
+import { HUB_SITES } from '@/lib/sites';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -18,7 +19,7 @@ export default function AboutPage() {
       <div className="max-w-3xl">
         <h1 className="text-4xl font-bold tracking-tight">About Consumers Trust Hub</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          {CONSUMERS_TRUST_HUB.tagline}
+          {BRAND.tagline}
         </p>
       </div>
 
@@ -44,7 +45,7 @@ export default function AboutPage() {
       <section className="mt-16">
         <h2 className="section-heading">The Trust Hub Family</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.values(SISTER_SITES).map((site) => (
+          {Object.values(HUB_SITES).map((site) => (
             <Card key={site.id}>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2">
@@ -53,9 +54,9 @@ export default function AboutPage() {
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">{site.tagline}</p>
                 <Button variant="link" className="mt-3 h-auto p-0 gap-1" asChild>
-                  <a href={site.url} target="_blank" rel="noopener noreferrer">
-                    Visit {site.domain} <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
+                  <Link href={site.path}>
+                    Explore {site.subBrand} <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
