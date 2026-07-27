@@ -32,6 +32,7 @@ export function buildOrganizationSchema() {
       availableLanguage: 'English',
     },
     sameAs: TRUST_HUBS.map((h) => h.url),
+    // Explicit sub-organizations for Move, Insurance, and Lender Trust Hubs
     subOrganization: TRUST_HUBS.map((hub) => ({
       '@type': 'Organization',
       '@id': `${hub.url}/#organization`,
@@ -41,6 +42,11 @@ export function buildOrganizationSchema() {
       parentOrganization: { '@id': orgId },
     })),
   };
+}
+
+/** Guarantees schema includes all three network hubs (used in tests / sanity checks). */
+export function getSubOrganizationNames(): string[] {
+  return TRUST_HUBS.map((h) => h.name);
 }
 
 export function buildWebSiteSchema() {

@@ -65,12 +65,18 @@ export default function EditorialStandardsPage() {
             specialist Trust Hubs, under these same standards. If a page on any hub conflicts with
             this policy, network standards win—and the page should be corrected.
           </p>
-          <p className="mt-8 flex flex-wrap gap-4 not-prose">
-            <Link href="/methodology" className="btn-primary">
-              Methodology
+
+          <h2>Report an error</h2>
+          <p>
+            Use the corrections process to submit a URL, the claimed error, and a primary source.
+            Reports are evaluated against public records, not commercial relationships.
+          </p>
+          <p className="mt-8 flex flex-wrap gap-3 not-prose">
+            <Link href="/corrections" className="btn-primary">
+              Corrections
             </Link>
-            <Link href="/contact" className="btn-secondary">
-              Request a correction
+            <Link href="/methodology" className="btn-secondary">
+              Methodology
             </Link>
           </p>
         </div>

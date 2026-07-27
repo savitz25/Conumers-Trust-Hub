@@ -161,10 +161,12 @@ export const FOOTER_ABOUT = [
   { href: '/how-we-make-money', label: 'How We Make Money' },
   { href: '/editorial-standards', label: 'Editorial Standards' },
   { href: '/data-sources', label: 'Data Sources' },
+  { href: '/corrections', label: 'Corrections' },
   { href: '/contact', label: 'Contact' },
 ] as const;
 
 export const FOOTER_LEGAL = [
+  { href: '/promise', label: 'Independence' },
   { href: '/methodology', label: 'Methodology' },
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/terms', label: 'Terms of Service' },
