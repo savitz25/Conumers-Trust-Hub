@@ -11,17 +11,17 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <BrandLogo inverted />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/65">
-              Thin parent brand for the Trust Hub network—methodology, independence, and discovery.
-              Product tools live on the specialist domains.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
+              Parent network for independent consumer research. Methodology, independence standards,
+              and discovery. Product tools operate on specialist domains.
             </p>
           </div>
 
           <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
-              The Trust Hubs
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
+              Trust Hubs
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
+            <ul className="space-y-2.5 text-sm text-white/65">
               {TRUST_HUBS.map((hub) => (
                 <li key={hub.id}>
                   {hub.status === 'live' ? (
@@ -35,8 +35,8 @@ export function Footer() {
                   ) : (
                     <span className="flex items-center gap-2">
                       {hub.name}
-                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/60">
-                        Soon
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-white/40">
+                        Planned
                       </span>
                     </span>
                   )}
@@ -46,10 +46,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
               Network
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
+            <ul className="space-y-2.5 text-sm text-white/65">
               {FOOTER_ABOUT.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="transition-colors hover:text-white">
@@ -61,10 +61,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
-              Methodology & Legal
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
+              Methodology & legal
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
+            <ul className="space-y-2.5 text-sm text-white/65">
               {FOOTER_LEGAL.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="transition-colors hover:text-white">
@@ -77,12 +77,12 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="max-w-3xl text-xs leading-relaxed text-white/45">
+          <p className="max-w-3xl text-xs leading-relaxed text-white/40">
             {BRAND.name} is an independent informational network. Not affiliated with, endorsed by,
-            or a partner of listed providers. Always verify licensing and terms with primary
-            regulators (FMCSA, state DOI, NMLS) and the company before you commit.
+            or a partner of listed providers. Confirm licensing and terms with primary regulators
+            (FMCSA, state DOI, NMLS) and the company before contractual commitment.
           </p>
-          <p className="mt-4 text-xs text-white/35">
+          <p className="mt-4 text-xs text-white/30">
             © {new Date().getFullYear()} {BRAND.name}. {BRAND.tagline}
           </p>
         </div>

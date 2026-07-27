@@ -26,7 +26,7 @@ export const TRUST_HUBS: TrustHub[] = [
     verification: 'FMCSA licensing & complaint data',
     dataSources: ['FMCSA', 'SAFER', 'Attributed reviews'],
     description:
-      'Specialist destination for FMCSA-licensed mover research. Directories and tools live on this domain—not the parent site.',
+      'Research destination for FMCSA-licensed movers. Provider directories and tools are hosted on this domain.',
     accent: '#1D4ED8',
     accentSoft: '#EFF6FF',
   },
@@ -40,7 +40,7 @@ export const TRUST_HUBS: TrustHub[] = [
     verification: 'State DOI / NAIC licensing',
     dataSources: ['State DOI', 'NAIC', 'Attributed reviews'],
     description:
-      'Specialist destination for state-licensed insurance agency research. Directories and tools live on this domain—not the parent site.',
+      'Research destination for state-licensed insurance agencies and brokers. Provider directories and tools are hosted on this domain.',
     accent: '#0F766E',
     accentSoft: '#F0FDFA',
   },
@@ -54,7 +54,7 @@ export const TRUST_HUBS: TrustHub[] = [
     verification: 'NMLS Consumer Access',
     dataSources: ['NMLS', 'CFPB', 'FDIC / public records'],
     description:
-      'Specialist destination for NMLS-verified lender research. Launching soon under the same independence standards as the live hubs.',
+      'Research destination for NMLS-verified lenders. Planned launch under the same independence standards as the live hubs.',
     accent: '#4338CA',
     accentSoft: '#EEF2FF',
   },

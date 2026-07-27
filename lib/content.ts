@@ -3,19 +3,19 @@
 export const INDEPENDENCE_PLEDGES = [
   {
     title: 'Zero paid placements',
-    body: 'No company can buy ranking, featured position, or preferred display on any Trust Hub. Listings and scores are driven by verification data and published methodology—not sponsorship fees.',
+    body: 'No company may purchase ranking, featured position, or preferred display on any Trust Hub. Listings and scores follow published methodology and verification data.',
   },
   {
-    title: 'We are not the product',
-    body: 'We are not a mover, lender, broker, or insurance agency. We do not originate loans, sell policies, or book moves. Our role is independent research infrastructure.',
+    title: 'No transactional role',
+    body: 'The network is not a mover, lender, broker, or insurance agency. It does not originate loans, sell policies, or book moves. Its function is independent research infrastructure.',
   },
   {
     title: 'Transparent methodology',
-    body: 'We publish how we verify providers, what data we use, and where our limits are. You should always be able to re-check primary sources yourself.',
+    body: 'Verification process, data sources, and known limitations are published. Primary sources remain available for independent re-checking.',
   },
   {
-    title: 'Corrections over vanity',
-    body: 'When we get something wrong, we correct it. When data is incomplete, we say so. Trust compounds only if we treat accuracy as a product requirement.',
+    title: 'Corrections policy',
+    body: 'Material errors are corrected. Incomplete data is disclosed. Accuracy is treated as an operational requirement, not a marketing claim.',
   },
 ] as const;
 
@@ -42,8 +42,8 @@ export const VERIFICATION_STEPS = [
   },
   {
     step: '05',
-    title: 'Disclose limits & invite re-verification',
-    body: 'Public data changes. Every Trust Hub encourages consumers to verify licenses and terms directly with regulators and providers before contracting.',
+    title: 'Disclose limits and require re-verification',
+    body: 'Public records can lag. Trust Hubs disclose data limitations and instruct consumers to confirm licenses and contractual terms with regulators and providers before committing.',
   },
 ] as const;
 

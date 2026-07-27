@@ -8,7 +8,7 @@ export const BRAND = {
   url: 'https://www.consumerstrusthub.com',
   tagline: 'Independent verification. Transparent methodology. Zero paid placements.',
   description:
-    'The independent consumer research network behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub. Trust infrastructure and discovery — not a directory.',
+    'Independent consumer research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub. Methodology, independence standards, and discovery—not a provider directory.',
   email: 'hello@consumerstrusthub.com',
   foundingYear: 2025,
 } as const;
@@ -16,6 +16,6 @@ export const BRAND = {
 export const FOUNDER = {
   name: 'Michael Henry',
   role: 'Founder',
-  bio: 'Solo founder building ConsumerTrust Hub as independent trust infrastructure for high-stakes consumer decisions. Background in researching regulated markets—moving, insurance, and lending—where paid placement and opaque rankings leave families guessing. Currently building and operating the network full-time.',
+  bio: 'Founder of ConsumerTrust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, and lending—where paid placement commonly substitutes for verification.',
   location: 'United States',
 } as const;

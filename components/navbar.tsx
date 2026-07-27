@@ -10,7 +10,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <BrandLogo />
 
@@ -28,7 +28,7 @@ export function Navbar() {
 
         <div className="hidden md:block">
           <Link href="/promise" className="btn-primary">
-            Our independence promise
+            Independence policy
           </Link>
         </div>
 
@@ -57,12 +57,8 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/promise"
-              className="btn-primary mt-2"
-              onClick={() => setOpen(false)}
-            >
-              Our independence promise
+            <Link href="/promise" className="btn-primary mt-2" onClick={() => setOpen(false)}>
+              Independence policy
             </Link>
           </nav>
         </div>

@@ -8,7 +8,7 @@ import { TRUST_HUBS } from '@/lib/hubs';
 export const metadata = createPageMetadata({
   title: 'About the Network',
   description:
-    'Why ConsumerTrust Hub exists: independent consumer research infrastructure for moving, insurance, and lending—without paid placements.',
+    'ConsumerTrust Hub is the independent research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub.',
   path: '/about',
 });
 
@@ -17,45 +17,59 @@ export default function AboutPage() {
     <>
       <PageHeader
         label="About the network"
-        title="A parent brand for independent consumer research"
-        description={`${BRAND.name} is the trust infrastructure and discovery layer behind specialist Trust Hubs—not a content farm or mega-directory.`}
+        title="Structure and purpose"
+        description={`${BRAND.name} is the parent brand and standards layer for a network of specialist consumer research sites.`}
       />
 
       <div className="container-page py-14 sm:py-16">
         <div className="prose-trust">
           <p>
-            High-stakes consumer markets—moving, insurance, lending—are saturated with lead-gen
-            sites that look like research tools. Rankings get sold. “Featured” means paid. Primary
-            licensing data is buried under urgency tactics.
+            Moving, insurance, and lending are high-stakes markets. They are also crowded with
+            comparison products that sell ranking position, bury primary licensing data, and present
+            commercial placement as independent research.
           </p>
           <p>
-            {BRAND.name} was built as the opposite: a thin, serious parent network that sets
-            independence standards, explains methodology, and points people to specialist hubs that
-            do the deep work.
+            {BRAND.name} exists to separate those concerns. The parent site documents independence
+            policy, verification methodology, data sources, editorial standards, and revenue
+            disclosure. Specialist Trust Hubs host market depth—directories, tools, and vertical
+            research—under the same constraints.
           </p>
-          <h2>What this site is</h2>
+
+          <h2>Division of responsibility</h2>
           <ul>
-            <li>Network positioning and discovery for the Trust Hubs</li>
-            <li>Public promises on independence, methodology, and revenue</li>
-            <li>Named accountability for who operates the project</li>
-            <li>Shared design and schema foundation for the network</li>
+            <li>
+              <strong>Parent domain:</strong> network standards, methodology, accountability, and
+              discovery
+            </li>
+            <li>
+              <strong>Specialist domains:</strong> market-specific research products and provider
+              directories
+            </li>
           </ul>
-          <h2>What this site is not</h2>
+
+          <h2>What this site does not do</h2>
           <ul>
-            <li>Not a provider directory</li>
-            <li>Not a location-page content farm</li>
-            <li>Not a blog competing with specialist hubs</li>
-            <li>Not a lead-gen marketplace in parent clothing</li>
+            <li>Operate provider directories</li>
+            <li>Host location or vertical tool pages that compete with specialist hubs</li>
+            <li>Sell ranking position or undisclosed endorsements</li>
+            <li>Originate loans, sell insurance, or book moves</li>
           </ul>
+
           <p>
-            Specialist sites own market depth. This parent owns the promise that depth remains
-            independent.
+            If depth and independence conflict, independence wins. Specialist sites implement market
+            research; this site defines the rules under which that research is allowed to claim
+            trustworthiness.
           </p>
         </div>
 
         <section className="mt-16">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">The Trust Hubs</h2>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Network destinations
+          </h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            External product domains. Links leave consumerstrusthub.com.
+          </p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             {TRUST_HUBS.map((hub) => (
               <HubCard key={hub.id} hub={hub} />
             ))}
@@ -67,10 +81,10 @@ export default function AboutPage() {
             Who we are
           </Link>
           <Link href="/promise" className="btn-secondary">
-            Our promise
+            Independence policy
           </Link>
-          <Link href="/contact" className="btn-secondary">
-            Contact
+          <Link href="/methodology" className="btn-secondary">
+            Methodology
           </Link>
         </div>
       </div>
