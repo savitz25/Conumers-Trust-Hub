@@ -152,7 +152,7 @@ export const NAV_PRIMARY = [
   { href: '/promise', label: 'Our Promise' },
   { href: '/methodology', label: 'How We Verify' },
   { href: '/#trust-hubs', label: 'The Trust Hubs' },
-  { href: '/about', label: 'About' },
+  { href: '/who-we-are', label: 'Who We Are' },
 ] as const;
 
 export const FOOTER_ABOUT = [

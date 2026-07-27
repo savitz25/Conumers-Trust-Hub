@@ -35,9 +35,13 @@ export function HubCard({ hub }: { hub: TrustHub }) {
         <p className="mt-1 text-xs text-muted-foreground">{hub.dataSources.join(' · ')}</p>
       </div>
 
-      {isLive && (
+      {isLive ? (
         <span className="btn-ghost mt-5 self-start">
-          Visit site <ArrowUpRight className="h-3.5 w-3.5" />
+          Go to {hub.domain} <ArrowUpRight className="h-3.5 w-3.5" />
+        </span>
+      ) : (
+        <span className="mt-5 text-xs font-medium text-muted-foreground">
+          Specialist product launching soon · {hub.domain}
         </span>
       )}
     </>

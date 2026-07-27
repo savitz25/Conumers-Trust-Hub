@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, ShieldCheck, Scale, Eye } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Scale, Eye, ArrowUpRight } from 'lucide-react';
 import { HubCard } from '@/components/hub-card';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
@@ -12,28 +12,29 @@ export default function HomePage() {
     <>
       <JsonLd data={buildHomepageGraph()} />
 
-      {/* Hero */}
+      {/* Hero — parent network, not product surface */}
       <section className="relative overflow-hidden border-b border-border/70">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgb(13_148_136/0.07),_transparent_55%)]" />
         <div className="container-page relative py-20 sm:py-28 lg:py-32">
           <div className="max-w-3xl">
             <p className="section-label">Independent consumer research network</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-              Trust infrastructure for the decisions that matter.
+              Independent verification. Transparent research. Zero paid placements.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              {BRAND.name} is the parent network behind MoveTrustHub, InsuranceTrustHub, and
-              LenderTrustHub. We exist so families can research high-stakes providers with{' '}
-              <strong className="font-semibold text-foreground">independent verification</strong>,{' '}
-              <strong className="font-semibold text-foreground">transparent methodology</strong>, and{' '}
-              <strong className="font-semibold text-foreground">zero paid placements</strong>.
+              {BRAND.name} is the <strong className="font-semibold text-foreground">trust infrastructure
+              and discovery layer</strong> behind MoveTrustHub, InsuranceTrustHub, and
+              LenderTrustHub. This parent site explains how the network stays independent.
+            </p>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Directories, tools, and market depth live on the specialist Trust Hubs—not here.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/promise" className="btn-primary">
-                Read our promise
-              </Link>
-              <Link href="/methodology" className="btn-secondary">
-                How we verify
+              <a href="#trust-hubs" className="btn-primary">
+                Explore the Trust Network
+              </a>
+              <Link href="/promise" className="btn-secondary">
+                Our independence promise
               </Link>
             </div>
           </div>
@@ -42,18 +43,18 @@ export default function HomePage() {
             {[
               {
                 icon: ShieldCheck,
-                title: 'Independent',
-                body: 'Not a mover, lender, or insurer. Research only.',
+                title: 'Parent network',
+                body: 'Standards, methodology, and discovery—not the product surface.',
               },
               {
                 icon: Scale,
-                title: 'Methodical',
-                body: 'Primary public sources. Published process.',
+                title: 'Independent',
+                body: 'Not a mover, lender, or insurer. Research infrastructure only.',
               },
               {
                 icon: Eye,
                 title: 'Transparent',
-                body: 'No paid rankings. Clear revenue disclosure.',
+                body: 'Published process. No paid rankings. Clear revenue disclosure.',
               },
             ].map((item) => (
               <div key={item.title} className="card-surface p-5">
@@ -91,15 +92,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust Hub cards */}
+      {/* Explore the Trust Network — external destinations only */}
       <section id="trust-hubs" className="scroll-mt-20 border-b border-border/70">
         <div className="container-page py-16 sm:py-20">
           <div className="max-w-2xl">
-            <p className="section-label">The Trust Hubs</p>
-            <h2 className="section-title mt-3">Specialist research sites. One network standard.</h2>
+            <p className="section-label">Explore the Trust Network</p>
+            <h2 className="section-title mt-3">
+              Specialist destinations. Shared independence standard.
+            </h2>
             <p className="section-lead">
-              Depth lives on the specialist hubs. This parent site is the discovery layer and the
-              shared promise of independence.
+              Choose a Trust Hub to research providers. Each site is a separate product destination
+              under the same zero paid-placement rules. This parent domain does not host directories
+              or vertical tools.
             </p>
           </div>
 
@@ -108,6 +112,20 @@ export default function HomePage() {
               <HubCard key={hub.id} hub={hub} />
             ))}
           </div>
+
+          <p className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+            {TRUST_HUBS.filter((h) => h.status === 'live').map((hub) => (
+              <a
+                key={hub.id}
+                href={hub.url}
+                className="inline-flex items-center gap-1 font-medium text-navy hover:text-trust"
+                rel="noopener noreferrer"
+              >
+                {hub.domain}
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+              </a>
+            ))}
+          </p>
         </div>
       </section>
 
@@ -118,8 +136,8 @@ export default function HomePage() {
             <p className="section-label">How we stay independent</p>
             <h2 className="section-title mt-3">Four non-negotiables</h2>
             <p className="section-lead">
-              Independence is a product requirement, not a tagline. These rules apply across the
-              network.
+              Independence is a network requirement, not a marketing line. These rules apply to
+              every Trust Hub.
             </p>
           </div>
 
@@ -139,7 +157,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <Link href="/methodology" className="btn-primary">
-              Methodology
+              How we verify
             </Link>
             <Link href="/how-we-make-money" className="btn-secondary">
               How we make money
@@ -148,17 +166,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Closing CTA */}
+      {/* Closing — infrastructure, not product */}
       <section>
         <div className="container-page py-16 sm:py-20">
           <div className="card-surface flex flex-col gap-6 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="max-w-xl">
               <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                Built for serious research—not lead-gen theater.
+                Methodology, accountability, and standards—not a relocation app.
               </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Meet the founder, read our data sources, or contact us about corrections and
-                methodology questions.
+                Read who operates the network, how verification works, and how we fund the work
+                without selling rankings.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">

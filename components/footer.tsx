@@ -12,8 +12,8 @@ export function Footer() {
           <div className="lg:col-span-1">
             <BrandLogo inverted />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/65">
-              Independent consumer research network. Trust infrastructure and discovery for
-              moving, insurance, and lending.
+              Thin parent brand for the Trust Hub network—methodology, independence, and discovery.
+              Product tools live on the specialist domains.
             </p>
           </div>
 
