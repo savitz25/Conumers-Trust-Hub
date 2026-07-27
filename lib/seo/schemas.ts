@@ -1,4 +1,4 @@
-import { BRAND, FOUNDER } from '@/lib/brand';
+import { BRAND, FOUNDER, brandLogoAbsoluteUrl } from '@/lib/brand';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { siteUrl } from '@/lib/seo/metadata';
 
@@ -13,7 +13,7 @@ export function buildOrganizationSchema() {
     name: BRAND.name,
     legalName: BRAND.legalName,
     url: siteUrl,
-    logo: `${siteUrl}/brand/logo.svg`,
+    logo: brandLogoAbsoluteUrl(siteUrl),
     email: BRAND.email,
     description: BRAND.description,
     foundingDate: String(BRAND.foundingYear),

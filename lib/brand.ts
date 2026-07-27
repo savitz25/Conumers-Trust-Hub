@@ -1,5 +1,8 @@
 /** Parent network brand — consumerstrusthub.com */
 
+/** Bump when replacing public brand logo assets (CDN/browser cache). */
+export const BRAND_LOGO_VERSION = '20260727';
+
 export const BRAND = {
   name: 'ConsumerTrust Hub',
   shortName: 'CTH',
@@ -12,6 +15,20 @@ export const BRAND = {
   email: 'hello@consumerstrusthub.com',
   foundingYear: 2025,
 } as const;
+
+/** Site logo paths — transparent PNG wordmark + dark-bg variant. */
+export const BRAND_LOGO = {
+  src: `/brand/logo.png?v=${BRAND_LOGO_VERSION}`,
+  lightSrc: `/brand/logo-light.png?v=${BRAND_LOGO_VERSION}`,
+  alt: 'ConsumerTrust Hub',
+  /** Intrinsic aspect ~3.7:1 after trim */
+  width: 714,
+  height: 192,
+} as const;
+
+export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
+  return `${baseUrl.replace(/\/$/, '')}/brand/logo.png?v=${BRAND_LOGO_VERSION}`;
+}
 
 export const FOUNDER = {
   name: 'Michael Henry',

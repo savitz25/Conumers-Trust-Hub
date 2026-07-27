@@ -12,7 +12,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-4">
-        <BrandLogo />
+        <BrandLogo priority />
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
           {NAV_PRIMARY.map((item) => (
