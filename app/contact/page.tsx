@@ -1,91 +1,68 @@
-'use client';
-
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Mail, Send } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { createPageMetadata } from '@/lib/seo/metadata';
 import { BRAND } from '@/lib/brand';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
-  email: z.string().email('Valid email required'),
-  subject: z.string().min(3, 'Subject is required'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
+export const metadata = createPageMetadata({
+  title: 'Contact',
+  description:
+    'Contact ConsumerTrust Hub for corrections, methodology questions, press, and partnership inquiries.',
+  path: '/contact',
 });
 
-type ContactForm = z.infer<typeof contactSchema>;
-
 export default function ContactPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<ContactForm>({
-    resolver: zodResolver(contactSchema),
-  });
-
-  async function onSubmit(data: ContactForm) {
-    // Future: POST to /api/contact with Supabase or email service
-    console.log('Contact form submission:', data);
-    alert('Thank you for reaching out. We will respond within 2 business days.');
-    reset();
-  }
-
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="max-w-xl">
-        <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
-        <p className="mt-4 text-muted-foreground">
-          Questions about our directories, verification methodology, or partnership inquiries.
-          We respond within 2 business days.
-        </p>
+    <>
+      <PageHeader
+        label="Contact"
+        title="Reach the network"
+        description="Corrections, methodology questions, press, and partnership notes. We respond within two business days."
+      />
 
-        <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
-          <Mail className="h-4 w-4" />
-          {BRAND.email}
+      <div className="container-page py-14 sm:py-16">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="card-surface p-6 lg:col-span-1">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-trust/10 text-trust">
+              <Mail className="h-5 w-5" aria-hidden />
+            </div>
+            <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground">Email</h2>
+            <a href={`mailto:${BRAND.email}`} className="link-inline mt-2 inline-block text-base">
+              {BRAND.email}
+            </a>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              Best for corrections, data disputes, press, and general network questions.
+            </p>
+          </div>
+
+          <div className="card-surface p-6 lg:col-span-2">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">
+              What to include for a correction
+            </h2>
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />
+                <span>Exact URL on ConsumerTrust Hub or a specialist Trust Hub</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />
+                <span>What you believe is wrong, with the correct fact if known</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />
+                <span>Primary source link (FMCSA, DOI, NMLS, official company filing, etc.)</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />
+                <span>Your relationship to the matter (consumer, provider, journalist)</span>
+              </li>
+            </ul>
+            <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+              Provider disputes are evaluated against public records. Willingness to advertise or
+              “partner” does not change editorial outcomes.
+            </p>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-10 space-y-5" noValidate>
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" className="mt-1.5" {...register('name')} aria-invalid={!!errors.name} />
-            {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" className="mt-1.5" {...register('email')} aria-invalid={!!errors.email} />
-            {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" className="mt-1.5" {...register('subject')} aria-invalid={!!errors.subject} />
-            {errors.subject && <p className="mt-1 text-sm text-destructive">{errors.subject.message}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="message">Message</Label>
-            <textarea
-              id="message"
-              rows={5}
-              className="mt-1.5 flex w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              {...register('message')}
-              aria-invalid={!!errors.message}
-            />
-            {errors.message && <p className="mt-1 text-sm text-destructive">{errors.message.message}</p>}
-          </div>
-
-          <Button type="submit" variant="trust" disabled={isSubmitting} className="gap-2">
-            <Send className="h-4 w-4" />
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </Button>
-        </form>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,74 +1,79 @@
 import Link from 'next/link';
-import { Shield, ExternalLink } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { HubCard } from '@/components/hub-card';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { BRAND } from '@/lib/brand';
-import { HUB_SITES } from '@/lib/sites';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { TRUST_HUBS } from '@/lib/hubs';
 
 export const metadata = createPageMetadata({
-  title: 'About Consumers Trust Hub',
+  title: 'About the Network',
   description:
-    'The family story behind Consumers Trust Hub — an independent umbrella connecting Move, Lender, and Insurance Trust Hub directories.',
+    'Why ConsumerTrust Hub exists: independent consumer research infrastructure for moving, insurance, and lending—without paid placements.',
   path: '/about',
 });
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="max-w-3xl">
-        <h1 className="text-4xl font-bold tracking-tight">About Consumers Trust Hub</h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          {BRAND.tagline}
-        </p>
-      </div>
+    <>
+      <PageHeader
+        label="About the network"
+        title="A parent brand for independent consumer research"
+        description={`${BRAND.name} is the trust infrastructure and discovery layer behind specialist Trust Hubs—not a content farm or mega-directory.`}
+      />
 
-      <section className="mt-12 max-w-3xl space-y-6 text-foreground/90 leading-relaxed">
-        <p>
-          Consumers Trust Hub is the central umbrella brand for a family of independent,
-          data-driven consumer directories. We built three specialized sites — each fully
-          operational on its own — and united them under one trusted starting point so families
-          can research moving, lending, and insurance without scattered tabs and conflicting advice.
-        </p>
-        <p>
-          We are not affiliated with, endorsed by, or partners of the companies listed on our
-          sister sites. Company names, logos, and data are used for identification and research
-          purposes only. Every directory maintains a strict zero paid placements policy.
-        </p>
-        <p>
-          Our verification standards draw from authoritative public sources: FMCSA for movers,
-          NMLS and CFPB for lenders, and state Departments of Insurance for agents. We combine
-          these with attributed reviews and transparent trust scores — never sponsored rankings.
-        </p>
-      </section>
-
-      <section className="mt-16">
-        <h2 className="section-heading">The Trust Hub Family</h2>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.values(HUB_SITES).map((site) => (
-            <Card key={site.id}>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-trust" />
-                  <h3 className="font-semibold">{site.name}</h3>
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">{site.tagline}</p>
-                <Button variant="link" className="mt-3 h-auto p-0 gap-1" asChild>
-                  <Link href={site.path}>
-                    Explore {site.subBrand} <ExternalLink className="h-3.5 w-3.5" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+      <div className="container-page py-14 sm:py-16">
+        <div className="prose-trust">
+          <p>
+            High-stakes consumer markets—moving, insurance, lending—are saturated with lead-gen
+            sites that look like research tools. Rankings get sold. “Featured” means paid. Primary
+            licensing data is buried under urgency tactics.
+          </p>
+          <p>
+            {BRAND.name} was built as the opposite: a thin, serious parent network that sets
+            independence standards, explains methodology, and points people to specialist hubs that
+            do the deep work.
+          </p>
+          <h2>What this site is</h2>
+          <ul>
+            <li>Network positioning and discovery for the Trust Hubs</li>
+            <li>Public promises on independence, methodology, and revenue</li>
+            <li>Named accountability for who operates the project</li>
+            <li>Shared design and schema foundation for the network</li>
+          </ul>
+          <h2>What this site is not</h2>
+          <ul>
+            <li>Not a provider directory</li>
+            <li>Not a location-page content farm</li>
+            <li>Not a blog competing with specialist hubs</li>
+            <li>Not a lead-gen marketplace in parent clothing</li>
+          </ul>
+          <p>
+            Specialist sites own market depth. This parent owns the promise that depth remains
+            independent.
+          </p>
         </div>
-      </section>
 
-      <div className="mt-12">
-        <Button variant="trust" asChild>
-          <Link href="/trust">Read Our Independence Pledge</Link>
-        </Button>
+        <section className="mt-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">The Trust Hubs</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {TRUST_HUBS.map((hub) => (
+              <HubCard key={hub.id} hub={hub} />
+            ))}
+          </div>
+        </section>
+
+        <div className="mt-12 flex flex-wrap gap-3">
+          <Link href="/who-we-are" className="btn-primary">
+            Who we are
+          </Link>
+          <Link href="/promise" className="btn-secondary">
+            Our promise
+          </Link>
+          <Link href="/contact" className="btn-secondary">
+            Contact
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

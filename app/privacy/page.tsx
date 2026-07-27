@@ -1,61 +1,87 @@
+import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { BRAND } from '@/lib/brand';
 
 export const metadata = createPageMetadata({
   title: 'Privacy Policy',
-  description: 'Unified privacy policy for Consumers Trust Hub and its sister directory sites.',
+  description: `Privacy policy for ${BRAND.name} (${BRAND.domain}).`,
   path: '/privacy',
 });
 
 export default function PrivacyPage() {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <div className="max-w-3xl prose prose-slate dark:prose-invert">
-        <h1>Privacy Policy</h1>
-        <p className="text-muted-foreground">Last updated: January 1, 2026</p>
+    <>
+      <PageHeader
+        label="Legal"
+        title="Privacy Policy"
+        description={`Last updated: July 1, 2026 · Applies to ${BRAND.domain}`}
+      />
 
-        <h2>Overview</h2>
-        <p>
-          {BRAND.name} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates{' '}
-          {BRAND.domain} and unifies MoveTrust Hub, LenderTrust Hub, and InsuranceTrust Hub
-          Trust Hub. This policy describes how we collect, use, and protect information across our
-          umbrella platform.
-        </p>
+      <div className="container-page py-14 sm:py-16">
+        <div className="prose-trust">
+          <h2>Overview</h2>
+          <p>
+            {BRAND.name} (“we,” “us,” or “our”) operates {BRAND.domain}. This policy describes how
+            we collect, use, and protect information on the parent network site. Specialist Trust
+            Hubs may publish additional notices for their own features.
+          </p>
 
-        <h2>Information We Collect</h2>
-        <ul>
-          <li><strong>Usage data:</strong> Pages visited, referral source, device type, and approximate location (via analytics).</li>
-          <li><strong>Search queries:</strong> ZIP codes entered for directory searches (not stored unless you create an account).</li>
-          <li><strong>Contact form:</strong> Name, email, and message content when you reach out to us.</li>
-          <li><strong>Cookies:</strong> Analytics cookies (Google Analytics 4) and theme preference (local storage).</li>
-        </ul>
+          <h2>Information we collect</h2>
+          <ul>
+            <li>
+              <strong>Usage data:</strong> pages visited, approximate location derived from IP,
+              device/browser type, and referral source via analytics.
+            </li>
+            <li>
+              <strong>Contact data:</strong> name, email, and message content when you email us.
+            </li>
+            <li>
+              <strong>Technical cookies:</strong> essential site operation and, if enabled, privacy-
+              respectful analytics.
+            </li>
+          </ul>
 
-        <h2>How We Use Information</h2>
-        <p>
-          We use collected data to improve directory experiences, measure cross-site navigation,
-          respond to inquiries, and maintain platform security. We do not sell personal information
-          to third parties.
-        </p>
+          <h2>How we use information</h2>
+          <p>
+            We use information to operate and improve the site, respond to inquiries, measure
+            performance, and protect against abuse. We do not sell personal information.
+          </p>
 
-        <h2>Cross-Domain Analytics</h2>
-        <p>
-          We use Google Analytics 4 with cross-domain tracking across {BRAND.domain},
-          movetrusthub.com, lendertrusthub.com, and insurancetrusthub.com to understand how users
-          navigate the Trust Hub family. You may opt out via Google&apos;s Ads Settings or browser
-          extensions that block analytics.
-        </p>
+          <h2>Analytics</h2>
+          <p>
+            We may use Vercel Analytics and/or Google Analytics to understand aggregate traffic. You
+            can block analytics via browser settings or extensions. Cross-domain measurement may
+            include specialist Trust Hub domains when configured.
+          </p>
 
-        <h2>Third-Party Sites</h2>
-        <p>
-          Our sister sites maintain their own privacy practices. When you click through to
-          Move Trust Hub, Lender Trust Hub, or Insurance Trust Hub, their respective policies apply.
-        </p>
+          <h2>Third-party sites</h2>
+          <p>
+            Links to MoveTrustHub, InsuranceTrustHub, LenderTrustHub, and external regulators leave
+            this site. Their privacy practices are governed by their own policies.
+          </p>
 
-        <h2>Contact</h2>
-        <p>
-          Privacy questions: <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
-        </p>
+          <h2>Data retention</h2>
+          <p>
+            Contact emails are retained as long as needed to resolve the inquiry and maintain a
+            reasonable compliance record. Analytics data is retained according to the analytics
+            provider’s configuration.
+          </p>
+
+          <h2>Your choices</h2>
+          <p>
+            To request access or deletion of personal information you have sent us, email{' '}
+            <a className="link-inline" href={`mailto:${BRAND.email}`}>
+              {BRAND.email}
+            </a>
+            . We will respond within a reasonable period consistent with applicable law.
+          </p>
+
+          <h2>Contact</h2>
+          <p>
+            Privacy questions: {BRAND.email}
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

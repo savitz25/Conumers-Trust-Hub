@@ -1,19 +1,21 @@
-/** Master brand — consumertrusthub.com (no 's') */
+/** Parent network brand — consumerstrusthub.com */
+
 export const BRAND = {
   name: 'ConsumerTrust Hub',
   shortName: 'CTH',
-  domain: 'consumertrusthub.com',
-  url: 'https://www.consumertrusthub.com',
-  tagline: 'One trusted home for your entire move.',
-  coachTagline: "Let's make this move the best one yet!",
-  email: 'hello@consumertrusthub.com',
+  legalName: 'ConsumerTrust Hub',
+  domain: 'consumerstrusthub.com',
+  url: 'https://www.consumerstrusthub.com',
+  tagline: 'Independent verification. Transparent methodology. Zero paid placements.',
+  description:
+    'The independent consumer research network behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub. Trust infrastructure and discovery — not a directory.',
+  email: 'hello@consumerstrusthub.com',
+  foundingYear: 2025,
 } as const;
 
-/** Legacy domains — 308 redirect sources (not yet active) */
-export const LEGACY_DOMAINS = {
-  moving: { host: 'movetrusthub.com', brand: 'MoveTrust Hub', emoji: '✨' },
-  lending: { host: 'lendertrusthub.com', brand: 'LenderTrust Hub', emoji: '✨' },
-  insurance: { host: 'insurancetrusthub.com', brand: 'InsuranceTrust Hub', emoji: '✨' },
+export const FOUNDER = {
+  name: 'Michael Henry',
+  role: 'Founder',
+  bio: 'Solo founder building ConsumerTrust Hub as independent trust infrastructure for high-stakes consumer decisions. Background in researching regulated markets—moving, insurance, and lending—where paid placement and opaque rankings leave families guessing. Currently building and operating the network full-time.',
+  location: 'United States',
 } as const;
-
-export type LegacySource = keyof typeof LEGACY_DOMAINS;

@@ -1,50 +1,27 @@
 import type { MetadataRoute } from 'next';
 import { BRAND } from '@/lib/brand';
-import { ARTICLES } from '@/lib/resources/articles';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
-const STATIC_ROUTES = [
-  '',
-  '/moving',
-  '/insurance',
-  '/lending',
-  '/dashboard',
-  '/onboarding',
-  '/concierge',
-  '/checklist',
-  '/vault',
-  '/account',
-  '/pricing',
-  '/community',
-  '/resources',
-  '/about',
-  '/trust',
-  '/contact',
-  '/privacy',
-  '/terms',
-  '/moving/companies',
-  '/moving/calculator',
-  '/lending/lenders',
-  '/lending/calculators',
-  '/insurance/directory',
-  '/insurance/calculators',
+const ROUTES: { path: string; priority: number; changeFrequency: 'weekly' | 'monthly' }[] = [
+  { path: '', priority: 1, changeFrequency: 'weekly' },
+  { path: '/promise', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/methodology', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/who-we-are', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/how-we-make-money', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/editorial-standards', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/data-sources', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/contact', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/privacy', priority: 0.4, changeFrequency: 'monthly' },
+  { path: '/terms', priority: 0.4, changeFrequency: 'monthly' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticEntries = STATIC_ROUTES.map((route) => ({
-    url: `${siteUrl}${route}`,
+  return ROUTES.map((route) => ({
+    url: `${siteUrl}${route.path}`,
     lastModified: new Date(),
-    changeFrequency: (route === '' ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
-    priority: route === '' ? 1 : 0.8,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
   }));
-
-  const articles = ARTICLES.map((a) => ({
-    url: `${siteUrl}/resources/${a.slug}`,
-    lastModified: new Date(a.publishedAt),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
-
-  return [...staticEntries, ...articles];
 }

@@ -1,49 +1,68 @@
-import { BRAND } from '@/lib/brand';
-import { HUB_SITES } from '@/lib/sites';
+import { BRAND, FOUNDER } from '@/lib/brand';
+import { TRUST_HUBS } from '@/lib/hubs';
+import { siteUrl } from '@/lib/seo/metadata';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
+const orgId = `${siteUrl}/#organization`;
+const websiteId = `${siteUrl}/#website`;
+const founderId = `${siteUrl}/who-we-are#founder`;
 
 export function buildOrganizationSchema() {
   return {
-    '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': orgId,
     name: BRAND.name,
+    legalName: BRAND.legalName,
     url: siteUrl,
     logo: `${siteUrl}/brand/logo.svg`,
-    description: BRAND.tagline,
-    sameAs: Object.values(HUB_SITES).map((h) => `${siteUrl}${h.path}`),
+    email: BRAND.email,
+    description: BRAND.description,
+    foundingDate: String(BRAND.foundingYear),
+    founder: {
+      '@type': 'Person',
+      '@id': founderId,
+      name: FOUNDER.name,
+      jobTitle: FOUNDER.role,
+      url: `${siteUrl}/who-we-are`,
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: BRAND.email,
+      contactType: 'customer service',
+      areaServed: 'US',
+      availableLanguage: 'English',
+    },
+    sameAs: TRUST_HUBS.map((h) => h.url),
+    subOrganization: TRUST_HUBS.map((hub) => ({
+      '@type': 'Organization',
+      '@id': `${hub.url}/#organization`,
+      name: hub.name,
+      url: hub.url,
+      description: hub.description,
+      parentOrganization: { '@id': orgId },
+    })),
   };
 }
 
 export function buildWebSiteSchema() {
   return {
-    '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': websiteId,
     name: BRAND.name,
     url: siteUrl,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${siteUrl}/moving/companies?zip={search_term_string}` },
-      'query-input': 'required name=search_term_string',
-    },
+    description: BRAND.description,
+    publisher: { '@id': orgId },
+    inLanguage: 'en-US',
   };
 }
 
 export function buildHomepageGraph() {
-  return { '@context': 'https://schema.org', '@graph': [buildOrganizationSchema(), buildWebSiteSchema()] };
-}
-
-export function buildArticleSchema(slug: string) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: slug,
-    publisher: { '@type': 'Organization', name: BRAND.name },
-    mainEntityOfPage: `${siteUrl}/resources/${slug}`,
+    '@graph': [buildOrganizationSchema(), buildWebSiteSchema()],
   };
 }
 
-export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
+export function buildBreadcrumbSchema(items: { name: string; path: string }[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -51,7 +70,22 @@ export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: item.url,
+      item: `${siteUrl}${item.path}`,
     })),
   };
 }
+
+export function buildPersonSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': founderId,
+    name: FOUNDER.name,
+    jobTitle: FOUNDER.role,
+    description: FOUNDER.bio,
+    url: `${siteUrl}/who-we-are`,
+    worksFor: { '@id': orgId },
+  };
+}
+
+export { orgId };

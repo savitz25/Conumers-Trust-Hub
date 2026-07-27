@@ -1,139 +1,175 @@
-'use client';
-
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Shield, Route } from 'lucide-react';
-import { ZipSearchBar } from '@/components/zip-search-bar';
-import { HubSwitcher } from '@/components/hub-switcher';
-import { TrustBadge, TrustProofRow } from '@/components/trust-badge';
-import { ProgressRing } from '@/components/progress-ring';
-import { HUB_SITES } from '@/lib/sites';
-import { BRAND } from '@/lib/brand';
-import { VERIFICATION_SOURCES } from '@/lib/stats';
-import { fadeUp, staggerContainer } from '@/lib/animations';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { ArrowRight, ShieldCheck, Scale, Eye } from 'lucide-react';
+import { HubCard } from '@/components/hub-card';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
+import { BRAND } from '@/lib/brand';
+import { TRUST_HUBS } from '@/lib/hubs';
+import { INDEPENDENCE_PLEDGES } from '@/lib/content';
 
-/**
- * Homepage — logged-out hero entry.
- * Delightful coach tone, journey metaphor, hub discovery cards.
- */
 export default function HomePage() {
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden fun-gradient-bg">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-trust/10 via-transparent to-transparent pointer-events-none" />
-        <div className="container mx-auto px-4 py-16 md:py-28 relative">
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="mx-auto max-w-4xl text-center"
-          >
-            <motion.div variants={fadeUp} custom={0}>
-              <TrustBadge type="independent" className="mb-6" />
-            </motion.div>
+      <section className="relative overflow-hidden border-b border-border/70">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgb(13_148_136/0.07),_transparent_55%)]" />
+        <div className="container-page relative py-20 sm:py-28 lg:py-32">
+          <div className="max-w-3xl">
+            <p className="section-label">Independent consumer research network</p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
+              Trust infrastructure for the decisions that matter.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              {BRAND.name} is the parent network behind MoveTrustHub, InsuranceTrustHub, and
+              LenderTrustHub. We exist so families can research high-stakes providers with{' '}
+              <strong className="font-semibold text-foreground">independent verification</strong>,{' '}
+              <strong className="font-semibold text-foreground">transparent methodology</strong>, and{' '}
+              <strong className="font-semibold text-foreground">zero paid placements</strong>.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link href="/promise" className="btn-primary">
+                Read our promise
+              </Link>
+              <Link href="/methodology" className="btn-secondary">
+                How we verify
+              </Link>
+            </div>
+          </div>
 
-            <motion.h1 variants={fadeUp} custom={1} className="section-heading">
-              {BRAND.coachTagline}
-            </motion.h1>
-
-            <motion.p variants={fadeUp} custom={2} className="coach-copy mx-auto mt-5 max-w-2xl">
-              Moving, insurance, and lending — finally in one friendly place. We verify every
-              provider so you can focus on the exciting part: your new chapter.
-            </motion.p>
-
-            <motion.div variants={fadeUp} custom={3} className="mt-10 mx-auto max-w-xl">
-              <ZipSearchBar variant="hero" />
-            </motion.div>
-
-            <motion.div variants={fadeUp} custom={4} className="mt-8 flex flex-wrap justify-center gap-3">
-              <Button size="lg" variant="trust" asChild className="rounded-xl gap-2">
-                <Link href="/onboarding">
-                  Start your journey <Sparkles className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="rounded-xl">
-                <Link href="/dashboard">See your dashboard</Link>
-              </Button>
-            </motion.div>
-          </motion.div>
+          <dl className="mt-16 grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                icon: ShieldCheck,
+                title: 'Independent',
+                body: 'Not a mover, lender, or insurer. Research only.',
+              },
+              {
+                icon: Scale,
+                title: 'Methodical',
+                body: 'Primary public sources. Published process.',
+              },
+              {
+                icon: Eye,
+                title: 'Transparent',
+                body: 'No paid rankings. Clear revenue disclosure.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="card-surface p-5">
+                <dt className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <item.icon className="h-4 w-4 text-trust" aria-hidden />
+                  {item.title}
+                </dt>
+                <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
-      {/* Journey teaser */}
-      <section className="border-y bg-card py-14">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-10">
-          <ProgressRing progress={8} label="Your move" sublabel="8% — let's build momentum!" />
-          <div className="max-w-md text-center md:text-left">
-            <h2 className="text-2xl font-bold flex items-center gap-2 justify-center md:justify-start">
-              <Route className="h-6 w-6 text-trust" />
-              Your relocation journey
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Every checklist item you complete unlocks progress. No boring spreadsheets — just
-              small wins that add up to a stress-free move.
+      {/* Independence statement */}
+      <section className="border-b border-border/70 bg-navy text-navy-foreground">
+        <div className="container-page py-14 sm:py-16">
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-300/90">
+              Independence statement
             </p>
-            <Link href="/checklist" className="mt-4 inline-flex items-center gap-1 font-semibold text-trust hover:underline">
-              Open your checklist <ArrowRight className="h-4 w-4" />
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+              We do not sell trust. We build systems that protect it.
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-lg">
+              Consumer research is broken when paid placement masquerades as advice. Across every
+              Trust Hub, ranking position cannot be purchased, Trust Scores cannot be bought, and
+              commercial relationships—if any—are isolated from editorial ordering and clearly
+              disclosed.
+            </p>
+            <Link href="/promise" className="btn-ghost mt-6 text-white hover:text-teal-200">
+              Full independence promise <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Hub cards */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <HubSwitcher className="mb-6" />
-            <h2 className="text-3xl font-bold">Three hubs. One happy ending.</h2>
-            <p className="mt-3 text-muted-foreground">Pick a lane — or explore them all. We&apos;ll remember your ZIP.</p>
+      {/* Trust Hub cards */}
+      <section id="trust-hubs" className="scroll-mt-20 border-b border-border/70">
+        <div className="container-page py-16 sm:py-20">
+          <div className="max-w-2xl">
+            <p className="section-label">The Trust Hubs</p>
+            <h2 className="section-title mt-3">Specialist research sites. One network standard.</h2>
+            <p className="section-lead">
+              Depth lives on the specialist hubs. This parent site is the discovery layer and the
+              shared promise of independence.
+            </p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {Object.values(HUB_SITES).map((hub, i) => (
-              <motion.div
-                key={hub.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link href={hub.path}>
-                  <Card
-                    className="hub-card h-full"
-                    style={{ borderTopColor: hub.accent, borderTopWidth: 3 }}
-                  >
-                    <CardContent className="pt-6">
-                      <span className="text-3xl" role="img" aria-hidden>{hub.emoji}</span>
-                      <p className="text-xs font-semibold text-muted-foreground mt-3">{hub.poweredBy}</p>
-                      <h3 className="text-xl font-bold mt-1" style={{ color: hub.accent }}>
-                        {hub.subBrand}
-                      </h3>
-                      <p className="mt-2 text-sm text-muted-foreground">{hub.coachLine}</p>
-                      <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-trust">
-                        Explore <ArrowRight className="h-4 w-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {TRUST_HUBS.map((hub) => (
+              <HubCard key={hub.id} hub={hub} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Trust proof */}
-      <section className="border-t py-12 bg-muted/30">
-        <div className="container mx-auto px-4 text-center">
-          <Shield className="h-8 w-8 text-trust mx-auto mb-4" aria-hidden />
-          <h2 className="text-xl font-bold mb-6">Verified across every vertical</h2>
-          <TrustProofRow items={[...VERIFICATION_SOURCES.slice(0, 5)]} />
+      {/* How we stay independent */}
+      <section className="border-b border-border/70 bg-muted/30">
+        <div className="container-page py-16 sm:py-20">
+          <div className="max-w-2xl">
+            <p className="section-label">How we stay independent</p>
+            <h2 className="section-title mt-3">Four non-negotiables</h2>
+            <p className="section-lead">
+              Independence is a product requirement, not a tagline. These rules apply across the
+              network.
+            </p>
+          </div>
+
+          <ol className="mt-10 grid gap-5 sm:grid-cols-2">
+            {INDEPENDENCE_PLEDGES.map((item, i) => (
+              <li key={item.title} className="card-surface p-6">
+                <span className="text-xs font-semibold tabular-nums text-trust">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-2 text-lg font-semibold tracking-tight text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-10 flex flex-wrap gap-4">
+            <Link href="/methodology" className="btn-primary">
+              Methodology
+            </Link>
+            <Link href="/how-we-make-money" className="btn-secondary">
+              How we make money
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Closing CTA */}
+      <section>
+        <div className="container-page py-16 sm:py-20">
+          <div className="card-surface flex flex-col gap-6 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+            <div className="max-w-xl">
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                Built for serious research—not lead-gen theater.
+              </h2>
+              <p className="mt-3 text-muted-foreground leading-relaxed">
+                Meet the founder, read our data sources, or contact us about corrections and
+                methodology questions.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/who-we-are" className="btn-primary">
+                Who we are
+              </Link>
+              <Link href="/contact" className="btn-secondary">
+                Contact
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>
