@@ -12,9 +12,27 @@ const nextConfig: NextConfig = {
       { source: '/privacy-policy', destination: '/privacy', permanent: true },
       { source: '/terms-of-service', destination: '/terms', permanent: true },
 
-      // Vertical roots → specialist domains (subpaths → hub root only)
+      // Vertical roots / mistaken parent paths → specialist domains
       { source: '/moving', destination: 'https://www.movetrusthub.com', permanent: true },
       { source: '/moving/:path*', destination: 'https://www.movetrusthub.com', permanent: true },
+      // Destination hub path often typed on parent by mistake
+      {
+        source: '/moving-to',
+        destination: 'https://www.movetrusthub.com/moving-to',
+        permanent: true,
+      },
+      {
+        source: '/moving-to/:path*',
+        destination: 'https://www.movetrusthub.com/moving-to/:path*',
+        permanent: true,
+      },
+      { source: '/companies', destination: 'https://www.movetrusthub.com/companies', permanent: true },
+      {
+        source: '/companies/:path*',
+        destination: 'https://www.movetrusthub.com/companies/:path*',
+        permanent: true,
+      },
+      { source: '/verify-dot', destination: 'https://www.movetrusthub.com/verify-dot', permanent: true },
       { source: '/insurance', destination: 'https://www.insurancetrusthub.com', permanent: true },
       {
         source: '/insurance/:path*',
@@ -31,6 +49,16 @@ const nextConfig: NextConfig = {
       {
         source: '/lender/:path*',
         destination: 'https://www.lendertrusthub.com',
+        permanent: true,
+      },
+      {
+        source: '/local-lenders',
+        destination: 'https://www.lendertrusthub.com/local-lenders',
+        permanent: true,
+      },
+      {
+        source: '/local-lenders/:path*',
+        destination: 'https://www.lendertrusthub.com/local-lenders/:path*',
         permanent: true,
       },
 

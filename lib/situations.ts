@@ -29,8 +29,9 @@ export const SITUATION_SUBCOPY =
   'Independent research · no paid placements · we route you to the right specialist hub' as const;
 
 /**
- * Situation cards (static links only — no forms, no PII).
- * Deep links verified against live specialist hosts.
+ * Situation cards (static links only — no forms, no PII, no directories on Ask).
+ * Deep links verified against live specialist hosts (200 OK).
+ * ≥4 cards above the fold on the homepage router.
  */
 export const SITUATIONS: SituationRoute[] = [
   {
@@ -39,7 +40,7 @@ export const SITUATIONS: SituationRoute[] = [
     detail: 'Research FMCSA-licensed movers and verify USDOT authority before you book.',
     hubLabel: 'Move Trust Hub',
     href: 'https://www.movetrusthub.com/verify-dot',
-    cta: 'Research movers',
+    cta: 'Verify a DOT number',
     hubTag: 'move',
   },
   {
@@ -49,7 +50,7 @@ export const SITUATIONS: SituationRoute[] = [
       'Cross-check NMLS licensing and public risk signals for mortgage lenders in your market.',
     hubLabel: 'Lender Trust Hub',
     href: 'https://www.lendertrusthub.com/local-lenders',
-    cta: 'Check a lender',
+    cta: 'Browse local lenders',
     hubTag: 'lender',
   },
   {
@@ -59,7 +60,7 @@ export const SITUATIONS: SituationRoute[] = [
       'Educational ACA and Medicare research on Insurance Trust Hub — not a policy marketplace.',
     hubLabel: 'Insurance Trust Hub',
     href: 'https://www.insurancetrusthub.com/tools/medicare-plan-finder',
-    cta: 'Research coverage options',
+    cta: 'Open Medicare research tools',
     hubTag: 'insurance',
   },
   {
@@ -111,6 +112,12 @@ export const SITUATIONS: SituationRoute[] = [
         label: 'Renters or homeowners agent research',
         href: 'https://www.insurancetrusthub.com/directory',
         hubLabel: 'Insurance Trust Hub',
+      },
+      {
+        step: 3,
+        label: 'County mortgage lenders if buying after the move',
+        href: 'https://www.lendertrusthub.com/local-lenders',
+        hubLabel: 'Lender Trust Hub',
       },
     ],
   },

@@ -6,9 +6,9 @@ Thin parent brand site for the Ask Trust Hub network — trust infrastructure an
 
 | Hub | Domain | Status |
 |-----|--------|--------|
-| MoveTrustHub | [movetrusthub.com](https://www.movetrusthub.com) | Live |
-| InsuranceTrustHub | [insurancetrusthub.com](https://www.insurancetrusthub.com) | Live |
-| LenderTrustHub | [lendertrusthub.com](https://www.lendertrusthub.com) | Coming soon |
+| MoveTrustHub | [movetrusthub.com](https://www.movetrusthub.com) | **Live** |
+| InsuranceTrustHub | [insurancetrusthub.com](https://www.insurancetrusthub.com) | **Live** |
+| LenderTrustHub | [lendertrusthub.com](https://www.lendertrusthub.com) | **Live** |
 
 **Parent domain:** [asktrusthub.com](https://www.asktrusthub.com)
 
