@@ -49,6 +49,21 @@ export default function TrustCenterPage() {
           </ul>
         </section>
 
+        <section className="mt-16" aria-labelledby="profiles-heading">
+          <h2
+            id="profiles-heading"
+            className="text-lg font-semibold tracking-tight text-foreground"
+          >
+            Trust Profiles (specialist hubs only)
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Trust Profiles on Move, Insurance, and Lender share one shell: verification sources,
+            contact, optional research scores, methodology links, and The Ask Trust Hub Standard.
+            Ask does not host directories or entity search — open a specialist hub to research a
+            provider.
+          </p>
+        </section>
+
         <section className="mt-16" aria-labelledby="vertical-methodology-heading">
           <h2
             id="vertical-methodology-heading"

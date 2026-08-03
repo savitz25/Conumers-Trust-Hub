@@ -142,6 +142,19 @@ export default function MethodologyPage() {
           </ul>
         </section>
 
+        {/* Trust Profiles (shell lives on specialist hubs — Ask does not host directories) */}
+        <section className="mt-16" aria-labelledby="profiles-heading">
+          <h2 id="profiles-heading" className="text-2xl font-semibold tracking-tight text-foreground">
+            Trust Profiles on specialist hubs
+          </h2>
+          <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
+            Entity profiles on Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub share one
+            shell: verification sources, optional research scores, contact when available, and links
+            to vertical methodology plus this Standard. Engines stay vertical (FMCSA, DOI, NMLS).{' '}
+            {BRAND.name} does not host provider directories or render full listings.
+          </p>
+        </section>
+
         {/* Vocabulary */}
         <section className="mt-16" aria-labelledby="vocab-heading">
           <h2 id="vocab-heading" className="text-2xl font-semibold tracking-tight text-foreground">
