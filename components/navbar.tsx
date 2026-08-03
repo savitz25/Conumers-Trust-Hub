@@ -10,8 +10,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-md">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container-page relative flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
         <BrandLogo priority />
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">

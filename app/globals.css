@@ -150,3 +150,36 @@
     @apply inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-navy transition-colors hover:text-foreground;
   }
 }
+
+/*
+ * Header logo slot — identical to MoveTrustHub / InsuranceTrustHub / LenderTrustHub
+ * (.hub-logo-slot in monorepo critical.css)
+ * 10rem → 12.5rem (sm) → 15rem (lg), height 3rem
+ */
+.hub-logo-slot {
+  display: block;
+  width: 10rem;
+  height: 3rem;
+  max-width: 10rem;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.hub-logo-slot img {
+  background: transparent !important;
+}
+
+@media (min-width: 640px) {
+  .hub-logo-slot {
+    width: 12.5rem;
+    max-width: 12.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hub-logo-slot {
+    width: 15rem;
+    max-width: 15rem;
+  }
+}
+
