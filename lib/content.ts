@@ -149,25 +149,27 @@ export const REVENUE_MODEL = {
 } as const;
 
 export const NAV_PRIMARY = [
-  { href: '/promise', label: 'Our Promise' },
-  { href: '/methodology', label: 'How We Verify' },
-  { href: '/#trust-hubs', label: 'The Trust Hubs' },
-  { href: '/who-we-are', label: 'Who We Are' },
+  { href: '/#ask', label: 'Ask' },
+  { href: '/network', label: 'Network' },
+  { href: '/trust', label: 'Trust Center' },
+  { href: '/promise', label: 'Independence' },
 ] as const;
 
 export const FOOTER_ABOUT = [
-  { href: '/about', label: 'About the Network' },
+  { href: '/network', label: 'The Network' },
+  { href: '/about', label: 'About' },
   { href: '/who-we-are', label: 'Who We Are' },
+  { href: '/trust', label: 'Trust Center' },
   { href: '/how-we-make-money', label: 'How We Make Money' },
-  { href: '/editorial-standards', label: 'Editorial Standards' },
-  { href: '/data-sources', label: 'Data Sources' },
-  { href: '/corrections', label: 'Corrections' },
   { href: '/contact', label: 'Contact' },
 ] as const;
 
 export const FOOTER_LEGAL = [
   { href: '/promise', label: 'Independence' },
   { href: '/methodology', label: 'Methodology' },
+  { href: '/data-sources', label: 'Data Sources' },
+  { href: '/editorial-standards', label: 'Editorial Standards' },
+  { href: '/corrections', label: 'Corrections' },
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/terms', label: 'Terms of Service' },
 ] as const;

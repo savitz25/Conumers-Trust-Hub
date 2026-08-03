@@ -6,14 +6,13 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Legal / policy aliases
-      { source: '/trust', destination: '/promise', permanent: true },
+      // Legal / policy aliases (/trust is a real Trust Center index page — do not redirect it)
       { source: '/independence', destination: '/promise', permanent: true },
+      { source: '/editorial', destination: '/editorial-standards', permanent: true },
       { source: '/privacy-policy', destination: '/privacy', permanent: true },
       { source: '/terms-of-service', destination: '/terms', permanent: true },
 
-      // Vertical roots → correct specialist domain (or parent if hub not live)
-      // Subpaths go to hub roots only — do not invent specialist deep paths.
+      // Vertical roots → specialist domains (subpaths → hub root only)
       { source: '/moving', destination: 'https://www.movetrusthub.com', permanent: true },
       { source: '/moving/:path*', destination: 'https://www.movetrusthub.com', permanent: true },
       { source: '/insurance', destination: 'https://www.insurancetrusthub.com', permanent: true },
@@ -22,10 +21,18 @@ const nextConfig: NextConfig = {
         destination: 'https://www.insurancetrusthub.com',
         permanent: true,
       },
-      { source: '/lending', destination: '/', permanent: true },
-      { source: '/lending/:path*', destination: '/', permanent: true },
-      { source: '/lender', destination: '/', permanent: true },
-      { source: '/lender/:path*', destination: '/', permanent: true },
+      { source: '/lending', destination: 'https://www.lendertrusthub.com', permanent: true },
+      {
+        source: '/lending/:path*',
+        destination: 'https://www.lendertrusthub.com',
+        permanent: true,
+      },
+      { source: '/lender', destination: 'https://www.lendertrusthub.com', permanent: true },
+      {
+        source: '/lender/:path*',
+        destination: 'https://www.lendertrusthub.com',
+        permanent: true,
+      },
 
       // Retired product surfaces → parent homepage
       { source: '/dashboard', destination: '/', permanent: true },

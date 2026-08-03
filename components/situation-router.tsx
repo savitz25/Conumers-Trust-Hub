@@ -13,53 +13,24 @@ const HUB_TAG_STYLES: Record<SituationRoute['hubTag'], string> = {
   insurance: 'bg-teal-50 text-teal-800 border-teal-100',
   lender: 'bg-indigo-50 text-indigo-800 border-indigo-100',
   network: 'bg-slate-100 text-slate-700 border-slate-200',
+  multi: 'bg-amber-50 text-amber-900 border-amber-100',
 };
 
-function isExternal(href: string) {
-  return href.startsWith('http://') || href.startsWith('https://');
-}
-
-const cardClassName = cn(
-  'group flex h-full min-h-[7.5rem] flex-col rounded-xl border border-border/80 bg-background p-5 sm:p-6',
-  'transition-colors hover:border-navy/25 hover:bg-muted/30',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2'
+const cardShell = cn(
+  'flex h-full min-h-[8rem] flex-col rounded-xl border border-border/80 bg-background p-5 sm:p-6',
+  'transition-colors hover:border-navy/25 hover:bg-muted/30'
 );
 
-function SituationCardBody({ s }: { s: SituationRoute }) {
-  return (
-    <>
-      <span
-        className={cn(
-          'inline-flex w-fit rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wide',
-          HUB_TAG_STYLES[s.hubTag]
-        )}
-      >
-        {s.hubLabel}
-      </span>
-      <span className="mt-3 text-base font-semibold tracking-tight text-foreground sm:text-[17px]">
-        {s.title}
-      </span>
-      <span className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{s.detail}</span>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-navy group-hover:underline">
-        {s.cta}
-        <ArrowUpRight
-          className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          aria-hidden
-        />
-      </span>
-    </>
-  );
-}
-
 /**
- * Homepage situation router — discovery only.
- * Routes to specialist hubs/tools or Ask Trust Center pages.
+ * Homepage situation router — static cards + outbound links only.
+ * Same-tab navigation to specialist hubs (normal navigation).
  */
 export function SituationRouter() {
   return (
     <section
+      id="ask"
       aria-labelledby="situation-router-heading"
-      className="border-b border-border/80 bg-background"
+      className="scroll-mt-20 border-b border-border/80 bg-background"
     >
       <div className="container-page py-12 sm:py-16 lg:py-20">
         <div className="max-w-2xl">
@@ -77,31 +48,74 @@ export function SituationRouter() {
 
         <ul className="mt-10 grid gap-3 sm:grid-cols-2">
           {SITUATIONS.map((s) => (
-            <li key={s.id}>
-              {isExternal(s.href) ? (
-                <a
-                  href={s.href}
-                  className={cardClassName}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <SituationCardBody s={s} />
+            <li key={s.id} className={cardShell}>
+              <span
+                className={cn(
+                  'inline-flex w-fit rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wide',
+                  HUB_TAG_STYLES[s.hubTag]
+                )}
+              >
+                {s.hubLabel}
+              </span>
+              <h2 className="mt-3 text-base font-semibold tracking-tight text-foreground sm:text-[17px]">
+                {s.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.detail}</p>
+
+              {s.checklist && s.checklist.length > 0 ? (
+                <>
+                  <ol className="mt-4 space-y-2.5 border-t border-border/70 pt-4">
+                    {s.checklist.map((step) => (
+                      <li key={step.step}>
+                        <a
+                          href={step.href}
+                          className="group flex gap-3 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+                        >
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-[11px] font-bold text-white">
+                            {step.step}
+                          </span>
+                          <span className="min-w-0">
+                            <span className="font-medium text-foreground group-hover:underline">
+                              {step.label}
+                            </span>
+                            <span className="mt-0.5 block text-xs text-muted-foreground">
+                              {step.hubLabel}
+                            </span>
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                  {s.checklist[0] ? (
+                    <a
+                      href={s.checklist[0].href}
+                      className="btn-primary mt-5 w-full sm:w-auto"
+                    >
+                      {s.cta}
+                      <ArrowUpRight className="h-4 w-4" aria-hidden />
+                    </a>
+                  ) : null}
+                </>
+              ) : s.href ? (
+                <a href={s.href} className="btn-primary mt-5 w-full sm:w-auto">
+                  {s.cta}
+                  <ArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
-              ) : (
-                <Link href={s.href} className={cardClassName}>
-                  <SituationCardBody s={s} />
-                </Link>
-              )}
+              ) : null}
             </li>
           ))}
         </ul>
 
         <p className="mt-8 text-sm text-muted-foreground">
-          Directories, calculators, and market tools live on the specialist hubs — not on this site.
-          Ask routes you; the hubs do the deep research.
+          Directories and tools live on the specialist hubs — not on this site. Ask routes you; the
+          hubs do the deep research. No forms and no personal data collected for routing.
+        </p>
+        <p className="mt-3 text-sm">
+          <Link href="/network" className="font-semibold text-navy underline-offset-4 hover:underline">
+            Explore the network
+          </Link>
         </p>
       </div>
     </section>
   );
 }
-

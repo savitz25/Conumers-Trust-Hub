@@ -7,34 +7,37 @@ import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
 import { BRAND } from '@/lib/brand';
 import { TRUST_HUBS } from '@/lib/hubs';
-import { INDEPENDENCE_PLEDGES } from '@/lib/content';
 
 /**
- * Ask Trust Hub homepage — situation router + Trust Center + hub discovery.
- * No directories or vertical guide farms on this domain.
+ * Ask homepage IA:
+ * 1. Situation router
+ * 2. Short trust promise
+ * 3. Network cards + /network
+ * 4. Trust Center entry points
+ * 5. Footer (layout) with legal + hubs
  */
 export default function HomePage() {
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
 
-      {/* 2.1 Situation router — above the fold */}
+      {/* 1. Situation router — above the fold */}
       <SituationRouter />
 
-      {/* Compact network framing */}
+      {/* 2. Short trust promise */}
       <section className="border-b border-border/80 bg-navy text-navy-foreground">
         <div className="container-page py-12 sm:py-14">
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-              How Ask works
+              Trust promise
             </p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-              We ask. Then we route. Specialists do the deep research.
+              Zero paid placements. Independent specialists. Deep research stays on the hubs.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/70 sm:text-[17px]">
-              {BRAND.name} is the discovery and trust layer for Move Trust Hub, Insurance Trust Hub,
-              and Lender Trust Hub. Ranking position is not for sale. Directories and tools live on
-              the specialist domains — not here.
+              {BRAND.name} asks what you are preparing for, then routes you to Move Trust Hub,
+              Insurance Trust Hub, or Lender Trust Hub. Ranking position is not for sale. We do not
+              host directories or sell policies, loans, or moves on this site.
             </p>
             <div className="mt-6 flex flex-wrap gap-4 text-sm">
               <Link
@@ -43,30 +46,32 @@ export default function HomePage() {
               >
                 Independence policy <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <a
-                href="#trust-hubs"
+              <Link
+                href="/how-we-make-money"
                 className="inline-flex items-center gap-1.5 font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline"
               >
-                Browse the Trust Hubs
-              </a>
+                How we make money
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2.1 Trust Center — owned on Ask */}
-      <TrustCenterStrip />
-
-      {/* Specialist discovery */}
+      {/* 3. Network cards */}
       <section id="trust-hubs" className="scroll-mt-20 border-b border-border/80">
         <div className="container-page py-16 sm:py-20">
-          <div className="max-w-2xl">
-            <p className="section-label">The Trust Hubs</p>
-            <h2 className="section-title mt-3">Specialist research destinations</h2>
-            <p className="section-lead">
-              Each hub is a separate product domain under shared network standards. Provider
-              research, directories, and tools are hosted on the specialist sites.
-            </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="section-label">The network</p>
+              <h2 className="section-title mt-3">Specialist research destinations</h2>
+              <p className="section-lead">
+                Three live hubs under one independence standard. Explore the full network page for
+                focus areas and outbound links.
+              </p>
+            </div>
+            <Link href="/network" className="btn-secondary shrink-0">
+              Explore the network
+            </Link>
           </div>
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -81,7 +86,6 @@ export default function HomePage() {
                 <a
                   href={hub.url}
                   className="inline-flex items-center gap-1 font-medium text-foreground/80 hover:text-foreground"
-                  rel="noopener noreferrer"
                 >
                   {hub.domain}
                   <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
@@ -92,52 +96,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-border/80 bg-muted/40">
-        <div className="container-page py-16 sm:py-20">
-          <div className="max-w-2xl">
-            <p className="section-label">Network standards</p>
-            <h2 className="section-title mt-3">Independence principles</h2>
-            <p className="section-lead">
-              These requirements apply to every Trust Hub. They are operational constraints, not
-              marketing claims.
-            </p>
-          </div>
+      {/* 4. Trust Center entry points */}
+      <TrustCenterStrip />
 
-          <ol className="mt-10 grid gap-4 sm:grid-cols-2">
-            {INDEPENDENCE_PLEDGES.map((item, i) => (
-              <li key={item.title} className="border border-border/80 bg-background p-6">
-                <span className="text-xs font-semibold tabular-nums text-muted-foreground">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="mt-2 text-base font-semibold tracking-tight text-foreground">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-              </li>
-            ))}
-          </ol>
-
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/methodology" className="btn-primary">
-              Methodology
-            </Link>
-            <Link href="/how-we-make-money" className="btn-secondary">
-              Revenue disclosure
-            </Link>
-          </div>
-        </div>
-      </section>
-
+      {/* Secondary governance (below fold) */}
       <section>
-        <div className="container-page py-16 sm:py-20">
+        <div className="container-page py-14 sm:py-16">
           <div className="flex flex-col gap-6 border border-border/80 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="max-w-xl">
               <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                Governance, methodology, and accountability
+                Who operates the network
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Documentation of who operates the network, how providers are verified, and how the
-                work is funded.
+                Named accountability, contact for corrections, and legal terms — available when you
+                need them, not the only above-the-fold story.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
