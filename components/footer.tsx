@@ -12,8 +12,17 @@ export function Footer() {
           <div className="lg:col-span-1">
             <BrandLogo inverted />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
-              Parent network for independent consumer research. Methodology, independence standards,
-              and discovery. Product tools operate on specialist domains.
+              Parent network for independent consumer research. Independently operated specialist
+              hubs · No paid placements. Product tools live on Move, Insurance, and Lender domains.
+            </p>
+            <p className="mt-3 text-xs text-white/45">
+              <a href="/promise" className="underline underline-offset-2 hover:text-white/70">
+                Independence policy
+              </a>
+              {' · '}
+              <a href={`mailto:${BRAND.email}`} className="hover:text-white/70">
+                {BRAND.email}
+              </a>
             </p>
           </div>
 

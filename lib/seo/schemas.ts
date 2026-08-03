@@ -32,15 +32,23 @@ export function buildOrganizationSchema() {
       availableLanguage: 'English',
     },
     sameAs: TRUST_HUBS.map((h) => h.url),
-    // Explicit sub-organizations for Move, Insurance, and Lender Trust Hubs
-    subOrganization: TRUST_HUBS.map((hub) => ({
-      '@type': 'Organization',
-      '@id': `${hub.url}/#organization`,
-      name: hub.name,
-      url: hub.url,
-      description: hub.description,
-      parentOrganization: { '@id': orgId },
-    })),
+    // Explicit sub-organizations (prose names) for the three live hubs
+    subOrganization: TRUST_HUBS.map((hub) => {
+      const proseName =
+        hub.id === 'move'
+          ? 'Move Trust Hub'
+          : hub.id === 'insurance'
+            ? 'Insurance Trust Hub'
+            : 'Lender Trust Hub';
+      return {
+        '@type': 'Organization',
+        '@id': `${hub.url}/#organization`,
+        name: proseName,
+        url: hub.url,
+        description: hub.description,
+        parentOrganization: { '@id': orgId },
+      };
+    }),
   };
 }
 

@@ -18,7 +18,7 @@ export interface TrustHub {
 export const TRUST_HUBS: TrustHub[] = [
   {
     id: 'move',
-    name: 'MoveTrustHub',
+    name: 'Move Trust Hub',
     shortName: 'Moving',
     domain: 'movetrusthub.com',
     url: 'https://www.movetrusthub.com',
@@ -32,7 +32,7 @@ export const TRUST_HUBS: TrustHub[] = [
   },
   {
     id: 'insurance',
-    name: 'InsuranceTrustHub',
+    name: 'Insurance Trust Hub',
     shortName: 'Insurance',
     domain: 'insurancetrusthub.com',
     url: 'https://www.insurancetrusthub.com',
@@ -46,7 +46,7 @@ export const TRUST_HUBS: TrustHub[] = [
   },
   {
     id: 'lender',
-    name: 'LenderTrustHub',
+    name: 'Lender Trust Hub',
     shortName: 'Lending',
     domain: 'lendertrusthub.com',
     url: 'https://www.lendertrusthub.com',
