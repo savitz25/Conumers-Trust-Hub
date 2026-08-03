@@ -7,10 +7,11 @@ export const rootLayoutMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: BRAND.name,
   title: {
-    default: `${BRAND.name} — Independent Consumer Research Network`,
+    default: `${BRAND.name} — What are you preparing for?`,
     template: `%s | ${BRAND.name}`,
   },
-  description: BRAND.description,
+  description:
+    'Independent research network for moving, insurance, and lending. Answer what you’re preparing for — we route you to Move Trust Hub, Insurance Trust Hub, or Lender Trust Hub. No paid placements. No directories on this site.',
   keywords: [
     'Ask Trust Hub',
     'independent consumer research',
@@ -45,8 +46,9 @@ export const rootLayoutMetadata: Metadata = {
     locale: 'en_US',
     url: siteUrl,
     siteName: BRAND.name,
-    title: `${BRAND.name} — Independent Consumer Research Network`,
-    description: BRAND.tagline,
+    title: `${BRAND.name} — What are you preparing for?`,
+    description:
+      'Route to the right specialist Trust Hub. Independent verification. Zero paid placements.',
     images: [
       {
         url: brandLogoAbsoluteUrl(siteUrl),

@@ -5,8 +5,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
 const ROUTES: { path: string; priority: number; changeFrequency: 'weekly' | 'monthly' }[] = [
   { path: '', priority: 1, changeFrequency: 'weekly' },
-  { path: '/promise', priority: 0.9, changeFrequency: 'monthly' },
-  { path: '/methodology', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/promise', priority: 0.95, changeFrequency: 'monthly' },
+  { path: '/methodology', priority: 0.95, changeFrequency: 'monthly' },
   { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
   { path: '/who-we-are', priority: 0.8, changeFrequency: 'monthly' },
   { path: '/how-we-make-money', priority: 0.8, changeFrequency: 'monthly' },

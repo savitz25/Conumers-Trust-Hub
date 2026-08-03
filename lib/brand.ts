@@ -11,7 +11,7 @@ export const BRAND = {
   url: 'https://www.asktrusthub.com',
   tagline: 'Independent verification. Transparent methodology. Zero paid placements.',
   description:
-    'Independent consumer research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub. Methodology, independence standards, and discovery—not a provider directory.',
+    'Ask Trust Hub is the discovery and trust layer for Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub. Situation routing, independence policy, and methodology — not a provider directory.',
   email: 'hello@asktrusthub.com',
   foundingYear: 2025,
 } as const;

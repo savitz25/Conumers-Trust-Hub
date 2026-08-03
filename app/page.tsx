@@ -1,89 +1,63 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { HubCard } from '@/components/hub-card';
+import { SituationRouter } from '@/components/situation-router';
+import { TrustCenterStrip } from '@/components/trust-center-strip';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
 import { BRAND } from '@/lib/brand';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { INDEPENDENCE_PLEDGES } from '@/lib/content';
 
+/**
+ * Ask Trust Hub homepage — situation router + Trust Center + hub discovery.
+ * No directories or vertical guide farms on this domain.
+ */
 export default function HomePage() {
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
 
-      <section className="border-b border-border/80">
-        <div className="container-page py-20 sm:py-24 lg:py-28">
-          <div className="max-w-3xl">
-            <p className="section-label">Independent consumer research network</p>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.15rem] lg:leading-[1.12]">
-              Independent research for high-stakes consumer decisions
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              {BRAND.name} is the trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and
-              LenderTrustHub. The parent site publishes verification standards, independence policy,
-              and network structure. Directories and market tools operate on the specialist domains.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <a href="#trust-hubs" className="btn-primary">
-                The Trust Hubs
-              </a>
-              <Link href="/methodology" className="btn-secondary">
-                Verification methodology
-              </Link>
-            </div>
-          </div>
+      {/* 2.1 Situation router — above the fold */}
+      <SituationRouter />
 
-          <dl className="mt-16 grid gap-px overflow-hidden rounded-xl border border-border/80 bg-border/80 sm:grid-cols-3">
-            {[
-              {
-                title: 'Role',
-                body: 'Parent network for methodology, independence standards, and discovery.',
-              },
-              {
-                title: 'Scope',
-                body: 'Does not operate provider directories or vertical product tools on this domain.',
-              },
-              {
-                title: 'Standard',
-                body: 'Transparent verification process. Zero paid placements across the network.',
-              },
-            ].map((item) => (
-              <div key={item.title} className="bg-background p-6">
-                <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                  {item.title}
-                </dt>
-                <dd className="mt-3 text-sm leading-relaxed text-foreground/85">{item.body}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
+      {/* Compact network framing */}
       <section className="border-b border-border/80 bg-navy text-navy-foreground">
-        <div className="container-page py-14 sm:py-16">
+        <div className="container-page py-12 sm:py-14">
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-              Independence
+              How Ask works
             </p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Ranking position is not for sale
+              We ask. Then we route. Specialists do the deep research.
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-[17px]">
-              Paid placement that presents as research is a structural failure. Across every Trust
-              Hub, ranking cannot be purchased, Trust Scores cannot be bought, and any commercial
-              relationship—if introduced—must be disclosed and isolated from editorial ordering.
+            <p className="mt-4 text-base leading-relaxed text-white/70 sm:text-[17px]">
+              {BRAND.name} is the discovery and trust layer for Move Trust Hub, Insurance Trust Hub,
+              and Lender Trust Hub. Ranking position is not for sale. Directories and tools live on
+              the specialist domains — not here.
             </p>
-            <Link
-              href="/promise"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white underline-offset-4 hover:underline"
-            >
-              Independence policy <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            <div className="mt-6 flex flex-wrap gap-4 text-sm">
+              <Link
+                href="/promise"
+                className="inline-flex items-center gap-1.5 font-semibold text-white underline-offset-4 hover:underline"
+              >
+                Independence policy <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <a
+                href="#trust-hubs"
+                className="inline-flex items-center gap-1.5 font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline"
+              >
+                Browse the Trust Hubs
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* 2.1 Trust Center — owned on Ask */}
+      <TrustCenterStrip />
+
+      {/* Specialist discovery */}
       <section id="trust-hubs" className="scroll-mt-20 border-b border-border/80">
         <div className="container-page py-16 sm:py-20">
           <div className="max-w-2xl">
@@ -170,8 +144,8 @@ export default function HomePage() {
               <Link href="/who-we-are" className="btn-primary">
                 Who we are
               </Link>
-              <Link href="/data-sources" className="btn-secondary">
-                Data sources
+              <Link href="/contact" className="btn-secondary">
+                Contact
               </Link>
             </div>
           </div>
