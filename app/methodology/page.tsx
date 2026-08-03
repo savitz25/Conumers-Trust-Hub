@@ -168,18 +168,46 @@ export default function MethodologyPage() {
             DOI / NAIC pathways, NMLS Consumer Access, and the provider’s own documentation before
             you sign.
           </p>
-          <p className="mt-8 flex flex-wrap gap-4 not-prose">
-            <Link href="/data-sources" className="btn-primary">
-              Data sources
-            </Link>
-            <Link href="/trust" className="btn-secondary">
-              Trust Center
-            </Link>
-            <Link href="/editorial-standards" className="btn-secondary">
-              Editorial standards
-            </Link>
-          </p>
         </section>
+
+        <nav
+          className="mt-12 flex flex-wrap gap-x-4 gap-y-2 border-t border-border/70 pt-8 text-sm font-semibold text-navy"
+          aria-label="Related Trust Center pages"
+        >
+          <Link href="/promise" className="underline-offset-4 hover:underline">
+            Promise
+          </Link>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <Link href="/data-sources" className="underline-offset-4 hover:underline">
+            Data sources
+          </Link>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <Link href="/corrections" className="underline-offset-4 hover:underline">
+            Corrections
+          </Link>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <Link href="/how-we-make-money" className="underline-offset-4 hover:underline">
+            How we make money
+          </Link>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <Link href="/network" className="underline-offset-4 hover:underline">
+            Network
+          </Link>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <Link href="/trust" className="underline-offset-4 hover:underline">
+            Trust Center
+          </Link>
+        </nav>
       </div>
     </>
   );
