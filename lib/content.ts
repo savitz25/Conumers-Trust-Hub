@@ -151,6 +151,7 @@ export const REVENUE_MODEL = {
 export const NAV_PRIMARY = [
   { href: '/#ask', label: 'Ask' },
   { href: '/network', label: 'Network' },
+  { href: '/methodology', label: 'Standard' },
   { href: '/trust', label: 'Trust Center' },
   { href: '/promise', label: 'Independence' },
 ] as const;
@@ -166,7 +167,7 @@ export const FOOTER_ABOUT = [
 
 export const FOOTER_LEGAL = [
   { href: '/promise', label: 'Independence' },
-  { href: '/methodology', label: 'Methodology' },
+  { href: '/methodology', label: 'The Standard' },
   { href: '/data-sources', label: 'Data Sources' },
   { href: '/editorial-standards', label: 'Editorial Standards' },
   { href: '/corrections', label: 'Corrections' },

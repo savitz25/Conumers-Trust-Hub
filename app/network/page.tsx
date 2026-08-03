@@ -76,6 +76,9 @@ export default function NetworkPage() {
           <Link href="/#ask" className="btn-primary">
             Situation router
           </Link>
+          <Link href="/methodology" className="btn-secondary">
+            The Ask Trust Hub Standard
+          </Link>
           <Link href="/promise" className="btn-secondary">
             Independence policy
           </Link>

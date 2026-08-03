@@ -125,8 +125,8 @@ export const TRUST_CENTER_LINKS = [
   },
   {
     href: '/methodology',
-    label: 'How we verify',
-    detail: 'Verification process and Trust Score philosophy',
+    label: 'The Ask Trust Hub Standard',
+    detail: 'Network methodology · SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE',
   },
   {
     href: '/data-sources',
