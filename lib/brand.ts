@@ -1,7 +1,7 @@
 /** Parent network brand — asktrusthub.com */
 
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
-export const BRAND_LOGO_VERSION = '20260727ath';
+export const BRAND_LOGO_VERSION = '20260803ath';
 
 export const BRAND = {
   name: 'Ask Trust Hub',
@@ -21,9 +21,9 @@ export const BRAND_LOGO = {
   src: `/brand/logo.png?v=${BRAND_LOGO_VERSION}`,
   lightSrc: `/brand/logo-light.png?v=${BRAND_LOGO_VERSION}`,
   alt: 'Ask Trust Hub',
-  /** Stacked wordmark + mark after trim (actual asset ~713×271) */
-  width: 713,
-  height: 271,
+  /** Stacked wordmark + mark after trim (actual asset ~497×249) */
+  width: 497,
+  height: 249,
 } as const;
 
 export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
