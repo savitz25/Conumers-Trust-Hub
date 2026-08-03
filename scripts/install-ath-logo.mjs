@@ -1,6 +1,6 @@
 /**
- * Install AskTrustHub logo → public brand assets + favicon set.
- * Usage: node scripts/install-cth-logo.mjs [sourcePath]
+ * Install Ask Trust Hub logo → public brand assets + favicon set.
+ * Usage: node scripts/install-ath-logo.mjs [sourcePath]
  */
 import sharp from 'sharp';
 import { join, dirname } from 'path';
@@ -10,12 +10,12 @@ import { copyFileSync, mkdirSync, writeFileSync, existsSync } from 'fs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_SOURCE = join(
   process.env.USERPROFILE || '',
-  'Ask Trust Hub',
+  'Consumer Trust Hub', // local folder name on disk (not brand)
   'logos for all verticals',
-  'AskTrustHub-logo-transparent.png'
+  'AskTrustHub-transparent.png'
 );
 const SOURCE = process.argv[2] || DEFAULT_SOURCE;
-const OUT_DOCS = join(ROOT, 'docs', 'logo-update-2026-07');
+const OUT_DOCS = join(ROOT, 'docs', 'logo-update-ask-trust-hub');
 const BRAND_DIR = join(ROOT, 'public', 'brand');
 
 function isNearWhite(r, g, b, a) {
@@ -49,7 +49,6 @@ async function cleanTransparent(input) {
     .toBuffer();
 }
 
-/** Dark-bg variant: lift dark navy wordmark to light tones; keep blue accents. */
 async function toLightOnDark(cleanedPng) {
   const { data, info } = await sharp(cleanedPng).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const pixels = new Uint8ClampedArray(data);
@@ -60,14 +59,13 @@ async function toLightOnDark(cleanedPng) {
     const a = pixels[i + 3];
     if (a < 8) continue;
     const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    const isBlueAccent = b > r + 20 && b > g + 10 && b > 100;
-    if (isBlueAccent) {
-      // Brighten blue mark for navy footer
-      pixels[i] = Math.min(255, Math.round(r * 1.15 + 20));
-      pixels[i + 1] = Math.min(255, Math.round(g * 1.2 + 30));
-      pixels[i + 2] = Math.min(255, Math.round(b * 1.05 + 15));
+    const isBlue = b > r + 15 && b > g + 5 && b > 90;
+    const isGreen = g > r + 20 && g > b + 10 && g > 100;
+    if (isBlue || isGreen) {
+      pixels[i] = Math.min(255, Math.round(r * 1.1 + 15));
+      pixels[i + 1] = Math.min(255, Math.round(g * 1.15 + 20));
+      pixels[i + 2] = Math.min(255, Math.round(b * 1.1 + 15));
     } else if (lum < 140) {
-      // Map dark text → near white
       const t = 1 - lum / 140;
       const w = Math.round(220 + t * 35);
       pixels[i] = w;
@@ -90,15 +88,12 @@ async function main() {
 
   mkdirSync(BRAND_DIR, { recursive: true });
   mkdirSync(OUT_DOCS, { recursive: true });
-  mkdirSync(join(ROOT, 'public'), { recursive: true });
 
   const prev = join(BRAND_DIR, 'logo.png');
   if (existsSync(prev)) copyFileSync(prev, join(OUT_DOCS, 'before-logo.png'));
-  else if (existsSync(join(BRAND_DIR, 'logo.svg'))) {
-    copyFileSync(join(BRAND_DIR, 'logo.svg'), join(OUT_DOCS, 'before-logo.svg'));
-  }
 
   copyFileSync(SOURCE, join(BRAND_DIR, 'AskTrustHub-logo-source.png'));
+  copyFileSync(SOURCE, join(ROOT, 'public', 'ask-trust-hub-logo.png'));
 
   const cleaned = await cleanTransparent(SOURCE);
   const meta = await sharp(cleaned).metadata();
@@ -109,13 +104,13 @@ async function main() {
   await sharp(cleaned)
     .resize({ width: 1200, withoutEnlargement: true, fit: 'inside' })
     .png()
-    .toFile(join(BRAND_DIR, 'AskTrustHub-logo.png'));
+    .toFile(join(BRAND_DIR, 'asktrusthub-logo.png'));
 
   const light = await toLightOnDark(cleaned);
   await sharp(light).toFile(join(BRAND_DIR, 'logo-light.png'));
 
-  // Icon mark from right side (A)
-  const iconX = Math.floor(meta.width * 0.58);
+  // Icon from right-side A mark
+  const iconX = Math.floor(meta.width * 0.52);
   const mark = await sharp(cleaned)
     .extract({ left: iconX, top: 0, width: meta.width - iconX, height: meta.height })
     .trim()
@@ -138,7 +133,6 @@ async function main() {
     ['public/favicon-32.png', 32],
     ['public/favicon-48.png', 48],
     ['public/favicon.png', 32],
-    ['public/apple-touch-icon.png', 180],
     ['public/icon-192.png', 192],
     ['public/icon-512.png', 512],
   ];
@@ -147,10 +141,8 @@ async function main() {
       .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toFile(join(ROOT, rel));
-    console.log('Wrote', rel);
   }
 
-  // Apple touch on white pad for iOS
   await sharp({
     create: { width: 180, height: 180, channels: 3, background: { r: 255, g: 255, b: 255 } },
   })
@@ -172,7 +164,7 @@ async function main() {
   async function headerMock(file, width, logoW) {
     const logoH = Math.round(logoW * (meta.height / meta.width));
     const logoBuf = await sharp(cleaned).resize(logoW, logoH, { fit: 'inside' }).png().toBuffer();
-    const barH = Math.max(72, logoH + 28);
+    const barH = Math.max(72, logoH + 24);
     const line = Buffer.from(
       `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${barH}">` +
         `<rect width="100%" height="100%" fill="#ffffff"/>` +
@@ -180,15 +172,16 @@ async function main() {
         `</svg>`
     );
     await sharp(line)
-      .composite([{ input: logoBuf, top: Math.floor((barH - logoH) / 2), left: 24 }])
+      .composite([{ input: logoBuf, top: Math.floor((barH - logoH) / 2), left: 20 }])
       .png()
       .toFile(file);
   }
 
-  await headerMock(join(OUT_DOCS, 'header-desktop.png'), 1200, 260);
-  await headerMock(join(OUT_DOCS, 'header-mobile.png'), 390, 180);
+  // Stacked logo needs more height, less width than horizontal brands
+  await headerMock(join(OUT_DOCS, 'header-desktop.png'), 1200, 140);
+  await headerMock(join(OUT_DOCS, 'header-mobile.png'), 390, 100);
 
-  const footerLogo = await sharp(light).resize(220).png().toBuffer();
+  const footerLogo = await sharp(light).resize(120).png().toBuffer();
   const fl = await sharp(footerLogo).metadata();
   const footerBg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="120">` +
@@ -208,7 +201,8 @@ async function main() {
         height: meta.height,
         aspect: meta.width / meta.height,
         source: SOURCE,
-        version: '20260727',
+        version: '20260727ath',
+        brand: 'Ask Trust Hub',
         generatedAt: new Date().toISOString(),
       },
       null,

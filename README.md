@@ -1,8 +1,8 @@
-# ConsumerTrust Hub
+# Ask Trust Hub
 
 **Independent verification. Transparent methodology. Zero paid placements.**
 
-Thin parent brand site for the ConsumerTrust Hub network — trust infrastructure and discovery, not a directory or content farm.
+Thin parent brand site for the Ask Trust Hub network — trust infrastructure and discovery, not a directory or content farm.
 
 | Hub | Domain | Status |
 |-----|--------|--------|
@@ -10,7 +10,7 @@ Thin parent brand site for the ConsumerTrust Hub network — trust infrastructur
 | InsuranceTrustHub | [insurancetrusthub.com](https://www.insurancetrusthub.com) | Live |
 | LenderTrustHub | [lendertrusthub.com](https://www.lendertrusthub.com) | Coming soon |
 
-**Parent domain:** [consumerstrusthub.com](https://www.consumerstrusthub.com)
+**Parent domain:** [asktrusthub.com](https://www.asktrusthub.com)
 
 ## Positioning
 
@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | Yes (prod) | `https://www.consumerstrusthub.com` |
+| `NEXT_PUBLIC_SITE_URL` | Yes (prod) | `https://www.asktrusthub.com` |
 
 ## Explicitly out of scope
 

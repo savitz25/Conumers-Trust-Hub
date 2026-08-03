@@ -11,7 +11,7 @@ interface BrandLogoProps {
 }
 
 /**
- * ConsumerTrustHub wordmark — links home.
+ * Ask Trust Hub wordmark — links home.
  * Header: full-color transparent PNG. Footer (inverted): light variant for navy.
  */
 export function BrandLogo({ className, inverted = false, priority = false }: BrandLogoProps) {
@@ -27,10 +27,13 @@ export function BrandLogo({ className, inverted = false, priority = false }: Bra
       )}
       aria-label={`${BRAND.name} home`}
     >
+      {/* Stacked wordmark needs more height than previous horizontal marks */}
       <span
         className={cn(
           'relative block overflow-hidden',
-          inverted ? 'h-10 w-[11.5rem] sm:h-11 sm:w-[13rem]' : 'h-9 w-[10.5rem] sm:h-10 sm:w-[12rem] lg:h-11 lg:w-[13.5rem]'
+          inverted
+            ? 'h-12 w-[5.5rem] sm:h-14 sm:w-[6.25rem]'
+            : 'h-11 w-[5.25rem] sm:h-12 sm:w-[5.75rem] lg:h-14 lg:w-[6.5rem]'
         )}
       >
         <Image
@@ -40,7 +43,7 @@ export function BrandLogo({ className, inverted = false, priority = false }: Bra
           height={BRAND_LOGO.height}
           priority={priority}
           className="h-full w-full object-contain object-left"
-          sizes="(max-width: 640px) 168px, 216px"
+          sizes="(max-width: 640px) 84px, 104px"
         />
       </span>
     </Link>

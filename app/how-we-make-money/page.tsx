@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/brand';
 export const metadata = createPageMetadata({
   title: 'How We Make Money',
   description:
-    'Transparent revenue model for ConsumerTrust Hub: what funds the network today, intended future revenue, and what we will never sell.',
+    'Transparent revenue model for Ask Trust Hub: what funds the network today, intended future revenue, and what we will never sell.',
   path: '/how-we-make-money',
 });
 

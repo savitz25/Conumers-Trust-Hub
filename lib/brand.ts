@@ -1,18 +1,18 @@
-/** Parent network brand — consumerstrusthub.com */
+/** Parent network brand — asktrusthub.com */
 
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
-export const BRAND_LOGO_VERSION = '20260727';
+export const BRAND_LOGO_VERSION = '20260727ath';
 
 export const BRAND = {
-  name: 'ConsumerTrust Hub',
-  shortName: 'CTH',
-  legalName: 'ConsumerTrust Hub',
-  domain: 'consumerstrusthub.com',
-  url: 'https://www.consumerstrusthub.com',
+  name: 'Ask Trust Hub',
+  shortName: 'ATH',
+  legalName: 'Ask Trust Hub',
+  domain: 'asktrusthub.com',
+  url: 'https://www.asktrusthub.com',
   tagline: 'Independent verification. Transparent methodology. Zero paid placements.',
   description:
     'Independent consumer research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub. Methodology, independence standards, and discovery—not a provider directory.',
-  email: 'hello@consumerstrusthub.com',
+  email: 'hello@asktrusthub.com',
   foundingYear: 2025,
 } as const;
 
@@ -20,10 +20,10 @@ export const BRAND = {
 export const BRAND_LOGO = {
   src: `/brand/logo.png?v=${BRAND_LOGO_VERSION}`,
   lightSrc: `/brand/logo-light.png?v=${BRAND_LOGO_VERSION}`,
-  alt: 'ConsumerTrust Hub',
-  /** Intrinsic aspect ~3.7:1 after trim */
-  width: 714,
-  height: 192,
+  alt: 'Ask Trust Hub',
+  /** Stacked wordmark + mark after trim (actual asset ~713×271) */
+  width: 713,
+  height: 271,
 } as const;
 
 export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
@@ -33,6 +33,6 @@ export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
 export const FOUNDER = {
   name: 'Michael Henry',
   role: 'Founder',
-  bio: 'Founder of ConsumerTrust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, and lending—where paid placement commonly substitutes for verification.',
+  bio: 'Founder of Ask Trust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, and lending—where paid placement commonly substitutes for verification.',
   location: 'United States',
 } as const;

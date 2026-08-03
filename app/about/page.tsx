@@ -8,7 +8,7 @@ import { TRUST_HUBS } from '@/lib/hubs';
 export const metadata = createPageMetadata({
   title: 'About the Network',
   description:
-    'ConsumerTrust Hub is the independent research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub.',
+    'Ask Trust Hub is the independent research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub.',
   path: '/about',
 });
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
             Network destinations
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            External product domains. Links leave consumerstrusthub.com.
+            External product domains. Links leave asktrusthub.com.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {TRUST_HUBS.map((hub) => (

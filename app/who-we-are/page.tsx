@@ -8,7 +8,7 @@ import { BRAND, FOUNDER } from '@/lib/brand';
 export const metadata = createPageMetadata({
   title: 'Who We Are',
   description:
-    'Accountability for ConsumerTrust Hub: founder identity, operating structure, and contact for corrections and methodology questions.',
+    'Accountability for Ask Trust Hub: founder identity, operating structure, and contact for corrections and methodology questions.',
   path: '/who-we-are',
 });
 

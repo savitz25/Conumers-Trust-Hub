@@ -6,7 +6,7 @@ import { TRUST_SCORE_PHILOSOPHY, VERIFICATION_STEPS } from '@/lib/content';
 export const metadata = createPageMetadata({
   title: 'How We Verify / Methodology',
   description:
-    'ConsumerTrust Hub verification process and Trust Score philosophy: primary public sources, explainable factors, and zero paid influence on rankings.',
+    'Ask Trust Hub verification process and Trust Score philosophy: primary public sources, explainable factors, and zero paid influence on rankings.',
   path: '/methodology',
 });
 
@@ -22,7 +22,7 @@ export default function MethodologyPage() {
       <div className="container-page py-14 sm:py-16">
         <div className="prose-trust">
           <p>
-            Verification is the core product of the ConsumerTrust Hub network. Specialist hubs
+            Verification is the core product of the Ask Trust Hub network. Specialist hubs
             implement market-specific checks; this page defines the shared philosophy so consumers
             know what “verified” means—and what it does not.
           </p>

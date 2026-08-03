@@ -6,7 +6,7 @@ import { EDITORIAL_STANDARDS } from '@/lib/content';
 export const metadata = createPageMetadata({
   title: 'Editorial Standards',
   description:
-    'ConsumerTrust Hub editorial standards: quality rules, corrections policy, and how AI may be used without fabricating credentials or reviews.',
+    'Ask Trust Hub editorial standards: quality rules, corrections policy, and how AI may be used without fabricating credentials or reviews.',
   path: '/editorial-standards',
 });
 

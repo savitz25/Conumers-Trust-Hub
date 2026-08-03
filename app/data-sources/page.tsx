@@ -6,7 +6,7 @@ import { DATA_SOURCES } from '@/lib/content';
 export const metadata = createPageMetadata({
   title: 'Data Sources',
   description:
-    'Primary data sources used across the ConsumerTrust Hub network: FMCSA, DOI/NAIC, NMLS, CFPB, and attributed reviews.',
+    'Primary data sources used across the Ask Trust Hub network: FMCSA, DOI/NAIC, NMLS, CFPB, and attributed reviews.',
   path: '/data-sources',
 });
 

@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/brand';
 export const metadata = createPageMetadata({
   title: 'Independence Policy — Zero Paid Placements',
   description:
-    'ConsumerTrust Hub independence policy: zero paid placements, transparent methodology, and separation of research from commerce.',
+    'Ask Trust Hub independence policy: zero paid placements, transparent methodology, and separation of research from commerce.',
   path: '/promise',
 });
 

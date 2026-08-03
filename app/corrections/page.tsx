@@ -6,12 +6,12 @@ import { BRAND } from '@/lib/brand';
 export const metadata = createPageMetadata({
   title: 'Corrections / Report an Error',
   description:
-    'Report factual errors on ConsumerTrust Hub or a specialist Trust Hub. Corrections are evaluated against primary public sources.',
+    'Report factual errors on Ask Trust Hub or a specialist Trust Hub. Corrections are evaluated against primary public sources.',
   path: '/corrections',
 });
 
 export default function CorrectionsPage() {
-  const subject = encodeURIComponent('Correction request — ConsumerTrust Hub');
+  const subject = encodeURIComponent('Correction request — Ask Trust Hub');
   const body = encodeURIComponent(
     [
       'URL:',

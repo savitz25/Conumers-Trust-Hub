@@ -116,7 +116,7 @@ export const EDITORIAL_STANDARDS = {
     'Write for a careful consumer making a high-stakes decision—not for clickbait.',
   ],
   corrections: [
-    'Report factual errors via hello@consumerstrusthub.com with the URL, the claimed error, and a source for the correction.',
+    'Report factual errors via hello@asktrusthub.com with the URL, the claimed error, and a source for the correction.',
     'Material factual corrections are reviewed promptly and applied network-wide when relevant.',
     'We note significant corrections on affected pages when the change could have influenced a decision.',
     'Disputes from providers are considered against public records—not against sponsorship willingness.',

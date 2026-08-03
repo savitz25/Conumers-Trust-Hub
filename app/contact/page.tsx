@@ -6,7 +6,7 @@ import { BRAND } from '@/lib/brand';
 export const metadata = createPageMetadata({
   title: 'Contact',
   description:
-    'Contact ConsumerTrust Hub for corrections, methodology questions, press, and partnership inquiries.',
+    'Contact Ask Trust Hub for corrections, methodology questions, press, and partnership inquiries.',
   path: '/contact',
 });
 
@@ -41,7 +41,7 @@ export default function ContactPage() {
             <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
               <li className="flex gap-2">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />
-                <span>Exact URL on ConsumerTrust Hub or a specialist Trust Hub</span>
+                <span>Exact URL on Ask Trust Hub or a specialist Trust Hub</span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-trust" />

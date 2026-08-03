@@ -5,13 +5,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
 
 export const rootLayoutMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: BRAND.name,
   title: {
     default: `${BRAND.name} — Independent Consumer Research Network`,
     template: `%s | ${BRAND.name}`,
   },
   description: BRAND.description,
   keywords: [
-    'ConsumerTrust Hub',
+    'Ask Trust Hub',
     'independent consumer research',
     'MoveTrustHub',
     'InsuranceTrustHub',
@@ -21,6 +22,7 @@ export const rootLayoutMetadata: Metadata = {
     'NMLS',
     'DOI verification',
   ],
+  authors: [{ name: BRAND.name }],
   icons: {
     icon: [
       { url: `/favicon-16.png?v=${BRAND_LOGO_VERSION}`, sizes: '16x16', type: 'image/png' },
