@@ -36,7 +36,7 @@ export function Footer() {
                     <span className="flex items-center gap-2">
                       {hub.name}
                       <span className="text-[10px] font-semibold uppercase tracking-wide text-white/40">
-                        Planned
+                        Soon
                       </span>
                     </span>
                   )}

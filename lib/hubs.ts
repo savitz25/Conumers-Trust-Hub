@@ -50,11 +50,11 @@ export const TRUST_HUBS: TrustHub[] = [
     shortName: 'Lending',
     domain: 'lendertrusthub.com',
     url: 'https://www.lendertrusthub.com',
-    status: 'coming_soon',
+    status: 'live',
     verification: 'NMLS Consumer Access',
     dataSources: ['NMLS', 'CFPB', 'FDIC / public records'],
     description:
-      'Research destination for NMLS-verified lenders. Planned launch under the same independence standards as the live hubs.',
+      'Research destination for NMLS-verified lenders. Provider directories and tools are hosted on this domain.',
     accent: '#4338CA',
     accentSoft: '#EEF2FF',
   },
