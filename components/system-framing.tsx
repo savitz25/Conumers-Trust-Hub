@@ -1,3 +1,5 @@
+import { TrustMark } from '@/components/trust-mark';
+
 /**
  * Short product framing: one research system for life events — not an org chart.
  * Sits with the situation router so the system is explicit after the first glance.
@@ -15,6 +17,9 @@ export function SystemFraming() {
         Specialist hubs for moving, home financing, and insurance — independent research, no paid
         placements. Pick a situation above, or follow a full life journey below.
       </p>
+      <div className="mt-3">
+        <TrustMark />
+      </div>
     </div>
   );
 }

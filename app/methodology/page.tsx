@@ -9,6 +9,7 @@ import {
   STANDARD_VOCABULARY,
 } from '@/lib/standard';
 import { BRAND } from '@/lib/brand';
+import { TrustMark } from '@/components/trust-mark';
 
 export const metadata = createPageMetadata({
   title: 'The Ask Trust Hub Standard — Network Methodology',
@@ -27,6 +28,9 @@ export default function MethodologyPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-6">
+          <TrustMark />
+        </div>
         <div className="prose-trust max-w-3xl">
           <p>
             {BRAND.name} is the discovery and trust parent for three specialist research

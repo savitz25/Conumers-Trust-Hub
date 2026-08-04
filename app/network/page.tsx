@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { BRAND } from '@/lib/brand';
@@ -56,6 +57,9 @@ export default function NetworkPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-6">
+          <TrustMark />
+        </div>
         <p className="max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
           {BRAND.name} does not host provider directories. Each Trust Hub is a separate product domain
           with its own tools and market depth — and a shared commitment to zero paid placements.

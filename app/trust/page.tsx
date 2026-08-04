@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_CENTER_LINKS } from '@/lib/situations';
 import { STANDARD_INHERITANCE } from '@/lib/standard';
@@ -25,6 +26,9 @@ export default function TrustCenterPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-8">
+          <TrustMark />
+        </div>
         <section aria-labelledby="network-standards-heading">
           <h2
             id="network-standards-heading"

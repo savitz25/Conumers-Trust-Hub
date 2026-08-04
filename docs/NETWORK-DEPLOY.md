@@ -32,6 +32,16 @@ Constant: `lib/network/standard-version.ts` → `ASK_NETWORK_STANDARD_VERSION`
 - **Do not bump for:** unrelated vertical content, local SEO pages, data refreshes
 - Live hosts expose `data-network-standard` on `<body>` for view-source checks
 
+### Trust Mark contract (Priority 3)
+
+| Field | Value |
+|-------|--------|
+| Primary label | `Ask Trust Hub Standard` |
+| Long form | `Researched to the Ask Trust Hub Standard` |
+| URL | `/methodology` (canonical Standard page) |
+
+Component: `components/trust-mark.tsx`.
+
 ## Post-deploy smoke
 
 From **Move-trust-Hub** (canonical script):
