@@ -31,6 +31,12 @@ Constant: `lib/network/standard-version.ts` → `ASK_NETWORK_STANDARD_VERSION`
 - **Bump when:** network bar/seal contract, journey module label API, Trust Mark, belonging line, methodology cross-links
 - **Do not bump for:** unrelated vertical content, local SEO pages, data refreshes
 - Live hosts expose `data-network-standard` on `<body>` for view-source checks
+- **2026.08.06:** ownership clarity — common ownership + separated research (not unaffiliated)
+
+### Ownership (Priority 5)
+
+Short: `Common ownership · Separated research & listing order · No paid placements`  
+Long: Move, Insurance, and Lender Trust Hub are part of the Ask Trust Hub network — common ownership, separated research and ordering, no paid placements.
 
 ### Hero intent map (Priority 4)
 

@@ -3,6 +3,7 @@ import { BrandLogo } from '@/components/brand-logo';
 import { BRAND } from '@/lib/brand';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { FOOTER_ABOUT, FOOTER_LEGAL } from '@/lib/content';
+import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 
 export function Footer() {
   return (
@@ -12,8 +13,8 @@ export function Footer() {
           <div className="lg:col-span-1">
             <BrandLogo inverted />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
-              Parent network for independent consumer research. Independently operated specialist
-              hubs · No paid placements. Product tools live on Move, Insurance, and Lender domains.
+              Parent network for consumer research on Move, Insurance, and Lender Trust Hub.
+              {ASK_NETWORK_OWNERSHIP_SHORT}. Product tools live on the specialist domains.
             </p>
             <p className="mt-3 text-xs text-white/45">
               <a href="/promise" className="underline underline-offset-2 hover:text-white/70">

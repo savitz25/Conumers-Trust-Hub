@@ -5,6 +5,10 @@ import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_CENTER_LINKS } from '@/lib/situations';
 import { STANDARD_INHERITANCE } from '@/lib/standard';
+import {
+  ASK_NETWORK_OWNERSHIP_LINE,
+  ASK_NETWORK_OWNERSHIP_SHORT,
+} from '@/lib/network/standard-version';
 
 export const metadata = createPageMetadata({
   title: 'Trust Center',
@@ -29,6 +33,19 @@ export default function TrustCenterPage() {
         <div className="mb-8">
           <TrustMark />
         </div>
+        <section className="mb-14 max-w-2xl" aria-labelledby="ownership-heading">
+          <h2
+            id="ownership-heading"
+            className="text-lg font-semibold tracking-tight text-foreground"
+          >
+            Ownership and independence
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {ASK_NETWORK_OWNERSHIP_LINE} Independence means ranking order and research signals are
+            not for sale — not that the hubs are unaffiliated businesses. {ASK_NETWORK_OWNERSHIP_SHORT}
+            .
+          </p>
+        </section>
         <section aria-labelledby="network-standards-heading">
           <h2
             id="network-standards-heading"

@@ -14,8 +14,9 @@ export function SystemFraming() {
         Big decisions, one research system
       </p>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-        Specialist hubs for moving, home financing, and insurance — independent research, no paid
-        placements. Pick a situation above, or follow a full life journey below.
+        Specialist hubs for moving, home financing, and insurance under one network: common
+        ownership, separated research and listing order, no paid placements. Pick a situation above,
+        or follow a full life journey below.
       </p>
       <div className="mt-3">
         <TrustMark />

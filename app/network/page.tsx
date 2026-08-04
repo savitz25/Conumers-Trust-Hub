@@ -6,6 +6,10 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { BRAND } from '@/lib/brand';
 import { LIFE_JOURNEYS } from '@/lib/life-journeys';
+import {
+  ASK_NETWORK_OWNERSHIP_LINE,
+  ASK_NETWORK_OWNERSHIP_SHORT,
+} from '@/lib/network/standard-version';
 
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
@@ -61,8 +65,16 @@ export default function NetworkPage() {
           <TrustMark />
         </div>
         <p className="max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
-          {BRAND.name} does not host provider directories. Each Trust Hub is a separate product domain
-          with its own tools and market depth — and a shared commitment to zero paid placements.
+          {ASK_NETWORK_OWNERSHIP_LINE} {BRAND.name} is the parent trust layer and discovery surface.
+          Each specialist hub is a separate product domain with its own tools and market depth. We
+          do not host provider directories on this site.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm font-medium text-foreground/80">
+          {ASK_NETWORK_OWNERSHIP_SHORT}
+        </p>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          “Independence” here means no paid placements and research ordering that is not for sale —
+          not three unrelated companies. Verify providers with primary regulators before you commit.
         </p>
 
         {/* How journeys work */}
@@ -123,7 +135,7 @@ export default function NetworkPage() {
                   {focus?.focus ?? hub.description}
                 </p>
                 <p className="mt-3 text-xs font-medium text-foreground/70">
-                  Independently operated · No paid placements
+                  {ASK_NETWORK_OWNERSHIP_SHORT}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">{hub.domain}</p>
                 <a href={hub.url} className="btn-primary mt-6 w-full sm:w-auto">

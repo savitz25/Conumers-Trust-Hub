@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { REVENUE_MODEL } from '@/lib/content';
 import { BRAND } from '@/lib/brand';
+import { ASK_NETWORK_OWNERSHIP_LINE } from '@/lib/network/standard-version';
 
 export const metadata = createPageMetadata({
   title: 'How We Make Money',
@@ -25,6 +26,10 @@ export default function HowWeMakeMoneyPage() {
           <p>
             {BRAND.name} publishes this page because independence claims are empty without revenue
             honesty. Below is the current model, the intended model, and the hard “never” list.
+          </p>
+          <p>
+            {ASK_NETWORK_OWNERSHIP_LINE} Revenue honesty applies network-wide: we do not sell ranking
+            position on Ask or any specialist hub.
           </p>
         </div>
 

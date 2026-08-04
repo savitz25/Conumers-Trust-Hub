@@ -3,6 +3,10 @@ import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { INDEPENDENCE_PLEDGES } from '@/lib/content';
 import { BRAND } from '@/lib/brand';
+import {
+  ASK_NETWORK_OWNERSHIP_LINE,
+  ASK_NETWORK_OWNERSHIP_SHORT,
+} from '@/lib/network/standard-version';
 
 export const metadata = createPageMetadata({
   title: 'Independence Policy — Zero Paid Placements',
@@ -26,6 +30,13 @@ export default function PromisePage() {
             {BRAND.name} rejects sponsored “top” lists that present as independent research. Across
             the parent site and every Trust Hub, editorial trust signals—ranking order, Trust Scores,
             and verification badges—cannot be purchased.
+          </p>
+          <p>
+            {ASK_NETWORK_OWNERSHIP_LINE} Independence in this policy means research and listing order
+            are not for sale — not that the hubs are three unaffiliated companies.
+          </p>
+          <p className="text-sm font-medium text-foreground/80 not-prose">
+            {ASK_NETWORK_OWNERSHIP_SHORT}
           </p>
         </div>
 
