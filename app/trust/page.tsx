@@ -46,6 +46,52 @@ export default function TrustCenterPage() {
             .
           </p>
         </section>
+
+        <section className="mb-14 max-w-2xl" aria-labelledby="after-research-heading">
+          <h2
+            id="after-research-heading"
+            className="text-lg font-semibold tracking-tight text-foreground"
+          >
+            After you research on a hub
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Specialist hubs help you shortlist and compare. Before you call a provider: save or
+            print a shortlist, use the on-page questions checklist, and re-verify licenses on primary
+            sources (FMCSA, NMLS Consumer Access, state DOI / NAIC). Ask does not host directories.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <a
+                href="https://www.movetrusthub.com/companies"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                Move Trust Hub
+              </a>
+              <span className="text-muted-foreground"> — movers · FMCSA context</span>
+            </li>
+            <li>
+              <a
+                href="https://www.lendertrusthub.com/local-lenders"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                Lender Trust Hub
+              </a>
+              <span className="text-muted-foreground"> — lenders · NMLS context</span>
+            </li>
+            <li>
+              <a
+                href="https://www.insurancetrusthub.com/directory"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                Insurance Trust Hub
+              </a>
+              <span className="text-muted-foreground"> — agencies · DOI pathways</span>
+            </li>
+          </ul>
+        </section>
         <section aria-labelledby="network-standards-heading">
           <h2
             id="network-standards-heading"
