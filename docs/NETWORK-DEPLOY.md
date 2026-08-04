@@ -32,6 +32,10 @@ Constant: `lib/network/standard-version.ts` → `ASK_NETWORK_STANDARD_VERSION`
 - **Do not bump for:** unrelated vertical content, local SEO pages, data refreshes
 - Live hosts expose `data-network-standard` on `<body>` for view-source checks
 
+### Hero intent map (Priority 4)
+
+Ask owns **What are you preparing for?** Specialist hubs own: Move *Where are you going?*, Lender *What are you trying to accomplish?*, Insurance *What are you trying to protect?* — vertical copy only; Standard version not bumped for hero-only changes.
+
 ### Trust Mark contract (Priority 3)
 
 | Field | Value |

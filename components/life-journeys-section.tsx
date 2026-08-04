@@ -26,6 +26,29 @@ export function LifeJourneysSection() {
             paid placements. Ask routes you; each hub executes the deep work under The Ask Trust Hub
             Standard.
           </p>
+          <ul className="mt-5 space-y-2 text-sm text-muted-foreground sm:text-[15px]">
+            <li>
+              <span className="font-semibold text-foreground">Moving</span>
+              {' → '}
+              <span className="italic">Where are you going?</span>
+              {' '}
+              <span className="text-muted-foreground/80">(Move Trust Hub)</span>
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Buying</span>
+              {' → '}
+              <span className="italic">What are you trying to accomplish?</span>
+              {' '}
+              <span className="text-muted-foreground/80">(Lender Trust Hub)</span>
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Protecting</span>
+              {' → '}
+              <span className="italic">What are you trying to protect?</span>
+              {' '}
+              <span className="text-muted-foreground/80">(Insurance Trust Hub)</span>
+            </li>
+          </ul>
         </div>
 
         <ul className="mt-10 grid gap-5 lg:grid-cols-3">
