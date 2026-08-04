@@ -4,11 +4,12 @@ import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { BRAND } from '@/lib/brand';
+import { LIFE_JOURNEYS } from '@/lib/life-journeys';
 
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
   description:
-    'The Ask Trust Hub network: Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub — independent research destinations with zero paid placements.',
+    'The Ask Trust Hub network: Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub — independent research destinations with zero paid placements. How life journeys work across hubs.',
   path: '/network',
 });
 
@@ -27,6 +28,24 @@ const HUB_FOCUS: Record<string, { focus: string; cta: string }> = {
   },
 };
 
+const JOURNEY_MODEL = [
+  {
+    step: '1',
+    title: 'Ask routes',
+    body: 'You name a life event or question. Ask Trust Hub points you to the right specialist — no directories and no forms on this site.',
+  },
+  {
+    step: '2',
+    title: 'Hub executes',
+    body: 'Move, Insurance, or Lender owns the deep tools: verify, compare, plan. Research stays on that domain.',
+  },
+  {
+    step: '3',
+    title: 'Standard applies',
+    body: 'Every hub inherits The Ask Trust Hub Standard — independence, disclosed sources, rankings not for sale.',
+  },
+] as const;
+
 export default function NetworkPage() {
   return (
     <>
@@ -42,7 +61,47 @@ export default function NetworkPage() {
           with its own tools and market depth — and a shared commitment to zero paid placements.
         </p>
 
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        {/* How journeys work */}
+        <section
+          id="how-journeys-work"
+          aria-labelledby="journey-model-heading"
+          className="mt-12 scroll-mt-20"
+        >
+          <h2
+            id="journey-model-heading"
+            className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl"
+          >
+            How life journeys work
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            You are inside one research system for a life event — not three unrelated websites with
+            footer links.
+          </p>
+          <ol className="mt-6 grid gap-4 sm:grid-cols-3">
+            {JOURNEY_MODEL.map((item) => (
+              <li
+                key={item.step}
+                className="rounded-xl border border-border/80 bg-background p-5"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">
+                  {item.step}
+                </span>
+                <h3 className="mt-3 text-base font-semibold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 text-sm">
+            <Link
+              href="/#life-journeys"
+              className="font-semibold text-navy underline-offset-4 hover:underline"
+            >
+              See ordered journeys on the homepage
+            </Link>
+          </p>
+        </section>
+
+        <ul className="mt-12 grid gap-4 md:grid-cols-3">
           {TRUST_HUBS.map((hub) => {
             const focus = HUB_FOCUS[hub.id];
             return (
@@ -72,9 +131,35 @@ export default function NetworkPage() {
           })}
         </ul>
 
+        {/* Compact journey index */}
+        <section className="mt-14" aria-labelledby="journey-index-heading">
+          <h2
+            id="journey-index-heading"
+            className="text-lg font-semibold tracking-tight text-foreground"
+          >
+            Example journeys
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {LIFE_JOURNEYS.map((j) => (
+              <li
+                key={j.id}
+                className="rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-sm"
+              >
+                <span className="font-semibold text-foreground">{j.title}</span>
+                <span className="mt-0.5 block text-muted-foreground">
+                  {j.steps.map((s) => s.hubLabel.replace(' Trust Hub', '')).join(' → ')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <div className="mt-12 flex flex-wrap gap-3">
           <Link href="/#ask" className="btn-primary">
             Situation router
+          </Link>
+          <Link href="/#life-journeys" className="btn-secondary">
+            Life journeys
           </Link>
           <Link href="/methodology" className="btn-secondary">
             The Ask Trust Hub Standard

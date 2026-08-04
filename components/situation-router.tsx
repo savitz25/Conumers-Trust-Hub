@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { SystemFraming } from '@/components/system-framing';
 import {
   SITUATION_PROMPT,
   SITUATION_SUBCOPY,
@@ -44,6 +45,7 @@ export function SituationRouter() {
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {SITUATION_SUBCOPY}
           </p>
+          <SystemFraming />
         </div>
 
         <ul className="mt-10 grid gap-3 sm:grid-cols-2">
@@ -110,7 +112,13 @@ export function SituationRouter() {
           Directories and tools live on the specialist hubs — not on this site. Ask routes you; the
           hubs do the deep research. No forms and no personal data collected for routing.
         </p>
-        <p className="mt-3 text-sm">
+        <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+          <Link
+            href="/#life-journeys"
+            className="font-semibold text-navy underline-offset-4 hover:underline"
+          >
+            Life journeys
+          </Link>
           <Link href="/network" className="font-semibold text-navy underline-offset-4 hover:underline">
             Explore the network
           </Link>

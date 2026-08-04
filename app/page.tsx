@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { HubCard } from '@/components/hub-card';
+import { LifeJourneysSection } from '@/components/life-journeys-section';
 import { SituationRouter } from '@/components/situation-router';
 import { TrustCenterStrip } from '@/components/trust-center-strip';
 import { JsonLd } from '@/lib/seo/json-ld';
@@ -10,11 +11,12 @@ import { TRUST_HUBS } from '@/lib/hubs';
 
 /**
  * Ask homepage IA:
- * 1. Situation router
- * 2. Short trust promise
- * 3. Network cards + /network
- * 4. Trust Center entry points
- * 5. Footer (layout) with legal + hubs
+ * 1. Situation router + system framing
+ * 2. Life journeys (ordered multi-hub paths)
+ * 3. Short trust promise
+ * 4. Network cards + /network
+ * 5. Trust Center entry points
+ * 6. Footer (layout) with legal + hubs
  */
 export default function HomePage() {
   return (
@@ -24,7 +26,10 @@ export default function HomePage() {
       {/* 1. Situation router — above the fold */}
       <SituationRouter />
 
-      {/* 2. Short trust promise */}
+      {/* 2. Life journeys as product — steps, not marketing tiles only */}
+      <LifeJourneysSection />
+
+      {/* 3. Short trust promise */}
       <section className="border-b border-border/80 bg-navy text-navy-foreground">
         <div className="container-page py-12 sm:py-14">
           <div className="max-w-3xl">
@@ -57,7 +62,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Network cards */}
+      {/* 4. Network cards */}
       <section id="trust-hubs" className="scroll-mt-20 border-b border-border/80">
         <div className="container-page py-16 sm:py-20">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -66,7 +71,7 @@ export default function HomePage() {
               <h2 className="section-title mt-3">Specialist research destinations</h2>
               <p className="section-lead">
                 Three live hubs under one independence standard. Explore the full network page for
-                focus areas and outbound links.
+                how journeys work and outbound links.
               </p>
             </div>
             <Link href="/network" className="btn-secondary shrink-0">
@@ -96,7 +101,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Trust Center entry points */}
+      {/* 5. Trust Center entry points */}
       <TrustCenterStrip />
 
       {/* Secondary governance (below fold) */}
