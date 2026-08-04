@@ -1,5 +1,14 @@
 # Ask Trust Hub
 
+**Production domain:** https://www.asktrusthub.com  
+**This repo is the source of truth for that domain** (`Conumers-Trust-Hub` → Vercel Ask project).
+
+Sibling network repos: [Move-trust-Hub](https://github.com/savitz25/Move-trust-Hub) · [Insurance-trust-hub](https://github.com/savitz25/Insurance-trust-hub) · [Lender-Trust-Hub](https://github.com/savitz25/Lender-Trust-Hub)
+
+**Network / multi-domain:** see [docs/NETWORK-DEPLOY.md](./docs/NETWORK-DEPLOY.md) and [docs/NETWORK-PR-CHECKLIST.md](./docs/NETWORK-PR-CHECKLIST.md). After network deploys run `npm run smoke:network` from Move-trust-Hub.
+
+---
+
 **Independent verification. Transparent methodology. Zero paid placements.**
 
 Thin parent brand site for the Ask Trust Hub network — trust infrastructure and discovery, not a directory or content farm.
