@@ -76,6 +76,11 @@ export default function NetworkPage() {
           “Independence” here means no paid placements and research ordering that is not for sale —
           not three unrelated companies. Verify providers with primary regulators before you commit.
         </p>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Specialist directories are expanding. If a ZIP or county has no listings yet, hub empty
+          states point you to official sources (FMCSA, NMLS, state DOI / NAIC) rather than inventing
+          results.
+        </p>
 
         {/* How journeys work */}
         <section
