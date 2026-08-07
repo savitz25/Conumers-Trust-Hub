@@ -29,6 +29,58 @@ export const SITUATION_SUBCOPY =
   'Independent research · no paid placements · we route you to the right specialist hub' as const;
 
 /**
+ * Lightweight keyword match for hero Concierge — no server, no PII.
+ * Returns the best-matching situation or null.
+ */
+export function matchSituationFromQuery(raw: string): SituationRoute | null {
+  const q = raw.trim().toLowerCase();
+  if (!q || q.length < 2) return null;
+
+  const rules: { id: string; keys: string[] }[] = [
+    {
+      id: 'buying-home',
+      keys: ['buy home', 'buying a home', 'homebuyer', 'first home', 'purchase a house'],
+    },
+    {
+      id: 'moving-scam-risk',
+      keys: ['move', 'moving', 'mover', 'scam', 'dot', 'usdot', 'fmcsa', 'relocat'],
+    },
+    {
+      id: 'relocating-work',
+      keys: ['cross-country', 'interstate', 'job transfer', 'work reloc', 'long-distance'],
+    },
+    {
+      id: 'lender-legit',
+      keys: ['lender', 'mortgage', 'loan', 'nmls', 'refinance', 'refi', 'pre-approv'],
+    },
+    {
+      id: 'premium-or-medicare',
+      keys: ['insurance', 'medicare', 'premium', 'aca', 'health plan', 'turning 65', 'coverage'],
+    },
+  ];
+
+  for (const rule of rules) {
+    if (rule.keys.some((k) => q.includes(k))) {
+      return SITUATIONS.find((s) => s.id === rule.id) ?? null;
+    }
+  }
+
+  // Title / detail substring fallback
+  const scored = SITUATIONS.map((s) => {
+    const hay = `${s.title} ${s.detail} ${s.hubLabel}`.toLowerCase();
+    let score = 0;
+    for (const word of q.split(/\s+/).filter((w) => w.length > 2)) {
+      if (hay.includes(word)) score += 1;
+    }
+    return { s, score };
+  })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scored[0]?.s ?? null;
+}
+
+/**
  * Situation cards (static links only — no forms, no PII, no directories on Ask).
  * Deep links verified against live specialist hosts (200 OK).
  * ≥4 cards above the fold on the homepage router.

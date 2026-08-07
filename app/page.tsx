@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { AskHero } from '@/components/ask-hero';
 import { HubCard } from '@/components/hub-card';
 import { LifeJourneysSection } from '@/components/life-journeys-section';
 import { SituationRouter } from '@/components/situation-router';
@@ -11,19 +12,23 @@ import { TRUST_HUBS } from '@/lib/hubs';
 
 /**
  * Ask homepage IA:
- * 1. Situation router + system framing
- * 2. Life journeys (ordered multi-hub paths)
- * 3. Short trust promise
- * 4. Network cards + /network
- * 5. Trust Center entry points
- * 6. Footer (layout) with legal + hubs
+ * 1. Hero — Knowledge & Concierge (Phase 2)
+ * 2. Situation grid + system framing (#ask)
+ * 3. Life journeys (ordered multi-hub paths)
+ * 4. Short trust promise
+ * 5. Network cards + /network
+ * 6. Trust Center entry points
+ * 7. Footer (layout) with legal + hubs
  */
 export default function HomePage() {
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
 
-      {/* 1. Situation router — above the fold */}
+      {/* 1. Hero — Concierge-first, advisory (not a product marketplace) */}
+      <AskHero />
+
+      {/* 2. Situation grid — guided paths after Concierge */}
       <SituationRouter />
 
       {/* 2. Life journeys as product — steps, not marketing tiles only */}

@@ -53,6 +53,34 @@ export const ASK_TAGLINE = 'SOURCES. VERIFIED. YOU DECIDE.';
 export const ASK_INDEPENDENCE_LINE =
   'Independent research network — no paid placements, no lead fees.';
 
+/** Homepage hero (Phase 2) — knowledge & concierge, not a product marketplace */
+export const ASK_HERO_EYEBROW = 'ASK TRUST HUB  ·  KNOWLEDGE & CONCIERGE';
+
+export const ASK_HERO_HEADLINE = 'Ask. Verify. Decide with confidence.';
+
+export const ASK_HERO_SUPPORT =
+  'Independent knowledge and concierge for life’s biggest decisions — moving, home financing, insurance, and more. We help you understand verified public sources and route you to the right specialist hub. Not a marketplace. No paid placements. No lead fees.';
+
+export const ASK_HERO_PRIMARY_CTA = {
+  label: 'Get guided answers',
+  href: '/#ask',
+} as const;
+
+export const ASK_HERO_SECONDARY_CTA = {
+  label: 'Explore life journeys',
+  href: '/#life-journeys',
+} as const;
+
+export const ASK_HERO_CHIPS = [
+  'Independent research',
+  'Verified sources',
+  'No paid placements',
+  'Clear guidance, not sales',
+] as const;
+
+export const ASK_HERO_CONCIERGE_PLACEHOLDER =
+  'What are you preparing for? e.g. moving, a mortgage, Medicare…';
+
 /**
  * Primary header nav (knowledge / concierge parent).
  * Switch Hub is a separate control, not a nav link.

@@ -10,39 +10,42 @@ import {
 import { cn } from '@/lib/utils';
 
 const HUB_TAG_STYLES: Record<SituationRoute['hubTag'], string> = {
-  move: 'bg-blue-50 text-blue-800 border-blue-100',
-  insurance: 'bg-teal-50 text-teal-800 border-teal-100',
-  lender: 'bg-indigo-50 text-indigo-800 border-indigo-100',
-  network: 'bg-slate-100 text-slate-700 border-slate-200',
-  multi: 'bg-amber-50 text-amber-900 border-amber-100',
+  move: 'bg-[#FFF4EF] text-[#C2410C] border-[#FFD4C2]',
+  insurance: 'bg-[#F0FDFA] text-[#0F766E] border-[#99F6E4]',
+  lender: 'bg-[#F0FDF4] text-[#166534] border-[#BBF7D0]',
+  network: 'bg-[#E0E7FF] text-[#3730A3] border-[#C7D2FE]',
+  multi: 'bg-[#E0E7FF] text-[#4F46E5] border-[#C7D2FE]',
 };
 
 const cardShell = cn(
-  'flex h-full min-h-[8rem] flex-col rounded-xl border border-border/80 bg-background p-5 sm:p-6',
-  'transition-colors hover:border-navy/25 hover:bg-muted/30'
+  'flex h-full min-h-[8rem] flex-col rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-6',
+  'shadow-[0_1px_2px_rgb(10_37_64_/_0.04),0_4px_16px_rgb(10_37_64_/_0.04)]',
+  'transition-colors hover:border-[#4F46E5]/30 hover:bg-[#F8FAFC]'
 );
 
 /**
- * Homepage situation router — static cards + outbound links only.
- * Same-tab navigation to specialist hubs (normal navigation).
+ * Situation grid — secondary to hero Concierge.
+ * H2 only (hero owns the page H1). Anchor: #ask
  */
 export function SituationRouter() {
   return (
     <section
       id="ask"
       aria-labelledby="situation-router-heading"
-      className="scroll-mt-20 border-b border-border/80 bg-background"
+      className="scroll-mt-24 border-b border-[#E2E8F0] bg-[#F8FAFC]"
     >
-      <div className="container-page py-12 sm:py-16 lg:py-20">
+      <div className="container-page py-12 sm:py-16">
         <div className="max-w-2xl">
-          <p className="section-label">Ask Trust Hub</p>
-          <h1
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4F46E5]">
+            Guided situations
+          </p>
+          <h2
             id="situation-router-heading"
-            className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]"
+            className="mt-3 text-2xl font-semibold tracking-tight text-[#0A2540] sm:text-3xl"
           >
             {SITUATION_PROMPT}
-          </h1>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          </h2>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-[#1E293B] sm:text-lg">
             {SITUATION_SUBCOPY}
           </p>
           <SystemFraming />
@@ -50,7 +53,7 @@ export function SituationRouter() {
 
         <ul className="mt-10 grid gap-3 sm:grid-cols-2">
           {SITUATIONS.map((s) => (
-            <li key={s.id} className={cardShell}>
+            <li key={s.id} id={`situation-${s.id}`} className={cardShell}>
               <span
                 className={cn(
                   'inline-flex w-fit rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wide',
@@ -59,28 +62,28 @@ export function SituationRouter() {
               >
                 {s.hubLabel}
               </span>
-              <h2 className="mt-3 text-base font-semibold tracking-tight text-foreground sm:text-[17px]">
+              <h3 className="mt-3 text-base font-semibold tracking-tight text-[#0A2540] sm:text-[17px]">
                 {s.title}
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.detail}</p>
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#1E293B]">{s.detail}</p>
 
               {s.checklist && s.checklist.length > 0 ? (
                 <>
-                  <ol className="mt-4 space-y-2.5 border-t border-border/70 pt-4">
+                  <ol className="mt-4 space-y-2.5 border-t border-[#E2E8F0] pt-4">
                     {s.checklist.map((step) => (
                       <li key={step.step}>
                         <a
                           href={step.href}
-                          className="group flex gap-3 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+                          className="group flex gap-3 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2"
                         >
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-[11px] font-bold text-white">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#4F46E5] text-[11px] font-bold text-white">
                             {step.step}
                           </span>
                           <span className="min-w-0">
-                            <span className="font-medium text-foreground group-hover:underline">
+                            <span className="font-medium text-[#0A2540] group-hover:text-[#4F46E5] group-hover:underline">
                               {step.label}
                             </span>
-                            <span className="mt-0.5 block text-xs text-muted-foreground">
+                            <span className="mt-0.5 block text-xs text-[#1E293B]">
                               {step.hubLabel}
                             </span>
                           </span>
@@ -89,10 +92,7 @@ export function SituationRouter() {
                     ))}
                   </ol>
                   {s.checklist[0] ? (
-                    <a
-                      href={s.checklist[0].href}
-                      className="btn-primary mt-5 w-full sm:w-auto"
-                    >
+                    <a href={s.checklist[0].href} className="btn-primary mt-5 w-full sm:w-auto">
                       {s.cta}
                       <ArrowUpRight className="h-4 w-4" aria-hidden />
                     </a>
@@ -108,18 +108,21 @@ export function SituationRouter() {
           ))}
         </ul>
 
-        <p className="mt-8 text-sm text-muted-foreground">
+        <p className="mt-8 text-sm leading-relaxed text-[#1E293B]">
           Directories and tools live on the specialist hubs — not on this site. Ask routes you; the
           hubs do the deep research. No forms and no personal data collected for routing.
         </p>
         <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
           <Link
             href="/#life-journeys"
-            className="font-semibold text-navy underline-offset-4 hover:underline"
+            className="font-semibold text-[#4F46E5] underline-offset-4 hover:text-[#6B21A8] hover:underline"
           >
             Life journeys
           </Link>
-          <Link href="/network" className="font-semibold text-navy underline-offset-4 hover:underline">
+          <Link
+            href="/network"
+            className="font-semibold text-[#4F46E5] underline-offset-4 hover:text-[#6B21A8] hover:underline"
+          >
             Explore the network
           </Link>
         </p>
