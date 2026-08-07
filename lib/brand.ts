@@ -3,7 +3,7 @@
 import { ASK_BRAND, ASK_TAGLINE } from '@/lib/design/ask-design-system';
 
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
-export const BRAND_LOGO_VERSION = '20260807ath3';
+export const BRAND_LOGO_VERSION = '20260807ath4';
 
 export const BRAND = {
   name: 'Ask Trust Hub',

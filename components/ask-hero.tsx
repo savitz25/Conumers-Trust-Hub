@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Check, ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
-import { BRAND_LOGO, BRAND_LOGO_VERSION } from '@/lib/brand';
+import { BRAND_LOGO_VERSION } from '@/lib/brand';
 import {
   ASK_BRAND,
   ASK_HERO_CHIPS,
@@ -12,7 +12,6 @@ import {
   ASK_HERO_PHILOSOPHY,
   ASK_HERO_SECONDARY_CTA,
   ASK_HERO_SUPPORT,
-  ASK_SHADOW,
 } from '@/lib/design/ask-design-system';
 
 /** Official bracket + 4-point hub mark (transparent) for soft hero placement */
@@ -53,8 +52,8 @@ export function AskHero() {
       />
 
       <div className="container-page relative py-14 sm:py-16 lg:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="text-center lg:text-left">
+        <div className="grid items-start gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <div className="relative z-[1] text-center lg:text-left">
             <p
               className="text-xs font-semibold uppercase tracking-[0.14em]"
               style={{ color: ASK_BRAND.indigo }}
@@ -184,59 +183,34 @@ export function AskHero() {
             </ul>
           </div>
 
-          {/* Soft official bracket + 4-point mark — ethereal, unboxed */}
-          <div className="relative mx-auto flex w-full max-w-md flex-col items-center lg:max-w-none">
-            <div className="relative flex w-full items-center justify-center py-4 sm:py-6 lg:py-8">
-              {/* Soft radial field (like original illustration, gentler) */}
-              <div
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(100%,22rem)] w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{
-                  background:
-                    'radial-gradient(circle at 50% 48%, rgb(79 70 229 / 0.10) 0%, rgb(107 33 168 / 0.06) 32%, rgb(224 231 255 / 0.35) 55%, transparent 72%)',
-                }}
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl sm:h-56 sm:w-56"
-                style={{
-                  background:
-                    'radial-gradient(circle, rgb(79 70 229 / 0.12) 0%, rgb(107 33 168 / 0.06) 50%, transparent 70%)',
-                }}
-                aria-hidden
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={HERO_MARK_SRC}
-                alt={BRAND_LOGO.alt}
-                width={420}
-                height={420}
-                className="relative z-[1] h-auto w-[min(72vw,240px)] object-contain object-center sm:w-[260px] lg:w-[300px]"
-                style={{
-                  opacity: 0.92,
-                  filter:
-                    'drop-shadow(0 12px 28px rgb(79 70 229 / 0.12)) drop-shadow(0 4px 12px rgb(10 37 64 / 0.06))',
-                }}
-                decoding="async"
-              />
-            </div>
-            <div className="mx-auto mt-1 w-full max-w-[280px] px-2 text-center sm:mt-2">
-              <p
-                className="text-[11px] font-semibold uppercase tracking-[0.12em]"
-                style={{ color: ASK_BRAND.indigo }}
-              >
-                {ASK_HERO_PHILOSOPHY}
-              </p>
-              <p className="mt-1.5 text-sm leading-snug" style={{ color: ASK_BRAND.ink }}>
-                Sources first. Specialist hubs for depth. You choose - never a paid ranking or lead
-                marketplace.
-              </p>
-              <p
-                className="mt-2 text-xs font-medium leading-snug"
-                style={{ color: ASK_BRAND.navy }}
-              >
-                Move · Lender · Insurance under one parent standard
-              </p>
-            </div>
+          {/* Large soft watermark — free-floating, no box/border/card */}
+          <div
+            className="relative mx-auto flex w-full max-w-lg items-start justify-center pt-0 lg:max-w-none lg:-mt-6 lg:self-start lg:pt-2 xl:-mt-10"
+            aria-hidden={false}
+          >
+            {/* Barely-there ambient wash — no hard edges */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-[42%] h-[85%] w-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(circle, rgb(79 70 229 / 0.06) 0%, rgb(107 33 168 / 0.03) 40%, transparent 68%)',
+              }}
+              aria-hidden
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={HERO_MARK_SRC}
+              alt=""
+              width={560}
+              height={373}
+              className="relative z-[1] h-auto w-[min(88vw,340px)] select-none object-contain object-center sm:w-[380px] lg:w-[440px] xl:w-[480px]"
+              style={{
+                opacity: 0.55,
+                mixBlendMode: 'multiply',
+              }}
+              decoding="async"
+              aria-hidden
+            />
           </div>
         </div>
       </div>
