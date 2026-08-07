@@ -277,7 +277,8 @@ export const ASK_FOOTER_COLUMNS = [
   {
     title: 'Standards',
     links: [
-      { href: '/methodology', label: 'The Ask Trust Hub Standard' },
+      { href: '/methodology', label: 'The Standard' },
+      { href: '/data-sources', label: 'Data Sources' },
       { href: '/promise', label: 'Independence Policy' },
       { href: '/how-we-make-money', label: 'How We Make Money' },
       { href: '/data-sources', label: 'Data Sources' },

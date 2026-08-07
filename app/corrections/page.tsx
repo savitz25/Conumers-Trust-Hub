@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { BRAND } from '@/lib/brand';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'Corrections / Report an Error',
@@ -36,6 +38,9 @@ export default function CorrectionsPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-8">
+          <LastReviewed date={TRUST_PAGE_REVIEWED.corrections} />
+        </div>
         <div className="prose-trust">
           <p>
             {BRAND.name} treats accuracy as an operational requirement. Use this page to report

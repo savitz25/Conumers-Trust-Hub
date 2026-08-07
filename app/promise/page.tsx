@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { INDEPENDENCE_PLEDGES } from '@/lib/content';
@@ -7,11 +8,12 @@ import {
   ASK_NETWORK_OWNERSHIP_LINE,
   ASK_NETWORK_OWNERSHIP_SHORT,
 } from '@/lib/network/standard-version';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'Independence Policy — Zero Paid Placements',
   description:
-    'Ask Trust Hub independence policy: zero paid placements, transparent methodology, and separation of research from commerce.',
+    'Ask Trust Hub independence policy: zero paid placements, transparent methodology, and separation of research from commerce. Common ownership; ranking not for sale.',
   path: '/promise',
 });
 
@@ -25,6 +27,9 @@ export default function PromisePage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-8">
+          <LastReviewed date={TRUST_PAGE_REVIEWED.promise} />
+        </div>
         <div className="prose-trust">
           <p>
             {BRAND.name} rejects sponsored “top” lists that present as independent research. Across

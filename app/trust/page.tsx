@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
@@ -9,6 +10,7 @@ import {
   ASK_NETWORK_OWNERSHIP_LINE,
   ASK_NETWORK_OWNERSHIP_SHORT,
 } from '@/lib/network/standard-version';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'Trust Center',
@@ -30,8 +32,9 @@ export default function TrustCenterPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
-        <div className="mb-8">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <TrustMark />
+          <LastReviewed date={TRUST_PAGE_REVIEWED.trust} />
         </div>
         <section className="mb-14 max-w-2xl" aria-labelledby="ownership-heading">
           <h2

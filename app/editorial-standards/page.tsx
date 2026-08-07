@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { EDITORIAL_STANDARDS } from '@/lib/content';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'Editorial Standards',
@@ -20,6 +22,9 @@ export default function EditorialStandardsPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-8">
+          <LastReviewed date={TRUST_PAGE_REVIEWED.editorial} />
+        </div>
         <div className="grid gap-6 lg:grid-cols-3">
           <section className="card-surface p-6 lg:col-span-1">
             <h2 className="text-lg font-semibold tracking-tight text-foreground">Quality standards</h2>

@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { REVENUE_MODEL } from '@/lib/content';
 import { BRAND } from '@/lib/brand';
 import { ASK_NETWORK_OWNERSHIP_LINE } from '@/lib/network/standard-version';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'How We Make Money',
@@ -22,6 +24,9 @@ export default function HowWeMakeMoneyPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
+        <div className="mb-8">
+          <LastReviewed date={TRUST_PAGE_REVIEWED.howWeMakeMoney} />
+        </div>
         <div className="prose-trust">
           <p>
             {BRAND.name} publishes this page because independence claims are empty without revenue

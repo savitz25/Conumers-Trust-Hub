@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
     return [
       // Legal / policy aliases (/trust is a real Trust Center index page — do not redirect it)
       { source: '/independence', destination: '/promise', permanent: true },
+      { source: '/standard', destination: '/methodology', permanent: true },
+      { source: '/the-standard', destination: '/methodology', permanent: true },
       { source: '/editorial', destination: '/editorial-standards', permanent: true },
       { source: '/privacy-policy', destination: '/privacy', permanent: true },
       { source: '/terms-of-service', destination: '/terms', permanent: true },
