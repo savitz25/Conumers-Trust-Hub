@@ -54,6 +54,13 @@ export async function createXaiChatCompletion(messages: ChatMessage[]): Promise<
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
     console.error('[xai] chat error', res.status, errText.slice(0, 500));
+    if (res.status === 429) {
+      const err = new Error('RATE_LIMIT');
+      throw err;
+    }
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('AUTH_FAILED');
+    }
     throw new Error(`xAI request failed (${res.status})`);
   }
 

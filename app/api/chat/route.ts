@@ -76,6 +76,25 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.error('[api/chat]', err);
+    const code = err instanceof Error ? err.message : '';
+    if (code === 'RATE_LIMIT') {
+      return NextResponse.json(
+        {
+          error:
+            'The Concierge is busy right now (rate limit). Please wait a moment and try again.',
+        },
+        { status: 429 }
+      );
+    }
+    if (code === 'AUTH_FAILED') {
+      return NextResponse.json(
+        {
+          error:
+            'The Concierge is temporarily unavailable. Please try again later or browse /network.',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       {
         error:
