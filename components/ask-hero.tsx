@@ -20,11 +20,9 @@ export function AskHero() {
       aria-labelledby="ask-hero-heading"
       className="relative overflow-hidden border-b border-[#E2E8F0]"
       style={{
-        background:
-          'linear-gradient(165deg, #F8FAFC 0%, #FFFFFF 42%, #E0E7FF 160%)',
+        background: 'linear-gradient(165deg, #F8FAFC 0%, #FFFFFF 42%, #E0E7FF 160%)',
       }}
     >
-      {/* Soft indigo wash — controlled, non-salesy */}
       <div
         className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full blur-3xl"
         style={{ backgroundColor: 'rgb(79 70 229 / 0.07)' }}
@@ -37,17 +35,15 @@ export function AskHero() {
       />
 
       <div className="container-page relative py-12 sm:py-16 lg:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
           <div className="text-center lg:text-left">
-            <p
-              className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4F46E5]"
-            >
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4F46E5]">
               {ASK_HERO_EYEBROW}
             </p>
 
             <h1
               id="ask-hero-heading"
-              className="mt-3 text-balance text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl lg:text-[2.85rem] lg:leading-[1.1]"
+              className="mt-3 text-balance text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl lg:text-5xl lg:leading-tight"
             >
               {ASK_HERO_HEADLINE}
             </h1>
@@ -58,7 +54,7 @@ export function AskHero() {
 
             <div className="mx-auto mt-7 max-w-xl lg:mx-0">
               <ConciergeEntry />
-              <p className="mt-2.5 text-left text-xs leading-relaxed text-[#1E293B]/
+              <p className="mt-2.5 text-left text-xs leading-relaxed text-[#1E293B]">
                 No accounts. No personal data for routing. We match your situation to verified
                 research on the specialist hubs.
               </p>
@@ -86,7 +82,7 @@ export function AskHero() {
               {ASK_HERO_CHIPS.map((label) => (
                 <li
                   key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white/90 px-3 py-1.5 text-[12px] font-medium text-[#1E293B] shadow-sm sm:text-sm"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white/90 px-3 py-1.5 text-xs font-medium text-[#1E293B] shadow-sm sm:text-sm"
                 >
                   <span
                     className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#E0E7FF] text-[#4F46E5]"
@@ -102,7 +98,10 @@ export function AskHero() {
 
           <div className="relative mx-auto hidden max-w-md lg:block lg:max-w-none">
             <HeroIllustration className="mx-auto h-auto w-full max-w-[320px] opacity-95" />
-            <div className="mx-auto mt-2 max-w-[280px] rounded-2xl border border-[#E2E8F0] bg-white/90 px-4 py-3 text-center shadow-[0_8px_24px_-12px_rgb(10_37_64_/_0.12)]">
+            <div
+              className="mx-auto mt-2 max-w-[280px] rounded-2xl border border-[#E2E8F0] bg-white/90 px-4 py-3 text-center"
+              style={{ boxShadow: '0 8px 24px -12px rgb(10 37 64 / 0.12)' }}
+            >
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4F46E5]">
                 Not a marketplace
               </p>
