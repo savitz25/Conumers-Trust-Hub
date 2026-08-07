@@ -137,6 +137,81 @@ export const ASK_NETWORK_LINKS = [
   },
 ] as const;
 
+/** Phase 3 — How the network works (4 steps) */
+export const ASK_NETWORK_STEPS = [
+  {
+    step: 1,
+    title: 'Start with guidance on Ask',
+    body: 'Get verified context and a clear research path - not a sales pitch or lead form.',
+  },
+  {
+    step: 2,
+    title: 'Route to the right specialist hub',
+    body: 'Move, Lender, or Insurance Trust Hub - each owns deep research for its market.',
+  },
+  {
+    step: 3,
+    title: 'Do deep research on the hub',
+    body: 'Directories, tools, and public-source checks live on the specialist sites - not on Ask.',
+  },
+  {
+    step: 4,
+    title: 'You decide',
+    body: 'We cite sources. We do not sell placements or rank for pay. You choose what to do next.',
+  },
+] as const;
+
+/** Phase 3 — Trust & standards pillars */
+export const ASK_TRUST_PILLARS = [
+  {
+    title: 'Independent research',
+    body: 'Common ownership with separated research and listing rules across the network.',
+  },
+  {
+    title: 'Verified public sources',
+    body: 'FMCSA, NMLS, state DOI/NAIC pathways, and other primary registries - attributed and checkable.',
+  },
+  {
+    title: 'No paid placements',
+    body: 'Ranking position is not for sale. No lead fees for organic research ordering.',
+  },
+  {
+    title: 'Guidance vs directories',
+    body: 'Ask routes and explains. Specialist hubs host directories and tools. We cite. You decide.',
+  },
+] as const;
+
+/** Phase 3 — simple journey entry cards (in addition to multi-step journeys) */
+export const ASK_JOURNEY_ENTRIES = [
+  {
+    id: 'moving',
+    title: 'Moving',
+    description:
+      'Research FMCSA-licensed movers, verify DOT authority, and plan without lead-market pressure.',
+    href: 'https://www.movetrusthub.com',
+    hubLabel: 'Move Trust Hub',
+    prompt: 'Where are you going?',
+  },
+  {
+    id: 'home-financing',
+    title: 'Buying or refinancing a home',
+    description:
+      'Cross-check NMLS-verified lenders and public risk signals before you apply.',
+    href: 'https://www.lendertrusthub.com/local-lenders',
+    hubLabel: 'Lender Trust Hub',
+    prompt: 'What are you trying to accomplish?',
+  },
+  {
+    id: 'protecting',
+    title: 'Protecting what matters',
+    description:
+      'Educational research on licensed insurance options - not a policy marketplace.',
+    href: 'https://www.insurancetrusthub.com',
+    hubLabel: 'Insurance Trust Hub',
+    prompt: 'What are you trying to protect?',
+  },
+] as const;
+
 export const ASK_FOOTER_COLUMNS = [
   {
     title: 'Explore',
