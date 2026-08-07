@@ -53,36 +53,85 @@ export const ASK_TAGLINE = 'SOURCES. VERIFIED. YOU DECIDE.';
 export const ASK_INDEPENDENCE_LINE =
   'Independent research — no paid placements, no lead fees. Common ownership · Separated research and listing order.';
 
-/** Homepage hero (Phase 2) — knowledge & concierge parent, not a product marketplace */
+/** Homepage hero (Phase 2 simplified) — Concierge is the primary product */
 export const ASK_HERO_EYEBROW = 'ASK TRUST HUB  ·  KNOWLEDGE & CONCIERGE';
 
 export const ASK_HERO_HEADLINE = 'Ask. Verify. Decide with confidence.';
 
+/** Semantic descriptor under H1 */
+export const ASK_HERO_DESCRIPTOR =
+  'Independent consumer research for moving, insurance, and home lending.';
+
 /** Network philosophy — cite sources; consumer decides */
 export const ASK_HERO_PHILOSOPHY = 'We cite. You decide.';
 
+/** One clean parent-role line (do not restate below the fold) */
 export const ASK_HERO_SUPPORT =
-  'You are on the parent knowledge layer for the Trust Hub network. We help you understand verified public sources, then route you to Move Trust Hub, Lender Trust Hub, or Insurance Trust Hub for deep research. Not a marketplace. No paid placements. No lead fees.';
+  'The parent knowledge layer of the Trust Hub network: we clarify verified public sources, then route you to the right specialist hub for deep research.';
 
 export const ASK_HERO_PRIMARY_CTA = {
-  label: 'Get guided answers',
+  label: 'Ask the Concierge',
   href: '/#ask',
 } as const;
 
 export const ASK_HERO_SECONDARY_CTA = {
-  label: 'Explore life journeys',
+  label: 'Life journeys',
   href: '/#life-journeys',
 } as const;
 
-export const ASK_HERO_CHIPS = [
-  'We cite. You decide.',
-  'Independent research',
-  'No paid placements',
-  'Routes to specialist hubs',
+export const ASK_HERO_CONCIERGE_PLACEHOLDER = 'What are you trying to figure out?';
+
+export const ASK_HERO_CONCIERGE_MICRO =
+  'No accounts. No personal data for routing. We match your situation and send you to the right specialist hub.';
+
+/** Suggested situations under the Concierge input */
+export const ASK_CONCIERGE_EXAMPLES = [
+  { label: 'Moving', prompt: 'I am planning a move and need to research licensed movers.' },
+  { label: 'Buying a home', prompt: 'I am buying a home and want to research NMLS-verified lenders.' },
+  { label: 'Insurance', prompt: 'I need help researching licensed insurance options for coverage.' },
+  { label: 'Medicare', prompt: 'I want educational research on Medicare coverage options.' },
+  { label: 'Relocating', prompt: 'I am relocating and need help with movers and insurance.' },
+  { label: 'Refinance', prompt: 'I am considering refinancing and want independent lender research.' },
 ] as const;
 
-export const ASK_HERO_CONCIERGE_PLACEHOLDER =
-  'What are you preparing for? e.g. moving, a mortgage, Medicare…';
+/** Homepage specialist hub cards */
+export const ASK_HOME_HUBS = [
+  {
+    id: 'move' as const,
+    name: 'Move Trust Hub',
+    blurb: 'FMCSA-licensed movers, Verify DOT, and free Move Plan tools.',
+    href: 'https://www.movetrusthub.com',
+    cta: 'Research movers',
+    accent: '#FF5A1F',
+    soft: '#FFF4EF',
+  },
+  {
+    id: 'lender' as const,
+    name: 'Lender Trust Hub',
+    blurb: 'NMLS-oriented lender research, comparisons, and educational calculators.',
+    href: 'https://www.lendertrusthub.com',
+    cta: 'Research lenders',
+    accent: '#0D9488',
+    soft: '#F0FDFA',
+  },
+  {
+    id: 'insurance' as const,
+    name: 'Insurance Trust Hub',
+    blurb: 'DOI / license context, coverage research, and educational tools.',
+    href: 'https://www.insurancetrusthub.com',
+    cta: 'Research coverage',
+    accent: '#0284C7',
+    soft: '#E0F2FE',
+  },
+] as const;
+
+/** Short trust signals (homepage strip) */
+export const ASK_HOME_TRUST_SIGNALS = [
+  'We cite. You decide.',
+  'No paid placements',
+  'Primary public sources',
+  'Common ownership · Separated listing order',
+] as const;
 
 /** Parent → child hubs (hero network strip) */
 export const ASK_HERO_NETWORK_PILLS = [
@@ -97,11 +146,11 @@ export const ASK_HERO_NETWORK_PILLS = [
  */
 export const ASK_HEADER_NAV = [
   { href: '/#ask', label: 'Ask' },
-  { href: '/#life-journeys', label: 'Life journeys' },
+  { href: '/#trust-hubs', label: 'Hubs' },
+  { href: '/#life-journeys', label: 'Journeys' },
   { href: '/network', label: 'Network' },
   { href: '/methodology', label: 'Standard' },
-  { href: '/trust', label: 'Trust Center' },
-  { href: '/promise', label: 'Independence' },
+  { href: '/trust', label: 'Trust' },
 ] as const;
 
 /** Primary header CTA — opens xAI Concierge chat */
@@ -216,7 +265,8 @@ export const ASK_FOOTER_COLUMNS = [
   {
     title: 'Explore',
     links: [
-      { href: '/#ask', label: 'Ask a situation' },
+      { href: '/#ask', label: 'Ask Concierge' },
+      { href: '/#trust-hubs', label: 'Specialist hubs' },
       { href: '/#life-journeys', label: 'Life journeys' },
       { href: '/network', label: 'The Network' },
       { href: '/trust', label: 'Trust Center' },
