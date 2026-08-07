@@ -20,12 +20,18 @@ export function HomeTrustSignals() {
     >
       <div className="container-page">
         <div className="mx-auto max-w-3xl text-center">
+          <p
+            className="text-xs font-semibold uppercase tracking-[0.14em]"
+            style={{ color: ASK_BRAND.indigo }}
+          >
+            Trust
+          </p>
           <h2
             id="home-trust-heading"
-            className="text-xl font-semibold tracking-tight sm:text-2xl"
+            className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl"
             style={{ color: ASK_BRAND.navy }}
           >
-            Built for confidence — not conversion
+            We cite. You decide.
           </h2>
           <ul
             className="mt-6 flex flex-wrap items-center justify-center gap-2"

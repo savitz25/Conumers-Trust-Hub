@@ -125,12 +125,12 @@ export const ASK_HOME_HUBS = [
   },
 ] as const;
 
-/** Short trust signals (homepage strip) */
+/** Short trust signals (homepage strip) — high-confidence, no essay */
 export const ASK_HOME_TRUST_SIGNALS = [
-  'We cite. You decide.',
   'No paid placements',
-  'Primary public sources',
-  'Common ownership · Separated listing order',
+  'No lead fees',
+  'Primary-source verification',
+  'Transparent methodology',
 ] as const;
 
 /** Parent → child hubs (hero network strip) */
