@@ -104,12 +104,12 @@ export const ASK_HEADER_NAV = [
   { href: '/promise', label: 'Independence' },
 ] as const;
 
-/** Primary header CTA — AI Concierge / situation entry */
+/** Primary header CTA — opens xAI Concierge chat */
 export const ASK_HEADER_CONCIERGE = {
   label: 'AI Concierge',
-  shortLabel: 'Ask',
+  shortLabel: 'Ask AI',
   href: '/#ask',
-  description: 'Describe your situation — we route you to the right hub',
+  description: 'Open the Ask Trust Hub Concierge — independent guidance powered by xAI',
 } as const;
 
 /** Specialist hubs for Switch Hub + footer network */

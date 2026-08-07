@@ -2,50 +2,34 @@
 
 import { useCallback, useState, type FormEvent } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import {
   ASK_BRAND,
   ASK_HERO_CONCIERGE_PLACEHOLDER,
   ASK_HERO_PRIMARY_CTA,
   ASK_SHADOW,
 } from '@/lib/design/ask-design-system';
-import { matchSituationFromQuery } from '@/lib/situations';
 import { cn } from '@/lib/utils';
 
 type Props = {
   className?: string;
-  /** When true, primary submit uses full-width stacked layout (mobile hero) */
   stacked?: boolean;
 };
 
 /**
- * Hero Concierge entry — no PII, no accounts.
- * Matches keywords to situation routes or scrolls to the Ask grid.
+ * Hero Concierge entry — opens AI chat (xAI) with optional initial prompt.
  */
 export function ConciergeEntry({ className, stacked = false }: Props) {
   const [query, setQuery] = useState('');
+  const { openChat } = useAskChat();
 
   const onSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
       const q = query.trim();
-      const match = q ? matchSituationFromQuery(q) : null;
-
-      if (match) {
-        const el = document.getElementById(`situation-${match.id}`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          el.classList.add('ring-2', 'ring-[#4F46E5]', 'ring-offset-2');
-          window.setTimeout(() => {
-            el.classList.remove('ring-2', 'ring-[#4F46E5]', 'ring-offset-2');
-          }, 2200);
-          return;
-        }
-      }
-
-      const ask = document.getElementById('ask');
-      ask?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      openChat(q ? { initialPrompt: q } : undefined);
     },
-    [query]
+    [openChat, query]
   );
 
   return (

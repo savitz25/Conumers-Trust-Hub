@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, Search, Sparkles, X } from 'lucide-react';
+import { Menu, Sparkles, X } from 'lucide-react';
+import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { BrandLogo } from '@/components/brand-logo';
 import { SwitchHubMenu } from '@/components/switch-hub-menu';
 import {
@@ -14,12 +15,12 @@ import {
 import { cn } from '@/lib/utils';
 
 /**
- * Ask Trust Hub primary header — Phase 1.
- * Logo · knowledge nav · AI Concierge entry · Switch Hub · mobile drawer.
+ * Ask Trust Hub primary header — Phase 1 + AI Concierge chat open.
  */
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname() || '/';
+  const { openChat } = useAskChat();
 
   return (
     <header
@@ -47,9 +48,7 @@ export function Navbar() {
                 className={cn(
                   'rounded-md px-2.5 py-2 text-sm font-semibold transition-colors',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2',
-                  active
-                    ? 'text-[#4F46E5]'
-                    : 'text-[#0A2540] hover:text-[#4F46E5]'
+                  active ? 'text-[#4F46E5]' : 'text-[#0A2540] hover:text-[#4F46E5]'
                 )}
                 style={{ color: active ? ASK_BRAND.indigo : ASK_BRAND.navy }}
               >
@@ -60,33 +59,36 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href={ASK_HEADER_CONCIERGE.href}
+          <button
+            type="button"
+            onClick={() => openChat()}
             className="ask-cta hidden min-h-10 items-center gap-2 sm:inline-flex"
             title={ASK_HEADER_CONCIERGE.description}
           >
             <Sparkles className="h-4 w-4" aria-hidden />
             {ASK_HEADER_CONCIERGE.label}
-          </Link>
-          <Link
-            href={ASK_HEADER_CONCIERGE.href}
+          </button>
+          <button
+            type="button"
+            onClick={() => openChat()}
             className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-[#E2E8F0] bg-[#E0E7FF]/50 px-3 py-2 text-sm font-semibold text-[#0A2540] transition-colors hover:border-[#4F46E5]/30 hover:bg-[#E0E7FF] lg:hidden"
             title={ASK_HEADER_CONCIERGE.description}
           >
-            <Search className="h-4 w-4 text-[#4F46E5]" aria-hidden />
-            Ask
-          </Link>
+            <Sparkles className="h-4 w-4 text-[#4F46E5]" aria-hidden />
+            Ask AI
+          </button>
           <SwitchHubMenu />
         </div>
 
         <div className="flex items-center gap-1.5 md:hidden">
-          <Link
-            href={ASK_HEADER_CONCIERGE.href}
+          <button
+            type="button"
+            onClick={() => openChat()}
             className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl bg-[#4F46E5] text-white"
             aria-label={ASK_HEADER_CONCIERGE.label}
           >
             <Sparkles className="h-4 w-4" aria-hidden />
-          </Link>
+          </button>
           <button
             type="button"
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-[#0A2540]"
@@ -101,10 +103,7 @@ export function Navbar() {
       </div>
 
       {open ? (
-        <div
-          id="mobile-nav"
-          className="border-t border-[#E2E8F0] bg-white md:hidden"
-        >
+        <div id="mobile-nav" className="border-t border-[#E2E8F0] bg-white md:hidden">
           <nav aria-label="Mobile" className="container-page flex flex-col gap-1 py-4">
             {ASK_HEADER_NAV.map((item) => (
               <Link
@@ -116,14 +115,17 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href={ASK_HEADER_CONCIERGE.href}
+            <button
+              type="button"
               className="ask-cta mt-2 w-full"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                openChat();
+              }}
             >
               <Sparkles className="h-4 w-4" aria-hidden />
               {ASK_HEADER_CONCIERGE.label}
-            </Link>
+            </button>
             <div className="mt-3 border-t border-[#E2E8F0] pt-3">
               <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4F46E5]">
                 Switch Hub
