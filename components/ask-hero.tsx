@@ -26,11 +26,13 @@ export function AskHero() {
     >
       {/* Soft indigo wash — controlled, non-salesy */}
       <div
-        className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full bg-[#4F46E5]/[0.07] blur-3xl"
+        className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full blur-3xl"
+        style={{ backgroundColor: 'rgb(79 70 229 / 0.07)' }}
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-[#6B21A8]/[0.05] blur-3xl"
+        className="pointer-events-none absolute -bottom-28 -left-16 h-72 w-72 rounded-full blur-3xl"
+        style={{ backgroundColor: 'rgb(107 33 168 / 0.05)' }}
         aria-hidden
       />
 
