@@ -4,18 +4,18 @@ import { BRAND, BRAND_LOGO } from '@/lib/brand';
 
 interface BrandLogoProps {
   className?: string;
-  /** Use light wordmark on dark backgrounds (footer). */
+  /** Use light/glow wordmark on dark backgrounds (footer). */
   inverted?: boolean;
   priority?: boolean;
 }
 
 /**
- * Ask Trust Hub wordmark — same slot sizing as Move / Insurance / Lender hubs.
+ * Ask Trust Hub wordmark — multi-node transparent lockup.
  * Header: .hub-logo-slot (10rem → 12.5rem → 15rem × 3rem)
- * Footer: h-12 w-[192px] (matches TrustHubLogoImage footer)
+ * Footer: h-12 w-[192px]
  */
 export function BrandLogo({ className, inverted = false, priority = false }: BrandLogoProps) {
-  const src = inverted ? BRAND_LOGO.lightSrc : BRAND_LOGO.src;
+  const src = inverted ? BRAND_LOGO.lightSrc : BRAND_LOGO.headerSrc || BRAND_LOGO.src;
   const isHeader = !inverted;
   const displayW = isHeader ? 240 : 192;
   const displayH = isHeader ? 65 : 52;
@@ -24,8 +24,8 @@ export function BrandLogo({ className, inverted = false, priority = false }: Bra
     <Link
       href="/"
       className={cn(
-        'group flex shrink-0 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust focus-visible:ring-offset-2',
-        inverted && 'focus-visible:ring-offset-navy',
+        'group flex shrink-0 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2',
+        inverted && 'focus-visible:ring-offset-[#0A2540]',
         className
       )}
       aria-label={`${BRAND.name} home`}
@@ -36,7 +36,6 @@ export function BrandLogo({ className, inverted = false, priority = false }: Bra
           isHeader ? 'hub-logo-slot' : 'h-12 w-[192px]'
         )}
       >
-        {/* Native img preserves alpha; matches specialist hub logo rendering */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}

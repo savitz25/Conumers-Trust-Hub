@@ -148,6 +148,7 @@ export const REVENUE_MODEL = {
   ],
 } as const;
 
+/** @deprecated Prefer ASK_HEADER_NAV from lib/design/ask-design-system */
 export const NAV_PRIMARY = [
   { href: '/#ask', label: 'Ask' },
   { href: '/#life-journeys', label: 'Life journeys' },

@@ -1,7 +1,9 @@
 /** Parent network brand — asktrusthub.com */
 
+import { ASK_BRAND, ASK_TAGLINE } from '@/lib/design/ask-design-system';
+
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
-export const BRAND_LOGO_VERSION = '20260803ath';
+export const BRAND_LOGO_VERSION = '20260807ath';
 
 export const BRAND = {
   name: 'Ask Trust Hub',
@@ -9,21 +11,24 @@ export const BRAND = {
   legalName: 'Ask Trust Hub',
   domain: 'asktrusthub.com',
   url: 'https://www.asktrusthub.com',
-  tagline: 'Independent verification. Transparent methodology. Zero paid placements.',
+  tagline: ASK_TAGLINE,
   description:
     'Ask Trust Hub is the discovery and trust layer for Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub. Situation routing, independence policy, and methodology — not a provider directory.',
   email: 'hello@asktrusthub.com',
   foundingYear: 2025,
+  /** Design tokens (Phase 1) */
+  colors: ASK_BRAND,
 } as const;
 
-/** Site logo paths — transparent PNG wordmark + dark-bg variant. */
+/** Site logo paths — official multi-node transparent lockup. */
 export const BRAND_LOGO = {
   src: `/brand/logo.png?v=${BRAND_LOGO_VERSION}`,
+  headerSrc: `/brand/logo-header.png?v=${BRAND_LOGO_VERSION}`,
   lightSrc: `/brand/logo-light.png?v=${BRAND_LOGO_VERSION}`,
+  transparentSrc: `/brand/logo-transparent.png?v=${BRAND_LOGO_VERSION}`,
   alt: 'Ask Trust Hub',
-  /** Stacked wordmark + mark after trim (actual asset ~497×249) */
-  width: 497,
-  height: 249,
+  width: 720,
+  height: 243,
 } as const;
 
 export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {

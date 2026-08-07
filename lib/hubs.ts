@@ -27,8 +27,8 @@ export const TRUST_HUBS: TrustHub[] = [
     dataSources: ['FMCSA', 'SAFER', 'Attributed reviews'],
     description:
       'Research destination for FMCSA-licensed movers. Provider directories and tools are hosted on this domain.',
-    accent: '#1D4ED8',
-    accentSoft: '#EFF6FF',
+    accent: '#FF5A1F',
+    accentSoft: '#FFF4EF',
   },
   {
     id: 'insurance',
@@ -41,7 +41,7 @@ export const TRUST_HUBS: TrustHub[] = [
     dataSources: ['State DOI', 'NAIC', 'Attributed reviews'],
     description:
       'Research destination for state-licensed insurance agencies and brokers. Provider directories and tools are hosted on this domain.',
-    accent: '#0F766E',
+    accent: '#0D9488',
     accentSoft: '#F0FDFA',
   },
   {
@@ -55,8 +55,8 @@ export const TRUST_HUBS: TrustHub[] = [
     dataSources: ['NMLS', 'CFPB', 'FDIC / public records'],
     description:
       'Research destination for NMLS-verified lenders. Provider directories and tools are hosted on this domain.',
-    accent: '#4338CA',
-    accentSoft: '#EEF2FF',
+    accent: '#16A34A',
+    accentSoft: '#F0FDF4',
   },
 ];
 

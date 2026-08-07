@@ -22,11 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${inter.variable} font-sans antialiased`}
+        data-hub="ask"
         data-network-standard={ASK_NETWORK_STANDARD_VERSION}
       >
         {/* network-standard: {ASK_NETWORK_STANDARD_VERSION} */}
         <Navbar />
-        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <main className="min-h-[calc(100vh-4rem)] bg-[#F8FAFC]">{children}</main>
         <Footer />
         <Analytics />
       </body>

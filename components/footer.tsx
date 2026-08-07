@@ -1,100 +1,111 @@
 import Link from 'next/link';
 import { BrandLogo } from '@/components/brand-logo';
 import { BRAND } from '@/lib/brand';
-import { TRUST_HUBS } from '@/lib/hubs';
-import { FOOTER_ABOUT, FOOTER_LEGAL } from '@/lib/content';
+import {
+  ASK_FOOTER_COLUMNS,
+  ASK_INDEPENDENCE_LINE,
+  ASK_NETWORK_LINKS,
+} from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 
+/**
+ * Ask Trust Hub footer — Phase 1.
+ * Deep navy · light logo · network hubs · independence · legal.
+ */
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="border-t border-white/10 bg-navy text-navy-foreground">
-      <div className="container-page py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-1">
+    <footer className="border-t border-white/10 bg-[#0A2540] text-slate-200">
+      <div className="container-page py-12 sm:py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-4">
             <BrandLogo inverted />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
-              Parent network for consumer research on Move, Insurance, and Lender Trust Hub.
-              {ASK_NETWORK_OWNERSHIP_SHORT}. Product tools live on the specialist domains.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-300">
+              Knowledge &amp; concierge layer for the independent Trust Hub network.
+              Situation routing, the Standard, and independence policy — not a provider
+              marketplace.
             </p>
-            <p className="mt-3 text-xs text-white/45">
-              <a href="/promise" className="underline underline-offset-2 hover:text-white/70">
-                Independence policy
-              </a>
-              {' · '}
-              <a href={`mailto:${BRAND.email}`} className="hover:text-white/70">
+            <p className="mt-3 text-xs leading-relaxed text-slate-400 max-w-sm">
+              {ASK_INDEPENDENCE_LINE} {ASK_NETWORK_OWNERSHIP_SHORT}.
+            </p>
+            <p className="mt-4 text-sm">
+              <a
+                href={`mailto:${BRAND.email}`}
+                className="font-medium text-[#E0E7FF] underline-offset-2 hover:text-white hover:underline"
+              >
                 {BRAND.email}
               </a>
             </p>
           </div>
 
-          <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
-              Trust Hubs
-            </h4>
-            <ul className="space-y-2.5 text-sm text-white/65">
-              {TRUST_HUBS.map((hub) => (
-                <li key={hub.id}>
-                  {hub.status === 'live' ? (
-                    <a
-                      href={hub.url}
-                      className="transition-colors hover:text-white"
-                      rel="noopener noreferrer"
-                    >
-                      {hub.name}
-                    </a>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      {hub.name}
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-white/40">
-                        Soon
-                      </span>
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
+          {/* Network hubs */}
+          <div className="lg:col-span-2">
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
               Network
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/65">
-              {FOOTER_ABOUT.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="transition-colors hover:text-white">
-                    {item.label}
-                  </Link>
+            <ul className="space-y-2.5 text-sm text-slate-300">
+              {ASK_NETWORK_LINKS.map((hub) => (
+                <li key={hub.id}>
+                  <a
+                    href={hub.href}
+                    className="transition-colors hover:text-white"
+                    rel="noopener noreferrer"
+                  >
+                    {hub.label}
+                  </a>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/promise"
+                  className="font-medium text-[#E0E7FF] transition-colors hover:text-white"
+                >
+                  Independence Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
-              Methodology & legal
-            </h4>
-            <ul className="space-y-2.5 text-sm text-white/65">
-              {FOOTER_LEGAL.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="transition-colors hover:text-white">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Columns */}
+          {ASK_FOOTER_COLUMNS.map((col) => (
+            <div key={col.title} className="lg:col-span-2">
+              <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                {col.title}
+              </h4>
+              <ul className="space-y-2.5 text-sm text-slate-300">
+                {col.links.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="transition-colors hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="max-w-3xl text-xs leading-relaxed text-white/40">
+          <p className="max-w-3xl text-xs leading-relaxed text-slate-400">
             {BRAND.name} is an independent informational network. Not affiliated with, endorsed by,
             or a partner of listed providers. Confirm licensing and terms with primary regulators
-            (FMCSA, state DOI, NMLS) and the company before contractual commitment.
+            (FMCSA, state DOI, NMLS) and the company before contractual commitment. Specialist
+            directories and tools live on Move, Insurance, and Lender Trust Hub — not on this parent
+            site.
           </p>
-          <p className="mt-4 text-xs text-white/30">
-            © {new Date().getFullYear()} {BRAND.name}. {BRAND.tagline}
-          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-slate-500">
+              © {year} {BRAND.name}. {BRAND.tagline}
+            </p>
+            <p className="text-xs font-medium text-slate-400">
+              Independent research network — no paid placements
+            </p>
+          </div>
         </div>
       </div>
     </footer>

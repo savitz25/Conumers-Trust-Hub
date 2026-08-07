@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════
-   Ask Trust Hub — Thin Parent Design System
-   Institutional · Calm · Stripe / Linear / Consumer Reports
-   Deep navy + white + one restrained accent (teal)
+   Ask Trust Hub — Design System (Phase 1)
+   Insight Indigo · Soft Purple · Deep Navy · High-contrast ink
+   Tokens: lib/design/ask-design-system.ts
    ═══════════════════════════════════════════════════════════════ */
 
 @theme inline {
@@ -30,12 +30,17 @@
   --color-navy-foreground: hsl(var(--navy-foreground));
   --color-trust: hsl(var(--trust));
   --color-trust-foreground: hsl(var(--trust-foreground));
+  --color-indigo: #4f46e5;
+  --color-indigo-soft: #6b21a8;
+  --color-periwinkle: #e0e7ff;
+  --color-ink: #1e293b;
+  --color-canvas: #f8fafc;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
-  --shadow-soft: 0 1px 2px rgb(10 37 64 / 0.04), 0 4px 16px rgb(10 37 64 / 0.04);
-  --shadow-card: 0 1px 2px rgb(10 37 64 / 0.05), 0 8px 24px rgb(10 37 64 / 0.06);
+  --shadow-soft: 0 1px 2px rgb(10 37 64 / 0.04), 0 4px 16px rgb(10 37 64 / 0.05);
+  --shadow-card: 0 1px 2px rgb(10 37 64 / 0.05), 0 8px 24px rgb(10 37 64 / 0.07);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,32 +48,39 @@
 }
 
 @layer base {
-  :root {
-    /* Deep navy #0A2540 · white · restrained teal #0D9488 */
-    --background: 0 0% 100%;
-    --foreground: 209 73% 15%;
+  :root,
+  [data-hub='ask'] {
+    /* Canvas #F8FAFC · Ink #1E293B · Indigo #4F46E5 · Navy #0A2540 */
+    --background: 210 40% 98%; /* #F8FAFC */
+    --foreground: 215 28% 17%; /* ~#1E293B */
     --card: 0 0% 100%;
-    --card-foreground: 209 73% 15%;
+    --card-foreground: 215 28% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 209 73% 15%;
-    --primary: 209 73% 15%;
+    --popover-foreground: 215 28% 17%;
+    --primary: 239 84% 67%; /* #4F46E5 Insight Indigo */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 209 73% 15%;
-    --muted: 210 33% 97%;
-    --muted-foreground: 215 16% 42%;
-    --accent: 175 77% 31%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 226 100% 94%; /* periwinkle soft */
+    --secondary-foreground: 215 28% 17%;
+    --muted: 210 40% 96%;
+    /* High-contrast secondary text — not light gray */
+    --muted-foreground: 215 25% 27%; /* ~#334155 */
+    --accent: 226 100% 94%; /* Soft Periwinkle */
+    --accent-foreground: 243 75% 30%; /* deep indigo-violet */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 28% 90%;
-    --input: 214 28% 90%;
-    --ring: 175 77% 31%;
-    --navy: 209 73% 15%;
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%;
+    --navy: 209 73% 15%; /* #0A2540 */
     --navy-foreground: 0 0% 100%;
-    --trust: 175 77% 31%;
+    --trust: 239 84% 67%;
     --trust-foreground: 0 0% 100%;
-    --radius: 0.375rem;
+    --radius: 0.75rem; /* 12px cards */
+    --ask-indigo: #4f46e5;
+    --ask-purple: #6b21a8;
+    --ask-periwinkle: #e0e7ff;
+    --ask-navy: #0a2540;
+    --ask-ink: #1e293b;
   }
 }
 
@@ -83,13 +95,14 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    color: #1e293b;
     font-feature-settings: "ss01" 1, "cv11" 1, "kern" 1;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background: hsl(175 77% 31% / 0.15);
-    color: hsl(209 73% 15%);
+    background: rgb(79 70 229 / 0.15);
+    color: #0a2540;
   }
 }
 
@@ -99,7 +112,8 @@
   }
 
   .prose-trust {
-    @apply max-w-3xl text-[17px] leading-relaxed text-foreground/90;
+    @apply max-w-3xl text-[17px] leading-relaxed;
+    color: #1e293b;
   }
 
   .prose-trust p + p {
@@ -107,53 +121,93 @@
   }
 
   .prose-trust h2 {
-    @apply mt-12 mb-4 text-2xl font-semibold tracking-tight text-foreground;
+    @apply mt-12 mb-4 text-2xl font-semibold tracking-tight;
+    color: #0a2540;
   }
 
   .prose-trust h3 {
-    @apply mt-8 mb-3 text-lg font-semibold tracking-tight text-foreground;
+    @apply mt-8 mb-3 text-lg font-semibold tracking-tight;
+    color: #0a2540;
   }
 
   .prose-trust ul {
-    @apply mt-4 list-disc space-y-2 pl-5 text-foreground/90;
+    @apply mt-4 list-disc space-y-2 pl-5;
+    color: #1e293b;
   }
 
   .section-label {
-    @apply text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground;
+    @apply text-xs font-semibold uppercase tracking-[0.14em];
+    color: #4f46e5;
   }
 
   .section-title {
-    @apply text-3xl font-semibold tracking-tight text-foreground sm:text-4xl;
+    @apply text-3xl font-semibold tracking-tight sm:text-4xl;
+    color: #0a2540;
   }
 
   .section-lead {
-    @apply mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground;
+    @apply mt-4 max-w-2xl text-lg leading-relaxed;
+    color: #1e293b;
   }
 
   .card-surface {
     @apply border border-border/80 bg-card;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-soft);
   }
 
   .link-inline {
-    @apply font-medium text-navy underline-offset-4 hover:underline;
+    @apply font-medium underline-offset-4 hover:underline;
+    color: #4f46e5;
   }
 
+  /* Primary CTA — Insight Indigo (hard-coded so portal/menus stay correct) */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px -6px rgb(79 70 229 / 0.35);
+  }
+  .btn-primary:hover {
+    background-color: #6b21a8 !important;
+    color: #ffffff !important;
+  }
+  .btn-primary:focus-visible {
+    --tw-ring-color: #4f46e5;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    border-color: #e2e8f0;
+    background-color: #ffffff;
+    color: #0a2540;
+  }
+  .btn-secondary:hover {
+    background-color: #e0e7ff;
+    border-color: rgb(79 70 229 / 0.25);
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-navy transition-colors hover:text-foreground;
+    @apply inline-flex items-center justify-center gap-1.5 text-sm font-semibold transition-colors;
+    color: #4f46e5;
+  }
+  .btn-ghost:hover {
+    color: #6b21a8;
+  }
+
+  .ask-cta {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-colors;
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px -6px rgb(79 70 229 / 0.35);
+  }
+  .ask-cta:hover {
+    background-color: #6b21a8 !important;
   }
 }
 
 /*
- * Header logo slot — identical to MoveTrustHub / InsuranceTrustHub / LenderTrustHub
- * (.hub-logo-slot in monorepo critical.css)
+ * Header logo slot — same scale as Move / Insurance / Lender hubs
  * 10rem → 12.5rem (sm) → 15rem (lg), height 3rem
  */
 .hub-logo-slot {
@@ -182,4 +236,3 @@
     max-width: 15rem;
   }
 }
-
