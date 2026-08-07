@@ -17,13 +17,13 @@ export function LifeJourneysSection() {
       id="life-journeys"
       data-hub="ask"
       aria-labelledby="life-journeys-heading"
-      className="scroll-mt-24 border-b"
+      className="section-block scroll-mt-24 border-b"
       style={{
         borderColor: ASK_BRAND.border,
         backgroundColor: ASK_BRAND.white,
       }}
     >
-      <div className="container-page py-16 sm:py-20">
+      <div className="container-page">
         <div className="max-w-2xl">
           <p
             className="text-xs font-semibold uppercase tracking-[0.14em]"

@@ -12,13 +12,13 @@ export function TrustCenterStrip() {
       id="trust-center"
       data-hub="ask"
       aria-labelledby="trust-center-heading"
-      className="scroll-mt-24 border-b"
+      className="section-block scroll-mt-24 border-b"
       style={{
         borderColor: ASK_BRAND.border,
         backgroundColor: ASK_BRAND.canvas,
       }}
     >
-      <div className="container-page py-14 sm:py-16">
+      <div className="container-page">
         <div className="max-w-2xl">
           <p
             className="text-xs font-semibold uppercase tracking-[0.14em]"

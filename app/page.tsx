@@ -41,10 +41,10 @@ export default function HomePage() {
 
       <TrustCenterStrip />
 
-      <section data-hub="ask" style={{ backgroundColor: ASK_BRAND.white }}>
-        <div className="container-page py-14 sm:py-16">
+      <section data-hub="ask" className="section-block border-0" style={{ backgroundColor: ASK_BRAND.white }}>
+        <div className="container-page">
           <div
-            className="flex flex-col gap-6 rounded-2xl border p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10"
+            className="ask-card flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"
             style={{
               borderColor: ASK_BRAND.border,
               backgroundColor: ASK_BRAND.canvas,

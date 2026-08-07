@@ -62,8 +62,8 @@
     --secondary: 226 100% 94%; /* periwinkle soft */
     --secondary-foreground: 215 28% 17%;
     --muted: 210 40% 96%;
-    /* High-contrast secondary text — not light gray */
-    --muted-foreground: 215 25% 27%; /* ~#334155 */
+    /* High-contrast secondary text — never light gray body copy */
+    --muted-foreground: 215 28% 20%; /* ~#1E293B range */
     --accent: 226 100% 94%; /* Soft Periwinkle */
     --accent-foreground: 243 75% 30%; /* deep indigo-violet */
     --destructive: 0 72% 51%;
@@ -150,9 +150,39 @@
     color: #1e293b;
   }
 
+  /**
+   * Shared landing section rhythm (Phase final polish).
+   * Use on homepage blocks for consistent vertical spacing.
+   */
+  .section-block {
+    @apply scroll-mt-24 border-b;
+    border-color: #e2e8f0;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+  @media (min-width: 640px) {
+    .section-block {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-block {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+
+  .ask-card {
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgb(10 37 64 / 0.04), 0 4px 16px rgb(10 37 64 / 0.05);
+  }
+
   .card-surface {
     @apply border border-border/80 bg-card;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     box-shadow: var(--shadow-soft);
   }
 

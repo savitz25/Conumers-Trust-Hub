@@ -49,7 +49,7 @@ export function AskHero() {
         aria-hidden
       />
 
-      <div className="container-page relative py-12 sm:py-16 lg:py-20">
+      <div className="container-page relative py-14 sm:py-16 lg:py-20">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
           <div className="text-center lg:text-left">
             <p

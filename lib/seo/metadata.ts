@@ -26,9 +26,12 @@ export const rootLayoutMetadata: Metadata = {
   authors: [{ name: BRAND.name }],
   icons: {
     icon: [
+      { url: `/favicon.ico?v=${BRAND_LOGO_VERSION}`, sizes: 'any' },
       { url: `/favicon-16.png?v=${BRAND_LOGO_VERSION}`, sizes: '16x16', type: 'image/png' },
       { url: `/favicon-32.png?v=${BRAND_LOGO_VERSION}`, sizes: '32x32', type: 'image/png' },
+      { url: `/favicon-48.png?v=${BRAND_LOGO_VERSION}`, sizes: '48x48', type: 'image/png' },
       { url: `/icon-192.png?v=${BRAND_LOGO_VERSION}`, sizes: '192x192', type: 'image/png' },
+      { url: `/icon-512.png?v=${BRAND_LOGO_VERSION}`, sizes: '512x512', type: 'image/png' },
       { url: BRAND_LOGO.src, type: 'image/png' },
     ],
     apple: [

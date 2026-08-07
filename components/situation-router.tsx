@@ -32,9 +32,9 @@ export function SituationRouter() {
     <section
       id="ask"
       aria-labelledby="situation-router-heading"
-      className="scroll-mt-24 border-b border-[#E2E8F0] bg-[#F8FAFC]"
+      className="section-block scroll-mt-24 border-b border-[#E2E8F0] bg-[#F8FAFC]"
     >
-      <div className="container-page py-12 sm:py-16">
+      <div className="container-page">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4F46E5]">
             Guided situations

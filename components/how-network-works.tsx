@@ -16,13 +16,13 @@ export function HowNetworkWorks() {
       id="how-it-works"
       data-hub="ask"
       aria-labelledby="how-network-heading"
-      className="scroll-mt-24 border-b"
+      className="section-block scroll-mt-24 border-b"
       style={{
         borderColor: ASK_BRAND.border,
         background: `linear-gradient(180deg, ${ASK_BRAND.canvas} 0%, ${ASK_BRAND.white} 100%)`,
       }}
     >
-      <div className="container-page py-16 sm:py-20">
+      <div className="container-page">
         <div className="max-w-2xl">
           <p
             className="text-xs font-semibold uppercase tracking-[0.14em]"
