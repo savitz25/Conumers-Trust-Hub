@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Check, ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
-import { HeroIllustration } from '@/components/hero-illustration';
+import { BRAND_LOGO } from '@/lib/brand';
 import {
   ASK_BRAND,
   ASK_HERO_CHIPS,
@@ -181,10 +181,37 @@ export function AskHero() {
             </ul>
           </div>
 
-          <div className="relative mx-auto hidden max-w-md lg:block lg:max-w-none">
-            <HeroIllustration className="mx-auto h-auto w-full max-w-[320px] opacity-95" />
+          {/* Official logo lockup (bracket + multi-node hub) — not a decorative illustration */}
+          <div className="relative mx-auto flex w-full max-w-sm flex-col items-center lg:max-w-none">
             <div
-              className="mx-auto mt-2 max-w-[300px] rounded-2xl border bg-white px-4 py-3.5 text-center"
+              className="relative flex w-full items-center justify-center rounded-2xl px-6 py-8 sm:px-8 sm:py-10"
+              style={{
+                backgroundColor: ASK_BRAND.white,
+                border: `1px solid ${ASK_BRAND.border}`,
+                boxShadow: `0 8px 28px -12px rgb(79 70 229 / 0.18), ${ASK_SHADOW.soft}`,
+              }}
+            >
+              {/* Subtle indigo/purple wash behind logo only */}
+              <div
+                className="pointer-events-none absolute inset-4 rounded-2xl blur-2xl"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at center, rgb(79 70 229 / 0.08) 0%, rgb(107 33 168 / 0.04) 45%, transparent 70%)',
+                }}
+                aria-hidden
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={BRAND_LOGO.transparentSrc}
+                alt={BRAND_LOGO.alt}
+                width={BRAND_LOGO.width}
+                height={BRAND_LOGO.height}
+                className="relative z-[1] h-auto w-full max-w-[280px] object-contain object-center sm:max-w-[300px] lg:max-w-[320px]"
+                decoding="async"
+              />
+            </div>
+            <div
+              className="mx-auto mt-4 w-full max-w-[300px] rounded-2xl border bg-white px-4 py-3.5 text-center"
               style={{
                 borderColor: ASK_BRAND.border,
                 boxShadow: ASK_SHADOW.card,
