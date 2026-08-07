@@ -114,7 +114,7 @@ export function SituationRouter() {
         </p>
         <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
           <Link
-            href="/#life-journeys"
+            href="/journeys"
             className="font-semibold text-[#4F46E5] underline-offset-4 hover:text-[#6B21A8] hover:underline"
           >
             Life journeys

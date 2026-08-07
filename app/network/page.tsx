@@ -6,7 +6,7 @@ import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { BRAND } from '@/lib/brand';
-import { LIFE_JOURNEYS } from '@/lib/life-journeys';
+import { JOURNEY_PAGES } from '@/lib/growth/journeys';
 import {
   ASK_NETWORK_OWNERSHIP_LINE,
   ASK_NETWORK_OWNERSHIP_SHORT,
@@ -131,10 +131,10 @@ export default function NetworkPage() {
           </ol>
           <p className="mt-4 text-sm">
             <Link
-              href="/#life-journeys"
+              href="/journeys"
               className="font-semibold text-navy underline-offset-4 hover:underline"
             >
-              See ordered journeys on the homepage
+              See full life journey pages
             </Link>
           </p>
         </section>
@@ -178,12 +178,17 @@ export default function NetworkPage() {
             Example journeys
           </h2>
           <ul className="mt-4 space-y-3">
-            {LIFE_JOURNEYS.map((j) => (
+            {JOURNEY_PAGES.map((j) => (
               <li
-                key={j.id}
+                key={j.slug}
                 className="rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-sm"
               >
-                <span className="font-semibold text-foreground">{j.title}</span>
+                <Link
+                  href={`/journeys/${j.slug}`}
+                  className="font-semibold text-foreground underline-offset-4 hover:underline"
+                >
+                  {j.title}
+                </Link>
                 <span className="mt-0.5 block text-muted-foreground">
                   {j.steps.map((s) => s.hubLabel.replace(' Trust Hub', '')).join(' → ')}
                 </span>
@@ -196,8 +201,11 @@ export default function NetworkPage() {
           <Link href="/#ask" className="btn-primary">
             Situation router
           </Link>
-          <Link href="/#life-journeys" className="btn-secondary">
+          <Link href="/journeys" className="btn-secondary">
             Life journeys
+          </Link>
+          <Link href="/guides" className="btn-secondary">
+            Educational guides
           </Link>
           <Link href="/methodology" className="btn-secondary">
             The Ask Trust Hub Standard

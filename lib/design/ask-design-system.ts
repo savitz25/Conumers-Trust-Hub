@@ -76,7 +76,7 @@ export const ASK_HERO_PRIMARY_CTA = {
 
 export const ASK_HERO_SECONDARY_CTA = {
   label: 'Life journeys',
-  href: '/#life-journeys',
+  href: '/journeys',
 } as const;
 
 export const ASK_HERO_CONCIERGE_PLACEHOLDER = 'What are you trying to figure out?';
@@ -146,8 +146,8 @@ export const ASK_HERO_NETWORK_PILLS = [
  */
 export const ASK_HEADER_NAV = [
   { href: '/#ask', label: 'Ask' },
-  { href: '/#trust-hubs', label: 'Hubs' },
-  { href: '/#life-journeys', label: 'Journeys' },
+  { href: '/journeys', label: 'Journeys' },
+  { href: '/guides', label: 'Guides' },
   { href: '/network', label: 'Network' },
   { href: '/methodology', label: 'Standard' },
   { href: '/trust', label: 'Trust' },
@@ -230,44 +230,14 @@ export const ASK_TRUST_PILLARS = [
   },
 ] as const;
 
-/** Phase 3 — simple journey entry cards (in addition to multi-step journeys) */
-export const ASK_JOURNEY_ENTRIES = [
-  {
-    id: 'moving',
-    title: 'Moving',
-    description:
-      'Research FMCSA-licensed movers, verify DOT authority, and plan without lead-market pressure.',
-    href: 'https://www.movetrusthub.com',
-    hubLabel: 'Move Trust Hub',
-    prompt: 'Where are you going?',
-  },
-  {
-    id: 'home-financing',
-    title: 'Buying or refinancing a home',
-    description:
-      'Cross-check NMLS-verified lenders and public risk signals before you apply.',
-    href: 'https://www.lendertrusthub.com/local-lenders',
-    hubLabel: 'Lender Trust Hub',
-    prompt: 'What are you trying to accomplish?',
-  },
-  {
-    id: 'protecting',
-    title: 'Protecting what matters',
-    description:
-      'Educational research on licensed insurance options - not a policy marketplace.',
-    href: 'https://www.insurancetrusthub.com',
-    hubLabel: 'Insurance Trust Hub',
-    prompt: 'What are you trying to protect?',
-  },
-] as const;
-
 export const ASK_FOOTER_COLUMNS = [
   {
     title: 'Explore',
     links: [
       { href: '/#ask', label: 'Ask Concierge' },
       { href: '/#trust-hubs', label: 'Specialist hubs' },
-      { href: '/#life-journeys', label: 'Life journeys' },
+      { href: '/journeys', label: 'Life journeys' },
+      { href: '/guides', label: 'Guides' },
       { href: '/network', label: 'The Network' },
       { href: '/trust', label: 'Trust Center' },
       { href: '/about', label: 'About' },
@@ -281,7 +251,6 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/data-sources', label: 'Data Sources' },
       { href: '/promise', label: 'Independence Policy' },
       { href: '/how-we-make-money', label: 'How We Make Money' },
-      { href: '/data-sources', label: 'Data Sources' },
       { href: '/editorial-standards', label: 'Editorial Standards' },
       { href: '/corrections', label: 'Corrections' },
     ],

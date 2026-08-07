@@ -303,6 +303,12 @@ export default function MethodologyPage() {
           <Link href="/trust" className="underline-offset-4 hover:underline">
             Trust Center
           </Link>
+          <Link href="/guides" className="underline-offset-4 hover:underline">
+            Educational guides
+          </Link>
+          <Link href="/journeys" className="underline-offset-4 hover:underline">
+            Life journeys
+          </Link>
         </nav>
       </div>
     </>
