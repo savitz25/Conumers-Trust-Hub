@@ -55,7 +55,10 @@ export function buildOrganizationSchema() {
   };
 }
 
-/** Fragment specialist hubs can later embed for reciprocal parentOrganization. */
+/**
+ * Fragment specialist hubs embed as parentOrganization (implemented on Move, Lender, Insurance).
+ * Keep IDs stable: https://www.asktrusthub.com/#organization
+ */
 export function buildParentOrganizationReference() {
   return {
     '@type': 'Organization',
@@ -93,12 +96,16 @@ export function buildBreadcrumbSchema(items: { name: string; path: string }[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.name,
-      item: `${siteUrl}${item.path}`,
-    })),
+    itemListElement: items.map((item, index) => {
+      const path =
+        item.path === '/' ? '' : item.path.startsWith('/') ? item.path.replace(/\/+$/, '') : `/${item.path}`;
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: `${siteUrl}${path}`,
+      };
+    }),
   };
 }
 

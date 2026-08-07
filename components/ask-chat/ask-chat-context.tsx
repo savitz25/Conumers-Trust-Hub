@@ -8,6 +8,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
+import { trackEvent } from '@/lib/analytics/track';
 
 type AskChatContextValue = {
   open: boolean;
@@ -27,7 +29,14 @@ export function AskChatProvider({ children }: { children: ReactNode }) {
   const openChat = useCallback((opts?: { initialPrompt?: string }) => {
     const p = opts?.initialPrompt?.trim();
     if (p) setPendingPrompt(p);
-    setOpen(true);
+    setOpen((wasOpen) => {
+      if (!wasOpen) {
+        trackEvent(ANALYTICS_EVENTS.CONCIERGE_OPEN, {
+          has_prompt: Boolean(p),
+        });
+      }
+      return true;
+    });
   }, []);
 
   const closeChat = useCallback(() => {
@@ -35,7 +44,12 @@ export function AskChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleChat = useCallback(() => {
-    setOpen((v) => !v);
+    setOpen((v) => {
+      if (!v) {
+        trackEvent(ANALYTICS_EVENTS.CONCIERGE_OPEN, { has_prompt: false, via: 'toggle' });
+      }
+      return !v;
+    });
   }, []);
 
   const takeInitialPrompt = useCallback(() => {

@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: Props) {
     title: guide.metaTitle,
     description: guide.metaDescription,
     path: `/guides/${guide.slug}`,
+    type: 'article',
   });
 }
 
@@ -142,7 +143,11 @@ export default async function GuidePage({ params }: Props) {
         </div>
 
         <div className="mt-8">
-          <a href={guide.hubCta.href} rel="noopener noreferrer" className="btn-primary inline-flex">
+          <a
+            href={guide.hubCta.href}
+            rel="noopener noreferrer"
+            className="btn-primary inline-flex min-h-11 w-full justify-center sm:w-auto"
+          >
             {guide.hubCta.label}
             <ArrowUpRight className="h-4 w-4" aria-hidden />
           </a>

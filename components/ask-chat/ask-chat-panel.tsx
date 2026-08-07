@@ -5,6 +5,8 @@ import { Loader2, Send, Sparkles, X } from 'lucide-react';
 import { AiConciergeDisclosure } from '@/components/ask-chat/ai-disclosure';
 import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { ASK_CONCIERGE_WELCOME } from '@/lib/ai/system-prompt';
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
+import { trackEvent } from '@/lib/analytics/track';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +44,9 @@ export function AskChatPanel() {
     sendingRef.current = true;
     setError(null);
     setInput('');
+    trackEvent(ANALYTICS_EVENTS.CONCIERGE_SUBMIT, {
+      length: Math.min(text.length, 2000),
+    });
 
     const userMsg: UiMessage = { id: newId(), role: 'user', content: text };
     const prior = messagesRef.current;
@@ -251,7 +256,7 @@ export function AskChatPanel() {
               }}
               placeholder="Ask about moving, lending, insurance…"
               disabled={loading}
-              className="min-h-[44px] flex-1 resize-none rounded-xl border bg-white px-3 py-2.5 text-sm leading-snug focus:outline-none focus:ring-2 disabled:opacity-60"
+              className="min-h-11 flex-1 resize-none rounded-xl border bg-white px-3 py-2.5 text-base leading-snug focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-sm"
               style={{
                 borderColor: ASK_BRAND.border,
                 color: ASK_BRAND.ink,
@@ -260,7 +265,7 @@ export function AskChatPanel() {
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-white transition-opacity disabled:opacity-50"
+              className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl text-white transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:opacity-50"
               style={{ backgroundColor: ASK_BRAND.indigo }}
               aria-label="Send message"
             >

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { ClickTracker } from '@/components/analytics/click-tracker';
 import { AskChatShell } from '@/components/ask-chat/ask-chat-shell';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -28,6 +29,7 @@ export default function RootLayout({
       >
         {/* network-standard: {ASK_NETWORK_STANDARD_VERSION} */}
         <AskChatShell>
+          <ClickTracker />
           <Navbar />
           <main className="min-h-[calc(100vh-4rem)] bg-[#F8FAFC]">{children}</main>
           <Footer />

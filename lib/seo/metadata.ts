@@ -98,7 +98,10 @@ export function createPageMetadata({
   type?: 'website' | 'article';
   noIndex?: boolean;
 }): Metadata {
-  const normalized = path.startsWith('/') ? path : `/${path}`;
+  const withSlash = path.startsWith('/') ? path : `/${path}`;
+  // Canonical consistency: no trailing slash (matches next.config trailingSlash: false)
+  const normalized =
+    withSlash === '/' ? '/' : withSlash.replace(/\/+$/, '').replace(/\/+/g, '/');
   const url = `${siteUrl}${normalized === '/' ? '' : normalized}`;
   const ogImage = brandOgImageAbsoluteUrl(siteUrl);
 

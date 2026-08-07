@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: Props) {
     title: journey.metaTitle,
     description: journey.metaDescription,
     path: `/journeys/${journey.slug}`,
+    type: 'article',
   });
 }
 
@@ -118,7 +119,7 @@ export default async function JourneyPage({ params }: Props) {
               <a
                 href={step.href}
                 rel="noopener noreferrer"
-                className="btn-primary mt-6 inline-flex"
+                className="btn-primary mt-6 inline-flex min-h-11 w-full justify-center sm:w-auto"
               >
                 {step.cta}
                 <ArrowUpRight className="h-4 w-4" aria-hidden />
@@ -128,21 +129,29 @@ export default async function JourneyPage({ params }: Props) {
         </ol>
 
         <section
-          className="mt-12 max-w-3xl rounded-2xl border p-6"
-          style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}
+          className="mt-12 max-w-3xl rounded-2xl border p-5 sm:p-6"
+          style={{
+            borderColor: ASK_BRAND.border,
+            backgroundColor: ASK_BRAND.white,
+            boxShadow: ASK_SHADOW.soft,
+          }}
           aria-labelledby="limitations-heading"
         >
           <h2
             id="limitations-heading"
-            className="text-lg font-semibold"
+            className="text-lg font-semibold tracking-tight"
             style={{ color: ASK_BRAND.navy }}
           >
             What this page does not do
           </h2>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+          <ul className="mt-3 space-y-2.5 text-sm leading-relaxed sm:text-base" style={{ color: ASK_BRAND.ink }}>
             {journey.limitations.map((line) => (
-              <li key={line} className="flex gap-2">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#94A3B8]" aria-hidden />
+              <li key={line} className="flex gap-2.5">
+                <span
+                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: ASK_BRAND.indigo }}
+                  aria-hidden
+                />
                 <span>{line}</span>
               </li>
             ))}
