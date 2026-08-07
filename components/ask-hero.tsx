@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Check, ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
-import { BRAND_LOGO } from '@/lib/brand';
+import { BRAND_LOGO, BRAND_LOGO_VERSION } from '@/lib/brand';
 import {
   ASK_BRAND,
   ASK_HERO_CHIPS,
@@ -14,6 +14,9 @@ import {
   ASK_HERO_SUPPORT,
   ASK_SHADOW,
 } from '@/lib/design/ask-design-system';
+
+/** Official bracket + 4-point hub mark (transparent) for soft hero placement */
+const HERO_MARK_SRC = `/brand/ask-bracket-hub-mark.png?v=${BRAND_LOGO_VERSION}`;
 
 /**
  * Homepage hero - Knowledge and Concierge parent layer (Phase 2).
@@ -181,42 +184,42 @@ export function AskHero() {
             </ul>
           </div>
 
-          {/* Official logo lockup (bracket + multi-node hub) — not a decorative illustration */}
-          <div className="relative mx-auto flex w-full max-w-sm flex-col items-center lg:max-w-none">
-            <div
-              className="relative flex w-full items-center justify-center rounded-2xl px-6 py-8 sm:px-8 sm:py-10"
-              style={{
-                backgroundColor: ASK_BRAND.white,
-                border: `1px solid ${ASK_BRAND.border}`,
-                boxShadow: `0 8px 28px -12px rgb(79 70 229 / 0.18), ${ASK_SHADOW.soft}`,
-              }}
-            >
-              {/* Subtle indigo/purple wash behind logo only */}
+          {/* Soft official bracket + 4-point mark — ethereal, unboxed */}
+          <div className="relative mx-auto flex w-full max-w-md flex-col items-center lg:max-w-none">
+            <div className="relative flex w-full items-center justify-center py-4 sm:py-6 lg:py-8">
+              {/* Soft radial field (like original illustration, gentler) */}
               <div
-                className="pointer-events-none absolute inset-4 rounded-2xl blur-2xl"
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(100%,22rem)] w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full"
                 style={{
                   background:
-                    'radial-gradient(ellipse at center, rgb(79 70 229 / 0.08) 0%, rgb(107 33 168 / 0.04) 45%, transparent 70%)',
+                    'radial-gradient(circle at 50% 48%, rgb(79 70 229 / 0.10) 0%, rgb(107 33 168 / 0.06) 32%, rgb(224 231 255 / 0.35) 55%, transparent 72%)',
+                }}
+                aria-hidden
+              />
+              <div
+                className="pointer-events-none absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl sm:h-56 sm:w-56"
+                style={{
+                  background:
+                    'radial-gradient(circle, rgb(79 70 229 / 0.12) 0%, rgb(107 33 168 / 0.06) 50%, transparent 70%)',
                 }}
                 aria-hidden
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={BRAND_LOGO.transparentSrc}
+                src={HERO_MARK_SRC}
                 alt={BRAND_LOGO.alt}
-                width={BRAND_LOGO.width}
-                height={BRAND_LOGO.height}
-                className="relative z-[1] h-auto w-full max-w-[280px] object-contain object-center sm:max-w-[300px] lg:max-w-[320px]"
+                width={420}
+                height={420}
+                className="relative z-[1] h-auto w-[min(72vw,240px)] object-contain object-center sm:w-[260px] lg:w-[300px]"
+                style={{
+                  opacity: 0.92,
+                  filter:
+                    'drop-shadow(0 12px 28px rgb(79 70 229 / 0.12)) drop-shadow(0 4px 12px rgb(10 37 64 / 0.06))',
+                }}
                 decoding="async"
               />
             </div>
-            <div
-              className="mx-auto mt-4 w-full max-w-[300px] rounded-2xl border bg-white px-4 py-3.5 text-center"
-              style={{
-                borderColor: ASK_BRAND.border,
-                boxShadow: ASK_SHADOW.card,
-              }}
-            >
+            <div className="mx-auto mt-1 w-full max-w-[280px] px-2 text-center sm:mt-2">
               <p
                 className="text-[11px] font-semibold uppercase tracking-[0.12em]"
                 style={{ color: ASK_BRAND.indigo }}
