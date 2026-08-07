@@ -3,8 +3,10 @@
 import { useCallback, useState, type FormEvent } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import {
+  ASK_BRAND,
   ASK_HERO_CONCIERGE_PLACEHOLDER,
   ASK_HERO_PRIMARY_CTA,
+  ASK_SHADOW,
 } from '@/lib/design/ask-design-system';
 import { matchSituationFromQuery } from '@/lib/situations';
 import { cn } from '@/lib/utils';
@@ -48,12 +50,17 @@ export function ConciergeEntry({ className, stacked = false }: Props) {
 
   return (
     <form
+      data-hub="ask"
       onSubmit={onSubmit}
       className={cn(
-        'rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-[0_8px_28px_-10px_rgb(10_37_64_/_0.14)]',
+        'rounded-2xl border bg-white p-2',
         stacked ? 'flex flex-col gap-2' : 'flex flex-col gap-2 sm:flex-row sm:items-stretch',
         className
       )}
+      style={{
+        borderColor: ASK_BRAND.border,
+        boxShadow: ASK_SHADOW.card,
+      }}
       role="search"
       aria-label="Ask Concierge"
     >
@@ -62,7 +69,8 @@ export function ConciergeEntry({ className, stacked = false }: Props) {
       </label>
       <div className="relative min-w-0 flex-1">
         <Sparkles
-          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#4F46E5]"
+          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2"
+          style={{ color: ASK_BRAND.indigo }}
           aria-hidden
         />
         <input
@@ -75,19 +83,32 @@ export function ConciergeEntry({ className, stacked = false }: Props) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder={ASK_HERO_CONCIERGE_PLACEHOLDER}
           className={cn(
-            'h-12 w-full rounded-xl border-0 bg-[#F8FAFC] pl-10 pr-3 text-sm font-medium text-[#1E293B]',
-            'placeholder:text-[#64748B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/35',
-            'sm:text-[15px]'
+            'h-12 w-full rounded-xl border-0 pl-10 pr-3 text-sm font-medium sm:text-[15px]',
+            'focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/40'
           )}
+          style={{
+            backgroundColor: ASK_BRAND.canvas,
+            color: ASK_BRAND.ink,
+          }}
         />
       </div>
       <button
         type="submit"
         className={cn(
-          'inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-white transition-colors',
-          'bg-[#4F46E5] hover:bg-[#6B21A8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2',
-          stacked ? 'w-full' : 'w-full sm:w-auto'
+          'inline-flex h-12 min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-white transition-colors',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          stacked ? 'w-full' : 'w-full sm:w-auto sm:min-w-[11rem]'
         )}
+        style={{
+          backgroundColor: ASK_BRAND.indigo,
+          boxShadow: ASK_SHADOW.indigo,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = ASK_BRAND.purple;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = ASK_BRAND.indigo;
+        }}
       >
         {ASK_HERO_PRIMARY_CTA.label}
         <ArrowRight className="h-4 w-4" aria-hidden />

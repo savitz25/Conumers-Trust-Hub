@@ -53,13 +53,16 @@ export const ASK_TAGLINE = 'SOURCES. VERIFIED. YOU DECIDE.';
 export const ASK_INDEPENDENCE_LINE =
   'Independent research network — no paid placements, no lead fees.';
 
-/** Homepage hero (Phase 2) — knowledge & concierge, not a product marketplace */
+/** Homepage hero (Phase 2) — knowledge & concierge parent, not a product marketplace */
 export const ASK_HERO_EYEBROW = 'ASK TRUST HUB  ·  KNOWLEDGE & CONCIERGE';
 
 export const ASK_HERO_HEADLINE = 'Ask. Verify. Decide with confidence.';
 
+/** Network philosophy — cite sources; consumer decides */
+export const ASK_HERO_PHILOSOPHY = 'We cite. You decide.';
+
 export const ASK_HERO_SUPPORT =
-  'Independent knowledge and concierge for life’s biggest decisions — moving, home financing, insurance, and more. We help you understand verified public sources and route you to the right specialist hub. Not a marketplace. No paid placements. No lead fees.';
+  'You are on the parent knowledge layer for the Trust Hub network. We help you understand verified public sources, then route you to Move Trust Hub, Lender Trust Hub, or Insurance Trust Hub for deep research. Not a marketplace. No paid placements. No lead fees.';
 
 export const ASK_HERO_PRIMARY_CTA = {
   label: 'Get guided answers',
@@ -72,14 +75,21 @@ export const ASK_HERO_SECONDARY_CTA = {
 } as const;
 
 export const ASK_HERO_CHIPS = [
+  'We cite. You decide.',
   'Independent research',
-  'Verified sources',
   'No paid placements',
-  'Clear guidance, not sales',
+  'Routes to specialist hubs',
 ] as const;
 
 export const ASK_HERO_CONCIERGE_PLACEHOLDER =
   'What are you preparing for? e.g. moving, a mortgage, Medicare…';
+
+/** Parent → child hubs (hero network strip) */
+export const ASK_HERO_NETWORK_PILLS = [
+  { id: 'move', label: 'Move', href: 'https://www.movetrusthub.com' },
+  { id: 'lender', label: 'Lender', href: 'https://www.lendertrusthub.com' },
+  { id: 'insurance', label: 'Insurance', href: 'https://www.insurancetrusthub.com' },
+] as const;
 
 /**
  * Primary header nav (knowledge / concierge parent).
