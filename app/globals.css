@@ -223,6 +223,14 @@
   background: transparent !important;
 }
 
+/* Hero alignment helpers (avoid SWC issues with lg:justify-start in class strings) */
+@media (min-width: 1024px) {
+  .ask-hero-hub-row,
+  .ask-hero-chip-row {
+    justify-content: flex-start !important;
+  }
+}
+
 @media (min-width: 640px) {
   .hub-logo-slot {
     width: 12.5rem;

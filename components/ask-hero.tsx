@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Check, ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
@@ -15,10 +16,18 @@ import {
 } from '@/lib/design/ask-design-system';
 
 /**
- * Homepage hero — Knowledge & Concierge parent layer (Phase 2).
- * Connects to Move / Lender / Insurance; “We cite. You decide.”
+ * Homepage hero - Knowledge and Concierge parent layer (Phase 2).
+ * Connects to Move / Lender / Insurance; We cite. You decide.
  */
 export function AskHero() {
+  const leftStack: CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+  };
+
   return (
     <section
       data-hub="ask"
@@ -72,7 +81,6 @@ export function AskHero() {
               {ASK_HERO_SUPPORT}
             </p>
 
-            {/* Parent → specialist hubs */}
             <div className="mx-auto mt-5 max-w-xl lg:mx-0">
               <p
                 className="text-left text-[11px] font-semibold uppercase tracking-[0.12em]"
@@ -81,8 +89,9 @@ export function AskHero() {
                 Parent knowledge layer · connects to
               </p>
               <ul
-                className="mt-2 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
+                className="mt-2 ask-hero-hub-row"
                 aria-label="Specialist Trust Hubs"
+                style={leftStack}
               >
                 {ASK_HERO_NETWORK_PILLS.map((hub) => (
                   <li key={hub.id}>
@@ -115,11 +124,14 @@ export function AskHero() {
                 style={{ color: ASK_BRAND.ink }}
               >
                 No accounts. No personal data for routing. We match your situation, cite the
-                research path, and send you to the right specialist hub — you decide.
+                research path, and send you to the right specialist hub - you decide.
               </p>
             </div>
 
-            <div className="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:justify-start">
+            <div
+              className="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+              style={{ justifyContent: 'center' }}
+            >
               <Link
                 href={ASK_HERO_SECONDARY_CTA.href}
                 className="inline-flex min-h-11 items-center justify-center rounded-xl border bg-white px-5 text-sm font-semibold transition-colors sm:min-h-10"
@@ -140,13 +152,14 @@ export function AskHero() {
             </div>
 
             <ul
-              className="mt-8 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
+              className="mt-8 ask-hero-chip-row"
               aria-label="Why Ask Trust Hub"
+              style={leftStack}
             >
               {ASK_HERO_CHIPS.map((label) => (
                 <li
                   key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full border bg-white/90 px-3 py-1.5 text-xs font-medium shadow-sm sm:text-sm"
+                  className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1.5 text-xs font-medium shadow-sm sm:text-sm"
                   style={{
                     borderColor: ASK_BRAND.border,
                     color: ASK_BRAND.ink,
@@ -160,7 +173,7 @@ export function AskHero() {
                     }}
                     aria-hidden
                   >
-                    <Check className="h-2.5 w-2.5 stroke-[3]" />
+                    <Check className="h-2.5 w-2.5" strokeWidth={3} />
                   </span>
                   {label}
                 </li>
@@ -171,7 +184,7 @@ export function AskHero() {
           <div className="relative mx-auto hidden max-w-md lg:block lg:max-w-none">
             <HeroIllustration className="mx-auto h-auto w-full max-w-[320px] opacity-95" />
             <div
-              className="mx-auto mt-2 max-w-[300px] rounded-2xl border bg-white/95 px-4 py-3.5 text-center"
+              className="mx-auto mt-2 max-w-[300px] rounded-2xl border bg-white px-4 py-3.5 text-center"
               style={{
                 borderColor: ASK_BRAND.border,
                 boxShadow: ASK_SHADOW.card,
@@ -184,7 +197,7 @@ export function AskHero() {
                 {ASK_HERO_PHILOSOPHY}
               </p>
               <p className="mt-1.5 text-sm leading-snug" style={{ color: ASK_BRAND.ink }}>
-                Sources first. Specialist hubs for depth. You choose — never a paid ranking or lead
+                Sources first. Specialist hubs for depth. You choose - never a paid ranking or lead
                 marketplace.
               </p>
               <p
