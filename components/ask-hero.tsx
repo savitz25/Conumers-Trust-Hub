@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Check, ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
-import { BRAND_LOGO, BRAND_LOGO_VERSION } from '@/lib/brand';
+import { HeroIllustration } from '@/components/hero-illustration';
 import {
   ASK_BRAND,
   ASK_HERO_CHIPS,
@@ -14,9 +14,6 @@ import {
   ASK_HERO_SUPPORT,
   ASK_SHADOW,
 } from '@/lib/design/ask-design-system';
-
-/** Official bracket + 4-point hub mark (transparent) for soft hero placement */
-const HERO_MARK_SRC = `/brand/ask-bracket-hub-mark.png?v=${BRAND_LOGO_VERSION}`;
 
 /**
  * Homepage hero - Knowledge and Concierge parent layer (Phase 2).
@@ -184,42 +181,16 @@ export function AskHero() {
             </ul>
           </div>
 
-          {/* Soft official bracket + 4-point mark — ethereal, unboxed */}
-          <div className="relative mx-auto flex w-full max-w-md flex-col items-center lg:max-w-none">
-            <div className="relative flex w-full items-center justify-center py-4 sm:py-6 lg:py-8">
-              {/* Soft radial field (like original illustration, gentler) */}
-              <div
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(100%,22rem)] w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{
-                  background:
-                    'radial-gradient(circle at 50% 48%, rgb(79 70 229 / 0.10) 0%, rgb(107 33 168 / 0.06) 32%, rgb(224 231 255 / 0.35) 55%, transparent 72%)',
-                }}
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl sm:h-56 sm:w-56"
-                style={{
-                  background:
-                    'radial-gradient(circle, rgb(79 70 229 / 0.12) 0%, rgb(107 33 168 / 0.06) 50%, transparent 70%)',
-                }}
-                aria-hidden
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={HERO_MARK_SRC}
-                alt={BRAND_LOGO.alt}
-                width={420}
-                height={420}
-                className="relative z-[1] h-auto w-[min(72vw,240px)] object-contain object-center sm:w-[260px] lg:w-[300px]"
-                style={{
-                  opacity: 0.92,
-                  filter:
-                    'drop-shadow(0 12px 28px rgb(79 70 229 / 0.12)) drop-shadow(0 4px 12px rgb(10 37 64 / 0.06))',
-                }}
-                decoding="async"
-              />
-            </div>
-            <div className="mx-auto mt-1 w-full max-w-[280px] px-2 text-center sm:mt-2">
+          {/* Original soft circular multi-node illustration (pre logo experiments) */}
+          <div className="relative mx-auto hidden max-w-md lg:block lg:max-w-none">
+            <HeroIllustration className="mx-auto h-auto w-full max-w-[320px] opacity-95" />
+            <div
+              className="mx-auto mt-2 max-w-[300px] rounded-2xl border bg-white px-4 py-3.5 text-center"
+              style={{
+                borderColor: ASK_BRAND.border,
+                boxShadow: ASK_SHADOW.card,
+              }}
+            >
               <p
                 className="text-[11px] font-semibold uppercase tracking-[0.12em]"
                 style={{ color: ASK_BRAND.indigo }}
