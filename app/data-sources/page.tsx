@@ -166,13 +166,16 @@ export default function DataSourcesPage() {
           </p>
           <p className="mt-8 flex flex-wrap gap-4 not-prose">
             <Link href="/methodology" className="btn-primary">
-              The Standard
+              Read the Ask Trust Hub Standard
             </Link>
             <Link href="/promise" className="btn-secondary">
               Independence policy
             </Link>
             <Link href="/corrections" className="btn-secondary">
-              Corrections
+              Report a correction
+            </Link>
+            <Link href="/editorial-standards" className="btn-secondary">
+              Editorial standards
             </Link>
           </p>
         </div>

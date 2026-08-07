@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
@@ -10,6 +11,7 @@ import {
   ASK_NETWORK_OWNERSHIP_LINE,
   ASK_NETWORK_OWNERSHIP_SHORT,
 } from '@/lib/network/standard-version';
+import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
@@ -61,8 +63,9 @@ export default function NetworkPage() {
       />
 
       <div className="container-page py-14 sm:py-16">
-        <div className="mb-6">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <TrustMark />
+          <LastReviewed date={TRUST_PAGE_REVIEWED.network} />
         </div>
         <p className="max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
           {ASK_NETWORK_OWNERSHIP_LINE} {BRAND.name} is the parent trust layer and discovery surface.
@@ -71,6 +74,20 @@ export default function NetworkPage() {
         </p>
         <p className="mt-3 max-w-2xl text-sm font-medium text-foreground/80">
           {ASK_NETWORK_OWNERSHIP_SHORT}
+        </p>
+        <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold not-prose">
+          <Link href="/methodology" className="text-navy underline-offset-4 hover:underline">
+            Ask Trust Hub Standard
+          </Link>
+          <Link href="/data-sources" className="text-navy underline-offset-4 hover:underline">
+            Data sources library
+          </Link>
+          <Link href="/promise" className="text-navy underline-offset-4 hover:underline">
+            Independence policy
+          </Link>
+          <Link href="/who-we-are" className="text-navy underline-offset-4 hover:underline">
+            Who we are
+          </Link>
         </p>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           “Independence” here means no paid placements and research ordering that is not for sale —

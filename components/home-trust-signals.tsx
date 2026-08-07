@@ -56,29 +56,39 @@ export function HomeTrustSignals() {
               </li>
             ))}
           </ul>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm font-semibold">
-            <Link
-              href="/promise"
-              className="underline-offset-4 hover:underline"
-              style={{ color: ASK_BRAND.indigo }}
-            >
-              Independence Policy
-            </Link>
-            <Link
-              href="/trust"
-              className="underline-offset-4 hover:underline"
-              style={{ color: ASK_BRAND.indigo }}
-            >
-              Trust Center
-            </Link>
+          <nav
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold"
+            aria-label="Trust infrastructure"
+          >
             <Link
               href="/methodology"
               className="underline-offset-4 hover:underline"
               style={{ color: ASK_BRAND.indigo }}
             >
-              The Standard
+              Read the Ask Trust Hub Standard
             </Link>
-          </div>
+            <Link
+              href="/data-sources"
+              className="underline-offset-4 hover:underline"
+              style={{ color: ASK_BRAND.indigo }}
+            >
+              Browse the data sources library
+            </Link>
+            <Link
+              href="/promise"
+              className="underline-offset-4 hover:underline"
+              style={{ color: ASK_BRAND.indigo }}
+            >
+              Independence policy (no paid placements)
+            </Link>
+            <Link
+              href="/trust"
+              className="underline-offset-4 hover:underline"
+              style={{ color: ASK_BRAND.navy }}
+            >
+              Trust Center index
+            </Link>
+          </nav>
         </div>
       </div>
     </section>

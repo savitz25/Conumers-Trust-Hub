@@ -78,10 +78,16 @@ export default function EditorialStandardsPage() {
           </p>
           <p className="mt-8 flex flex-wrap gap-3 not-prose">
             <Link href="/corrections" className="btn-primary">
-              Corrections
+              Corrections policy
             </Link>
             <Link href="/methodology" className="btn-secondary">
-              Methodology
+              Ask Trust Hub Standard
+            </Link>
+            <Link href="/promise" className="btn-secondary">
+              Independence policy
+            </Link>
+            <Link href="/data-sources" className="btn-secondary">
+              Data sources
             </Link>
           </p>
         </div>

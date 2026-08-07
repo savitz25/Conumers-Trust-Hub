@@ -278,21 +278,27 @@ export default function MethodologyPage() {
         </section>
 
         <nav
-          className="mt-12 flex flex-wrap gap-x-4 gap-y-2 border-t pt-8 text-sm font-semibold"
+          className="mt-12 flex flex-col gap-3 border-t pt-8 text-sm font-semibold sm:flex-row sm:flex-wrap sm:gap-x-5 sm:gap-y-2"
           style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
           aria-label="Related Trust Center pages"
         >
           <Link href="/data-sources" className="underline-offset-4 hover:underline">
-            Data sources
+            Primary data sources library
           </Link>
           <Link href="/promise" className="underline-offset-4 hover:underline">
-            Independence
+            Independence policy
+          </Link>
+          <Link href="/editorial-standards" className="underline-offset-4 hover:underline">
+            Editorial standards
           </Link>
           <Link href="/how-we-make-money" className="underline-offset-4 hover:underline">
             How we make money
           </Link>
           <Link href="/corrections" className="underline-offset-4 hover:underline">
-            Corrections
+            Corrections policy
+          </Link>
+          <Link href="/who-we-are" className="underline-offset-4 hover:underline">
+            Who we are
           </Link>
           <Link href="/trust" className="underline-offset-4 hover:underline">
             Trust Center

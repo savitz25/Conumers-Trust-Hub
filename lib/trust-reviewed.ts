@@ -9,6 +9,7 @@ export const TRUST_PAGE_REVIEWED = {
   corrections: '2026-08-07',
   howWeMakeMoney: '2026-08-07',
   trust: '2026-08-07',
+  network: '2026-08-07',
 } as const;
 
 export function formatReviewDate(iso: string): string {
