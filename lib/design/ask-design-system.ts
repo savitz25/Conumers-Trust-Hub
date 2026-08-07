@@ -51,7 +51,7 @@ export const ASK_SPACE = {
 export const ASK_TAGLINE = 'SOURCES. VERIFIED. YOU DECIDE.';
 
 export const ASK_INDEPENDENCE_LINE =
-  'Independent research network — no paid placements, no lead fees.';
+  'Independent research — no paid placements, no lead fees. Common ownership · Separated research and listing order.';
 
 /** Homepage hero (Phase 2) — knowledge & concierge parent, not a product marketplace */
 export const ASK_HERO_EYEBROW = 'ASK TRUST HUB  ·  KNOWLEDGE & CONCIERGE';

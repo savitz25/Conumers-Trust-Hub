@@ -26,7 +26,7 @@ export type SituationRoute = {
 export const SITUATION_PROMPT = 'What are you preparing for?' as const;
 
 export const SITUATION_SUBCOPY =
-  'Independent research · no paid placements · we route you to the right specialist hub' as const;
+  'Common ownership · Separated research and listing order · No paid placements · We route you to the right specialist hub' as const;
 
 /**
  * Lightweight keyword match for hero Concierge — no server, no PII.

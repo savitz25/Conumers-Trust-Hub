@@ -3,7 +3,7 @@
 import { ASK_BRAND, ASK_TAGLINE } from '@/lib/design/ask-design-system';
 
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
-export const BRAND_LOGO_VERSION = '20260807ath3';
+export const BRAND_LOGO_VERSION = '20260807ath-p1';
 
 export const BRAND = {
   name: 'Ask Trust Hub',
@@ -13,7 +13,7 @@ export const BRAND = {
   url: 'https://www.asktrusthub.com',
   tagline: ASK_TAGLINE,
   description:
-    'Ask Trust Hub is the discovery and trust layer for Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub. Situation routing, independence policy, and methodology — not a provider directory.',
+    'Ask Trust Hub is the parent knowledge and trust layer for Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub under common ownership. Situation routing, independence policy, and methodology — not a provider directory. Separated research and listing order. No paid placements.',
   email: 'hello@asktrusthub.com',
   foundingYear: 2025,
   /** Design tokens (Phase 1) */

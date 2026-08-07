@@ -1,24 +1,35 @@
 import type { Metadata } from 'next';
 import { BRAND, BRAND_LOGO, BRAND_LOGO_VERSION, brandLogoAbsoluteUrl } from '@/lib/brand';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url;
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
+
+/** Homepage — entity-rich title & description (Phase 1 integrity). */
+export const HOMEPAGE_TITLE =
+  'Ask Trust Hub | Independent Consumer Research for Moving, Insurance & Lending';
+
+export const HOMEPAGE_DESCRIPTION =
+  'Independent consumer research network. We help you understand verified public sources and route you to specialist research on Move, Insurance, and Lender Trust Hub — no paid placements, no lead fees.';
+
+/** Default share image (1200×630) — prefer dedicated OG art over logo crop. */
+export function brandOgImageAbsoluteUrl(baseUrl: string = siteUrl): string {
+  return `${baseUrl.replace(/\/$/, '')}/og-default.png?v=${BRAND_LOGO_VERSION}`;
+}
 
 export const rootLayoutMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: BRAND.name,
   title: {
-    default: `${BRAND.name} — What are you preparing for?`,
+    default: HOMEPAGE_TITLE,
     template: `%s | ${BRAND.name}`,
   },
-  description:
-    'Independent research network for moving, insurance, and lending. Answer what you’re preparing for — we route you to Move Trust Hub, Insurance Trust Hub, or Lender Trust Hub. No paid placements. No directories on this site.',
+  description: HOMEPAGE_DESCRIPTION,
   keywords: [
     'Ask Trust Hub',
     'independent consumer research',
-    'MoveTrustHub',
-    'InsuranceTrustHub',
-    'LenderTrustHub',
-    'zero paid placements',
+    'Move Trust Hub',
+    'Insurance Trust Hub',
+    'Lender Trust Hub',
+    'no paid placements',
     'FMCSA',
     'NMLS',
     'DOI verification',
@@ -43,63 +54,84 @@ export const rootLayoutMetadata: Metadata = {
     ],
     shortcut: [`/favicon-32.png?v=${BRAND_LOGO_VERSION}`],
   },
-  manifest: '/manifest.webmanifest',
+  manifest: `/manifest.webmanifest?v=${BRAND_LOGO_VERSION}`,
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
     siteName: BRAND.name,
-    title: `${BRAND.name} — What are you preparing for?`,
-    description:
-      'Route to the right specialist Trust Hub. Independent verification. Zero paid placements.',
+    title: HOMEPAGE_TITLE,
+    description: HOMEPAGE_DESCRIPTION,
     images: [
       {
-        url: brandLogoAbsoluteUrl(siteUrl),
-        width: BRAND_LOGO.width,
-        height: BRAND_LOGO.height,
-        alt: BRAND_LOGO.alt,
+        url: brandOgImageAbsoluteUrl(siteUrl),
+        width: 1200,
+        height: 630,
+        alt: 'Ask Trust Hub — independent consumer research network',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: BRAND.name,
-    description: BRAND.tagline,
-    images: [brandLogoAbsoluteUrl(siteUrl)],
+    title: HOMEPAGE_TITLE,
+    description: HOMEPAGE_DESCRIPTION,
+    images: [brandOgImageAbsoluteUrl(siteUrl)],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: siteUrl },
 };
 
+/**
+ * Per-page metadata with unique title, description, self-referencing canonical,
+ * and matching Open Graph + Twitter tags.
+ */
 export function createPageMetadata({
   title,
   description,
   path,
+  type = 'website',
+  noIndex = false,
 }: {
   title: string;
   description: string;
   path: string;
+  type?: 'website' | 'article';
+  noIndex?: boolean;
 }): Metadata {
-  const url = `${siteUrl}${path}`;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  const url = `${siteUrl}${normalized === '/' ? '' : normalized}`;
+  const ogImage = brandOgImageAbsoluteUrl(siteUrl);
+
   return {
     title,
     description,
     alternates: { canonical: url },
     openGraph: {
+      type,
+      locale: 'en_US',
+      siteName: BRAND.name,
       title,
       description,
       url,
-      siteName: BRAND.name,
       images: [
         {
-          url: brandLogoAbsoluteUrl(siteUrl),
-          width: BRAND_LOGO.width,
-          height: BRAND_LOGO.height,
-          alt: BRAND_LOGO.alt,
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
         },
       ],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+    robots: noIndex
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
   };
 }
 
-export { siteUrl };
+export { siteUrl, brandLogoAbsoluteUrl };

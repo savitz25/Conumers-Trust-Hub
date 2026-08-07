@@ -14,7 +14,7 @@ import {
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
   description:
-    'The Ask Trust Hub network: Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub — independent research destinations with zero paid placements. How life journeys work across hubs.',
+    'The Ask Trust Hub network: Move, Insurance, and Lender Trust Hub under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
   path: '/network',
 });
 

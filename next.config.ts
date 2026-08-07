@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Prefer trailingSlash false + host redirects handled at edge (Vercel www primary).
+  trailingSlash: false,
   images: {
     formats: ['image/avif', 'image/webp'],
   },

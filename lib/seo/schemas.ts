@@ -1,11 +1,16 @@
 import { BRAND, FOUNDER, brandLogoAbsoluteUrl } from '@/lib/brand';
 import { TRUST_HUBS } from '@/lib/hubs';
+import { ASK_NETWORK_OWNERSHIP_LINE, ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 import { siteUrl } from '@/lib/seo/metadata';
 
 const orgId = `${siteUrl}/#organization`;
 const websiteId = `${siteUrl}/#website`;
 const founderId = `${siteUrl}/who-we-are#founder`;
 
+/**
+ * Parent Organization JSON-LD for Ask Trust Hub.
+ * Represents common-ownership network structure; not three unaffiliated companies.
+ */
 export function buildOrganizationSchema() {
   return {
     '@type': 'Organization',
@@ -15,8 +20,9 @@ export function buildOrganizationSchema() {
     url: siteUrl,
     logo: brandLogoAbsoluteUrl(siteUrl),
     email: BRAND.email,
-    description: BRAND.description,
+    description: `${BRAND.description} ${ASK_NETWORK_OWNERSHIP_LINE}`,
     foundingDate: String(BRAND.foundingYear),
+    slogan: ASK_NETWORK_OWNERSHIP_SHORT,
     founder: {
       '@type': 'Person',
       '@id': founderId,
@@ -31,24 +37,31 @@ export function buildOrganizationSchema() {
       areaServed: 'US',
       availableLanguage: 'English',
     },
+    /** Specialist domains as related entities under the parent brand. */
     sameAs: TRUST_HUBS.map((h) => h.url),
-    // Explicit sub-organizations (prose names) for the three live hubs
-    subOrganization: TRUST_HUBS.map((hub) => {
-      const proseName =
-        hub.id === 'move'
-          ? 'Move Trust Hub'
-          : hub.id === 'insurance'
-            ? 'Insurance Trust Hub'
-            : 'Lender Trust Hub';
-      return {
-        '@type': 'Organization',
-        '@id': `${hub.url}/#organization`,
-        name: proseName,
-        url: hub.url,
-        description: hub.description,
-        parentOrganization: { '@id': orgId },
-      };
-    }),
+    /**
+     * Specialist research sites under common ownership.
+     * Each subOrganization includes parentOrganization for reciprocal graph completeness
+     * (specialist sites should later embed parentOrganization pointing here).
+     */
+    subOrganization: TRUST_HUBS.map((hub) => ({
+      '@type': 'Organization',
+      '@id': `${hub.url}/#organization`,
+      name: hub.name,
+      url: hub.url,
+      description: `${hub.description} ${ASK_NETWORK_OWNERSHIP_SHORT}.`,
+      parentOrganization: { '@id': orgId },
+    })),
+  };
+}
+
+/** Fragment specialist hubs can later embed for reciprocal parentOrganization. */
+export function buildParentOrganizationReference() {
+  return {
+    '@type': 'Organization',
+    '@id': orgId,
+    name: BRAND.name,
+    url: siteUrl,
   };
 }
 

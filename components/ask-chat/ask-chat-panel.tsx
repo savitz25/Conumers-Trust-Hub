@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Loader2, Send, Sparkles, X } from 'lucide-react';
+import { AiConciergeDisclosure } from '@/components/ask-chat/ai-disclosure';
 import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { ASK_CONCIERGE_WELCOME } from '@/lib/ai/system-prompt';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
@@ -176,6 +177,13 @@ export function AskChatPanel() {
         </div>
 
         <div
+          className="border-b px-4 py-2.5 sm:px-5"
+          style={{ borderColor: ASK_BRAND.border, backgroundColor: '#EEF2FF' }}
+        >
+          <AiConciergeDisclosure compact />
+        </div>
+
+        <div
           ref={listRef}
           className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5"
           style={{ backgroundColor: ASK_BRAND.white }}
@@ -263,10 +271,12 @@ export function AskChatPanel() {
               )}
             </button>
           </div>
-          <p className="mt-2 text-[11px] leading-snug" style={{ color: ASK_BRAND.ink }}>
-            Guidance only — not legal, financial, or medical advice. Independent research; no paid
-            placements.
-          </p>
+          <div className="mt-2 space-y-1.5">
+            <AiConciergeDisclosure compact />
+            <p className="text-[11px] leading-snug" style={{ color: ASK_BRAND.ink }}>
+              Guidance only — not legal, financial, or medical advice. No paid placements.
+            </p>
+          </div>
         </form>
       </div>
     </div>

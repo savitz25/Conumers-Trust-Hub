@@ -8,7 +8,7 @@ import { TRUST_HUBS } from '@/lib/hubs';
 export const metadata = createPageMetadata({
   title: 'About the Network',
   description:
-    'Ask Trust Hub is the independent research network and trust infrastructure behind MoveTrustHub, InsuranceTrustHub, and LenderTrustHub.',
+    'Ask Trust Hub is the parent research network for Move, Insurance, and Lender Trust Hub — common ownership, separated research and listing order, no paid placements.',
   path: '/about',
 });
 

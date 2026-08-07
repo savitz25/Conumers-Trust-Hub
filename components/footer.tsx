@@ -23,12 +23,14 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-4">
             <BrandLogo inverted />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-300">
-              Knowledge &amp; concierge layer for the independent Trust Hub network.
-              Situation routing, the Standard, and independence policy — not a provider
-              marketplace.
+              Knowledge &amp; concierge layer for the Trust Hub network. Situation routing,
+              the Standard, and independence policy — not a provider marketplace.
             </p>
             <p className="mt-3 text-xs leading-relaxed text-slate-400 max-w-sm">
-              {ASK_INDEPENDENCE_LINE} {ASK_NETWORK_OWNERSHIP_SHORT}.
+              {ASK_NETWORK_OWNERSHIP_SHORT}
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-400 max-w-sm">
+              {ASK_INDEPENDENCE_LINE}
             </p>
             <p className="mt-4 text-sm">
               <a
@@ -92,18 +94,19 @@ export function Footer() {
 
         <div className="mt-12 border-t border-white/10 pt-8">
           <p className="max-w-3xl text-xs leading-relaxed text-slate-400">
-            {BRAND.name} is an independent informational network. Not affiliated with, endorsed by,
-            or a partner of listed providers. Confirm licensing and terms with primary regulators
-            (FMCSA, state DOI, NMLS) and the company before contractual commitment. Specialist
-            directories and tools live on Move, Insurance, and Lender Trust Hub — not on this parent
-            site.
+            {BRAND.name} is an informational research network under common ownership with Move,
+            Insurance, and Lender Trust Hub — with separated research and listing order and no paid
+            placements. Not endorsed by or a partner of listed providers. Confirm licensing and
+            terms with primary regulators (FMCSA, state DOI, NMLS) and the company before
+            contractual commitment. Specialist directories and tools live on the specialist hubs —
+            not on this parent site.
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-slate-500">
               © {year} {BRAND.name}. {BRAND.tagline}
             </p>
             <p className="text-xs font-medium text-slate-400">
-              Independent research network — no paid placements
+              {ASK_NETWORK_OWNERSHIP_SHORT}
             </p>
           </div>
         </div>
