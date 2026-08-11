@@ -75,23 +75,23 @@ export const ASK_HERO_PRIMARY_CTA = {
 } as const;
 
 export const ASK_HERO_SECONDARY_CTA = {
-  label: 'Life journeys',
-  href: '/journeys',
+  label: "What's happening?",
+  href: '/#whats-happening',
 } as const;
 
 export const ASK_HERO_CONCIERGE_PLACEHOLDER = 'What are you trying to figure out?';
 
 export const ASK_HERO_CONCIERGE_MICRO =
-  'No accounts. No personal data for routing. We match your situation and send you to the right specialist hub.';
+  'No accounts. No personal data for routing. Prefer the path planner below for an ordered multi-hub research plan — or open the Concierge for a free-form question.';
 
 /** Suggested situations under the Concierge input */
 export const ASK_CONCIERGE_EXAMPLES = [
-  { label: 'Moving', prompt: 'I am planning a move and need to research licensed movers.' },
-  { label: 'Buying a home', prompt: 'I am buying a home and want to research NMLS-verified lenders.' },
-  { label: 'Insurance', prompt: 'I need help researching licensed insurance options for coverage.' },
-  { label: 'Medicare', prompt: 'I want educational research on Medicare coverage options.' },
-  { label: 'Relocating', prompt: 'I am relocating and need help with movers and insurance.' },
+  { label: 'Moving + buying', prompt: 'I am moving to another state and plan to buy a home.' },
+  { label: 'Moving + renting', prompt: 'I am relocating and plan to rent at the destination.' },
+  { label: 'Buying locally', prompt: 'I am buying a home and want NMLS-oriented lender research.' },
   { label: 'Refinance', prompt: 'I am considering refinancing and want independent lender research.' },
+  { label: 'Coverage after move', prompt: 'I need insurance research after moving to a new state.' },
+  { label: 'Movers only', prompt: 'I need to research FMCSA-licensed movers for a move.' },
 ] as const;
 
 /** Homepage specialist hub cards */

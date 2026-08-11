@@ -1,7 +1,10 @@
 /**
  * Homepage situation router — discovery only.
  * Routes users to specialist hubs/tools. No directories or PII on Ask.
+ * Stage B.2: multi-hub checklists use generateTrustJourneyPlan deep links.
  */
+
+import { generateTrustJourneyPlan } from '@/lib/orchestration/path-generator';
 
 export type ChecklistStep = {
   step: number;
@@ -119,59 +122,38 @@ export const SITUATIONS: SituationRoute[] = [
     id: 'buying-home',
     title: "I'm buying a home",
     detail:
-      'Ordered research path: financing first, then homeowners coverage, then the move — each on its specialist hub.',
+      'Ordered research path: financing first, then homeowners coverage — each on its specialist hub with journey context.',
     hubLabel: 'Multi-hub path',
     cta: 'Start with lenders',
     hubTag: 'multi',
-    checklist: [
-      {
-        step: 1,
-        label: 'Research licensed mortgage lenders (NMLS)',
-        href: 'https://www.lendertrusthub.com/local-lenders',
-        hubLabel: 'Lender Trust Hub',
-      },
-      {
-        step: 2,
-        label: 'Research homeowners / property coverage agents (DOI)',
-        href: 'https://www.insurancetrusthub.com/directory',
-        hubLabel: 'Insurance Trust Hub',
-      },
-      {
-        step: 3,
-        label: 'Research FMCSA movers and verify DOT',
-        href: 'https://www.movetrusthub.com/verify-dot',
-        hubLabel: 'Move Trust Hub',
-      },
-    ],
+    checklist: generateTrustJourneyPlan({ situationId: 'buy_local', state: 'FL' }).steps.map(
+      (s) => ({
+        step: s.step,
+        label: s.title,
+        href: s.href,
+        hubLabel: s.hubLabel,
+      })
+    ),
   },
   {
     id: 'relocating-work',
     title: "I'm relocating for work / moving cross-country",
     detail:
-      'Long-distance move research plus renters or homeowners coverage checks on the specialist hubs.',
-    hubLabel: 'Move + Insurance',
-    cta: 'Start with interstate movers',
+      'Long-distance move research, financing if buying, then coverage — use What’s happening? for your destination.',
+    hubLabel: 'Move + Lender + Insurance',
+    cta: 'Start with movers',
     hubTag: 'multi',
-    checklist: [
-      {
-        step: 1,
-        label: 'Interstate movers & DOT verification',
-        href: 'https://www.movetrusthub.com/verify-dot',
-        hubLabel: 'Move Trust Hub',
-      },
-      {
-        step: 2,
-        label: 'Renters or homeowners agent research',
-        href: 'https://www.insurancetrusthub.com/directory',
-        hubLabel: 'Insurance Trust Hub',
-      },
-      {
-        step: 3,
-        label: 'County mortgage lenders if buying after the move',
-        href: 'https://www.lendertrusthub.com/local-lenders',
-        hubLabel: 'Lender Trust Hub',
-      },
-    ],
+    checklist: generateTrustJourneyPlan({
+      situationId: 'move_buy',
+      state: 'FL',
+      county: 'miami-dade',
+      citySlug: 'miami',
+    }).steps.map((s) => ({
+      step: s.step,
+      label: s.title,
+      href: s.href,
+      hubLabel: s.hubLabel,
+    })),
   },
 ];
 

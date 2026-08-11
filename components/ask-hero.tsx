@@ -129,6 +129,13 @@ export function AskHero() {
               {ASK_HERO_SECONDARY_CTA.label}
             </Link>
             <Link
+              href="/journeys"
+              className="inline-flex min-h-10 items-center justify-center px-2 text-sm font-semibold underline-offset-4 hover:underline"
+              style={{ color: ASK_BRAND.navy }}
+            >
+              Life journeys
+            </Link>
+            <Link
               href="/#trust-hubs"
               className="inline-flex min-h-10 items-center justify-center px-2 text-sm font-semibold underline-offset-4 hover:underline"
               style={{ color: ASK_BRAND.navy }}

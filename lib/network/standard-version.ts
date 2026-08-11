@@ -1,7 +1,7 @@
 /**
  * Ask Trust Hub network contract version.
  */
-export const ASK_NETWORK_STANDARD_VERSION = '2026.08.07';
+export const ASK_NETWORK_STANDARD_VERSION = '2026.08.11';
 export const ASK_NETWORK_STANDARD_URL = 'https://www.asktrusthub.com/methodology';
 
 export const ASK_NETWORK_STANDARD_LABEL = 'Ask Trust Hub Standard';

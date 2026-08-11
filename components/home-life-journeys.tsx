@@ -32,15 +32,26 @@ export function HomeLifeJourneys() {
               Start with a situation
             </h2>
             <p className="mt-2 text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              Full cross-hub paths on Ask — then deep research on specialist hubs. Prefer the
-              Concierge if you are unsure where to begin.
+              Editorial long-form paths. For a live plan with destination context, use{' '}
+              <Link href="/#whats-happening" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                What&apos;s happening?
+              </Link>
+              .
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
             <Link
-              href="/journeys"
+              href="/#whats-happening"
               className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold"
               style={{ color: ASK_BRAND.indigo }}
+            >
+              Build a research path
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link
+              href="/journeys"
+              className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold"
+              style={{ color: ASK_BRAND.navy }}
             >
               All life journeys
               <ArrowRight className="h-4 w-4" aria-hidden />
