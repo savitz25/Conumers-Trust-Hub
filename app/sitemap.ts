@@ -24,6 +24,7 @@ const CORE: {
   { path: '/corrections', priority: 0.5, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/journeys', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },
   { path: '/guides', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },
+  // Personal overview is noindex; omit from sitemap
   { path: '/contact', priority: 0.4, changeFrequency: 'monthly', lastmod: '2026-07-01' },
   { path: '/privacy', priority: 0.25, changeFrequency: 'yearly', lastmod: '2026-06-01' },
   { path: '/terms', priority: 0.25, changeFrequency: 'yearly', lastmod: '2026-06-01' },

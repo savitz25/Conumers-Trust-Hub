@@ -146,6 +146,8 @@ export const ASK_HERO_NETWORK_PILLS = [
  */
 export const ASK_HEADER_NAV = [
   { href: '/#ask', label: 'Ask' },
+  { href: '/#whats-happening', label: 'Path' },
+  { href: '/my-trust-journey', label: 'My Journey' },
   { href: '/journeys', label: 'Journeys' },
   { href: '/guides', label: 'Guides' },
   { href: '/network', label: 'Network' },
@@ -235,6 +237,8 @@ export const ASK_FOOTER_COLUMNS = [
     title: 'Explore',
     links: [
       { href: '/#ask', label: 'Ask Concierge' },
+      { href: '/#whats-happening', label: "What's happening?" },
+      { href: '/my-trust-journey', label: 'My Trust Journey' },
       { href: '/#trust-hubs', label: 'Specialist hubs' },
       { href: '/journeys', label: 'Life journeys' },
       { href: '/guides', label: 'Guides' },

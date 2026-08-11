@@ -40,7 +40,10 @@ export function Navbar() {
             const active =
               item.href.startsWith('/#')
                 ? pathname === '/'
-                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                : item.href === '/my-trust-journey'
+                  ? pathname === '/my-trust-journey' ||
+                    pathname.startsWith('/my-trust-journey/')
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}

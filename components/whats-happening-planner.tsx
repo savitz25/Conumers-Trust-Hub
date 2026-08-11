@@ -15,6 +15,10 @@ import {
   type TrustJourneyPlan,
 } from '@/lib/orchestration/path-generator';
 import {
+  recordHubVisit,
+  upsertMetadataFromPlan,
+} from '@/lib/orchestration/journey-metadata';
+import {
   makePlanKey,
   markStepVisited,
   visitedSetForPlan,
@@ -67,6 +71,11 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
       county: next.context.county,
     });
     setVisited(visitedSetForPlan(key));
+    // Stage B.3 — optional Ask-origin journey metadata (no PII)
+    upsertMetadataFromPlan(next, {
+      originStateCode: originCode || undefined,
+      citySlug: citySlug || undefined,
+    });
   }, [situationId, stateCode, county, citySlug, originCode, intent, situation.needsDestination]);
 
   // Generate initial plan on mount
@@ -97,10 +106,11 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
     }
   };
 
-  const onStepClick = (stepId: string) => {
+  const onStepClick = (stepId: string, hub: 'move' | 'lender' | 'insurance') => {
     if (!planKey) return;
     const next = markStepVisited(planKey, stepId);
     if (next) setVisited(new Set(next.visitedStepIds));
+    recordHubVisit(stepId, hub);
   };
 
   return (
@@ -410,7 +420,7 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
                     <a
                       href={s.href}
                       rel="noopener noreferrer"
-                      onClick={() => onStepClick(s.id)}
+                      onClick={() => onStepClick(s.id, s.hub)}
                       className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold text-white"
                       style={{ backgroundColor: ASK_BRAND.indigo }}
                       data-journey-hub={s.hub}
@@ -427,6 +437,19 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
                 );
               })}
             </ol>
+            <p className="mt-6 text-center text-sm">
+              <a
+                href="/my-trust-journey"
+                className="font-semibold underline-offset-2 hover:underline"
+                style={{ color: ASK_BRAND.indigo }}
+              >
+                Open My Trust Journey overview
+              </a>
+              <span className="mx-2 opacity-50">·</span>
+              <span style={{ color: ASK_BRAND.ink }}>
+                Optional browser metadata — no account
+              </span>
+            </p>
           </div>
         ) : null}
       </div>
