@@ -55,33 +55,38 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
 
   const situation = SITUATION_OPTIONS.find((s) => s.id === situationId)!;
 
-  const build = useCallback(() => {
-    const next = generateTrustJourneyPlan({
-      situationId,
-      state: situation.needsDestination ? stateCode || undefined : stateCode || undefined,
-      county: county || undefined,
-      citySlug: citySlug || undefined,
-      originState: originCode || undefined,
-      intent,
-    });
-    setPlan(next);
-    const key = makePlanKey({
-      situationId: next.situationId,
-      stateCode: next.context.stateCode,
-      county: next.context.county,
-    });
-    setVisited(visitedSetForPlan(key));
-    // Stage B.3 — optional Ask-origin journey metadata (no PII)
-    upsertMetadataFromPlan(next, {
-      originStateCode: originCode || undefined,
-      citySlug: citySlug || undefined,
-    });
-  }, [situationId, stateCode, county, citySlug, originCode, intent, situation.needsDestination]);
+  const buildPlan = useCallback(
+    (persist: boolean) => {
+      const next = generateTrustJourneyPlan({
+        situationId,
+        state: situation.needsDestination ? stateCode || undefined : stateCode || undefined,
+        county: county || undefined,
+        citySlug: citySlug || undefined,
+        originState: originCode || undefined,
+        intent,
+      });
+      setPlan(next);
+      const key = makePlanKey({
+        situationId: next.situationId,
+        stateCode: next.context.stateCode,
+        county: next.context.county,
+      });
+      setVisited(visitedSetForPlan(key));
+      // Stage B.3 — only persist when user explicitly builds (not on passive preview)
+      if (persist) {
+        upsertMetadataFromPlan(next, {
+          originStateCode: originCode || undefined,
+          citySlug: citySlug || undefined,
+        });
+      }
+    },
+    [situationId, stateCode, county, citySlug, originCode, intent, situation.needsDestination]
+  );
 
-  // Generate initial plan on mount
+  // Preview plan as fields change — do not overwrite saved metadata
   useEffect(() => {
-    build();
-  }, [build]);
+    buildPlan(false);
+  }, [buildPlan]);
 
   const planKey = useMemo(() => {
     if (!plan) return '';
@@ -309,7 +314,7 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
 
           <button
             type="button"
-            onClick={build}
+            onClick={() => buildPlan(true)}
             className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold text-white sm:w-auto"
             style={{
               backgroundColor: ASK_BRAND.indigo,
@@ -317,12 +322,12 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
             }}
           >
             <Route className="h-4 w-4" aria-hidden />
-            Build my research path
+            Save &amp; build my research path
           </button>
 
           <p className="mt-3 text-xs leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-            Ask orchestrates specialist research. Directories and tools live on Move, Lender, and
-            Insurance Trust Hub — not here. Independent research · no paid placements.
+            Save stores high-level situation metadata in this browser for My Trust Journey.
+            Directories and tools live on Move, Lender, and Insurance — not here. No account required.
           </p>
         </div>
 
