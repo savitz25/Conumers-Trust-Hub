@@ -16,7 +16,7 @@ import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
   description:
-    'The Ask Trust Hub network: Move, Insurance, and Lender Trust Hub under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
+    'The Ask Trust Hub network: Move, Insurance, Lender, and Contractor Trust Hub under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
   path: '/network',
 });
 
@@ -33,6 +33,10 @@ const HUB_FOCUS: Record<string, { focus: string; cta: string }> = {
     focus: 'Financing research · NMLS Consumer Access and county lender research',
     cta: 'Open Lender Trust Hub',
   },
+  contractor: {
+    focus: 'Contractor research · Florida DBPR licenses, planning ranges, verified trades',
+    cta: 'Open Contractor Trust Hub',
+  },
 };
 
 const JOURNEY_MODEL = [
@@ -44,7 +48,7 @@ const JOURNEY_MODEL = [
   {
     step: '2',
     title: 'Hub executes',
-    body: 'Move, Insurance, or Lender owns the deep tools: verify, compare, plan. Research stays on that domain.',
+    body: 'Move, Insurance, Lender, or Contractor owns the deep tools: verify, compare, plan. Research stays on that domain.',
   },
   {
     step: '3',
@@ -59,7 +63,7 @@ export default function NetworkPage() {
       <PageHeader
         label="Network"
         title="The Ask Trust Hub network"
-        description="Three specialist research destinations under one independence standard. Ask routes you; the hubs do the deep work."
+        description="Specialist research destinations under one independence standard. Ask routes you; the hubs do the deep work."
       />
 
       <div className="container-page py-14 sm:py-16">

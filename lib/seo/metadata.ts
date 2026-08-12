@@ -8,7 +8,7 @@ export const HOMEPAGE_TITLE =
   'Ask Trust Hub | Independent Consumer Research for Moving, Insurance & Lending';
 
 export const HOMEPAGE_DESCRIPTION =
-  'Independent consumer research network. We help you understand verified public sources and route you to specialist research on Move, Insurance, and Lender Trust Hub — no paid placements, no lead fees.';
+  'Independent consumer research network. We help you understand verified public sources and route you to specialist research on Move, Insurance, Lender, and Contractor Trust Hub — no paid placements, no lead fees.';
 
 /** Default share image (1200×630) — prefer dedicated OG art over logo crop. */
 export function brandOgImageAbsoluteUrl(baseUrl: string = siteUrl): string {

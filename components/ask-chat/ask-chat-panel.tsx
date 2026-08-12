@@ -91,7 +91,7 @@ export function AskChatPanel() {
           id: newId(),
           role: 'assistant',
           content:
-            'I could not complete that reply just now. Please try again, or browse Move (movetrusthub.com), Lender (lendertrusthub.com), or Insurance (insurancetrusthub.com).',
+            'I could not complete that reply just now. Please try again, or browse Move (movetrusthub.com), Lender (lendertrusthub.com), Insurance (insurancetrusthub.com), or Contractor (contractortrusthub.com).',
         },
       ]);
     } finally {

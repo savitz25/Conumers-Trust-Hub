@@ -16,4 +16,4 @@ export const ASK_NETWORK_OWNERSHIP_SHORT =
 
 /** Longer ownership sentence for prose blocks. */
 export const ASK_NETWORK_OWNERSHIP_LINE =
-  'Move, Insurance, and Lender Trust Hub are part of the Ask Trust Hub network under common ownership, with separated research and listing order and no paid placements.';
+  'Move, Insurance, Lender, and Contractor Trust Hub are part of the Ask Trust Hub network under common ownership, with separated research and listing order and no paid placements.';

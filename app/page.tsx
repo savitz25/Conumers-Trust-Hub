@@ -11,7 +11,7 @@ import { buildHomepageGraph } from '@/lib/seo/schemas';
  * Homepage IA (Stage B.2):
  * 1. Hero + Concierge
  * 2. What's happening? multi-hub path generator
- * 3. Three specialist hubs
+ * 3. Specialist hubs
  * 4. Research standard (short)
  * 5. Life journeys (editorial long-form)
  * 6. Trust signals

@@ -19,6 +19,7 @@ export function hubIdFromHostname(hostname: string): HubOutboundId | null {
   if (host === 'movetrusthub.com') return 'move';
   if (host === 'lendertrusthub.com') return 'lender';
   if (host === 'insurancetrusthub.com') return 'insurance';
+  if (host === 'contractortrusthub.com') return 'contractor';
   return null;
 }
 

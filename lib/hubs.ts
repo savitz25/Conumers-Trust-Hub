@@ -1,7 +1,7 @@
 export type HubStatus = 'live' | 'coming_soon';
 
 export interface TrustHub {
-  id: 'move' | 'insurance' | 'lender';
+  id: 'move' | 'insurance' | 'lender' | 'contractor';
   name: string;
   shortName: string;
   domain: string;
@@ -57,6 +57,20 @@ export const TRUST_HUBS: TrustHub[] = [
       'Research destination for NMLS-verified lenders. Provider directories and tools are hosted on this domain.',
     accent: '#16A34A',
     accentSoft: '#F0FDF4',
+  },
+  {
+    id: 'contractor',
+    name: 'Contractor Trust Hub',
+    shortName: 'Contractors',
+    domain: 'contractortrusthub.com',
+    url: 'https://www.contractortrusthub.com',
+    status: 'live',
+    verification: 'Florida DBPR licensing & Sunbiz entity links',
+    dataSources: ['Florida DBPR', 'Sunbiz', 'Board discipline extracts'],
+    description:
+      'Research destination for Florida contractor license verification, project cost planning, and verified trade matches. Evidence only — not a marketplace.',
+    accent: '#0A2540',
+    accentSoft: '#EEF2FF',
   },
 ];
 

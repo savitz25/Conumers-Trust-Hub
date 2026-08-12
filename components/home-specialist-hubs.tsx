@@ -2,7 +2,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { ASK_BRAND, ASK_HOME_HUBS, ASK_SHADOW } from '@/lib/design/ask-design-system';
 
 /**
- * Three specialist hubs — one clean visual section.
+ * Specialist hubs — one clean visual section.
  */
 export function HomeSpecialistHubs() {
   return (
@@ -34,7 +34,7 @@ export function HomeSpecialistHubs() {
           </p>
         </div>
 
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {ASK_HOME_HUBS.map((hub) => (
             <li key={hub.id}>
               <a

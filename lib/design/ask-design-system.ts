@@ -123,6 +123,15 @@ export const ASK_HOME_HUBS = [
     accent: '#0284C7',
     soft: '#E0F2FE',
   },
+  {
+    id: 'contractor' as const,
+    name: 'Contractor Trust Hub',
+    blurb: 'Florida DBPR license verification, project planning ranges, and verified trades.',
+    href: 'https://www.contractortrusthub.com',
+    cta: 'Verify contractors',
+    accent: '#0A2540',
+    soft: '#EEF2FF',
+  },
 ] as const;
 
 /** Short trust signals (homepage strip) — high-confidence, no essay */
@@ -138,6 +147,7 @@ export const ASK_HERO_NETWORK_PILLS = [
   { id: 'move', label: 'Move', href: 'https://www.movetrusthub.com' },
   { id: 'lender', label: 'Lender', href: 'https://www.lendertrusthub.com' },
   { id: 'insurance', label: 'Insurance', href: 'https://www.insurancetrusthub.com' },
+  { id: 'contractor', label: 'Contractor', href: 'https://www.contractortrusthub.com' },
 ] as const;
 
 /**
@@ -186,6 +196,13 @@ export const ASK_NETWORK_LINKS = [
     href: 'https://www.insurancetrusthub.com',
     blurb: 'Licensed agencies & plans',
   },
+  {
+    id: 'contractor' as const,
+    label: 'Contractor Trust Hub',
+    shortLabel: 'Contractor',
+    href: 'https://www.contractortrusthub.com',
+    blurb: 'Florida license verification & planning',
+  },
 ] as const;
 
 /** Phase 3 — How the network works (4 steps) */
@@ -198,7 +215,7 @@ export const ASK_NETWORK_STEPS = [
   {
     step: 2,
     title: 'Route to the right specialist hub',
-    body: 'Move, Lender, or Insurance Trust Hub - each owns deep research for its market.',
+    body: 'Move, Lender, Insurance, or Contractor Trust Hub - each owns deep research for its market.',
   },
   {
     step: 3,

@@ -18,7 +18,7 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 export const metadata = createPageMetadata({
   title: 'The Ask Trust Hub Standard — Network Methodology',
   description:
-    'The Ask Trust Hub Standard: SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE. Shared research principles for Move, Insurance, and Lender Trust Hub. Vertical-specific scoring. Rankings not for sale.',
+    'The Ask Trust Hub Standard: SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE. Shared research principles for Move, Insurance, Lender, and Contractor Trust Hub. Vertical-specific scoring. Rankings not for sale.',
   path: '/methodology',
 });
 

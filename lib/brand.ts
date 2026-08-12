@@ -38,6 +38,6 @@ export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
 export const FOUNDER = {
   name: 'Michael Henry',
   role: 'Founder',
-  bio: 'Founder of Ask Trust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, and lending—where paid placement commonly substitutes for verification.',
+  bio: 'Founder of Ask Trust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, lending, and contractors—where paid placement commonly substitutes for verification.',
   location: 'United States',
 } as const;

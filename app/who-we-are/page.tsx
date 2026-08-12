@@ -15,7 +15,7 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 export const metadata = createPageMetadata({
   title: 'Who We Are — Organizational Accountability',
   description:
-    'Who operates Ask Trust Hub: founder accountability, common ownership across Move, Insurance, and Lender Trust Hub, revenue honesty, corrections, and contact.',
+    'Who operates Ask Trust Hub: founder accountability, common ownership across Move, Insurance, Lender, and Contractor Trust Hub, revenue honesty, corrections, and contact.',
   path: '/who-we-are',
 });
 
@@ -26,7 +26,7 @@ const ACCOUNTABILITY = [
   },
   {
     q: 'What is the ownership relationship across the four domains?',
-    a: `${ASK_NETWORK_OWNERSHIP_LINE} Ask is the parent knowledge and standards layer. Move, Insurance, and Lender Trust Hub are specialist research products under that network — not three unrelated companies.`,
+    a: `${ASK_NETWORK_OWNERSHIP_LINE} Ask is the parent knowledge and standards layer. Move, Insurance, Lender, and Contractor Trust Hub are specialist research products under that network — not unrelated companies.`,
   },
   {
     q: 'How does the network make money?',
@@ -133,7 +133,7 @@ export default function WhoWeArePage() {
           </p>
           <p>
             Domains in the network: asktrusthub.com (parent), movetrusthub.com, lendertrusthub.com,
-            insurancetrusthub.com.
+            insurancetrusthub.com, contractortrusthub.com.
           </p>
         </section>
 
