@@ -35,7 +35,7 @@ export function NetworkOverviewSection() {
               Where deep research lives
             </h2>
             <p className="mt-4 text-lg leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              Three live destinations under one parent standard. Ask routes; each hub owns its
+              Live specialist destinations under one parent standard. Ask routes; each hub owns its
               directory and tools.
             </p>
           </div>
@@ -44,7 +44,7 @@ export function NetworkOverviewSection() {
           </Link>
         </div>
 
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_HUBS.map((hub) => {
             const isLive = hub.status === 'live';
             const cardClass =

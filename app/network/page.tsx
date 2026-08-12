@@ -143,7 +143,7 @@ export default function NetworkPage() {
           </p>
         </section>
 
-        <ul className="mt-12 grid gap-4 md:grid-cols-3">
+        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_HUBS.map((hub) => {
             const focus = HUB_FOCUS[hub.id];
             return (

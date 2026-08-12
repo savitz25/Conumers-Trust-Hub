@@ -12,7 +12,7 @@ export const ANALYTICS_EVENTS = {
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
 
-export type HubOutboundId = 'move' | 'lender' | 'insurance';
+export type HubOutboundId = 'move' | 'lender' | 'insurance' | 'contractor';
 
 export function hubIdFromHostname(hostname: string): HubOutboundId | null {
   const host = hostname.replace(/^www\./, '').toLowerCase();
