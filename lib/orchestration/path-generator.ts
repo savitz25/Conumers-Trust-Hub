@@ -271,9 +271,12 @@ export function generateTrustJourneyPlan(input: PathInput): TrustJourneyPlan {
       return {
         situationId: 'buy_local',
         title: `Buying a home in ${place}`,
-        summary: 'Financing research first, then homeowners coverage — educational only.',
+        summary:
+          'Financing first, then homeowners coverage. Relocation and contractor research are optional next decisions — not required steps.',
         context: ctx,
         place: placeLabel(ctx),
+        clarifyingNote:
+          'Planning a relocation? Research movers separately. Planning work after purchase? Verify contractors when that decision is real.',
         steps: [
           step(
             1,
@@ -398,25 +401,19 @@ export function generateTrustJourneyPlan(input: PathInput): TrustJourneyPlan {
         situationId: 'aging_parent',
         title: 'Researching senior care for an aging parent',
         summary:
-          'SeniorTrustHub first. Insurance, move, or contractor steps appear only when that next life decision is real — never as placement or referral leads.',
+          'SeniorTrustHub first. Move, contractor, or insurance research appears only when that next life decision is real — never as a placement or referral funnel.',
         context: ctx,
         place: placeLabel(ctx),
+        clarifyingNote:
+          'Planning a move, aging-in-place modifications, or a separate coverage question? Those are optional next decisions on the specialist hubs — not required steps.',
         steps: [
           step(
             1,
             'senior',
             'Research senior care with government-sourced evidence',
             'CMS and supported state regulatory research. Not a placement agency.',
-            'Open SeniorTrustHub',
+            'Research senior care',
             buildSeniorDeepLink(ctx)
-          ),
-          step(
-            2,
-            'insurance',
-            'Coverage only if it is part of this decision',
-            'Optional: insurance research when coverage actually intersects the care decision.',
-            'Optional: Insurance Trust Hub',
-            buildInsuranceDeepLink(ctx)
           ),
         ],
       };

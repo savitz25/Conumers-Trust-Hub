@@ -138,7 +138,7 @@ export const SITUATIONS: SituationRoute[] = [
     hubLabel: 'Multi-hub path',
     cta: 'Start with lenders',
     hubTag: 'multi',
-    checklist: generateTrustJourneyPlan({ situationId: 'buy_local', state: 'FL' }).steps.map(
+    checklist: generateTrustJourneyPlan({ situationId: 'buy_local' }).steps.map(
       (s) => ({
         step: s.step,
         label: s.title,
@@ -151,15 +151,12 @@ export const SITUATIONS: SituationRoute[] = [
     id: 'relocating-work',
     title: "I'm relocating for work / moving cross-country",
     detail:
-      'Long-distance move research, financing if buying, then coverage — use What’s happening? for your destination.',
-    hubLabel: 'Move + Lender + Insurance',
+      'Start with mover research. Financing and coverage are optional next decisions if you are buying or settling in — not required for renters.',
+    hubLabel: 'Move Trust Hub',
     cta: 'Start with movers',
     hubTag: 'multi',
     checklist: generateTrustJourneyPlan({
-      situationId: 'move_buy',
-      state: 'FL',
-      county: 'miami-dade',
-      citySlug: 'miami',
+      situationId: 'pure_move',
     }).steps.map((s) => ({
       step: s.step,
       label: s.title,
@@ -184,7 +181,7 @@ export const SITUATIONS: SituationRoute[] = [
       'Government-sourced senior care research. This is research — not a placement agency or referral marketplace.',
     hubLabel: 'SeniorTrustHub',
     href: 'https://www.seniortrusthub.com',
-    cta: 'Research senior care',
+    cta: 'Research senior care (not a referral)',
     hubTag: 'senior',
   },
   {
@@ -194,7 +191,7 @@ export const SITUATIONS: SituationRoute[] = [
       'SEC/IARD firm research on InvestorTrustHub. Research before you invest — not stock picks, rankings, or portfolio advice.',
     hubLabel: 'InvestorTrustHub',
     href: 'https://www.investortrusthub.com',
-    cta: 'Research investment firms',
+    cta: 'Research investment firm regulatory evidence',
     hubTag: 'investor',
   },
 ];
