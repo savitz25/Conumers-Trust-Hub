@@ -54,6 +54,16 @@ assert(links.includes("p.set('src'"), 'journey query writes src');
 assert(!links.includes("p.set('email'"), 'journey query does not write email');
 assert(!links.includes("p.set('phone'"), 'journey query does not write phone');
 
+const analytics = readFileSync(join(root, 'lib/analytics/journey-handoff.ts'), 'utf8');
+const router = readFileSync(join(root, 'components/situation-router.tsx'), 'utf8');
+assert(analytics.includes("journey_handoff_click"), 'Ask uses journey_handoff_click');
+assert(analytics.includes("FORBIDDEN_KEYS"), 'Ask forbids PII analytics keys');
+assert(analytics.includes("'email'"), 'Ask forbids email as analytics key');
+assert(!analytics.includes('payload.email'), 'Ask does not set payload.email');
+assert(router.includes('trackJourneyHandoff'), 'situation router instruments clicks');
+assert(router.includes("investment-firm"), 'Ask→Investor route instrumented');
+assert(journeysDoc.includes('Journey analytics contract'), 'analytics contract documented');
+
 if (failed) {
   console.error(`${failed} assertion(s) failed`);
   process.exit(1);

@@ -26,7 +26,56 @@ Never: name, email, phone, street address, SSN, member ID, diagnosis, holdings, 
 
 Journey parameters are navigation context. They must not become sitemap or indexable landing pages.
 
-## Excluded surfaces
+## Journey analytics contract
+
+**Event:** `journey_handoff_click`
+
+Click-only. No impression events in V2.1.1.
+
+Best-effort. Navigation must not wait on analytics. Do not pass visitor IDs or stitch cross-domain identity.
+
+### Required fields
+
+| Field | Meaning |
+|-------|---------|
+| `source_hub` | Sending hub (`ask` / `move` / `lender` / `insurance` / `contractor` / `senior` / `investor`) |
+| `destination_hub` | Receiving hub (same enum) |
+| `surface` | Stable low-cardinality surface id |
+| `journey_id` | Bounded journey (`purchase`, `relocate`, `coverage`, `contractor`, `senior_care`, `investing`) |
+| `context_type` | Controlled vocabulary below |
+
+Compatibility aliases used by existing Lender/Insurance helpers: `from_hub` = `source_hub`, `to_hub` = `destination_hub`, `journey` = `journey_id`.
+
+### Optional fields
+
+`intent` (`buy` / `rent` / `refi`)  
+`state` (2-letter code only)
+
+### Surface vocabulary
+
+`situation_router`  
+`journey_page`  
+`lender_state_results`  
+`lender_county_results`  
+`lender_tool_completion`  
+`move_destination`  
+`move_plan_completion`  
+`insurance_destination`  
+`contractor_plan_completion`  
+`contractor_home_next_step`  
+`contractor_trust_report_next_step`  
+`senior_transition`  
+`senior_navigator_completion`
+
+### context_type vocabulary
+
+`home_buy` `relocate` `move_rent` `coverage` `home_project` `senior_transition` `investment_research`
+
+### Privacy
+
+Never send: name, email, phone, address, SSN, account/member IDs, diagnosis, holdings, free-form text, full URLs, raw searchParams, facility CCN, or facility name.
+
+### Excluded surfaces
 
 - Investor Firm Trust Reports and firm search
 - Contractor Trust Reports without inbound journey context

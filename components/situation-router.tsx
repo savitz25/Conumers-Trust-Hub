@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { SystemFraming } from '@/components/system-framing';
@@ -7,7 +9,37 @@ import {
   SITUATIONS,
   type SituationRoute,
 } from '@/lib/situations';
+import {
+  destinationHubFromHref,
+  trackJourneyHandoff,
+} from '@/lib/analytics/journey-handoff';
 import { cn } from '@/lib/utils';
+
+const SITUATION_JOURNEY: Record<
+  string,
+  { journey_id: string; context_type: string }
+> = {
+  'buying-home': { journey_id: 'purchase', context_type: 'home_buy' },
+  'relocating-work': { journey_id: 'relocate', context_type: 'relocate' },
+  'hire-contractor': { journey_id: 'contractor', context_type: 'home_project' },
+  'aging-parent': { journey_id: 'senior_care', context_type: 'senior_transition' },
+  'investment-firm': { journey_id: 'investing', context_type: 'investment_research' },
+  'premium-or-medicare': { journey_id: 'coverage', context_type: 'coverage' },
+  'moving-scam-risk': { journey_id: 'relocate', context_type: 'relocate' },
+};
+
+function onJourneyClick(situationId: string, href: string) {
+  const meta = SITUATION_JOURNEY[situationId];
+  if (!meta) return;
+  const dest = destinationHubFromHref(href);
+  if (!dest || dest === 'ask') return;
+  trackJourneyHandoff({
+    destination_hub: dest,
+    surface: 'situation_router',
+    journey_id: meta.journey_id,
+    context_type: meta.context_type,
+  });
+}
 
 const HUB_TAG_STYLES: Record<SituationRoute['hubTag'], string> = {
   move: 'bg-[#FFF4EF] text-[#C2410C] border-[#FFD4C2]',
@@ -78,6 +110,7 @@ export function SituationRouter() {
                         <a
                           href={step.href}
                           className="group flex gap-3 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2"
+                          onClick={() => onJourneyClick(s.id, step.href)}
                         >
                           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#4F46E5] text-[11px] font-bold text-white">
                             {step.step}
@@ -95,14 +128,22 @@ export function SituationRouter() {
                     ))}
                   </ol>
                   {s.checklist[0] ? (
-                    <a href={s.checklist[0].href} className="btn-primary mt-5 w-full sm:w-auto">
+                    <a
+                      href={s.checklist[0].href}
+                      className="btn-primary mt-5 w-full sm:w-auto"
+                      onClick={() => onJourneyClick(s.id, s.checklist![0].href)}
+                    >
                       {s.cta}
                       <ArrowUpRight className="h-4 w-4" aria-hidden />
                     </a>
                   ) : null}
                 </>
               ) : s.href ? (
-                <a href={s.href} className="btn-primary mt-5 w-full sm:w-auto">
+                <a
+                  href={s.href}
+                  className="btn-primary mt-5 w-full sm:w-auto"
+                  onClick={() => onJourneyClick(s.id, s.href!)}
+                >
                   {s.cta}
                   <ArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>

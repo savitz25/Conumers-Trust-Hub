@@ -8,6 +8,7 @@ export const ANALYTICS_EVENTS = {
   CONCIERGE_SUBMIT: 'concierge_submit',
   OUTBOUND_HUB: 'outbound_hub_click',
   INTERNAL_NAV: 'internal_nav_click',
+  JOURNEY_HANDOFF: 'journey_handoff_click',
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
