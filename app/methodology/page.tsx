@@ -18,7 +18,7 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 export const metadata = createPageMetadata({
   title: 'The Ask Trust Hub Standard — Network Methodology',
   description:
-    'The Ask Trust Hub Standard: SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE. Shared research principles for Move, Insurance, Lender, and Contractor Trust Hub. Vertical-specific scoring. Rankings not for sale.',
+    'The Ask Trust Hub Standard: SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE. Shared research principles for the Ask Trust Hub network. Vertical-specific scoring. Rankings not for sale.',
   path: '/methodology',
 });
 
@@ -39,8 +39,8 @@ export default function MethodologyPage() {
 
         <div className="prose-trust max-w-3xl">
           <p>
-            {BRAND.name} is the parent knowledge and standards layer for Move Trust Hub, Insurance
-            Trust Hub, and Lender Trust Hub. {ASK_NETWORK_OWNERSHIP_SHORT}.
+            {BRAND.name} is the parent knowledge and standards layer for the Ask Trust Hub network.
+            {' '}{ASK_NETWORK_OWNERSHIP_SHORT}.
           </p>
           <p>
             This Standard defines how the network treats evidence — not a marketplace rulebook and

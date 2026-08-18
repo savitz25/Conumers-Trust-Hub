@@ -16,7 +16,7 @@ import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
   description:
-    'The Ask Trust Hub network: Move, Insurance, Lender, and Contractor Trust Hub under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
+    'The Ask Trust Hub network: specialist research domains under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
   path: '/network',
 });
 
@@ -34,8 +34,16 @@ const HUB_FOCUS: Record<string, { focus: string; cta: string }> = {
     cta: 'Open Lender Trust Hub',
   },
   contractor: {
-    focus: 'Contractor research · Florida DBPR licenses, planning ranges, verified trades',
+    focus: 'Contractor research · state licensing boards with state-specific evidence depth',
     cta: 'Open Contractor Trust Hub',
+  },
+  senior: {
+    focus: 'Senior care research · CMS and supported state regulatory evidence',
+    cta: 'Open SeniorTrustHub',
+  },
+  investor: {
+    focus: 'Investment firm research · SEC/IARD filings — not investment advice',
+    cta: 'Open InvestorTrustHub',
   },
 };
 
@@ -48,7 +56,7 @@ const JOURNEY_MODEL = [
   {
     step: '2',
     title: 'Hub executes',
-    body: 'Move, Insurance, Lender, or Contractor owns the deep tools: verify, compare, plan. Research stays on that domain.',
+    body: 'The specialist hub owns the deep tools: verify, compare, plan. Research stays on that domain.',
   },
   {
     step: '3',
@@ -95,7 +103,8 @@ export default function NetworkPage() {
         </p>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           “Independence” here means no paid placements and research ordering that is not for sale —
-          not three unrelated companies. Verify providers with primary regulators before you commit.
+          one research network with specialist domains, not unrelated companies. Verify providers
+          with primary regulators before you commit.
         </p>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Specialist directories are expanding. If a ZIP or county has no listings yet, hub empty
@@ -116,8 +125,8 @@ export default function NetworkPage() {
             How life journeys work
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            You are inside one research system for a life event — not three unrelated websites with
-            footer links.
+            You are inside one research system for a life event — one research network with
+            specialist domains, not a pile of unrelated websites.
           </p>
           <ol className="mt-6 grid gap-4 sm:grid-cols-3">
             {JOURNEY_MODEL.map((item) => (
@@ -143,7 +152,7 @@ export default function NetworkPage() {
           </p>
         </section>
 
-        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TRUST_HUBS.map((hub) => {
             const focus = HUB_FOCUS[hub.id];
             return (

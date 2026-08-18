@@ -37,7 +37,7 @@ export default function GuidesIndexPage() {
         />
         <p className="max-w-2xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
           These pages stay on Ask because they are cross-cutting education. Directories and tools
-          live on Move, Lender, and Insurance Trust Hub. We cite. You decide.
+          live on the specialist hubs. We cite. You decide.
         </p>
 
         {SECTIONS.map((section) => {

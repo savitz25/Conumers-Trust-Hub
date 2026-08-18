@@ -6,10 +6,25 @@
  *   ?src=ask&journey=relocate&state=FL&county=miami-dade&intent=buy
  */
 
-export type JourneySrc = 'move' | 'lender' | 'insurance' | 'ask';
-export type JourneyKind = 'relocate' | 'purchase' | 'refi' | 'coverage' | 'unknown';
+export type JourneySrc =
+  | 'move'
+  | 'lender'
+  | 'insurance'
+  | 'contractor'
+  | 'senior'
+  | 'investor'
+  | 'ask';
+export type JourneyKind =
+  | 'relocate'
+  | 'purchase'
+  | 'refi'
+  | 'coverage'
+  | 'senior_care'
+  | 'investing'
+  | 'contractor'
+  | 'unknown';
 export type JourneyIntent = 'buy' | 'rent' | 'refi' | 'unknown';
-export type JourneyHub = 'move' | 'lender' | 'insurance';
+export type JourneyHub = 'move' | 'lender' | 'insurance' | 'contractor' | 'senior' | 'investor';
 
 export type JourneyContext = {
   src?: JourneySrc;
@@ -27,6 +42,9 @@ const HUB_ORIGIN = {
   move: 'https://www.movetrusthub.com',
   insurance: 'https://www.insurancetrusthub.com',
   lender: 'https://www.lendertrusthub.com',
+  contractor: 'https://www.contractortrusthub.com',
+  senior: 'https://www.seniortrusthub.com',
+  investor: 'https://www.investortrusthub.com',
   ask: 'https://www.asktrusthub.com',
 } as const;
 
@@ -255,5 +273,21 @@ export function buildMoveDeepLink(ctx: JourneyContext): string {
 export function hubDisplayName(hub: JourneyHub): string {
   if (hub === 'move') return 'Move Trust Hub';
   if (hub === 'lender') return 'Lender Trust Hub';
-  return 'Insurance Trust Hub';
+  if (hub === 'insurance') return 'Insurance Trust Hub';
+  if (hub === 'contractor') return 'Contractor Trust Hub';
+  if (hub === 'senior') return 'SeniorTrustHub';
+  return 'InvestorTrustHub';
+}
+
+/** Homepage-only handoff — do not invent crawlable landing pages. */
+export function buildContractorDeepLink(ctx: JourneyContext): string {
+  return absoluteHubUrl('contractor', withJourneyParams('/', { ...ctx, src: 'ask' }));
+}
+
+export function buildSeniorDeepLink(ctx: JourneyContext): string {
+  return absoluteHubUrl('senior', withJourneyParams('/', { ...ctx, src: 'ask' }));
+}
+
+export function buildInvestorDeepLink(ctx: JourneyContext): string {
+  return absoluteHubUrl('investor', withJourneyParams('/', { ...ctx, src: 'ask' }));
 }

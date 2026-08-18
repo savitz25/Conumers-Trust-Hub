@@ -13,7 +13,7 @@ export const BRAND = {
   url: 'https://www.asktrusthub.com',
   tagline: ASK_TAGLINE,
   description:
-    'Ask Trust Hub is the parent knowledge and trust layer for Move Trust Hub, Insurance Trust Hub, and Lender Trust Hub under common ownership. Situation routing, independence policy, and methodology — not a provider directory. Separated research and listing order. No paid placements.',
+    'Ask Trust Hub is the parent knowledge and trust layer for the Ask Trust Hub network under common ownership. Situation routing, independence policy, and methodology — not a provider directory. Separated research and listing order. No paid placements.',
   email: 'hello@asktrusthub.com',
   foundingYear: 2025,
   /** Design tokens (Phase 1) */
@@ -38,6 +38,6 @@ export function brandLogoAbsoluteUrl(baseUrl: string = BRAND.url): string {
 export const FOUNDER = {
   name: 'Michael Henry',
   role: 'Founder',
-  bio: 'Founder of Ask Trust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, lending, and contractors—where paid placement commonly substitutes for verification.',
+  bio: 'Founder of Ask Trust Hub. Responsible for network standards, independence policy, and the specialist research sites covering regulated consumer markets—moving, insurance, lending, contractors, senior care, and investment firms—where paid placement commonly substitutes for verification.',
   location: 'United States',
 } as const;

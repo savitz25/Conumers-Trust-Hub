@@ -21,7 +21,7 @@ export type SituationRoute = {
   /** Primary destination when no checklist */
   href?: string;
   cta: string;
-  hubTag: 'move' | 'insurance' | 'lender' | 'network' | 'multi';
+  hubTag: 'move' | 'insurance' | 'lender' | 'contractor' | 'senior' | 'investor' | 'network' | 'multi';
   /** Buying-a-home style ordered outbound links */
   checklist?: ChecklistStep[];
 };
@@ -59,6 +59,18 @@ export function matchSituationFromQuery(raw: string): SituationRoute | null {
     {
       id: 'premium-or-medicare',
       keys: ['insurance', 'medicare', 'premium', 'aca', 'health plan', 'turning 65', 'coverage'],
+    },
+    {
+      id: 'hire-contractor',
+      keys: ['contractor', 'license', 'remodel', 'renovat', 'plumber', 'electrician', 'hvac'],
+    },
+    {
+      id: 'aging-parent',
+      keys: ['aging', 'parent', 'senior care', 'nursing home', 'assisted living', 'cms', 'elder'],
+    },
+    {
+      id: 'investment-firm',
+      keys: ['invest', 'ria', 'crd', 'sec', 'iard', 'advisor firm', 'advisory firm', 'broker-dealer'],
     },
   ];
 
@@ -155,6 +167,36 @@ export const SITUATIONS: SituationRoute[] = [
       hubLabel: s.hubLabel,
     })),
   },
+  {
+    id: 'hire-contractor',
+    title: "I'm hiring a contractor",
+    detail:
+      'Research official license and registration evidence before you hire. Depth varies by state — missing records are not a clean bill of health.',
+    hubLabel: 'Contractor Trust Hub',
+    href: 'https://www.contractortrusthub.com',
+    cta: 'Research contractor licenses',
+    hubTag: 'contractor',
+  },
+  {
+    id: 'aging-parent',
+    title: "I'm helping an aging parent / researching senior care",
+    detail:
+      'Government-sourced senior care research. This is research — not a placement agency or referral marketplace.',
+    hubLabel: 'SeniorTrustHub',
+    href: 'https://www.seniortrusthub.com',
+    cta: 'Research senior care',
+    hubTag: 'senior',
+  },
+  {
+    id: 'investment-firm',
+    title: "I'm researching an investment firm",
+    detail:
+      'SEC/IARD firm research on InvestorTrustHub. Research before you invest — not stock picks, rankings, or portfolio advice.',
+    hubLabel: 'InvestorTrustHub',
+    href: 'https://www.investortrusthub.com',
+    cta: 'Research investment firms',
+    hubTag: 'investor',
+  },
 ];
 
 /** Trust Center — owned on Ask; hubs only deep-link here. */
@@ -172,7 +214,7 @@ export const TRUST_CENTER_LINKS = [
   {
     href: '/data-sources',
     label: 'Data sources',
-    detail: 'FMCSA, DOI/NAIC, NMLS, CFPB, and more',
+    detail: 'FMCSA, NMLS, DOI/NAIC, state boards, CMS, SEC/IARD',
   },
   {
     href: '/editorial-standards',

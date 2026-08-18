@@ -26,7 +26,7 @@ import {
   stepStatus,
   type JourneyMetadata,
 } from '@/lib/orchestration/journey-metadata';
-import { placeLabel } from '@/lib/orchestration/journey-links';
+import { placeLabel, type JourneyHub } from '@/lib/orchestration/journey-links';
 import {
   SITUATION_OPTIONS,
   type TrustJourneyPlan,
@@ -86,7 +86,7 @@ export function MyTrustJourneyOverview() {
     [meta]
   );
 
-  const onStepContinue = (stepId: string, hub: 'move' | 'lender' | 'insurance') => {
+  const onStepContinue = (stepId: string, hub: JourneyHub) => {
     recordHubVisit(stepId, hub);
     refresh();
   };

@@ -60,7 +60,7 @@ export const ASK_HERO_HEADLINE = 'Ask. Verify. Decide with confidence.';
 
 /** Semantic descriptor under H1 */
 export const ASK_HERO_DESCRIPTOR =
-  'Independent consumer research for moving, insurance, and home lending.';
+  'Independent consumer research across one network with specialist domains.';
 
 /** Network philosophy — cite sources; consumer decides */
 export const ASK_HERO_PHILOSOPHY = 'We cite. You decide.';
@@ -92,6 +92,9 @@ export const ASK_CONCIERGE_EXAMPLES = [
   { label: 'Refinance', prompt: 'I am considering refinancing and want independent lender research.' },
   { label: 'Coverage after move', prompt: 'I need insurance research after moving to a new state.' },
   { label: 'Movers only', prompt: 'I need to research FMCSA-licensed movers for a move.' },
+  { label: 'Hiring a contractor', prompt: 'I need to research a contractor license before hiring.' },
+  { label: 'Aging parent', prompt: 'I am researching senior care for an aging parent.' },
+  { label: 'Investment firm', prompt: 'I want to research an investment firm using SEC filings.' },
 ] as const;
 
 /** Homepage specialist hub cards */
@@ -126,11 +129,29 @@ export const ASK_HOME_HUBS = [
   {
     id: 'contractor' as const,
     name: 'Contractor Trust Hub',
-    blurb: 'Florida DBPR license verification, project planning ranges, and verified trades.',
+    blurb: 'Multi-state contractor license research with state-specific evidence depth.',
     href: 'https://www.contractortrusthub.com',
-    cta: 'Verify contractors',
+    cta: 'Research contractors',
     accent: '#0A2540',
     soft: '#EEF2FF',
+  },
+  {
+    id: 'senior' as const,
+    name: 'SeniorTrustHub',
+    blurb: 'Government-sourced senior care research using CMS and supported state evidence.',
+    href: 'https://www.seniortrusthub.com',
+    cta: 'Research senior care',
+    accent: '#7C3AED',
+    soft: '#F5F3FF',
+  },
+  {
+    id: 'investor' as const,
+    name: 'InvestorTrustHub',
+    blurb: 'Investment firm research using SEC/IARD evidence. Research before you invest.',
+    href: 'https://www.investortrusthub.com',
+    cta: 'Research firms',
+    accent: '#001F52',
+    soft: '#EEF4FF',
   },
 ] as const;
 
@@ -148,6 +169,8 @@ export const ASK_HERO_NETWORK_PILLS = [
   { id: 'lender', label: 'Lender', href: 'https://www.lendertrusthub.com' },
   { id: 'insurance', label: 'Insurance', href: 'https://www.insurancetrusthub.com' },
   { id: 'contractor', label: 'Contractor', href: 'https://www.contractortrusthub.com' },
+  { id: 'senior', label: 'Senior', href: 'https://www.seniortrusthub.com' },
+  { id: 'investor', label: 'Investor', href: 'https://www.investortrusthub.com' },
 ] as const;
 
 /**
@@ -201,7 +224,21 @@ export const ASK_NETWORK_LINKS = [
     label: 'Contractor Trust Hub',
     shortLabel: 'Contractor',
     href: 'https://www.contractortrusthub.com',
-    blurb: 'Florida license verification & planning',
+    blurb: 'State licensing-board research',
+  },
+  {
+    id: 'senior' as const,
+    label: 'SeniorTrustHub',
+    shortLabel: 'Senior',
+    href: 'https://www.seniortrusthub.com',
+    blurb: 'CMS / supported state senior-care research',
+  },
+  {
+    id: 'investor' as const,
+    label: 'InvestorTrustHub',
+    shortLabel: 'Investor',
+    href: 'https://www.investortrusthub.com',
+    blurb: 'SEC / IARD investment-firm research',
   },
 ] as const;
 
@@ -215,7 +252,7 @@ export const ASK_NETWORK_STEPS = [
   {
     step: 2,
     title: 'Route to the right specialist hub',
-    body: 'Move, Lender, Insurance, or Contractor Trust Hub - each owns deep research for its market.',
+    body: 'Each specialist hub owns deep research for its market — Ask routes; it does not host directories.',
   },
   {
     step: 3,

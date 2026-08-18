@@ -15,7 +15,7 @@ export type DataSourceEntry = {
 };
 
 export type DataSourceVertical = {
-  id: 'moving' | 'lending' | 'insurance' | 'network';
+  id: 'moving' | 'lending' | 'insurance' | 'contractor' | 'senior' | 'investor' | 'network';
   title: string;
   hubLabel: string;
   hubUrl?: string;
@@ -177,6 +177,78 @@ export const DATA_SOURCE_VERTICALS: DataSourceVertical[] = [
           'That a private agent recommendation is endorsed by CMS, or that plan details never change.',
         url: 'https://www.medicare.gov/',
         lastReviewed: '2026-08-07',
+      },
+    ],
+  },
+  {
+    id: 'contractor',
+    title: 'Contractors',
+    hubLabel: 'Contractor Trust Hub',
+    hubUrl: 'https://www.contractortrusthub.com',
+    intro:
+      'Contractor licensing is state-based. Official board evidence depth varies by jurisdiction. Missing records do not mean a clean history.',
+    sources: [
+      {
+        id: 'state-boards',
+        name: 'State contractor licensing boards',
+        whatItIs:
+          'State agencies and professional boards that license or register contractors and related trades.',
+        provides:
+          'License or registration status, board identity, and — where published — discipline or enforcement extracts.',
+        howWeUse:
+          'Contractor Trust Hub organizes official-board evidence with state-specific depth. It is not a marketplace.',
+        cannotProve:
+          'Identical coverage in every state, workmanship quality, or that an absent record means no history exists.',
+        url: 'https://www.contractortrusthub.com',
+        lastReviewed: '2026-08-18',
+      },
+    ],
+  },
+  {
+    id: 'senior',
+    title: 'Senior care',
+    hubLabel: 'SeniorTrustHub',
+    hubUrl: 'https://www.seniortrusthub.com',
+    intro:
+      'Senior care research starts with government sources. SeniorTrustHub is research infrastructure — not a placement agency or referral marketplace.',
+    sources: [
+      {
+        id: 'cms',
+        name: 'CMS (Centers for Medicare & Medicaid Services)',
+        whatItIs:
+          'Federal agency that publishes nursing-home and related provider quality and certification data.',
+        provides:
+          'Public facility identity and quality-measure context where CMS publishes it.',
+        howWeUse:
+          'SeniorTrustHub uses CMS and supported state regulators as research evidence. It does not place residents or sell referrals.',
+        cannotProve:
+          'That a facility is the right choice, or that unpublished state actions do not exist.',
+        url: 'https://www.medicare.gov/care-compare/',
+        lastReviewed: '2026-08-18',
+      },
+    ],
+  },
+  {
+    id: 'investor',
+    title: 'Investment firms',
+    hubLabel: 'InvestorTrustHub',
+    hubUrl: 'https://www.investortrusthub.com',
+    intro:
+      'Current InvestorTrustHub research is SEC/IARD firm evidence. It is not a broker directory, FINRA people product, or advice engine.',
+    sources: [
+      {
+        id: 'sec-iard',
+        name: 'SEC / IARD',
+        whatItIs:
+          'U.S. Securities and Exchange Commission investment adviser registration data via IARD / Form ADV.',
+        provides:
+          'Firm identity, registration classification, and filer-supplied Form ADV fields used for research.',
+        howWeUse:
+          'InvestorTrustHub organizes official firm filings so you can research before you invest. Source “Approved” is not SEC endorsement.',
+        cannotProve:
+          'That a firm is suitable, that people/broker records are included, or that missing disclosures mean a clean history.',
+        url: 'https://adviserinfo.sec.gov/',
+        lastReviewed: '2026-08-18',
       },
     ],
   },

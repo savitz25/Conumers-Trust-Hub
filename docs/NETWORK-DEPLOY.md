@@ -10,6 +10,9 @@
 | `www.movetrusthub.com` | **Move-trust-Hub** | https://www.movetrusthub.com | Move project → Move `main` |
 | `www.insurancetrusthub.com` | **Insurance-trust-hub** | https://www.insurancetrusthub.com | Insurance project → Insurance `main` |
 | `www.lendertrusthub.com` | **Lender-Trust-Hub** | https://www.lendertrusthub.com | Lender project → Lender `main` |
+| `www.contractortrusthub.com` | **contractor-trust-hub** | https://www.contractortrusthub.com | Contractor project → Contractor `main` |
+| `www.seniortrusthub.com` | **care-trust-hub** | https://www.seniortrusthub.com | Senior project → care-trust-hub `main` |
+| `www.investortrusthub.com` | **investor-trust-hub** | https://www.investortrusthub.com | Investor project → Investor `main` |
 
 ## When you change X, push to Y
 
@@ -36,7 +39,7 @@ Constant: `lib/network/standard-version.ts` → `ASK_NETWORK_STANDARD_VERSION`
 ### Ownership (Priority 5)
 
 Short: `Common ownership · Separated research & listing order · No paid placements`  
-Long: Move, Insurance, and Lender Trust Hub are part of the Ask Trust Hub network — common ownership, separated research and ordering, no paid placements.
+Long: Move, Lender, Insurance, Contractor, Senior, and Investor Trust Hub are part of the Ask Trust Hub network — common ownership, separated research and ordering, no paid placements.
 
 ### Hero intent map (Priority 4)
 

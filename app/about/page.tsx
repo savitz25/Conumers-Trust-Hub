@@ -14,7 +14,7 @@ import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 export const metadata = createPageMetadata({
   title: 'About the Network',
   description:
-    'Ask Trust Hub is the parent research network for Move, Insurance, Lender, and Contractor Trust Hub — common ownership, separated research and listing order, no paid placements.',
+    'Ask Trust Hub is the parent research network for the Ask Trust Hub specialist hubs — common ownership, separated research and listing order, no paid placements.',
   path: '/about',
 });
 
@@ -55,7 +55,7 @@ export default function AboutPage() {
             </li>
             <li>
               <strong>Specialist domains:</strong> market-specific research products and provider
-              directories (Move, Insurance, Lender, Contractor)
+              directories (our specialist hubs)
             </li>
           </ul>
 

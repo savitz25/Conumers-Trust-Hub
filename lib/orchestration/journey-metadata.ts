@@ -93,6 +93,9 @@ const SITUATION_SET = new Set<SituationId>([
   'refinance',
   'coverage_after_move',
   'pure_move',
+  'hire_contractor',
+  'aging_parent',
+  'investing_research',
   'unknown',
 ]);
 
@@ -101,11 +104,21 @@ const JOURNEY_SET = new Set<JourneyKind>([
   'purchase',
   'refi',
   'coverage',
+  'senior_care',
+  'investing',
+  'contractor',
   'unknown',
 ]);
 
 const INTENT_SET = new Set<JourneyIntent>(['buy', 'rent', 'refi', 'unknown']);
-const HUB_SET = new Set<JourneyHub>(['move', 'lender', 'insurance']);
+const HUB_SET = new Set<JourneyHub>([
+  'move',
+  'lender',
+  'insurance',
+  'contractor',
+  'senior',
+  'investor',
+]);
 
 function sanitizeHubs(raw: unknown): JourneyHub[] {
   if (!Array.isArray(raw)) return [];
@@ -393,7 +406,8 @@ export function specialistContinues(meta: JourneyMetadata): {
     : (['move', 'lender', 'insurance'] as JourneyHub[]);
 
   for (const hub of hubs) {
-    const my = SPECIALIST_MY_WORKSPACES[hub];
+    if (!(hub in SPECIALIST_MY_WORKSPACES)) continue;
+    const my = SPECIALIST_MY_WORKSPACES[hub as keyof typeof SPECIALIST_MY_WORKSPACES];
     items.push({
       hub,
       label: my.label,

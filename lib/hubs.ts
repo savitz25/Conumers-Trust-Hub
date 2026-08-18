@@ -1,7 +1,16 @@
+import {
+  CANONICAL_ORIGINS,
+  NETWORK_PUBLIC_NAMES,
+  SPECIALIST_HUB_IDS,
+  type SpecialistHubId,
+} from '@/lib/network/registry';
+
 export type HubStatus = 'live' | 'coming_soon';
 
+export type HubId = SpecialistHubId;
+
 export interface TrustHub {
-  id: 'move' | 'insurance' | 'lender' | 'contractor';
+  id: HubId;
   name: string;
   shortName: string;
   domain: string;
@@ -18,10 +27,10 @@ export interface TrustHub {
 export const TRUST_HUBS: TrustHub[] = [
   {
     id: 'move',
-    name: 'Move Trust Hub',
+    name: NETWORK_PUBLIC_NAMES.move,
     shortName: 'Moving',
     domain: 'movetrusthub.com',
-    url: 'https://www.movetrusthub.com',
+    url: CANONICAL_ORIGINS.move,
     status: 'live',
     verification: 'FMCSA licensing & complaint data',
     dataSources: ['FMCSA', 'SAFER', 'Attributed reviews'],
@@ -31,25 +40,11 @@ export const TRUST_HUBS: TrustHub[] = [
     accentSoft: '#FFF4EF',
   },
   {
-    id: 'insurance',
-    name: 'Insurance Trust Hub',
-    shortName: 'Insurance',
-    domain: 'insurancetrusthub.com',
-    url: 'https://www.insurancetrusthub.com',
-    status: 'live',
-    verification: 'State DOI / NAIC licensing',
-    dataSources: ['State DOI', 'NAIC', 'Attributed reviews'],
-    description:
-      'Research destination for state-licensed insurance agencies and brokers. Provider directories and tools are hosted on this domain.',
-    accent: '#0D9488',
-    accentSoft: '#F0FDFA',
-  },
-  {
     id: 'lender',
-    name: 'Lender Trust Hub',
+    name: NETWORK_PUBLIC_NAMES.lender,
     shortName: 'Lending',
     domain: 'lendertrusthub.com',
-    url: 'https://www.lendertrusthub.com',
+    url: CANONICAL_ORIGINS.lender,
     status: 'live',
     verification: 'NMLS Consumer Access',
     dataSources: ['NMLS', 'CFPB', 'FDIC / public records'],
@@ -59,25 +54,82 @@ export const TRUST_HUBS: TrustHub[] = [
     accentSoft: '#F0FDF4',
   },
   {
+    id: 'insurance',
+    name: NETWORK_PUBLIC_NAMES.insurance,
+    shortName: 'Insurance',
+    domain: 'insurancetrusthub.com',
+    url: CANONICAL_ORIGINS.insurance,
+    status: 'live',
+    verification: 'State DOI / NAIC licensing',
+    dataSources: ['State DOI', 'NAIC', 'Attributed reviews'],
+    description:
+      'Research destination for state-licensed insurance agencies and brokers. Provider directories and tools are hosted on this domain.',
+    accent: '#0D9488',
+    accentSoft: '#F0FDFA',
+  },
+  {
     id: 'contractor',
-    name: 'Contractor Trust Hub',
+    name: NETWORK_PUBLIC_NAMES.contractor,
     shortName: 'Contractors',
     domain: 'contractortrusthub.com',
-    url: 'https://www.contractortrusthub.com',
+    url: CANONICAL_ORIGINS.contractor,
     status: 'live',
-    verification: 'Florida DBPR licensing & Sunbiz entity links',
-    dataSources: ['Florida DBPR', 'Sunbiz', 'Board discipline extracts'],
+    verification: 'State licensing-board research with state-specific evidence depth',
+    dataSources: ['State licensing boards', 'Official registration extracts'],
     description:
-      'Research destination for Florida contractor license verification, project cost planning, and verified trade matches. Evidence only — not a marketplace.',
+      'Multi-state contractor license and registration research with state-specific evidence depth. Evidence only — not a marketplace.',
     accent: '#0A2540',
     accentSoft: '#EEF2FF',
   },
+  {
+    id: 'senior',
+    name: NETWORK_PUBLIC_NAMES.senior,
+    shortName: 'Senior care',
+    domain: 'seniortrusthub.com',
+    url: CANONICAL_ORIGINS.senior,
+    status: 'live',
+    verification: 'CMS and supported state regulatory evidence',
+    dataSources: ['CMS', 'Supported state regulators'],
+    description:
+      'Government-sourced senior care research. Not a placement agency, referral marketplace, or lead-generation service.',
+    accent: '#7C3AED',
+    accentSoft: '#F5F3FF',
+  },
+  {
+    id: 'investor',
+    name: NETWORK_PUBLIC_NAMES.investor,
+    shortName: 'Investing',
+    domain: 'investortrusthub.com',
+    url: CANONICAL_ORIGINS.investor,
+    status: 'live',
+    verification: 'SEC / IARD firm filings',
+    dataSources: ['SEC', 'IARD'],
+    description:
+      'Investment firm research using SEC/IARD regulatory evidence. Research before you invest — not stock recommendations or portfolio advice.',
+    accent: '#001F52',
+    accentSoft: '#EEF4FF',
+  },
 ];
+
+const HUB_BY_ID = Object.fromEntries(TRUST_HUBS.map((h) => [h.id, h])) as Record<
+  HubId,
+  TrustHub
+>;
 
 export function getLiveHubs() {
   return TRUST_HUBS.filter((h) => h.status === 'live');
 }
 
-export function getHubById(id: TrustHub['id']) {
-  return TRUST_HUBS.find((h) => h.id === id);
+export function getHubById(id: HubId) {
+  return HUB_BY_ID[id];
+}
+
+export function assertCompleteSpecialistRegistry(): void {
+  const ids = TRUST_HUBS.map((h) => h.id);
+  if (ids.length !== SPECIALIST_HUB_IDS.length) {
+    throw new Error('TRUST_HUBS must contain exactly six specialists');
+  }
+  for (const id of SPECIALIST_HUB_IDS) {
+    if (!ids.includes(id)) throw new Error(`Missing specialist hub: ${id}`);
+  }
 }

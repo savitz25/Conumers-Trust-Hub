@@ -15,7 +15,7 @@ import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 export const metadata = createPageMetadata({
   title: 'Trust Center',
   description:
-    'Ask Trust Hub Trust Center: The Ask Trust Hub Standard, independence, data sources, revenue disclosure, corrections, and vertical methodology on Move, Insurance, and Lender.',
+    'Ask Trust Hub Trust Center: The Ask Trust Hub Standard, independence, data sources, revenue disclosure, corrections, and vertical methodology on the specialist hubs.',
   path: '/trust',
 });
 
@@ -93,6 +93,36 @@ export default function TrustCenterPage() {
               </a>
               <span className="text-muted-foreground"> — agencies · DOI pathways</span>
             </li>
+            <li>
+              <a
+                href="https://www.contractortrusthub.com"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                Contractor Trust Hub
+              </a>
+              <span className="text-muted-foreground"> — contractors · state boards</span>
+            </li>
+            <li>
+              <a
+                href="https://www.seniortrusthub.com"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                SeniorTrustHub
+              </a>
+              <span className="text-muted-foreground"> — senior care · CMS / supported states</span>
+            </li>
+            <li>
+              <a
+                href="https://www.investortrusthub.com"
+                className="font-semibold text-navy underline-offset-2 hover:underline"
+                rel="noopener noreferrer"
+              >
+                InvestorTrustHub
+              </a>
+              <span className="text-muted-foreground"> — investment firms · SEC/IARD</span>
+            </li>
           </ul>
         </section>
         <section aria-labelledby="network-standards-heading">
@@ -127,7 +157,7 @@ export default function TrustCenterPage() {
             Trust Profiles (specialist hubs only)
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Trust Profiles on Move, Insurance, and Lender share one shell: verification sources,
+            Trust Profiles on specialist hubs share one shell: verification sources,
             contact, optional research scores, methodology links, and The Ask Trust Hub Standard.
             Ask does not host directories or entity search — open a specialist hub to research a
             provider.

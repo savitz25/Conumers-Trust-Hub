@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/assert-network-v2.mjs",
+    "assert:network": "node scripts/assert-network-v2.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

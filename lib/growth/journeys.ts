@@ -357,6 +357,75 @@ export const JOURNEY_PAGES: JourneyPage[] = [
     ],
     lastReviewed: '2026-08-07',
   },
+  {
+    slug: 'helping-an-aging-parent',
+    title: 'Helping an aging parent: research first, not a placement funnel',
+    metaTitle: 'Helping an Aging Parent — Senior Care Research Path',
+    metaDescription:
+      'Research senior care with government-sourced evidence first. Optional insurance, move, or contractor steps only when that next life decision is real. Not a placement agency.',
+    summary:
+      'Start on SeniorTrustHub. Add insurance, relocation, or contractor research only when those decisions actually appear — never as referral leads.',
+    intro: [
+      'Helping an aging parent is a research problem before it is a sales problem. Public CMS records and supported state regulators can help you understand what is published about a facility. They do not tell you what to choose, and they do not replace a visit, a contract review, or counsel when you need it.',
+      'Ask Trust Hub routes you. SeniorTrustHub does the deep research. This is not a placement agency, a referral marketplace, or a paid ranking product. We cite. You decide.',
+    ],
+    steps: [
+      {
+        step: 1,
+        title: 'Research senior care with official evidence',
+        hubLabel: 'SeniorTrustHub',
+        why: 'Start with government-sourced research, not a lead form.',
+        body: 'Open SeniorTrustHub for CMS and supported state regulatory evidence. Missing records are not a clean bill of health. Do not treat a listing as an endorsement or a placement offer.',
+        href: 'https://www.seniortrusthub.com',
+        cta: 'Research senior care on SeniorTrustHub',
+      },
+      {
+        step: 2,
+        title: 'Coverage only if it is part of this decision',
+        hubLabel: 'Insurance Trust Hub',
+        why: 'Insurance research belongs here only when coverage actually intersects the care decision.',
+        body: 'If Medicare, supplemental, or long-term coverage questions are real for this situation, use Insurance Trust Hub for DOI-oriented research education. Skip this step if coverage is not on the table.',
+        href: 'https://www.insurancetrusthub.com',
+        cta: 'Optional: Insurance Trust Hub',
+      },
+    ],
+    limitations: [
+      'Not a placement, referral, or care-management service.',
+      'CMS and state records lag and are incomplete.',
+      'Ask does not rank facilities or sell leads.',
+    ],
+    lastReviewed: '2026-08-18',
+  },
+  {
+    slug: 'researching-an-investment-firm',
+    title: 'Researching an investment firm: SEC/IARD evidence, not advice',
+    metaTitle: 'Researching an Investment Firm — SEC/IARD Path',
+    metaDescription:
+      'Research an investment firm using SEC/IARD filings on InvestorTrustHub. Not stock recommendations, rankings, or portfolio advice.',
+    summary:
+      'InvestorTrustHub is the primary hub. This path is firm research from official filings — not personalized financial advice.',
+    intro: [
+      'If you are trying to understand a firm that files Form ADV, start with official SEC/IARD evidence. InvestorTrustHub organizes that research. It does not pick stocks, rank advisers, or tell you what to buy.',
+      'This journey does not include FINRA BrokerCheck people coverage or complete advisor profiles unless those products exist on InvestorTrustHub. They are not claimed here. We cite. You decide.',
+    ],
+    steps: [
+      {
+        step: 1,
+        title: 'Read the firm’s official filings',
+        hubLabel: 'InvestorTrustHub',
+        why: 'Identity and registration research comes from IARD / Form ADV — not marketing sites.',
+        body: 'Use InvestorTrustHub to research the firm in SEC/IARD records. Source “Approved” is not SEC endorsement. Missing disclosures are not a clean record. Re-check adviserinfo.sec.gov before you rely on any page.',
+        href: 'https://www.investortrusthub.com',
+        cta: 'Research firms on InvestorTrustHub',
+      },
+    ],
+    limitations: [
+      'Not investment, legal, or tax advice.',
+      'Does not include complete people/broker research unless separately published.',
+      'Ask does not recommend firms or products.',
+    ],
+    lastReviewed: '2026-08-18',
+  },
 ];
 
 export function getJourneyBySlug(slug: string): JourneyPage | undefined {

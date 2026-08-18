@@ -6,6 +6,7 @@ import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import {
   MOVE_CITY_HUBS,
   US_STATES,
+  type JourneyHub,
   type JourneyIntent,
 } from '@/lib/orchestration/journey-links';
 import {
@@ -25,10 +26,13 @@ import {
 } from '@/lib/orchestration/progress';
 import { cn } from '@/lib/utils';
 
-const HUB_ACCENT: Record<string, string> = {
+const HUB_ACCENT: Record<JourneyHub, string> = {
   move: '#C2410C',
   lender: '#166534',
   insurance: '#0F766E',
+  contractor: '#0A2540',
+  senior: '#6D28D9',
+  investor: '#001F52',
 };
 
 type Props = {
@@ -111,7 +115,7 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
     }
   };
 
-  const onStepClick = (stepId: string, hub: 'move' | 'lender' | 'insurance') => {
+  const onStepClick = (stepId: string, hub: JourneyHub) => {
     if (!planKey) return;
     const next = markStepVisited(planKey, stepId);
     if (next) setVisited(new Set(next.visitedStepIds));
@@ -146,7 +150,7 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
             What&apos;s happening?
           </h2>
           <p className="mt-2 text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-            Tell us the situation. Ask builds an ordered research path into Move, Lender, and
+            Tell us the situation. Ask builds an ordered research path into the specialist hubs that apply —
             Insurance Trust Hub — with context preserved. No account. No personal data.
           </p>
         </div>
@@ -327,7 +331,7 @@ export function WhatsHappeningPlanner({ className, initialSituation }: Props) {
 
           <p className="mt-3 text-xs leading-relaxed" style={{ color: ASK_BRAND.ink }}>
             Save stores high-level situation metadata in this browser for My Trust Journey.
-            Directories and tools live on Move, Lender, and Insurance — not here. No account required.
+            Directories and tools live on the specialist hubs — not here. No account required.
           </p>
         </div>
 

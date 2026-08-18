@@ -11,7 +11,7 @@ import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 export const metadata = createPageMetadata({
   title: 'Life Journeys — Cross-Hub Decision Paths',
   description:
-    'Cross-vertical consumer journeys on Ask Trust Hub: buying a home, interstate moves, work relocation, and protection research. Routes to Move, Lender, and Insurance Trust Hub.',
+    'Cross-vertical consumer journeys on Ask Trust Hub: buying a home, interstate moves, work relocation, and protection research. Routes to the specialist hub that owns each decision.',
   path: '/journeys',
 });
 

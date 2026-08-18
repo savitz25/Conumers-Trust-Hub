@@ -9,7 +9,7 @@ const founderId = `${siteUrl}/who-we-are#founder`;
 
 /**
  * Parent Organization JSON-LD for Ask Trust Hub.
- * Represents common-ownership network structure; not three unaffiliated companies.
+ * Represents common-ownership network structure; not unaffiliated companies.
  */
 export function buildOrganizationSchema() {
   return {
@@ -68,7 +68,7 @@ export function buildParentOrganizationReference() {
   };
 }
 
-/** Guarantees schema includes all three network hubs (used in tests / sanity checks). */
+/** Guarantees schema includes all six specialist hubs (used in tests / sanity checks). */
 export function getSubOrganizationNames(): string[] {
   return TRUST_HUBS.map((h) => h.name);
 }

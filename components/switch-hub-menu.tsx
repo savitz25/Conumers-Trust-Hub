@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { ASK_NETWORK_LINKS } from '@/lib/design/ask-design-system';
+import { NETWORK_REGISTRY, switcherEntries } from '@/lib/network/registry';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -50,7 +51,7 @@ export function SwitchHubMenu({ className, compact = false }: Props) {
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
       >
-        {compact ? 'Hubs' : 'Switch Hub'}
+        {compact ? 'Switch Hub' : 'Switch Hub'}
         <ChevronDown
           className={cn('h-3.5 w-3.5 text-[#4F46E5] transition-transform', open && 'rotate-180')}
           aria-hidden
@@ -65,31 +66,50 @@ export function SwitchHubMenu({ className, compact = false }: Props) {
           className="absolute right-0 z-[80] mt-2 w-[min(100vw-2rem,18rem)] overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white py-2 shadow-[0_8px_24px_-8px_rgb(10_37_64_/_0.15)]"
         >
           <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4F46E5]">
-            Specialist hubs
+            Ask Trust Hub Network
           </p>
           <ul className="space-y-0.5 px-1.5">
-            {ASK_NETWORK_LINKS.map((hub) => (
-              <li key={hub.id}>
-                <a
-                  role="menuitem"
-                  href={hub.href}
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-[#E0E7FF]/70"
-                  onClick={() => setOpen(false)}
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-[#0A2540]">{hub.label}</span>
-                    <span className="mt-0.5 block text-xs leading-snug text-[#1E293B]">
-                      {hub.blurb}
+            {switcherEntries().map((hub) => {
+              const current = hub.id === 'ask';
+              const specialist = ASK_NETWORK_LINKS.find((link) => link.id === hub.id);
+              return (
+                <li key={hub.id}>
+                  <a
+                    role="menuitem"
+                    href={hub.url}
+                    aria-current={current ? 'page' : undefined}
+                    rel={current ? undefined : 'noopener noreferrer'}
+                    className={cn(
+                      'flex min-h-11 items-start gap-2 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-[#E0E7FF]/70',
+                      current && 'bg-[#E0E7FF]/80'
+                    )}
+                    onClick={() => setOpen(false)}
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-[#0A2540]">
+                        {hub.name}
+                        {current ? (
+                          <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-[#4F46E5]">
+                            Current
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="mt-0.5 block text-xs leading-snug text-[#1E293B]">
+                        {current
+                          ? NETWORK_REGISTRY.ask.switcherLabel
+                          : specialist?.blurb ?? hub.switcherLabel}
+                      </span>
                     </span>
-                  </span>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4F46E5]" aria-hidden />
-                </a>
-              </li>
-            ))}
+                    {current ? null : (
+                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4F46E5]" aria-hidden />
+                    )}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
           <p className="mt-1 border-t border-[#E2E8F0] px-3 pt-2 text-[11px] leading-relaxed text-[#1E293B]">
-            You are on Ask Trust Hub — knowledge &amp; routing for the network.
+            You are on Ask Trust Hub — parent research &amp; standards layer.
           </p>
         </div>
       ) : null}

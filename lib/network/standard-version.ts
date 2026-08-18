@@ -1,7 +1,10 @@
 /**
  * Ask Trust Hub network contract version.
+ * Keep in lockstep with docs/ASK-NETWORK-CONTRACT.md and lib/network/registry.ts.
  */
-export const ASK_NETWORK_STANDARD_VERSION = '2026.08.11-b3';
+import { ASK_NETWORK_CONTRACT_VERSION } from '@/lib/network/registry';
+
+export const ASK_NETWORK_STANDARD_VERSION = ASK_NETWORK_CONTRACT_VERSION;
 export const ASK_NETWORK_STANDARD_URL = 'https://www.asktrusthub.com/methodology';
 
 export const ASK_NETWORK_STANDARD_LABEL = 'Ask Trust Hub Standard';
@@ -16,4 +19,4 @@ export const ASK_NETWORK_OWNERSHIP_SHORT =
 
 /** Longer ownership sentence for prose blocks. */
 export const ASK_NETWORK_OWNERSHIP_LINE =
-  'Move, Insurance, Lender, and Contractor Trust Hub are part of the Ask Trust Hub network under common ownership, with separated research and listing order and no paid placements.';
+  'Move, Lender, Insurance, Contractor, Senior, and Investor Trust Hub are part of the Ask Trust Hub network under common ownership, with separated research and listing order and no paid placements.';

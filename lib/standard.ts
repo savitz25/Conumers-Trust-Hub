@@ -163,6 +163,27 @@ export const STANDARD_INHERITANCE = [
     focus:
       'NMLS Consumer Access context, mortgage research signals, complaint transparency, and Trust Score philosophy for financing research — not loan origination.',
   },
+  {
+    hub: 'Contractor Trust Hub',
+    domain: 'contractortrusthub.com',
+    url: 'https://www.contractortrusthub.com',
+    focus:
+      'State licensing-board and registration evidence with state-specific depth — not identical coverage in every state, and not a marketplace.',
+  },
+  {
+    hub: 'SeniorTrustHub',
+    domain: 'seniortrusthub.com',
+    url: 'https://www.seniortrusthub.com',
+    focus:
+      'CMS and supported state regulatory evidence for senior care research — not placement, referrals, or paid rankings.',
+  },
+  {
+    hub: 'InvestorTrustHub',
+    domain: 'investortrusthub.com',
+    url: 'https://www.investortrusthub.com',
+    focus:
+      'SEC / IARD investment-firm research. Not FINRA people coverage, stock recommendations, or portfolio advice.',
+  },
 ] as const;
 
 export const STANDARD_VOCABULARY = [

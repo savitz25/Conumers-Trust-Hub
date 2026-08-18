@@ -5,10 +5,10 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '
 
 /** Homepage — entity-rich title & description (Phase 1 integrity). */
 export const HOMEPAGE_TITLE =
-  'Ask Trust Hub | Independent Consumer Research for Moving, Insurance & Lending';
+  'Ask Trust Hub | Independent Consumer Research Network';
 
 export const HOMEPAGE_DESCRIPTION =
-  'Independent consumer research network. We help you understand verified public sources and route you to specialist research on Move, Insurance, Lender, and Contractor Trust Hub — no paid placements, no lead fees.';
+  'Independent consumer research network. We help you understand verified public sources and route you to specialist hubs — no paid placements, no lead fees.';
 
 /** Default share image (1200×630) — prefer dedicated OG art over logo crop. */
 export function brandOgImageAbsoluteUrl(baseUrl: string = siteUrl): string {
@@ -29,6 +29,9 @@ export const rootLayoutMetadata: Metadata = {
     'Move Trust Hub',
     'Insurance Trust Hub',
     'Lender Trust Hub',
+    'Contractor Trust Hub',
+    'SeniorTrustHub',
+    'InvestorTrustHub',
     'no paid placements',
     'FMCSA',
     'NMLS',

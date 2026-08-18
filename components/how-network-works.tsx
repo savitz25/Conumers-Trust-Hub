@@ -38,8 +38,8 @@ export function HowNetworkWorks() {
             How Ask connects to the specialist hubs
           </h2>
           <p className="mt-4 text-lg leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-            Ask Trust Hub is the parent knowledge and concierge layer. Move, Lender, and Insurance
-            Trust Hub do market-depth research under shared standards - common ownership, separated
+            Ask Trust Hub is the parent knowledge and concierge layer. Our specialist hubs
+            do market-depth research under shared standards — common ownership, separated
             research and listing order, no paid placements.
           </p>
         </div>

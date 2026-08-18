@@ -13,6 +13,9 @@ const HUB_TAG_STYLES: Record<SituationRoute['hubTag'], string> = {
   move: 'bg-[#FFF4EF] text-[#C2410C] border-[#FFD4C2]',
   insurance: 'bg-[#F0FDFA] text-[#0F766E] border-[#99F6E4]',
   lender: 'bg-[#F0FDF4] text-[#166534] border-[#BBF7D0]',
+  contractor: 'bg-[#EEF2FF] text-[#0A2540] border-[#C7D2FE]',
+  senior: 'bg-[#F5F3FF] text-[#6D28D9] border-[#DDD6FE]',
+  investor: 'bg-[#EEF4FF] text-[#001F52] border-[#BFDBFE]',
   network: 'bg-[#E0E7FF] text-[#3730A3] border-[#C7D2FE]',
   multi: 'bg-[#E0E7FF] text-[#4F46E5] border-[#C7D2FE]',
 };

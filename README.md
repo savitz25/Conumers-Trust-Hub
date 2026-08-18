@@ -3,7 +3,9 @@
 **Production domain:** https://www.asktrusthub.com  
 **This repo is the source of truth for that domain** (`Conumers-Trust-Hub` → Vercel Ask project).
 
-Sibling network repos: [Move-trust-Hub](https://github.com/savitz25/Move-trust-Hub) · [Insurance-trust-hub](https://github.com/savitz25/Insurance-trust-hub) · [Lender-Trust-Hub](https://github.com/savitz25/Lender-Trust-Hub)
+Network contract: [docs/ASK-NETWORK-CONTRACT.md](./docs/ASK-NETWORK-CONTRACT.md) (`2026.08.18-network-v2`).
+
+Sibling network repos: [Move-trust-Hub](https://github.com/savitz25/Move-trust-Hub) · [Insurance-trust-hub](https://github.com/savitz25/Insurance-trust-hub) · [Lender-Trust-Hub](https://github.com/savitz25/Lender-Trust-Hub) · [contractor-trust-hub](https://github.com/savitz25/contractor-trust-hub) · [care-trust-hub](https://github.com/savitz25/care-trust-hub) · [investor-trust-hub](https://github.com/savitz25/investor-trust-hub)
 
 **Network / multi-domain:** see [docs/NETWORK-DEPLOY.md](./docs/NETWORK-DEPLOY.md) and [docs/NETWORK-PR-CHECKLIST.md](./docs/NETWORK-PR-CHECKLIST.md). After network deploys run `npm run smoke:network` from Move-trust-Hub.
 
@@ -15,9 +17,12 @@ Thin parent brand site for the Ask Trust Hub network — trust infrastructure an
 
 | Hub | Domain | Status |
 |-----|--------|--------|
-| MoveTrustHub | [movetrusthub.com](https://www.movetrusthub.com) | **Live** |
-| InsuranceTrustHub | [insurancetrusthub.com](https://www.insurancetrusthub.com) | **Live** |
-| LenderTrustHub | [lendertrusthub.com](https://www.lendertrusthub.com) | **Live** |
+| Move Trust Hub | [movetrusthub.com](https://www.movetrusthub.com) | **Live** |
+| Lender Trust Hub | [lendertrusthub.com](https://www.lendertrusthub.com) | **Live** |
+| Insurance Trust Hub | [insurancetrusthub.com](https://www.insurancetrusthub.com) | **Live** |
+| Contractor Trust Hub | [contractortrusthub.com](https://www.contractortrusthub.com) | **Live** |
+| SeniorTrustHub | [seniortrusthub.com](https://www.seniortrusthub.com) | **Live** |
+| InvestorTrustHub | [investortrusthub.com](https://www.investortrusthub.com) | **Live** |
 
 **Parent domain:** [asktrusthub.com](https://www.asktrusthub.com)
 
@@ -43,7 +48,7 @@ Thin parent brand site for the Ask Trust Hub network — trust infrastructure an
 
 - Next.js 15 (App Router) + TypeScript
 - Tailwind CSS 4
-- Organization schema with `subOrganization` for the three hubs
+- Organization schema with `subOrganization` for the six specialist hubs
 - `sitemap.xml` + `robots.txt`
 
 ## Quick start

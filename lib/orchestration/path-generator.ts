@@ -4,9 +4,12 @@
  */
 
 import {
+  buildContractorDeepLink,
   buildInsuranceDeepLink,
+  buildInvestorDeepLink,
   buildLenderDeepLink,
   buildMoveDeepLink,
+  buildSeniorDeepLink,
   hubDisplayName,
   normalizeCountySlug,
   normalizeState,
@@ -24,6 +27,9 @@ export type SituationId =
   | 'refinance'
   | 'coverage_after_move'
   | 'pure_move'
+  | 'hire_contractor'
+  | 'aging_parent'
+  | 'investing_research'
   | 'unknown';
 
 export type SituationOption = {
@@ -78,6 +84,24 @@ export const SITUATION_OPTIONS: SituationOption[] = [
     description: 'Mover licensing and destination logistics',
     needsDestination: true,
     fixedIntent: 'unknown',
+  },
+  {
+    id: 'hire_contractor',
+    label: 'Hiring a contractor',
+    description: 'License and registration research before you hire',
+    needsDestination: true,
+  },
+  {
+    id: 'aging_parent',
+    label: 'Helping an aging parent',
+    description: 'Senior care research — not a placement or referral service',
+    needsDestination: false,
+  },
+  {
+    id: 'investing_research',
+    label: 'Researching an investment firm',
+    description: 'SEC/IARD firm research — not investment advice',
+    needsDestination: false,
   },
   {
     id: 'unknown',
@@ -161,7 +185,9 @@ function placePhrase(ctx: JourneyContext): string {
  * Generate an ordered Trust Journey plan from a non-PII situation + optional geography.
  */
 export function generateTrustJourneyPlan(input: PathInput): TrustJourneyPlan {
-  const opt = SITUATION_OPTIONS.find((s) => s.id === input.situationId) ?? SITUATION_OPTIONS[6];
+  const opt =
+    SITUATION_OPTIONS.find((s) => s.id === input.situationId) ??
+    SITUATION_OPTIONS.find((s) => s.id === 'unknown')!;
   const intent = opt.fixedIntent ?? input.intent ?? 'unknown';
   const origin = normalizeState(input.originState);
 
@@ -343,6 +369,81 @@ export function generateTrustJourneyPlan(input: PathInput): TrustJourneyPlan {
       };
     }
 
+    case 'hire_contractor': {
+      const ctx = baseContext(input, 'contractor', 'unknown');
+      const place = placePhrase(ctx);
+      return {
+        situationId: 'hire_contractor',
+        title: `Contractor research${ctx.stateName ? ` — ${place}` : ''}`,
+        summary:
+          'Contractor Trust Hub only on this path. Evidence depth is state-specific; missing records are not a clean bill of health.',
+        context: ctx,
+        place: placeLabel(ctx),
+        steps: [
+          step(
+            1,
+            'contractor',
+            ctx.stateName ? `Research contractor licenses in ${place}` : 'Research contractor licenses',
+            'Official board and registration evidence — not a marketplace or lead form.',
+            'Open Contractor Trust Hub',
+            buildContractorDeepLink(ctx)
+          ),
+        ],
+      };
+    }
+
+    case 'aging_parent': {
+      const ctx = baseContext(input, 'senior_care', 'unknown');
+      return {
+        situationId: 'aging_parent',
+        title: 'Researching senior care for an aging parent',
+        summary:
+          'SeniorTrustHub first. Insurance, move, or contractor steps appear only when that next life decision is real — never as placement or referral leads.',
+        context: ctx,
+        place: placeLabel(ctx),
+        steps: [
+          step(
+            1,
+            'senior',
+            'Research senior care with government-sourced evidence',
+            'CMS and supported state regulatory research. Not a placement agency.',
+            'Open SeniorTrustHub',
+            buildSeniorDeepLink(ctx)
+          ),
+          step(
+            2,
+            'insurance',
+            'Coverage only if it is part of this decision',
+            'Optional: insurance research when coverage actually intersects the care decision.',
+            'Optional: Insurance Trust Hub',
+            buildInsuranceDeepLink(ctx)
+          ),
+        ],
+      };
+    }
+
+    case 'investing_research': {
+      const ctx = baseContext(input, 'investing', 'unknown');
+      return {
+        situationId: 'investing_research',
+        title: 'Researching an investment firm',
+        summary:
+          'InvestorTrustHub only. SEC/IARD firm research — not stock recommendations, rankings, or portfolio advice.',
+        context: ctx,
+        place: null,
+        steps: [
+          step(
+            1,
+            'investor',
+            'Research the firm in SEC/IARD records',
+            'Firm research using official filings. We cite. You decide.',
+            'Open InvestorTrustHub',
+            buildInvestorDeepLink(ctx)
+          ),
+        ],
+      };
+    }
+
     case 'unknown':
     default: {
       const ctx = baseContext(
@@ -394,6 +495,9 @@ export function matchSituationIdFromQuery(raw: string): SituationId | null {
   if (/\b(insurance|coverage|premium)\b/.test(q) && /\b(mov|relocat|after)\b/.test(q))
     return 'coverage_after_move';
   if (/\b(mover|moving|relocat|dot|fmcsa)\b/.test(q)) return 'pure_move';
+  if (/\b(contractor|remodel|renovat)\b/.test(q)) return 'hire_contractor';
+  if (/\b(aging|senior care|nursing|assisted living)\b/.test(q)) return 'aging_parent';
+  if (/\b(invest|ria|crd|sec|iard|advisor firm)\b/.test(q)) return 'investing_research';
   if (/\b(not sure|unsure|help me)\b/.test(q)) return 'unknown';
   return null;
 }

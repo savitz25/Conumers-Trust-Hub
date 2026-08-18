@@ -12,14 +12,24 @@ export const ANALYTICS_EVENTS = {
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
 
-export type HubOutboundId = 'move' | 'lender' | 'insurance' | 'contractor';
+export type HubOutboundId =
+  | 'ask'
+  | 'move'
+  | 'lender'
+  | 'insurance'
+  | 'contractor'
+  | 'senior'
+  | 'investor';
 
 export function hubIdFromHostname(hostname: string): HubOutboundId | null {
   const host = hostname.replace(/^www\./, '').toLowerCase();
+  if (host === 'asktrusthub.com') return 'ask';
   if (host === 'movetrusthub.com') return 'move';
   if (host === 'lendertrusthub.com') return 'lender';
   if (host === 'insurancetrusthub.com') return 'insurance';
   if (host === 'contractortrusthub.com') return 'contractor';
+  if (host === 'seniortrusthub.com') return 'senior';
+  if (host === 'investortrusthub.com') return 'investor';
   return null;
 }
 

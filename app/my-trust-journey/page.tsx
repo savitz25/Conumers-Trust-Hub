@@ -8,7 +8,7 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 export const metadata: Metadata = createPageMetadata({
   title: 'My Trust Journey — Research Overview',
   description:
-    'Optional overview of your Ask Trust Hub research path: situation, destination, and ordered steps into Move, Lender, and Insurance. No account required. Specialist My… workspaces stay separate.',
+    'Optional overview of your Ask Trust Hub research path: situation, destination, and ordered steps into the specialist hubs that apply. No account required. Specialist My… workspaces stay separate.',
   path: '/my-trust-journey',
   noIndex: true,
 });

@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Ask Trust Hub — independent consumer research for moving, insurance & lending';
+export const alt = 'Ask Trust Hub — independent consumer research network';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -45,7 +45,7 @@ export default function OpenGraphImage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Independent consumer research for moving, insurance &amp; lending
+            Independent consumer research across one specialist network
           </div>
           <div
             style={{

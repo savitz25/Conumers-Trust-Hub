@@ -94,12 +94,11 @@ export function Footer() {
 
         <div className="mt-12 border-t border-white/10 pt-8">
           <p className="max-w-3xl text-xs leading-relaxed text-slate-400">
-            {BRAND.name} is an informational research network under common ownership with Move,
-            Insurance, and Lender Trust Hub — with separated research and listing order and no paid
-            placements. Not endorsed by or a partner of listed providers. Confirm licensing and
-            terms with primary regulators (FMCSA, state DOI, NMLS) and the company before
-            contractual commitment. Specialist directories and tools live on the specialist hubs —
-            not on this parent site.
+            {BRAND.name} is an informational research network under common ownership with our
+            specialist hubs — with separated research and listing order and no paid placements. Not
+            endorsed by or a partner of listed providers. Confirm licensing and terms with primary
+            regulators and the company before contractual commitment. Specialist directories and
+            tools live on the specialist hubs — not on this parent site.
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-slate-500">
