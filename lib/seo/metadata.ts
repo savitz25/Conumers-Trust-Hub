@@ -5,14 +5,14 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '
 
 /** Homepage — entity-rich title & description (Phase 1 integrity). */
 export const HOMEPAGE_TITLE =
-  'Ask Trust Hub | Independent Consumer Research Network';
+  'Ask Trust Hub';
 
 export const HOMEPAGE_DESCRIPTION =
-  'Independent consumer research network. We help you understand verified public sources and route you to specialist hubs — no paid placements, no lead fees.';
+  'Independent Consumer Research Network';
 
 /** Default share image (1200×630) — prefer dedicated OG art over logo crop. */
 export function brandOgImageAbsoluteUrl(baseUrl: string = siteUrl): string {
-  return `${baseUrl.replace(/\/$/, '')}/og-default.png?v=${BRAND_LOGO_VERSION}`;
+  return `${baseUrl.replace(/\/$/, '')}/og/ask-trust-hub-social-card.png?v=20260819`;
 }
 
 export const rootLayoutMetadata: Metadata = {
@@ -61,7 +61,7 @@ export const rootLayoutMetadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: siteUrl,
+    url: `${siteUrl}/`,
     siteName: BRAND.name,
     title: HOMEPAGE_TITLE,
     description: HOMEPAGE_DESCRIPTION,
@@ -70,7 +70,7 @@ export const rootLayoutMetadata: Metadata = {
         url: brandOgImageAbsoluteUrl(siteUrl),
         width: 1200,
         height: 630,
-        alt: 'Ask Trust Hub — independent consumer research network',
+        alt: 'Ask Trust Hub — Independent Consumer Research Network',
       },
     ],
   },
@@ -81,7 +81,7 @@ export const rootLayoutMetadata: Metadata = {
     images: [brandOgImageAbsoluteUrl(siteUrl)],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: `${siteUrl}/` },
 };
 
 /**
