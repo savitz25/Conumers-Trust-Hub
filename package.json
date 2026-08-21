@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs",
+    "test": "node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs",
     "assert:network": "node scripts/assert-network-v2.mjs",
     "check:journey-v21": "node scripts/check-journey-v21.mjs"
   },

@@ -1,27 +1,72 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { ChevronDown, ExternalLink } from 'lucide-react';
-import { ASK_NETWORK_LINKS } from '@/lib/design/ask-design-system';
+import { ChevronDown } from 'lucide-react';
+import { TH_HUB_ACCENT } from '@/lib/design/trusthub-visual-standard';
 import { NETWORK_REGISTRY, switcherEntries } from '@/lib/network/registry';
 import { cn } from '@/lib/utils';
 
 type Props = {
   className?: string;
-  /** Compact label for tight header slots */
-  compact?: boolean;
+  /** Drawer: list only, no trigger. Header: dropdown. */
+  variant?: 'dropdown' | 'embedded';
 };
 
+function HubRows({ onPick }: { onPick?: () => void }) {
+  return (
+    <ul className="space-y-0.5">
+      {switcherEntries().map((hub) => {
+        const current = hub.id === 'ask';
+        return (
+          <li key={hub.id}>
+            <a
+              role="menuitem"
+              href={hub.url}
+              aria-current={current ? 'page' : undefined}
+              rel={current ? undefined : 'noopener noreferrer'}
+              className={cn(
+                'flex min-h-11 items-center gap-3 rounded-xl px-2.5 py-2 transition-colors',
+                'hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--th-accent)]',
+                current && 'bg-[#F8FAFC]'
+              )}
+              onClick={onPick}
+            >
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: TH_HUB_ACCENT[hub.id] }}
+                aria-hidden
+              />
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-[#0A2540]">{hub.name}</span>
+                  {current ? (
+                    <span className="rounded-md bg-[#0A2540] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      Current
+                    </span>
+                  ) : null}
+                </span>
+                <span className="mt-0.5 block text-xs leading-snug text-[#1E293B]">
+                  {hub.switcherLabel}
+                </span>
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /**
- * Switch Hub — routes consumers to specialist Trust Hub domains.
- * Parent-site control; specialist product nav lives on each hub.
+ * TrustHub Network Navigator — NETWORK_REGISTRY switcherLabel only.
  */
-export function SwitchHubMenu({ className, compact = false }: Props) {
+export function SwitchHubMenu({ className, variant = 'dropdown' }: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
 
   useEffect(() => {
+    if (variant !== 'dropdown') return;
     function onDoc(e: MouseEvent) {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
     }
@@ -34,26 +79,35 @@ export function SwitchHubMenu({ className, compact = false }: Props) {
       document.removeEventListener('mousedown', onDoc);
       document.removeEventListener('keydown', onKey);
     };
-  }, []);
+  }, [variant]);
+
+  if (variant === 'embedded') {
+    return (
+      <div className={cn('th-network-panel-embed', className)}>
+        <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A2540]">
+          Ask Trust Hub Network
+        </p>
+        <HubRows />
+        <p className="mt-2 border-t border-[#E2E8F0] px-1 pt-2 text-[11px] leading-relaxed text-[#1E293B]">
+          You are on {NETWORK_REGISTRY.ask.name} — {NETWORK_REGISTRY.ask.switcherLabel}.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div ref={rootRef} className={cn('relative', className)}>
       <button
         type="button"
-        className={cn(
-          'inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-sm font-semibold transition-colors',
-          'text-[#0A2540] hover:border-[#4F46E5]/35 hover:bg-[#E0E7FF]/50',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2',
-          open && 'border-[#4F46E5]/40 bg-[#E0E7FF]/60'
-        )}
+        className={cn('th-btn-secondary', open && 'border-[#4F46E5]/40 bg-[#E0E7FF]/50')}
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
       >
-        {compact ? 'Switch Hub' : 'Switch Hub'}
+        Switch Hub
         <ChevronDown
-          className={cn('h-3.5 w-3.5 text-[#4F46E5] transition-transform', open && 'rotate-180')}
+          className={cn('h-3.5 w-3.5 shrink-0 text-[#0A2540] transition-transform', open && 'rotate-180')}
           aria-hidden
         />
       </button>
@@ -62,54 +116,17 @@ export function SwitchHubMenu({ className, compact = false }: Props) {
         <div
           id={panelId}
           role="menu"
-          aria-label="Switch Trust Hub"
-          className="absolute right-0 z-[80] mt-2 w-[min(100vw-2rem,18rem)] overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white py-2 shadow-[0_8px_24px_-8px_rgb(10_37_64_/_0.15)]"
+          aria-label="Ask Trust Hub Network"
+          className="th-network-panel absolute right-0 z-[80] mt-2 w-[min(100vw-2rem,20.5rem)]"
         >
-          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4F46E5]">
+          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A2540]">
             Ask Trust Hub Network
           </p>
-          <ul className="space-y-0.5 px-1.5">
-            {switcherEntries().map((hub) => {
-              const current = hub.id === 'ask';
-              const specialist = ASK_NETWORK_LINKS.find((link) => link.id === hub.id);
-              return (
-                <li key={hub.id}>
-                  <a
-                    role="menuitem"
-                    href={hub.url}
-                    aria-current={current ? 'page' : undefined}
-                    rel={current ? undefined : 'noopener noreferrer'}
-                    className={cn(
-                      'flex min-h-11 items-start gap-2 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-[#E0E7FF]/70',
-                      current && 'bg-[#E0E7FF]/80'
-                    )}
-                    onClick={() => setOpen(false)}
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold text-[#0A2540]">
-                        {hub.name}
-                        {current ? (
-                          <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-[#4F46E5]">
-                            Current
-                          </span>
-                        ) : null}
-                      </span>
-                      <span className="mt-0.5 block text-xs leading-snug text-[#1E293B]">
-                        {current
-                          ? NETWORK_REGISTRY.ask.switcherLabel
-                          : specialist?.blurb ?? hub.switcherLabel}
-                      </span>
-                    </span>
-                    {current ? null : (
-                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4F46E5]" aria-hidden />
-                    )}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="px-1.5">
+            <HubRows onPick={() => setOpen(false)} />
+          </div>
           <p className="mt-1 border-t border-[#E2E8F0] px-3 pt-2 text-[11px] leading-relaxed text-[#1E293B]">
-            You are on Ask Trust Hub — parent research &amp; standards layer.
+            You are on {NETWORK_REGISTRY.ask.name} — {NETWORK_REGISTRY.ask.switcherLabel}.
           </p>
         </div>
       ) : null}
