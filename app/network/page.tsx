@@ -4,6 +4,7 @@ import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { TrustMark } from '@/components/trust-mark';
 import { createPageMetadata } from '@/lib/seo/metadata';
+import { shareRouteOgImage } from '@/lib/seo/share-hub';
 import { TRUST_HUBS } from '@/lib/hubs';
 import { BRAND } from '@/lib/brand';
 import { JOURNEY_PAGES } from '@/lib/growth/journeys';
@@ -13,11 +14,15 @@ import {
 } from '@/lib/network/standard-version';
 import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
+const networkOg = shareRouteOgImage('/network', 'The Ask Trust Hub Network');
+
 export const metadata = createPageMetadata({
   title: 'Our Trust Hubs — The Ask Trust Hub Network',
   description:
     'The Ask Trust Hub network: specialist research domains under common ownership with separated research and listing order and no paid placements. How life journeys work across hubs.',
   path: '/network',
+  imageUrl: networkOg.url,
+  imageAlt: networkOg.alt,
 });
 
 const HUB_FOCUS: Record<string, { focus: string; cta: string }> = {

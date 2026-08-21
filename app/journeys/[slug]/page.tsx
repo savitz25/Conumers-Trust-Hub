@@ -4,6 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { LastReviewed } from '@/components/last-reviewed';
 import { createPageMetadata } from '@/lib/seo/metadata';
+import { shareRouteOgImage } from '@/lib/seo/share-hub';
 import { getAllJourneySlugs, getJourneyBySlug } from '@/lib/growth/journeys';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
@@ -18,11 +19,14 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const journey = getJourneyBySlug(slug);
   if (!journey) return {};
+  const og = shareRouteOgImage(`/journeys/${journey.slug}`, journey.title);
   return createPageMetadata({
     title: journey.metaTitle,
     description: journey.metaDescription,
     path: `/journeys/${journey.slug}`,
     type: 'article',
+    imageUrl: og.url,
+    imageAlt: og.alt,
   });
 }
 
