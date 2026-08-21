@@ -208,6 +208,14 @@ const queries = {
     COUNT(DISTINCT provider_id)::bigint AS facilities
     FROM published_state_claim
     GROUP BY 1 ORDER BY 1`,
+  state_events_by_state: `SELECT COALESCE(state_code, '(null)') AS state_code,
+    COUNT(*)::bigint AS event_rows,
+    COUNT(DISTINCT provider_id)::bigint AS facilities
+    FROM facility_history_event
+    WHERE event_family = 'state'
+    GROUP BY 1 ORDER BY 1`,
+  assisted_living: `SELECT COUNT(*)::bigint AS assisted_living_provider_rows FROM assisted_living_provider`,
+  assisted_living_by_state: `SELECT state_code, COUNT(*)::bigint AS n FROM assisted_living_provider GROUP BY state_code ORDER BY state_code`,
 };
 
 async function main() {

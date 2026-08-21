@@ -183,3 +183,18 @@ FROM published_state_claim
 WHERE claim_type = 'STATE_LICENSE_ID'
 GROUP BY 1
 ORDER BY 1;
+
+SELECT COALESCE(state_code, '(null)') AS state_code,
+       COUNT(*) AS event_rows,
+       COUNT(DISTINCT provider_id) AS facilities
+FROM facility_history_event
+WHERE event_family = 'state'
+GROUP BY 1
+ORDER BY 1;
+
+SELECT COUNT(*) AS assisted_living_provider_rows FROM assisted_living_provider;
+
+SELECT state_code, COUNT(*) AS n
+FROM assisted_living_provider
+GROUP BY state_code
+ORDER BY state_code;
