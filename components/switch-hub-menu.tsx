@@ -85,7 +85,7 @@ export function SwitchHubMenu({ className, variant = 'dropdown' }: Props) {
     return (
       <div className={cn('th-network-panel-embed', className)}>
         <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A2540]">
-          Ask Trust Hub Network
+          ASK TRUST HUB NETWORK
         </p>
         <HubRows />
         <p className="mt-2 border-t border-[#E2E8F0] px-1 pt-2 text-[11px] leading-relaxed text-[#1E293B]">
@@ -120,7 +120,7 @@ export function SwitchHubMenu({ className, variant = 'dropdown' }: Props) {
           className="th-network-panel absolute right-0 z-[80] mt-2 w-[min(100vw-2rem,20.5rem)]"
         >
           <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A2540]">
-            Ask Trust Hub Network
+            ASK TRUST HUB NETWORK
           </p>
           <div className="px-1.5">
             <HubRows onPick={() => setOpen(false)} />

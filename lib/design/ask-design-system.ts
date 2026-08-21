@@ -190,7 +190,7 @@ export const ASK_HEADER_NAV = [
 
 /** Primary header CTA — opens xAI Concierge chat */
 export const ASK_HEADER_CONCIERGE = {
-  label: 'AI Concierge',
+  label: 'Ask Concierge',
   shortLabel: 'Ask AI',
   href: '/#ask',
   description: 'Open the Ask Trust Hub Concierge — independent guidance powered by xAI',

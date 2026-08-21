@@ -16,7 +16,8 @@ async function measure(page) {
     const lock = document.querySelector('.th-logo-lockup');
     const mark = document.querySelector('.th-logo-mark');
     const concierge = [...document.querySelectorAll('button')].find((b) =>
-      /AI Concierge|Ask AI/i.test(b.textContent || '') || /AI Concierge|Ask AI/i.test(b.getAttribute('aria-label') || '')
+      /Ask Concierge|AI Concierge|Ask AI/i.test(b.textContent || '') ||
+        /Ask Concierge|AI Concierge|Ask AI/i.test(b.getAttribute('aria-label') || '')
     );
     const sw = [...document.querySelectorAll('button')].find((b) => /Switch Hub/i.test(b.textContent || ''));
     const r = (el) => {

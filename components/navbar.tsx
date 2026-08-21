@@ -90,7 +90,7 @@ export function Navbar() {
             type="button"
             onClick={() => openChat()}
             className="th-btn-icon-accent"
-            aria-label={ASK_HEADER_CONCIERGE.label}
+            aria-label={ASK_HEADER_CONCIERGE.shortLabel}
             title={ASK_HEADER_CONCIERGE.description}
           >
             <Sparkles className="h-4 w-4" aria-hidden />

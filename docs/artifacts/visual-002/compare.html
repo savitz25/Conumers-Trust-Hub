@@ -2,60 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AskTrustHub — VISUAL-002 before / after</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OLD ASK vs NEW ASK — VISUAL-002</title>
   <style>
-    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #0a2540; color: #fff; }
-    h1 { font-size: 22px; padding: 24px 24px 8px; }
-    .note { padding: 0 24px 24px; color: #cbd5e1; max-width: 800px; }
-    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px 32px; }
-    figure { margin: 0; background: #132a4a; border-radius: 12px; overflow: hidden; }
-    figcaption { padding: 10px 12px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #94a3b8; }
+    :root { --navy: #0a2540; --muted: #94a3b8; --card: #132a4a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: var(--navy); color: #fff; }
+    header.page { padding: 28px 24px 8px; }
+    h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: .02em; }
+    .note { margin: 0; color: #cbd5e1; max-width: 920px; line-height: 1.5; }
+    .meta { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+    section { padding: 8px 24px 36px; }
+    h2 { margin: 0 0 12px; font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #e2e8f0; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    figure { margin: 0; background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.08); }
+    figcaption { padding: 12px 14px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+    figcaption .tag { color: #a5b4fc; }
+    figcaption .old { color: #fda4af; }
     img { width: 100%; display: block; background: #fff; }
-    @media (max-width: 900px) { .pair { grid-template-columns: 1fr; } }
+    .solo { max-width: 960px; }
+    @media (max-width: 960px) { .pair { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <h1>OLD ASK vs NEW ASK</h1>
-  <p class="note">Desktop 1440 and mobile 390. Production before vs VISUAL-002 reference shell. Open this file to judge — do not rely on Markdown.</p>
-  <div class="pair">
-    <figure>
-      <figcaption>Before · desktop 1440</figcaption>
-      <img src="before/desktop-1440.jpg" alt="Ask homepage before desktop" />
+  <header class="page">
+    <h1>OLD ASK vs NEW ASK</h1>
+    <p class="note">
+      Production before vs VISUAL-002 AskTrustHub reference shell.
+      Judge from these images — this page is the visual deliverable.
+    </p>
+    <p class="meta">Desktop 1440 · Mobile 390 · Network Navigator · Mobile drawer · Future hub-hop board</p>
+  </header>
+
+  <section>
+    <h2>1 · Desktop 1440</h2>
+    <div class="pair">
+      <figure>
+        <figcaption><span class="old">Before</span><span>desktop 1440</span></figcaption>
+        <img src="before/desktop-1440.jpg" alt="Ask homepage before — desktop 1440" />
+      </figure>
+      <figure>
+        <figcaption><span class="tag">After</span><span>desktop 1440</span></figcaption>
+        <img src="after/desktop-1440.jpg" alt="Ask homepage after — desktop 1440" />
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · Desktop header crop</h2>
+    <div class="pair">
+      <figure>
+        <figcaption><span class="old">Before</span><span>header</span></figcaption>
+        <img src="before/header-desktop.png" alt="Header before desktop" />
+      </figure>
+      <figure>
+        <figcaption><span class="tag">After</span><span>logo · nav · Ask Concierge · Switch Hub</span></figcaption>
+        <img src="after/header-desktop.png" alt="Header after desktop" />
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · Network Navigator open</h2>
+    <div class="pair">
+      <figure>
+        <figcaption><span class="old">Before</span><span>Switch Hub</span></figcaption>
+        <img src="before/desktop-switch.jpg" alt="Switch Hub before" />
+      </figure>
+      <figure>
+        <figcaption><span class="tag">After</span><span>ASK TRUST HUB NETWORK + Current</span></figcaption>
+        <img src="after/desktop-switch.jpg" alt="Switch Hub after" />
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · Mobile 390</h2>
+    <div class="pair">
+      <figure>
+        <figcaption><span class="old">Before</span><span>mobile 390</span></figcaption>
+        <img src="before/mobile-390.jpg" alt="Ask homepage before — mobile 390" />
+      </figure>
+      <figure>
+        <figcaption><span class="tag">After</span><span>57px · logo · Ask AI · Menu</span></figcaption>
+        <img src="after/mobile-390.jpg" alt="Ask homepage after — mobile 390" />
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>5 · Mobile drawer + network</h2>
+    <div class="pair">
+      <figure>
+        <figcaption><span class="tag">After</span><span>drawer open</span></figcaption>
+        <img src="after/mobile-drawer.jpg" alt="Mobile drawer after" />
+      </figure>
+      <figure>
+        <figcaption><span class="tag">After</span><span>network section</span></figcaption>
+        <img src="after/mobile-network.jpg" alt="Mobile network section after" />
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>6 · Future multi-Hub header board</h2>
+    <figure class="solo">
+      <figcaption><span class="tag">Simulation</span><span>canonical bracket geometry · accent + wordmark only</span></figcaption>
+      <img src="hub-hop-board.jpg" alt="Future multi-Hub header board with canonical marks" />
     </figure>
-    <figure>
-      <figcaption>After · desktop 1440</figcaption>
-      <img src="after/desktop-1440.jpg" alt="Ask homepage after desktop" />
-    </figure>
-  </div>
-  <div class="pair">
-    <figure>
-      <figcaption>After · Network Navigator open</figcaption>
-      <img src="after/desktop-switch.jpg" alt="Switch Hub panel after" />
-    </figure>
-    <figure>
-      <figcaption>After · desktop header crop</figcaption>
-      <img src="after/header-desktop.png" alt="Header after" />
-    </figure>
-  </div>
-  <div class="pair">
-    <figure>
-      <figcaption>Before · mobile 390</figcaption>
-      <img src="before/mobile-390.jpg" alt="Ask homepage before mobile" />
-    </figure>
-    <figure>
-      <figcaption>After · mobile 390</figcaption>
-      <img src="after/mobile-390.jpg" alt="Ask homepage after mobile" />
-    </figure>
-  </div>
-  <div class="pair">
-    <figure>
-      <figcaption>After · mobile drawer</figcaption>
-      <img src="after/mobile-drawer.jpg" alt="Mobile drawer after" />
-    </figure>
-    <figure>
-      <figcaption>After · drawer network section</figcaption>
-      <img src="after/mobile-network.jpg" alt="Mobile Switch Hub section" />
-    </figure>
-  </div>
+  </section>
 </body>
 </html>
