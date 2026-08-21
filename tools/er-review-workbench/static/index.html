@@ -2,115 +2,360 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>TrustHub ER review (local only)</title>
+  <title>TrustHub Research — Entity Resolution review (local)</title>
   <style>
-    :root { font-family: Georgia, serif; color: #1a1a1a; background: #f6f3ee; }
-    body { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    h1,h2 { font-family: "Segoe UI", sans-serif; }
-    .banner { background: #3b2f2a; color: #f6f3ee; padding: 12px 16px; border-radius: 8px; }
-    .warn { background: #fff3cd; padding: 10px 12px; border-left: 4px solid #c48a00; margin: 12px 0; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .card { background: white; border: 1px solid #d9d1c7; padding: 14px; border-radius: 8px; }
-    label { display: block; margin-top: 10px; font-weight: 600; }
-    textarea, select, input[type=text] { width: 100%; box-sizing: border-box; padding: 8px; }
-    textarea { min-height: 90px; }
-    button { margin-right: 8px; margin-top: 12px; padding: 8px 14px; }
-    a { color: #1f4b8f; }
-    .progress { font-family: "Segoe UI", sans-serif; }
-    .hidden { display: none; }
-    .defs p { margin: 0.4em 0; }
+    :root {
+      --navy: #1b365d;
+      --navy-2: #163056;
+      --ink: #1c2430;
+      --muted: #5c6570;
+      --paper: #f3f1eb;
+      --card: #ffffff;
+      --line: #d7d2c8;
+      --focus: #0b57d0;
+      --warn: #8a5a00;
+      --warn-bg: #fff6e5;
+      --ok: #0f6b4c;
+      --train: #6b4f16;
+      --train-bg: #f4ead3;
+      --radius: 10px;
+      --sticky-h: 220px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.45;
+    }
+    a { color: var(--navy); }
+    a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .skip {
+      position: absolute; left: -999px;
+    }
+    .skip:focus { left: 8px; top: 8px; background: #fff; padding: 8px; z-index: 20; }
+    header.app {
+      background: var(--navy);
+      color: #f7f4ee;
+      padding: 14px 20px 16px;
+      position: sticky; top: 0; z-index: 8;
+    }
+    header.app.training { background: #5a4314; }
+    .brand-row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: baseline; }
+    .brand { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; }
+    .product { font-size: 20px; font-weight: 650; margin: 2px 0 0; }
+    .meta { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; }
+    .mode-pill {
+      display: inline-block; font-weight: 700; letter-spacing: 0.08em;
+      font-size: 11px; padding: 3px 8px; border: 1px solid rgba(255,255,255,0.45); border-radius: 999px;
+    }
+    .progress-wrap { margin-top: 10px; }
+    .progress-label { font-size: 13px; margin-bottom: 4px; }
+    .bar { height: 8px; background: rgba(255,255,255,0.18); border-radius: 99px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: #f7f4ee; width: 0%; }
+    .local { font-size: 11px; opacity: 0.8; margin-top: 8px; }
+    .toolbar {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: end;
+      padding: 12px 20px; background: #fff; border-bottom: 1px solid var(--line);
+    }
+    .toolbar label { font-size: 12px; font-weight: 650; color: var(--muted); display: block; }
+    select { min-height: 40px; min-width: 180px; font-size: 14px; padding: 6px 8px; }
+    main { padding: 16px 20px 280px; max-width: 1280px; margin: 0 auto; }
+    .defs {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      margin-bottom: 14px; font-size: 13px;
+    }
+    .defs div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+    .defs strong { display: block; font-size: 12px; letter-spacing: 0.04em; }
+    .disclaimer { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+    .warn {
+      background: var(--warn-bg); color: var(--warn); border: 1px solid #e6d3a6;
+      padding: 10px 12px; border-radius: var(--radius); margin-bottom: 12px;
+    }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .rec {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 16px 16px 14px; min-height: 280px;
+    }
+    .rec h2 { margin: 0 0 12px; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); }
+    .field { margin: 0 0 10px; }
+    .field dt { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .field dd { margin: 2px 0 0; font-size: 16px; font-weight: 600; }
+    .diff { background: #efe7d4; box-shadow: inset 0 -2px 0 #c4b48a; padding: 0 2px; }
+    .diff-note { font-size: 12px; color: var(--muted); margin: 10px 0 0; font-weight: 400; }
+    .official { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .official-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--navy); }
+    .official a.btn-src {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 8px 12px; border-radius: 8px;
+      background: var(--navy); color: #fff; text-decoration: none; font-weight: 650;
+    }
+    .official a.btn-src:hover { background: var(--navy-2); }
+    .sticky {
+      position: sticky; bottom: 0; z-index: 7;
+      background: #fff; border-top: 1px solid var(--line);
+      padding: 12px 20px 16px; box-shadow: 0 -8px 24px rgba(27,54,93,0.08);
+    }
+    .sticky-inner { max-width: 1280px; margin: 0 auto; }
+    .decisions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+    .choice {
+      min-height: 52px; border: 2px solid var(--navy); background: #fff; color: var(--navy);
+      font-weight: 750; font-size: 15px; border-radius: 8px; cursor: pointer;
+    }
+    .choice[aria-pressed="true"] { background: var(--navy); color: #fff; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr 180px; gap: 10px; }
+    .fields label { font-size: 12px; font-weight: 700; color: var(--muted); }
+    textarea, .fields select {
+      width: 100%; margin-top: 4px; font: inherit; padding: 8px; border: 1px solid var(--line); border-radius: 6px;
+    }
+    textarea { min-height: 64px; resize: vertical; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+    .nav button, .toolbar button {
+      min-height: 44px; padding: 0 14px; font-weight: 650; border-radius: 8px;
+      border: 1px solid var(--navy); background: #fff; color: var(--navy); cursor: pointer;
+    }
+    .nav button.primary { background: var(--navy); color: #fff; }
+    .kbd { font-size: 11px; color: var(--muted); margin-left: auto; }
+    .toast {
+      position: fixed; top: 18px; right: 18px; background: var(--ok); color: #fff;
+      padding: 10px 14px; border-radius: 8px; display: none; z-index: 30; font-weight: 650;
+    }
+    .toast.show { display: block; }
+    .lock { max-width: 1280px; margin: 0 auto 40px; padding: 0 20px; }
+    .lock textarea { width: 100%; min-height: 70px; }
+    .dots { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 0; }
+    .dots button {
+      width: 12px; height: 12px; padding: 0; border-radius: 99px; border: 1px solid var(--line);
+      background: #fff; min-height: 12px;
+    }
+    .dots button.done { background: var(--navy); }
+    .dots button.now { outline: 2px solid var(--focus); }
+    .status { font-size: 13px; color: var(--muted); white-space: pre-wrap; }
+    @media (max-width: 900px) {
+      .compare, .defs, .fields, .decisions { grid-template-columns: 1fr; }
+      main { padding-bottom: 420px; }
+    }
   </style>
 </head>
 <body>
-  <div class="banner">
-    LOCAL / INTERNAL ONLY — not a public benchmark. Similarity is not ground truth. No Google. No automatic labels.
-  </div>
-  <h1>Entity resolution human review</h1>
-  <p class="progress" id="progress"></p>
-  <p>
-    Role:
-    <select id="role">
-      <option value="REVIEWER_A">REVIEWER_A</option>
-      <option value="REVIEWER_B">REVIEWER_B</option>
-    </select>
-    Mode:
-    <select id="mode">
-      <option value="training">Training (12 cases, not the 400)</option>
-      <option value="benchmark">Frozen benchmark (400)</option>
-    </select>
-    <button type="button" id="loadBtn">Load</button>
-  </p>
+  <a class="skip" href="#decision">Skip to decision controls</a>
+  <div class="toast" id="toast" role="status">Saved</div>
+  <header class="app" id="header">
+    <div class="brand-row">
+      <div>
+        <div class="brand">TrustHub Research</div>
+        <div class="product">Entity Resolution Benchmark</div>
+      </div>
+      <div class="meta">
+        <div>Reviewer <strong id="roleLabel">REVIEWER_A</strong></div>
+        <div><span class="mode-pill" id="modePill">TRAINING</span></div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label" id="progressLabel">TRAINING · 0 / 12 reviewed</div>
+      <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
+    </div>
+    <div class="local">LOCAL / INTERNAL ONLY · 127.0.0.1 · Similarity is not ground truth · No Google · No automatic labels</div>
+  </header>
 
-  <div class="defs card">
-    <strong>MATCH</strong>
-    <p>Authoritative public evidence supports that Record A and Record B represent the same underlying regulated business/entity for this identity question.</p>
-    <strong>NON_MATCH</strong>
-    <p>Authoritative public evidence supports that they are distinct regulated businesses/entities.</p>
-    <strong>AMBIGUOUS</strong>
-    <p>The available authoritative public evidence is insufficient, conflicting, or does not support a defensible binary conclusion.</p>
-    <p><strong>Similarity is not ground truth.</strong> Do not use Google, Yelp, BBB, social media, or commercial aggregators.</p>
-  </div>
-
-  <div id="limitation" class="warn hidden"></div>
-  <div class="grid">
-    <div class="card" id="cardA"></div>
-    <div class="card" id="cardB"></div>
-  </div>
-
-  <form id="form">
-    <label>Label
-      <select id="label" required>
-        <option value="">Select…</option>
-        <option>MATCH</option>
-        <option>NON_MATCH</option>
-        <option>AMBIGUOUS</option>
+  <div class="toolbar">
+    <div>
+      <label for="role">Reviewer role</label>
+      <select id="role" aria-label="Reviewer role">
+        <option value="REVIEWER_A">REVIEWER_A</option>
+        <option value="REVIEWER_B">REVIEWER_B</option>
       </select>
-    </label>
-    <label>Evidence checked (official sources you actually opened)
-      <textarea id="evidence" required placeholder="e.g. FMCSA SAFER snapshot for USDOT …; CSLB Instant License Check for …"></textarea>
-    </label>
-    <label>Notes (required)
-      <textarea id="notes" required placeholder="What official fields supported your label? Why not the other labels?"></textarea>
-    </label>
-    <label>Evidence strength (optional)
-      <select id="strength">
-        <option value="">—</option>
-        <option>STRONG</option>
-        <option>MODERATE</option>
-        <option>INSUFFICIENT</option>
+    </div>
+    <div>
+      <label for="mode">Current mode</label>
+      <select id="mode" aria-label="Review mode">
+        <option value="training">Training (not the frozen 400)</option>
+        <option value="benchmark">Frozen benchmark (400)</option>
       </select>
-    </label>
-    <button type="submit">Save this case</button>
-    <button type="button" id="prevBtn">Previous</button>
-    <button type="button" id="nextBtn">Next unreviewed</button>
-  </form>
+    </div>
+    <button type="button" id="loadBtn">Resume</button>
+  </div>
 
-  <h2>Complete and lock (benchmark only)</h2>
-  <p>Required attestation (exact text):</p>
-  <blockquote>I reviewed these cases using the TrustHub Entity Resolution Benchmark review protocol and did not use an automatic proposed benchmark label.</blockquote>
-  <textarea id="attest"></textarea>
-  <button type="button" id="lockBtn">Lock my 400-case review</button>
-  <pre id="status"></pre>
+  <main>
+    <div class="defs" aria-label="Label definitions">
+      <div><strong>MATCH</strong> Authoritative public evidence supports that A and B are the same regulated business for this question.</div>
+      <div><strong>NON_MATCH</strong> Authoritative public evidence supports that they are distinct regulated businesses.</div>
+      <div><strong>AMBIGUOUS</strong> Official evidence is insufficient, conflicting, or does not support a defensible binary conclusion.</div>
+    </div>
+    <p class="disclaimer">Highlighted text marks visible field differences only. It is not evidence and does not recommend a label.</p>
+    <div id="limitation" class="warn" hidden></div>
+    <div class="compare">
+      <article class="rec" id="cardA" aria-label="Record A"></article>
+      <article class="rec" id="cardB" aria-label="Record B"></article>
+    </div>
+    <div class="dots" id="dots" aria-label="Case map"></div>
+  </main>
+
+  <div class="sticky" id="decision">
+    <div class="sticky-inner">
+      <div class="decisions" role="group" aria-label="Decision">
+        <button type="button" class="choice" data-label="MATCH" aria-pressed="false">MATCH <span class="kbd">1</span></button>
+        <button type="button" class="choice" data-label="NON_MATCH" aria-pressed="false">NON-MATCH <span class="kbd">2</span></button>
+        <button type="button" class="choice" data-label="AMBIGUOUS" aria-pressed="false">AMBIGUOUS <span class="kbd">3</span></button>
+      </div>
+      <div class="fields">
+        <div>
+          <label for="evidence">Evidence checked (required)</label>
+          <textarea id="evidence" required placeholder="List the official regulator pages/records you opened."></textarea>
+        </div>
+        <div>
+          <label for="notes">Notes (required)</label>
+          <textarea id="notes" required placeholder="State the specific official fields supporting your decision."></textarea>
+        </div>
+        <div>
+          <label for="strength">Evidence strength</label>
+          <select id="strength">
+            <option value="">Optional</option>
+            <option>STRONG</option>
+            <option>MODERATE</option>
+            <option>INSUFFICIENT</option>
+          </select>
+        </div>
+      </div>
+      <div class="nav">
+        <button type="button" id="prevBtn">Previous</button>
+        <button type="button" id="saveBtn">Save</button>
+        <button type="button" class="primary" id="saveNextBtn">Save &amp; Next</button>
+        <button type="button" id="nextBtn">Next unreviewed</button>
+        <span class="kbd">← previous · → next unreviewed · S save &amp; next (when not typing)</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="lock" id="lock">
+    <h2>Lock (frozen benchmark only)</h2>
+    <p>Required attestation (exact text):</p>
+    <blockquote>I reviewed these cases using the TrustHub Entity Resolution Benchmark review protocol and did not use an automatic proposed benchmark label.</blockquote>
+    <textarea id="attest" aria-label="Attestation"></textarea>
+    <div class="nav"><button type="button" id="lockBtn">Lock my 400-case review</button></div>
+    <p class="status" id="status" role="status"></p>
+  </section>
 
 <script>
-const state = { index: 0, mode: "training", role: "REVIEWER_A", caseId: null };
+const state = {
+  index: 0, mode: "training", role: "REVIEWER_A", caseId: null,
+  dirty: false, openedOfficial: false, selectedLabel: "", recA: null, recB: null, map: []
+};
 
-function renderRecord(title, rec) {
-  if (!rec) return "";
-  const links = (rec.lookups || []).map(l => `<div><a href="${l.url}" target="_blank" rel="noopener">${l.title || l.url}</a></div>`).join("");
-  const miss = rec.missing_second_usdot ? "<p><strong>Limitation:</strong> no second official USDOT is frozen. Search FMCSA by legal name. Do not invent an identifier.</p>" : "";
-  return `<h2>${title}</h2>
-    <p>System: ${rec.system || ""}</p>
-    <p>Identifier: ${rec.identifier || ""}</p>
-    <p>Legal/business name: ${rec.name || ""}</p>
-    <p>DBA: ${rec.dba || ""}</p>
-    <p>City / state: ${rec.city || ""} / ${rec.state || ""}</p>
-    <p>Address: ${rec.address || ""}</p>
-    ${miss}
-    ${links}`;
+function esc(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 }
-
+function tokens(s) {
+  return new Set(String(s || "").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+}
+function highlight(a, b) {
+  const sa = String(a || ""), sb = String(b || "");
+  if (!sa && !sb) return "—";
+  if (sa.trim().toLowerCase() === sb.trim().toLowerCase()) return esc(sa || "—");
+  const tb = tokens(sb);
+  return esc(sa).split(/(\s+)/).map(part => {
+    if (!part.trim()) return part;
+    const t = part.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (t && !tb.has(t)) return `<span class="diff">${part}</span>`;
+    return part;
+  }).join("");
+}
+function srcLabel(lookup, rec) {
+  const u = lookup.url || "";
+  if (rec.system === "fmcsa_li" && u.includes("safer.fmcsa")) return "Open FMCSA SAFER";
+  if (u.includes("fmcsa.dot.gov") || rec.system === "fmcsa_li") return "Open official regulator lookup";
+  if (rec.system === "move_existing_profile") return "Open FMCSA SAFER";
+  return "Open official state board record";
+}
+function renderRecord(title, rec, other) {
+  if (!rec) return "";
+  const links = (rec.lookups || []).map(l =>
+    `<a class="btn-src official-link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(srcLabel(l, rec))}</a>`
+  ).join("");
+  const miss = rec.missing_second_usdot ? `<p class="diff-note">No second official USDOT is frozen. Search FMCSA by legal name. Do not invent an identifier.</p>` : "";
+  return `<h2>${title}</h2>
+    <dl>
+      <div class="field"><dt>Source system</dt><dd>${highlight(rec.system, other && other.system)}</dd></div>
+      <div class="field"><dt>Official identifier</dt><dd>${highlight(rec.identifier, other && other.identifier)}</dd></div>
+      <div class="field"><dt>Legal / business name</dt><dd>${highlight(rec.name, other && other.name)}</dd></div>
+      <div class="field"><dt>DBA</dt><dd>${highlight(rec.dba, other && other.dba)}</dd></div>
+      <div class="field"><dt>Address</dt><dd>${highlight(rec.address, other && other.address)}</dd></div>
+      <div class="field"><dt>City</dt><dd>${highlight(rec.city, other && other.city)}</dd></div>
+      <div class="field"><dt>State / jurisdiction</dt><dd>${highlight(rec.state, other && other.state)}</dd></div>
+    </dl>
+    <div class="official"><div class="official-kicker">Official source</div>${links}${miss}</div>
+    <p class="diff-note">Amber marks tokens that differ from the other record. Not a match score.</p>`;
+}
+function setLabel(v) {
+  state.selectedLabel = v;
+  state.dirty = true;
+  document.querySelectorAll(".choice").forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.dataset.label === v ? "true" : "false");
+  });
+}
+function toast() {
+  const el = document.getElementById("toast");
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1400);
+}
+function snapshotForm() {
+  return JSON.stringify({
+    label: state.selectedLabel,
+    notes: document.getElementById("notes").value,
+    evidence: document.getElementById("evidence").value,
+    strength: document.getElementById("strength").value
+  });
+}
+let savedSnap = "";
+function markClean() { savedSnap = snapshotForm(); state.dirty = false; }
+function isDirty() { return snapshotForm() !== savedSnap; }
+function confirmNav() {
+  if (!isDirty()) return true;
+  return confirm("You have unsaved notes. Leave this case anyway?");
+}
+function updateHeader(data) {
+  const mode = state.mode;
+  const total = data.progress?.total || (mode === "training" ? 12 : 400);
+  const reviewed = data.progress?.reviewed ?? 0;
+  const pct = data.progress?.percent ?? 0;
+  const title = mode === "training" ? "TRAINING" : "FROZEN BENCHMARK";
+  document.getElementById("header").classList.toggle("training", mode === "training");
+  document.getElementById("modePill").textContent = title;
+  document.getElementById("roleLabel").textContent = state.role;
+  document.getElementById("progressLabel").textContent = `${title} · ${reviewed} / ${total} reviewed · ${pct}% · case ${state.index + 1}`;
+  document.getElementById("barFill").style.width = `${pct}%`;
+}
+function bindOfficial() {
+  document.querySelectorAll(".official-link").forEach(a => {
+    a.addEventListener("click", () => { state.openedOfficial = true; });
+  });
+}
+function drawDots() {
+  const host = document.getElementById("dots");
+  host.innerHTML = "";
+  const map = state.map || [];
+  if (!map.length || map.length > 40) return;
+  map.forEach((done, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.title = `Case ${i + 1}`;
+    b.className = (done ? "done" : "") + (i === state.index ? " now" : "");
+    b.addEventListener("click", () => { if (confirmNav()) { state.index = i; loadCase(); } });
+    host.appendChild(b);
+  });
+}
+async function fetchMap() {
+  const res = await fetch(`/api/map?role=${state.role}&mode=${state.mode}`);
+  const data = await res.json();
+  state.map = data.map || [];
+  drawDots();
+}
 async function loadCase() {
   const role = document.getElementById("role").value;
   const mode = document.getElementById("mode").value;
@@ -123,46 +368,74 @@ async function loadCase() {
   document.getElementById("status").textContent = data.error || "";
   if (data.error) return;
   state.caseId = data.benchmark_case_id || data.training_case_id;
-  document.getElementById("progress").textContent =
-    `${role} · ${mode} · ${data.progress?.reviewed ?? 0} reviewed / ${data.progress?.remaining ?? "?"} remaining (${data.progress?.percent ?? 0}%) · case ${state.index + 1}`;
-  document.getElementById("cardA").innerHTML = renderRecord("Record A", data.record_a);
-  document.getElementById("cardB").innerHTML = renderRecord("Record B", data.record_b);
+  state.recA = data.record_a; state.recB = data.record_b;
+  state.openedOfficial = false;
+  updateHeader(data);
+  document.getElementById("cardA").innerHTML = renderRecord("Record A", data.record_a, data.record_b);
+  document.getElementById("cardB").innerHTML = renderRecord("Record B", data.record_b, data.record_a);
+  bindOfficial();
   const lim = document.getElementById("limitation");
   if (data.record_a?.missing_second_usdot || data.record_b?.missing_second_usdot) {
-    lim.classList.remove("hidden");
+    lim.hidden = false;
     lim.textContent = "One side has no frozen official second USDOT (move-profile). Locate the FMCSA record by name. Do not fabricate an identifier.";
-  } else lim.classList.add("hidden");
+  } else lim.hidden = true;
   const yr = data.your_review;
-  document.getElementById("label").value = yr?.review_label || "";
+  setLabel(yr?.review_label || "");
   document.getElementById("notes").value = yr?.review_notes || "";
   document.getElementById("evidence").value = yr?.evidence_checked || "";
   document.getElementById("strength").value = yr?.evidence_strength || "";
+  state.dirty = false;
+  markClean();
+  fetchMap();
 }
-
-document.getElementById("loadBtn").onclick = () => { state.index = 0; loadCase(); };
-document.getElementById("prevBtn").onclick = () => { state.index = Math.max(0, state.index - 1); loadCase(); };
-document.getElementById("nextBtn").onclick = async () => {
-  const res = await fetch(`/api/next?role=${state.role}&mode=${state.mode}`);
-  const data = await res.json();
-  state.index = data.index ?? state.index + 1;
-  loadCase();
-};
-document.getElementById("form").onsubmit = async (e) => {
-  e.preventDefault();
+async function save(advance) {
+  if (!state.selectedLabel) { alert("Choose MATCH, NON-MATCH, or AMBIGUOUS."); return false; }
+  if (!document.getElementById("evidence").value.trim() || !document.getElementById("notes").value.trim()) {
+    alert("Evidence checked and notes are required.");
+    return false;
+  }
+  if (!state.openedOfficial) {
+    const ok = confirm("You did not click an official-source button on this case. Confirm you opened official regulator records another way?");
+    if (!ok) return false;
+  }
   const body = {
-    role: state.role,
-    mode: state.mode,
-    case_id: state.caseId,
-    review_label: document.getElementById("label").value,
+    role: state.role, mode: state.mode, case_id: state.caseId,
+    review_label: state.selectedLabel,
     review_notes: document.getElementById("notes").value,
     evidence_checked: document.getElementById("evidence").value,
     evidence_strength: document.getElementById("strength").value
   };
   const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const data = await res.json();
-  document.getElementById("status").textContent = JSON.stringify(data, null, 2);
-  if (!data.error) { state.index += 1; loadCase(); }
+  document.getElementById("status").textContent = data.error ? data.error : "Saved.";
+  if (data.error) return false;
+  toast();
+  markClean();
+  if (advance) {
+    const n = await fetch(`/api/next?role=${state.role}&mode=${state.mode}`);
+    const nx = await n.json();
+    state.index = nx.index ?? state.index + 1;
+    await loadCase();
+  } else {
+    updateHeader({ progress: data });
+    fetchMap();
+  }
+  return true;
+}
+document.querySelectorAll(".choice").forEach(btn => btn.addEventListener("click", () => setLabel(btn.dataset.label)));
+["notes","evidence","strength"].forEach(id => document.getElementById(id).addEventListener("input", () => { state.dirty = true; }));
+document.getElementById("loadBtn").onclick = () => { if (confirmNav()) { state.index = 0; loadCase(); } };
+document.getElementById("role").onchange = () => { if (confirmNav()) loadCase(); };
+document.getElementById("mode").onchange = () => { if (confirmNav()) { state.index = 0; loadCase(); } };
+document.getElementById("prevBtn").onclick = () => { if (confirmNav()) { state.index = Math.max(0, state.index - 1); loadCase(); } };
+document.getElementById("nextBtn").onclick = async () => {
+  if (!confirmNav()) return;
+  const res = await fetch(`/api/next?role=${state.role}&mode=${state.mode}`);
+  state.index = (await res.json()).index ?? state.index + 1;
+  loadCase();
 };
+document.getElementById("saveBtn").onclick = () => save(false);
+document.getElementById("saveNextBtn").onclick = () => save(true);
 document.getElementById("lockBtn").onclick = async () => {
   const res = await fetch("/api/lock", {
     method: "POST",
@@ -171,6 +444,17 @@ document.getElementById("lockBtn").onclick = async () => {
   });
   document.getElementById("status").textContent = JSON.stringify(await res.json(), null, 2);
 };
+window.addEventListener("beforeunload", e => { if (isDirty()) { e.preventDefault(); e.returnValue = ""; } });
+document.addEventListener("keydown", e => {
+  const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName);
+  if (typing) return;
+  if (e.key === "1") setLabel("MATCH");
+  if (e.key === "2") setLabel("NON_MATCH");
+  if (e.key === "3") setLabel("AMBIGUOUS");
+  if (e.key === "s" || e.key === "S") { e.preventDefault(); save(true); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); document.getElementById("prevBtn").click(); }
+  if (e.key === "ArrowRight") { e.preventDefault(); document.getElementById("nextBtn").click(); }
+});
 loadCase();
 </script>
 </body>

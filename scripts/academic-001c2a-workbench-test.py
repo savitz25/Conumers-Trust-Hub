@@ -101,8 +101,10 @@ def test_training():
 
 def test_blindness():
     hits = rc.reviewer_payload_leakage_scan()
-    # token scan is strict; allow empty
-    assert_true(isinstance(hits, list), hits)
+    assert_true(hits == [], hits)
+    html = (ROOT / "tools" / "er-review-workbench" / "static" / "index.html").read_text(encoding="utf-8")
+    for token in ("case_type", "candidate_reason", "match_method", "entity_id", "googleapis", "yelp"):
+        assert_true(token not in html, f"html leaked {token}")
 
 
 def main() -> int:

@@ -88,6 +88,16 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path == "/api/progress":
             self._json(200, progress(role))
             return
+        if parsed.path == "/api/map":
+            mode = (q.get("mode") or ["benchmark"])[0]
+            if mode == "training":
+                done = load_training_reviews(role)
+                cases = load_training()
+                self._json(200, {"map": [c["training_case_id"] in done for c in cases]})
+                return
+            done = load_reviews(role)
+            self._json(200, {"map": [row["benchmark_case_id"] in done for row in ordered_cases()]})
+            return
         if parsed.path == "/api/next":
             mode = (q.get("mode") or ["benchmark"])[0]
             if mode == "training":
@@ -118,6 +128,7 @@ class Handler(BaseHTTPRequestHandler):
                     "reviewed": len(load_training_reviews(role)),
                     "remaining": len(cases) - len(load_training_reviews(role)),
                     "percent": round(100 * len(load_training_reviews(role)) / len(cases), 1),
+                    "total": len(cases),
                 },
             }
             self._json(200, payload)
