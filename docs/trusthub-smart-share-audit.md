@@ -1,10 +1,138 @@
+# TrustHub Network Smart Share — SHARE-001 audit + SHARE-002 baseline
+
+**Network deploy rule:** `docs/NETWORK-DEPLOY.md` — repository → correct Vercel project → correct canonical domain.
+
+---
+
+# SHARE-002 — Network social-share baseline (implemented 2026-08-21)
+
+**Status:** COMPLETE  
+**Scope:** Generic 1200×630 fallback cards only. No ENTITY/CONTENT cards (SHARE-003). No calculator snapshots or `/share/` routes (SHARE-004). No Vercel domain changes.
+
+Verified allowlist used for every production-affecting push. `MATCH = YES` before each push. No `vercel link`.
+
+## SHARE-002 network table
+
+| Hub | Repo | Starting SHA | Final SHA | Vercel project | Project ID | Canonical | 1200×630 | Twitter large | Prod probe | Visual QA | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ask | savitz25/Conumers-Trust-Hub | `06d825c77e6c` | `6c08968d2097` | conumers-trust-hub | prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB | https://www.asktrusthub.com | yes PNG | yes | PASS | PASS | GO |
+| Insurance | savitz25/Insurance-trust-hub | `e5a3225555cd` | `187f3ac286ea` | insurance-trust-hub | prj_ARBlfWYNhpJWBtaPO4vUJlraa5BK | https://www.insurancetrusthub.com | yes PNG | yes | PASS | PASS | GO |
+| Move | savitz25/Move-trust-Hub | `68be79002293` | `38fc5532908b` (on main under later `a5d9b72f`) | move-trust-hub | prj_gudPGeW9SZBkgiL8zxvi3Swfo6T0 | https://www.movetrusthub.com | yes ImageResponse | yes | PASS | PASS | GO |
+| Lender | savitz25/Lender-Trust-Hub | `c7f8896e0700` | `39080e4658ed` | lender-trust-hub | prj_Il28Mv0ebRiIrumFO7iBX6JrSbdD | https://www.lendertrusthub.com | yes PNG | yes | PASS | PASS | GO |
+| Contractor | savitz25/contractor-trust-hub | `4818247d8f2d` | `96e751ee046d` | contractor-trust-hub | prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq | https://www.contractortrusthub.com | yes PNG | yes | PASS | PASS | GO |
+| Senior | savitz25/care-trust-hub | `48346da8691e` | `b8a785f247e5` | care-trust-hub | prj_k9GyyXn28JZkyYKqLhBJ4rUQcpUb | https://www.seniortrusthub.com | yes ImageResponse | yes | PASS | PASS | GO |
+| Investor | savitz25/investor-trust-hub | `2df7ac7493f1` | `c8d500f18de1` | **investor-trust-hub-web** | prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8 | https://www.investortrusthub.com | yes PNG | yes | PASS | PASS | GO |
+
+## Per-hub implementation
+
+### Ask
+
+- Kept production card `/og/ask-trust-hub-social-card.png` (1200×630). No visual redesign.
+- Pinned `SHARE_HUB.origin = https://www.asktrusthub.com`.
+- Stopped metadata from referencing stale `og-default.png`.
+- PR: https://github.com/savitz25/Conumers-Trust-Hub/pull/2
+- Image: `https://www.asktrusthub.com/og/ask-trust-hub-social-card.png?v=20260819`
+- Probed `/` and `/network` with facebookexternalhit, Twitterbot, Slackbot, browser. No localhost. No other Hub host.
+
+### Insurance
+
+- Kept navy lockup; added Ask network label, independent-research line, and `insurancetrusthub.com`.
+- Absolute OG URL. Tools/carriers inherit the fallback via `buildMetadata`.
+- PR: https://github.com/savitz25/Insurance-trust-hub/pull/1
+- Image: `https://www.insurancetrusthub.com/brand/insurance-trust-hub-og.png?v=20260821share002`
+- Probed `/`, `/tools/coverage-compass`, `/carriers`.
+
+### Move
+
+- ImageResponse 1200×630 in Move orange with Ask network signature and `movetrusthub.com`.
+- `getOgImageForHub()` always returns the Move card on this host.
+- Removed leftover `app/lender/opengraph-image.tsx` and `app/insurance/opengraph-image.tsx`.
+- Production: `/lender/opengraph-image` and `/insurance/opengraph-image` now **HTTP 404**.
+- Wrong-Lender-domain scan: **none** in homepage/calculator/company/Florida local-movers metadata.
+- Wrong-Insurance-domain scan: **none**.
+- PR: https://github.com/savitz25/Move-trust-Hub/pull/34
+- Vercel domains were **not** modified.
+- Probed `/`, `/moving-calculator`, `/companies/1-800-pack-rat`, `/local-movers/florida`.
+
+### Lender
+
+- Replaced 720×217 `/brand/lender-trust-hub-logo-header.png` social preview with 1200×630 `/brand/lender-trust-hub-og.png`.
+- Old header-logo preview is **gone** from Open Graph tags.
+- PR: https://github.com/savitz25/Lender-Trust-Hub/pull/1
+- Probed `/` and `/tools/loan-estimate-analyzer`. Image HTTP 200, 1200×630.
+
+### Contractor
+
+- SVG `/brand/contractor-trust-hub-logo.svg` + `twitter:card=summary` replaced with PNG 1200×630 and `summary_large_image`.
+- SVG social fallback is **gone**. Large card is **active**.
+- PR: https://github.com/savitz25/contractor-trust-hub/pull/1
+- Probed `/` and `/florida`.
+
+### Senior
+
+- `metadataBase` pinned to `https://www.seniortrusthub.com` (no production localhost).
+- Facility pages no longer set `images: []`. They now attach the default 1200×630 card.
+- ImageResponse includes Ask network + `seniortrusthub.com`.
+- PRs: https://github.com/savitz25/care-trust-hub/pull/1 and https://github.com/savitz25/care-trust-hub/pull/2
+- Localhost scan of production metadata: **none**.
+- Blank-image fallback: Harbor Pines now emits `/opengraph-image` 1200×630, `summary_large_image`.
+- Probed `/`, `/facility/harbor-pines`, `/search`.
+
+### Investor
+
+- Vercel project confirmed **investor-trust-hub-web** (`prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8`). Not `investor-trust-hub`.
+- Canonical/OG/Twitter pinned to `https://www.investortrusthub.com`. Production metadata has **no localhost**.
+- `/opengraph-image` 404d for crawlers; SHARE-002 follow-up publishes `/opengraph-image.png` (HTTP 200, 1200×630).
+- Twitter images completed (`summary_large_image` + image URL).
+- PRs: https://github.com/savitz25/investor-trust-hub/pull/1 and https://github.com/savitz25/investor-trust-hub/pull/2
+- Probed `/`, `/research`, `/firm/northbridge-ledger-advisors`.
+
+## Git / PRs
+
+| Repo | Branch | PR | Starting SHA | Final / merge SHA |
+| --- | --- | --- | --- | --- |
+| Conumers-Trust-Hub | share-002-social-baseline | #2 | 06d825c | 6c08968 |
+| Insurance-trust-hub | share-002-social-baseline | #1 | e5a3225 | 187f3ac |
+| Move-trust-Hub | share-002-social-baseline | #34 | 68be7900 | 38fc553 |
+| Lender-Trust-Hub | share-002-social-baseline | #1 | c7f8896e | 39080e46 |
+| contractor-trust-hub | share-002-social-baseline | #1 | 4818247d | 96e751ee |
+| care-trust-hub | share-002-social-baseline | #1 | 48346da8 | d942325 |
+| care-trust-hub | share-002-facility-fallback | #2 | d942325 | b8a785f |
+| investor-trust-hub | share-002-social-baseline | #1 | 2df7ac74 | a79b178 |
+| investor-trust-hub | share-002-static-og | #2 | a79b178 | c8d500f |
+
+## Vercel production deployments (GitHub deployment IDs)
+
+| Hub | Project | Project ID | Deployment ID | Host | READY |
+| --- | --- | --- | --- | --- | --- |
+| Ask | conumers-trust-hub | prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB | 6023705841 | www.asktrusthub.com | yes |
+| Insurance | insurance-trust-hub | prj_ARBlfWYNhpJWBtaPO4vUJlraa5BK | 6023831799 | www.insurancetrusthub.com | yes |
+| Move | move-trust-hub | prj_gudPGeW9SZBkgiL8zxvi3Swfo6T0 | 6024092255 | www.movetrusthub.com | yes |
+| Lender | lender-trust-hub | prj_Il28Mv0ebRiIrumFO7iBX6JrSbdD | 6024182935 | www.lendertrusthub.com | yes |
+| Contractor | contractor-trust-hub | prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq | 6024244045 | www.contractortrusthub.com | yes |
+| Senior | care-trust-hub | prj_k9GyyXn28JZkyYKqLhBJ4rUQcpUb | 6024418141 | www.seniortrusthub.com | yes |
+| Investor | investor-trust-hub-web | prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8 | 6024505098 | www.investortrusthub.com | yes |
+
+## Rollback targets
+
+Roll back **that Hub only** by reverting to the starting SHA above (or the previous Production deployment SHA in the table).
+
+## Remaining work (do not start SHARE-003 here)
+
+Routes now ready for later **CONTENT** cards: Ask `/network`, `/guides`, `/journeys`; Insurance research articles; Move county/state guides; Contractor `/guides`; Investor `/research`.
+
+Routes now ready for later **ENTITY** cards: Move `/companies/[slug]`; Insurance `/carriers/[slug]` and provider pages; Lender `/lenders/[slug]`; Contractor `/contractors/[slug]`; Senior `/facility/[slug]` and CMS facility pages; Investor `/firm/[slug]`.
+
+Applications eventually ready for **COMPARISON / CALCULATOR / SMART SHARE SNAPSHOT** (SHARE-004): Move calculator and compare; Insurance Coverage Compass / cost tools; Lender Loan Estimate Analyzer; Contractor quote/compare tools; Senior cost planner; Investor compare. Not implemented in SHARE-002.
+
+---
+
 # SHARE-001 — TrustHub Network Smart Share Audit & Architecture
 
-**Status:** PARTIAL (architecture ready; Vercel project IDs and domain-alias lists not readable from local machines)
+**Status:** COMPLETE as an audit. SHARE-002 implemented 2026-08-21.
 
 **Date:** 2026-08-19  
-**Scope:** Audit + architecture only. No domain mutation. No production feature deploy required for this document.  
-**Network deploy rule:** `docs/NETWORK-DEPLOY.md` — repository → correct Vercel project → correct canonical domain.
+**Scope:** Audit + architecture only. No domain mutation. No production feature deploy required for this document.
 
 ---
 
