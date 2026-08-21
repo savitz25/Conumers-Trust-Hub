@@ -104,19 +104,24 @@ export function createPageMetadata({
   path,
   type = 'website',
   noIndex = false,
+  imageUrl,
+  imageAlt,
 }: {
   title: string;
   description: string;
   path: string;
   type?: 'website' | 'article';
   noIndex?: boolean;
+  imageUrl?: string;
+  imageAlt?: string;
 }): Metadata {
   const withSlash = path.startsWith('/') ? path : `/${path}`;
   // Canonical consistency: no trailing slash (matches next.config trailingSlash: false)
   const normalized =
     withSlash === '/' ? '/' : withSlash.replace(/\/+$/, '').replace(/\/+/g, '/');
   const url = `${siteUrl}${normalized === '/' ? '' : normalized}`;
-  const ogImage = brandOgImageAbsoluteUrl(siteUrl);
+  const ogImage = imageUrl || brandOgImageAbsoluteUrl(siteUrl);
+  const ogAlt = imageAlt || title;
 
   return {
     title,
@@ -134,7 +139,7 @@ export function createPageMetadata({
           url: ogImage,
           width: SHARE_HUB.ogWidth,
           height: SHARE_HUB.ogHeight,
-          alt: title,
+          alt: ogAlt,
         },
       ],
     },
@@ -142,7 +147,7 @@ export function createPageMetadata({
       card: SHARE_HUB.twitterCard,
       title,
       description,
-      images: [{ url: ogImage, alt: title }],
+      images: [{ url: ogImage, alt: ogAlt }],
     },
     robots: noIndex
       ? { index: false, follow: false }

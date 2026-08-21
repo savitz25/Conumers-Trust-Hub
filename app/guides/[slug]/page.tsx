@@ -4,6 +4,7 @@ import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { LastReviewed } from '@/components/last-reviewed';
 import { createPageMetadata } from '@/lib/seo/metadata';
+import { shareRouteOgImage } from '@/lib/seo/share-hub';
 import { getAllGuideSlugs, getGuideBySlug } from '@/lib/growth/guides';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
@@ -18,11 +19,14 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const guide = getGuideBySlug(slug);
   if (!guide) return {};
+  const og = shareRouteOgImage(`/guides/${guide.slug}`, guide.title);
   return createPageMetadata({
     title: guide.metaTitle,
     description: guide.metaDescription,
     path: `/guides/${guide.slug}`,
     type: 'article',
+    imageUrl: og.url,
+    imageAlt: og.alt,
   });
 }
 

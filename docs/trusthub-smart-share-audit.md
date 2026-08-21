@@ -1,6 +1,114 @@
-# TrustHub Network Smart Share — SHARE-001 audit + SHARE-002 baseline
+# TrustHub Network Smart Share — SHARE-001 audit + SHARE-002 baseline + SHARE-003 contextual cards
 
 **Network deploy rule:** `docs/NETWORK-DEPLOY.md` — repository → correct Vercel project → correct canonical domain.
+
+---
+
+# SHARE-003 — Dynamic ENTITY + CONTENT cards (implemented 2026-08-21)
+
+**Status:** COMPLETE  
+**Scope:** Public CONTENT and ENTITY social cards only. No calculator snapshots, saved comparisons, `/share/[id]`, or consumer-specific data (SHARE-004). No Google Places. No unpublished fields.
+
+SHARE-002 Hub fallback remains the safe baseline. Every contextual route uses a stable `/share-og` ImageResponse handler (Next hashes nested `opengraph-image.tsx` filenames and those URLs 404). Missing entity/content data, malformed routes, and render errors fall back to the SHARE-002 card — never 500, blank, `undefined`, or `UNKNOWN`.
+
+Pattern: `generateMetadata()` sets absolute `https://www.{hub}/…/share-og`. Cards are 1200×630, `summary_large_image`, system-ui/Arial only.
+
+**Publication safety:** NO previously unpublished field was exposed. Cards use only fields already rendered on the public page. Absence is never converted into “no complaints / fully verified / approved.”
+
+## SHARE-003 network table
+
+| Hub | Entity cards | Content cards | Fallback | Starting SHA | Final SHA | Vercel project | Deployment | Prod QA | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Move | `/companies/[slug]` | `/local-movers/[state]`, `/local-movers/[state]/[county]` | SHARE-002 ImageResponse | `b167a5ee` | `14b891f2` | move-trust-hub | prod READY | PASS | GO |
+| Senior | `/facility/[slug]`, CMS `/facility/cms/[ccn]/[slug]` | — | SHARE-002 ImageResponse | `b8a785f2` | `82b4e4a1` | care-trust-hub | prod READY | PASS | GO |
+| Lender | `/lenders/[slug]` | — | SHARE-002 ImageResponse | `39080e46` | `01841a39` | lender-trust-hub | prod READY | PASS | GO |
+| Contractor | `/contractors/[slug]` | FL/AZ/WA/OR discovery + guides | SHARE-002 PNG | `96e751ee` | `a00a2aad` | contractor-trust-hub | prod READY | PASS | GO |
+| Investor | `/firm/[slug]` official + synthetic | `/research` | SHARE-002 PNG | `c8d500f1` | `68d5654e` | **investor-trust-hub-web** | prod READY | PASS | GO |
+| Insurance | `/carriers/[slug]`, verified `/providers/[slug]` | destinations + ACA guides | SHARE-002 PNG | `187f3ac2` | `d93e8e9e` | insurance-trust-hub | prod READY | PASS | GO |
+| Ask | — | `/network`, `/guides/[slug]`, `/journeys/[slug]` | SHARE-002 PNG | `d6fe6fa2` | (this commit) | conumers-trust-hub | (after merge) | (after merge) | GO |
+
+## Per-hub SHARE-003 record
+
+### Move
+
+- **Routes:** `/companies/[slug]`, `/local-movers/[stateSlug]`, `/local-movers/[stateSlug]/[countySlug]`
+- **Card type:** ENTITY + CONTENT
+- **Metadata:** `generateMetadata` + `shareRouteOgImage`
+- **Image:** `/…/share-og` ImageResponse (navy + orange accent bar)
+- **Fields:** public name, headquarters, USDOT only if `canShowLicenseNumbers()`, interstate/profile label. County/state geography only — no mover lists.
+- **Safety:** no ratings, BBB, phone, email. Invalid slug → SHARE-002 card.
+- **Tests:** `scripts/assert-share-003.ts`
+- **Production:** `https://www.movetrusthub.com/companies/1-800-pack-rat/share-og`, Palm Beach County + Florida local pages. facebookexternalhit / Twitterbot / Slackbot PASS.
+- **PR:** https://github.com/savitz25/Move-trust-Hub/pull/43 (final stable `/share-og`; earlier #39/#41 hashed-path attempt)
+- **SHA:** `14b891f2`
+
+### Senior
+
+- **Routes:** `/facility/[slug]`, `/facility/cms/[ccn]/[slug]`
+- **Card type:** ENTITY
+- **Public projection:** same fail-closed identity as the facility page. Name, city/state, care type, CMS/staffing/inspections/ownership research labels.
+- **Excluded:** REVIEW_REQUIRED website, PROBABLE identity, UNRESOLVED match, hidden Place IDs, match confidence, cmsOverall/stars/deficiencies/penalties, telephone, street address.
+- **Fallback:** SHARE-002 cream/plum Hub card
+- **Production:** Harbor Pines `https://www.seniortrusthub.com/facility/harbor-pines/share-og` 1200×630
+- **PR:** https://github.com/savitz25/care-trust-hub/pull/3
+- **SHA:** `82b4e4a1`
+
+### Lender
+
+- **Routes:** `/lenders/[slug]`
+- **Card type:** ENTITY
+- **Fields:** name, city/state, numeric NMLS, type. No APR, rates, rating, trustScore, phone, CFPB dumps, Google ratings.
+- **Financial-data safety:** no borrower-specific or personalized APR.
+- **Production:** Pacific Trust Mortgage `…/lenders/pacific-trust-mortgage/share-og` 1200×630, NMLS 1984721
+- **PR:** https://github.com/savitz25/Lender-Trust-Hub/pull/2
+- **SHA:** `01841a39`
+
+### Contractor
+
+- **Routes:** `/contractors/[slug]`; `/florida` `/arizona` `/washington` `/oregon` and segment/facet discovery; `/guides/*`
+- **Card type:** ENTITY + CONTENT
+- **Fields:** displayName, city/county/state, occupation label. No license numbers on the image, no discipline counts, no matchConfidence, no Google Places.
+- **Fallback:** exact SHARE-002 PNG `public/brand/contractor-trust-hub-og.png`
+- **Worktree:** implemented from `origin/main`; dirty NJ MyLicense worktree was not touched.
+- **Production:** MBCS Company entity card; Palm Beach County contractors; Florida state; how-to-verify guide; invalid slug → PNG
+- **PR:** https://github.com/savitz25/contractor-trust-hub/pull/2
+- **SHA:** `a00a2aad`
+
+### Investor
+
+- **Deployed only to** `investor-trust-hub-web` / `prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8`
+- **Routes:** `/firm/[slug]`, `/research`
+- **Official firms:** displayName, city/region, numeric CRD only. No RAUM/AUM, website hotlink, disclosure-absence-as-endorsement, street address, quality/performance claims.
+- **Synthetic (Northbridge):** `SYNTHETIC FIRM RESEARCH` + “Development fixture · not a real firm”. SYN- CRD identifiers are never printed.
+- **Production:** Northbridge, `/research`, official `sec-crd-160657` (long dual name truncated), invalid slug → PNG
+- **PR:** https://github.com/savitz25/investor-trust-hub/pull/3
+- **SHA:** `68d5654e`
+
+### Insurance
+
+- **Justified public routes:** curated `/carriers/[slug]`; fail-closed verified `/providers/[slug]`; `/destinations/[state]` and `[city]`; ACA `/guides/[slug]`
+- **Not contextualized:** Medicare contract pages, marketplace plan results, calculators, `/my-insurance` (personalized / SHARE-004 / CMS-endorsement risk)
+- **Provider gate:** same `canShowAsVerified` as the public page. Unpublished listings do not get an entity card.
+- **No:** CMS endorsement copy, Google Places, phones, ratings, trust scores
+- **Production:** Humana carrier card; Florida destination; Florida ACA guide; invalid carrier → PNG
+- **PR:** https://github.com/savitz25/Insurance-trust-hub/pull/2
+- **SHA:** `d93e8e9e`
+
+### Ask
+
+- **Routes:** `/network`, `/guides/[slug]`, `/journeys/[slug]`
+- **Not forced:** homepage and utility pages keep SHARE-002 PNG
+- **Card type:** CONTENT (parent discovery layer; no entity directory)
+- **Fallback:** `/og/ask-trust-hub-social-card.png`
+- **PR / SHA:** recorded at merge of this Ask commit
+
+## SHARE-004 readiness (not implemented)
+
+Ranked first tools:
+
+1. **Native “Share this research” control on public ENTITY pages** — copies canonical URL; Web Share API where available. Highest consumer value, lowest risk (no new data surface).
+2. **Privacy-safe comparison share** — opaque `/share/{id}` of already-public entity slugs only, noindex, TTL. High value, medium risk (must not embed account state).
+3. **Calculator snapshot share** — last, because inputs can be quasi-PII (income, ZIP+age, loan amounts). Needs redaction rules before any snapshot store.
 
 ---
 
