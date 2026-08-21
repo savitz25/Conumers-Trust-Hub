@@ -38,3 +38,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Academic 001B.2B internal extracts (never publish)
+/data/academic-internal/

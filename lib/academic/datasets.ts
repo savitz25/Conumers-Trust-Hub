@@ -87,7 +87,7 @@ export const ACADEMIC_DATASETS: readonly AcademicResearchDataset[] = [
       ...COMMON_LIMITATIONS,
       'Assisted-living identity is only in scope where the hub already supports it. CMS nursing-home data is not a national AL registry.',
       'SeniorTrustHub is research infrastructure, not a referral marketplace; academic extracts must not be framed as placement lists.',
-      'A 2026-08-21 live warehouse recount and Open V1 freeze exist internally (docs/academic/senior-v1/). No public files, download, or DOI. snapshotDate remains unset until an extract exists.',
+      'A 2026-08-21 live warehouse recount, Open V1 freeze, and internal reproducibility dry-run exist (docs/academic/senior-v1/, docs/ACADEMIC-001B2B-SENIOR-OPEN-V1-REPRODUCIBILITY.md). No public files, download, or DOI. snapshotDate remains unset until a published extract exists.',
     ],
     lastReviewedAt: '2026-08-21',
   },

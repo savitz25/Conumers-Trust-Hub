@@ -156,3 +156,4 @@ Cite **CMS** as the source of the records. Cite TrustHub only for organization, 
 - `MANIFEST-SPEC.md`
 - `COUNSEL-REVIEW.md`
 - `docs/ACADEMIC-001B2A-SENIOR-SNAPSHOT-FREEZE.md` (live counts, comparison, release gate)
+- `docs/ACADEMIC-001B2B-SENIOR-OPEN-V1-REPRODUCIBILITY.md` (internal dual-extract integrity; not a public release)
