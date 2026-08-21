@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { BRAND, BRAND_LOGO, BRAND_LOGO_VERSION, brandLogoAbsoluteUrl } from '@/lib/brand';
+import {
+  SHARE_HUB,
+  resolveShareOrigin,
+  shareOgImageAbsoluteUrl,
+} from '@/lib/seo/share-hub';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
+const siteUrl = resolveShareOrigin();
 
 /** Homepage — entity-rich title & description (Phase 1 integrity). */
 export const HOMEPAGE_TITLE =
@@ -10,10 +15,17 @@ export const HOMEPAGE_TITLE =
 export const HOMEPAGE_DESCRIPTION =
   'Independent Consumer Research Network';
 
-/** Default share image (1200×630) — prefer dedicated OG art over logo crop. */
+/** Default share image (1200×630) — dedicated OG art, not a logo crop. */
 export function brandOgImageAbsoluteUrl(baseUrl: string = siteUrl): string {
-  return `${baseUrl.replace(/\/$/, '')}/og/ask-trust-hub-social-card.png?v=20260819`;
+  return shareOgImageAbsoluteUrl(baseUrl);
 }
+
+const defaultOgImage = {
+  url: brandOgImageAbsoluteUrl(siteUrl),
+  width: SHARE_HUB.ogWidth,
+  height: SHARE_HUB.ogHeight,
+  alt: SHARE_HUB.ogAlt,
+} as const;
 
 export const rootLayoutMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -65,20 +77,18 @@ export const rootLayoutMetadata: Metadata = {
     siteName: BRAND.name,
     title: HOMEPAGE_TITLE,
     description: HOMEPAGE_DESCRIPTION,
-    images: [
-      {
-        url: brandOgImageAbsoluteUrl(siteUrl),
-        width: 1200,
-        height: 630,
-        alt: 'Ask Trust Hub — Independent Consumer Research Network',
-      },
-    ],
+    images: [defaultOgImage],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: SHARE_HUB.twitterCard,
     title: HOMEPAGE_TITLE,
     description: HOMEPAGE_DESCRIPTION,
-    images: [brandOgImageAbsoluteUrl(siteUrl)],
+    images: [
+      {
+        url: defaultOgImage.url,
+        alt: SHARE_HUB.ogAlt,
+      },
+    ],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: `${siteUrl}/` },
@@ -122,17 +132,17 @@ export function createPageMetadata({
       images: [
         {
           url: ogImage,
-          width: 1200,
-          height: 630,
+          width: SHARE_HUB.ogWidth,
+          height: SHARE_HUB.ogHeight,
           alt: title,
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: SHARE_HUB.twitterCard,
       title,
       description,
-      images: [ogImage],
+      images: [{ url: ogImage, alt: title }],
     },
     robots: noIndex
       ? { index: false, follow: false }
@@ -140,4 +150,4 @@ export function createPageMetadata({
   };
 }
 
-export { siteUrl, brandLogoAbsoluteUrl };
+export { siteUrl, brandLogoAbsoluteUrl, SHARE_HUB };

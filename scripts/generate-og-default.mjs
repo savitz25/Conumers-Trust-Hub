@@ -1,3 +1,8 @@
+/**
+ * Obsolete generator. Production Open Graph art is:
+ *   public/og/ask-trust-hub-social-card.png (1200×630)
+ * Do not point metadata at public/og-default.png.
+ */
 import sharp from 'sharp';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
