@@ -243,6 +243,45 @@ export const ACADEMIC_DATASETS: readonly AcademicResearchDataset[] = [
     ],
     lastReviewedAt: REVIEWED,
   },
+  {
+    id: 'trusthub-entity-resolution-benchmark',
+    title: 'TrustHub Entity Resolution Benchmark (unlabeled candidates)',
+    vertical: 'cross-network',
+    description:
+      'Internal unlabeled candidate pairs for later dual human review of difficult Move (FMCSA) and Contractor (state license) business-identity questions. Similarity and matcher confidence are not ground truth.',
+    researchUseCases: [
+      'Entity-resolution method evaluation after labels exist',
+      'False-positive trap analysis on similar business names',
+      'Cross-state license identity studies',
+    ],
+    sourceAuthorities: ['FMCSA', 'State contractor licensing boards'],
+    canonicalEntityType: 'business_entity',
+    canonicalIdentifier: 'composite',
+    coverage: {
+      geography: 'FMCSA household-goods identity-review universe plus selected state contractor staging boards',
+      timeRange: 'Not snapshot-dated as a public release; internal candidate version trusthub-er-candidate-v1',
+      completeness: 'About 400 unlabeled candidates; not a complete registry dump',
+    },
+    snapshotDate: null,
+    version: null,
+    format: 'UNSPECIFIED',
+    accessLevel: 'INTERNAL_RESEARCH',
+    releaseStatus: 'DOCUMENTATION',
+    piiStatus: 'NONE_INTENDED',
+    businessIdentificationPolicy: 'UNDECIDED_COUNSEL_REVIEW',
+    licenseStatus: 'PENDING_COUNSEL',
+    citationStatus: 'TEMPLATE_ONLY',
+    doi: null,
+    documentationHref: '/academic#datasets',
+    downloadHref: null,
+    limitations: [
+      ...COMMON_LIMITATIONS,
+      'No MATCH/NON_MATCH/AMBIGUOUS labels are assigned in Academic 001C.1.',
+      'Candidate-generation methods are not evidence. Google is not used.',
+      'Internal candidate rows are not a public download. downloadHref remains null.',
+    ],
+    lastReviewedAt: '2026-08-21',
+  },
 ] as const;
 
 export function getAcademicDatasetById(id: string): AcademicResearchDataset | undefined {

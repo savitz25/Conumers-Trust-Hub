@@ -8,7 +8,7 @@ export const ENTITY_RESOLUTION_BENCHMARK_ID = 'trusthub-entity-resolution-benchm
 export const ENTITY_RESOLUTION_BENCHMARK_TITLE = 'TrustHub Entity Resolution Benchmark';
 
 export const ENTITY_RESOLUTION_BENCHMARK_STATUS =
-  'Specification only. No public ground-truth file, no claimed precision/recall, no production matching dump.';
+  'Documentation and internal unlabeled candidates (Academic 001C.1). No public ground-truth file, no claimed precision/recall, no production matching dump.';
 
 export const ENTITY_RESOLUTION_EXAMPLE_CLASSES = [
   'Legal name versus DBA',
