@@ -35,11 +35,13 @@ A similarity score, matcher confidence, shared address, shared phone, or Google 
 - `SCHEMA.md` — candidate and reviewer fields
 - `CANDIDATE-SELECTION.md` — generation, sampling, IDs, difficulty
 - `REVIEW-PROTOCOL.md` — MATCH / NON_MATCH / AMBIGUOUS evidence rules
+- `HUMAN-REVIEW-GUIDE.md` — reviewer-facing instructions
 - `LIMITATIONS.md`
 - `docs/ACADEMIC-001C1-ENTITY-RESOLUTION-CANDIDATE-SET.md`
+- `docs/ACADEMIC-001C2A-HUMAN-REVIEW-WORKBENCH.md` — local workbench (001C.2A)
 
 ---
 
-## Next (001C.2)
+## Next (001C.2B)
 
-Independent dual human review using the protocol. Do not auto-label. Do not publish.
+Two humans use the local workbench. Builder does not label. Do not publish.

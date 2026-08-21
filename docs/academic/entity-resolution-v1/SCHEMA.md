@@ -36,8 +36,9 @@ benchmark_case_id = er1_ + sha256(payload).hexdigest()
 
 ## Reviewer packets
 
-Same evidence fields. Blank: `review_label`, `review_notes`, `evidence_checked`, `reviewed_at`.  
-Hidden from reviewers: any 008b resolution, confidence, matcher outcome, or proposed label.
+Workbench review rows (gitignored `{ROLE}.jsonl` / `{ROLE}-completed.csv`): `benchmark_case_id`, `reviewer_role` (`REVIEWER_A`|`REVIEWER_B`), `review_label`, `review_notes`, `evidence_checked`, optional `evidence_strength`, `reviewed_at`.
+
+Hidden on the human screen until after (and preferably never): `case_type`, `difficulty`, `candidate_reason`. Always hidden: 008b resolution, confidence, matcher outcome, the other reviewer’s file, proposed labels.
 
 ## Leakage fields excluded from packets
 

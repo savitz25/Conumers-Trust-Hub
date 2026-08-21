@@ -1,0 +1,98 @@
+[
+  {
+    "training_case_id": "train-er-01",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000001", "name": "NORTHSTAR HOUSEHOLD GOODS LLC", "dba": "NORTHSTAR MOVERS", "city": "AUSTIN", "state": "TX", "address": "100 Example Blvd"},
+    "record_b": {"system": "fmcsa_li", "identifier": "9000001", "name": "NORTHSTAR HOUSEHOLD GOODS LLC", "dba": "NORTHSTAR MOVERS", "city": "AUSTIN", "state": "TX", "address": "100 Example Blvd"},
+    "teaching_note": "Same official USDOT on both sides. After training, discuss that a shared regulator identifier is MATCH-capable evidence.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-02",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000002", "name": "PRAIRIE PIANO TRANSIT INC", "dba": "", "city": "OMAHA", "state": "NE", "address": ""},
+    "record_b": {"system": "fmcsa_li", "identifier": "9000099", "name": "COASTAL CRATE HAULERS LLC", "dba": "", "city": "MIAMI", "state": "FL", "address": ""},
+    "teaching_note": "Different USDOTs and unrelated names/states. Distinct official identities support NON_MATCH after inspecting FMCSA.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-03",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000003", "name": "LAKESIDE RELOCATION SERVICES INC", "dba": "", "city": "CHICAGO", "state": "IL", "address": ""},
+    "record_b": {"system": "move_existing_profile", "identifier": "move-profile:training-lakeside-only", "name": "Lakeside Relocation", "dba": "", "city": "CHICAGO", "state": "IL", "address": ""},
+    "teaching_note": "No second USDOT frozen. Similar names are not enough. AMBIGUOUS until an official second identifier is found.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-04",
+    "vertical": "contractor",
+    "record_a": {"system": "ca_cslb", "identifier": "CA-CSLB:TRAIN100", "name": "REDWOOD DECK WORKS INC", "dba": "", "city": "OAKLAND", "state": "CA", "address": "12 Harbor St"},
+    "record_b": {"system": "ca_cslb", "identifier": "CA-CSLB:TRAIN100", "name": "REDWOOD DECK WORKS INC", "dba": "REDWOOD DECKS", "city": "OAKLAND", "state": "CA", "address": "12 Harbor St"},
+    "teaching_note": "Same CSLB license number; DBA on the same official record. Official identifier MATCH-capable.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-05",
+    "vertical": "contractor",
+    "record_a": {"system": "az_roc", "identifier": "AZ-ROC:TRAIN200", "name": "DESERT TILE COMPANY LLC", "dba": "", "city": "PHOENIX", "state": "AZ", "address": "1 Sand Rd"},
+    "record_b": {"system": "nj_dca", "identifier": "NJ-HIC:TRAIN200", "name": "DESERT TILE COMPANY LLC", "dba": "", "city": "NEWARK", "state": "NJ", "address": "9 River Ave"},
+    "teaching_note": "Same trade name across boards is not MATCH without an official entity key. Often AMBIGUOUS or NON_MATCH after board review.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-06",
+    "vertical": "contractor",
+    "record_a": {"system": "mn_dli", "identifier": "MN-DLI:TRAIN300", "name": "TWIN CITIES ROOFING LLC", "dba": "", "city": "ST PAUL", "state": "MN", "address": "50 Summit Ave"},
+    "record_b": {"system": "mn_dli", "identifier": "MN-DLI:TRAIN301", "name": "TWIN CITIES PLUMBING LLC", "dba": "", "city": "ST PAUL", "state": "MN", "address": "50 Summit Ave"},
+    "teaching_note": "Shared building does not make one company. Inspect both licenses; likely NON_MATCH if distinct licensees.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-07",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000007", "name": "UNITED VAN LINES AGENT TRAINING CO", "dba": "UNITED VAN LINES", "city": "ST LOUIS", "state": "MO", "address": ""},
+    "record_b": {"system": "fmcsa_li", "identifier": "9000008", "name": "UNITED VAN LINES AGENT TRAINING TWO LLC", "dba": "UNITED VAN LINES", "city": "KANSAS CITY", "state": "MO", "address": ""},
+    "teaching_note": "Shared franchise branding with different USDOTs. Do not collapse van-line brands without official identity links.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-08",
+    "vertical": "contractor",
+    "record_a": {"system": "va_dpor", "identifier": "VA-DPOR:TRAIN400", "name": "BLUE RIDGE ELECTRIC INC", "dba": "", "city": "ROANOKE", "state": "VA", "address": "8 Mill St"},
+    "record_b": {"system": "va_dpor", "identifier": "VA-DPOR:TRAIN401", "name": "BLUE RIDGE ELECTRICAL CONTRACTORS INC", "dba": "", "city": "LYNCHBURG", "state": "VA", "address": "22 Oak St"},
+    "teaching_note": "Near-identical names, different licenses and cities. Similarity is not ground truth.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-09",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000010", "name": "CASCADE CARTAGE LLC", "dba": "", "city": "PORTLAND", "state": "OR", "address": ""},
+    "record_b": {"system": "fmcsa_li", "identifier": "9000011", "name": "CASCADE CARTAGE LLC", "dba": "", "city": "SEATTLE", "state": "WA", "address": ""},
+    "teaching_note": "Identical legal name, different USDOT and state. Inspect FMCSA; do not assume MATCH.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-10",
+    "vertical": "contractor",
+    "record_a": {"system": "ct_dcp", "identifier": "CT-DCP:TRAIN500", "name": "SHORELINE IMPROVEMENTS LLC", "dba": "SHORELINE HIC", "city": "NEW HAVEN", "state": "CT", "address": "3 Harbor"},
+    "record_b": {"system": "ct_dcp", "identifier": "CT-DCP:TRAIN500", "name": "SHORELINE IMPROVEMENTS LLC", "dba": "SHORELINE HIC", "city": "NEW HAVEN", "state": "CT", "address": "3 Harbor"},
+    "teaching_note": "Same CT credential twice. Official identifier MATCH-capable after confirming eLicense.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-11",
+    "vertical": "contractor",
+    "record_a": {"system": "id_dopl", "identifier": "ID-DOPL:TRAIN600", "name": "SAWTOOTH BUILDERS LLC", "dba": "", "city": "BOISE", "state": "ID", "address": ""},
+    "record_b": {"system": "tn_blc", "identifier": "TN-BLC:TRAIN600", "name": "SAWTOOTH BUILDERS LLC", "dba": "", "city": "NASHVILLE", "state": "TN", "address": ""},
+    "teaching_note": "Cross-state same name without a shared official entity key. AMBIGUOUS is allowed.",
+    "not_in_benchmark": true
+  },
+  {
+    "training_case_id": "train-er-12",
+    "vertical": "move",
+    "record_a": {"system": "fmcsa_li", "identifier": "9000012", "name": "BAYOU BOX & FREIGHT INC", "dba": "", "city": "BATON ROUGE", "state": "LA", "address": ""},
+    "record_b": {"system": "move_existing_profile", "identifier": "move-profile:training-unnamed-counterpart", "name": "", "dba": "", "city": "", "state": "", "address": ""},
+    "teaching_note": "Missing counterpart identity. Use AMBIGUOUS; do not invent a USDOT.",
+    "not_in_benchmark": true
+  }
+]

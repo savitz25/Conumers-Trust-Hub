@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>TrustHub ER review (local only)</title>
+  <style>
+    :root { font-family: Georgia, serif; color: #1a1a1a; background: #f6f3ee; }
+    body { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    h1,h2 { font-family: "Segoe UI", sans-serif; }
+    .banner { background: #3b2f2a; color: #f6f3ee; padding: 12px 16px; border-radius: 8px; }
+    .warn { background: #fff3cd; padding: 10px 12px; border-left: 4px solid #c48a00; margin: 12px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: white; border: 1px solid #d9d1c7; padding: 14px; border-radius: 8px; }
+    label { display: block; margin-top: 10px; font-weight: 600; }
+    textarea, select, input[type=text] { width: 100%; box-sizing: border-box; padding: 8px; }
+    textarea { min-height: 90px; }
+    button { margin-right: 8px; margin-top: 12px; padding: 8px 14px; }
+    a { color: #1f4b8f; }
+    .progress { font-family: "Segoe UI", sans-serif; }
+    .hidden { display: none; }
+    .defs p { margin: 0.4em 0; }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    LOCAL / INTERNAL ONLY — not a public benchmark. Similarity is not ground truth. No Google. No automatic labels.
+  </div>
+  <h1>Entity resolution human review</h1>
+  <p class="progress" id="progress"></p>
+  <p>
+    Role:
+    <select id="role">
+      <option value="REVIEWER_A">REVIEWER_A</option>
+      <option value="REVIEWER_B">REVIEWER_B</option>
+    </select>
+    Mode:
+    <select id="mode">
+      <option value="training">Training (12 cases, not the 400)</option>
+      <option value="benchmark">Frozen benchmark (400)</option>
+    </select>
+    <button type="button" id="loadBtn">Load</button>
+  </p>
+
+  <div class="defs card">
+    <strong>MATCH</strong>
+    <p>Authoritative public evidence supports that Record A and Record B represent the same underlying regulated business/entity for this identity question.</p>
+    <strong>NON_MATCH</strong>
+    <p>Authoritative public evidence supports that they are distinct regulated businesses/entities.</p>
+    <strong>AMBIGUOUS</strong>
+    <p>The available authoritative public evidence is insufficient, conflicting, or does not support a defensible binary conclusion.</p>
+    <p><strong>Similarity is not ground truth.</strong> Do not use Google, Yelp, BBB, social media, or commercial aggregators.</p>
+  </div>
+
+  <div id="limitation" class="warn hidden"></div>
+  <div class="grid">
+    <div class="card" id="cardA"></div>
+    <div class="card" id="cardB"></div>
+  </div>
+
+  <form id="form">
+    <label>Label
+      <select id="label" required>
+        <option value="">Select…</option>
+        <option>MATCH</option>
+        <option>NON_MATCH</option>
+        <option>AMBIGUOUS</option>
+      </select>
+    </label>
+    <label>Evidence checked (official sources you actually opened)
+      <textarea id="evidence" required placeholder="e.g. FMCSA SAFER snapshot for USDOT …; CSLB Instant License Check for …"></textarea>
+    </label>
+    <label>Notes (required)
+      <textarea id="notes" required placeholder="What official fields supported your label? Why not the other labels?"></textarea>
+    </label>
+    <label>Evidence strength (optional)
+      <select id="strength">
+        <option value="">—</option>
+        <option>STRONG</option>
+        <option>MODERATE</option>
+        <option>INSUFFICIENT</option>
+      </select>
+    </label>
+    <button type="submit">Save this case</button>
+    <button type="button" id="prevBtn">Previous</button>
+    <button type="button" id="nextBtn">Next unreviewed</button>
+  </form>
+
+  <h2>Complete and lock (benchmark only)</h2>
+  <p>Required attestation (exact text):</p>
+  <blockquote>I reviewed these cases using the TrustHub Entity Resolution Benchmark review protocol and did not use an automatic proposed benchmark label.</blockquote>
+  <textarea id="attest"></textarea>
+  <button type="button" id="lockBtn">Lock my 400-case review</button>
+  <pre id="status"></pre>
+
+<script>
+const state = { index: 0, mode: "training", role: "REVIEWER_A", caseId: null };
+
+function renderRecord(title, rec) {
+  if (!rec) return "";
+  const links = (rec.lookups || []).map(l => `<div><a href="${l.url}" target="_blank" rel="noopener">${l.title || l.url}</a></div>`).join("");
+  const miss = rec.missing_second_usdot ? "<p><strong>Limitation:</strong> no second official USDOT is frozen. Search FMCSA by legal name. Do not invent an identifier.</p>" : "";
+  return `<h2>${title}</h2>
+    <p>System: ${rec.system || ""}</p>
+    <p>Identifier: ${rec.identifier || ""}</p>
+    <p>Legal/business name: ${rec.name || ""}</p>
+    <p>DBA: ${rec.dba || ""}</p>
+    <p>City / state: ${rec.city || ""} / ${rec.state || ""}</p>
+    <p>Address: ${rec.address || ""}</p>
+    ${miss}
+    ${links}`;
+}
+
+async function loadCase() {
+  const role = document.getElementById("role").value;
+  const mode = document.getElementById("mode").value;
+  state.role = role; state.mode = mode;
+  const url = mode === "training"
+    ? `/api/training?role=${role}&index=${state.index}`
+    : `/api/case?role=${role}&index=${state.index}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  document.getElementById("status").textContent = data.error || "";
+  if (data.error) return;
+  state.caseId = data.benchmark_case_id || data.training_case_id;
+  document.getElementById("progress").textContent =
+    `${role} · ${mode} · ${data.progress?.reviewed ?? 0} reviewed / ${data.progress?.remaining ?? "?"} remaining (${data.progress?.percent ?? 0}%) · case ${state.index + 1}`;
+  document.getElementById("cardA").innerHTML = renderRecord("Record A", data.record_a);
+  document.getElementById("cardB").innerHTML = renderRecord("Record B", data.record_b);
+  const lim = document.getElementById("limitation");
+  if (data.record_a?.missing_second_usdot || data.record_b?.missing_second_usdot) {
+    lim.classList.remove("hidden");
+    lim.textContent = "One side has no frozen official second USDOT (move-profile). Locate the FMCSA record by name. Do not fabricate an identifier.";
+  } else lim.classList.add("hidden");
+  const yr = data.your_review;
+  document.getElementById("label").value = yr?.review_label || "";
+  document.getElementById("notes").value = yr?.review_notes || "";
+  document.getElementById("evidence").value = yr?.evidence_checked || "";
+  document.getElementById("strength").value = yr?.evidence_strength || "";
+}
+
+document.getElementById("loadBtn").onclick = () => { state.index = 0; loadCase(); };
+document.getElementById("prevBtn").onclick = () => { state.index = Math.max(0, state.index - 1); loadCase(); };
+document.getElementById("nextBtn").onclick = async () => {
+  const res = await fetch(`/api/next?role=${state.role}&mode=${state.mode}`);
+  const data = await res.json();
+  state.index = data.index ?? state.index + 1;
+  loadCase();
+};
+document.getElementById("form").onsubmit = async (e) => {
+  e.preventDefault();
+  const body = {
+    role: state.role,
+    mode: state.mode,
+    case_id: state.caseId,
+    review_label: document.getElementById("label").value,
+    review_notes: document.getElementById("notes").value,
+    evidence_checked: document.getElementById("evidence").value,
+    evidence_strength: document.getElementById("strength").value
+  };
+  const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await res.json();
+  document.getElementById("status").textContent = JSON.stringify(data, null, 2);
+  if (!data.error) { state.index += 1; loadCase(); }
+};
+document.getElementById("lockBtn").onclick = async () => {
+  const res = await fetch("/api/lock", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role: state.role, attestation: document.getElementById("attest").value })
+  });
+  document.getElementById("status").textContent = JSON.stringify(await res.json(), null, 2);
+};
+loadCase();
+</script>
+</body>
+</html>

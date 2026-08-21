@@ -1,6 +1,6 @@
 # ER V1 review protocol (for Academic 001C.2)
 
-Reviews are **not** performed in 001C.1.
+Reviews are performed by **humans** in 001C.2B using the local workbench (`docs/ACADEMIC-001C2A-HUMAN-REVIEW-WORKBENCH.md`). 001C.2A does not assign labels.
 
 ## Independent dual review
 

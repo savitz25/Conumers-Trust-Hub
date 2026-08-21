@@ -276,7 +276,7 @@ export const ACADEMIC_DATASETS: readonly AcademicResearchDataset[] = [
     downloadHref: null,
     limitations: [
       ...COMMON_LIMITATIONS,
-      'No MATCH/NON_MATCH/AMBIGUOUS labels are assigned in Academic 001C.1.',
+      'No MATCH/NON_MATCH/AMBIGUOUS labels are assigned in Academic 001C.1. A local human review workbench exists (001C.2A); labels still require humans.',
       'Candidate-generation methods are not evidence. Google is not used.',
       'Internal candidate rows are not a public download. downloadHref remains null.',
     ],
