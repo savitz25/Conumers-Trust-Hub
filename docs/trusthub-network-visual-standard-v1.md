@@ -255,6 +255,76 @@ Shared network mark language: multi-node graph. Hub personality is the **frame +
 
 ---
 
+## G2. CANONICAL TRUSTHUB MARK GEOMETRY (VISUAL-002 ADDENDUM)
+
+**Ticket:** VISUAL-002 addendum — brand-mark geometry lock  
+**Production impact:** NONE on Contractor (or any Hub) in this addendum. Documentation + simulation only. Contractor **must** re-export a corrected asset during its later visual migration — **do not** “fix” thickness with CSS scale, stroke overrides, transforms, or negative margins.
+
+### CANONICAL TRUSTHUB MARK RULE
+
+> **The bracket-and-four-point TrustHub mark is immutable network geometry. Hub identity changes through accent color and wordmark, not through bracket thickness, proportions, dot geometry or spacing.**
+
+### Locked (must match across Hubs)
+
+| Characteristic | Lock |
+|----------------|------|
+| Bracket stroke / shape thickness | Immutable |
+| Bracket width-to-height proportions | Immutable |
+| Bracket corner radius / cap treatment | Immutable |
+| Bracket distance from center mark | Immutable |
+| Four-point / dot size | Immutable |
+| Four-point / dot spacing | Immutable |
+| Center alignment | Immutable |
+| Overall symbol bounding box | Immutable |
+| Clear space between symbol and wordmark | Immutable |
+
+### May vary
+
+| Characteristic | Allowed |
+|----------------|---------|
+| Specialist bracket / accent color | Yes |
+| Specialist wordmark text | Yes |
+| Specialist wordmark color (where approved) | Yes |
+
+The bracket geometry **must not** be independently redrawn per Hub.
+
+### Canonical source
+
+**Canonical geometry:** Ask / Move stroke-bracket family — specifically the reference SVG in `components/ask-network-mark.tsx` (`viewBox="0 0 36 36"`, bracket `strokeWidth="2.4"`, outer dots `r="2.5"`, center `r="2.1"`), which matches Move’s thinner stroke construction in `move-trust-hub-logo.svg` (`stroke-width="5.5"` on a ~84×60 mark field ≈ **6.5–6.7%** of mark height).
+
+**Not canonical:** Contractor’s **filled** gold bracket paths (`contractor-trust-hub-mark.svg` / logo SVG), which read substantially heavier (~**16%** stem thickness vs bracket height, solid fill vs stroke). Prefer thinner Ask/Move geometry over Contractor unless a future asset audit proves otherwise — this audit does **not**.
+
+Normalized ratios below use **% of mark height** so SVG viewBoxes of different sizes are comparable.
+
+| Hub | Asset path | Format | Symbol / mark box | Bracket width (outer) | Bracket visual thickness | Dot diameter | Dot spacing (center→outer) | Transparent padding | Deviation from canonical |
+|-----|------------|--------|-------------------|-----------------------|--------------------------|--------------|----------------------------|---------------------|--------------------------|
+| **Ask (canonical)** | `ask-visual-002/components/ask-network-mark.tsx` (+ `public/brand/ask-bracket-hub-mark.png` raster companion) | SVG reference + PNG | `36×36` | outer x≈5–31 (**72%** of H) | **stroke 2.4** → **6.67%** of H | outer **13.9%** (`r=2.5`); center **11.7%** (`r=2.1`) | **21.7%** of H (centers at ±7.8) | none in SVG (tight) | **CANONICAL** |
+| **Move** | `move-trust-hub-temp/public/brand/move-trust-hub-logo.svg` | SVG | mark ~`84×84` in `420×96` lockup | brackets x=8–76 | **stroke 5.5** → **~6.5%** of mark H | outer ~**10.7–13.1%** (`r=4.5–5.5`) | ~cross at 48 | modest pad in lockup | **MATCH** (stroke family) |
+| **Lender** | `lender-trust-hub/public/brand/lender-trust-hub-logo-nav.png` (SVG wrappers embed PNG) | PNG (+ SVG `<image>`) | lockup 720×217; mark on left | raster stem ~18px mid-band | **~8%** of ink H (raster est.) | raster (four-point present) | raster | opaque plate risk on some exports | **NEAR MATCH** — prefer re-export as true stroke SVG from Ask/Move geometry |
+| **Insurance** | Header lockup: `insurance-trust-hub/public/brand/insurance-trust-hub-logo-header.png`; favicon `insurance-trust-hub-icon.svg` | PNG lockup; SVG icon is **shield**, not brackets | header 720×198 | raster stem ~18px | **~9%** of ink H (raster est.) | present on lockup PNG | — | — | **LOCKUP NEAR MATCH**; **icon SVG is architecture outlier** (triangle shield ≠ bracket mark) |
+| **Contractor** | `contractor-trust-hub/public/brand/contractor-trust-hub-mark.svg` (+ `contractor-trust-hub-logo.svg`) | SVG **filled** paths | mark `256×256`; logo `900×220` | outer x=32–224 | **fill stem ~32px / bracket H 200 → ~16%** | outer **r=14** (~11% of mark); center **r=18** | ±56 from center (~22% of mark) | `translate(8,10)` on logo | **TOO HEAVY** — filled brackets; **ASSET CORRECTION REQUIRED** at Contractor visual migration (no production change in VISUAL-002) |
+| **Senior** | `care-trust-hub/apps/web/public/brand/senior-trust-hub-logo.svg` | SVG stroke | local symbol ~100×100 in `430×140` | stroke brackets H=100 | **stroke 8 → 8%** of symbol H | outer **r=8** (16% of symbol H) | ±35 from center | `translate(8 8)` | **MILD HEAVY** — stroke family but thicker/dotter than Ask/Move; re-export to canonical ratios at Senior migration |
+| **Investor** | `investor-trust-hub/apps/web/public/brand/mark.svg` | SVG stroke | `512×512` | bracket H ~358 | **stroke 40.75 → ~11.4%** of bracket H (~8% of mark) | outer **r=38.31** (~15% of mark) | span ~249 on cross | none | **HEAVIER** than Ask/Move — re-export to canonical stroke % at Investor migration |
+
+### Flags (migration backlog — not VISUAL-002 production edits)
+
+| Hub | Flag |
+|-----|------|
+| **Contractor** | **YES — re-export** mark + lockup using Ask/Move stroke geometry; gold accent only. Do not CSS-fake thickness. |
+| Senior | Re-export thinner stroke + smaller dots to canonical % |
+| Investor | Re-export thinner bracket stroke to canonical % |
+| Insurance | Replace shield-only favicon/icon with bracket mark; keep accent color for brackets |
+| Lender | Prefer vector stroke SVG (stop PNG-in-SVG wrappers) from canonical geometry |
+| Ask `public/brand/logo.svg` | Legacy hexagon “ConsumerTrustHub” tile — **not** network bracket; do not use as chrome mark |
+
+### Simulation
+
+`docs/artifacts/visual-002/hub-hop.html` must render **one** canonical bracket SVG (Ask/Move weight) recolored per Hub accent — not letter tiles or Hub-specific heavy brackets.
+
+Evidence notes: SVG path/`stroke-width` inspected 2026-08-21+ addendum; Contractor fill vs Ask stroke is the primary inconsistency called out by product. Raster stem scans are supporting only (lockups include wordmark ink and can overestimate).
+
+---
+
 ## H. HEADER CONTRACT
 
 **One row. No stacked `AskNetworkBar`.** Network switching is Switch Hub only (`docs/ASK-NETWORK-CONTRACT.md` §5).
