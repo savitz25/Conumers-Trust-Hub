@@ -41,3 +41,6 @@ next-env.d.ts
 
 # Academic internal extracts and unlabeled ER candidates (never publish)
 /data/academic-internal/
+
+__pycache__/
+**/__pycache__/
