@@ -40,19 +40,22 @@ Live warehouse recount (SELECT-only, 2026-08-21): 14,693 current CCNs in Provide
 
 ```
 facilities.ccn
-  ← facility_ratings.ccn
-  ← facility_inspections.ccn
-  ← facility_deficiencies.ccn
-  ← facility_enforcement.ccn
-  ← facility_chains.ccn
+  ← facility_ratings.ccn                 -- strict (same Provider Information universe)
+  ← facility_inspections.ccn             -- strict
+  ← facility_deficiencies.ccn            -- strict
+  ← facility_enforcement.ccn             -- strict
 
 facility_inspections.academic_inspection_id
-  ← facility_deficiencies.academic_inspection_id   -- nullable
+  ← facility_deficiencies.academic_inspection_id   -- nullable LEFT
+
+facility_chains.ccn  →  facilities.ccn             -- LEFT JOIN only; not a strict FK
 ```
 
 `academic_*_id` values **alias existing warehouse keys** (`event_key`, `finding_key`, `penalty_key`). They are SHA-256 hex strings already stored; 001B.2A does not generate new hashes. Uniqueness is per `source_release` (Open V1 ships one vintage per CMS product).
 
 `chain_id` is CMS Chain ID text (`cms_chain.cms_chain_id`), not a UUID.
+
+**Chain join:** `facility_chains.ccn` is a CMS CCN identifier, not a required key into the current-active `facilities.csv`. CMS SNF enrollments / chain membership are a different vintage universe than Provider Information’s currently active homes. In the 001B.2B dry-run, **1,361** of **10,231** chain rows name a CCN that is not in the 14,693-row facilities snapshot. Use `LEFT JOIN facilities USING (ccn)`. A chain row that does not match is still a published CMS enrollment/membership record.
 
 ---
 
@@ -65,6 +68,7 @@ facility_inspections.academic_inspection_id
 | Null fine_amount on Payment Denial | Denials are not dollar fines in this model |
 | Null lat/long | CMS did not publish a coordinate pair |
 | CCN absent from deficiencies or penalties | Not in that CMS file window; **not** a clean record |
+| Chain CCN absent from facilities.csv | Enrollment/membership CCN is outside the current Provider Information snapshot; chain row remains valid |
 | Empty boolean | Unknown, not false |
 
 Never recode null to 0.
@@ -138,7 +142,7 @@ Open V1 ships the **letter code only**. Do not add proprietary low/medium/high l
 
 ### facility_chains.csv
 
-`chain_id` (CMS Chain ID), `ccn`, `source_release_key`, `chain_name`, `enrollment_id`, plus provenance. CMS grouping, not a TrustHub score.
+`chain_id` (CMS Chain ID), `ccn`, `source_release_key`, `chain_name`, `enrollment_id`, plus provenance. CMS grouping, not a TrustHub score. `ccn` identifies a facility in CMS enrollments; it is **not** a strict foreign key to `facilities.csv`. LEFT JOIN to current facilities. **1,361** membership CCNs sit outside the current Provider Information universe.
 
 ### sources.csv
 

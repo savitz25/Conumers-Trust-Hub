@@ -54,6 +54,8 @@ CMS ownership / All Owners / PECOS self-report is **public disclosure**. It is n
 
 `facility_chains.csv` is CMS Chain ID membership from enrollments. It is a CMS grouping, not a TrustHub-constructed system, not a quality score, and not proof that unaffiliated homes are independent operators. **671** chain records exist; **632** distinct chain IDs appear on memberships; **39** chain records have no membership in this vintage.
 
+The enrollment / chain-membership universe is **not identical** to the current CMS-active Provider Information list. Of **10,231** chain rows, **1,361** CCNs are absent from `facilities.csv` (14,693 current homes). Those 1,361 rows were **not** deleted to force a foreign key. Researchers should `LEFT JOIN` chain memberships to facilities. Missing current-home attributes does not mean the chain record is invalid.
+
 ---
 
 ## CMS stars are CMS ratings, not TrustHub ratings

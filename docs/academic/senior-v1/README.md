@@ -87,17 +87,23 @@ Normative columns: `FIELD-FREEZE.md`. Dictionary: `DATA-DICTIONARY.md`.
 
 ## How files join
 
+CCN is the facility identifier on every facility-level table.
+
 ```
 facilities.ccn
-    ← facility_ratings.ccn
-    ← facility_inspections.ccn
-    ← facility_deficiencies.ccn
-    ← facility_enforcement.ccn
-    ← facility_chains.ccn
+    ← facility_ratings.ccn                 -- inner / strict (same snapshot universe)
+    ← facility_inspections.ccn             -- inner / strict
+    ← facility_deficiencies.ccn            -- inner / strict
+    ← facility_enforcement.ccn             -- inner / strict
 
 facility_inspections.academic_inspection_id
-    ← facility_deficiencies.academic_inspection_id  (nullable)
+    ← facility_deficiencies.academic_inspection_id  -- LEFT / nullable
+
+facility_chains.ccn
+    → facilities.ccn                       -- LEFT JOIN only (not a strict FK)
 ```
+
+`facility_chains.ccn` is still a CMS CCN. Most membership rows join to `facilities.csv`. Some CMS SNF enrollment records name CCNs that are **not** in the current Provider Information snapshot (001B.2B: **1,361** of 10,231). Those rows remain valid enrollment/chain evidence. Absence from `facilities.csv` does not invalidate them. Researchers should `LEFT JOIN facilities` when attaching current-home attributes to chain memberships.
 
 `sources` joins on `source_dataset_key` + `source_release_key` + `transformation_version`.
 
@@ -111,7 +117,7 @@ facility_inspections.academic_inspection_id
 - Inspections: every current CCN has ≥1 inspection row in this vintage; dates 2016-07-28–2026-06-26.
 - Deficiencies: 14,629 facilities; 64 current CCNs have none; dates 2017-03-23–2026-06-22.
 - Penalties: 6,844 facilities; dates 2023-07-17–2026-06-11 (CMS published window, not all-time).
-- Chains: 10,116 facilities with a membership.
+- Chains: 10,231 membership rows; most join to current facilities. **1,361** membership CCNs are outside the current 14,693-home snapshot — LEFT JOIN; do not drop them.
 
 ---
 

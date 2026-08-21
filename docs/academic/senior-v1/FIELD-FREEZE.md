@@ -176,7 +176,7 @@ Plus provenance (`penalties-v1`).
 | public_field_name | source_table | source_column/expression | data_type | nullable | description | grain | source authority | transformation | public/hold/exclude | reason |
 |-------------------|--------------|--------------------------|-----------|----------|-------------|-------|------------------|----------------|---------------------|--------|
 | chain_id | cms_chain | cms_chain_id | text | no | Official CMS Chain ID | membership | CMS | copy | public | Public CMS identifier |
-| ccn | cms_chain_provider | provider_identifier (normalized CCN) | char(6) | no | Member facility CCN | membership | CMS | copy | public | FK |
+| ccn | cms_chain_provider | provider_identifier (normalized CCN) | char(6) | no | Member facility CCN (CMS enrollments). LEFT JOIN to facilities; not a strict FK | membership | CMS | copy | public | Identifier, not required FK |
 | source_release_key | source_release | release_key | text | no | Enrollments vintage | membership | CMS | join | public | PK component |
 | chain_name | cms_chain_provider | chain_name | text | no | CMS-published chain name on the membership row | membership | CMS | copy | public | CMS grouping name |
 | enrollment_id | cms_chain_provider | enrollment_id | text | no | CMS enrollment id; unique per source release | membership | CMS | copy | public | CMS field |
@@ -237,7 +237,7 @@ See freeze document section E. Individual owner names (453,390 rows / 246,020 pa
 | facility_inspections | `academic_inspection_id` | `ccn` → facilities |
 | facility_deficiencies | `academic_deficiency_id` | `ccn` → facilities; optional `academic_inspection_id` → inspections |
 | facility_enforcement | `academic_enforcement_id` | `ccn` → facilities |
-| facility_chains | `chain_id` + `ccn` + `source_release_key` | `ccn` → facilities |
+| facility_chains | `chain_id` + `ccn` + `source_release_key` | `ccn` **LEFT JOIN** facilities (1,361 CCNs outside current snapshot; not a strict FK) |
 | sources | `source_dataset_key` + `source_release_key` + `transformation_version` | — |
 
 No new hash implementation in this task.

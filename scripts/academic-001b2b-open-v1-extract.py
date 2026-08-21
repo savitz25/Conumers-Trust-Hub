@@ -15,6 +15,8 @@ from urllib.parse import urlparse, urlunparse
 
 import psycopg2
 
+from academic_open_v1_qa import scan_field
+
 ASK_ROOT = Path(__file__).resolve().parents[1]
 CARE_ROOT = Path(r"C:\Users\makei\care-trust-hub")
 OUT_ROOT = ASK_ROOT / "data" / "academic-internal" / "001b2b"
@@ -317,11 +319,7 @@ def qa_run(dest: Path) -> dict:
     issues = []
     explained = []
     headers_by = {}
-    pii = {"ssn": 0, "email": 0, "google_place": 0, "google_url": 0}
-    ssn_re = re.compile(r"\b\d{3}-\d{2}-\d{4}\b")
-    email_re = re.compile(r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", re.I)
-    google_url_re = re.compile(r"googleapis\.com|googleusercontent\.com|maps\.google", re.I)
-    place_re = re.compile(r"\bChIJ[A-Za-z0-9_-]{20,}\b")
+    pii: dict[str, int] = {}
 
     facility_ccns = set()
     inspection_ids = set()
@@ -366,17 +364,11 @@ def qa_run(dest: Path) -> dict:
                 dup += 1
             else:
                 pk_seen.add(key)
-            for v in rec.values():
+            for field, v in rec.items():
                 if not v:
                     continue
-                if ssn_re.search(v):
-                    pii["ssn"] += 1
-                if email_re.search(v):
-                    pii["email"] += 1
-                if google_url_re.search(v):
-                    pii["google_url"] += 1
-                if place_re.search(v):
-                    pii["google_place"] += 1
+                for kind in scan_field(name, field, v):
+                    pii[kind] = pii.get(kind, 0) + 1
             if name == "facility_deficiencies":
                 insp = rec.get("academic_inspection_id") or ""
                 if not insp:
@@ -390,8 +382,6 @@ def qa_run(dest: Path) -> dict:
                         chain_orphans += 1
                     else:
                         missing_parent += 1
-            for v in rec.values():
-                pass
         fh.close()
         if rows != spec["expected"]:
             issues.append(
@@ -425,8 +415,10 @@ def qa_run(dest: Path) -> dict:
                 "note": "Enrollment membership CCN not in current Provider Information snapshot.",
             }
         )
-    if pii["ssn"] or pii["google_place"] or pii["google_url"]:
-        issues.append({"kind": "critical_pii_or_google_leak", "pii": pii})
+    if pii.get("email") or pii.get("ssn") or pii.get("google_place") or pii.get("google_url") or pii.get(
+        "unexpected_url"
+    ) or pii.get("dob_labeled") or pii.get("medical_record_label"):
+        issues.append({"kind": "critical_privacy_summary", "pii": pii})
 
     return {
         "issues": issues,

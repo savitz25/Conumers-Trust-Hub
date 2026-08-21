@@ -63,6 +63,51 @@ Telephone remains **hold** (not extracted). Ownership, daily PBJ, assisted livin
 
 ---
 
+## Chain-universe join semantics (001B.2B.1)
+
+`facility_chains.ccn` is a CMS CCN. It is **not** a strict foreign key to `facilities.ccn`.
+
+CMS SNF enrollments / chain membership (10,231 rows) and current Provider Information (14,693 active homes) are different universes. **1,361** chain membership CCNs are not in the current facilities snapshot. Those rows were kept. Use a **LEFT JOIN**. A miss does not invalidate the chain record. Researcher-facing dictionary, README, limitations, and field-freeze now say LEFT JOIN rather than FK.
+
+---
+
+## 40-facility source-to-export QA (001B.2B.1)
+
+Deterministic sample seed: `academic-001b2b1-v1` (SHA-256 of `seed|ccn`, then greedy diversity then fill). Raw CCN list is **not** committed.
+
+| Measure | Result |
+|---------|--------|
+| Facilities sampled | **40** |
+| States represented | **23** (CA, FL, IA, IL, IN, LA, MA, MI, MN, MO, NJ, NY, OH, OK, OR, PA, RI, SD, TN, TX, VA, WA, WI) |
+| Overall stars in sample | 1:6 · 2:13 · 3:4 · 4:8 · 5:7 · null:2 |
+| Chain / non-chain | 27 / 13 |
+| With inspections | 40 |
+| With deficiencies | 40 |
+| With enforcement | 17 |
+| Field/relationship comparisons | **560** (name, state, beds, four CMS stars, inspection count and date range, deficiency count and unlinked count, enforcement count, chain membership count) |
+| Mismatches | **0** |
+| Unexplained mismatches | **0** |
+
+Warehouse reads were SELECT-only. Source records were not changed.
+
+---
+
+## Expanded privacy scan (001B.2B.1)
+
+Pattern scan is a **QA aid**, not a proof of absence of PII.
+
+Gates: SSN; **email (fail if any)**; Google URL / Place ID; unexpected `http(s)` outside `sources.official_landing_url`; labeled DOB language; labeled medical-record / patient / resident-id language. Phone-like patterns are reviewed; ordinary date columns are not treated as DOB. CMS `official_description` standardized wording (including the word “resident”) is **not** rewritten and is not treated as resident-specific identifying content by itself.
+
+Result on the frozen seven files: **no hits**. Critical privacy: **PASS**. Official descriptions were left intact.
+
+---
+
+## Email fail-gate correction (001B.2B.1)
+
+001B.2B counted emails but did not fail the gate on email alone. The scanner now treats **any unexpected email** in the seven Open V1 files as a critical exclusion/privacy failure. Observed email count on the frozen extract: **0**. Gate: **PASS**.
+
+---
+
 ## Registry
 
 `senior-cms-facility` stays **DOCUMENTATION**. `downloadHref` null. `doi` null. `snapshotDate` null. Internal hashes are **not** a public snapshot date.

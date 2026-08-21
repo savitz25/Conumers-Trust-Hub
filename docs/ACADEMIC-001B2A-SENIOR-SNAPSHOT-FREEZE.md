@@ -172,7 +172,7 @@ Keys:
 | facility_inspections | `academic_inspection_id` (= existing `event_key`) | `ccn` |
 | facility_deficiencies | `academic_deficiency_id` (= existing `finding_key`) | `ccn`; optional `academic_inspection_id` |
 | facility_enforcement | `academic_enforcement_id` (= existing `penalty_key`) | `ccn` |
-| facility_chains | `chain_id` (CMS) + `ccn` + `source_release_key` | `ccn` |
+| facility_chains | `chain_id` (CMS) + `ccn` + `source_release_key` | `ccn` LEFT JOIN facilities (not a strict FK; 1,361 outside current snapshot) |
 | sources | `source_dataset_key` + `source_release_key` + `transformation_version` | |
 
 No new hash implementation. Telephone **hold**. No `SELECT *`. No public UUIDs.
