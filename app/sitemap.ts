@@ -21,6 +21,7 @@ const CORE: {
   { path: '/who-we-are', priority: 0.75, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/editorial-standards', priority: 0.55, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/data-sources', priority: 0.75, changeFrequency: 'monthly', lastmod: '2026-08-07' },
+  { path: '/academic', priority: 0.7, changeFrequency: 'monthly', lastmod: '2026-08-10' },
   { path: '/corrections', priority: 0.5, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/journeys', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },
   { path: '/guides', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },

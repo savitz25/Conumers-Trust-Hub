@@ -122,4 +122,27 @@ export function buildPersonSchema() {
   };
 }
 
+/** Ordinary WebPage for /academic — not AcademicOrganization, not fake affiliations. */
+export function buildWebPageSchema(input: {
+  name: string;
+  description: string;
+  path: string;
+}): Record<string, unknown> {
+  const path = input.path.startsWith('/') ? input.path.replace(/\/+$/, '') : `/${input.path}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: input.name,
+    description: input.description,
+    url: `${siteUrl}${path}`,
+    isPartOf: { '@id': websiteId },
+    about: {
+      '@type': 'Thing',
+      name: 'Independent academic research using public regulatory and consumer-protection data',
+    },
+    publisher: { '@id': orgId },
+    inLanguage: 'en-US',
+  };
+}
+
 export { orgId };

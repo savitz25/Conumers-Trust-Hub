@@ -228,6 +228,11 @@ export const TRUST_CENTER_LINKS = [
     label: 'Report an error',
     detail: 'Corrections process for the network',
   },
+  {
+    href: '/academic',
+    label: 'Academic research',
+    detail: 'Program foundation · public regulatory data · no claimed university partnerships',
+  },
 ] as const;
 
 export const ASK_REVENUE_URL = 'https://www.asktrusthub.com/how-we-make-money';

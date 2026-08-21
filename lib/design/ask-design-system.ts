@@ -311,6 +311,7 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/how-we-make-money', label: 'How We Make Money' },
       { href: '/editorial-standards', label: 'Editorial Standards' },
       { href: '/corrections', label: 'Corrections' },
+      { href: '/academic', label: 'Academic Research' },
     ],
   },
   {

@@ -100,6 +100,9 @@ export default function NetworkPage() {
           <Link href="/who-we-are" className="text-navy underline-offset-4 hover:underline">
             Who we are
           </Link>
+          <Link href="/academic" className="text-navy underline-offset-4 hover:underline">
+            Academic research
+          </Link>
         </p>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           “Independence” here means no paid placements and research ordering that is not for sale —
