@@ -18,7 +18,7 @@ python tools/er-review-workbench/server.py
 
 Open http://127.0.0.1:8765/ as **REVIEWER_A** or **REVIEWER_B** (separate browsers/profiles).
 
-UX (001C.2A.1): sticky decision bar; MATCH / NON-MATCH / AMBIGUOUS as equal-weight buttons; official-source buttons; token difference highlighting (not a score); shortcuts 1/2/3, S, arrows; unsaved-change warning. Restart the local server after pulling this change.
+UX (001C.2A.2): real training cases (not synthetic USDOTs); SAFER as primary Move evidence (SMS Overview removed); copy identifier / copy legal name; frozen vs live official source; training answer key only after submit. Restart the local server after pulling this change.
 
 CLI:
 

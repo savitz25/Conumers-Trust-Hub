@@ -51,6 +51,7 @@ Incomplete, conflicting, or insufficient official evidence. Reviewers **must not
 - Address similarity  
 - Phone similarity  
 - Google / commercial enrichment (**not used**)  
+- FMCSA SMS Overview pages (unreliable; use SAFER)  
 - TrustHub confidence, `review_required`, heuristics, automated linker output  
 
 ## Adjudication (001C.2)

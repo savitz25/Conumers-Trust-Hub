@@ -137,6 +137,11 @@
     .dots button.done { background: var(--navy); }
     .dots button.now { outline: 2px solid var(--focus); }
     .status { font-size: 13px; color: var(--muted); white-space: pre-wrap; }
+    .frozen { background: #f7f5f0; border: 1px dashed var(--line); padding: 10px 12px; margin-top: 12px; font-size: 13px; border-radius: 8px; }
+    .frozen strong { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .copy-btn { min-height: 36px; margin: 4px 6px 0 0; padding: 0 10px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 6px; font-weight: 650; cursor: pointer; }
+    .train-fb { background: #eef6f2; border: 1px solid #b7d4c6; padding: 12px; border-radius: 8px; margin: 12px 0; }
+    .train-fb.miss { background: #f8eee8; border-color: #e0c4b4; }
     @media (max-width: 900px) {
       .compare, .defs, .fields, .decisions { grid-template-columns: 1fr; }
       main { padding-bottom: 420px; }
@@ -190,6 +195,7 @@
     </div>
     <p class="disclaimer">Highlighted text marks visible field differences only. It is not evidence and does not recommend a label.</p>
     <div id="limitation" class="warn" hidden></div>
+    <div id="trainFeedback" class="train-fb" hidden></div>
     <div class="compare">
       <article class="rec" id="cardA" aria-label="Record A"></article>
       <article class="rec" id="cardB" aria-label="Record B"></article>
@@ -267,18 +273,34 @@ function highlight(a, b) {
   }).join("");
 }
 function srcLabel(lookup, rec) {
-  const u = lookup.url || "";
-  if (rec.system === "fmcsa_li" && u.includes("safer.fmcsa")) return "Open FMCSA SAFER";
-  if (u.includes("fmcsa.dot.gov") || rec.system === "fmcsa_li") return "Open official regulator lookup";
-  if (rec.system === "move_existing_profile") return "Open FMCSA SAFER";
-  return "Open official state board record";
+  if (lookup.kind === "DIRECT_RECORD" && rec.system === "fmcsa_li") return "Open FMCSA SAFER";
+  if (lookup.kind === "DIRECT_RECORD") return "Open official state board record";
+  if (rec.missing_second_usdot || rec.system === "move_existing_profile") return "Open FMCSA SAFER search";
+  return "Open official board search";
+}
+function copyButtons(rec) {
+  const bits = [];
+  (rec.lookups || []).forEach(l => {
+    if (l.copy_kind === "identifier" && l.copy_value) {
+      bits.push(`<button type="button" class="copy-btn" data-copy="${esc(l.copy_value)}">Copy identifier</button>`);
+    }
+    if (l.copy_kind === "legal_name" && l.copy_value) {
+      bits.push(`<button type="button" class="copy-btn" data-copy="${esc(l.copy_value)}">Copy legal name</button>`);
+    }
+  });
+  if (rec.missing_second_usdot && rec.name && !bits.some(b => b.includes("Copy legal name"))) {
+    bits.push(`<button type="button" class="copy-btn" data-copy="${esc(rec.name)}">Copy legal name</button>`);
+  }
+  return bits.join("");
 }
 function renderRecord(title, rec, other) {
   if (!rec) return "";
-  const links = (rec.lookups || []).map(l =>
-    `<a class="btn-src official-link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(srcLabel(l, rec))}</a>`
-  ).join("");
-  const miss = rec.missing_second_usdot ? `<p class="diff-note">No second official USDOT is frozen. Search FMCSA by legal name. Do not invent an identifier.</p>` : "";
+  const fs = rec.frozen_snapshot || {};
+  const links = (rec.lookups || []).map(l => {
+    const instr = l.instruction ? `<p class="diff-note">${esc(l.instruction)}</p>` : "";
+    return `<a class="btn-src official-link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(srcLabel(l, rec))}</a>${instr}`;
+  }).join("");
+  const miss = rec.missing_second_usdot ? `<p class="warn" style="margin-top:8px"><strong>NO SECOND USDOT FROZEN.</strong> This identifier is not an official FMCSA USDOT. Copy the legal name and search SAFER. Do not invent a USDOT. AMBIGUOUS is appropriate if no official counterpart is found.</p>` : "";
   return `<h2>${title}</h2>
     <dl>
       <div class="field"><dt>Source system</dt><dd>${highlight(rec.system, other && other.system)}</dd></div>
@@ -289,7 +311,19 @@ function renderRecord(title, rec, other) {
       <div class="field"><dt>City</dt><dd>${highlight(rec.city, other && other.city)}</dd></div>
       <div class="field"><dt>State / jurisdiction</dt><dd>${highlight(rec.state, other && other.state)}</dd></div>
     </dl>
-    <div class="official"><div class="official-kicker">Official source</div>${links}${miss}</div>
+    <div class="frozen">
+      <strong>Frozen official-source snapshot</strong>
+      TrustHub copy of public regulator data used to construct this case. Vintage: ${esc(fs.vintage || "—")}.
+      Verify against the live regulator when practical.
+      <div>Authority: ${esc(fs.source_authority || "")} · ${esc(fs.source_system || "")}</div>
+      <div>Identifier: ${esc(fs.official_identifier || "")}</div>
+      <div>Legal name: ${esc(fs.legal_name || "")}${fs.dba ? " · DBA: " + esc(fs.dba) : ""}</div>
+      <div>${esc(fs.address || "")} ${esc(fs.city || "")} ${esc(fs.state || "")}</div>
+    </div>
+    <div class="official">
+      <div class="official-kicker">Live official source</div>
+      ${links}${copyButtons(rec)}${miss}
+    </div>
     <p class="diff-note">Amber marks tokens that differ from the other record. Not a match score.</p>`;
 }
 function setLabel(v) {
@@ -299,8 +333,9 @@ function setLabel(v) {
     btn.setAttribute("aria-pressed", btn.dataset.label === v ? "true" : "false");
   });
 }
-function toast() {
+function toast(msg) {
   const el = document.getElementById("toast");
+  el.textContent = msg || "Saved";
   el.classList.add("show");
   setTimeout(() => el.classList.remove("show"), 1400);
 }
@@ -334,6 +369,16 @@ function updateHeader(data) {
 function bindOfficial() {
   document.querySelectorAll(".official-link").forEach(a => {
     a.addEventListener("click", () => { state.openedOfficial = true; });
+  });
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.getAttribute("data-copy") || "");
+        toast("Copied");
+      } catch (err) {
+        alert("Copy failed. Select the identifier manually.");
+      }
+    });
   });
 }
 function drawDots() {
@@ -370,6 +415,7 @@ async function loadCase() {
   state.caseId = data.benchmark_case_id || data.training_case_id;
   state.recA = data.record_a; state.recB = data.record_b;
   state.openedOfficial = false;
+  document.getElementById("trainFeedback").hidden = true;
   updateHeader(data);
   document.getElementById("cardA").innerHTML = renderRecord("Record A", data.record_a, data.record_b);
   document.getElementById("cardB").innerHTML = renderRecord("Record B", data.record_b, data.record_a);
@@ -409,7 +455,19 @@ async function save(advance) {
   const data = await res.json();
   document.getElementById("status").textContent = data.error ? data.error : "Saved.";
   if (data.error) return false;
-  toast();
+  toast("Saved");
+  const fb = document.getElementById("trainFeedback");
+  if (data.training_feedback) {
+    fb.hidden = false;
+    fb.className = "train-fb" + (data.training_feedback.matched ? "" : " miss");
+    fb.innerHTML = `<strong>${data.training_feedback.matched ? "Correct" : "Expected"}: ${esc(data.training_feedback.expected)}</strong>
+      <p>${esc(data.training_feedback.why)}</p>
+      <p>${esc(data.training_feedback.official_evidence)}</p>
+      <p class="diff-note">Training only. The frozen 400 never show an answer key.</p>`;
+  } else {
+    fb.hidden = true;
+    fb.innerHTML = "";
+  }
   markClean();
   if (advance) {
     const n = await fetch(`/api/next?role=${state.role}&mode=${state.mode}`);

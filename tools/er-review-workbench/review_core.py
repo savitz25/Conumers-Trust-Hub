@@ -18,6 +18,7 @@ FROZEN_CSV = FROZEN_DIR / "candidate_cases.csv"
 EXPECTED_SHA = "b049015026ea5efe4c3d836bd94b1f81db138be8ef64c80f1bec21633cd60d56"
 REVIEWS_DIR = ASK_ROOT / "data" / "academic-internal" / "entity-resolution-v1" / "reviews"
 TRAINING_PATH = Path(__file__).resolve().parent / "training_cases.json"
+TRAINING_KEY_PATH = Path(__file__).resolve().parent / "training_key.json"
 
 ALLOWED_LABELS = {"MATCH", "NON_MATCH", "AMBIGUOUS"}
 ROLES = ("REVIEWER_A", "REVIEWER_B")
@@ -156,59 +157,108 @@ def candidate_index() -> dict[str, dict]:
     return {r["benchmark_case_id"]: r for r in load_candidates()}
 
 
-def _usdot_links(identifier: str) -> list[dict]:
-    usdot = identifier.strip()
-    if not usdot.isdigit():
-        return [{"title": "FMCSA SAFER home (search by name)", "url": "https://safer.fmcsa.dot.gov/"}]
-    return [
-        {
-            "title": "FMCSA SAFER snapshot (USDOT)",
-            "url": (
-                "https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY"
-                "&query_type=queryCarrierSnapshot&query_param=USDOT"
-                f"&query_string={usdot}"
-            ),
-        },
-        {
-            "title": "FMCSA SMS carrier overview",
-            "url": f"https://ai.fmcsa.dot.gov/SMS/Carrier/{usdot}/Overview.aspx",
-        },
-    ]
+def license_search_id(identifier: str) -> str:
+    ident = (identifier or "").strip()
+    if ident.startswith("move-profile:"):
+        return ""
+    return ident.split(":")[-1] if ":" in ident else ident
 
 
-def official_lookups(system: str, identifier: str) -> list[dict]:
+def _safer_url(usdot: str) -> str:
+    return (
+        "https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY"
+        "&query_type=queryCarrierSnapshot&query_param=USDOT"
+        f"&query_string={usdot}"
+    )
+
+
+def official_lookups(system: str, identifier: str, legal_name: str = "") -> list[dict]:
+    """Deepest stable official URL. No undocumented query params. SMS is not included."""
+    ident = license_search_id(identifier)
     if system == "fmcsa_li":
-        return _usdot_links(identifier)
-    if system == "move_existing_profile":
+        if ident.isdigit():
+            return [
+                {
+                    "title": "Open FMCSA SAFER",
+                    "url": _safer_url(ident),
+                    "kind": "DIRECT_RECORD",
+                    "copy_value": ident,
+                    "copy_kind": "identifier",
+                    "instruction": "",
+                }
+            ]
         return [
             {
-                "title": "No second USDOT is frozen. Search FMCSA SAFER by the legal name shown.",
+                "title": "Open FMCSA SAFER search",
                 "url": "https://safer.fmcsa.dot.gov/",
+                "kind": "SEARCH_PAGE",
+                "copy_value": legal_name or ident,
+                "copy_kind": "legal_name",
+                "instruction": "Search SAFER by legal name. Do not invent a USDOT.",
+            }
+        ]
+    if system == "move_existing_profile" or (identifier or "").startswith("move-profile:"):
+        return [
+            {
+                "title": "Open FMCSA SAFER search",
+                "url": "https://safer.fmcsa.dot.gov/",
+                "kind": "SEARCH_PAGE",
+                "copy_value": legal_name,
+                "copy_kind": "legal_name",
+                "instruction": "NO SECOND USDOT FROZEN. Copy the legal name and search official FMCSA records. Do not invent a USDOT.",
+            }
+        ]
+    if system == "ca_cslb" and ident:
+        return [
+            {
+                "title": "Open official state board record",
+                "url": f"https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum={ident}",
+                "kind": "DIRECT_RECORD",
+                "copy_value": ident,
+                "copy_kind": "identifier",
+                "instruction": f"If the page does not load, paste {ident} into CSLB Instant License Check.",
             }
         ]
     meta = BOARD_LOOKUPS.get(system, {"name": "Official board search", "home": ""})
     url = meta.get("home") or ""
-    license_hint = identifier.split(":")[-1] if ":" in identifier else identifier
-    items = []
-    if url:
-        items.append({"title": meta["name"], "url": url})
-    items.append({"title": f"Search the official board for identifier {license_hint}", "url": url or "https://www.usa.gov/"})
-    return items
+    return [
+        {
+            "title": "Open official board search",
+            "url": url or "https://www.usa.gov/",
+            "kind": "SEARCH_PAGE",
+            "copy_value": ident,
+            "copy_kind": "identifier",
+            "instruction": f"Paste {ident} into License Number (or the board's license/search field).",
+        }
+    ]
 
 
-def record_view(prefix: str, row: dict) -> dict:
+def record_view(prefix: str, row: dict, vintage: str | None = None) -> dict:
     system = row[f"source_{prefix}_system"]
     ident = row[f"source_{prefix}_identifier"]
+    name = row[f"source_{prefix}_name"]
+    missing = system == "move_existing_profile" or ident.startswith("move-profile:")
     return {
         "system": system,
         "identifier": ident,
-        "name": row[f"source_{prefix}_name"],
+        "name": name,
         "dba": row[f"source_{prefix}_dba"],
         "city": row[f"source_{prefix}_city"],
         "state": row[f"source_{prefix}_state"],
         "address": row[f"source_{prefix}_address"],
-        "lookups": official_lookups(system, ident),
-        "missing_second_usdot": system == "move_existing_profile" or ident.startswith("move-profile:"),
+        "lookups": official_lookups(system, ident, name),
+        "missing_second_usdot": missing,
+        "frozen_snapshot": {
+            "source_authority": "FMCSA" if system in {"fmcsa_li", "move_existing_profile"} else "State contractor licensing board",
+            "source_system": system,
+            "official_identifier": ident,
+            "legal_name": name,
+            "dba": row[f"source_{prefix}_dba"],
+            "address": row[f"source_{prefix}_address"],
+            "city": row[f"source_{prefix}_city"],
+            "state": row[f"source_{prefix}_state"],
+            "vintage": vintage or row.get("snapshot_version") or "",
+        },
     }
 
 
@@ -482,6 +532,45 @@ def adjudication_queue() -> list[dict]:
 
 def load_training() -> list[dict]:
     return json.loads(TRAINING_PATH.read_text(encoding="utf-8"))
+
+
+def load_training_key() -> dict:
+    return json.loads(TRAINING_KEY_PATH.read_text(encoding="utf-8"))
+
+
+def enrich_plain_record(rec: dict, vintage: str = "training-v2-real-records") -> dict:
+    system = rec["system"]
+    ident = rec["identifier"]
+    name = rec.get("name") or ""
+    missing = system == "move_existing_profile" or ident.startswith("move-profile:")
+    return {
+        **rec,
+        "lookups": official_lookups(system, ident, name),
+        "missing_second_usdot": missing,
+        "frozen_snapshot": {
+            "source_authority": "FMCSA" if system in {"fmcsa_li", "move_existing_profile"} else "State contractor licensing board",
+            "source_system": system,
+            "official_identifier": ident,
+            "legal_name": name,
+            "dba": rec.get("dba") or "",
+            "address": rec.get("address") or "",
+            "city": rec.get("city") or "",
+            "state": rec.get("state") or "",
+            "vintage": vintage,
+        },
+    }
+
+
+def training_feedback(case_id: str, submitted: str) -> dict | None:
+    key = load_training_key().get(case_id)
+    if not key:
+        return None
+    return {
+        "expected": key["expected"],
+        "matched": submitted == key["expected"],
+        "why": key["why"],
+        "official_evidence": key["official_evidence"],
+    }
 
 
 def training_overlap() -> list[str]:

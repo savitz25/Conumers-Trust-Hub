@@ -72,15 +72,17 @@ Name similarity, address similarity, or a shared phone **alone** is not enough f
 
 ## FMCSA lookup
 
-If a record has a numeric USDOT, open the SAFER snapshot link in the workbench (or search [SAFER](https://safer.fmcsa.dot.gov/) by USDOT). Confirm legal name, DBA, location, and MC if present.
+If a record has a numeric USDOT, use **Open FMCSA SAFER**. That is the primary official source. Do not rely on FMCSA SMS Overview pages.
 
-If Record B is `move-profile:…` **no second USDOT was frozen**. Search SAFER by the displayed legal name. **Do not invent a USDOT.** If you cannot find an official counterpart, AMBIGUOUS is appropriate.
+If Record B is `move-profile:…` you will see **NO SECOND USDOT FROZEN**. Use **Copy legal name**, then **Open FMCSA SAFER search**. **Do not invent a USDOT.** If you cannot find an official counterpart, AMBIGUOUS is appropriate.
+
+A **Frozen official-source snapshot** panel shows the regulator fields TrustHub stored when the case was built. You may still use it if a live board page is down. Prefer checking the live regulator when it works.
 
 ---
 
 ## Contractor board lookup
 
-Use the official board link shown for that source (CSLB, AZ ROC, NJ MyLicense, NV NSCB, OK CIB, TN Commerce, ID DOPL, MN DLI, VA DPOR, CT eLicense). Search the license/external identifier.
+Use **Open official state board record** when a direct license URL exists (CSLB `LicNum`), or **Open official board search** plus **Copy identifier** when the board only has a search page. Paste the identifier into License Number. Do not use unofficial contractor directories.
 
 Do not use unofficial contractor directories as evidence.
 

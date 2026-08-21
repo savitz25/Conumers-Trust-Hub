@@ -92,11 +92,50 @@ def test_training():
     overlap = rc.training_overlap()
     assert_true(overlap == [], overlap)
     cases = rc.load_training()
-    assert_true(12 <= len(cases) <= 15, len(cases))
-    bench = {r["benchmark_case_id"] for r in rc.load_candidates()}
+    assert_true(len(cases) == 12, len(cases))
+    bench_ids = {r["benchmark_case_id"] for r in rc.load_candidates()}
+    used = set()
+    with (ROOT / "data/academic-internal/entity-resolution-v1/run-a/candidate_cases.csv").open(encoding="utf-8") as fh:
+        import csv as _csv
+        for r in _csv.DictReader(fh):
+            used.add(r["source_a_identifier"])
+            used.add(r["source_b_identifier"])
+    fake = 0
     for c in cases:
-        assert_true(c["training_case_id"] not in bench, c["training_case_id"])
-        assert_true(c.get("not_in_benchmark") is True, c)
+        assert_true(c["training_case_id"] not in bench_ids, c["training_case_id"])
+        assert_true("expected" not in c, "training GET source must not include answer")
+        for side in ("record_a", "record_b"):
+            ident = c[side]["identifier"]
+            assert_true(ident not in used or ident.startswith("move-profile:"), ident)
+            if ident.startswith("900000"):
+                fake += 1
+            lookups = rc.official_lookups(c[side]["system"], ident, c[side].get("name") or "")
+            blob = json.dumps(lookups)
+            assert_true("ai.fmcsa.dot.gov/SMS" not in blob, "SMS must not be primary")
+    assert_true(fake == 0, "synthetic USDOTs remain")
+    key = rc.load_training_key()
+    assert_true(len(key) == 12, key)
+    fb = rc.training_feedback("train-er-01", "MATCH")
+    assert_true(fb and fb["matched"] is True, fb)
+
+
+def test_lookup_sample():
+    rows = rc.ordered_cases()
+    move = [r for r in rows if r["vertical"] == "move"][:20]
+    contr = [r for r in rows if r["vertical"] == "contractor"][:20]
+    assert_true(len(move) == 20 and len(contr) == 20, "sample size")
+    broken = 0
+    for r in move + contr:
+        for prefix in ("a", "b"):
+            sys = r[f"source_{prefix}_system"]
+            ident = r[f"source_{prefix}_identifier"]
+            lu = rc.official_lookups(sys, ident, r[f"source_{prefix}_name"])
+            assert_true(lu, sys)
+            assert_true(all("ai.fmcsa.dot.gov/SMS" not in x.get("url", "") for x in lu), "sms")
+            kinds = {x.get("kind") for x in lu}
+            if not kinds & {"DIRECT_RECORD", "SEARCH_PAGE"}:
+                broken += 1
+    assert_true(broken == 0, broken)
 
 
 def test_blindness():
@@ -111,6 +150,7 @@ def main() -> int:
     test_frozen()
     test_hidden_fields()
     test_training()
+    test_lookup_sample()
     test_blindness()
     with tempfile.TemporaryDirectory() as td:
         test_validation(Path(td))

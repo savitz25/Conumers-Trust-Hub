@@ -1,0 +1,62 @@
+{
+  "train-er-01": {
+    "expected": "MATCH",
+    "why": "Both sides are USDOT 2213273. SAFER lists legal name DARYL FLOOD RELOCATION INC and DBA DARYL FLOOD MOVING & STORAGE on that same official record.",
+    "official_evidence": "FMCSA SAFER Carrier Snapshot USDOT 2213273 (verified ACTIVE)."
+  },
+  "train-er-02": {
+    "expected": "MATCH",
+    "why": "Both sides are USDOT 2216678. SAFER lists legal name PRINCETON RELOCATION MANAGEMENT INC and DBA PRM INTERNATIONAL on the same official record.",
+    "official_evidence": "FMCSA SAFER Carrier Snapshot USDOT 2216678 (verified ACTIVE)."
+  },
+  "train-er-03": {
+    "expected": "NON_MATCH",
+    "why": "USDOT 98062 is WELESKI TRANSFER INC (Tarentum, PA). USDOT 282762 is LIBERTY LINEHAUL WEST INC (Montebello, CA). Two official identifiers, two legal names.",
+    "official_evidence": "FMCSA SAFER snapshots 98062 and 282762 (both verified ACTIVE)."
+  },
+  "train-er-04": {
+    "expected": "NON_MATCH",
+    "why": "USDOT 291633 is CENTURY CARRIERS INC (Farmingdale, NY). USDOT 98062 is WELESKI TRANSFER INC (Tarentum, PA).",
+    "official_evidence": "FMCSA SAFER snapshots 291633 and 98062 (both verified ACTIVE)."
+  },
+  "train-er-05": {
+    "expected": "AMBIGUOUS",
+    "why": "Record B is a move-profile slug with no second USDOT frozen. A similar name in the same city is not enough. Search SAFER by name; if you cannot attach an official second identifier, AMBIGUOUS is correct.",
+    "official_evidence": "SAFER USDOT 291633 for Record A. Record B has no official USDOT in this training file."
+  },
+  "train-er-06": {
+    "expected": "AMBIGUOUS",
+    "why": "Record A is an official USDOT. Record B is only a move-profile name. Do not treat the slug as FMCSA identity. If you find the same USDOT 2213273 on SAFER for that name, MATCH would require that official link; this packet does not freeze it on B.",
+    "official_evidence": "SAFER USDOT 2213273 for Record A. No second USDOT frozen on B."
+  },
+  "train-er-07": {
+    "expected": "MATCH",
+    "why": "Same Arizona ROC license 028410. Shasta Pools is the DBA on the same official license as Shasta Industries Inc.",
+    "official_evidence": "AZ ROC posting-list / contractor search for license 028410 (frozen staging extract)."
+  },
+  "train-er-08": {
+    "expected": "MATCH",
+    "why": "Same Arizona ROC license 032554. Patio Pools and Spas is the DBA on Patio Pools Of Tucson Inc.",
+    "official_evidence": "AZ ROC license 032554 (frozen staging extract)."
+  },
+  "train-er-09": {
+    "expected": "NON_MATCH",
+    "why": "Two different NJ DCA HIC registration numbers and two different legal names (WOLFE HOUSE MOVERS LLC vs FRANK MYRONCUK AND SON INC).",
+    "official_evidence": "NJ MyLicense / DCA credentials 13HE00000100 and 13HE00000400 (frozen staging extract)."
+  },
+  "train-er-10": {
+    "expected": "NON_MATCH",
+    "why": "Two different CSLB license numbers (1055445 Rainbow Construction Group vs 22726 Ransome Company).",
+    "official_evidence": "CSLB licenses 1055445 and 22726 (frozen staging extract). Live CSLB pages may be on maintenance; frozen official fields remain usable."
+  },
+  "train-er-11": {
+    "expected": "NON_MATCH",
+    "why": "Arizona ROC 028410 Shasta Industries Inc is a different official license and legal name from California CSLB 1055445 Rainbow Construction Group.",
+    "official_evidence": "AZ ROC 028410 and CSLB 1055445 (frozen staging extracts)."
+  },
+  "train-er-12": {
+    "expected": "NON_MATCH",
+    "why": "Arizona ROC 016349 American Fence Company Of Arizona Inc is a different official identity from NJ HIC 13HE00000100 Wolfe House Movers LLC.",
+    "official_evidence": "AZ ROC 016349 and NJ HIC 13HE00000100 (frozen staging extracts)."
+  }
+}

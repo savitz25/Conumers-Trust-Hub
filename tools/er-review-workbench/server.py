@@ -15,8 +15,9 @@ from review_core import (
     lock_review,
     next_unreviewed_index,
     ordered_cases,
-    official_lookups,
+    enrich_plain_record,
     progress,
+    training_feedback,
     reviewer_case_payload,
     save_review,
     validate_review,
@@ -121,8 +122,8 @@ class Handler(BaseHTTPRequestHandler):
             payload = {
                 "training_case_id": case["training_case_id"],
                 "vertical": case["vertical"],
-                "record_a": {**case["record_a"], "lookups": official_lookups(case["record_a"]["system"], case["record_a"]["identifier"]), "missing_second_usdot": case["record_a"]["system"] == "move_existing_profile"},
-                "record_b": {**case["record_b"], "lookups": official_lookups(case["record_b"]["system"], case["record_b"]["identifier"]), "missing_second_usdot": case["record_b"]["system"] == "move_existing_profile"},
+                "record_a": enrich_plain_record(case["record_a"]),
+                "record_b": enrich_plain_record(case["record_b"]),
                 "your_review": existing,
                 "progress": {
                     "reviewed": len(load_training_reviews(role)),
@@ -167,7 +168,11 @@ class Handler(BaseHTTPRequestHandler):
                         "review_notes": body["review_notes"].strip(),
                         "evidence_checked": body["evidence_checked"].strip(),
                     }
-                    self._json(200, save_training_review(role, rec))
+                    out = save_training_review(role, rec)
+                    fb = training_feedback(body.get("case_id") or "", body["review_label"])
+                    if fb:
+                        out["training_feedback"] = fb
+                    self._json(200, out)
                     return
                 rec = validate_review(
                     role,
