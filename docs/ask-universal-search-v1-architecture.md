@@ -1,6 +1,7 @@
 # AskTrustHub Universal Search v1 — Architecture
 
 **Document ID:** ASK-SEARCH-001  
+**Amendment:** ASK-SEARCH-001.1 — Locked preview + specialist handoff UX (2026-08-22)  
 **Status:** Architecture & specification only — **not implemented**  
 **Date:** 2026-08-22  
 **Owner repo:** `savitz25/Conumers-Trust-Hub` (AskTrustHub parent)  
@@ -26,8 +27,34 @@ Ask should:
 1. Understand **intent + geography** (and hub when clear).
 2. Route to the correct **specialist Trust Hub**.
 3. Retrieve **authoritative Hub data** (never AI-invented providers).
-4. Show a **small preview** (≈5–10 cards) on Ask.
-5. Hand the consumer into the specialist Hub **with the search context intact** — no repeated search.
+4. Show **Top Matches** on Ask — **maximum 7** preview results (normally **5–7** when enough matches exist).
+5. Hand the consumer into the specialist Hub **with structured search context intact** — the consumer must **never re-enter the same search**.
+
+### Locked consumer behavior (ASK-SEARCH-001.1)
+
+```text
+AskTrustHub search
+"movers in Keansburg NJ"
+        ↓
+Ask shows MAXIMUM 7 Top Matches
+(typically 5–7 when enough matches exist)
+        ↓
+OPTION A — Consumer clicks a company
+        ↓
+MoveTrustHub → that company's full Trust Report / profile
+        ↓
+Original structured search context remains available
+        ↓
+Consumer can return to: "Movers serving Keansburg, NJ"
+
+OPTION B — Consumer clicks "View More Results"
+        ↓
+MoveTrustHub → full Keansburg mover search results ALREADY LOADED
+        ↓
+No second search
+```
+
+This Option A / Option B pattern is a **v1 requirement** for every participating specialist Hub (Move, Lender, Insurance, Contractor, Senior, Investor).
 
 ### Network model (locked)
 
@@ -198,9 +225,11 @@ Universal Search **previews** entities; it does **not** become a sixth directory
 2. **Query Understanding** → `TrustHubSearchIntent` (+ confidence, parse method).
 3. If hub/entity ambiguous → clarification UI (not invent results).
 4. Query **Network Discovery Index** filtered by hub + geo + entity/category.
-5. Apply **relevance ranking** (never payment/premium).
-6. Render **5–10 preview cards** + “See all on {Hub}”.
-7. Handoff URL carries Stage A′ + search extension params → specialist opens matching experience.
+5. Apply **relevance ranking** (never payment/premium) — label results **Top Matches**, never “Best Companies.”
+6. Render **at most 7** Top Match cards (normally 5–7) + **View More Results**.
+7. Handoff uses Stage A′ + approved search extensions (structured fields only — **not** raw free-text query transfer):
+   - **Option A (card click)** → specialist entity Trust Report / profile with search context retained + contextual back link when practical.
+   - **Option B (View More Results)** → specialist full matching SERP **already loaded** from structured intent.
 8. Optional: specialist returns to Ask / My Trust Journey for save (later).
 
 ### 3.4 What stays out of Ask’s store
@@ -645,39 +674,64 @@ LLM output must be **validated** against allowlisted hubs/entity types/geo codes
 
 Ask cards may say “Trust Report available” — they must **not** display a synthetic Ask-computed Trust Score unless the Hub publishes that score as an official field (even then, label Hub ownership).
 
-### 8.4 Independence safeguard checklist
+### 8.4 Preview labeling (ASK-SEARCH-001.1 — locked)
+
+Ask must describe ranked preview results as **Top Matches**.
+
+| Allowed | Forbidden |
+|---------|-----------|
+| Top Matches | Best Companies |
+| Matching movers / facilities / … | Best / #1 / Top-rated / Recommended for you |
+| Relevance based on search + geography + service-area fit + entity type + regulatory eligibility (where applicable) + other **neutral** search signals | Any implication of TrustHub **endorsement** |
+
+Ranking on Ask represents **search relevance**, not endorsement.
+
+### 8.5 Independence safeguard checklist
 
 Every ranking change review must answer:
 
 1. Could a paying customer buy a higher slot? → If yes, reject.  
 2. Does this use a non-public popularity proxy? → Justify or reject.  
 3. Does this conflate relevance with trustworthiness? → Split signals.  
+4. Does UI language imply endorsement (“Best Companies”)? → Reject; use **Top Matches**.
 
 ---
 
 ## 9. Result Preview Standard
 
+### 9.0 Locked preview count (ASK-SEARCH-001.1)
+
+| Rule | Requirement |
+|------|-------------|
+| **Maximum** Ask preview cards | **7** |
+| **Normal** when enough matches exist | **5–7** |
+| If fewer than 5 matches | Show all available (do not pad with invented entities) |
+| If more than 7 matches | Show Top Matches (≤7) + **View More Results** |
+| Ask-side infinite scroll / deep pagination | **Not allowed** in v1 |
+
 ### 9.1 Ask shows (v1)
 
+- Section heading: **Top Matches** (not “Best Companies”)
 - Hub chip (Move / Lender / …)
 - Entity display name
 - Entity type / category label (Carrier, Agency, Facility, …)
 - Geo line (city / county / state)
 - Optional one-line `regulatory_status_summary`
 - “Trust Report available” when true
-- Primary CTA: **View Trust Report** → `canonical_profile_url` (+ handoff params)
-- Footer CTA: **See all {entities} on {Hub}** → search handoff URL
+- **Card click / primary CTA:** open that entity’s full profile / Trust Report on the specialist Hub (**Option A**) with structured search context attached
+- **View More Results:** open the specialist Hub’s full matching search-results experience with the search **already applied** (**Option B**)
 
-Approximate count: **5–10** cards. Show total match estimate when known (`About 120 movers` → see all).
+Show total match estimate when known (e.g. `About 120 movers` → View More Results).
 
 ### 9.2 Ask must not show
 
 - Full Trust Report sections  
 - Complaint dumps / document viewers  
 - Calculators embedded as search results  
-- “Best / top / #1” language  
+- “Best / top / #1 / Best Companies” or endorsement language  
 - Sibling spam of all six Hubs on every SERP  
 - Login walls  
+- More than **7** preview cards  
 
 ### 9.3 Card minimum fields
 
@@ -690,6 +744,7 @@ export type AskSearchResultCard = {
   geo_line: string;
   regulatory_status_summary?: string;
   trust_report_available: boolean;
+  /** Specialist Trust Report / profile URL + structured handoff params (Option A) */
   profile_url: string;
   missing?: Array<'geo' | 'status' | 'categories'>;
 };
@@ -703,14 +758,14 @@ export type AskSearchResultCard = {
 
 ### 9.5 Pagination / continuation
 
-- Ask page: single preview page (no deep Ask pagination SEO).  
-- Continuation = specialist Hub handoff with same intent.  
-- Optional “Load more preview” (next 5) only if index supports offset — still capped; never infinite Ask SERP.
+- Ask page: single **Top Matches** preview (≤7) — no deep Ask pagination SEO.  
+- Continuation = **View More Results** → specialist Hub full SERP with structured intent already applied (**Option B**).  
+- Do **not** implement Ask-side “load more preview” that expands beyond 7 on Ask.
 
 ### 9.6 No-result behavior
 
 1. Honest empty state: “No verified {entity} matches in discovery for {place}.”  
-2. Offer: open specialist Hub search anyway (handoff with intent).  
+2. Offer: open specialist Hub search anyway (Option B handoff with intent — still no second typed search).  
 3. Offer: broaden geo (state-level) or clarify category.  
 4. Never fabricate entities.
 
@@ -723,19 +778,34 @@ export type AskSearchResultCard = {
 
 If parse detects multi-hub life event, Ask may show a **secondary** module: “Also build a research path” → existing What’s Happening / path generator — separate from entity SERP.
 
+### 9.9 Cross-Hub consistency
+
+The Top Matches (≤7) + Option A / Option B handoff model applies identically to:
+
+- MoveTrustHub  
+- LenderTrustHub  
+- InsuranceTrustHub  
+- ContractorTrustHub  
+- SeniorTrustHub  
+- InvestorTrustHub  
+
+Example: `senior care facilities in Austin Texas` → 5–7 Top Matches → facility click opens SeniorTrustHub research page with Austin context retained, **or** View More Results opens SeniorTrustHub Austin-area results already loaded.
+
 ---
 
 ## 10. Cross-Domain Handoff Standard
 
-### 10.1 Goals
+### 10.1 Goals (ASK-SEARCH-001.1 — locked)
 
-- Consumer does **not** re-type the search on the specialist Hub.  
-- No PII in URLs.  
-- Reuse Stage A′ keys; extend carefully.
+- Consumer must **never need to enter the same search twice**.  
+- No PII in cross-domain URLs.  
+- Do **not** depend on transferring the raw free-text query between domains.  
+- Prefer Stage A′ structured handoff + approved search extensions.  
+- Reuse existing journey keys; extend carefully.
 
 ### 10.2 Recommended handoff query keys
 
-**Existing (keep):**
+**Existing Stage A′ (keep):**
 
 | Key | Values |
 |-----|--------|
@@ -745,7 +815,7 @@ If parse detects multi-hub life event, Ask may show a **secondary** module: “A
 | `county` | slug |
 | `intent` | `buy` \| `rent` \| `refi` |
 
-**Search extension (additive):**
+**Search extension (additive, approved):**
 
 | Key | Purpose |
 |-----|---------|
@@ -753,13 +823,41 @@ If parse detects multi-hub life event, Ask may show a **secondary** module: “A
 | `category` | trade / product / facility class slug |
 | `city` | city slug when Hub routes support it |
 | `zip` | 5-digit when Hub routes support it |
-| `q` | optional short normalized query token string — **avoid raw user PII**; prefer structured keys |
-| `sid` | optional opaque Ask search session id (non-PII random) for analytics join |
+| `sid` | optional opaque non-PII search-context ID (if later required for analytics/join) |
 
-### 10.3 Example
+**Do not** rely on shipping raw user free-text as the handoff mechanism. Structured fields above are authoritative. If a short normalized token is ever needed, it must remain non-PII and secondary to structured keys.
 
-Ask query: `movers in Keansburg NJ`  
-User clicks “See all movers on MoveTrustHub”:
+### 10.3 Locked handoff paths
+
+#### Option A — Direct result click (entity / company / facility)
+
+Consumer clicks a Top Match card on Ask.
+
+1. Opens that entity’s **full Trust Report / profile** on the correct specialist Hub.  
+2. URL includes Stage A′ + search extensions so the **original normalized search context survives**.  
+3. When practical, the specialist entity page provides a contextual return action, e.g.:
+
+   `← Back to movers serving Keansburg, NJ`
+
+   That back action must reconstruct the Hub’s matching search SERP from the **same structured context** (not by asking the user to re-type).
+
+```text
+https://www.movetrusthub.com/movers/{slug}
+  ?src=ask
+  &journey=directory
+  &state=NJ
+  &city=keansburg
+  &entity=mover
+  &county={if-known}
+```
+
+#### Option B — View More Results
+
+Consumer clicks **View More Results** on Ask.
+
+1. Opens the specialist Hub’s **full matching search-results experience**.  
+2. Results for the original structured intent are **already loaded / seeded** on arrival.  
+3. **No second search** — no blank search box requiring re-entry of “movers in Keansburg NJ”.
 
 ```text
 https://www.movetrusthub.com/local-movers/new-jersey/{county-if-known}
@@ -770,31 +868,24 @@ https://www.movetrusthub.com/local-movers/new-jersey/{county-if-known}
   &entity=mover
 ```
 
-(Exact path chosen by Move adapter — county resolution may require Hub geo tables.)
+(Exact path chosen by each Hub’s search adapter — county resolution may require Hub geo tables.)
 
-Profile click:
+### 10.4 Specialist requirements (all six Hubs)
 
-```text
-https://www.movetrusthub.com/movers/{slug}
-  ?src=ask
-  &state=NJ
-  &entity=mover
-```
-
-### 10.4 Specialist requirements
-
-- Parse Stage A′ + search extension params on landing.  
-- If params present, **seed** directory/search UI immediately.  
-- If path is soft (Contractor/Senior/Investor today), still honor params for client-side seed until deep routes exist.  
-- Fail soft: unknown city → state-level results, not 404.
+- Parse Stage A′ + approved search extension params on landing.  
+- **Option A:** open entity profile; retain search context; expose contextual “back to {search summary}” when practical.  
+- **Option B:** if params present, **seed / load** the full directory or search UI immediately with matching filters.  
+- If deep routes are soft today (Contractor / Senior / Investor), still honor params for client-side seed until deep routes exist.  
+- Fail soft: unknown city → state-level results, not 404.  
+- Never require the consumer to re-type the Ask query.
 
 ### 10.5 Analytics on handoff
 
 Extend allowlisted `journey_handoff_click` **or** emit `network_search_hub_handoff` with:
 
-`destination_hub`, `entity_type`, `state`, `result_count`, `surface=universal_search`  
+`destination_hub`, `entity_type`, `state`, `result_count`, `surface=universal_search`, `handoff_type=entity|view_more`
 
-No raw query text in analytics if it may contain addresses/names — prefer structured dims + optional hashed query id.
+No raw query text in analytics if it may contain addresses/names — prefer structured dims + optional opaque `sid`.
 
 ---
 
@@ -875,7 +966,7 @@ Do not block Universal Search on extending SSO to Senior/Investor.
 | `network_search_parsed` | Intent produced (include parse_method, confidence) |
 | `network_search_results_viewed` | Preview rendered |
 | `network_search_no_results` | Empty preview |
-| `network_search_hub_handoff` | See-all or card → Hub |
+| `network_search_hub_handoff` | View More Results (Option B) or entity card (Option A) → Hub |
 | `network_entity_opened` | Profile CTA |
 | `network_search_saved` | Future save |
 | `network_search_compare_started` | Future compare |
@@ -1005,7 +1096,7 @@ They block or shape **later implementation tasks**, not ASK-SEARCH-001.
 | **ASK-SEARCH-004** | Hub adapter descriptors + handoff URL extension (`entity`,`category`,`city`,`zip`) | Docs + Ask builders; Hub parse later |
 | **ASK-SEARCH-005** | Discovery schema finalization + sample fixtures per Hub | Still no prod migration unless separately approved |
 | **ASK-SEARCH-006** | Move discovery publish pilot + Ask index sink | First Hub end-to-end |
-| **ASK-SEARCH-007** | Ask Universal Search UI (hero/network) + preview cards + noindex SERP | Product surface |
+| **ASK-SEARCH-007** | Ask Universal Search UI + Top Matches (≤7) + Option A/B handoffs + noindex SERP | Product surface |
 | **ASK-SEARCH-008** | Analytics events `network_search_*` | Extend allowlists |
 | **ASK-SEARCH-009** | Lender + Insurance discovery enablement | Repeat adapter pattern |
 | **ASK-SEARCH-010** | Contractor / Senior / Investor deep handoff + discovery | After Hub URL readiness |
@@ -1025,16 +1116,21 @@ Ask understands: Mover + Keansburg + New Jersey
         ↓
 TrustHub verified discovery results (Move corpus)
         ↓
-5–10 useful Ask preview results
+Top Matches — MAXIMUM 7 (typically 5–7)
         ↓
-"See all movers on MoveTrustHub"
-        ↓
-MoveTrustHub opens matching Keansburg / county experience
+OPTION A: click a company
+  → MoveTrustHub full Trust Report / profile
+  → structured search context retained
+  → ← Back to movers serving Keansburg, NJ (when practical)
+OR
+OPTION B: View More Results
+  → MoveTrustHub full Keansburg mover SERP ALREADY LOADED
+  → no second search
         ↓
 Research → Compare → Save → My Move
 ```
 
-Same architecture path for Lender, Insurance, Contractor, Senior, Investor — **one** Ask search system, **N** Hub adapters.
+Same Option A / Option B architecture for Lender, Insurance, Contractor, Senior, Investor — **one** Ask search system, **N** Hub adapters.
 
 ---
 
@@ -1043,11 +1139,12 @@ Same architecture path for Lender, Insurance, Contractor, Senior, Investor — *
 | Field | Value |
 |-------|-------|
 | ASK-SEARCH-001 | Architecture complete |
+| ASK-SEARCH-001.1 | Preview ≤7 Top Matches + Option A/B handoff UX locked |
 | Implementation | Not started |
 | Specialist repo edits | None required by this document |
 | Production deploy | None |
-| Follow-on | ASK-SEARCH-002 (parser / lexicon) |
+| Follow-on | ASK-SEARCH-002 (parser / lexicon) — do not start in this amendment |
 
 ---
 
-*End of ASK-SEARCH-001 architecture.*
+*End of ASK-SEARCH-001 architecture (including ASK-SEARCH-001.1 amendment).*
