@@ -10,8 +10,10 @@ import {
   normalizeState,
 } from '../../orchestration/journey-links';
 import {
+  analyticsFromContext,
   buildSearchBackLabel,
   intentToHandoffContext,
+  serializeHandoffContext,
   withHandoffParams,
   type HubEntityHandoffResult,
   type HubSearchHandoffResult,
@@ -59,43 +61,83 @@ function result(
     context: ctx,
     backLabel: buildSearchBackLabel(intent),
     maturity,
+    analytics: analyticsFromContext(hub, handoffType, ctx, maturity),
     ...extra,
   };
 }
 
+/**
+ * Option A: canonical specialist entity URL + src=ask + structured search context.
+ * Does not implement specialist-side back button — only supplies backLabel metadata.
+ */
 function entityResult(
   hub: SearchHubId,
   entity: NetworkDiscoveryEntity,
   intent: TrustHubSearchIntent,
-  profilePath: string,
+  fallbackPath: string,
   maturity: HubSearchAdapter['maturity']
 ): HubEntityHandoffResult {
   const ctx = intentToHandoffContext(intent);
-  const pathWithQ = withHandoffParams(profilePath, ctx);
+  const { profilePath, canonicalProfileUrl, url } = appendContextToCanonicalUrl(
+    hub,
+    entity.canonical_profile_url,
+    fallbackPath,
+    ctx
+  );
   return {
     destinationHub: hub,
     handoffType: 'entity',
-    path: pathWithQ,
-    url: absolute(hub, pathWithQ),
+    path: profilePath.includes('?') ? profilePath : withHandoffParams(profilePath, ctx),
+    url,
     context: ctx,
     backLabel: buildSearchBackLabel(intent),
     maturity,
+    analytics: analyticsFromContext(hub, 'entity', ctx, maturity),
     networkEntityId: entity.network_entity_id,
-    profilePath,
+    profilePath: profilePath.split('?')[0],
+    canonicalProfileUrl,
   };
 }
 
-function profilePathFromEntity(entity: NetworkDiscoveryEntity, fallbackPath: string): string {
+function appendContextToCanonicalUrl(
+  hub: SearchHubId,
+  canonical: string,
+  fallbackPath: string,
+  ctx: SearchHandoffContext
+): { profilePath: string; canonicalProfileUrl: string; url: string } {
+  const q = serializeHandoffContext(ctx);
   try {
-    if (entity.canonical_profile_url.startsWith('http')) {
-      const u = new URL(entity.canonical_profile_url);
-      return u.pathname || fallbackPath;
+    if (canonical.startsWith('http')) {
+      const u = new URL(canonical);
+      const params = new URLSearchParams(u.search);
+      // Merge allowlisted context; never copy arbitrary existing PII-like keys in
+      for (const [k, v] of new URLSearchParams(q).entries()) {
+        params.set(k, v);
+      }
+      u.search = params.toString();
+      return {
+        profilePath: u.pathname + (u.search ? `?${u.searchParams.toString()}` : ''),
+        canonicalProfileUrl: canonical.split('?')[0],
+        url: u.toString(),
+      };
     }
-    if (entity.canonical_profile_url.startsWith('/')) return entity.canonical_profile_url;
+    if (canonical.startsWith('/')) {
+      const pathWithQ = withHandoffParams(canonical, ctx);
+      return {
+        profilePath: pathWithQ,
+        canonicalProfileUrl: `${originOf(hub)}${canonical.split('?')[0]}`,
+        url: absolute(hub, pathWithQ),
+      };
+    }
   } catch {
     /* fall through */
   }
-  return fallbackPath;
+  const pathWithQ = withHandoffParams(fallbackPath, ctx);
+  return {
+    profilePath: pathWithQ,
+    canonicalProfileUrl: absolute(hub, fallbackPath),
+    url: absolute(hub, pathWithQ),
+  };
 }
 
 /** Move — strongest deep-link maturity. */
@@ -146,7 +188,7 @@ export const moveAdapter: HubSearchAdapter = {
   },
   buildEntityHandoff(entity, intent) {
     const fallback = `/movers/${entity.source_entity_id}`;
-    return entityResult('move', entity, intent, profilePathFromEntity(entity, fallback), 'ready');
+    return entityResult('move', entity, intent, fallback, 'ready');
   },
 };
 
@@ -186,7 +228,7 @@ export const lenderAdapter: HubSearchAdapter = {
   },
   buildEntityHandoff(entity, intent) {
     const fallback = `/lenders/${entity.source_entity_id}`;
-    return entityResult('lender', entity, intent, profilePathFromEntity(entity, fallback), 'ready');
+    return entityResult('lender', entity, intent, fallback, 'ready');
   },
 };
 
@@ -235,13 +277,7 @@ export const insuranceAdapter: HubSearchAdapter = {
       entity.entity_type === 'insurance_carrier'
         ? `/carriers/${entity.source_entity_id}`
         : `/providers/${entity.source_entity_id}`;
-    return entityResult(
-      'insurance',
-      entity,
-      intent,
-      profilePathFromEntity(entity, fallback),
-      'ready'
-    );
+    return entityResult('insurance', entity, intent, fallback, 'ready');
   },
 };
 
@@ -297,13 +333,7 @@ export const contractorAdapter: HubSearchAdapter = {
   },
   buildEntityHandoff(entity, intent) {
     const fallback = `/contractors/${entity.source_entity_id}`;
-    return entityResult(
-      'contractor',
-      entity,
-      intent,
-      profilePathFromEntity(entity, fallback),
-      'soft_handoff'
-    );
+    return entityResult('contractor', entity, intent, fallback, 'soft_handoff');
   },
 };
 
@@ -328,13 +358,7 @@ export const seniorAdapter: HubSearchAdapter = {
   },
   buildEntityHandoff(entity, intent) {
     const fallback = `/facilities/${entity.source_entity_id}`;
-    return entityResult(
-      'senior',
-      entity,
-      intent,
-      profilePathFromEntity(entity, fallback),
-      'soft_handoff'
-    );
+    return entityResult('senior', entity, intent, fallback, 'soft_handoff');
   },
 };
 
@@ -355,12 +379,6 @@ export const investorAdapter: HubSearchAdapter = {
   },
   buildEntityHandoff(entity, intent) {
     const fallback = `/firm/${entity.source_entity_id}`;
-    return entityResult(
-      'investor',
-      entity,
-      intent,
-      profilePathFromEntity(entity, fallback),
-      'soft_handoff'
-    );
+    return entityResult('investor', entity, intent, fallback, 'soft_handoff');
   },
 };

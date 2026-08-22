@@ -11,6 +11,9 @@ export {
   listHubSearchAdapters,
   buildViewMoreHandoff,
   buildEntityHandoff,
+  evaluateSearchDestination,
+  resolveViewMoreDestination,
+  resolveEntityDestination,
 } from './registry';
 
 export {

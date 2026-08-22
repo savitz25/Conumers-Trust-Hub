@@ -46,20 +46,69 @@ export type SearchHandoffContext = {
 export type HubSearchHandoffResult = {
   destinationHub: SearchHubId;
   handoffType: SearchHandoffType;
+  /** Absolute specialist URL (canonical profile or search path) + structured context */
   url: string;
   path: string;
   context: SearchHandoffContext;
-  /** Human label for future “Back to …” UI on specialist */
+  /** Human label for future specialist “← Back to …” UI (not implemented on Hub yet) */
   backLabel?: string;
   maturity: 'ready' | 'soft_handoff' | 'disabled';
   notes?: string;
+  /** Analytics-ready metadata (not necessarily serialized into the URL) */
+  analytics: SearchHandoffAnalytics;
+};
+
+export type SearchHandoffAnalytics = {
+  source: 'ask';
+  destinationHub: SearchHubId;
+  handoffType: SearchHandoffType;
+  entityType?: string;
+  category?: string;
+  state?: string;
+  county?: string;
+  city?: string;
+  zip?: string;
+  maturity: 'ready' | 'soft_handoff' | 'disabled';
 };
 
 export type HubEntityHandoffResult = HubSearchHandoffResult & {
   handoffType: 'entity';
   networkEntityId: string;
   profilePath: string;
+  /** Original specialist canonical profile URL before context params */
+  canonicalProfileUrl: string;
 };
+
+/** Fail-closed / clarification outcomes — do not guess destinations. */
+export type SearchDestinationOutcome =
+  | { status: 'ok'; handoff: HubSearchHandoffResult }
+  | {
+      status: 'unsupported' | 'soft_handoff' | 'needs_clarification' | 'disabled';
+      reason: string;
+      hub?: SearchHubId;
+      maturity?: 'ready' | 'soft_handoff' | 'disabled';
+      analytics?: Partial<SearchHandoffAnalytics>;
+    };
+
+export function analyticsFromContext(
+  hub: SearchHubId,
+  handoffType: SearchHandoffType,
+  ctx: SearchHandoffContext,
+  maturity: 'ready' | 'soft_handoff' | 'disabled'
+): SearchHandoffAnalytics {
+  return {
+    source: 'ask',
+    destinationHub: hub,
+    handoffType,
+    entityType: ctx.entity,
+    category: ctx.category,
+    state: ctx.state,
+    county: ctx.county,
+    city: ctx.city,
+    zip: ctx.zip,
+    maturity,
+  };
+}
 
 const ALLOW = new Set<string>(SEARCH_HANDOFF_KEYS);
 const FORBIDDEN = new Set([

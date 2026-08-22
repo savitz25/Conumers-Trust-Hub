@@ -20,6 +20,8 @@ export type {
   SearchHandoffType,
   HubSearchHandoffResult,
   HubEntityHandoffResult,
+  SearchHandoffAnalytics,
+  SearchDestinationOutcome,
 } from './handoff';
 
 export {
@@ -30,6 +32,7 @@ export {
   parseHandoffContext,
   withHandoffParams,
   buildSearchBackLabel,
+  analyticsFromContext,
 } from './handoff';
 
 export {
@@ -38,6 +41,9 @@ export {
   listHubSearchAdapters,
   buildViewMoreHandoff,
   buildEntityHandoff,
+  evaluateSearchDestination,
+  resolveViewMoreDestination,
+  resolveEntityDestination,
 } from './adapters';
 
 export type { HubSearchAdapter, NetworkDiscoveryEntity } from './adapters';
