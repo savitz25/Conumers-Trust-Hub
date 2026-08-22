@@ -193,7 +193,9 @@ Without a new numbered visual ticket:
 2. **Lender / Insurance H1 weight 700** vs Ask 600. Personality, not chassis.
 3. **Ask** still shows eight desktop nav items; they fit the 69px row.
 4. **Move** `origin/main` is ahead of the VISUAL-006 merge; live shell still certifies.
-5. Navigator DOM scrape in the harness missed menuitems; screenshots confirm order and Current. No production defect.
+5. **Move** desktop navigator panel was not reliably DOM-scraped in the second pass (Coach/Journey overlay is product context, not chassis). Header trigger still 44×129 @ 1167. Classified P2 harness/context, not P1 geometry.
+6. **Contractor** computed `font-family` lists system-ui before Inter on the header. Inter is in the stack; 14/600 Switch Hub metrics match. P2, not P1.
+7. Ask panel heading title-case vs `ASK TRUST HUB NETWORK` uppercase on other Hubs. P3 copy casing.
 
 No Hub materially failed. No VISUAL-010 remediation is required for chassis geometry.
 
@@ -208,3 +210,120 @@ Next visual work should be **named, scoped, and measured against this document**
 - VISUAL-010 only if a future hop recapture shows drift
 - Token packaging / shared CSS as an engineering convenience, not a redesign
 - Contractor Switch Hub width unification **only** if a product owner wants 129px triggers everywhere
+
+---
+
+## 14. Overlay hop boards
+
+Horizontal/vertical guides (desktop 1440 crops):
+
+- header top (y=0)
+- header bottom (y=69)
+- mark top (y=16)
+- mark bottom (y=52)
+- shell left (x=120 at 1440)
+- control baseline (y=56)
+
+Board: `docs/artifacts/visual-009/desktop-seven-hub.html`
+
+Mobile 390 + 375: `docs/artifacts/visual-009/mobile-seven-hub.html`
+
+---
+
+## 15. Desktop measurement table (1440)
+
+See `docs/artifacts/visual-009/measurement-matrix.html` and `cert2.json`.
+
+All seven: header 69, rows 1, mark h 36, mark x 144, mark y 16, nav baseline 56, Switch Hub h 44, Switch Hub right edge **1296**, shell 120–1320, scrollWidth=clientWidth, overflow Δ **0**.
+
+---
+
+## 16. Overflow matrix
+
+All seven homepages at 1440, 1280, 1024, 768, 430, 390, 375: **Δ = 0**.
+
+Sampled complex routes (1440, overflow 0, header 69) where the path exists:
+
+| Hub | Route | Status |
+|---|---|---|
+| Ask | `/` | 200 |
+| Move | `/` | 200 (calculator path 404 locally unused) |
+| Lender | `/` | 200 |
+| Insurance | `/tools`, `/carriers` | 200 |
+| Contractor | `/verify`, `/florida` | 200 |
+| Senior | `/facility/harbor-pines`, `/tools/care-needs-navigator` | 200 |
+| Investor | `/professionals`, `/research` | 200 |
+
+---
+
+## 17. Navigator copy
+
+Registry language is identical on Ask, Lender, Insurance, Contractor, Senior, Investor:
+
+Ask: Parent research & standards layer  
+Move: FMCSA / SAFER mover research  
+Lender: NMLS / CFPB / FDIC financing research  
+Insurance: State DOI / NAIC coverage research  
+Contractor: State licensing-board contractor research  
+Senior: CMS / supported state senior-care research  
+Investor: SEC / IARD investment-firm research  
+
+Order exact. Current + `aria-current="page"`. Trigger 44px, radius 12px, Inter 14/600, 1px border.
+
+---
+
+## 18. Mobile drawer
+
+Ask, Lender, Insurance, Contractor, Senior, Investor: `role="dialog"` + `aria-modal="true"`, body overflow hidden, network section present, Escape handled, overflow-x 0.
+
+Move: 57px header + 44×44 menu; Coach/Journey strip is **product context**, not a second network header.
+
+---
+
+## 19. Accessibility / performance / share
+
+- Skip links: yes on all seven.
+- Switch Hub: `aria-expanded`, `aria-controls`, `aria-haspopup="menu"`.
+- Mobile menu 44×44.
+- No Google Places requests observed during homepage capture.
+- No unexpected Google Fonts network requests in the chrome pass.
+- No remote logos.
+- SHARE PNG sampled: Move `/opengraph-image` 200 `image/png`; Senior `/opengraph-image` 200 `image/png`. Others not probed beyond those paths; no old heavy-mark header observed.
+
+---
+
+## 20. Drift register
+
+| ID | Class | Item |
+|---|---|---|
+| — | P0 | none |
+| — | P1 | none |
+| R1 | P2 | Contractor Switch Hub width 124 vs 129 |
+| R2 | P2 | Contractor header font-family lists system before Inter |
+| R3 | P2 | Move navigator/drawer DOM scrape incomplete; Coach is contextual |
+| R4 | P3 | Ask navigator heading title-case vs uppercase |
+| R5 | P3 | Lender/Insurance H1 weight 700 |
+
+---
+
+## 21. Named artifacts
+
+| File | Contents |
+|---|---|
+| `desktop-seven-hub.html` | 1440 hop + overlay guides |
+| `mobile-seven-hub.html` | 390 + 375 hops |
+| `mark-ink-scan.html` | 36 and 30 mark board |
+| `navigator-seven-hub.html` | desktop panels + mobile drawers |
+| `measurement-matrix.html` | §11 table |
+| `certification-summary.html` | overflow matrix + status |
+| `../trusthub-network-visual-baseline-2026-08.json` | machine-readable baseline |
+
+---
+
+## 22. Future-change policy
+
+Once certified, TRUSTHUB_VISUAL_STANDARD_V1 is frozen.
+
+May change without a network ticket: content, tools, data, specialist IA, illustrations, editorial layouts, approved local personality.
+
+May **not** change without **NETWORK DESIGN SYSTEM V2**: 69/65/57 chassis, 36/33/30 mark, canonical brackets, 1200 shell, Navigator order/behavior, header slogan rule, Inter network chrome, 44px minimum control grammar.

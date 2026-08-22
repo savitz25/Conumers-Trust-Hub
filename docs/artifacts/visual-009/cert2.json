@@ -1,0 +1,4388 @@
+{
+  "capturedAt": "2026-08-22T16:38:20.454Z",
+  "hubs": {
+    "ask": {
+      "id": "ask",
+      "origin": "https://www.asktrusthub.com",
+      "accent": "#4F46E5",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 264,
+            "y": 12,
+            "w": 753,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 184,
+            "y": 12,
+            "w": 753,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 144,
+            "y": 12,
+            "w": 577,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 115,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 19,
+            "w": 72,
+            "h": 25
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "ask",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_17abb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif, Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": "Ask Trust Hub Network",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": true,
+            "ariaCurrent": "page"
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": false,
+            "ariaCurrent": null
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/ask",
+          "status": 404,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": null,
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "move": {
+      "id": "move",
+      "origin": "https://www.movetrusthub.com",
+      "accent": "#FF5A1F",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 264,
+            "y": 12,
+            "w": 779,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 184,
+            "y": 12,
+            "w": 779,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 21,
+            "w": 72,
+            "h": 26
+          },
+          "nav": {
+            "x": 144,
+            "y": 12,
+            "w": 603,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 115,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 19,
+            "w": 72,
+            "h": 25
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": null,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 16,
+            "w": 65,
+            "h": 23
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_9qaknnb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", system-ui, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": null,
+        "items": [],
+        "count": 0
+      },
+      "drawer": {
+        "dialog": false,
+        "ariaModal": null,
+        "bodyOverflow": "",
+        "networkSection": false,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/tools/moving-cost-calculator",
+          "status": 404,
+          "overflowDelta": 0,
+          "headerH": null
+        },
+        {
+          "path": "/search",
+          "status": 404,
+          "overflowDelta": 0,
+          "headerH": null
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": {
+        "path": "/opengraph-image",
+        "status": 200,
+        "type": "image/png"
+      },
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "lender": {
+      "id": "lender",
+      "origin": "https://www.lendertrusthub.com",
+      "accent": "#0D9488",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 21,
+            "w": 72,
+            "h": 25
+          },
+          "nav": {
+            "x": 264,
+            "y": 12,
+            "w": 760,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 21,
+            "w": 72,
+            "h": 25
+          },
+          "nav": {
+            "x": 184,
+            "y": 12,
+            "w": 760,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 118,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 21,
+            "w": 72,
+            "h": 25
+          },
+          "nav": {
+            "x": 144,
+            "y": 12,
+            "w": 584,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 115,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 20,
+            "w": 72,
+            "h": 24
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 65,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 65,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "lender",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 105,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 65,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2endb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": "ASK TRUST HUB NETWORK",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": true,
+            "ariaCurrent": "page"
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": false,
+            "ariaCurrent": null
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/tools",
+          "status": 404,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/search",
+          "status": 404,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": null,
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "insurance": {
+      "id": "insurance",
+      "origin": "https://www.insurancetrusthub.com",
+      "accent": "#0284C7",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 131,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 22,
+            "w": 85,
+            "h": 24
+          },
+          "nav": {
+            "x": 277,
+            "y": 12,
+            "w": 734,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 131,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 22,
+            "w": 85,
+            "h": 24
+          },
+          "nav": {
+            "x": 197,
+            "y": 12,
+            "w": 734,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 131,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 22,
+            "w": 85,
+            "h": 24
+          },
+          "nav": {
+            "x": 157,
+            "y": 12,
+            "w": 558,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 121,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 21,
+            "w": 78,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 112,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 72,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 112,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 72,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "insurance",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 112,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 72,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_r_2_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, \"Segoe UI\", sans-serif, system-ui, -apple-system, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": "ASK TRUST HUB NETWORK",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": true,
+            "ariaCurrent": "page"
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": false,
+            "ariaCurrent": null
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/tools",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/carriers",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": null,
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "contractor": {
+      "id": "contractor",
+      "origin": "https://www.contractortrusthub.com",
+      "accent": "#F5C518",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 144,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "nav": {
+            "x": 382,
+            "y": 12,
+            "w": 715,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1172,
+            "y": 12,
+            "w": 124,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 64,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "nav": {
+            "x": 302,
+            "y": 12,
+            "w": 715,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1092,
+            "y": 12,
+            "w": 124,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 24,
+            "y": 16,
+            "w": 236,
+            "h": 36
+          },
+          "nav": {
+            "x": 262,
+            "y": 12,
+            "w": 539,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 876,
+            "y": 12,
+            "w": 124,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 216,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 216,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 16,
+            "y": 16,
+            "w": 216,
+            "h": 33
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "contractor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 16,
+            "y": 13,
+            "w": 197,
+            "h": 30
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2eclb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": "/brand/contractor-trust-hub-logo-compact.svg"
+        }
+      },
+      "navigator": {
+        "heading": "ASK TRUST HUB NETWORK",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": true,
+            "ariaCurrent": "page"
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": false,
+            "ariaCurrent": null
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/verify",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/florida",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": null,
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "senior": {
+      "id": "senior",
+      "origin": "https://www.seniortrusthub.com",
+      "accent": "#681860",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 116,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 22,
+            "w": 70,
+            "h": 24
+          },
+          "nav": {
+            "x": 262,
+            "y": 12,
+            "w": 810,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 116,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 22,
+            "w": 70,
+            "h": 24
+          },
+          "nav": {
+            "x": 182,
+            "y": 12,
+            "w": 810,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 116,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 22,
+            "w": 70,
+            "h": 24
+          },
+          "nav": {
+            "x": 142,
+            "y": 12,
+            "w": 634,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 106,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 21,
+            "w": 63,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 96,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 56,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 96,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 56,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "senior",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 96,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 18,
+            "w": 56,
+            "h": 20
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_2dlb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif, Inter, ui-sans-serif, system-ui, sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": "ASK TRUST HUB NETWORK",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": true,
+            "ariaCurrent": "page"
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": false,
+            "ariaCurrent": null
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/facility/harbor-pines",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/tools/care-needs-navigator",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": {
+        "path": "/opengraph-image",
+        "status": 200,
+        "type": "image/png"
+      },
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    },
+    "investor": {
+      "id": "investor",
+      "origin": "https://www.investortrusthub.com",
+      "accent": "#0F766E",
+      "viewports": {
+        "w1440": {
+          "viewport": {
+            "w": 1440,
+            "h": 900
+          },
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 144,
+            "y": 16,
+            "w": 125,
+            "h": 36
+          },
+          "mark": {
+            "x": 144,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 190,
+            "y": 21,
+            "w": 79,
+            "h": 25
+          },
+          "nav": {
+            "x": 271,
+            "y": 12,
+            "w": 894,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1167,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 120,
+          "shellRight": 1320,
+          "imgSrc": null
+        },
+        "w1280": {
+          "viewport": {
+            "w": 1280,
+            "h": 900
+          },
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 64,
+            "y": 16,
+            "w": 125,
+            "h": 36
+          },
+          "mark": {
+            "x": 64,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 110,
+            "y": 21,
+            "w": 79,
+            "h": 25
+          },
+          "nav": {
+            "x": 191,
+            "y": 12,
+            "w": 894,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 1087,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": 40,
+          "shellRight": 1240,
+          "imgSrc": null
+        },
+        "w1024": {
+          "viewport": {
+            "w": 1024,
+            "h": 900
+          },
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 69
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 24,
+            "y": 16,
+            "w": 125,
+            "h": 36
+          },
+          "mark": {
+            "x": 24,
+            "y": 16,
+            "w": 36,
+            "h": 36
+          },
+          "wordmark": {
+            "x": 70,
+            "y": 21,
+            "w": 79,
+            "h": 25
+          },
+          "nav": {
+            "x": 151,
+            "y": 12,
+            "w": 718,
+            "h": 44
+          },
+          "navBaseline": 56,
+          "switchHub": {
+            "x": 871,
+            "y": 12,
+            "w": 129,
+            "h": 44
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -88,
+          "shellRight": 1112,
+          "imgSrc": null
+        },
+        "w768": {
+          "viewport": {
+            "w": 768,
+            "h": 900
+          },
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 65
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 16,
+            "w": 116,
+            "h": 33
+          },
+          "mark": {
+            "x": 16,
+            "y": 16,
+            "w": 33,
+            "h": 33
+          },
+          "wordmark": {
+            "x": 59,
+            "y": 20,
+            "w": 73,
+            "h": 24
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 708,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -216,
+          "shellRight": 984,
+          "imgSrc": null
+        },
+        "w430": {
+          "viewport": {
+            "w": 430,
+            "h": 844
+          },
+          "clientWidth": 430,
+          "scrollWidth": 430,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 430,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 108,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 68,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 370,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -385,
+          "shellRight": 815,
+          "imgSrc": null
+        },
+        "w390": {
+          "viewport": {
+            "w": 390,
+            "h": 844
+          },
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 108,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 68,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 330,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -405,
+          "shellRight": 795,
+          "imgSrc": null
+        },
+        "w375": {
+          "viewport": {
+            "w": 375,
+            "h": 844
+          },
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "overflowDelta": 0,
+          "chassis": "2026.08.21-visual-v1",
+          "hub": "investor",
+          "header": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 57
+          },
+          "headerRows": 1,
+          "lock": {
+            "x": 16,
+            "y": 13,
+            "w": 108,
+            "h": 30
+          },
+          "mark": {
+            "x": 16,
+            "y": 13,
+            "w": 30,
+            "h": 30
+          },
+          "wordmark": {
+            "x": 56,
+            "y": 17,
+            "w": 68,
+            "h": 22
+          },
+          "nav": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "navBaseline": 0,
+          "switchHub": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "switchStyle": {
+            "height": "44px",
+            "fontFamily": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "borderRadius": "12px",
+            "borderTopWidth": "1px"
+          },
+          "switchAria": {
+            "expanded": "false",
+            "controls": "_R_elb_",
+            "haspopup": "menu"
+          },
+          "menu": {
+            "x": 315,
+            "y": 6,
+            "w": 44,
+            "h": 44
+          },
+          "skip": true,
+          "skipText": "Skip to content",
+          "headerFont": "Inter, \"Inter Fallback\", Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "slogan": false,
+          "stackedBar": false,
+          "shellLeft": -412,
+          "shellRight": 788,
+          "imgSrc": null
+        }
+      },
+      "navigator": {
+        "heading": "ASK TRUST HUB NETWORK",
+        "items": [
+          {
+            "name": "Ask Trust Hub",
+            "blurb": "Parent research & standards layer",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Move Trust Hub",
+            "blurb": "FMCSA / SAFER mover research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Lender Trust Hub",
+            "blurb": "NMLS / CFPB / FDIC financing research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Insurance Trust Hub",
+            "blurb": "State DOI / NAIC coverage research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "Contractor Trust Hub",
+            "blurb": "State licensing-board contractor research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "SeniorTrustHub",
+            "blurb": "CMS / supported state senior-care research",
+            "current": false,
+            "ariaCurrent": null
+          },
+          {
+            "name": "InvestorTrustHub",
+            "blurb": "SEC / IARD investment-firm research",
+            "current": true,
+            "ariaCurrent": "page"
+          }
+        ],
+        "count": 7
+      },
+      "drawer": {
+        "dialog": true,
+        "ariaModal": "true",
+        "bodyOverflow": "hidden",
+        "networkSection": true,
+        "overflowX": false,
+        "escapeCloses": true,
+        "bodyAfterEscape": ""
+      },
+      "routes": [
+        {
+          "path": "/",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/professionals",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        },
+        {
+          "path": "/research",
+          "status": 200,
+          "overflowDelta": 0,
+          "headerH": 69
+        }
+      ],
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "a11y": {},
+      "share": null,
+      "perf": {
+        "googleFonts": [],
+        "places": false,
+        "remoteLogo": false
+      }
+    }
+  }
+}
