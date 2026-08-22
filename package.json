@@ -9,10 +9,11 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs && npm run assert:search-003 && npm run assert:search-004",
+    "test": "node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs && npm run assert:search-003 && npm run assert:search-004 && npm run assert:search-005",
     "assert:network": "node scripts/assert-network-v2.mjs",
     "assert:search-003": "npx --yes tsx scripts/_run-search-003-tests.mts",
     "assert:search-004": "npx --yes tsx scripts/_run-search-004-tests.mts",
+    "assert:search-005": "npx --yes tsx scripts/_run-search-005-tests.mts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs"
   },
   "dependencies": {

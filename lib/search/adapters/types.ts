@@ -3,32 +3,11 @@
  * Ask owns descriptors + URL generation; specialists remain authoritative for data/UI.
  */
 
-import type {
-  SearchEntityType,
-  SearchHubId,
-  TrustHubSearchIntent,
-} from '../types';
+import type { SearchEntityType, SearchHubId, TrustHubSearchIntent } from '../types';
 import type { HubEntityHandoffResult, HubSearchHandoffResult } from '../handoff';
+import type { NetworkDiscoveryEntity } from '../discovery/types';
 
-/**
- * Lightweight discovery entity shape for Option A handoffs.
- * Full discovery index arrives in later tasks — this is the Ask-side contract stub.
- */
-export type NetworkDiscoveryEntity = {
-  network_entity_id: string;
-  hub: SearchHubId;
-  source_entity_id: string;
-  entity_type: SearchEntityType;
-  display_name: string;
-  /** Absolute or path-absolute specialist profile URL when known */
-  canonical_profile_url: string;
-  city?: string;
-  county?: string;
-  state?: string;
-  zip?: string;
-  categories?: string[];
-  trust_report_available?: boolean;
-};
+export type { NetworkDiscoveryEntity } from '../discovery/types';
 
 export type HubGeoCapabilities = {
   state: boolean;

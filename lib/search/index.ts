@@ -47,3 +47,23 @@ export {
 } from './adapters';
 
 export type { HubSearchAdapter, NetworkDiscoveryEntity } from './adapters';
+
+export {
+  createDiscoveryIndex,
+  createFixtureDiscoveryIndex,
+  loadDiscoveryFixtureCorpus,
+  validateDiscoveryCorpus,
+  validateDiscoveryEntity,
+  buildNetworkEntityId,
+  parseNetworkEntityId,
+  getTopMatchesPreviewCap,
+  isPreviewEligible,
+} from './discovery';
+
+export type {
+  DiscoveryStatus,
+  DiscoveryServiceArea,
+  DiscoveryMatchReason,
+  DiscoverySearchMatch,
+  DiscoverySearchResult,
+} from './discovery';
