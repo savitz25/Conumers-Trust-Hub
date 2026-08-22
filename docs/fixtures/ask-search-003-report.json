@@ -1,0 +1,23 @@
+{
+  "fixture_count": 119,
+  "passed": 119,
+  "failed_fixtures": 0,
+  "pass_rate": "100.0%",
+  "failure_details": [],
+  "failure_count": 0,
+  "critical_fail_count": 0,
+  "critical_fails": [],
+  "performance_ms": {
+    "total": 37.359,
+    "average": 0.3139,
+    "p50": 0.2071,
+    "p95": 0.8702,
+    "max": 4.9097
+  },
+  "external_calls": {
+    "LLM": 0,
+    "Google": 0,
+    "external_geo": 0,
+    "specialist_APIs": 0
+  }
+}
