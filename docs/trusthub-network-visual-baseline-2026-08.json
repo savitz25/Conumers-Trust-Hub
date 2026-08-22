@@ -1,0 +1,330 @@
+{
+  "certificationDate": "2026-08-22",
+  "standard": "TRUSTHUB_VISUAL_STANDARD_V1",
+  "chassisVersion": "2026.08.21-visual-v1",
+  "status": "CERTIFIED",
+  "hubs": [
+    {
+      "id": "ask",
+      "name": "ASK",
+      "canonicalDomain": "https://www.asktrusthub.com",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "originMainSha": "31b20cda5e04b63247a3eaadb96c2bb127eaf549",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#4F46E5",
+      "networkFont": "Inter",
+      "editorialException": "none",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "move",
+      "name": "MOVE",
+      "canonicalDomain": "https://www.movetrusthub.com",
+      "repo": "savitz25/Move-trust-Hub",
+      "originMainSha": "cf42ae005ab2e616f10342b19a40692132410601",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#FF5A1F",
+      "networkFont": "Inter chrome / Geist interior",
+      "editorialException": "Geist interior permitted",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "lender",
+      "name": "LENDER",
+      "canonicalDomain": "https://www.lendertrusthub.com",
+      "repo": "savitz25/Lender-Trust-Hub",
+      "originMainSha": "5a4954d2eb8376c3e7ec67e8539d8f8eac8dd496",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#0D9488",
+      "networkFont": "Inter",
+      "editorialException": "none",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "insurance",
+      "name": "INSURANCE",
+      "canonicalDomain": "https://www.insurancetrusthub.com",
+      "repo": "savitz25/Insurance-trust-hub",
+      "originMainSha": "fb9db9c90c6fa0b3e425e71a112e6a483403bf8c",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#0284C7",
+      "networkFont": "Inter",
+      "editorialException": "shield illustration permitted off-mark",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "contractor",
+      "name": "CONTRACTOR",
+      "canonicalDomain": "https://www.contractortrusthub.com",
+      "repo": "savitz25/contractor-trust-hub",
+      "originMainSha": "10c58dde712923c5994533ae1e886c07b2c21a21",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#F5C518",
+      "networkFont": "Inter in stack (system listed first — P2)",
+      "editorialException": "gold+navy; slogan off compact header",
+      "switchHub": {
+        "height": 44,
+        "width": 124,
+        "x": 1172,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "senior",
+      "name": "SENIOR",
+      "canonicalDomain": "https://www.seniortrusthub.com",
+      "repo": "savitz25/care-trust-hub",
+      "originMainSha": "179061b07b4854e9bb5ee7ec7acf1050ee64fb7c",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#681860",
+      "networkFont": "Inter chrome / Georgia editorial",
+      "editorialException": "Georgia editorial; 17–18px body; cream",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    },
+    {
+      "id": "investor",
+      "name": "INVESTOR",
+      "canonicalDomain": "https://www.investortrusthub.com",
+      "repo": "savitz25/investor-trust-hub",
+      "originMainSha": "c71e43d9fbefc3026453ea0d40bae8ca8a944087",
+      "header": {
+        "desktop": 69,
+        "tablet": 65,
+        "mobile": 57
+      },
+      "mark": {
+        "desktop": 36,
+        "tablet": 33,
+        "mobile": 30
+      },
+      "markX1440": 144,
+      "shell": {
+        "max": 1200,
+        "gutterDesktop": 24,
+        "gutterMobile": 16
+      },
+      "primaryAccent": "#0F766E",
+      "networkFont": "Inter chrome / Source Serif 4 editorial",
+      "editorialException": "Source Serif 4 editorial; cream",
+      "switchHub": {
+        "height": 44,
+        "width": 129,
+        "x": 1167,
+        "rightEdge": 1296,
+        "radius": "12px",
+        "font": "14/600"
+      },
+      "overflow": {
+        "w1440": 0,
+        "w1280": 0,
+        "w1024": 0,
+        "w768": 0,
+        "w430": 0,
+        "w390": 0,
+        "w375": 0
+      },
+      "overflowStatus": "PASS",
+      "chassisMarker": "2026.08.21-visual-v1",
+      "certificationStatus": "PASS"
+    }
+  ]
+}
