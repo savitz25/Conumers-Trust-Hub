@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" role="img" aria-label="Contractor Trust Hub mark">
+  <title>Contractor Trust Hub</title>
+  <!--
+    CONTRACTOR-BRAND-001 — canonical TrustHub bracket + four-point mark.
+    Geometry locked to Ask/Move stroke family (VISUAL-002):
+      viewBox 0 0 36 36 · bracket stroke 2.4 (~6.67%) · outer dots r=2.5 · center r=2.1 · spacing 7.8
+    Hub identity: Contractor gold brackets + Contractor node palette only.
+  -->
+  <path d="M9 5H5v26h4" stroke="#F5C518" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M27 5h4v26h-4" stroke="#F5C518" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="18" y1="11.2" x2="18" y2="18" stroke="#0A2540" stroke-width="1.2"/>
+  <line x1="12.2" y1="18" x2="18" y2="18" stroke="#0A2540" stroke-width="1.2"/>
+  <line x1="23.8" y1="18" x2="18" y2="18" stroke="#0A2540" stroke-width="1.2"/>
+  <line x1="18" y1="24.8" x2="18" y2="18" stroke="#0A2540" stroke-width="1.2"/>
+  <circle cx="18" cy="18" r="2.1" fill="#0A2540"/>
+  <circle cx="18" cy="10.2" r="2.5" fill="#F28C28"/>
+  <circle cx="11.2" cy="18" r="2.5" fill="#2F80ED"/>
+  <circle cx="24.8" cy="18" r="2.5" fill="#2BBBAD"/>
+  <circle cx="18" cy="25.8" r="2.5" fill="#8B5CF6"/>
+</svg>

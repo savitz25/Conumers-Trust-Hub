@@ -1,11 +1,15 @@
 # TRUSTHUB_VISUAL_STANDARD_V1
 
+> **FROZEN PRODUCTION (VISUAL-009, 2026-08-22).**  
+> The seven live Hubs are certified against this chassis. Current production baseline and hop boards: [`docs/VISUAL-009-SEVEN-HUB-CERTIFICATION.md`](./VISUAL-009-SEVEN-HUB-CERTIFICATION.md).  
+> This VISUAL-001 file is the **historical pre-migration audit**. Do not implement from its “current measured state” tables — those describe August 21 unmigrated chrome. Implement and recertify against the VISUAL-009 freeze.
+
 **Document title:** TrustHub Network Visual System 1.0  
 **Ticket:** VISUAL-001 — Network Visual System (design contract)  
 **Author:** VISUAL-001 audit  
 **Date:** 2026-08-21  
-**Status:** READY FOR VISUAL-002  
-**Production impact:** NONE — read-only audit + design contract. No production UI is changed in this ticket.  
+**Status:** SUPERSEDED AS BASELINE by VISUAL-009 freeze — historical audit retained  
+**Production impact:** NONE — read-only audit + design contract. No production UI is changed in this ticket.
 **Worktree:** `ask-visual-001` branch `visual-001-network-design-contract` from SHA `08fe72dc`  
 **Canonical parent:** https://www.asktrusthub.com  
 **Network contract companion:** `docs/ASK-NETWORK-CONTRACT.md` (`2026.08.18-network-v2`)  
