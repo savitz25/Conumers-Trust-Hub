@@ -39,6 +39,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Academic internal extracts and unlabeled ER candidates (never publish)
 /data/academic-internal/
 

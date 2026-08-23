@@ -32,7 +32,7 @@ export default async function UniversalSearchPage({ searchParams }: Props) {
 
   return (
     <div
-      className="border-b"
+      className="min-w-0 overflow-x-clip border-b"
       style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}
     >
       <div className="container-page py-10 sm:py-12">

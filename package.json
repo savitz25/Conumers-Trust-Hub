@@ -16,6 +16,7 @@
     "assert:search-005": "npx --yes tsx scripts/_run-search-005-tests.mts",
     "assert:search-006b": "npx --yes tsx scripts/assert-search-006b.mts",
     "assert:search-007": "npx --yes tsx scripts/assert-search-007.mts",
+    "qa:search-0071": "npx --yes tsx scripts/qa/ask-search-0071-browser.mts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.19",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

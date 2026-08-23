@@ -7,7 +7,7 @@ import { UniversalSearchForm } from './search-form';
 
 export function UniversalSearchResults({ model }: { model: UniversalSearchModel }) {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto min-w-0 max-w-3xl">
       <SearchPageAnalytics
         status={model.status}
         hub={model.hub}
@@ -16,14 +16,14 @@ export function UniversalSearchResults({ model }: { model: UniversalSearchModel 
       />
       <UniversalSearchForm initialQuery={model.q} />
 
-      <div className="mt-8" aria-live="polite" aria-atomic="true">
+      <div className="mt-8 min-w-0" aria-live="polite" aria-atomic="true">
         {model.status === 'error' ? (
           <StatusBlock title="Search unavailable" body={model.errorSafe || 'Please try again.'} />
         ) : null}
 
         {model.status === 'needs_clarification' ? (
           <section>
-            <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+            <h2 className="break-words text-xl font-semibold [overflow-wrap:anywhere]" style={{ color: ASK_BRAND.navy }}>
               {model.clarification?.prompt || 'We need a bit more detail'}
             </h2>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
@@ -32,13 +32,17 @@ export function UniversalSearchResults({ model }: { model: UniversalSearchModel 
             {model.clarification?.choices?.length ? (
               <ul className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 {model.clarification.choices.map((c) => (
-                  <li key={c.href}>
+                  <li key={c.href} className="min-w-0 max-w-full">
                     <a
                       href={c.href}
-                      className="inline-flex min-h-11 items-center rounded-xl border bg-white px-4 text-sm font-semibold no-underline"
-                      style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+                      className="inline-flex min-h-11 max-w-full items-center rounded-xl border bg-white px-4 py-2 text-sm font-semibold no-underline outline-none focus-visible:ring-2"
+                      style={{
+                        borderColor: ASK_BRAND.border,
+                        color: ASK_BRAND.navy,
+                        ['--tw-ring-color' as string]: ASK_BRAND.indigo,
+                      }}
                     >
-                      {c.label}
+                      <span className="break-words [overflow-wrap:anywhere]">{c.label}</span>
                     </a>
                   </li>
                 ))}
@@ -55,11 +59,11 @@ export function UniversalSearchResults({ model }: { model: UniversalSearchModel 
         ) : null}
 
         {model.status === 'empty' ? (
-          <section>
-            <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+          <section className="min-w-0">
+            <h2 className="break-words text-xl font-semibold [overflow-wrap:anywhere]" style={{ color: ASK_BRAND.navy }}>
               No verified matches
             </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            <p className="mt-2 break-words text-sm leading-relaxed [overflow-wrap:anywhere]" style={{ color: ASK_BRAND.ink }}>
               {model.message} That does not mean no companies exist — only that this safe index
               returned zero.
             </p>
@@ -108,8 +112,12 @@ export function UniversalSearchResults({ model }: { model: UniversalSearchModel 
                   <a
                     href={model.viewMore.href}
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border bg-white px-4 text-sm font-semibold no-underline sm:w-auto"
-                    style={{ borderColor: ASK_BRAND.indigo, color: ASK_BRAND.indigo }}
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border bg-white px-4 text-sm font-semibold no-underline outline-none focus-visible:ring-2 sm:w-auto"
+                    style={{
+                      borderColor: ASK_BRAND.indigo,
+                      color: ASK_BRAND.indigo,
+                      ['--tw-ring-color' as string]: ASK_BRAND.indigo,
+                    }}
                   >
                     View More Results
                   </a>
@@ -128,11 +136,11 @@ export function UniversalSearchResults({ model }: { model: UniversalSearchModel 
 
 function StatusBlock({ title, body }: { title: string; body: string }) {
   return (
-    <section>
-      <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+    <section className="min-w-0">
+      <h2 className="break-words text-xl font-semibold [overflow-wrap:anywhere]" style={{ color: ASK_BRAND.navy }}>
         {title}
       </h2>
-      <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+      <p className="mt-2 break-words text-sm leading-relaxed [overflow-wrap:anywhere]" style={{ color: ASK_BRAND.ink }}>
         {body}
       </p>
     </section>

@@ -1,0 +1,470 @@
+{
+  "base": "http://127.0.0.1:3011",
+  "fails": [],
+  "eventsSeen": [
+    "search_resolved",
+    "top_matches_rendered",
+    "search_submitted",
+    "outbound_hub_click",
+    "result_clicked",
+    "view_more_clicked",
+    "zero_results",
+    "unsupported_search",
+    "clarification_shown"
+  ],
+  "outboundHosts": [
+    "127.0.0.1"
+  ],
+  "desktopOverflowPx": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "mobileOverflowPx": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "desktopMaxOverflow": 0,
+  "mobileMaxOverflow": 0,
+  "shots": [
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\01-homepage.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/",
+      "title": "Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\02-keansburg.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers+in+Keansburg+NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\03-zip-07734.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=licensed%20movers%20around%2007734",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\04-lender-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=mortgage%20companies%20in%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\05-lender-fha-tampa.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=FHA%20lenders%20Tampa",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\06-insurance-texas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=auto%20insurance%20agencies%20Texas",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\07-insurance-dallas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=insurance%20agencies%20Dallas%20TX",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\08-contractor-roofers.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=roofers%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\09-contractor-hvac.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=HVAC%20contractors%20Tampa%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\10-contractor-gc.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=general%20contractors%20Orlando%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\11-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=moving%20broker%20in%20Miami",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\12-unsupported-electricians.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=electricians%20Jacksonville%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\13-unsupported-inspectors.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=home%20inspectors%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\14-clarification.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=insurance%20company%20near%20me",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\15-long-content.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=VeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpaces%20movers%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\16-security-script.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\17-security-javascript.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=javascript%3Aalert(1)",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\18-security-dotdot.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=..%2F..%2F",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\19-security-long.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\20-security-unicode.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers%00%07%E2%80%AE%EF%BF%BD%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\21-search-idle.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\desktop-1440\\22-keyboard.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers+in+Keansburg+NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\01-homepage.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/",
+      "title": "Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\02-keansburg.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers+in+Keansburg+NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\03-zip-07734.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=licensed%20movers%20around%2007734",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\04-lender-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=mortgage%20companies%20in%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\05-lender-fha-tampa.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=FHA%20lenders%20Tampa",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\06-insurance-texas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=auto%20insurance%20agencies%20Texas",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\07-insurance-dallas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=insurance%20agencies%20Dallas%20TX",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\08-contractor-roofers.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=roofers%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\09-contractor-hvac.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=HVAC%20contractors%20Tampa%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\10-contractor-gc.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=general%20contractors%20Orlando%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\11-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=moving%20broker%20in%20Miami",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\12-unsupported-electricians.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=electricians%20Jacksonville%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\13-unsupported-inspectors.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=home%20inspectors%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\14-clarification.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=insurance%20company%20near%20me",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\15-long-content.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=VeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpacesVeryLongCompanyNameWithoutSpaces%20movers%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\16-security-script.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\17-security-javascript.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=javascript%3Aalert(1)",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\18-security-dotdot.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=..%2F..%2F",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\19-security-long.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\20-security-unicode.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers%00%07%E2%80%AE%EF%BF%BD%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\21-search-idle.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\Michael.Savitsky\\ask-search-0071\\artifacts\\ask-search-0071\\mobile-390\\22-keyboard.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3011/search?q=movers+in+Keansburg+NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    }
+  ],
+  "notes": {
+    "desktop-1440-keansburg-cards": 7,
+    "desktop-1440-keansburg-profile": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+    "desktop-1440-keansburg-viewmore": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+    "desktop-1440-entity-click-status": 200,
+    "desktop-1440-viewmore-status": 200,
+    "desktop-1440-long-q-len": 350,
+    "desktop-1440-dialogs": [],
+    "desktop-1440-events": [
+      "search_resolved",
+      "top_matches_rendered",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered",
+      "outbound_hub_click",
+      "result_clicked",
+      "outbound_hub_click",
+      "view_more_clicked",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "zero_results",
+      "search_resolved",
+      "unsupported_search",
+      "search_resolved",
+      "unsupported_search",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered"
+    ],
+    "mobile-390-keansburg-cards": 7,
+    "mobile-390-keansburg-profile": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+    "mobile-390-keansburg-viewmore": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+    "mobile-390-entity-click-status": 200,
+    "mobile-390-viewmore-status": 200,
+    "mobile-390-long-q-len": 350,
+    "mobile-390-dialogs": [],
+    "mobile-390-events": [
+      "search_resolved",
+      "top_matches_rendered",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered",
+      "outbound_hub_click",
+      "result_clicked",
+      "outbound_hub_click",
+      "view_more_clicked",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "zero_results",
+      "search_resolved",
+      "unsupported_search",
+      "search_resolved",
+      "unsupported_search",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "clarification_shown",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_resolved",
+      "top_matches_rendered",
+      "search_submitted",
+      "search_resolved",
+      "top_matches_rendered"
+    ]
+  }
+}

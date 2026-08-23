@@ -56,7 +56,6 @@ export function ConciergeEntry({ className, dominant = false }: Props) {
           borderColor: ASK_BRAND.border,
           boxShadow: dominant ? ASK_SHADOW.indigo : ASK_SHADOW.card,
         }}
-        role="search"
         aria-label="Ask Concierge"
       >
         <label htmlFor="ask-concierge-input" className="sr-only">

@@ -16,6 +16,19 @@ export function trackEvent(name: AnalyticsEventName | string, props?: Props): vo
       }
     }
     track(name, cleaned);
+    if (typeof window !== 'undefined') {
+      const row = { name, props: cleaned };
+      const g = window as Window & { __askSearchEvents?: Array<typeof row> };
+      g.__askSearchEvents = g.__askSearchEvents || [];
+      g.__askSearchEvents.push(row);
+      try {
+        const prev = JSON.parse(sessionStorage.getItem('__askSearchEvents') || '[]') as typeof g.__askSearchEvents;
+        prev.push(row);
+        sessionStorage.setItem('__askSearchEvents', JSON.stringify(prev));
+      } catch {
+        /* private mode / quota must never break UX */
+      }
+    }
   } catch {
     // Measurement must never break UX
   }
