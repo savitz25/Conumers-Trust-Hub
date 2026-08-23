@@ -9,6 +9,15 @@ export const ANALYTICS_EVENTS = {
   OUTBOUND_HUB: 'outbound_hub_click',
   INTERNAL_NAV: 'internal_nav_click',
   JOURNEY_HANDOFF: 'journey_handoff_click',
+  SEARCH_SUBMITTED: 'search_submitted',
+  SEARCH_RESOLVED: 'search_resolved',
+  TOP_MATCHES_RENDERED: 'top_matches_rendered',
+  RESULT_CLICKED: 'result_clicked',
+  VIEW_MORE_CLICKED: 'view_more_clicked',
+  CLARIFICATION_SHOWN: 'clarification_shown',
+  CLARIFICATION_SELECTED: 'clarification_selected',
+  UNSUPPORTED_SEARCH: 'unsupported_search',
+  ZERO_RESULTS: 'zero_results',
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];

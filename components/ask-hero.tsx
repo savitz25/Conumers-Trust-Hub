@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { ConciergeEntry } from '@/components/concierge-entry';
+import { UniversalSearchForm } from '@/components/universal-search/search-form';
 import {
   ASK_BRAND,
   ASK_HERO_DESCRIPTOR,
@@ -111,7 +112,20 @@ export function AskHero() {
           </ul>
         </div>
 
-        {/* Dominant Ask product */}
+        <div className="mx-auto mt-10 max-w-2xl scroll-mt-24 sm:mt-12" id="universal-search">
+          <p
+            className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.14em]"
+            style={{ color: ASK_BRAND.indigo }}
+          >
+            Universal Search
+          </p>
+          <UniversalSearchForm showExamples />
+          <p className="mt-3 text-center text-xs leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            Find a provider, then research on the specialist Hub. Not a ranking or marketplace.
+          </p>
+        </div>
+
+        {/* Concierge remains available; discovery search is additive */}
         <div className="mx-auto mt-10 max-w-2xl scroll-mt-24 sm:mt-12">
           <p
             className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.14em]"
