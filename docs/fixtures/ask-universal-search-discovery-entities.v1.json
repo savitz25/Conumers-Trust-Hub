@@ -1,0 +1,986 @@
+{
+  "schema_version": 1,
+  "corpus_id": "ask-universal-search-discovery-entities.v1",
+  "provenance": "synthetic_representative — NOT production specialist data",
+  "architecture": "docs/ask-universal-search-v1-architecture.md",
+  "notes": "Ask FIND-only fixtures for ASK-SEARCH-005. discovery_status active|held|disabled. Google SEO indexability is intentionally separate.",
+  "count": 31,
+  "by_hub": {
+    "move": 6,
+    "lender": 5,
+    "insurance": 5,
+    "contractor": 5,
+    "senior": 5,
+    "investor": 5
+  },
+  "entities": [
+    {
+      "network_entity_id": "move:usdot-3141592",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "usdot-3141592",
+      "entity_type": "mover",
+      "display_name": "Bayshore Moving LLC",
+      "legal_name": "Bayshore Moving Limited Liability Company",
+      "city": "Keansburg",
+      "county": "monmouth",
+      "state": "NJ",
+      "zip": "07734",
+      "categories": [
+        "mover"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Keansburg",
+          "state": "NJ"
+        },
+        {
+          "kind": "county",
+          "county": "monmouth",
+          "state": "NJ"
+        }
+      ],
+      "regulatory_status_summary": "Federal authority on file",
+      "canonical_profile_url": "https://www.movetrusthub.com/movers/bayshore-moving-llc",
+      "search_terms": [
+        "bayshore",
+        "keansburg mover",
+        "monmouth moving"
+      ]
+    },
+    {
+      "network_entity_id": "move:usdot-2718281",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "usdot-2718281",
+      "entity_type": "mover",
+      "display_name": "Garden State Relocators",
+      "city": "Red Bank",
+      "county": "monmouth",
+      "state": "NJ",
+      "zip": "07701",
+      "categories": [
+        "mover"
+      ],
+      "service_areas": [
+        {
+          "kind": "county",
+          "county": "monmouth",
+          "state": "NJ"
+        },
+        {
+          "kind": "state",
+          "state": "NJ"
+        }
+      ],
+      "regulatory_status_summary": "Interstate HHG carrier",
+      "canonical_profile_url": "https://www.movetrusthub.com/movers/garden-state-relocators",
+      "search_terms": [
+        "garden state",
+        "nj movers"
+      ]
+    },
+    {
+      "network_entity_id": "move:usdot-1618033",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "usdot-1618033",
+      "entity_type": "interstate_mover",
+      "display_name": "Sunshine Interstate Movers",
+      "city": "Miami",
+      "county": "miami-dade",
+      "state": "FL",
+      "zip": "33101",
+      "categories": [
+        "interstate"
+      ],
+      "service_areas": [
+        {
+          "kind": "interstate",
+          "label": "FL-NJ corridor"
+        },
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Interstate authority verified research signal",
+      "canonical_profile_url": "https://www.movetrusthub.com/movers/sunshine-interstate-movers",
+      "search_terms": [
+        "sunshine",
+        "long distance",
+        "interstate"
+      ]
+    },
+    {
+      "network_entity_id": "move:broker-miami-harbor",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "broker-miami-harbor",
+      "entity_type": "moving_broker",
+      "display_name": "Harbor HHG Brokerage",
+      "city": "Miami",
+      "state": "FL",
+      "zip": "33130",
+      "categories": [
+        "broker"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Broker registration on file",
+      "canonical_profile_url": "https://www.movetrusthub.com/movers/harbor-hhg-brokerage",
+      "search_terms": [
+        "harbor broker",
+        "moving broker miami"
+      ]
+    },
+    {
+      "network_entity_id": "move:auto-fl-coastal",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "auto-fl-coastal",
+      "entity_type": "auto_transporter",
+      "display_name": "Coastal Auto Transport Co",
+      "city": "Tampa",
+      "state": "FL",
+      "categories": [
+        "auto_transport"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        },
+        {
+          "kind": "interstate"
+        }
+      ],
+      "regulatory_status_summary": "Auto transport carrier research",
+      "canonical_profile_url": "https://www.movetrusthub.com/auto-transport/coastal-auto-transport-co",
+      "search_terms": [
+        "car shipping",
+        "auto transport"
+      ]
+    },
+    {
+      "network_entity_id": "move:usdot-1414213",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "move",
+      "source_entity_id": "usdot-1414213",
+      "entity_type": "mover",
+      "display_name": "Bayshore Moving LLC",
+      "city": "Orlando",
+      "state": "FL",
+      "zip": "32801",
+      "categories": [
+        "mover"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Orlando",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Same display name, different Hub identity/geo",
+      "canonical_profile_url": "https://www.movetrusthub.com/movers/bayshore-moving-orlando",
+      "search_terms": [
+        "bayshore orlando"
+      ]
+    },
+    {
+      "network_entity_id": "lender:lender-fl-bayshore",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "lender",
+      "source_entity_id": "lender-fl-bayshore",
+      "entity_type": "mortgage_company",
+      "display_name": "Bayshore Mortgage Group",
+      "city": "Tampa",
+      "state": "FL",
+      "zip": "33602",
+      "categories": [
+        "fha",
+        "conventional",
+        "refinance"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "NMLS company research signals",
+      "canonical_profile_url": "https://www.lendertrusthub.com/lenders/bayshore-mortgage-group",
+      "search_terms": [
+        "bayshore mortgage",
+        "fha tampa"
+      ]
+    },
+    {
+      "network_entity_id": "lender:lender-fl-gulfstream",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "lender",
+      "source_entity_id": "lender-fl-gulfstream",
+      "entity_type": "mortgage_company",
+      "display_name": "Gulfstream Home Loans",
+      "city": "Miami",
+      "state": "FL",
+      "categories": [
+        "va",
+        "conventional"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        },
+        {
+          "kind": "county",
+          "county": "miami-dade",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Mortgage lender directory entity",
+      "canonical_profile_url": "https://www.lendertrusthub.com/lenders/gulfstream-home-loans",
+      "search_terms": [
+        "gulfstream",
+        "florida mortgage"
+      ]
+    },
+    {
+      "network_entity_id": "lender:lender-tx-hillcountry",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "lender",
+      "source_entity_id": "lender-tx-hillcountry",
+      "entity_type": "mortgage_company",
+      "display_name": "Hill Country Lending",
+      "city": "Austin",
+      "state": "TX",
+      "categories": [
+        "conventional",
+        "refinance"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "TX mortgage company",
+      "canonical_profile_url": "https://www.lendertrusthub.com/lenders/hill-country-lending",
+      "search_terms": [
+        "hill country",
+        "austin lender"
+      ]
+    },
+    {
+      "network_entity_id": "lender:broker-fl-palm",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "lender",
+      "source_entity_id": "broker-fl-palm",
+      "entity_type": "mortgage_broker",
+      "display_name": "Palm Coast Mortgage Brokers",
+      "city": "Orlando",
+      "state": "FL",
+      "categories": [
+        "fha"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Mortgage broker type",
+      "canonical_profile_url": "https://www.lendertrusthub.com/lenders/palm-coast-mortgage-brokers",
+      "search_terms": [
+        "palm coast broker"
+      ]
+    },
+    {
+      "network_entity_id": "lender:lender-nj-shore",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "lender",
+      "source_entity_id": "lender-nj-shore",
+      "entity_type": "mortgage_company",
+      "display_name": "Shoreline Home Finance",
+      "city": "Red Bank",
+      "state": "NJ",
+      "categories": [
+        "conventional",
+        "fha"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "NJ"
+        },
+        {
+          "kind": "county",
+          "county": "monmouth",
+          "state": "NJ"
+        }
+      ],
+      "regulatory_status_summary": "NJ mortgage company",
+      "canonical_profile_url": "https://www.lendertrusthub.com/lenders/shoreline-home-finance",
+      "search_terms": [
+        "shoreline",
+        "nj mortgage"
+      ]
+    },
+    {
+      "network_entity_id": "insurance:medicare-in-midwest",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "insurance",
+      "source_entity_id": "medicare-in-midwest",
+      "entity_type": "medicare_agent",
+      "display_name": "Midwest Medicare Advisors",
+      "city": "Indianapolis",
+      "state": "IN",
+      "zip": "46204",
+      "categories": [
+        "medicare"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "IN"
+        }
+      ],
+      "regulatory_status_summary": "Medicare-focused agency research",
+      "canonical_profile_url": "https://www.insurancetrusthub.com/providers/midwest-medicare-advisors",
+      "search_terms": [
+        "medicare indiana",
+        "midwest medicare"
+      ]
+    },
+    {
+      "network_entity_id": "insurance:agency-fl-coral",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "insurance",
+      "source_entity_id": "agency-fl-coral",
+      "entity_type": "insurance_agency",
+      "display_name": "Coral Home Insurance Agency",
+      "city": "Miami",
+      "state": "FL",
+      "categories": [
+        "homeowners",
+        "flood"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Miami",
+          "state": "FL"
+        },
+        {
+          "kind": "county",
+          "county": "miami-dade",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Homeowners agency listing",
+      "canonical_profile_url": "https://www.insurancetrusthub.com/providers/coral-home-insurance-agency",
+      "search_terms": [
+        "coral homeowners",
+        "miami insurance"
+      ]
+    },
+    {
+      "network_entity_id": "insurance:carrier-national-shield",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "insurance",
+      "source_entity_id": "carrier-national-shield",
+      "entity_type": "insurance_carrier",
+      "display_name": "National Shield Insurance Co",
+      "city": "Chicago",
+      "state": "IL",
+      "categories": [
+        "homeowners",
+        "auto"
+      ],
+      "service_areas": [
+        {
+          "kind": "nationwide"
+        }
+      ],
+      "regulatory_status_summary": "Carrier research entity",
+      "canonical_profile_url": "https://www.insurancetrusthub.com/carriers/national-shield-insurance-co",
+      "search_terms": [
+        "national shield",
+        "carrier"
+      ]
+    },
+    {
+      "network_entity_id": "insurance:agency-tx-austin",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "insurance",
+      "source_entity_id": "agency-tx-austin",
+      "entity_type": "insurance_agency",
+      "display_name": "Capitol Coverage Agency",
+      "city": "Austin",
+      "state": "TX",
+      "categories": [
+        "auto",
+        "life"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "TX agency",
+      "canonical_profile_url": "https://www.insurancetrusthub.com/providers/capitol-coverage-agency",
+      "search_terms": [
+        "capitol coverage"
+      ]
+    },
+    {
+      "network_entity_id": "insurance:agent-nj-monmouth",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "insurance",
+      "source_entity_id": "agent-nj-monmouth",
+      "entity_type": "insurance_agent",
+      "display_name": "Shore Independent Agent",
+      "city": "Keansburg",
+      "state": "NJ",
+      "county": "monmouth",
+      "categories": [
+        "homeowners"
+      ],
+      "service_areas": [
+        {
+          "kind": "county",
+          "county": "monmouth",
+          "state": "NJ"
+        }
+      ],
+      "regulatory_status_summary": "Independent agent",
+      "canonical_profile_url": "https://www.insurancetrusthub.com/providers/shore-independent-agent",
+      "search_terms": [
+        "shore agent"
+      ]
+    },
+    {
+      "network_entity_id": "contractor:contractor-fl-miami-roof",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "contractor",
+      "source_entity_id": "contractor-fl-miami-roof",
+      "entity_type": "contractor",
+      "display_name": "Atlantic Roofing Pros",
+      "city": "Miami",
+      "state": "FL",
+      "county": "miami-dade",
+      "categories": [
+        "roofing"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Miami",
+          "state": "FL"
+        },
+        {
+          "kind": "county",
+          "county": "miami-dade",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Roofing contractor research",
+      "canonical_profile_url": "https://www.contractortrusthub.com/contractors/atlantic-roofing-pros",
+      "search_terms": [
+        "atlantic roofing",
+        "miami roofers"
+      ]
+    },
+    {
+      "network_entity_id": "contractor:contractor-fl-ftl-kitchen",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "contractor",
+      "source_entity_id": "contractor-fl-ftl-kitchen",
+      "entity_type": "contractor",
+      "display_name": "Intracoastal Kitchen Remodelers",
+      "city": "Fort Lauderdale",
+      "state": "FL",
+      "county": "broward",
+      "categories": [
+        "kitchen_remodel"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Fort Lauderdale",
+          "state": "FL"
+        },
+        {
+          "kind": "county",
+          "county": "broward",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Kitchen remodel contractor",
+      "canonical_profile_url": "https://www.contractortrusthub.com/contractors/intracoastal-kitchen-remodelers",
+      "search_terms": [
+        "kitchen remodel",
+        "fort lauderdale"
+      ]
+    },
+    {
+      "network_entity_id": "contractor:contractor-fl-tampa-plumb",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "contractor",
+      "source_entity_id": "contractor-fl-tampa-plumb",
+      "entity_type": "contractor",
+      "display_name": "Bay Plumbing Services",
+      "city": "Tampa",
+      "state": "FL",
+      "categories": [
+        "plumbing"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Tampa",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Plumbing trade",
+      "canonical_profile_url": "https://www.contractortrusthub.com/contractors/bay-plumbing-services",
+      "search_terms": [
+        "plumber tampa"
+      ]
+    },
+    {
+      "network_entity_id": "contractor:contractor-az-phx-gc",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "contractor",
+      "source_entity_id": "contractor-az-phx-gc",
+      "entity_type": "contractor",
+      "display_name": "Desert General Contractors",
+      "city": "Phoenix",
+      "state": "AZ",
+      "categories": [
+        "general_contractor"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "AZ"
+        }
+      ],
+      "regulatory_status_summary": "AZ GC",
+      "canonical_profile_url": "https://www.contractortrusthub.com/contractors/desert-general-contractors",
+      "search_terms": [
+        "desert gc"
+      ]
+    },
+    {
+      "network_entity_id": "contractor:contractor-fl-miami-hvac",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "contractor",
+      "source_entity_id": "contractor-fl-miami-hvac",
+      "entity_type": "contractor",
+      "display_name": "Tropic Air HVAC",
+      "city": "Miami",
+      "state": "FL",
+      "categories": [
+        "hvac"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Miami",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "HVAC contractor",
+      "canonical_profile_url": "https://www.contractortrusthub.com/contractors/tropic-air-hvac",
+      "search_terms": [
+        "hvac miami",
+        "ac contractor"
+      ]
+    },
+    {
+      "network_entity_id": "senior:ccn-675120",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "senior",
+      "source_entity_id": "ccn-675120",
+      "entity_type": "nursing_facility",
+      "display_name": "Austin Oaks Nursing & Rehab",
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701",
+      "categories": [
+        "nursing"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Austin",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "CMS nursing facility research",
+      "canonical_profile_url": "https://www.seniortrusthub.com/facilities/austin-oaks-nursing-rehab",
+      "search_terms": [
+        "austin oaks",
+        "nursing home austin"
+      ]
+    },
+    {
+      "network_entity_id": "senior:ccn-675221",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "senior",
+      "source_entity_id": "ccn-675221",
+      "entity_type": "nursing_facility",
+      "display_name": "Capitol Skilled Nursing Center",
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78704",
+      "categories": [
+        "nursing"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Austin",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "CMS SNF",
+      "canonical_profile_url": "https://www.seniortrusthub.com/facilities/capitol-skilled-nursing-center",
+      "search_terms": [
+        "capitol snf",
+        "skilled nursing austin"
+      ]
+    },
+    {
+      "network_entity_id": "senior:ccn-455800",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "senior",
+      "source_entity_id": "ccn-455800",
+      "entity_type": "nursing_facility",
+      "display_name": "Houston Cypress Nursing",
+      "city": "Houston",
+      "state": "TX",
+      "categories": [
+        "nursing"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Houston",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "CMS nursing facility",
+      "canonical_profile_url": "https://www.seniortrusthub.com/facilities/houston-cypress-nursing",
+      "search_terms": [
+        "houston nursing"
+      ]
+    },
+    {
+      "network_entity_id": "senior:al-pilot-austin-river",
+      "trust_report_available": false,
+      "discovery_status": "held",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "senior",
+      "source_entity_id": "al-pilot-austin-river",
+      "entity_type": "assisted_living",
+      "display_name": "Riverbend Assisted Living",
+      "city": "Austin",
+      "state": "TX",
+      "categories": [
+        "assisted_living"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Austin",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "Pilot AL fixture — soft support",
+      "canonical_profile_url": "https://www.seniortrusthub.com/facilities/riverbend-assisted-living",
+      "search_terms": [
+        "riverbend al"
+      ]
+    },
+    {
+      "network_entity_id": "senior:mem-disabled-austin",
+      "trust_report_available": false,
+      "discovery_status": "disabled",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "senior",
+      "source_entity_id": "mem-disabled-austin",
+      "entity_type": "memory_care",
+      "display_name": "Austin Memory Support (disabled fixture)",
+      "city": "Austin",
+      "state": "TX",
+      "categories": [
+        "memory_care"
+      ],
+      "canonical_profile_url": "https://www.seniortrusthub.com/facilities/austin-memory-support-disabled",
+      "search_terms": [
+        "memory care"
+      ]
+    },
+    {
+      "network_entity_id": "investor:crd-104986",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "investor",
+      "source_entity_id": "crd-104986",
+      "entity_type": "ria",
+      "display_name": "Palm Fiduciary Advisers",
+      "city": "Boca Raton",
+      "state": "FL",
+      "county": "palm-beach",
+      "categories": [
+        "ria"
+      ],
+      "service_areas": [
+        {
+          "kind": "city",
+          "city": "Boca Raton",
+          "state": "FL"
+        },
+        {
+          "kind": "county",
+          "county": "palm-beach",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Reported as registered investment adviser",
+      "canonical_profile_url": "https://www.investortrusthub.com/firm/sec-crd-104986",
+      "search_terms": [
+        "palm fiduciary",
+        "ria boca"
+      ]
+    },
+    {
+      "network_entity_id": "investor:crd-162511",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "investor",
+      "source_entity_id": "crd-162511",
+      "entity_type": "era",
+      "display_name": "Atlantic Exempt Strategies",
+      "city": "Miami",
+      "state": "FL",
+      "categories": [
+        "era"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Exempt reporting adviser — not an RIA",
+      "canonical_profile_url": "https://www.investortrusthub.com/firm/sec-crd-162511",
+      "search_terms": [
+        "atlantic era",
+        "exempt reporting"
+      ]
+    },
+    {
+      "network_entity_id": "investor:crd-110011",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "investor",
+      "source_entity_id": "crd-110011",
+      "entity_type": "advisory_firm",
+      "display_name": "Gulfstream Advisory Partners",
+      "city": "Tampa",
+      "state": "FL",
+      "categories": [
+        "ria"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Advisory firm research",
+      "canonical_profile_url": "https://www.investortrusthub.com/firm/sec-crd-110011",
+      "search_terms": [
+        "gulfstream advisory"
+      ]
+    },
+    {
+      "network_entity_id": "investor:crd-120120",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "investor",
+      "source_entity_id": "crd-120120",
+      "entity_type": "ria",
+      "display_name": "Palm Fiduciary Advisers",
+      "city": "West Palm Beach",
+      "state": "FL",
+      "county": "palm-beach",
+      "categories": [
+        "ria"
+      ],
+      "service_areas": [
+        {
+          "kind": "county",
+          "county": "palm-beach",
+          "state": "FL"
+        }
+      ],
+      "regulatory_status_summary": "Same display name, different CRD/geo",
+      "canonical_profile_url": "https://www.investortrusthub.com/firm/sec-crd-120120",
+      "search_terms": [
+        "palm fiduciary wpb"
+      ]
+    },
+    {
+      "network_entity_id": "investor:crd-998877",
+      "trust_report_available": true,
+      "discovery_status": "active",
+      "fixture_provenance": "synthetic_representative",
+      "source_version": "ask-search-005-fixtures-v1",
+      "updated_at": "2026-08-22T00:00:00.000Z",
+      "hub": "investor",
+      "source_entity_id": "crd-998877",
+      "entity_type": "ria",
+      "display_name": "Lone Star Registered Advisers",
+      "city": "Austin",
+      "state": "TX",
+      "categories": [
+        "ria"
+      ],
+      "service_areas": [
+        {
+          "kind": "state",
+          "state": "TX"
+        }
+      ],
+      "regulatory_status_summary": "TX RIA firm",
+      "canonical_profile_url": "https://www.investortrusthub.com/firm/sec-crd-998877",
+      "search_terms": [
+        "lone star ria"
+      ]
+    }
+  ]
+}

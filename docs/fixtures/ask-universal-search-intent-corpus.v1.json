@@ -1,0 +1,2086 @@
+{
+  "lexicon_version": 1,
+  "corpus_id": "ask-universal-search-intent-corpus.v1",
+  "architecture_doc": "docs/ask-universal-search-v1-architecture.md",
+  "lexicon_doc": "docs/ask-universal-search-v1-lexicon.md",
+  "notes": "Specification fixtures for ASK-SEARCH-003. No production parser. supported may be true|false|soft|partial|special|planner_bridge|null.",
+  "count": 119,
+  "fixtures": [
+    {
+      "id": "f001",
+      "query": "movers in Keansburg NJ",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "state": "NJ",
+        "city": "Keansburg",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "consumerIntent": "find_provider"
+      },
+      "tags": [
+        "critical",
+        "move"
+      ]
+    },
+    {
+      "id": "f002",
+      "query": "licensed movers around 07734",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "zip": "07734",
+        "state": "NJ",
+        "filters": {
+          "regulatoryEligibleOnly": true
+        },
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "move",
+        "zip"
+      ]
+    },
+    {
+      "id": "f003",
+      "query": "long distance mover Florida",
+      "expected": {
+        "hub": "move",
+        "entityType": "interstate_mover",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "move"
+      ]
+    },
+    {
+      "id": "f004",
+      "query": "moving broker in Miami",
+      "expected": {
+        "hub": "move",
+        "entityType": "moving_broker",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "move"
+      ]
+    },
+    {
+      "id": "f005",
+      "query": "moving companies near me",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move",
+        "near_me"
+      ]
+    },
+    {
+      "id": "f006",
+      "query": "local movers Bergen County NJ",
+      "expected": {
+        "hub": "move",
+        "entityType": "intrastate_mover",
+        "county": "bergen",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move",
+        "county"
+      ]
+    },
+    {
+      "id": "f007",
+      "query": "interstate moving company TX",
+      "expected": {
+        "hub": "move",
+        "entityType": "interstate_mover",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f008",
+      "query": "auto transport Florida",
+      "expected": {
+        "hub": "move",
+        "entityType": "auto_transporter",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f009",
+      "query": "car shipping company NJ",
+      "expected": {
+        "hub": "move",
+        "entityType": "auto_transporter",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f010",
+      "query": "HHG mover Keansburg New Jersey",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "city": "Keansburg",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f011",
+      "query": "moving service in Fort Lauderdale",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "city": "Fort Lauderdale",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f012",
+      "query": "cross-country movers",
+      "expected": {
+        "hub": "move",
+        "entityType": "interstate_mover",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f013",
+      "query": "NJ mover",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f014",
+      "query": "Florida mover",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f015",
+      "query": "household goods broker Miami",
+      "expected": {
+        "hub": "move",
+        "entityType": "moving_broker",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f016",
+      "query": "movers serving Monmouth County NJ",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "county": "monmouth",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f017",
+      "query": "vehicle shipping Austin TX",
+      "expected": {
+        "hub": "move",
+        "entityType": "auto_transporter",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f018",
+      "query": "intrastate movers California",
+      "expected": {
+        "hub": "move",
+        "entityType": "intrastate_mover",
+        "state": "CA",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move"
+      ]
+    },
+    {
+      "id": "f019",
+      "query": "mortgage companies in Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "lender"
+      ]
+    },
+    {
+      "id": "f020",
+      "query": "FHA lenders Tampa",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "fha",
+        "city": "Tampa",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "lender"
+      ]
+    },
+    {
+      "id": "f021",
+      "query": "refinance company near Austin",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "refinance",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "lender"
+      ]
+    },
+    {
+      "id": "f022",
+      "query": "mortgage lender",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f023",
+      "query": "home loan company Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f024",
+      "query": "VA mortgage company Texas",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "va",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f025",
+      "query": "conventional lenders NJ",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "conventional",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f026",
+      "query": "USDA loan lenders Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "usda",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f027",
+      "query": "refi lender Miami",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "refinance",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f028",
+      "query": "mortgage brokers in Orlando FL",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_broker",
+        "city": "Orlando",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f029",
+      "query": "lenders near me",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender",
+        "near_me"
+      ]
+    },
+    {
+      "id": "f030",
+      "query": "loan officer Tampa",
+      "expected": {
+        "hub": "lender",
+        "entityType": "loan_officer",
+        "city": "Tampa",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "lender",
+        "soft"
+      ]
+    },
+    {
+      "id": "f031",
+      "query": "FDIC banks Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": "bank",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f032",
+      "query": "auto loan companies Texas",
+      "expected": {
+        "hub": "lender",
+        "entityType": "auto_loan_company",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f033",
+      "query": "jumbo mortgage lenders CA",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "jumbo",
+        "state": "CA",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender"
+      ]
+    },
+    {
+      "id": "f034",
+      "query": "credit repair companies Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": null,
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": false,
+        "unsupportedReason": "credit_repair_not_live"
+      },
+      "tags": [
+        "lender",
+        "unsupported"
+      ]
+    },
+    {
+      "id": "f035",
+      "query": "investment property mortgage",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "exclusion: not investor"
+      },
+      "tags": [
+        "critical",
+        "lender",
+        "exclusion"
+      ]
+    },
+    {
+      "id": "f036",
+      "query": "Medicare agents Indiana",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "medicare_agent",
+        "state": "IN",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "insurance"
+      ]
+    },
+    {
+      "id": "f037",
+      "query": "home insurance companies in Miami",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "category": "homeowners",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "agency vs carrier soft"
+      },
+      "tags": [
+        "critical",
+        "insurance"
+      ]
+    },
+    {
+      "id": "f038",
+      "query": "insurance company near me",
+      "expected": {
+        "hubCandidates": [
+          "insurance"
+        ],
+        "entityType": null,
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "critical",
+        "insurance"
+      ]
+    },
+    {
+      "id": "f039",
+      "query": "insurance agents Indianapolis",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agent",
+        "city": "Indianapolis",
+        "state": "IN",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f040",
+      "query": "insurance agency Florida",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f041",
+      "query": "life insurance agent NJ",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agent",
+        "category": "life",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f042",
+      "query": "health insurance agency Texas",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "category": "health",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f043",
+      "query": "auto insurance agents Miami",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agent",
+        "category": "auto",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f044",
+      "query": "homeowners insurance Florida",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "category": "homeowners",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f045",
+      "query": "insurance carriers Florida",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_carrier",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f046",
+      "query": "insurance brokerage Austin TX",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_brokerage",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f047",
+      "query": "Medicare agent near 46204",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "medicare_agent",
+        "zip": "46204",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance",
+        "zip"
+      ]
+    },
+    {
+      "id": "f048",
+      "query": "roofers Miami",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "roofing",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "contractor"
+      ]
+    },
+    {
+      "id": "f049",
+      "query": "kitchen remodeler Fort Lauderdale",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "kitchen_remodel",
+        "city": "Fort Lauderdale",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "contractor"
+      ]
+    },
+    {
+      "id": "f050",
+      "query": "someone to redo my kitchen",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "kitchen_remodel",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": true,
+        "supported": "soft"
+      },
+      "tags": [
+        "critical",
+        "contractor",
+        "ai"
+      ]
+    },
+    {
+      "id": "f051",
+      "query": "roofing contractor Miami FL",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "roofing",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f052",
+      "query": "plumber near me",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "plumbing",
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor",
+        "near_me"
+      ]
+    },
+    {
+      "id": "f053",
+      "query": "electrician Boca Raton",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "electrical",
+        "city": "Boca Raton",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f054",
+      "query": "HVAC contractor Austin TX",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "hvac",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f055",
+      "query": "general contractor Phoenix AZ",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "general_contractor",
+        "city": "Phoenix",
+        "state": "AZ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f056",
+      "query": "pool contractor Miami",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "pool",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f057",
+      "query": "bathroom renovation company Tampa",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "bathroom_remodel",
+        "city": "Tampa",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f058",
+      "query": "painter in Seattle WA",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "painting",
+        "city": "Seattle",
+        "state": "WA",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f059",
+      "query": "flooring installer Orlando",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "flooring",
+        "city": "Orlando",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f060",
+      "query": "roof replacement company NJ",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "roofing",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f061",
+      "query": "air conditioning contractors Florida",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "hvac",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor"
+      ]
+    },
+    {
+      "id": "f062",
+      "query": "solar installer Miami",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "solar",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "contractor",
+        "soft"
+      ]
+    },
+    {
+      "id": "f063",
+      "query": "nursing homes Austin Texas",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "senior"
+      ]
+    },
+    {
+      "id": "f064",
+      "query": "senior care near 78701",
+      "expected": {
+        "hub": "senior",
+        "entityType": null,
+        "zip": "78701",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "partial",
+        "notes": "generic senior care"
+      },
+      "tags": [
+        "critical",
+        "senior"
+      ]
+    },
+    {
+      "id": "f065",
+      "query": "assisted living Austin",
+      "expected": {
+        "hub": "senior",
+        "entityType": "assisted_living",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "critical",
+        "senior"
+      ]
+    },
+    {
+      "id": "f066",
+      "query": "SNF in Florida",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "senior"
+      ]
+    },
+    {
+      "id": "f067",
+      "query": "skilled nursing facility Houston TX",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "city": "Houston",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "senior"
+      ]
+    },
+    {
+      "id": "f068",
+      "query": "nursing facility near me",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "senior",
+        "near_me"
+      ]
+    },
+    {
+      "id": "f069",
+      "query": "memory care in Austin",
+      "expected": {
+        "hub": "senior",
+        "entityType": "memory_care",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": false,
+        "unsupportedReason": "memory_care_national_directory_not_built"
+      },
+      "tags": [
+        "senior",
+        "unsupported"
+      ]
+    },
+    {
+      "id": "f070",
+      "query": "long term care facility Dallas TX",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "city": "Dallas",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "senior"
+      ]
+    },
+    {
+      "id": "f071",
+      "query": "place for my elderly mother near Austin",
+      "expected": {
+        "hub": "senior",
+        "entityType": null,
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": true,
+        "supported": "partial"
+      },
+      "tags": [
+        "senior",
+        "ai"
+      ]
+    },
+    {
+      "id": "f072",
+      "query": "care home New York",
+      "expected": {
+        "hub": "senior",
+        "entityType": "assisted_living",
+        "state": "NY",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "senior"
+      ]
+    },
+    {
+      "id": "f073",
+      "query": "RIA Boca Raton",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "city": "Boca Raton",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "investor"
+      ]
+    },
+    {
+      "id": "f074",
+      "query": "investment advisers in Palm Beach County",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "county": "palm-beach",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "critical",
+        "investor"
+      ]
+    },
+    {
+      "id": "f075",
+      "query": "financial advisor near me",
+      "expected": {
+        "hub": "investor",
+        "entityType": "advisory_firm",
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "critical",
+        "investor"
+      ]
+    },
+    {
+      "id": "f076",
+      "query": "registered investment advisor Miami",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f077",
+      "query": "exempt reporting adviser Florida",
+      "expected": {
+        "hub": "investor",
+        "entityType": "era",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f078",
+      "query": "ERA New York",
+      "expected": {
+        "hub": "investor",
+        "entityType": "era",
+        "state": "NY",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f079",
+      "query": "advisory firm Chicago IL",
+      "expected": {
+        "hub": "investor",
+        "entityType": "advisory_firm",
+        "city": "Chicago",
+        "state": "IL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f080",
+      "query": "wealth manager Miami",
+      "expected": {
+        "hub": "investor",
+        "entityType": "advisory_firm",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f081",
+      "query": "investment firm Boca Raton FL",
+      "expected": {
+        "hub": "investor",
+        "entityType": "advisory_firm",
+        "city": "Boca Raton",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f082",
+      "query": "registered investment adviser Texas",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "state": "TX",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f083",
+      "query": "broker in Tampa",
+      "expected": {
+        "hubCandidates": [
+          "move",
+          "lender",
+          "insurance"
+        ],
+        "city": "Tampa",
+        "state": "FL",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": null
+      },
+      "tags": [
+        "critical",
+        "ambiguous"
+      ]
+    },
+    {
+      "id": "f084",
+      "query": "company near me",
+      "expected": {
+        "hubCandidates": [],
+        "geoPrecision": "near_me",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": null
+      },
+      "tags": [
+        "critical",
+        "ambiguous"
+      ]
+    },
+    {
+      "id": "f085",
+      "query": "moving insurance",
+      "expected": {
+        "hubCandidates": [
+          "move",
+          "insurance"
+        ],
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "special",
+        "notes": "exclusion compound"
+      },
+      "tags": [
+        "critical",
+        "exclusion"
+      ]
+    },
+    {
+      "id": "f086",
+      "query": "senior moving company",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "not senior hub"
+      },
+      "tags": [
+        "critical",
+        "exclusion"
+      ]
+    },
+    {
+      "id": "f087",
+      "query": "I'm moving from New Jersey to Florida and buying a house",
+      "expected": {
+        "primaryHub": "move",
+        "relatedHubs": [
+          "lender"
+        ],
+        "consumerIntent": "life_event",
+        "situationIdHint": "move_buy",
+        "originState": "NJ",
+        "destinationState": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": true,
+        "supported": "planner_bridge"
+      },
+      "tags": [
+        "critical",
+        "multi_hub",
+        "ai"
+      ]
+    },
+    {
+      "id": "f088",
+      "query": "buying a house and need insurance",
+      "expected": {
+        "primaryHub": "lender",
+        "relatedHubs": [
+          "insurance"
+        ],
+        "consumerIntent": "life_event",
+        "situationIdHint": "buy_local",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "planner_bridge"
+      },
+      "tags": [
+        "multi_hub"
+      ]
+    },
+    {
+      "id": "f089",
+      "query": "moving my mother into senior care",
+      "expected": {
+        "primaryHub": "senior",
+        "relatedHubs": [
+          "move"
+        ],
+        "consumerIntent": "life_event",
+        "situationIdHint": "aging_parent",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": true,
+        "supported": "planner_bridge"
+      },
+      "tags": [
+        "multi_hub",
+        "ai"
+      ]
+    },
+    {
+      "id": "f090",
+      "query": "agent in Dallas",
+      "expected": {
+        "hubCandidates": [
+          "insurance"
+        ],
+        "city": "Dallas",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "soft"
+      },
+      "tags": [
+        "ambiguous"
+      ]
+    },
+    {
+      "id": "f091",
+      "query": "carrier in Florida",
+      "expected": {
+        "hubCandidates": [
+          "move",
+          "insurance"
+        ],
+        "state": "FL",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": null
+      },
+      "tags": [
+        "ambiguous"
+      ]
+    },
+    {
+      "id": "f092",
+      "query": "Springfield nursing homes",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "city": "Springfield",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "multi-state city"
+      },
+      "tags": [
+        "geo",
+        "ambiguous"
+      ]
+    },
+    {
+      "id": "f093",
+      "query": "mortage companies Florida",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "misspelling mortage"
+      },
+      "tags": [
+        "misspelling",
+        "lender"
+      ]
+    },
+    {
+      "id": "f094",
+      "query": "contracter Miami",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "misspelling"
+      },
+      "tags": [
+        "misspelling",
+        "contractor"
+      ]
+    },
+    {
+      "id": "f095",
+      "query": "insurence agents NJ",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agent",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "misspelling"
+      },
+      "tags": [
+        "misspelling",
+        "insurance"
+      ]
+    },
+    {
+      "id": "f096",
+      "query": "assited living Texas",
+      "expected": {
+        "hub": "senior",
+        "entityType": "assisted_living",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "soft",
+        "notes": "misspelling"
+      },
+      "tags": [
+        "misspelling",
+        "senior"
+      ]
+    },
+    {
+      "id": "f097",
+      "query": "movers",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "short"
+      ]
+    },
+    {
+      "id": "f098",
+      "query": "help",
+      "expected": {
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": null
+      },
+      "tags": [
+        "short",
+        "malformed"
+      ]
+    },
+    {
+      "id": "f099",
+      "query": "33101 roofers",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "roofing",
+        "zip": "33101",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "zip",
+        "contractor"
+      ]
+    },
+    {
+      "id": "f100",
+      "query": "contractors serving Bergen County NJ",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "county": "bergen",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "contractor",
+        "county"
+      ]
+    },
+    {
+      "id": "f101",
+      "query": "RIA near 33432",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "zip": "33432",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor",
+        "zip"
+      ]
+    },
+    {
+      "id": "f102",
+      "query": "verify USDOT",
+      "expected": {
+        "hub": "move",
+        "consumerIntent": "verify",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true,
+        "notes": "tool soft-route"
+      },
+      "tags": [
+        "move",
+        "verify"
+      ]
+    },
+    {
+      "id": "f103",
+      "query": "NMLS lender lookup Florida",
+      "expected": {
+        "hub": "lender",
+        "consumerIntent": "verify",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender",
+        "verify"
+      ]
+    },
+    {
+      "id": "f104",
+      "query": "someone to fix my roof after storm damage",
+      "expected": {
+        "hub": "contractor",
+        "entityType": "contractor",
+        "category": "roofing",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": true,
+        "supported": true
+      },
+      "tags": [
+        "contractor",
+        "ai"
+      ]
+    },
+    {
+      "id": "f105",
+      "query": "who can help me refinance because my payment is too high",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "category": "refinance",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": true,
+        "supported": true
+      },
+      "tags": [
+        "lender",
+        "ai"
+      ]
+    },
+    {
+      "id": "f106",
+      "query": "my mother cannot safely live alone anymore and I need a place near Austin",
+      "expected": {
+        "hub": "senior",
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": true,
+        "supported": "partial"
+      },
+      "tags": [
+        "senior",
+        "ai"
+      ]
+    },
+    {
+      "id": "f107",
+      "query": "mortgage companies Springfield",
+      "expected": {
+        "hub": "lender",
+        "entityType": "mortgage_company",
+        "city": "Springfield",
+        "confidence": "low",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "lender",
+        "geo"
+      ]
+    },
+    {
+      "id": "f108",
+      "query": "moving to Florida and need a mortgage",
+      "expected": {
+        "primaryHub": "move",
+        "relatedHubs": [
+          "lender"
+        ],
+        "consumerIntent": "life_event",
+        "situationIdHint": "move_buy",
+        "destinationState": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": "planner_bridge"
+      },
+      "tags": [
+        "multi_hub"
+      ]
+    },
+    {
+      "id": "f109",
+      "query": "renovating a home I just bought",
+      "expected": {
+        "primaryHub": "contractor",
+        "relatedHubs": [
+          "lender"
+        ],
+        "consumerIntent": "life_event",
+        "situationIdHint": "hire_contractor",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": true,
+        "supported": "planner_bridge"
+      },
+      "tags": [
+        "multi_hub",
+        "ai"
+      ]
+    },
+    {
+      "id": "f110",
+      "query": "MCA companies Florida",
+      "expected": {
+        "hub": "lender",
+        "supported": false,
+        "unsupportedReason": "mca_not_live",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false
+      },
+      "tags": [
+        "unsupported",
+        "lender"
+      ]
+    },
+    {
+      "id": "f111",
+      "query": "mutual funds Boca Raton",
+      "expected": {
+        "hub": "investor",
+        "supported": false,
+        "unsupportedReason": "funds_not_live_search",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false
+      },
+      "tags": [
+        "unsupported",
+        "investor"
+      ]
+    },
+    {
+      "id": "f112",
+      "query": "home inspector Miami",
+      "expected": {
+        "hub": "contractor",
+        "supported": false,
+        "unsupportedReason": "trade_not_in_controlled_taxonomy",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false
+      },
+      "tags": [
+        "unsupported",
+        "contractor"
+      ]
+    },
+    {
+      "id": "f113",
+      "query": "Keansburg New Jersey movers",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "city": "Keansburg",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move",
+        "pattern"
+      ]
+    },
+    {
+      "id": "f114",
+      "query": "Austin TX senior facility",
+      "expected": {
+        "hub": "senior",
+        "entityType": null,
+        "city": "Austin",
+        "state": "TX",
+        "confidence": "medium",
+        "requiresClarification": true,
+        "requiresAI": false,
+        "supported": "partial"
+      },
+      "tags": [
+        "senior"
+      ]
+    },
+    {
+      "id": "f115",
+      "query": "Palm Beach County FL investment adviser",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "county": "palm-beach",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "investor"
+      ]
+    },
+    {
+      "id": "f116",
+      "query": "Indianapolis insurance agents",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agent",
+        "city": "Indianapolis",
+        "state": "IN",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f117",
+      "query": "07734 movers",
+      "expected": {
+        "hub": "move",
+        "entityType": "mover",
+        "zip": "07734",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "move",
+        "zip"
+      ]
+    },
+    {
+      "id": "f118",
+      "query": "flood insurance Florida",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "category": "flood",
+        "state": "FL",
+        "confidence": "medium",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    },
+    {
+      "id": "f119",
+      "query": "umbrella insurance agency NJ",
+      "expected": {
+        "hub": "insurance",
+        "entityType": "insurance_agency",
+        "category": "umbrella",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "requiresAI": false,
+        "supported": true
+      },
+      "tags": [
+        "insurance"
+      ]
+    }
+  ]
+}
