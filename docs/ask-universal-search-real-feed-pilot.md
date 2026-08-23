@@ -2,6 +2,8 @@
 
 **Status:** Engine/data/handoff layer only. No customer-facing Universal Search UI. Not deployed.
 
+**006B.1:** Integrated onto current `origin/main` (VISUAL-009 chassis freeze) without rolling back newer Ask chrome/docs. Search engine remains additive.
+
 ASK-SEARCH-006B.0 importer did **not** exist in reachable history. This task adds a generic `ask-network-discovery-v1` loader on top of ASK-SEARCH-003/004/005.
 
 ## Architecture reused
