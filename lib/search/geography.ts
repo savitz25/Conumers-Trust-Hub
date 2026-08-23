@@ -12,25 +12,26 @@ export type GeoHit = TrustHubSearchLocation & {
 };
 
 /** Fixture ZIP → state (+ optional city). Not a national ZIP DB. */
-const ZIP_STUB: Record<string, { stateCode: string; cityName?: string }> = {
-  '07734': { stateCode: 'NJ', cityName: 'Keansburg' },
-  '33101': { stateCode: 'FL', cityName: 'Miami' },
-  '33432': { stateCode: 'FL', cityName: 'Boca Raton' },
+const ZIP_STUB: Record<string, { stateCode: string; cityName?: string; countySlug?: string }> = {
+  '07734': { stateCode: 'NJ', cityName: 'Keansburg', countySlug: 'monmouth' },
+  '33101': { stateCode: 'FL', cityName: 'Miami', countySlug: 'miami-dade' },
+  '33432': { stateCode: 'FL', cityName: 'Boca Raton', countySlug: 'palm-beach' },
   '46204': { stateCode: 'IN', cityName: 'Indianapolis' },
   '78701': { stateCode: 'TX', cityName: 'Austin' },
 };
 
 /** Well-known cities used by the acceptance corpus (unique or default state). */
-const CITY_STUB: Record<string, { stateCode: string; cityName: string }> = {
-  keansburg: { stateCode: 'NJ', cityName: 'Keansburg' },
-  miami: { stateCode: 'FL', cityName: 'Miami' },
-  tampa: { stateCode: 'FL', cityName: 'Tampa' },
-  orlando: { stateCode: 'FL', cityName: 'Orlando' },
-  'fort lauderdale': { stateCode: 'FL', cityName: 'Fort Lauderdale' },
-  'boca raton': { stateCode: 'FL', cityName: 'Boca Raton' },
+const CITY_STUB: Record<string, { stateCode: string; cityName: string; countySlug?: string }> = {
+  keansburg: { stateCode: 'NJ', cityName: 'Keansburg', countySlug: 'monmouth' },
+  miami: { stateCode: 'FL', cityName: 'Miami', countySlug: 'miami-dade' },
+  tampa: { stateCode: 'FL', cityName: 'Tampa', countySlug: 'hillsborough' },
+  orlando: { stateCode: 'FL', cityName: 'Orlando', countySlug: 'orange' },
+  jacksonville: { stateCode: 'FL', cityName: 'Jacksonville', countySlug: 'duval' },
+  'fort lauderdale': { stateCode: 'FL', cityName: 'Fort Lauderdale', countySlug: 'broward' },
+  'boca raton': { stateCode: 'FL', cityName: 'Boca Raton', countySlug: 'palm-beach' },
   austin: { stateCode: 'TX', cityName: 'Austin' },
   houston: { stateCode: 'TX', cityName: 'Houston' },
-  dallas: { stateCode: 'TX', cityName: 'Dallas' },
+  dallas: { stateCode: 'TX', cityName: 'Dallas', countySlug: 'dallas' },
   phoenix: { stateCode: 'AZ', cityName: 'Phoenix' },
   seattle: { stateCode: 'WA', cityName: 'Seattle' },
   chicago: { stateCode: 'IL', cityName: 'Chicago' },
@@ -46,6 +47,9 @@ const COUNTY_STUB: Record<string, { stateCode: string; countySlug: string }> = {
   'palm beach county': { stateCode: 'FL', countySlug: 'palm-beach' },
   'miami-dade county': { stateCode: 'FL', countySlug: 'miami-dade' },
   'miami dade county': { stateCode: 'FL', countySlug: 'miami-dade' },
+  'hillsborough county': { stateCode: 'FL', countySlug: 'hillsborough' },
+  'orange county': { stateCode: 'FL', countySlug: 'orange' },
+  'broward county': { stateCode: 'FL', countySlug: 'broward' },
 };
 
 function locFromState(code: string, precision: GeoPrecision, extra: Partial<TrustHubSearchLocation> = {}): TrustHubSearchLocation {
@@ -119,6 +123,7 @@ export function extractGeography(normalized: string): {
         stateName: meta.stateName,
         cityName: stub.cityName,
         citySlug: stub.cityName?.toLowerCase().replace(/\s+/g, '-'),
+        countySlug: stub.countySlug,
         precision: 'zip',
         raw: zip,
       };
@@ -183,6 +188,7 @@ export function extractGeography(normalized: string): {
       stateCode: meta.stateCode,
       stateSlug: meta.stateSlug,
       stateName: meta.stateName,
+      countySlug: stub.countySlug,
       precision: 'city',
       raw: m[0],
     };

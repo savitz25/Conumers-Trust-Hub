@@ -270,7 +270,7 @@ export function buildSearchBackLabel(intent: TrustHubSearchIntent): string | und
   }
   if (hub === 'contractor') {
     const trade = intent.category ? intent.category.replace(/_/g, ' ') : 'contractors';
-    return `Back to ${trade} serving ${place}`;
+    return `Back to ${trade} in ${place}`;
   }
   if (hub === 'senior' || entity === 'nursing_facility') {
     return `Back to senior care in ${place}`;

@@ -4,11 +4,7 @@
  */
 
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from '../../network/registry';
-import {
-  INSURANCE_DESTINATION_SLUGS,
-  MOVE_CITY_HUBS,
-  normalizeState,
-} from '../../orchestration/journey-links';
+import { MOVE_CITY_HUBS, normalizeState } from '../../orchestration/journey-links';
 import {
   analyticsFromContext,
   buildSearchBackLabel,
@@ -209,21 +205,8 @@ export const lenderAdapter: HubSearchAdapter = {
   maturity: 'ready',
   buildSearchHandoff(intent) {
     const ctx = intentToHandoffContext(intent, { journey: 'directory' });
-    const stateSlug = stateSlugFromIntent(intent);
-    const county = intent.location?.countySlug;
-
-    let path = '/local-lenders';
-    if (intent.entityType === 'bank') path = '/fdic-insured-banks';
-    else if (intent.entityType === 'auto_loan_company') path = '/auto-loan-companies';
-    else if (intent.consumerIntent === 'verify') path = '/local-lenders';
-
-    if (intent.entityType !== 'bank' && intent.entityType !== 'auto_loan_company') {
-      if (stateSlug && county) path = `/local-lenders/${stateSlug}/${county}`;
-      else if (stateSlug) path = `/local-lenders/${stateSlug}`;
-    } else if (stateSlug) {
-      path = `${path}/${stateSlug}`;
-    }
-
+    const path =
+      intent.entityType === 'auto_loan_company' ? '/auto-loan-companies' : '/from-ask';
     return result('lender', 'view_more', path, ctx, 'ready', intent);
   },
   buildEntityHandoff(entity, intent) {
@@ -258,19 +241,7 @@ export const insuranceAdapter: HubSearchAdapter = {
   maturity: 'ready',
   buildSearchHandoff(intent) {
     const ctx = intentToHandoffContext(intent, { journey: 'directory' });
-    const stateSlug = stateSlugFromIntent(intent);
-
-    let path = '/destinations';
-    if (intent.entityType === 'insurance_carrier') path = '/carriers';
-    else if (intent.entityType === 'medicare_agent' || intent.category === 'medicare') {
-      path = '/tools/medicare-plan-finder';
-    } else if (stateSlug && INSURANCE_DESTINATION_SLUGS.has(stateSlug)) {
-      path = `/destinations/${stateSlug}`;
-    } else if (stateSlug) {
-      path = '/destinations';
-    }
-
-    return result('insurance', 'view_more', path, ctx, 'ready', intent);
+    return result('insurance', 'view_more', '/from-ask', ctx, 'ready', intent);
   },
   buildEntityHandoff(entity, intent) {
     const fallback =
@@ -316,19 +287,14 @@ export const contractorAdapter: HubSearchAdapter = {
       general_contractor: 'general-contractors',
     };
 
-    let path = '/';
-    if (stateSlug === 'florida' && category && flTrade[category]) {
-      path = `/florida/${flTrade[category]}`;
-    } else if (stateSlug === 'florida') {
-      path = '/florida';
-    } else if (stateSlug === 'arizona') {
-      path = '/arizona';
-    } else if (intent.consumerIntent === 'verify') {
-      path = '/verify';
-    }
+    const path = '/from-ask';
+    const ready =
+      stateSlug === 'florida' && category && flTrade[category]
+        ? 'Florida bounded READY category — specialist /from-ask owns routing'
+        : 'Structured context attached; Hub-wide Contractor remains soft_handoff';
 
     return result('contractor', 'view_more', path, ctx, 'soft_handoff', intent, {
-      notes: 'Structured context attached; Hub may soft-seed until deep SERP routes exist',
+      notes: ready,
     });
   },
   buildEntityHandoff(entity, intent) {

@@ -53,11 +53,8 @@ export function validateDiscoveryEntity(
           message: `hub mismatch: id=${parsed.hub} field=${e.hub}`,
         });
       }
-      if (parsed.sourceEntityId !== e.source_entity_id) {
-        issues.push({
-          path: `${path}.network_entity_id`,
-          message: 'source_entity_id must match network_entity_id suffix',
-        });
+      if (!e.source_entity_id) {
+        issues.push({ path: `${path}.source_entity_id`, message: 'required' });
       }
     } catch (err) {
       issues.push({

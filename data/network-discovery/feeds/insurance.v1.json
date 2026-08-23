@@ -1,0 +1,5043 @@
+{
+  "schema_version": "ask-network-discovery-v1",
+  "hub": "insurance",
+  "generated_at": "2026-08-23T13:10:30.207Z",
+  "source_version": "git:088378ea533bcd7ffc04aadb0fbeee5353829a5c|providers:106372|updated:2026-08-15T18:15:12.013556+00:00|carriers:14",
+  "entity_count": 180,
+  "fingerprint": "f3c3588439bba150b779ef547f5c8f0ab1891e8382b327187e3fa8503a4ed874",
+  "banner": "PILOT / NOT YET CONSUMED BY ASK PRODUCTION",
+  "entities": [
+    {
+      "network_id": "insurance:carrier:aetna",
+      "source_table": "carrier_registry",
+      "source_pk": "aetna",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Aetna",
+      "slug": "aetna",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/aetna",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:ambetter",
+      "source_table": "carrier_registry",
+      "source_pk": "ambetter",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Ambetter",
+      "slug": "ambetter",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/ambetter",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:careplus",
+      "source_table": "carrier_registry",
+      "source_pk": "careplus",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "CarePlus",
+      "slug": "careplus",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/careplus",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:cigna",
+      "source_table": "carrier_registry",
+      "source_pk": "cigna",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Cigna",
+      "slug": "cigna",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/cigna",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:doctors-healthcare-plans",
+      "source_table": "carrier_registry",
+      "source_pk": "doctors-healthcare-plans",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Doctors HealthCare Plans",
+      "slug": "doctors-healthcare-plans",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/doctors-healthcare-plans",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:florida-blue",
+      "source_table": "carrier_registry",
+      "source_pk": "florida-blue",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Florida Blue",
+      "slug": "florida-blue",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/florida-blue",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:healthsun",
+      "source_table": "carrier_registry",
+      "source_pk": "healthsun",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "HealthSun",
+      "slug": "healthsun",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/healthsun",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:humana",
+      "source_table": "carrier_registry",
+      "source_pk": "humana",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Humana",
+      "slug": "humana",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/humana",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:kaiser-permanente",
+      "source_table": "carrier_registry",
+      "source_pk": "kaiser-permanente",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Kaiser Permanente",
+      "slug": "kaiser-permanente",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/kaiser-permanente",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:leon-health",
+      "source_table": "carrier_registry",
+      "source_pk": "leon-health",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Leon Health",
+      "slug": "leon-health",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/leon-health",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:molina",
+      "source_table": "carrier_registry",
+      "source_pk": "molina",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Molina Healthcare",
+      "slug": "molina",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/molina",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:oscar",
+      "source_table": "carrier_registry",
+      "source_pk": "oscar",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Oscar",
+      "slug": "oscar",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/oscar",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:unitedhealthcare",
+      "source_table": "carrier_registry",
+      "source_pk": "unitedhealthcare",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "UnitedHealthcare",
+      "slug": "unitedhealthcare",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/unitedhealthcare",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:carrier:wellcare",
+      "source_table": "carrier_registry",
+      "source_pk": "wellcare",
+      "entity_type": "insurance_carrier",
+      "source_provider_type": "carrier",
+      "display_name": "Wellcare",
+      "slug": "wellcare",
+      "profile_url": "https://www.insurancetrusthub.com/carriers/wellcare",
+      "physical_location": {
+        "city": null,
+        "state": null,
+        "postal_code": null,
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [],
+      "license_state": null,
+      "categories": [],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "carrier_slug"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000031",
+      "source_table": "providers",
+      "source_pk": "9760f1eb-b013-4966-b09b-6c01e6604ed3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "A-BEST AIR & HEAT INC",
+      "slug": "a-best-air-heat-inc-a000031",
+      "profile_url": "https://www.insurancetrusthub.com/providers/a-best-air-heat-inc-a000031",
+      "physical_location": {
+        "city": "WEST MELBOURNE",
+        "state": "FL",
+        "postal_code": "32904",
+        "county": "Brevard",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000620",
+      "source_table": "providers",
+      "source_pk": "a1ff85d0-b228-48c0-be4f-65da35d15987",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ABSOLUTE BEST, INC.",
+      "slug": "absolute-best-inc-a000620",
+      "profile_url": "https://www.insurancetrusthub.com/providers/absolute-best-inc-a000620",
+      "physical_location": {
+        "city": "FORT MYERS",
+        "state": "FL",
+        "postal_code": "33908",
+        "county": "Lee",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000694",
+      "source_table": "providers",
+      "source_pk": "e8b54a50-3a6b-4e09-b8ae-40e090b04339",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ACE REFRIGERATION INC",
+      "slug": "ace-refrigeration-inc-a000694",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ace-refrigeration-inc-a000694",
+      "physical_location": {
+        "city": "LAKELAND",
+        "state": "FL",
+        "postal_code": "33801",
+        "county": "Polk",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000968",
+      "source_table": "providers",
+      "source_pk": "b5901c40-3dfa-411d-ad0a-02d25247c957",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ACTION AIR OF FLORIDA",
+      "slug": "action-air-of-florida-a000968",
+      "profile_url": "https://www.insurancetrusthub.com/providers/action-air-of-florida-a000968",
+      "physical_location": {
+        "city": "ORLANDO",
+        "state": "FL",
+        "postal_code": "32835",
+        "county": "Orange",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000974",
+      "source_table": "providers",
+      "source_pk": "14d4ade6-30c7-47ca-960a-93c5a5dae545",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ACTION JET SPORTS INC",
+      "slug": "action-jet-sports-inc-a000974",
+      "profile_url": "https://www.insurancetrusthub.com/providers/action-jet-sports-inc-a000974",
+      "physical_location": {
+        "city": "BRADENTON",
+        "state": "FL",
+        "postal_code": "34208",
+        "county": "Manatee",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A000993",
+      "source_table": "providers",
+      "source_pk": "f72d30ba-c8b4-42d7-b653-1c2d64f11ac2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ACU-TEMP REFRIGERATION INC",
+      "slug": "acu-temp-refrigeration-inc-a000993",
+      "profile_url": "https://www.insurancetrusthub.com/providers/acu-temp-refrigeration-inc-a000993",
+      "physical_location": {
+        "city": "LAKELAND",
+        "state": "FL",
+        "postal_code": "33801",
+        "county": "Polk",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A001863",
+      "source_table": "providers",
+      "source_pk": "cbf1863f-3453-449b-882e-a8d86cca0d22",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ADMIRAL AIR OF SARASOTA COUNTY INC",
+      "slug": "admiral-air-of-sarasota-county-inc-a001863",
+      "profile_url": "https://www.insurancetrusthub.com/providers/admiral-air-of-sarasota-county-inc-a001863",
+      "physical_location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "postal_code": "34234",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A001864",
+      "source_table": "providers",
+      "source_pk": "39e9c9e8-77b7-4240-88b4-0292de195b02",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ADMIRAL TRAVEL INTERNATIONAL DBA ADMIRAL",
+      "slug": "admiral-travel-international-dba-admiral-a001864",
+      "profile_url": "https://www.insurancetrusthub.com/providers/admiral-travel-international-dba-admiral-a001864",
+      "physical_location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "postal_code": "34236",
+        "county": "Sarasota",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A001916",
+      "source_table": "providers",
+      "source_pk": "02a36845-4565-437c-8590-5bd17e2fcdae",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ADVANCED AIR & HEAT",
+      "slug": "advanced-air-heat-a001916",
+      "profile_url": "https://www.insurancetrusthub.com/providers/advanced-air-heat-a001916",
+      "physical_location": {
+        "city": "EDGEWATER",
+        "state": "FL",
+        "postal_code": "32132",
+        "county": "Volusia",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A001933",
+      "source_table": "providers",
+      "source_pk": "84653be5-9d8a-42f5-8550-4a35dcda2341",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ADVANTAGE AC OF THE TREASURE COAST INC",
+      "slug": "advantage-ac-of-the-treasure-coast-inc-a001933",
+      "profile_url": "https://www.insurancetrusthub.com/providers/advantage-ac-of-the-treasure-coast-inc-a001933",
+      "physical_location": {
+        "city": "FORT PIERCE",
+        "state": "FL",
+        "postal_code": "34982",
+        "county": "St. Lucie",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A001994",
+      "source_table": "providers",
+      "source_pk": "6aae70a1-a493-41ce-a94b-8fcc0b9744e3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AFFORDABLE INC",
+      "slug": "affordable-inc-a001994",
+      "profile_url": "https://www.insurancetrusthub.com/providers/affordable-inc-a001994",
+      "physical_location": {
+        "city": "OLDSMAR",
+        "state": "FL",
+        "postal_code": "34677",
+        "county": "Pinellas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002035",
+      "source_table": "providers",
+      "source_pk": "744491c7-f5fe-42d7-8fd2-fa5e2658d099",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AGGRESSIVE APPLIANCE S",
+      "slug": "aggressive-appliance-s-a002035",
+      "profile_url": "https://www.insurancetrusthub.com/providers/aggressive-appliance-s-a002035",
+      "physical_location": {
+        "city": "ORLANDO",
+        "state": "FL",
+        "postal_code": "32805",
+        "county": "Orange",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002326",
+      "source_table": "providers",
+      "source_pk": "8e2ebe8c-9d5a-49c6-82be-a19111298078",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIG AEROSPACE INSURANCE SERVICES INC",
+      "slug": "aig-aerospace-insurance-services-inc-a002326",
+      "profile_url": "https://www.insurancetrusthub.com/providers/aig-aerospace-insurance-services-inc-a002326",
+      "physical_location": {
+        "city": "ATLANTA",
+        "state": "GA",
+        "postal_code": "30361",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002391",
+      "source_table": "providers",
+      "source_pk": "bcc3d83b-818b-42f3-91c3-9f90e3a880ee",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR AND ENERGY INC",
+      "slug": "air-and-energy-inc-a002391",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-and-energy-inc-a002391",
+      "physical_location": {
+        "city": "HOLMES BEACH",
+        "state": "FL",
+        "postal_code": "34217",
+        "county": "Manatee",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002400",
+      "source_table": "providers",
+      "source_pk": "7dd82997-48be-4f7d-b550-88c7d62eb970",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR CARE SYSTEMS INC",
+      "slug": "air-care-systems-inc-a002400",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-care-systems-inc-a002400",
+      "physical_location": {
+        "city": "COCOA",
+        "state": "FL",
+        "postal_code": "32922",
+        "county": "Brevard",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002401",
+      "source_table": "providers",
+      "source_pk": "10456561-b196-4d5c-bddb-f4fc2eaa2fe4",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR COMFORT SERVICES INC",
+      "slug": "air-comfort-services-inc-a002401",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-comfort-services-inc-a002401",
+      "physical_location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "postal_code": "34243",
+        "county": "Sarasota",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002408",
+      "source_table": "providers",
+      "source_pk": "c329e2c6-7cbe-4933-a937-1088d9b5ee61",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR DESIGN SYSTEMS I NC",
+      "slug": "air-design-systems-i-nc-a002408",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-design-systems-i-nc-a002408",
+      "physical_location": {
+        "city": "PENSACOLA",
+        "state": "FL",
+        "postal_code": "32505",
+        "county": "Escambia",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002416",
+      "source_table": "providers",
+      "source_pk": "13b22067-03fc-4561-9a06-29c435bbf122",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR LAND & SEA TRAVEL AGENCY INC",
+      "slug": "air-land-sea-travel-agency-inc-a002416",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-land-sea-travel-agency-inc-a002416",
+      "physical_location": {
+        "city": "COCOA BEACH",
+        "state": "FL",
+        "postal_code": "32931",
+        "county": "Brevard",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002420",
+      "source_table": "providers",
+      "source_pk": "87e4f6aa-2752-43e6-b6b2-ba91cc8b8f45",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR QUALITY CONTROL INC",
+      "slug": "air-quality-control-inc-a002420",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-quality-control-inc-a002420",
+      "physical_location": {
+        "city": "SAINT PETERSBURG",
+        "state": "FL",
+        "postal_code": "33714",
+        "county": "Pinellas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002424",
+      "source_table": "providers",
+      "source_pk": "5077da7d-64f0-4dd0-8b62-885a61383918",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR SYSTEMS OF DAYTO NA INC",
+      "slug": "air-systems-of-dayto-na-inc-a002424",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-systems-of-dayto-na-inc-a002424",
+      "physical_location": {
+        "city": "PORT ORANGE",
+        "state": "FL",
+        "postal_code": "32127",
+        "county": "Volusia",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002425",
+      "source_table": "providers",
+      "source_pk": "f04094b7-14e5-4cb7-880f-8c527aa5b1d2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR WEST A/C INC",
+      "slug": "air-west-a-c-inc-a002425",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-west-a-c-inc-a002425",
+      "physical_location": {
+        "city": "CLEARWATER",
+        "state": "FL",
+        "postal_code": "33765",
+        "county": "Pinellas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002427",
+      "source_table": "providers",
+      "source_pk": "1649913d-2f66-4a24-9119-bb8cd519732f",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIR-CON SERVICE INC",
+      "slug": "air-con-service-inc-a002427",
+      "profile_url": "https://www.insurancetrusthub.com/providers/air-con-service-inc-a002427",
+      "physical_location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "postal_code": "33175",
+        "county": "Miami-Dade",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002435",
+      "source_table": "providers",
+      "source_pk": "50f56d83-4b8d-4b0a-a9fe-92cae7f7a154",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIRCOM OF TAMPA INC",
+      "slug": "aircom-of-tampa-inc-a002435",
+      "profile_url": "https://www.insurancetrusthub.com/providers/aircom-of-tampa-inc-a002435",
+      "physical_location": {
+        "city": "SAFETY HARBOR",
+        "state": "FL",
+        "postal_code": "34695",
+        "county": "Pinellas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002446",
+      "source_table": "providers",
+      "source_pk": "c8fe901c-8075-483e-aa89-464cc48e622c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AIRMARK AIR CONDITIO NING",
+      "slug": "airmark-air-conditio-ning-a002446",
+      "profile_url": "https://www.insurancetrusthub.com/providers/airmark-air-conditio-ning-a002446",
+      "physical_location": {
+        "city": "CAPE CORAL",
+        "state": "FL",
+        "postal_code": "33990",
+        "county": "Lee",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002593",
+      "source_table": "providers",
+      "source_pk": "44d3d8c6-3c86-48a4-9a5d-18d4bf4d3f8d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ALADDINS MAGIC INC",
+      "slug": "aladdins-magic-inc-a002593",
+      "profile_url": "https://www.insurancetrusthub.com/providers/aladdins-magic-inc-a002593",
+      "physical_location": {
+        "city": "MELBOURNE",
+        "state": "FL",
+        "postal_code": "32904",
+        "county": "Brevard",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A002787",
+      "source_table": "providers",
+      "source_pk": "7dd80b75-f29a-4274-9352-5e7f08deb33f",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ALBERS APPLIANCE INC",
+      "slug": "albers-appliance-inc-a002787",
+      "profile_url": "https://www.insurancetrusthub.com/providers/albers-appliance-inc-a002787",
+      "physical_location": {
+        "city": "HOLLYWOOD",
+        "state": "FL",
+        "postal_code": "33020",
+        "county": "Broward",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A003671",
+      "source_table": "providers",
+      "source_pk": "163dabb7-7a8a-43ba-b305-26ec1a407747",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ALL AMERICA AIR COND & REFRIG INC",
+      "slug": "all-america-air-cond-refrig-inc-a003671",
+      "profile_url": "https://www.insurancetrusthub.com/providers/all-america-air-cond-refrig-inc-a003671",
+      "physical_location": {
+        "city": "HIALEAH",
+        "state": "FL",
+        "postal_code": "33016",
+        "county": "Miami-Dade",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:FL:A003718",
+      "source_table": "providers",
+      "source_pk": "12445324-e4d3-4177-b6f2-c98979458187",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ALL TRAVEL&CRUISE CTR DBA RUNAWAY TOURS",
+      "slug": "all-travel-cruise-ctr-dba-runaway-tours-a003718",
+      "profile_url": "https://www.insurancetrusthub.com/providers/all-travel-cruise-ctr-dba-runaway-tours-a003718",
+      "physical_location": {
+        "city": "SPRING HILL",
+        "state": "FL",
+        "postal_code": "34606",
+        "county": "Hernando",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "FL"
+      ],
+      "license_state": "FL",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10000769",
+      "source_table": "providers",
+      "source_pk": "e58aaeb2-5139-4e24-a520-3b52141dd86c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "THE LLOYD GROUP-BENEFIT CONSULTANTS LLC",
+      "slug": "the-lloyd-group-benefit-consultants-llc-10000769",
+      "profile_url": "https://www.insurancetrusthub.com/providers/the-lloyd-group-benefit-consultants-llc-10000769",
+      "physical_location": {
+        "city": "Madison",
+        "state": "MS",
+        "postal_code": "39110",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10001030",
+      "source_table": "providers",
+      "source_pk": "adc34f95-91f5-4f8f-940a-db3a0b0cbd10",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SOUTHGROUP BENEFITS CONSULTANTS LLC",
+      "slug": "southgroup-benefits-consultants-llc-10001030",
+      "profile_url": "https://www.insurancetrusthub.com/providers/southgroup-benefits-consultants-llc-10001030",
+      "physical_location": {
+        "city": "Ridgeland",
+        "state": "MS",
+        "postal_code": "39158",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10001270",
+      "source_table": "providers",
+      "source_pk": "51914914-eaa9-4420-ac61-65e421aa73a7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "TERRY M. CRANE CORPORATION",
+      "slug": "terry-m-crane-corporation-10001270",
+      "profile_url": "https://www.insurancetrusthub.com/providers/terry-m-crane-corporation-10001270",
+      "physical_location": {
+        "city": "Moss Point",
+        "state": "MS",
+        "postal_code": "39562",
+        "county": "Jackson",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10001611",
+      "source_table": "providers",
+      "source_pk": "1e3f59d8-4740-4d59-8a47-2d571a2a53ca",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PERCY BLAND INSURANCE AGENCY INC.",
+      "slug": "percy-bland-insurance-agency-inc-10001611",
+      "profile_url": "https://www.insurancetrusthub.com/providers/percy-bland-insurance-agency-inc-10001611",
+      "physical_location": {
+        "city": "Meridian",
+        "state": "MS",
+        "postal_code": "39301",
+        "county": "Lauderdale",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10002003",
+      "source_table": "providers",
+      "source_pk": "518c7dee-4f8d-45d8-aff1-55c288bcf318",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SENIOR CARE PLUS INC",
+      "slug": "senior-care-plus-inc-10002003",
+      "profile_url": "https://www.insurancetrusthub.com/providers/senior-care-plus-inc-10002003",
+      "physical_location": {
+        "city": "Pearl",
+        "state": "MS",
+        "postal_code": "39208",
+        "county": "Rankin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10002392",
+      "source_table": "providers",
+      "source_pk": "a50c7118-d9ab-4c47-b2a2-d33336979cef",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ROBERT GAINES INSURANCE AGENCY INC.",
+      "slug": "robert-gaines-insurance-agency-inc-10002392",
+      "profile_url": "https://www.insurancetrusthub.com/providers/robert-gaines-insurance-agency-inc-10002392",
+      "physical_location": {
+        "city": "Tupelo",
+        "state": "MS",
+        "postal_code": "38801",
+        "county": "Lee",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10003060",
+      "source_table": "providers",
+      "source_pk": "1f5c3669-5f89-4cca-a676-ccfae6778bc1",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PEARSON & COMPANY INSURANCE INC",
+      "slug": "pearson-company-insurance-inc-10003060",
+      "profile_url": "https://www.insurancetrusthub.com/providers/pearson-company-insurance-inc-10003060",
+      "physical_location": {
+        "city": "Meridian",
+        "state": "MS",
+        "postal_code": "39301",
+        "county": "Lauderdale",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10003697",
+      "source_table": "providers",
+      "source_pk": "b088dc59-fcbf-4fdb-8f2c-90d18ca5753d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CHANCELLOR FUNERAL HOME OF BYRAM LLC",
+      "slug": "chancellor-funeral-home-of-byram-llc-10003697",
+      "profile_url": "https://www.insurancetrusthub.com/providers/chancellor-funeral-home-of-byram-llc-10003697",
+      "physical_location": {
+        "city": "Byram",
+        "state": "MS",
+        "postal_code": "39272",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10003835",
+      "source_table": "providers",
+      "source_pk": "f05cbcaa-9627-4731-873d-84f40389745d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "FRAZIER AGENCY LLC",
+      "slug": "frazier-agency-llc-10003835",
+      "profile_url": "https://www.insurancetrusthub.com/providers/frazier-agency-llc-10003835",
+      "physical_location": {
+        "city": "Jackson",
+        "state": "MS",
+        "postal_code": "39209",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10003881",
+      "source_table": "providers",
+      "source_pk": "fe69509e-3442-4b8f-8ac2-e5b35a8557b9",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MWG DIRECTINC",
+      "slug": "mwg-directinc-10003881",
+      "profile_url": "https://www.insurancetrusthub.com/providers/mwg-directinc-10003881",
+      "physical_location": {
+        "city": "Jackson",
+        "state": "MS",
+        "postal_code": "39236",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004192",
+      "source_table": "providers",
+      "source_pk": "3a5fb91d-3fa1-4d84-ba28-0d975fbc3733",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ROSS GIBSON & ASSOCIATES LLC",
+      "slug": "ross-gibson-associates-llc-10004192",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ross-gibson-associates-llc-10004192",
+      "physical_location": {
+        "city": "Jackson",
+        "state": "MS",
+        "postal_code": "39206",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004358",
+      "source_table": "providers",
+      "source_pk": "45d972a1-ab12-41b7-95c5-99af06aa2346",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BRADFORD AGENCY INC.",
+      "slug": "bradford-agency-inc-10004358",
+      "profile_url": "https://www.insurancetrusthub.com/providers/bradford-agency-inc-10004358",
+      "physical_location": {
+        "city": "Biloxi",
+        "state": "MS",
+        "postal_code": "39533",
+        "county": "Harrison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004536",
+      "source_table": "providers",
+      "source_pk": "6fce6736-1236-4c2f-90f0-6895ea2923ca",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "THE JAMES AGENCY LLC",
+      "slug": "the-james-agency-llc-10004536",
+      "profile_url": "https://www.insurancetrusthub.com/providers/the-james-agency-llc-10004536",
+      "physical_location": {
+        "city": "Hattiesburg",
+        "state": "MS",
+        "postal_code": "39402",
+        "county": "Forrest",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004541",
+      "source_table": "providers",
+      "source_pk": "283a5a84-f046-4b40-8283-4592c365f801",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BROWN & BROWN OF MISSISSIPPI LLC",
+      "slug": "brown-brown-of-mississippi-llc-10004541",
+      "profile_url": "https://www.insurancetrusthub.com/providers/brown-brown-of-mississippi-llc-10004541",
+      "physical_location": {
+        "city": "Gulfport",
+        "state": "MS",
+        "postal_code": "39501",
+        "county": "Harrison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004778",
+      "source_table": "providers",
+      "source_pk": "2ec8c5b7-ed09-4100-9b38-b4aef3ab1c24",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "FORTSON GROUP INC",
+      "slug": "fortson-group-inc-10004778",
+      "profile_url": "https://www.insurancetrusthub.com/providers/fortson-group-inc-10004778",
+      "physical_location": {
+        "city": "Jackson",
+        "state": "MS",
+        "postal_code": "39207",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10004872",
+      "source_table": "providers",
+      "source_pk": "8458e03f-c303-4826-82f6-c637274feb77",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MISSISSIPPI`S BEST INSURANCE AGENCY INC.",
+      "slug": "mississippi-s-best-insurance-agency-inc-10004872",
+      "profile_url": "https://www.insurancetrusthub.com/providers/mississippi-s-best-insurance-agency-inc-10004872",
+      "physical_location": {
+        "city": "Jackson",
+        "state": "MS",
+        "postal_code": "39204",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10005098",
+      "source_table": "providers",
+      "source_pk": "d2fc7a0f-734c-4b68-be83-56e12c2a9dbd",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "GULF GUARANTY EMPLOYEE BENEFIT SERVICES INC",
+      "slug": "gulf-guaranty-employee-benefit-services-inc-10005098",
+      "profile_url": "https://www.insurancetrusthub.com/providers/gulf-guaranty-employee-benefit-services-inc-10005098",
+      "physical_location": {
+        "city": "Flowood",
+        "state": "MS",
+        "postal_code": "39232",
+        "county": "Rankin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:10005132",
+      "source_table": "providers",
+      "source_pk": "85d73fbd-eef5-42c5-b536-5c03a4cdc8b4",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ETERNITY INSURANCE AGENCY LLC",
+      "slug": "eternity-insurance-agency-llc-10005132",
+      "profile_url": "https://www.insurancetrusthub.com/providers/eternity-insurance-agency-llc-10005132",
+      "physical_location": {
+        "city": "Clinton",
+        "state": "MS",
+        "postal_code": "39060",
+        "county": "Hinds",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:100605",
+      "source_table": "providers",
+      "source_pk": "c46372f7-4d2a-47c6-9deb-2c5f71728104",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SOUTHEAST INSURANCE INC.",
+      "slug": "southeast-insurance-inc-100605",
+      "profile_url": "https://www.insurancetrusthub.com/providers/southeast-insurance-inc-100605",
+      "physical_location": {
+        "city": "Hattiesburg",
+        "state": "MS",
+        "postal_code": "39404",
+        "county": "Forrest",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:101171",
+      "source_table": "providers",
+      "source_pk": "c0fce96d-34ba-4415-b53d-1f23c80d7880",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MISSISSIPPI HEALTH CARE INS SERVICES CORP",
+      "slug": "mississippi-health-care-ins-services-corp-101171",
+      "profile_url": "https://www.insurancetrusthub.com/providers/mississippi-health-care-ins-services-corp-101171",
+      "physical_location": {
+        "city": "Ridgeland",
+        "state": "MS",
+        "postal_code": "39157",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:101305",
+      "source_table": "providers",
+      "source_pk": "813e5870-7c05-4bde-a928-7ff76b775566",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "COASTAL INSURANCE ASSOCIATES LTD",
+      "slug": "coastal-insurance-associates-ltd-101305",
+      "profile_url": "https://www.insurancetrusthub.com/providers/coastal-insurance-associates-ltd-101305",
+      "physical_location": {
+        "city": "Gautier",
+        "state": "MS",
+        "postal_code": "39553",
+        "county": "Jackson",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:101919",
+      "source_table": "providers",
+      "source_pk": "04574617-aebb-4d6d-b2ce-25580da47706",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "GROGAN & CREWS INC.",
+      "slug": "grogan-crews-inc-101919",
+      "profile_url": "https://www.insurancetrusthub.com/providers/grogan-crews-inc-101919",
+      "physical_location": {
+        "city": "Canton",
+        "state": "MS",
+        "postal_code": "39046",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:103217",
+      "source_table": "providers",
+      "source_pk": "e24f1a18-6dd3-4275-a025-e3d17084cb3d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SOUTHERN INSURANCE SPECIALISTS INC.",
+      "slug": "southern-insurance-specialists-inc-103217",
+      "profile_url": "https://www.insurancetrusthub.com/providers/southern-insurance-specialists-inc-103217",
+      "physical_location": {
+        "city": "Ridgeland",
+        "state": "MS",
+        "postal_code": "39158",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:104690",
+      "source_table": "providers",
+      "source_pk": "cfb0c459-e9b5-4dcf-9c33-483cda025769",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ARGENT INSURANCE LLC",
+      "slug": "argent-insurance-llc-104690",
+      "profile_url": "https://www.insurancetrusthub.com/providers/argent-insurance-llc-104690",
+      "physical_location": {
+        "city": "Ridgeland",
+        "state": "MS",
+        "postal_code": "39157",
+        "county": "Madison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:105651",
+      "source_table": "providers",
+      "source_pk": "c8440d29-f65c-4c65-8628-2c3b85f79b39",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "INSURANCE ADVISORY GROUP LLC",
+      "slug": "insurance-advisory-group-llc-105651",
+      "profile_url": "https://www.insurancetrusthub.com/providers/insurance-advisory-group-llc-105651",
+      "physical_location": {
+        "city": "Meridian",
+        "state": "MS",
+        "postal_code": "39302",
+        "county": "Lauderdale",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:108326",
+      "source_table": "providers",
+      "source_pk": "9e5b3089-529a-4925-838a-ad33cd180dd2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "LINDA D SMITH INSURANCE AGENCY LLC",
+      "slug": "linda-d-smith-insurance-agency-llc-108326",
+      "profile_url": "https://www.insurancetrusthub.com/providers/linda-d-smith-insurance-agency-llc-108326",
+      "physical_location": {
+        "city": "Brandon",
+        "state": "MS",
+        "postal_code": "39047",
+        "county": "Rankin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:108762",
+      "source_table": "providers",
+      "source_pk": "48c0b625-1612-4636-859a-fa1ede60b310",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WORLDWIDE INSURANCE & SAVINGS AGENCY #2 INC.",
+      "slug": "worldwide-insurance-savings-agency-2-inc-108762",
+      "profile_url": "https://www.insurancetrusthub.com/providers/worldwide-insurance-savings-agency-2-inc-108762",
+      "physical_location": {
+        "city": "Gulfport",
+        "state": "MS",
+        "postal_code": "39501",
+        "county": "Harrison",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:MS:109204",
+      "source_table": "providers",
+      "source_pk": "bb2f68a5-f5d4-4b6c-ba16-ba50ad5e690b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AULTON VANN JR. INSURANCE AGENCY INC.",
+      "slug": "aulton-vann-jr-insurance-agency-inc-109204",
+      "profile_url": "https://www.insurancetrusthub.com/providers/aulton-vann-jr-insurance-agency-inc-109204",
+      "physical_location": {
+        "city": "Pascagoula",
+        "state": "MS",
+        "postal_code": "39569",
+        "county": "Jackson",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "MS"
+      ],
+      "license_state": "MS",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10000",
+      "source_table": "providers",
+      "source_pk": "40c36c60-2f57-48d8-b6c2-9e89032ba147",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Park Avenue Securities Llc",
+      "slug": "park-avenue-securities-llc-10000",
+      "profile_url": "https://www.insurancetrusthub.com/providers/park-avenue-securities-llc-10000",
+      "physical_location": {
+        "city": "Bethlehem",
+        "state": "PA",
+        "postal_code": "18017",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1000036",
+      "source_table": "providers",
+      "source_pk": "054e2d17-2173-48c6-9ab8-3fac944e3fc0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Trupoint Marketing Llc",
+      "slug": "trupoint-marketing-llc-1000036",
+      "profile_url": "https://www.insurancetrusthub.com/providers/trupoint-marketing-llc-1000036",
+      "physical_location": {
+        "city": "Winston Salem",
+        "state": "NC",
+        "postal_code": "27114",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10003",
+      "source_table": "providers",
+      "source_pk": "2de99668-b2bc-44e9-a4e4-5b9ab19d0dbc",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Buckner Partners, Llc",
+      "slug": "buckner-partners-llc-10003",
+      "profile_url": "https://www.insurancetrusthub.com/providers/buckner-partners-llc-10003",
+      "physical_location": {
+        "city": "Salt Lake City",
+        "state": "UT",
+        "postal_code": "84107",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1000382",
+      "source_table": "providers",
+      "source_pk": "54fcb094-5c8e-421b-8049-c85196fb936a",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Northern Kentucky Ins Agency Inc",
+      "slug": "northern-kentucky-ins-agency-inc-1000382",
+      "profile_url": "https://www.insurancetrusthub.com/providers/northern-kentucky-ins-agency-inc-1000382",
+      "physical_location": {
+        "city": "Florence",
+        "state": "KY",
+        "postal_code": "41042",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1000635",
+      "source_table": "providers",
+      "source_pk": "fc0b2343-16a9-40ae-ab03-b51a82c66092",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Hartland Ins Services Inc",
+      "slug": "hartland-ins-services-inc-1000635",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hartland-ins-services-inc-1000635",
+      "physical_location": {
+        "city": "Woodridge",
+        "state": "IL",
+        "postal_code": "60517",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1000897",
+      "source_table": "providers",
+      "source_pk": "35dfefb3-fb4b-4262-a878-ee59e59014fd",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Tedford & Assoc Llc",
+      "slug": "tedford-assoc-llc-1000897",
+      "profile_url": "https://www.insurancetrusthub.com/providers/tedford-assoc-llc-1000897",
+      "physical_location": {
+        "city": "Jenks",
+        "state": "OK",
+        "postal_code": "74037",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10012",
+      "source_table": "providers",
+      "source_pk": "971c6bb9-8ac8-4d69-9e6c-fb7f8ebc847b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Contractors Exam Center Inc Nv",
+      "slug": "contractors-exam-center-inc-nv-10012",
+      "profile_url": "https://www.insurancetrusthub.com/providers/contractors-exam-center-inc-nv-10012",
+      "physical_location": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "postal_code": "89120",
+        "county": "Clark",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10013",
+      "source_table": "providers",
+      "source_pk": "1d697f93-035b-4e40-aeaf-7fbe0475470f",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Gomez Enterprise Group Inc",
+      "slug": "gomez-enterprise-group-inc-10013",
+      "profile_url": "https://www.insurancetrusthub.com/providers/gomez-enterprise-group-inc-10013",
+      "physical_location": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "postal_code": "89123",
+        "county": "Clark",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1001637",
+      "source_table": "providers",
+      "source_pk": "88947ee9-2f28-4cf0-b16a-063bfbdd7920",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Strategic Non-Medical Solutions Llc",
+      "slug": "strategic-non-medical-solutions-llc-1001637",
+      "profile_url": "https://www.insurancetrusthub.com/providers/strategic-non-medical-solutions-llc-1001637",
+      "physical_location": {
+        "city": "Chicago",
+        "state": "IL",
+        "postal_code": "60654",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1001855",
+      "source_table": "providers",
+      "source_pk": "f3089bba-cbff-4231-82b8-b0be3e317edc",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Montes Services Llc",
+      "slug": "montes-services-llc-1001855",
+      "profile_url": "https://www.insurancetrusthub.com/providers/montes-services-llc-1001855",
+      "physical_location": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "postal_code": "89108",
+        "county": "Clark",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1002582",
+      "source_table": "providers",
+      "source_pk": "03311858-170f-47e0-9446-d68b8a8551d0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Altman Advisory Group, Llc",
+      "slug": "altman-advisory-group-llc-1002582",
+      "profile_url": "https://www.insurancetrusthub.com/providers/altman-advisory-group-llc-1002582",
+      "physical_location": {
+        "city": "Henderson",
+        "state": "NV",
+        "postal_code": "89074",
+        "county": "Clark",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1002620",
+      "source_table": "providers",
+      "source_pk": "4231cf95-d07b-4268-9b92-de32cda4b274",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Ezra T Summers Inc",
+      "slug": "ezra-t-summers-inc-1002620",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ezra-t-summers-inc-1002620",
+      "physical_location": {
+        "city": "Virginia Beach",
+        "state": "VA",
+        "postal_code": "23462",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10027",
+      "source_table": "providers",
+      "source_pk": "9d760051-edf3-421a-88c8-a3374c74dd5d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Mji Inc",
+      "slug": "mji-inc-10027",
+      "profile_url": "https://www.insurancetrusthub.com/providers/mji-inc-10027",
+      "physical_location": {
+        "city": "Mcminnville",
+        "state": "OR",
+        "postal_code": "97128",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1002734",
+      "source_table": "providers",
+      "source_pk": "edf7c983-bb87-426b-b201-c0bc10d3ce51",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Lockton Specialties Llc",
+      "slug": "lockton-specialties-llc-1002734",
+      "profile_url": "https://www.insurancetrusthub.com/providers/lockton-specialties-llc-1002734",
+      "physical_location": {
+        "city": "Kansas City",
+        "state": "MO",
+        "postal_code": "64112",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10028",
+      "source_table": "providers",
+      "source_pk": "51f4e968-45f2-4bf5-a904-ceedc154b5e6",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Digital Insurance Llc",
+      "slug": "digital-insurance-llc-10028",
+      "profile_url": "https://www.insurancetrusthub.com/providers/digital-insurance-llc-10028",
+      "physical_location": {
+        "city": "Atlanta",
+        "state": "GA",
+        "postal_code": "30339",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1002949",
+      "source_table": "providers",
+      "source_pk": "3bf358eb-1afb-4099-b225-e800c5c84e05",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Acrisure Of California Llc",
+      "slug": "acrisure-of-california-llc-1002949",
+      "profile_url": "https://www.insurancetrusthub.com/providers/acrisure-of-california-llc-1002949",
+      "physical_location": {
+        "city": "Grand Rapids",
+        "state": "MI",
+        "postal_code": "49501",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1002950",
+      "source_table": "providers",
+      "source_pk": "056f001a-abb5-49c9-bf9a-9f7ed562ecce",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Acrisure Mga Llc",
+      "slug": "acrisure-mga-llc-1002950",
+      "profile_url": "https://www.insurancetrusthub.com/providers/acrisure-mga-llc-1002950",
+      "physical_location": {
+        "city": "Grand Rapids",
+        "state": "MI",
+        "postal_code": "49501",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10031",
+      "source_table": "providers",
+      "source_pk": "2ba1841d-d88e-4c40-8620-7d9b23b4ea41",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Pinney Insurance Center Inc",
+      "slug": "pinney-insurance-center-inc-10031",
+      "profile_url": "https://www.insurancetrusthub.com/providers/pinney-insurance-center-inc-10031",
+      "physical_location": {
+        "city": "Roseville",
+        "state": "CA",
+        "postal_code": "95661",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003151",
+      "source_table": "providers",
+      "source_pk": "70f708c7-235f-4384-83d2-62195bc03a3c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Jlny Group Llc",
+      "slug": "jlny-group-llc-1003151",
+      "profile_url": "https://www.insurancetrusthub.com/providers/jlny-group-llc-1003151",
+      "physical_location": {
+        "city": "Huntington",
+        "state": "NY",
+        "postal_code": "11743",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10034",
+      "source_table": "providers",
+      "source_pk": "a6ca93f6-6424-4bde-a649-4f77fdeb8b71",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Ramsgate Insurance Inc",
+      "slug": "ramsgate-insurance-inc-10034",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ramsgate-insurance-inc-10034",
+      "physical_location": {
+        "city": "Lake Wales",
+        "state": "FL",
+        "postal_code": "33853",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003420",
+      "source_table": "providers",
+      "source_pk": "1485bbfd-b638-4968-b450-20b65cd5d108",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Hill Financial & Insurance Services, Inc.",
+      "slug": "hill-financial-insurance-services-inc-1003420",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hill-financial-insurance-services-inc-1003420",
+      "physical_location": {
+        "city": "Seal Beach",
+        "state": "CA",
+        "postal_code": "90740",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003464",
+      "source_table": "providers",
+      "source_pk": "de517c2b-58a9-411d-bb68-6994f30be6be",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Annapolis Corporation",
+      "slug": "annapolis-corporation-1003464",
+      "profile_url": "https://www.insurancetrusthub.com/providers/annapolis-corporation-1003464",
+      "physical_location": {
+        "city": "Hartford",
+        "state": "CT",
+        "postal_code": "06103",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003466",
+      "source_table": "providers",
+      "source_pk": "f2aee2ef-8b25-4829-9868-6d4fbfee4b4b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Coverageamerica Corporation",
+      "slug": "coverageamerica-corporation-1003466",
+      "profile_url": "https://www.insurancetrusthub.com/providers/coverageamerica-corporation-1003466",
+      "physical_location": {
+        "city": "Hartford",
+        "state": "CT",
+        "postal_code": "06103",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:10035",
+      "source_table": "providers",
+      "source_pk": "193d97b6-963b-4a27-8895-c673342f55b2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Upfsa Insurance Agency Of Arizona Inc",
+      "slug": "upfsa-insurance-agency-of-arizona-inc-10035",
+      "profile_url": "https://www.insurancetrusthub.com/providers/upfsa-insurance-agency-of-arizona-inc-10035",
+      "physical_location": {
+        "city": "Scottsdale",
+        "state": "AZ",
+        "postal_code": "85261",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003525",
+      "source_table": "providers",
+      "source_pk": "0097c2ec-de74-42d9-9917-1456dda55411",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Coremark Ins Services Inc",
+      "slug": "coremark-ins-services-inc-1003525",
+      "profile_url": "https://www.insurancetrusthub.com/providers/coremark-ins-services-inc-1003525",
+      "physical_location": {
+        "city": "Sacramento",
+        "state": "CA",
+        "postal_code": "95834",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003527",
+      "source_table": "providers",
+      "source_pk": "b4968a34-d1fe-4802-b10a-67f46c1b1be0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Ins United Inc",
+      "slug": "ins-united-inc-1003527",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ins-united-inc-1003527",
+      "physical_location": {
+        "city": "Higley",
+        "state": "AZ",
+        "postal_code": "85236",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003528",
+      "source_table": "providers",
+      "source_pk": "0a72bda7-34f7-40e4-8b1f-0e5830eca9eb",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Kemmons Wilson Insurance Group Llc",
+      "slug": "kemmons-wilson-insurance-group-llc-1003528",
+      "profile_url": "https://www.insurancetrusthub.com/providers/kemmons-wilson-insurance-group-llc-1003528",
+      "physical_location": {
+        "city": "Memphis",
+        "state": "TN",
+        "postal_code": "38125",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:NV:1003529",
+      "source_table": "providers",
+      "source_pk": "e6f268bb-28d3-4675-8b93-ad17f0f177df",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Glenn Harris & Assoc Inc",
+      "slug": "glenn-harris-assoc-inc-1003529",
+      "profile_url": "https://www.insurancetrusthub.com/providers/glenn-harris-assoc-inc-1003529",
+      "physical_location": {
+        "city": "Oklahoma City",
+        "state": "OK",
+        "postal_code": "73156",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "NV"
+      ],
+      "license_state": "NV",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10028623",
+      "source_table": "providers",
+      "source_pk": "17d67827-5f2d-4a9b-841e-c23af7cba49a",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "LESOURD, LLC",
+      "slug": "lesourd-llc-10028623",
+      "profile_url": "https://www.insurancetrusthub.com/providers/lesourd-llc-10028623",
+      "physical_location": {
+        "city": "XENIA",
+        "state": "OH",
+        "postal_code": "45385",
+        "county": "Montgomery",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:1008340",
+      "source_table": "providers",
+      "source_pk": "b5e92046-3907-4e69-bbd9-a8232b7cde5d",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WILKS INS AGCY INC",
+      "slug": "wilks-ins-agcy-inc-1008340",
+      "profile_url": "https://www.insurancetrusthub.com/providers/wilks-ins-agcy-inc-1008340",
+      "physical_location": {
+        "city": "HAMILTON",
+        "state": "OH",
+        "postal_code": "45011",
+        "county": "Hamilton",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10097638",
+      "source_table": "providers",
+      "source_pk": "e566848a-32c9-46b7-99ed-0f23e6ee3a01",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "E & M RISK MANAGEMENT LLC",
+      "slug": "e-m-risk-management-llc-10097638",
+      "profile_url": "https://www.insurancetrusthub.com/providers/e-m-risk-management-llc-10097638",
+      "physical_location": {
+        "city": "WORTHINGTON",
+        "state": "OH",
+        "postal_code": "43085",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10097642",
+      "source_table": "providers",
+      "source_pk": "24c2a5ed-5938-4fee-b603-bf691a38cf29",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "VALMARK SECURITIES INC",
+      "slug": "valmark-securities-inc-10097642",
+      "profile_url": "https://www.insurancetrusthub.com/providers/valmark-securities-inc-10097642",
+      "physical_location": {
+        "city": "AKRON",
+        "state": "OH",
+        "postal_code": "44333",
+        "county": "Summit",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10150803",
+      "source_table": "providers",
+      "source_pk": "561c0b7f-a7cd-49eb-a9dc-505b48609672",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BANKS AND SNAYD INSURANCE AGENCY INC",
+      "slug": "banks-and-snayd-insurance-agency-inc-10150803",
+      "profile_url": "https://www.insurancetrusthub.com/providers/banks-and-snayd-insurance-agency-inc-10150803",
+      "physical_location": {
+        "city": "PARMA",
+        "state": "OH",
+        "postal_code": "44129",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10150804",
+      "source_table": "providers",
+      "source_pk": "f665c304-9733-4b14-af5b-5741961a009c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "RENK & ASSOC LLC",
+      "slug": "renk-assoc-llc-10150804",
+      "profile_url": "https://www.insurancetrusthub.com/providers/renk-assoc-llc-10150804",
+      "physical_location": {
+        "city": "HILLSBORO",
+        "state": "OH",
+        "postal_code": "45133",
+        "county": "Hamilton",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10162563",
+      "source_table": "providers",
+      "source_pk": "99fab920-d6a1-4cae-9d71-f61cd067ab84",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "OPPORTUNITY INC",
+      "slug": "opportunity-inc-10162563",
+      "profile_url": "https://www.insurancetrusthub.com/providers/opportunity-inc-10162563",
+      "physical_location": {
+        "city": "BROADVIEW HEIGHTS",
+        "state": "OH",
+        "postal_code": "44147",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10162564",
+      "source_table": "providers",
+      "source_pk": "efca1e61-01ca-48f7-8424-db4ea33178f7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AMERICAN RISK SERVICES LLC",
+      "slug": "american-risk-services-llc-10162564",
+      "profile_url": "https://www.insurancetrusthub.com/providers/american-risk-services-llc-10162564",
+      "physical_location": {
+        "city": "CINCINNATI",
+        "state": "OH",
+        "postal_code": "45246",
+        "county": "Hamilton",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10165604",
+      "source_table": "providers",
+      "source_pk": "e5ae3d36-8d17-4dd3-85f8-71615830d332",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BARRETT INS AND FIN SVCS INC",
+      "slug": "barrett-ins-and-fin-svcs-inc-10165604",
+      "profile_url": "https://www.insurancetrusthub.com/providers/barrett-ins-and-fin-svcs-inc-10165604",
+      "physical_location": {
+        "city": "AVON",
+        "state": "OH",
+        "postal_code": "44011",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10170161",
+      "source_table": "providers",
+      "source_pk": "b1af6d9c-cdc4-4258-9626-62eafb3ac9d3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "GOLDEN EAGLE TITLE & ESCROW INC",
+      "slug": "golden-eagle-title-escrow-inc-10170161",
+      "profile_url": "https://www.insurancetrusthub.com/providers/golden-eagle-title-escrow-inc-10170161",
+      "physical_location": {
+        "city": "Hudson",
+        "state": "OH",
+        "postal_code": "44236",
+        "county": "Summit",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10203293",
+      "source_table": "providers",
+      "source_pk": "8865070a-e617-4961-8231-68c55d33efe4",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "KARI BALL INSURANCE AGENCY LLC",
+      "slug": "kari-ball-insurance-agency-llc-10203293",
+      "profile_url": "https://www.insurancetrusthub.com/providers/kari-ball-insurance-agency-llc-10203293",
+      "physical_location": {
+        "city": "MOUNT VERNON",
+        "state": "OH",
+        "postal_code": "43050",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10219055",
+      "source_table": "providers",
+      "source_pk": "20b5c978-b9df-493a-87cc-8f0259469010",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WEALTHQUEST INSURANCE ADVISORS LLC",
+      "slug": "wealthquest-insurance-advisors-llc-10219055",
+      "profile_url": "https://www.insurancetrusthub.com/providers/wealthquest-insurance-advisors-llc-10219055",
+      "physical_location": {
+        "city": "ENGLEWOOD",
+        "state": "OH",
+        "postal_code": "45322",
+        "county": "Montgomery",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10265104",
+      "source_table": "providers",
+      "source_pk": "bb26c1ff-2937-437f-8782-ce2c2eda36ef",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MERIDIAN CAPSTONE INS INC",
+      "slug": "meridian-capstone-ins-inc-10265104",
+      "profile_url": "https://www.insurancetrusthub.com/providers/meridian-capstone-ins-inc-10265104",
+      "physical_location": {
+        "city": "DAYTON",
+        "state": "OH",
+        "postal_code": "45459",
+        "county": "Montgomery",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10265105",
+      "source_table": "providers",
+      "source_pk": "7fef69e7-417c-4c80-9f0b-778293019673",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BENEFITS ONE CONSULTING INC",
+      "slug": "benefits-one-consulting-inc-10265105",
+      "profile_url": "https://www.insurancetrusthub.com/providers/benefits-one-consulting-inc-10265105",
+      "physical_location": {
+        "city": "POWELL",
+        "state": "OH",
+        "postal_code": "43065",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10282666",
+      "source_table": "providers",
+      "source_pk": "366b8be5-21f8-4283-bc2b-c40b000e94f5",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ACE INSURANCE SERVICES LLC",
+      "slug": "ace-insurance-services-llc-10282666",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ace-insurance-services-llc-10282666",
+      "physical_location": {
+        "city": "BEDFORD",
+        "state": "OH",
+        "postal_code": "44146",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10327281",
+      "source_table": "providers",
+      "source_pk": "66200c47-848b-4b50-a5a9-ea1081aea36c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "GOLAN SALES ASSOC INC",
+      "slug": "golan-sales-assoc-inc-10327281",
+      "profile_url": "https://www.insurancetrusthub.com/providers/golan-sales-assoc-inc-10327281",
+      "physical_location": {
+        "city": "COLUMBUS",
+        "state": "OH",
+        "postal_code": "43221",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10334329",
+      "source_table": "providers",
+      "source_pk": "e96ab3b6-c8a3-436c-9b9f-af3d8d34b59a",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "LEGACY HEALTH BENEFITS INC",
+      "slug": "legacy-health-benefits-inc-10334329",
+      "profile_url": "https://www.insurancetrusthub.com/providers/legacy-health-benefits-inc-10334329",
+      "physical_location": {
+        "city": "CHAGRIN FALLS",
+        "state": "OH",
+        "postal_code": "44023",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10345500",
+      "source_table": "providers",
+      "source_pk": "d09ae08d-b540-4e78-8904-64dd88267a28",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PINNACLE TRAVEL & TOURS, LLC",
+      "slug": "pinnacle-travel-tours-llc-10345500",
+      "profile_url": "https://www.insurancetrusthub.com/providers/pinnacle-travel-tours-llc-10345500",
+      "physical_location": {
+        "city": "FREMONT",
+        "state": "OH",
+        "postal_code": "43420",
+        "county": "Lucas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10371409",
+      "source_table": "providers",
+      "source_pk": "1b973a04-fa79-4ef4-9c91-e9b8db87746b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "R & S INSURANCE LLC",
+      "slug": "r-s-insurance-llc-10371409",
+      "profile_url": "https://www.insurancetrusthub.com/providers/r-s-insurance-llc-10371409",
+      "physical_location": {
+        "city": "BEDFORD HEIGHTS",
+        "state": "OH",
+        "postal_code": "44146",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10371410",
+      "source_table": "providers",
+      "source_pk": "419db142-6115-42de-a950-344b8a2cdfa3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "OHIO COUNCIL OF RETAIL MERCHANTS INSURANCE AGENCY INC",
+      "slug": "ohio-council-of-retail-merchants-insurance-agency-inc-10371410",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ohio-council-of-retail-merchants-insurance-agency-inc-10371410",
+      "physical_location": {
+        "city": "COLUMBUS",
+        "state": "OH",
+        "postal_code": "43215",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10371414",
+      "source_table": "providers",
+      "source_pk": "08fb4574-3908-4979-9730-9751f81bce0f",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WALLACE BROKERAGE SERVICES LLC",
+      "slug": "wallace-brokerage-services-llc-10371414",
+      "profile_url": "https://www.insurancetrusthub.com/providers/wallace-brokerage-services-llc-10371414",
+      "physical_location": {
+        "city": "BEAVERCREEK",
+        "state": "OH",
+        "postal_code": "45440",
+        "county": "Montgomery",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10384723",
+      "source_table": "providers",
+      "source_pk": "61bbb8b0-0ef5-4c1c-bd9c-013cdc036742",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "T-BONDS LLC",
+      "slug": "t-bonds-llc-10384723",
+      "profile_url": "https://www.insurancetrusthub.com/providers/t-bonds-llc-10384723",
+      "physical_location": {
+        "city": "LORAIN",
+        "state": "OH",
+        "postal_code": "44052",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10416936",
+      "source_table": "providers",
+      "source_pk": "d89d2146-836a-4f32-aef9-ff4a28860e78",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "JACK COLLINS INS AGENCY LLC",
+      "slug": "jack-collins-ins-agency-llc-10416936",
+      "profile_url": "https://www.insurancetrusthub.com/providers/jack-collins-ins-agency-llc-10416936",
+      "physical_location": {
+        "city": "NAPOLEON",
+        "state": "OH",
+        "postal_code": "43545",
+        "county": "Lucas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10421613",
+      "source_table": "providers",
+      "source_pk": "46914710-3b0e-4913-920c-6351905f52a0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "STERLING FARM EQUIPMENT INC",
+      "slug": "sterling-farm-equipment-inc-10421613",
+      "profile_url": "https://www.insurancetrusthub.com/providers/sterling-farm-equipment-inc-10421613",
+      "physical_location": {
+        "city": "STERLING",
+        "state": "OH",
+        "postal_code": "44276",
+        "county": "Summit",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10421615",
+      "source_table": "providers",
+      "source_pk": "0f0d961f-950c-482a-bf88-5942f1f5cd93",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "HERITAGE WEALTH PARTNERS LLC",
+      "slug": "heritage-wealth-partners-llc-10421615",
+      "profile_url": "https://www.insurancetrusthub.com/providers/heritage-wealth-partners-llc-10421615",
+      "physical_location": {
+        "city": "DUBLIN",
+        "state": "OH",
+        "postal_code": "43016",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10427040",
+      "source_table": "providers",
+      "source_pk": "e4ddee16-f38b-43c6-a9a2-15155fcb7bd7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "KELLEY FINANCIAL GROUP INC",
+      "slug": "kelley-financial-group-inc-10427040",
+      "profile_url": "https://www.insurancetrusthub.com/providers/kelley-financial-group-inc-10427040",
+      "physical_location": {
+        "city": "CINCINNATI",
+        "state": "OH",
+        "postal_code": "45209",
+        "county": "Hamilton",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10427041",
+      "source_table": "providers",
+      "source_pk": "6b1e7ed7-b451-456a-8646-973eba3d5eab",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "T&B CONSULTANTS INC",
+      "slug": "t-b-consultants-inc-10427041",
+      "profile_url": "https://www.insurancetrusthub.com/providers/t-b-consultants-inc-10427041",
+      "physical_location": {
+        "city": "GRAFTON",
+        "state": "OH",
+        "postal_code": "44044",
+        "county": "Cuyahoga",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:OH:10434014",
+      "source_table": "providers",
+      "source_pk": "7a442ab7-3db8-4636-b720-d85f3c1726b6",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "FACKLER COUNTRY GARDENS INC",
+      "slug": "fackler-country-gardens-inc-10434014",
+      "profile_url": "https://www.insurancetrusthub.com/providers/fackler-country-gardens-inc-10434014",
+      "physical_location": {
+        "city": "GRANVILLE",
+        "state": "OH",
+        "postal_code": "43023",
+        "county": "Franklin",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "OH"
+      ],
+      "license_state": "OH",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10030",
+      "source_table": "providers",
+      "source_pk": "4ecbf5d9-ca6e-4efa-be7d-fdb52f26a212",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "A R SCHELL & SON AGENCY INC",
+      "slug": "a-r-schell-son-agency-inc-10030",
+      "profile_url": "https://www.insurancetrusthub.com/providers/a-r-schell-son-agency-inc-10030",
+      "physical_location": {
+        "city": "PLANO",
+        "state": "TX",
+        "postal_code": "75074",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10051",
+      "source_table": "providers",
+      "source_pk": "878f05c4-90f0-4e9c-bb53-5d2e4d7be36e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "THE MICHAEL KENTOR COMPANY",
+      "slug": "the-michael-kentor-company-10051",
+      "profile_url": "https://www.insurancetrusthub.com/providers/the-michael-kentor-company-10051",
+      "physical_location": {
+        "city": "AUSTIN",
+        "state": "TX",
+        "postal_code": "78703",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10110",
+      "source_table": "providers",
+      "source_pk": "5caef379-24a2-46ef-bc5b-03bc9a6bf98f",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SWBC INSURANCE SERVICES, INC.",
+      "slug": "swbc-insurance-services-inc-10110",
+      "profile_url": "https://www.insurancetrusthub.com/providers/swbc-insurance-services-inc-10110",
+      "physical_location": {
+        "city": "SAN ANTONIO",
+        "state": "TX",
+        "postal_code": "78216",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10128",
+      "source_table": "providers",
+      "source_pk": "f68fbc3e-b4a4-47dd-8f2d-c491c29fdd14",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PIPKIN & PIPKIN INC",
+      "slug": "pipkin-pipkin-inc-10128",
+      "profile_url": "https://www.insurancetrusthub.com/providers/pipkin-pipkin-inc-10128",
+      "physical_location": {
+        "city": "LIBERTY HILL",
+        "state": "TX",
+        "postal_code": "78642",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10273",
+      "source_table": "providers",
+      "source_pk": "6a9dadad-4d5f-4e1b-be68-360efecbdea3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WILLIAM R. SKEETERS, INC.",
+      "slug": "william-r-skeeters-inc-10273",
+      "profile_url": "https://www.insurancetrusthub.com/providers/william-r-skeeters-inc-10273",
+      "physical_location": {
+        "city": "DALLAS",
+        "state": "TX",
+        "postal_code": "75240",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10335",
+      "source_table": "providers",
+      "source_pk": "cffea88f-f160-42e3-a1da-3451bf8ba04e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "SJJS INC",
+      "slug": "sjjs-inc-10335",
+      "profile_url": "https://www.insurancetrusthub.com/providers/sjjs-inc-10335",
+      "physical_location": {
+        "city": "PALMER",
+        "state": "TX",
+        "postal_code": "75152",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10398",
+      "source_table": "providers",
+      "source_pk": "fa0575d5-dabf-4f0f-9cfe-9371a050b2e0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BROKERAGE STORE, INC., THE",
+      "slug": "brokerage-store-inc-the-10398",
+      "profile_url": "https://www.insurancetrusthub.com/providers/brokerage-store-inc-the-10398",
+      "physical_location": {
+        "city": "SAN ANTONIO",
+        "state": "TX",
+        "postal_code": "78249",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10407",
+      "source_table": "providers",
+      "source_pk": "85ef8248-cbc2-4448-890c-73f2fd3dc263",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "THE BLACKBURN INSURANCE AGENCY INC",
+      "slug": "the-blackburn-insurance-agency-inc-10407",
+      "profile_url": "https://www.insurancetrusthub.com/providers/the-blackburn-insurance-agency-inc-10407",
+      "physical_location": {
+        "city": "GRAND PRAIRIE",
+        "state": "TX",
+        "postal_code": "75051",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10428",
+      "source_table": "providers",
+      "source_pk": "5f75b1d8-2a58-4552-9f32-f3cbb64dbdff",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "Awesome Insurance Agency, Inc.",
+      "slug": "awesome-insurance-agency-inc-10428",
+      "profile_url": "https://www.insurancetrusthub.com/providers/awesome-insurance-agency-inc-10428",
+      "physical_location": {
+        "city": "LEWISVILLE",
+        "state": "TX",
+        "postal_code": "75057",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10433",
+      "source_table": "providers",
+      "source_pk": "e5c9ce19-37a9-4f96-a566-21a98f14d658",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PLANNED FINANCIAL INVESTMENTS INC",
+      "slug": "planned-financial-investments-inc-10433",
+      "profile_url": "https://www.insurancetrusthub.com/providers/planned-financial-investments-inc-10433",
+      "physical_location": {
+        "city": "PLANO",
+        "state": "TX",
+        "postal_code": "75093",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10452",
+      "source_table": "providers",
+      "source_pk": "85c12d62-8912-4a88-be09-2b7f8aafbbde",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AMM INSURANCE AGENCY, INC.",
+      "slug": "amm-insurance-agency-inc-10452",
+      "profile_url": "https://www.insurancetrusthub.com/providers/amm-insurance-agency-inc-10452",
+      "physical_location": {
+        "city": "BASTROP",
+        "state": "TX",
+        "postal_code": "78602",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10455",
+      "source_table": "providers",
+      "source_pk": "8f4fb78f-1917-4ccb-8681-f00dd712ea48",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BURGE CENTEX INC.",
+      "slug": "burge-centex-inc-10455",
+      "profile_url": "https://www.insurancetrusthub.com/providers/burge-centex-inc-10455",
+      "physical_location": {
+        "city": "ROUND ROCK",
+        "state": "TX",
+        "postal_code": "78664",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10492",
+      "source_table": "providers",
+      "source_pk": "e3f22aa1-b19c-46d0-8139-b7905d4bd323",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PRENEED SYSTEMS L L P",
+      "slug": "preneed-systems-l-l-p-10492",
+      "profile_url": "https://www.insurancetrusthub.com/providers/preneed-systems-l-l-p-10492",
+      "physical_location": {
+        "city": "GARLAND",
+        "state": "TX",
+        "postal_code": "75043",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10503",
+      "source_table": "providers",
+      "source_pk": "2655562d-e779-48e2-9815-a04216fed829",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "BENEPLACE, LLC",
+      "slug": "beneplace-llc-10503",
+      "profile_url": "https://www.insurancetrusthub.com/providers/beneplace-llc-10503",
+      "physical_location": {
+        "city": "WEST LAKE HILLS",
+        "state": "TX",
+        "postal_code": "78746",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10506",
+      "source_table": "providers",
+      "source_pk": "afde725c-8bdc-471d-a04d-6f238eca60cd",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "TURPIN & TURPIN INC",
+      "slug": "turpin-turpin-inc-10506",
+      "profile_url": "https://www.insurancetrusthub.com/providers/turpin-turpin-inc-10506",
+      "physical_location": {
+        "city": "SAN ANTONIO",
+        "state": "TX",
+        "postal_code": "78216",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10526",
+      "source_table": "providers",
+      "source_pk": "5254b0d5-511c-43c2-b838-8dbd26e666c0",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MOORE BENEFITS INC",
+      "slug": "moore-benefits-inc-10526",
+      "profile_url": "https://www.insurancetrusthub.com/providers/moore-benefits-inc-10526",
+      "physical_location": {
+        "city": "DALLAS",
+        "state": "TX",
+        "postal_code": "75228",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10532",
+      "source_table": "providers",
+      "source_pk": "f6049ac4-81a8-4c8f-851b-729d18df8f13",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ATLAS INSURANCE AGENCY INC",
+      "slug": "atlas-insurance-agency-inc-10532",
+      "profile_url": "https://www.insurancetrusthub.com/providers/atlas-insurance-agency-inc-10532",
+      "physical_location": {
+        "city": "SAN ANTONIO",
+        "state": "TX",
+        "postal_code": "78221",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10539",
+      "source_table": "providers",
+      "source_pk": "31000de6-8e37-4fba-a1fa-aa336975fbcb",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "HERTEL INSURORS GROUP LLP",
+      "slug": "hertel-insurors-group-llp-10539",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hertel-insurors-group-llp-10539",
+      "physical_location": {
+        "city": "AUSTIN",
+        "state": "TX",
+        "postal_code": "78759",
+        "county": "Travis",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10573",
+      "source_table": "providers",
+      "source_pk": "aa405c70-4c61-4b46-9323-afb951def836",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AMERICAN HALLMARK INSURANCE SERVICES, INC.",
+      "slug": "american-hallmark-insurance-services-inc-10573",
+      "profile_url": "https://www.insurancetrusthub.com/providers/american-hallmark-insurance-services-inc-10573",
+      "physical_location": {
+        "city": "DALLAS",
+        "state": "TX",
+        "postal_code": "75240",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10579",
+      "source_table": "providers",
+      "source_pk": "e0e6a1bb-e069-4f15-86a5-7f7c9c25eae7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MARK MOON INSURANCE AGENCY INC",
+      "slug": "mark-moon-insurance-agency-inc-10579",
+      "profile_url": "https://www.insurancetrusthub.com/providers/mark-moon-insurance-agency-inc-10579",
+      "physical_location": {
+        "city": "PLANO",
+        "state": "TX",
+        "postal_code": "75093",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10598",
+      "source_table": "providers",
+      "source_pk": "3f4b75c8-3ce5-4a47-99f7-1daf7ed80c4b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ABC/ASSOCIATED BENEFIT CONSULTANTS INC",
+      "slug": "abc-associated-benefit-consultants-inc-10598",
+      "profile_url": "https://www.insurancetrusthub.com/providers/abc-associated-benefit-consultants-inc-10598",
+      "physical_location": {
+        "city": "SAN ANTONIO",
+        "state": "TX",
+        "postal_code": "78240",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10623",
+      "source_table": "providers",
+      "source_pk": "4ce8d36e-f51f-46b7-9206-b5b448faa2a7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "FIRST INDEMNITY INSURANCE AGENCY OF TEXAS INC",
+      "slug": "first-indemnity-insurance-agency-of-texas-inc-10623",
+      "profile_url": "https://www.insurancetrusthub.com/providers/first-indemnity-insurance-agency-of-texas-inc-10623",
+      "physical_location": {
+        "city": "DALLAS",
+        "state": "TX",
+        "postal_code": "75225",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10628",
+      "source_table": "providers",
+      "source_pk": "aa8862fc-d314-40ed-9ce4-45a29a4c2751",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WARREN EMPLOYEE BENEFITS CO",
+      "slug": "warren-employee-benefits-co-10628",
+      "profile_url": "https://www.insurancetrusthub.com/providers/warren-employee-benefits-co-10628",
+      "physical_location": {
+        "city": "CARROLLTON",
+        "state": "TX",
+        "postal_code": "75010",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10681",
+      "source_table": "providers",
+      "source_pk": "2784e942-5ae1-4e0e-9809-bc37bd821eca",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "IMPERIAL GENERAL AGENCY OF TEXAS INC",
+      "slug": "imperial-general-agency-of-texas-inc-10681",
+      "profile_url": "https://www.insurancetrusthub.com/providers/imperial-general-agency-of-texas-inc-10681",
+      "physical_location": {
+        "city": "WINSTON SALEM",
+        "state": "NC",
+        "postal_code": "27102",
+        "county": null,
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10695",
+      "source_table": "providers",
+      "source_pk": "e86acb99-0406-472f-87bc-2d62ab58ca46",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CAREINGTON INTERNATIONAL CORPORATION",
+      "slug": "careington-international-corporation-10695",
+      "profile_url": "https://www.insurancetrusthub.com/providers/careington-international-corporation-10695",
+      "physical_location": {
+        "city": "FRISCO",
+        "state": "TX",
+        "postal_code": "75034",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10761",
+      "source_table": "providers",
+      "source_pk": "55c8aeca-dafd-4006-bb15-01ffd27bb053",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CHENEY, BRENNAN & ASSOCIATES, INC",
+      "slug": "cheney-brennan-associates-inc-10761",
+      "profile_url": "https://www.insurancetrusthub.com/providers/cheney-brennan-associates-inc-10761",
+      "physical_location": {
+        "city": "NEW BRAUNFELS",
+        "state": "TX",
+        "postal_code": "78132",
+        "county": "Bexar",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:TX:10762",
+      "source_table": "providers",
+      "source_pk": "c4b04857-3b5b-4e72-b033-dd9739b8e13c",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "KEYSTONE SOUTHWEST INSURANCE AGENCY, INC.",
+      "slug": "keystone-southwest-insurance-agency-inc-10762",
+      "profile_url": "https://www.insurancetrusthub.com/providers/keystone-southwest-insurance-agency-inc-10762",
+      "physical_location": {
+        "city": "ROCKWALL",
+        "state": "TX",
+        "postal_code": "75087",
+        "county": "Dallas",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "TX"
+      ],
+      "license_state": "TX",
+      "categories": [
+        "auto",
+        "health",
+        "homeowners"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:1000069",
+      "source_table": "providers",
+      "source_pk": "dbb863f0-139f-44da-98a1-f830b6a485d7",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CHEESEMAN INSURANCE INC",
+      "slug": "cheeseman-insurance-inc-1000069",
+      "profile_url": "https://www.insurancetrusthub.com/providers/cheeseman-insurance-inc-1000069",
+      "physical_location": {
+        "city": "Burlington",
+        "state": "VT",
+        "postal_code": "05401",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:100525",
+      "source_table": "providers",
+      "source_pk": "2cd944c6-c23e-46e6-9347-8af294c3f498",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "NORTHEAST INSURANCE BROKER SERVICES LLC",
+      "slug": "northeast-insurance-broker-services-llc-100525",
+      "profile_url": "https://www.insurancetrusthub.com/providers/northeast-insurance-broker-services-llc-100525",
+      "physical_location": {
+        "city": "South Burlington",
+        "state": "VT",
+        "postal_code": "05403",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:1027200",
+      "source_table": "providers",
+      "source_pk": "f300f751-260f-45b8-97e7-7b0ace7c6373",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "HANNAH INSURANCE AGENCY INC.",
+      "slug": "hannah-insurance-agency-inc-1027200",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hannah-insurance-agency-inc-1027200",
+      "physical_location": {
+        "city": "Swanton",
+        "state": "VT",
+        "postal_code": "05488",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:1260",
+      "source_table": "providers",
+      "source_pk": "f6986ec9-320a-4771-8477-f72456ca0cc9",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "US AIRCRAFT INSURANCE LLC",
+      "slug": "us-aircraft-insurance-llc-1260",
+      "profile_url": "https://www.insurancetrusthub.com/providers/us-aircraft-insurance-llc-1260",
+      "physical_location": {
+        "city": "Richmond",
+        "state": "VT",
+        "postal_code": "05477",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:286",
+      "source_table": "providers",
+      "source_pk": "8ebe68d7-e0b4-4ba7-9bea-5f95da15aa34",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "EILERS FINANCIAL SERVICES INC",
+      "slug": "eilers-financial-services-inc-286",
+      "profile_url": "https://www.insurancetrusthub.com/providers/eilers-financial-services-inc-286",
+      "physical_location": {
+        "city": "Waitsfield",
+        "state": "VT",
+        "postal_code": "05673",
+        "county": "Washington",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3002026693",
+      "source_table": "providers",
+      "source_pk": "0460b3f9-5c93-43dc-b0d0-333a67fbc613",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CORBETT INSURANCE AGENCY, INC.",
+      "slug": "corbett-insurance-agency-inc-3002026693",
+      "profile_url": "https://www.insurancetrusthub.com/providers/corbett-insurance-agency-inc-3002026693",
+      "physical_location": {
+        "city": "Colchester",
+        "state": "VT",
+        "postal_code": "05446",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3002551537",
+      "source_table": "providers",
+      "source_pk": "2181d71b-40cf-466f-a3ec-6a1accbddb07",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ALBA RISK MANAGEMENT SERVICES LLC",
+      "slug": "alba-risk-management-services-llc-3002551537",
+      "profile_url": "https://www.insurancetrusthub.com/providers/alba-risk-management-services-llc-3002551537",
+      "physical_location": {
+        "city": "Middlesex",
+        "state": "VT",
+        "postal_code": "05602",
+        "county": "Washington",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3002645167",
+      "source_table": "providers",
+      "source_pk": "1537749e-48fd-4dd2-82de-7434451cfb33",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PRESSON NADEAU ENTERPRISES, DBA PINNACLE WEALTH",
+      "slug": "presson-nadeau-enterprises-dba-pinnacle-wealth-3002645167",
+      "profile_url": "https://www.insurancetrusthub.com/providers/presson-nadeau-enterprises-dba-pinnacle-wealth-3002645167",
+      "physical_location": {
+        "city": "South Burlington",
+        "state": "VT",
+        "postal_code": "05403",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3002753087",
+      "source_table": "providers",
+      "source_pk": "438135e0-1fe1-4b1c-b71f-4606a3ccd16e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AP PREMIUM FINANCE LLC",
+      "slug": "ap-premium-finance-llc-3002753087",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ap-premium-finance-llc-3002753087",
+      "physical_location": {
+        "city": "Underhill",
+        "state": "VT",
+        "postal_code": "05489",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3002979280",
+      "source_table": "providers",
+      "source_pk": "7a2aa439-9926-490b-a4f7-9edd3832ec34",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "LARA TAX & INSURANCE SERVICES LLC",
+      "slug": "lara-tax-insurance-services-llc-3002979280",
+      "profile_url": "https://www.insurancetrusthub.com/providers/lara-tax-insurance-services-llc-3002979280",
+      "physical_location": {
+        "city": "Winooski",
+        "state": "VT",
+        "postal_code": "05404",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3003169626",
+      "source_table": "providers",
+      "source_pk": "db6b17bf-bc4f-4cd9-8cb0-7eef044f708b",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "AMERIPRO SURETY BONDS LLC",
+      "slug": "ameripro-surety-bonds-llc-3003169626",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ameripro-surety-bonds-llc-3003169626",
+      "physical_location": {
+        "city": "Stowe",
+        "state": "VT",
+        "postal_code": "05672",
+        "county": "Washington",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3003797214",
+      "source_table": "providers",
+      "source_pk": "81916561-6eba-4d20-a7f7-548e692b6446",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "KERRI SURRIDGE INSURANCE AGENCY LLC",
+      "slug": "kerri-surridge-insurance-agency-llc-3003797214",
+      "profile_url": "https://www.insurancetrusthub.com/providers/kerri-surridge-insurance-agency-llc-3003797214",
+      "physical_location": {
+        "city": "Barre",
+        "state": "VT",
+        "postal_code": "05641",
+        "county": "Washington",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3131810",
+      "source_table": "providers",
+      "source_pk": "1c6d54e6-acc8-4b9d-9649-795c9c1b50b2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "POLLY INSURANCE AGENCY, LLC",
+      "slug": "polly-insurance-agency-llc-3131810",
+      "profile_url": "https://www.insurancetrusthub.com/providers/polly-insurance-agency-llc-3131810",
+      "physical_location": {
+        "city": "Williston",
+        "state": "VT",
+        "postal_code": "05495",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3232853",
+      "source_table": "providers",
+      "source_pk": "b875d5ec-3e28-44ec-85d2-8c2e96048213",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "THE COBURN GROUP, INC",
+      "slug": "the-coburn-group-inc-3232853",
+      "profile_url": "https://www.insurancetrusthub.com/providers/the-coburn-group-inc-3232853",
+      "physical_location": {
+        "city": "Williston",
+        "state": "VT",
+        "postal_code": "05495",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3407063",
+      "source_table": "providers",
+      "source_pk": "bcc5df3c-f039-4fac-8657-3ddcf262388e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "HURLBUT, GLITMAN & ASSOCIATES, P.C.",
+      "slug": "hurlbut-glitman-associates-p-c-3407063",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hurlbut-glitman-associates-p-c-3407063",
+      "physical_location": {
+        "city": "Saint Albans",
+        "state": "VT",
+        "postal_code": "05478",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3515321",
+      "source_table": "providers",
+      "source_pk": "53338c5a-1b63-4fc1-976a-49d01a8036a8",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "PERKINS INSURANCE AGENCY, INC.",
+      "slug": "perkins-insurance-agency-inc-3515321",
+      "profile_url": "https://www.insurancetrusthub.com/providers/perkins-insurance-agency-inc-3515321",
+      "physical_location": {
+        "city": "Rutland",
+        "state": "VT",
+        "postal_code": "05701",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3568998",
+      "source_table": "providers",
+      "source_pk": "58609d65-240d-4829-a654-a393f3227c9e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "WILLIAM C BURNS INC",
+      "slug": "william-c-burns-inc-3568998",
+      "profile_url": "https://www.insurancetrusthub.com/providers/william-c-burns-inc-3568998",
+      "physical_location": {
+        "city": "Rutland",
+        "state": "VT",
+        "postal_code": "05702",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3623658",
+      "source_table": "providers",
+      "source_pk": "2e0f133d-74c7-46b3-bf46-c90894105055",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "VT RISK PARTNERS, LLC",
+      "slug": "vt-risk-partners-llc-3623658",
+      "profile_url": "https://www.insurancetrusthub.com/providers/vt-risk-partners-llc-3623658",
+      "physical_location": {
+        "city": "Colchester",
+        "state": "VT",
+        "postal_code": "05446",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3654271",
+      "source_table": "providers",
+      "source_pk": "fa65f4b6-299a-417e-9375-a4cdbcfbc370",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CHAMPLAIN YACHT UNDERWRITERS INC",
+      "slug": "champlain-yacht-underwriters-inc-3654271",
+      "profile_url": "https://www.insurancetrusthub.com/providers/champlain-yacht-underwriters-inc-3654271",
+      "physical_location": {
+        "city": "Shelburne",
+        "state": "VT",
+        "postal_code": "05482",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3668358",
+      "source_table": "providers",
+      "source_pk": "f232f4ac-441f-4788-a485-7164a403cba8",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "HIBBARD INSURANCE AGENCY INC",
+      "slug": "hibbard-insurance-agency-inc-3668358",
+      "profile_url": "https://www.insurancetrusthub.com/providers/hibbard-insurance-agency-inc-3668358",
+      "physical_location": {
+        "city": "Williston",
+        "state": "VT",
+        "postal_code": "05495",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:3668815",
+      "source_table": "providers",
+      "source_pk": "7762ebd9-4498-41e3-aedd-01d317301eba",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "K E KOLOMAZNIK LLC",
+      "slug": "k-e-kolomaznik-llc-3668815",
+      "profile_url": "https://www.insurancetrusthub.com/providers/k-e-kolomaznik-llc-3668815",
+      "physical_location": {
+        "city": "South Burlington",
+        "state": "VT",
+        "postal_code": "05403",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:56818",
+      "source_table": "providers",
+      "source_pk": "0520844c-4ebf-4fd8-9235-93f3dfbc9532",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "UI INSURANCE SERVICES INC",
+      "slug": "ui-insurance-services-inc-56818",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ui-insurance-services-inc-56818",
+      "physical_location": {
+        "city": "Middlebury",
+        "state": "VT",
+        "postal_code": "05753",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:569907",
+      "source_table": "providers",
+      "source_pk": "74735807-52cc-489c-8395-94289c583db3",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "ERNEST C SOTO INSURANCE AGENCY INCORPORATED",
+      "slug": "ernest-c-soto-insurance-agency-incorporated-569907",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ernest-c-soto-insurance-agency-incorporated-569907",
+      "physical_location": {
+        "city": "Rutland",
+        "state": "VT",
+        "postal_code": "05701",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:57123",
+      "source_table": "providers",
+      "source_pk": "15ee42b6-1ce6-4d98-a294-e46a4fe72ca2",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "MARTIN AGENCIES INC",
+      "slug": "martin-agencies-inc-57123",
+      "profile_url": "https://www.insurancetrusthub.com/providers/martin-agencies-inc-57123",
+      "physical_location": {
+        "city": "Cornwall",
+        "state": "VT",
+        "postal_code": "05753",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:579016",
+      "source_table": "providers",
+      "source_pk": "01fb9665-9cf5-4526-be64-43f1f8715bbb",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "JOHN M LINDLEY INS AGENCY INC",
+      "slug": "john-m-lindley-ins-agency-inc-579016",
+      "profile_url": "https://www.insurancetrusthub.com/providers/john-m-lindley-ins-agency-inc-579016",
+      "physical_location": {
+        "city": "Burlington",
+        "state": "VT",
+        "postal_code": "05401",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:595719",
+      "source_table": "providers",
+      "source_pk": "3a2042dd-a38a-47bd-bf99-1d0b84e1dd0e",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "TS PECK LLC",
+      "slug": "ts-peck-llc-595719",
+      "profile_url": "https://www.insurancetrusthub.com/providers/ts-peck-llc-595719",
+      "physical_location": {
+        "city": "So. Burlington",
+        "state": "VT",
+        "postal_code": "05403",
+        "county": "Chittenden",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    },
+    {
+      "network_id": "insurance:doi:VT:634",
+      "source_table": "providers",
+      "source_pk": "b51d2e16-0488-44b7-84d5-5bf4b9bf1126",
+      "entity_type": "insurance_brokerage",
+      "source_provider_type": "brokerage",
+      "display_name": "CAVALIERI INSURANCE AGENCY INCORPORATED",
+      "slug": "cavalieri-insurance-agency-incorporated-634",
+      "profile_url": "https://www.insurancetrusthub.com/providers/cavalieri-insurance-agency-incorporated-634",
+      "physical_location": {
+        "city": "Rutland",
+        "state": "VT",
+        "postal_code": "05701",
+        "county": "Rutland",
+        "country": "US"
+      },
+      "licensed_service_states": [
+        "VT"
+      ],
+      "license_state": "VT",
+      "categories": [
+        "health"
+      ],
+      "medicare_category": false,
+      "medicare_entity_class": false,
+      "discovery_status": "eligible",
+      "identity_kind": "doi_license"
+    }
+  ]
+}

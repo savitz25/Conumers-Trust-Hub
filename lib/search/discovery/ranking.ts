@@ -1,6 +1,8 @@
 /**
- * Simple explainable relevance for ASK-SEARCH-005.
- * No paid / premium / popularity / RAUM signals.
+ * Deterministic relevance for Universal Search.
+ * No paid / premium / popularity / ratings / RAUM / Trust Score signals.
+ *
+ * Tie-break: score desc → display_name → network_entity_id.
  */
 
 import type { TrustHubSearchIntent } from '../types';
@@ -21,52 +23,145 @@ function norm(s?: string): string {
   return (s || '').toLowerCase().trim();
 }
 
-function cityMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
-  const want = norm(intent.location?.cityName || intent.location?.citySlug?.replace(/-/g, ' '));
-  if (!want) return false;
-  if (norm(entity.city) === want || norm(entity.city?.replace(/-/g, ' ')) === want) return true;
-  return (entity.service_areas || []).some(
-    (a) => a.kind === 'city' && norm(a.city) === want
-  );
+function countyKey(s?: string): string {
+  return norm(s)
+    .replace(/\bcounty\b/g, '')
+    .replace(/[^a-z0-9]+/g, '');
 }
 
-function countyMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
-  const want = norm(intent.location?.countySlug);
-  if (!want) return false;
-  if (norm(entity.county) === want) return true;
-  return (entity.service_areas || []).some(
-    (a) => a.kind === 'county' && norm(a.county) === want
-  );
+function cityKey(s?: string): string {
+  return norm(s).replace(/[^a-z0-9]+/g, '');
 }
 
-function zipMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+function wantCity(intent: TrustHubSearchIntent): string {
+  return cityKey(intent.location?.cityName || intent.location?.citySlug);
+}
+
+function wantCounty(intent: TrustHubSearchIntent): string {
+  return countyKey(intent.location?.countySlug);
+}
+
+function wantState(intent: TrustHubSearchIntent): string {
+  return norm(intent.location?.stateCode || intent.location?.stateSlug);
+}
+
+function physicalCity(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantCity(intent);
+  if (!want) return false;
+  return cityKey(entity.city) === want;
+}
+
+function physicalCounty(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantCounty(intent);
+  if (!want) return false;
+  return countyKey(entity.county) === want;
+}
+
+function physicalZip(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
   const want = intent.location?.zip;
   if (!want) return false;
-  if (entity.zip === want) return true;
+  return entity.zip === want;
+}
+
+function physicalState(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantState(intent);
+  if (!want) return false;
+  const st = norm(entity.state);
+  return st === want || st === norm(intent.location?.stateCode);
+}
+
+function countyService(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantCounty(intent);
+  if (!want) return false;
+  return (entity.service_areas || []).some(
+    (a) => a.kind === 'county' && countyKey(a.county) === want && (!wantState(intent) || norm(a.state) === wantState(intent))
+  );
+}
+
+function cityService(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantCity(intent);
+  if (!want) return false;
+  return (entity.service_areas || []).some((a) => a.kind === 'city' && cityKey(a.city) === want);
+}
+
+function zipService(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = intent.location?.zip;
+  if (!want) return false;
   return (entity.service_areas || []).some((a) => a.kind === 'zip' && a.zip === want);
 }
 
-function stateMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
-  const want = norm(intent.location?.stateCode || intent.location?.stateSlug);
+function stateService(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantState(intent);
   if (!want) return false;
-  const st = norm(entity.state);
-  if (st === want || st === norm(intent.location?.stateCode)) return true;
-  if (intent.location?.stateCode && st === intent.location.stateCode.toLowerCase()) return true;
-  return (entity.service_areas || []).some((a) => {
-    if (a.kind === 'state' && norm(a.state) === want) return true;
-    if (a.kind === 'interstate') return true;
-    if (a.kind === 'nationwide') return true;
-    if ((a.kind === 'city' || a.kind === 'county') && norm(a.state) === want) return true;
-    return false;
-  });
+  return (entity.service_areas || []).some((a) => a.kind === 'state' && norm(a.state) === want);
+}
+
+function countyInRequestedState(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantState(intent);
+  if (!want) return false;
+  return (entity.service_areas || []).some((a) => a.kind === 'county' && norm(a.state) === want);
+}
+
+function nationwide(entity: NetworkDiscoveryEntity): boolean {
+  return (entity.service_areas || []).some((a) => a.kind === 'nationwide' || a.kind === 'interstate');
+}
+
+function hmdaState(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantState(intent);
+  if (!want) return false;
+  return (entity.service_areas || []).some(
+    (a) =>
+      a.kind === 'state' &&
+      norm(a.state) === want &&
+      'label' in a &&
+      String((a as { label?: string }).label || '').includes('hmda')
+  );
+}
+
+function hmdaCounty(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  const want = wantCounty(intent);
+  if (!want) return false;
+  return (entity.service_areas || []).some(
+    (a) =>
+      a.kind === 'county' &&
+      countyKey(a.county) === want &&
+      'label' in a &&
+      String((a as { label?: string }).label || '').includes('hmda')
+  );
+}
+
+/** Legacy names used by ASK-SEARCH-005 fixtures. */
+function cityMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  return physicalCity(entity, intent) || cityService(entity, intent);
+}
+
+function countyMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  return physicalCounty(entity, intent) || countyService(entity, intent);
+}
+
+function zipMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  return physicalZip(entity, intent) || zipService(entity, intent);
+}
+
+function stateMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
+  return physicalState(entity, intent) || stateService(entity, intent);
 }
 
 function serviceAreaMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
-  return cityMatch(entity, intent) || countyMatch(entity, intent) || zipMatch(entity, intent);
+  return cityService(entity, intent) || countyService(entity, intent) || zipService(entity, intent);
+}
+
+function agencyLike(
+  intentType: string | null | undefined,
+  entityType: string
+): boolean {
+  const a = new Set(['insurance_agency', 'insurance_brokerage', 'insurance_agent']);
+  if (!intentType || intentType === 'unknown') return false;
+  if (intentType === entityType) return true;
+  return a.has(intentType) && a.has(entityType);
 }
 
 function nameMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchIntent): boolean {
-  // Intent has no free-text search blob by design — use entity type token lightly
   const terms = [entity.display_name, entity.legal_name, ...(entity.search_terms || [])]
     .map(norm)
     .filter(Boolean);
@@ -83,7 +178,6 @@ function searchTermMatch(entity: NetworkDiscoveryEntity, intent: TrustHubSearchI
   return false;
 }
 
-/** Score a single eligible entity against intent. Returns null if filtered out. */
 export function scoreEntity(
   entity: NetworkDiscoveryEntity,
   intent: TrustHubSearchIntent
@@ -95,28 +189,45 @@ export function scoreEntity(
   const hub = intent.hub || intent.primaryHub;
   if (hub && entity.hub !== hub) return null;
 
+  const moverFamily = new Set(['mover', 'interstate_mover', 'intrastate_mover']);
   if (intent.entityType && intent.entityType !== 'unknown' && intent.entityType !== null) {
-    if (entity.entity_type !== intent.entityType) return null;
+    const moverOk = intent.entityType === 'mover' && moverFamily.has(entity.entity_type);
+    if (
+      entity.entity_type !== intent.entityType &&
+      !agencyLike(intent.entityType, entity.entity_type) &&
+      !moverOk
+    ) {
+      return null;
+    }
+    if (intent.entityType === 'insurance_carrier' && entity.entity_type !== 'insurance_carrier') {
+      return null;
+    }
+    if (
+      (intent.entityType === 'insurance_agency' ||
+        intent.entityType === 'insurance_brokerage' ||
+        intent.entityType === 'insurance_agent') &&
+      entity.entity_type === 'insurance_carrier'
+    ) {
+      return null;
+    }
   }
 
   if (intent.category) {
     const cats = (entity.categories || []).map(norm);
     if (!cats.includes(norm(intent.category))) {
-      // allow interstate mover without explicit category list
       if (!(intent.entityType === 'interstate_mover' && entity.entity_type === 'interstate_mover')) {
         return null;
       }
     }
   }
 
-  // Geography: if intent has geo, require at least state/service coverage when precision ≥ state
   const loc = intent.location;
   if (loc && loc.precision !== 'near_me' && loc.precision !== 'unknown') {
-    const hasGeo =
-      zipMatch(entity, intent) ||
-      cityMatch(entity, intent) ||
-      countyMatch(entity, intent) ||
-      stateMatch(entity, intent);
+    const localGeo =
+      zipMatch(entity, intent) || cityMatch(entity, intent) || countyMatch(entity, intent);
+    const stateGeo = stateMatch(entity, intent) || countyInRequestedState(entity, intent);
+    const cityOrZip = loc.precision === 'city' || loc.precision === 'zip';
+    const hasGeo = cityOrZip ? localGeo : localGeo || stateGeo || nationwide(entity);
     if (!hasGeo) return null;
   }
 
@@ -127,7 +238,12 @@ export function scoreEntity(
     reasons.push('hub_match');
     score += 40;
   }
-  if (intent.entityType && entity.entity_type === intent.entityType) {
+  if (
+    intent.entityType &&
+    (entity.entity_type === intent.entityType ||
+      agencyLike(intent.entityType, entity.entity_type) ||
+      (intent.entityType === 'mover' && moverFamily.has(entity.entity_type)))
+  ) {
     reasons.push('entity_match');
     score += 30;
   }
@@ -135,30 +251,71 @@ export function scoreEntity(
     reasons.push('category_match');
     score += 20;
   }
-  if (zipMatch(entity, intent)) {
+
+  if (physicalZip(entity, intent)) {
     reasons.push('zip_match');
-    score += 25;
+    score += 28;
   }
-  if (cityMatch(entity, intent)) {
+  if (physicalCity(entity, intent)) {
     reasons.push('city_match');
-    score += 22;
+    reasons.push('exact_physical_city');
+    score += 26;
+  } else if (cityService(entity, intent)) {
+    reasons.push('city_match');
+    score += 14;
   }
-  if (countyMatch(entity, intent)) {
+  if (physicalCounty(entity, intent)) {
     reasons.push('county_match');
-    score += 18;
-  }
-  if (stateMatch(entity, intent)) {
-    reasons.push('state_match');
-    score += 10;
-  }
-  if (serviceAreaMatch(entity, intent)) {
-    if (!reasons.includes('city_match') && !reasons.includes('county_match') && !reasons.includes('zip_match')) {
-      reasons.push('service_area_match');
-      score += 15;
-    } else if (!reasons.includes('service_area_match')) {
-      reasons.push('service_area_match');
-      score += 5;
+    reasons.push('exact_physical_county');
+    score += 20;
+  } else if (countyService(entity, intent)) {
+    reasons.push('county_match');
+    reasons.push('county_service_area');
+    score += 16;
+    if (intent.location?.zip && !physicalZip(entity, intent) && !zipService(entity, intent)) {
+      reasons.push('county_service_area_via_zip_resolution');
     }
+  }
+  if (hmdaCounty(entity, intent)) {
+    reasons.push('hmda_activity_county');
+    score += 12;
+  }
+  if (countyInRequestedState(entity, intent) && !wantCounty(intent)) {
+    reasons.push('state_service_area');
+    score += 12;
+  }
+  if (physicalState(entity, intent)) {
+    reasons.push('state_match');
+    reasons.push('physical_state');
+    score += 10;
+  } else if (stateService(entity, intent)) {
+    reasons.push('state_match');
+    if (hmdaState(entity, intent)) {
+      reasons.push('hmda_activity_state');
+      score += 5;
+    } else {
+      reasons.push(entity.hub === 'insurance' ? 'licensed_service_state' : 'state_service_area');
+      score += 6;
+    }
+  }
+  if (serviceAreaMatch(entity, intent) && !reasons.includes('city_match') && !reasons.includes('county_match')) {
+    reasons.push('service_area_match');
+    score += 8;
+  } else if (serviceAreaMatch(entity, intent) && !reasons.includes('service_area_match')) {
+    reasons.push('service_area_match');
+    score += 3;
+  }
+  if (
+    nationwide(entity) &&
+    !physicalCity(entity, intent) &&
+    !physicalCounty(entity, intent) &&
+    !countyService(entity, intent) &&
+    !countyInRequestedState(entity, intent) &&
+    !physicalState(entity, intent) &&
+    !stateService(entity, intent)
+  ) {
+    reasons.push('nationwide_coverage');
+    score += 2;
   }
   if (nameMatch(entity, intent)) {
     reasons.push('name_match');
@@ -170,13 +327,14 @@ export function scoreEntity(
   }
 
   if (reasons.length === 0) return null;
-
-  return { entity, score, reasons };
+  return { entity, score, reasons: [...new Set(reasons)] };
 }
 
 export function rankMatches(matches: DiscoverySearchMatch[]): DiscoverySearchMatch[] {
   return [...matches].sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
+    const byName = a.entity.display_name.localeCompare(b.entity.display_name);
+    if (byName !== 0) return byName;
     return a.entity.network_entity_id.localeCompare(b.entity.network_entity_id);
   });
 }

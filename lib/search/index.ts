@@ -67,3 +67,5 @@ export type {
   DiscoverySearchMatch,
   DiscoverySearchResult,
 } from './discovery';
+
+export { createRealDiscoveryIndex, loadActiveDiscoveryBundle } from './feeds';

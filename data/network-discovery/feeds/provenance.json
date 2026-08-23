@@ -1,0 +1,49 @@
+{
+  "schema_version": "ask-network-discovery-v1",
+  "task": "ASK-SEARCH-006B",
+  "note": "Snapshots copied from specialist repos. Entities are not rewritten in these files. Ask-side projection/filtering is explicit in lib/search/feeds.",
+  "feeds": {
+    "move": {
+      "hub": "move",
+      "local_path": "data/network-discovery/feeds/move.v1.json",
+      "source_repository": "savitz25/move-trust-hub",
+      "source_sha": "92da3b0b6289f9a44785ec0ebb78dd85e1dd99da",
+      "source_artifact": "data/network-discovery/move-discovery-pilot.v1.1.json",
+      "source_amendment": "ASK-SEARCH-006A.2",
+      "entity_count": 200,
+      "fingerprint": "0006223ddfb82ef3fbf0c1ad62472a0c53824e2c7e44dec940a0a0a3e9300a0d"
+    },
+    "lender": {
+      "hub": "lender",
+      "local_path": "data/network-discovery/feeds/lender.v1.json",
+      "source_repository": "savitz25/lender-trust-hub",
+      "source_sha": "47014791ffbfb9c5f0506e63b89297f64b2baa1e",
+      "source_artifact": "data/network-discovery/lender-discovery-pilot.v1.json",
+      "source_amendment": "ASK-SEARCH-LENDER-001",
+      "entity_count": 200,
+      "fingerprint": "8638d4ce4ec4a8005dc4b3fb5f8e02626b187fe129dd911d0e45e594df029647"
+    },
+    "insurance": {
+      "hub": "insurance",
+      "local_path": "data/network-discovery/feeds/insurance.v1.json",
+      "source_repository": "savitz25/insurance-trust-hub",
+      "source_sha": "790dbc345001844e429b37f2b4e521299e48b625",
+      "source_artifact": "data/network-discovery/insurance-discovery-pilot.v1.json",
+      "source_amendment": "ASK-SEARCH-INSURANCE-001.1",
+      "entity_count": 180,
+      "fingerprint": "f3c3588439bba150b779ef547f5c8f0ab1891e8382b327187e3fa8503a4ed874",
+      "projection": "Ask maps insurance snapshot fields (network_id/profile_url/eligible) onto NetworkDiscoveryEntity at load. Snapshot file is unmodified."
+    },
+    "contractor": {
+      "hub": "contractor",
+      "local_path": "data/network-discovery/feeds/contractor.v1.json",
+      "source_repository": "savitz25/contractor-trust-hub",
+      "source_sha": "6428ef00adf7f231962729f1bd1bd27a7f574c0b",
+      "source_artifact": "data/network-discovery/contractor-discovery-pilot.v1.json",
+      "source_amendment": "ASK-SEARCH-CONTRACTOR-001.1",
+      "entity_count": 200,
+      "fingerprint": "2b8b2d5439bf182cfb0c45bc22af7bdc3678365f4b7c724542bbcffa01dafeab",
+      "ask_filter": "Imported 200. Ask active subset is Florida READY trades only (roofing, plumbing, hvac, pool, general_contractor). NJ and electrical-only rows stay in the snapshot and are not activated."
+    }
+  }
+}

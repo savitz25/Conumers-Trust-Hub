@@ -72,7 +72,17 @@ export type DiscoveryMatchReason =
   | 'state_match'
   | 'service_area_match'
   | 'name_match'
-  | 'search_term_match';
+  | 'search_term_match'
+  | 'exact_physical_city'
+  | 'exact_physical_county'
+  | 'county_service_area'
+  | 'county_service_area_via_zip_resolution'
+  | 'state_service_area'
+  | 'physical_state'
+  | 'hmda_activity_county'
+  | 'hmda_activity_state'
+  | 'licensed_service_state'
+  | 'nationwide_coverage';
 
 export type DiscoverySearchMatch = {
   entity: NetworkDiscoveryEntity;
