@@ -1,7 +1,14 @@
 import { NETWORK_PUBLIC_NAMES } from '@/lib/network/registry';
 import type { SearchHubId } from '../types';
 
-export const ACTIVE_SEARCH_HUBS: SearchHubId[] = ['move', 'lender', 'insurance', 'contractor'];
+export const ACTIVE_SEARCH_HUBS: SearchHubId[] = [
+  'move',
+  'lender',
+  'insurance',
+  'contractor',
+  'senior',
+  'investor',
+];
 
 export function hubPublicName(hub: SearchHubId): string {
   return NETWORK_PUBLIC_NAMES[hub];
@@ -12,6 +19,8 @@ export function researchCta(hub: SearchHubId): string {
   if (hub === 'lender') return 'View on LenderTrustHub';
   if (hub === 'insurance') return 'Research on InsuranceTrustHub';
   if (hub === 'contractor') return 'View Contractor Trust Report';
+  if (hub === 'senior') return 'Research on SeniorTrustHub';
+  if (hub === 'investor') return 'Research on InvestorTrustHub';
   return `Research on ${hubPublicName(hub)}`;
 }
 
@@ -35,6 +44,11 @@ export function entityLabel(entityType: string, category?: string): string {
     insurance_agent: 'Insurance agent',
     insurance_carrier: 'Insurance carrier',
     contractor: 'Contractor',
+    nursing_facility: 'Nursing facility',
+    ria: 'Registered investment adviser',
+    era: 'Exempt reporting adviser',
+    advisory_firm: 'Advisory firm',
+    investment_adviser: 'Investment adviser',
   };
   return map[entityType] || entityType.replace(/_/g, ' ');
 }
@@ -72,6 +86,8 @@ export const SEARCH_EXAMPLES = [
   { label: 'Mortgage companies in Florida', q: 'mortgage companies in Florida' },
   { label: 'Auto insurance agencies in Texas', q: 'auto insurance agencies Texas' },
   { label: 'Roofers in Miami, FL', q: 'roofers Miami FL' },
+  { label: 'Nursing homes in Miami, FL', q: 'nursing homes in Miami FL' },
+  { label: 'RIAs in Boca Raton, FL', q: 'RIAs in Boca Raton FL' },
 ] as const;
 
 export const INDEPENDENCE_LINE =

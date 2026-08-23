@@ -1,6 +1,6 @@
 {
   "schema_version": "ask-network-discovery-v1",
-  "task": "ASK-SEARCH-006B",
+  "task": "ASK-SEARCH-008",
   "note": "Snapshots copied from specialist repos. Entities are not rewritten in these files. Ask-side projection/filtering is explicit in lib/search/feeds.",
   "feeds": {
     "move": {
@@ -44,6 +44,30 @@
       "entity_count": 200,
       "fingerprint": "2b8b2d5439bf182cfb0c45bc22af7bdc3678365f4b7c724542bbcffa01dafeab",
       "ask_filter": "Imported 200. Ask active subset is Florida READY trades only (roofing, plumbing, hvac, pool, general_contractor). NJ and electrical-only rows stay in the snapshot and are not activated."
+    },
+    "senior": {
+      "hub": "senior",
+      "local_path": "data/network-discovery/feeds/senior.v1.json",
+      "source_repository": "savitz25/care-trust-hub",
+      "source_sha": "817553e7aa8e969e61d146400cf9b2331b0f7493",
+      "receiving_sha": "76e24d16d991989b4ae285d76783854156063d5d",
+      "source_artifact": "data/network-discovery/senior-discovery-pilot.v1.json",
+      "source_amendment": "ASK-SEARCH-SENIOR-001",
+      "entity_count": 200,
+      "fingerprint": "23e837a09f541460c688a47b3fa460cffe3b591675ed3861ba79ca2787bf70b6",
+      "projection": "Ask maps discovery_status eligible→active and physical_location onto NetworkDiscoveryEntity at load. Snapshot file is unmodified. Assisted living / memory care / home care are not activated."
+    },
+    "investor": {
+      "hub": "investor",
+      "local_path": "data/network-discovery/feeds/investor.v1.json",
+      "source_repository": "savitz25/investor-trust-hub",
+      "source_sha": "739d058ed2b210d9d1421beee1224c1b46f111e1",
+      "receiving_sha": "ac7cfb485b31831d0ff016dd29fa7966f6e6524f",
+      "source_artifact": "data/network-discovery/investor-discovery-pilot.v1.json",
+      "source_amendment": "ASK-SEARCH-INVESTOR-001",
+      "entity_count": 200,
+      "fingerprint": "8f16793a6bbaeb630f5f643c00f0ca8f06539b0bb3cf73a26d6160908467f52a",
+      "projection": "Ask maps discovery_status eligible→active and physical_location onto NetworkDiscoveryEntity at load. Snapshot file is unmodified. RIA ≠ ERA retained."
     }
   }
 }

@@ -125,6 +125,25 @@ function unsupportedMessage(intent: TrustHubSearchIntent, reason?: string): stri
   if (intent.entityType === 'home_inspector' || /home inspector/i.test(reason || '')) {
     return 'Home inspectors are not a supported Ask contractor category.';
   }
+  if (
+    intent.entityType === 'assisted_living' ||
+    intent.entityType === 'memory_care' ||
+    intent.entityType === 'home_care' ||
+    intent.entityType === 'home_health' ||
+    reason?.includes('senior_care_type') ||
+    reason?.includes('memory_care')
+  ) {
+    return 'That senior care type is not in the current Ask nursing/SNF index. We did not substitute nursing facilities.';
+  }
+  if (
+    intent.hub === 'investor' &&
+    (reason?.includes('funds_not_live') ||
+      reason?.includes('investor_product') ||
+      intent.category === 'etf' ||
+      intent.category === 'mutual_fund')
+  ) {
+    return 'Investment products are not searchable in Ask Universal Search. We did not substitute investment advisers.';
+  }
   return 'This search is not supported in the current Trust Hub discovery index.';
 }
 
@@ -155,6 +174,8 @@ export function runUniversalSearch(rawQuery: string): UniversalSearchModel {
       | 'lender'
       | 'insurance'
       | 'contractor'
+      | 'senior'
+      | 'investor'
       | undefined;
 
     if (res.status === 'needs_clarification') {

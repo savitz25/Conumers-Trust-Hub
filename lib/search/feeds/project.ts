@@ -61,6 +61,22 @@ export function projectStandardEntity(raw: Record<string, unknown>, hub: SearchH
   const source_entity_id = str(raw.source_entity_id);
   if (!network_entity_id || !display_name || !canonical_profile_url || !source_entity_id) return null;
   const hubField = (str(raw.hub) || hub) as SearchHubId;
+
+  // Ask-side only: specialist snapshots may use discovery_status "eligible".
+  const statusRaw = str(raw.discovery_status);
+  const discovery_status =
+    statusRaw === 'eligible' || statusRaw === 'active' || !statusRaw
+      ? 'active'
+      : statusRaw === 'held' || statusRaw === 'disabled'
+        ? statusRaw
+        : 'active';
+
+  const loc = (raw.physical_location || {}) as Record<string, unknown>;
+  const city = str(raw.city) || str(loc.city);
+  const state = str(raw.state) || str(loc.state);
+  const zip = str(raw.zip) || str(loc.postal_code);
+  const county = str(raw.county) || str(loc.county);
+
   return {
     ...(raw as unknown as NetworkDiscoveryEntity),
     network_entity_id,
@@ -69,5 +85,10 @@ export function projectStandardEntity(raw: Record<string, unknown>, hub: SearchH
     entity_type: raw.entity_type as SearchEntityType,
     display_name,
     canonical_profile_url,
+    discovery_status,
+    city,
+    state,
+    zip,
+    county,
   };
 }

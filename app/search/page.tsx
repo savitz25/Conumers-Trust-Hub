@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Universal Search',
-  description: 'Find movers, lenders, insurance agencies, and contractors across the Trust Hub network.',
+  description:
+    'Find movers, lenders, insurance agencies, contractors, nursing facilities, and investment advisers across the Trust Hub network.',
   robots: { index: false, follow: true },
   openGraph: {
     title: 'Universal Search · Ask Trust Hub',
@@ -43,8 +44,8 @@ export default async function UniversalSearchPage({ searchParams }: Props) {
           Find. Then research on the specialist Hub.
         </h1>
         <p className="mt-2 max-w-2xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-          Ask discovers verified providers. Move, Lender, Insurance, and Contractor Trust Hubs
-          remain the research authority.
+          Ask discovers verified providers. Specialist Trust Hubs remain the research authority —
+          including Move, Lender, Insurance, Contractor, Senior, and Investor.
         </p>
 
         <div className="mt-8">

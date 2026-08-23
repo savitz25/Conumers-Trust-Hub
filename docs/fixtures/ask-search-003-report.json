@@ -8,11 +8,11 @@
   "critical_fail_count": 0,
   "critical_fails": [],
   "performance_ms": {
-    "total": 37.359,
-    "average": 0.3139,
-    "p50": 0.2071,
-    "p95": 0.8702,
-    "max": 4.9097
+    "total": 28.025,
+    "average": 0.2355,
+    "p50": 0.1544,
+    "p95": 0.5951,
+    "max": 3.7915
   },
   "external_calls": {
     "LLM": 0,

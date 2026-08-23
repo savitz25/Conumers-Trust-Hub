@@ -47,8 +47,8 @@ assert(HUB_SEARCH_ADAPTERS.move.maturity === 'ready', 'move ready');
 assert(HUB_SEARCH_ADAPTERS.lender.maturity === 'ready', 'lender ready');
 assert(HUB_SEARCH_ADAPTERS.insurance.maturity === 'ready', 'insurance ready');
 assert(HUB_SEARCH_ADAPTERS.contractor.maturity === 'soft_handoff', 'contractor soft');
-assert(HUB_SEARCH_ADAPTERS.senior.maturity === 'soft_handoff', 'senior soft');
-assert(HUB_SEARCH_ADAPTERS.investor.maturity === 'soft_handoff', 'investor soft');
+assert(HUB_SEARCH_ADAPTERS.senior.maturity === 'ready', 'senior ready');
+assert(HUB_SEARCH_ADAPTERS.investor.maturity === 'ready', 'investor ready');
 
 // --- Move required ---
 {
@@ -102,13 +102,14 @@ assert(HUB_SEARCH_ADAPTERS.investor.maturity === 'soft_handoff', 'investor soft'
 {
   const a = vm('nursing homes Austin TX');
   assert(a.status === 'ok' && a.handoff.context.entity === 'nursing_facility', 'senior nursing');
+  assert(a.status === 'ok' && a.handoff.maturity === 'ready', 'senior ready maturity');
+  assert(a.status === 'ok' && a.handoff.url.includes('/from-ask'), 'senior view more /from-ask');
 
   const b = vm('assisted living Austin');
-  assert(b.status === 'ok' && b.handoff.maturity === 'soft_handoff', 'assisted living soft');
+  assert(b.status === 'unsupported', 'assisted living fail closed');
   assert(
-    b.status === 'ok' &&
-      (b.handoff.notes?.includes('assisted_living') || b.handoff.maturity === 'soft_handoff'),
-    'assisted living soft note/maturity'
+    b.status === 'unsupported' && /assisted_living|senior_care_type/i.test(b.reason || ''),
+    'assisted living unsupported reason'
   );
 
   const c = vm('memory care Austin');
@@ -123,6 +124,8 @@ assert(HUB_SEARCH_ADAPTERS.investor.maturity === 'soft_handoff', 'investor soft'
 {
   const a = vm('RIA Boca Raton');
   assert(a.status === 'ok' && a.handoff.context.entity === 'ria', 'investor RIA');
+  assert(a.status === 'ok' && a.handoff.maturity === 'ready', 'investor ready maturity');
+  assert(a.status === 'ok' && a.handoff.url.includes('/from-ask'), 'investor view more /from-ask');
 
   const b = vm('investment advisers in Palm Beach County');
   assert(b.status === 'ok' && b.handoff.context.county === 'palm-beach', 'investor county');

@@ -401,8 +401,6 @@ export function parseUniversalSearchQuery(raw: string): TrustHubSearchIntent {
   ) {
     confidence = 'medium';
     requiresClarification = false;
-  } else if (lex.soft && lex.entityType === 'assisted_living') {
-    confidence = 'medium';
   } else if (lex.soft && lex.category === 'flooring') {
     confidence = 'medium';
   } else if (lex.soft && lex.category === 'solar') {

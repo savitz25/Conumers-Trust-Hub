@@ -36,6 +36,7 @@ export function isContractorFlReadyEntity(e: NetworkDiscoveryEntity): boolean {
 export function realPolicyOverride(intent: TrustHubSearchIntent): DiscoverySearchResult | null {
   const hub = intent.hub || intent.primaryHub;
   const cat = (intent.category || '').toLowerCase();
+  const entity = (intent.entityType || '').toLowerCase();
 
   if (intent.entityType === 'medicare_agent' || cat === 'medicare') {
     return empty('unsupported', 'medicare_agent_unsupported');
@@ -52,6 +53,34 @@ export function realPolicyOverride(intent: TrustHubSearchIntent): DiscoverySearc
   if (hub === 'contractor' && intent.location?.stateCode === 'NJ') {
     return empty('unsupported', 'contractor_nj_not_ready');
   }
+
+  // Senior — nursing/SNF only; never substitute AL / memory / home care
+  if (
+    entity === 'memory_care' ||
+    entity === 'assisted_living' ||
+    cat === 'memory_care' ||
+    cat === 'assisted_living' ||
+    cat === 'home_care' ||
+    cat === 'home_health' ||
+    entity === 'home_care' ||
+    entity === 'home_health'
+  ) {
+    return empty('unsupported', `senior_care_type_not_ready:${entity || cat}`);
+  }
+
+  // Investor products — never substitute advisers
+  if (
+    cat === 'etf' ||
+    cat === 'mutual_fund' ||
+    cat === 'stock' ||
+    cat === 'crypto' ||
+    cat === 'hedge_fund' ||
+    entity === 'etf' ||
+    entity === 'mutual_fund'
+  ) {
+    return empty('unsupported', `investor_product_unsupported:${entity || cat}`);
+  }
+
   return null;
 }
 

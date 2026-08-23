@@ -1,0 +1,245 @@
+{
+  "base": "http://127.0.0.1:3013",
+  "fails": [],
+  "eventsSeen": [
+    "search_resolved",
+    "top_matches_rendered",
+    "outbound_hub_click",
+    "zero_results",
+    "unsupported_search"
+  ],
+  "outboundHosts": [
+    "127.0.0.1",
+    "va.vercel-scripts.com"
+  ],
+  "desktopOverflowPx": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "mobileOverflowPx": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "desktopMaxOverflow": 0,
+  "mobileMaxOverflow": 0,
+  "shots": [
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\01-homepage.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/",
+      "title": "Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\02-move-keansburg.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=movers%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\03-lender-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=mortgage%20companies%20in%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\04-insurance-texas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=auto%20insurance%20agencies%20Texas",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\05-contractor-roofers.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=roofers%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\06-senior-miami.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\07-senior-nj.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20New%20Jersey",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\08-senior-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\09-senior-unsupported.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=assisted%20living%20Miami",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\10-investor-boca.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Boca%20Raton%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\11-investor-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\12-investor-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\13-investor-unsupported.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=mutual%20funds%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\14-investor-era-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=ERA%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\desktop-1440\\15-security-script.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E%20nursing%20homes%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\01-homepage.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/",
+      "title": "Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\02-move-keansburg.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=movers%20in%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\03-lender-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=mortgage%20companies%20in%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\04-insurance-texas.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=auto%20insurance%20agencies%20Texas",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\05-contractor-roofers.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=roofers%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\06-senior-miami.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\07-senior-nj.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20New%20Jersey",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\08-senior-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=nursing%20homes%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\09-senior-unsupported.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=assisted%20living%20Miami",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\10-investor-boca.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Boca%20Raton%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\11-investor-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\12-investor-zero.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=RIAs%20Keansburg%20NJ",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\13-investor-unsupported.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=mutual%20funds%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\14-investor-era-florida.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=ERA%20Florida",
+      "title": "Universal Search | Ask Trust Hub"
+    },
+    {
+      "path": "C:\\Users\\makei\\consumers-trust-hub-ask-search-008\\artifacts\\ask-search-008\\mobile-390\\15-security-script.png",
+      "overflow": 0,
+      "url": "http://127.0.0.1:3013/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E%20nursing%20homes%20Miami%20FL",
+      "title": "Universal Search | Ask Trust Hub"
+    }
+  ],
+  "notes": {
+    "desktop-1440-senior-entity-status": 200,
+    "desktop-1440-investor-vm-status": 404,
+    "desktop-1440-investor-entity-status": 200,
+    "desktop-1440-era-florida": "UNIVERSAL SEARCH\n\nFind. Then research on the specialist Hub.\n\nAsk discovers verified providers. Move, Lender, Insurance, and Contractor Trust Hubs remain the research authority.\n\nSearch movers, lenders, insurance, or contractors\nSearch\n\nSEARCHING INVESTORTRUSTHUB\n\nTop Matches\n\n1 of 1 verified match\n\nINVESTORTRUSTHUB\n\nAZURE CAPITAL PARTNERS LP\n\nExempt reporting adviser · Ferris Ft Lauderdale, FL\n\nL",
+    "desktop-1440-dialogs": [],
+    "mobile-390-senior-entity-status": 200,
+    "mobile-390-investor-vm-status": 404,
+    "mobile-390-investor-entity-status": 200,
+    "mobile-390-era-florida": "UNIVERSAL SEARCH\n\nFind. Then research on the specialist Hub.\n\nAsk discovers verified providers. Move, Lender, Insurance, and Contractor Trust Hubs remain the research authority.\n\nSearch movers, lenders, insurance, or contractors\nSearch\n\nSEARCHING INVESTORTRUSTHUB\n\nTop Matches\n\n1 of 1 verified match\n\nINVESTORTRUSTHUB\n\nAZURE CAPITAL PARTNERS LP\n\nExempt reporting adviser · Ferris Ft Lauderdale, FL\n\nL",
+    "mobile-390-dialogs": []
+  }
+}

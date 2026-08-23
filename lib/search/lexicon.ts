@@ -115,6 +115,26 @@ export const EXCLUSION_RULES: Array<{
       confidenceHint: 'medium',
     }),
   },
+  {
+    test: /\bassisted living\b|\bcare homes?\b/,
+    apply: () => ({
+      hub: 'senior',
+      entityType: 'assisted_living',
+      supported: false,
+      unsupportedReason: 'senior_care_type_not_ready:assisted_living',
+      confidenceHint: 'medium',
+    }),
+  },
+  {
+    test: /\bhome care\b|\bhome health\b|\bin[- ]home care\b/,
+    apply: () => ({
+      hub: 'senior',
+      entityType: 'home_care',
+      supported: false,
+      unsupportedReason: 'senior_care_type_not_ready:home_care',
+      confidenceHint: 'medium',
+    }),
+  },
 ];
 
 /** Multi-word entity/category phrases (longest first). */
@@ -139,8 +159,7 @@ export const PHRASE_RULES: LexMatch[] = [
   { phrase: 'nursing homes', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'nursing home', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'nursing facility', hub: 'senior', entityType: 'nursing_facility', supported: true },
-  { phrase: 'assisted living', hub: 'senior', entityType: 'assisted_living', supported: 'soft', soft: true },
-  { phrase: 'care home', hub: 'senior', entityType: 'assisted_living', supported: 'soft', soft: true },
+  // assisted living / care home / home care handled as EXCLUSION_RULES (fail closed)
   { phrase: 'senior care', hub: 'senior', entityType: null, supported: 'partial', soft: true },
   { phrase: 'senior facility', hub: 'senior', entityType: null, supported: 'partial', soft: true },
 
@@ -225,7 +244,9 @@ export const PHRASE_RULES: LexMatch[] = [
 ];
 
 export const SINGLE_TOKEN_RULES: LexMatch[] = [
+  { phrase: 'rias', hub: 'investor', entityType: 'ria', supported: true },
   { phrase: 'ria', hub: 'investor', entityType: 'ria', supported: true },
+  { phrase: 'eras', hub: 'investor', entityType: 'era', supported: true },
   { phrase: 'era', hub: 'investor', entityType: 'era', supported: true },
   { phrase: 'snf', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'roofers', hub: 'contractor', entityType: 'contractor', category: 'roofing', supported: true },

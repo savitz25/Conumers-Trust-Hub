@@ -8,10 +8,14 @@ export type FeedProvenance = {
   local_path: string;
   source_repository: string;
   source_sha: string;
+  /** Specialist receiving-contract SHA (SENIOR-002 / INVESTOR-002), when recorded */
+  receiving_sha?: string;
   source_artifact: string;
   source_amendment?: string;
   entity_count: number;
   fingerprint: string;
+  projection?: string;
+  ask_filter?: string;
 };
 
 export type FeedValidationIssue = { path: string; message: string };

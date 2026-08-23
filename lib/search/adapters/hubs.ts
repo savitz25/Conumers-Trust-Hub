@@ -303,48 +303,42 @@ export const contractorAdapter: HubSearchAdapter = {
   },
 };
 
-/** Senior */
+/** Senior — nursing/SNF READY via SENIOR-002 /from-ask. AL/memory/home care fail closed upstream. */
 export const seniorAdapter: HubSearchAdapter = {
   hub: 'senior',
   displayName: NETWORK_PUBLIC_NAMES.senior,
   origin: CANONICAL_ORIGINS.senior,
-  supportedEntityTypes: ['nursing_facility', 'assisted_living', 'memory_care'],
+  supportedEntityTypes: ['nursing_facility'],
   geography: { state: true, county: true, city: true, zip: true, radius: false },
-  maturity: 'soft_handoff',
+  maturity: 'ready',
   buildSearchHandoff(intent) {
     const ctx = intentToHandoffContext(intent, { journey: 'senior_care' });
-    // Soft root with structured params until deep SERP paths are confirmed network-wide
-    const path = '/';
-    return result('senior', 'view_more', path, ctx, 'soft_handoff', intent, {
-      notes:
-        intent.entityType === 'memory_care'
-          ? 'Memory care national directory unsupported — soft Hub entry with context only'
-          : 'Structured senior search context attached for Hub seeding',
-    });
+    return result('senior', 'view_more', '/from-ask', ctx, 'ready', intent);
   },
   buildEntityHandoff(entity, intent) {
-    const fallback = `/facilities/${entity.source_entity_id}`;
-    return entityResult('senior', entity, intent, fallback, 'soft_handoff');
+    // Canonical CMS facility URLs preferred; CCN slug fallback
+    const ccn = entity.source_entity_id.replace(/^ccn-/, '');
+    const fallback = `/facility/cms/${ccn}`;
+    return entityResult('senior', entity, intent, fallback, 'ready');
   },
 };
 
-/** Investor */
+/** Investor — RIA/ERA READY via INVESTOR-002 /from-ask. Products fail closed upstream. */
 export const investorAdapter: HubSearchAdapter = {
   hub: 'investor',
   displayName: NETWORK_PUBLIC_NAMES.investor,
   origin: CANONICAL_ORIGINS.investor,
   supportedEntityTypes: ['ria', 'era', 'advisory_firm', 'investment_adviser'],
   geography: { state: true, county: true, city: true, zip: true, radius: false },
-  maturity: 'soft_handoff',
+  maturity: 'ready',
   buildSearchHandoff(intent) {
     const ctx = intentToHandoffContext(intent, { journey: 'investing' });
-    const path = '/';
-    return result('investor', 'view_more', path, ctx, 'soft_handoff', intent, {
-      notes: 'Firm research entry with structured RIA/ERA context',
-    });
+    return result('investor', 'view_more', '/from-ask', ctx, 'ready', intent);
   },
   buildEntityHandoff(entity, intent) {
-    const fallback = `/firm/${entity.source_entity_id}`;
-    return entityResult('investor', entity, intent, fallback, 'soft_handoff');
+    // Canonical SEC CRD firm URLs preferred
+    const crd = entity.source_entity_id.replace(/^crd-/, '');
+    const fallback = `/firm/sec-crd-${crd}`;
+    return entityResult('investor', entity, intent, fallback, 'ready');
   },
 };

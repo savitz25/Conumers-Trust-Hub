@@ -5,7 +5,7 @@ import { loadSpecialistFeed } from './load';
 import { isContractorFlReadyEntity, realPolicyOverride } from './policy';
 import type { ActiveDiscoveryBundle, LoadedFeed } from './types';
 
-const HUBS = ['move', 'lender', 'insurance', 'contractor'] as const;
+const HUBS = ['move', 'lender', 'insurance', 'contractor', 'senior', 'investor'] as const;
 
 export function loadActiveDiscoveryBundle(rootDir = process.cwd()): ActiveDiscoveryBundle {
   const feeds: LoadedFeed[] = HUBS.map((h) => loadSpecialistFeed(h, rootDir));

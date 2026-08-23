@@ -1,0 +1,114 @@
+{
+  "schema_version": "ask-universal-search-intent-corpus-v1",
+  "task": "ASK-SEARCH-008",
+  "notes": "Additional Senior/Investor parser fixtures for six-hub activation. Legacy 119 corpus remains authoritative for ASK-SEARCH-003.",
+  "fixtures": [
+    {
+      "id": "s008-01",
+      "query": "nursing homes Miami FL",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "city": "Miami",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "supported": true
+      }
+    },
+    {
+      "id": "s008-02",
+      "query": "nursing homes New Jersey",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "state": "NJ",
+        "confidence": "high",
+        "requiresClarification": false,
+        "supported": true
+      }
+    },
+    {
+      "id": "s008-03",
+      "query": "assisted living Miami",
+      "expected": {
+        "hub": "senior",
+        "entityType": "assisted_living",
+        "supported": false,
+        "unsupportedReason": "senior_care_type_not_ready:assisted_living"
+      }
+    },
+    {
+      "id": "s008-04",
+      "query": "home care Tampa",
+      "expected": {
+        "hub": "senior",
+        "entityType": "home_care",
+        "supported": false,
+        "unsupportedReason": "senior_care_type_not_ready:home_care"
+      }
+    },
+    {
+      "id": "s008-05",
+      "query": "memory care Florida",
+      "expected": {
+        "hub": "senior",
+        "entityType": "memory_care",
+        "supported": false,
+        "unsupportedReason": "memory_care_national_directory_not_built"
+      }
+    },
+    {
+      "id": "s008-06",
+      "query": "RIAs Boca Raton FL",
+      "expected": {
+        "hub": "investor",
+        "entityType": "ria",
+        "city": "Boca Raton",
+        "state": "FL",
+        "confidence": "high",
+        "requiresClarification": false,
+        "supported": true
+      }
+    },
+    {
+      "id": "s008-07",
+      "query": "ERA Florida",
+      "expected": {
+        "hub": "investor",
+        "entityType": "era",
+        "state": "FL",
+        "confidence": "high",
+        "supported": true
+      }
+    },
+    {
+      "id": "s008-08",
+      "query": "mutual funds Florida",
+      "expected": {
+        "hub": "investor",
+        "supported": false,
+        "unsupportedReason": "funds_not_live_search"
+      }
+    },
+    {
+      "id": "s008-09",
+      "query": "ETF Miami",
+      "expected": {
+        "hub": "investor",
+        "supported": false,
+        "unsupportedReason": "funds_not_live_search"
+      }
+    },
+    {
+      "id": "s008-10",
+      "query": "SNF in Florida",
+      "expected": {
+        "hub": "senior",
+        "entityType": "nursing_facility",
+        "state": "FL",
+        "supported": true
+      }
+    }
+  ]
+}

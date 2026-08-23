@@ -88,20 +88,60 @@ export function evaluateSearchDestination(
     };
   }
 
-  // Memory care — never invent nursing-home SERP
-  if (intent.entityType === 'memory_care') {
+  // Senior care types that are not nursing/SNF — never invent nursing-home SERP
+  if (
+    intent.entityType === 'memory_care' ||
+    intent.entityType === 'assisted_living' ||
+    intent.entityType === 'home_care' ||
+    intent.entityType === 'home_health' ||
+    intent.category === 'memory_care' ||
+    intent.category === 'assisted_living' ||
+    intent.category === 'home_care' ||
+    intent.category === 'home_health'
+  ) {
+    const et = intent.entityType || intent.category || 'senior_care';
     return {
       status: 'unsupported',
-      reason: 'memory_care_national_directory_not_built',
+      reason:
+        et === 'memory_care'
+          ? 'memory_care_national_directory_not_built'
+          : `senior_care_type_not_ready:${et}`,
       hub: 'senior',
       maturity: 'disabled',
       analytics: {
         source: 'ask',
         destinationHub: 'senior',
         handoffType: 'view_more',
-        entityType: 'memory_care',
+        entityType: intent.entityType || undefined,
+        category: intent.category,
         state: intent.location?.stateCode,
         city: intent.location?.citySlug,
+        maturity: 'disabled',
+      },
+    };
+  }
+
+  // Investor products — never substitute advisers
+  if (
+    intent.category === 'etf' ||
+    intent.category === 'mutual_fund' ||
+    intent.category === 'stock' ||
+    intent.category === 'crypto' ||
+    intent.category === 'hedge_fund' ||
+    intent.entityType === 'etf' ||
+    intent.entityType === 'mutual_fund'
+  ) {
+    return {
+      status: 'unsupported',
+      reason: `investor_product_unsupported:${intent.entityType || intent.category}`,
+      hub: 'investor',
+      maturity: 'disabled',
+      analytics: {
+        source: 'ask',
+        destinationHub: 'investor',
+        handoffType: 'view_more',
+        entityType: intent.entityType || undefined,
+        category: intent.category,
         maturity: 'disabled',
       },
     };
@@ -145,11 +185,6 @@ export function evaluateSearchDestination(
     return { status: 'disabled', reason: `Adapter disabled for ${hub}`, hub, maturity: 'disabled' };
   }
 
-  // Assisted living — soft (pilot), still may produce soft handoff URL
-  if (intent.entityType === 'assisted_living') {
-    return { status: 'proceed', hub }; // adapter maturity soft_handoff marks result
-  }
-
   return { status: 'proceed', hub };
 }
 
@@ -174,17 +209,13 @@ export function resolveViewMoreDestination(intent: TrustHubSearchIntent): Search
   }
   const adapter = getHubSearchAdapter(gate.hub);
   const handoff = adapter.buildSearchHandoff(intent);
-  if (intent.entityType === 'assisted_living' || adapter.maturity === 'soft_handoff') {
+  if (adapter.maturity === 'soft_handoff') {
     return {
       status: 'ok',
       handoff: {
         ...handoff,
         maturity: 'soft_handoff',
-        notes:
-          handoff.notes ||
-          (intent.entityType === 'assisted_living'
-            ? 'assisted_living_pilot_soft_handoff'
-            : undefined),
+        notes: handoff.notes,
       },
     };
   }
@@ -229,10 +260,20 @@ export function resolveEntityDestination(
   entity: NetworkDiscoveryEntity,
   intent: TrustHubSearchIntent
 ): SearchDestinationOutcome {
-  if (entity.entity_type === 'memory_care' || intent.entityType === 'memory_care') {
+  if (
+    entity.entity_type === 'memory_care' ||
+    entity.entity_type === 'assisted_living' ||
+    entity.entity_type === 'home_care' ||
+    intent.entityType === 'memory_care' ||
+    intent.entityType === 'assisted_living' ||
+    intent.entityType === 'home_care'
+  ) {
     return {
       status: 'unsupported',
-      reason: 'memory_care_national_directory_not_built',
+      reason:
+        entity.entity_type === 'memory_care' || intent.entityType === 'memory_care'
+          ? 'memory_care_national_directory_not_built'
+          : `senior_care_type_not_ready:${entity.entity_type || intent.entityType}`,
       hub: 'senior',
       maturity: 'disabled',
     };
