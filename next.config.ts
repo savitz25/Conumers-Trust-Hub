@@ -3,6 +3,12 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   // Prefer trailingSlash false + host redirects handled at edge (Vercel www primary).
   trailingSlash: false,
+  outputFileTracingIncludes: {
+    '/search': [
+      './data/network-discovery/feeds/provenance.json',
+      './data/network-discovery/feeds/*.v1.json',
+    ],
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
   },
