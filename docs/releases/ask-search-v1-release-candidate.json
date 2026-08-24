@@ -1,0 +1,116 @@
+{
+  "schema_version": "ask-search-v1-release-candidate",
+  "task": "ASK-SEARCH-009.1",
+  "certified_at": "2026-08-24",
+  "production_deployed": false,
+  "ask_sha_note": "Ask sha is the exact deployable application/QA commit. The branch tip is its manifest-only child because a commit cannot contain its own SHA.",
+  "active_discovery_index": {
+    "move": 200,
+    "lender": 200,
+    "insurance": 180,
+    "contractor_fl": 112,
+    "senior": 200,
+    "investor": 200,
+    "total": 1092,
+    "top_matches_max": 7,
+    "padding": false
+  },
+  "deployment_order": [
+    "move",
+    "lender",
+    "insurance",
+    "contractor",
+    "senior",
+    "investor",
+    "verify all production receiving routes",
+    "ask",
+    "production smoke",
+    "rollback Ask immediately if a required specialist route regresses"
+  ],
+  "release_candidates": {
+    "ask": {
+      "repository": "savitz25/Conumers-Trust-Hub",
+      "branch": "ask-search-009-release-ask",
+      "sha": "af998a0b3ffee70f572b45502cd90654c8d67dce",
+      "receiving_route": "/search",
+      "profile_route": "specialist-owned",
+      "test_status": "PASS: legacy 119/119; 006B; 007; 008; Senior/Investor 10/10; 009 quality 31/31; E2E 13/13; browser 12/12",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /search noindex, robots-disallowed, absent from sitemap",
+      "baseline_debt": "Two unrelated build lint warnings; not introduced by ASK-SEARCH-009.1",
+      "deployment_required": true
+    },
+    "move": {
+      "repository": "savitz25/Move-trust-Hub",
+      "branch": "ask-search-009-release-move",
+      "sha": "629e4ca59ded62da3f98a8794c92159529ce09a3",
+      "receiving_route": "/local-movers/[stateSlug]/[countySlug]",
+      "profile_route": "/companies/[slug]",
+      "test_status": "PASS: normal tests and cross-repo profile/Back assertions",
+      "build_status": "PASS",
+      "noindex_status": "PASS: accepted existing local-route SEO policy; handoff parameters create no sitemap entry",
+      "baseline_debt": "Global typecheck debt exists on byte-identical origin/main baseline; not introduced by ASK-SEARCH-009.1",
+      "deployment_required": true
+    },
+    "lender": {
+      "repository": "savitz25/Lender-Trust-Hub",
+      "branch": "ask-search-009-release-lender",
+      "sha": "d6f2ffe29aec1524ca17810fc3d43ef65aa1d745",
+      "receiving_route": "/from-ask",
+      "profile_route": "/lenders/[slug]",
+      "test_status": "PASS: handoff assertions, typecheck, focused lint, cross-repo profile/Back",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /from-ask noindex and excluded from sitemap",
+      "baseline_debt": "25 lint errors and 30 warnings remain in unrelated origin/main files; the one task-file lint error was fixed",
+      "deployment_required": true
+    },
+    "insurance": {
+      "repository": "savitz25/Insurance-trust-hub",
+      "branch": "ask-search-009-release-insurance",
+      "sha": "210aee2111ea7bde1ec9d63387fa6f2448d264bf",
+      "receiving_route": "/from-ask",
+      "profile_route": "/providers/[slug]",
+      "test_status": "PASS: handoff assertions, typecheck, focused lint, cross-repo profile/Back",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /from-ask noindex and excluded from sitemap",
+      "baseline_debt": "Repository-wide lint errors are unrelated origin/main debt; changed files have zero lint errors",
+      "deployment_required": true
+    },
+    "contractor": {
+      "repository": "savitz25/contractor-trust-hub",
+      "branch": "ask-search-009-release-contractor",
+      "sha": "68f20a92628c463cd2207d03a66c4d12aa908fbd",
+      "receiving_route": "/from-ask",
+      "profile_route": "/contractors/[slug]",
+      "test_status": "PASS: handoff, discovery, FL safety, typecheck, cross-repo profile/Back",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /from-ask noindex and robots-disallowed; clean profile canonical",
+      "baseline_debt": "None affecting task files",
+      "deployment_required": true
+    },
+    "senior": {
+      "repository": "savitz25/care-trust-hub",
+      "branch": "ask-search-009-release-senior",
+      "sha": "dc957939f25b088a304cddfa4b19304ecf68ecc7",
+      "receiving_route": "/from-ask",
+      "profile_route": "/facility/cms/[ccn]/[slug]",
+      "test_status": "PASS: handoff/parser fixtures and cross-repo CMS profile/Back",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /from-ask noindex and excluded from sitemap; clean profile canonical",
+      "baseline_debt": "Repository-wide Prettier failures are pre-existing accepted-branch debt; no broad reformat performed",
+      "deployment_required": true
+    },
+    "investor": {
+      "repository": "savitz25/investor-trust-hub",
+      "branch": "ask-search-009-release-investor",
+      "sha": "ac7cfb485b31831d0ff016dd29fa7966f6e6524f",
+      "receiving_route": "/from-ask",
+      "profile_route": "/firm/[slug]",
+      "test_status": "PASS: handoff/parser fixtures and cross-repo real-database CRD profile/Back",
+      "build_status": "PASS",
+      "noindex_status": "PASS: /from-ask noindex and excluded from sitemap; clean profile canonical",
+      "baseline_debt": "None affecting release certification",
+      "deployment_required": true
+    }
+  }
+}
