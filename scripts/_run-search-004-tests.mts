@@ -60,8 +60,9 @@ assert(HUB_SEARCH_ADAPTERS.investor.maturity === 'ready', 'investor ready');
   assert(a.status === 'ok' && a.handoff.analytics.handoffType === 'view_more', 'move: analytics type');
 
   const b = vm('licensed movers around 07734');
-  assert(b.status === 'ok' && b.handoff.context.zip === '07734', 'move: zip 07734');
+  assert(b.status === 'ok' && !b.handoff.context.zip, 'move: ZIP not asserted as service context');
   assert(b.status === 'ok' && b.handoff.context.state === 'NJ', 'move: zip→NJ');
+  assert(b.status === 'ok' && b.handoff.context.county === 'monmouth', 'move: ZIP resolves to county context');
 
   const c = vm('moving broker in Miami');
   assert(c.status === 'ok' && c.handoff.context.entity === 'moving_broker', 'move: broker entity');

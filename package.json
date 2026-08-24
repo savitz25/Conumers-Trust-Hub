@@ -17,6 +17,7 @@
     "assert:search-006b": "npx --yes tsx scripts/assert-search-006b.mts",
     "assert:search-007": "npx --yes tsx scripts/assert-search-007.mts",
     "assert:search-008": "npx --yes tsx scripts/assert-search-008.mts && npx --yes tsx scripts/assert-search-008-fixtures.mts",
+    "assert:search-009": "npx --yes tsx scripts/assert-search-009.mts",
     "qa:search-0071": "npx --yes tsx scripts/qa/ask-search-0071-browser.mts",
     "qa:search-008": "npx --yes tsx scripts/qa/ask-search-008-browser.mts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs"

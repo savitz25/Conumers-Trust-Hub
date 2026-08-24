@@ -146,6 +146,8 @@ export const PHRASE_RULES: LexMatch[] = [
   { phrase: 'exempt reporting advisor', hub: 'investor', entityType: 'era', supported: true },
   { phrase: 'investment advisers', hub: 'investor', entityType: 'ria', supported: true },
   { phrase: 'investment adviser', hub: 'investor', entityType: 'ria', supported: true },
+  { phrase: 'investment advisory firms', hub: 'investor', entityType: 'ria', supported: true },
+  { phrase: 'investment advisory firm', hub: 'investor', entityType: 'ria', supported: true },
   { phrase: 'advisory firm', hub: 'investor', entityType: 'advisory_firm', supported: true, soft: true },
   { phrase: 'investment firm', hub: 'investor', entityType: 'advisory_firm', supported: 'soft', soft: true },
   { phrase: 'wealth manager', hub: 'investor', entityType: 'advisory_firm', supported: 'soft', soft: true },
@@ -153,11 +155,13 @@ export const PHRASE_RULES: LexMatch[] = [
   { phrase: 'financial advisor', hub: 'investor', entityType: 'advisory_firm', supported: 'soft', soft: true },
 
   // Senior
+  { phrase: 'skilled nursing facilities', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'skilled nursing facility', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'long term care facility', hub: 'senior', entityType: 'nursing_facility', supported: true, soft: true },
   { phrase: 'long-term care facility', hub: 'senior', entityType: 'nursing_facility', supported: true, soft: true },
   { phrase: 'nursing homes', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'nursing home', hub: 'senior', entityType: 'nursing_facility', supported: true },
+  { phrase: 'nursing facilities', hub: 'senior', entityType: 'nursing_facility', supported: true },
   { phrase: 'nursing facility', hub: 'senior', entityType: 'nursing_facility', supported: true },
   // assisted living / care home / home care handled as EXCLUSION_RULES (fail closed)
   { phrase: 'senior care', hub: 'senior', entityType: null, supported: 'partial', soft: true },

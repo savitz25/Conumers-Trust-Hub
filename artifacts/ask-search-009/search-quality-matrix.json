@@ -1,0 +1,1493 @@
+{
+  "task": "ASK-SEARCH-009.1",
+  "rows": [
+    {
+      "query": "movers in Keansburg NJ",
+      "parsed_hub": "move",
+      "entity": "mover",
+      "category": null,
+      "geography": {
+        "state": "NJ",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 17,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "view_more": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "licensed movers around 07734",
+      "parsed_hub": "move",
+      "entity": "mover",
+      "category": null,
+      "geography": {
+        "state": "NJ",
+        "county": null,
+        "city": null,
+        "zip": "07734"
+      },
+      "state": "ok",
+      "eligible_count": 17,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "county_service_area_via_zip_resolution",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg&zip=07734",
+      "view_more": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "movers Miami FL",
+      "parsed_hub": "move",
+      "entity": "mover",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 28,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "state_service_area",
+          "service_area_match",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.movetrusthub.com/companies/1-800-pack-rat?src=ask&journey=directory&state=FL&county=miami-dade&entity=mover&city=miami",
+      "view_more": "https://www.movetrusthub.com/moving-to/miami?src=ask&journey=directory&state=FL&county=miami-dade&entity=mover&city=miami",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "moving companies Florida",
+      "parsed_hub": "move",
+      "entity": "mover",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 85,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.movetrusthub.com/companies/1-800-pack-rat?src=ask&journey=directory&state=FL&entity=mover",
+      "view_more": "https://www.movetrusthub.com/local-movers/florida?src=ask&journey=directory&state=FL&entity=mover",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "moving broker in Miami",
+      "parsed_hub": "move",
+      "entity": "moving_broker",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "empty",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.movetrusthub.com/moving-to/miami?src=ask&journey=directory&state=FL&county=miami-dade&entity=moving_broker&city=miami",
+      "assessment": "empty"
+    },
+    {
+      "query": "mortgage companies in Florida",
+      "parsed_hub": "lender",
+      "entity": "mortgage_company",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 14,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.lendertrusthub.com/lenders/floridas-va-mortgage-center?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "FHA lenders Tampa",
+      "parsed_hub": "lender",
+      "entity": "mortgage_company",
+      "category": "fha",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 1,
+      "displayed_count": 1,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "county_match",
+          "county_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "service_area_match",
+          "name_match",
+          "search_term_match"
+        ]
+      ],
+      "direct_profile": "https://www.lendertrusthub.com/lenders/loandepot?src=ask&journey=directory&state=FL&county=hillsborough&entity=mortgage_company&category=fha&city=tampa",
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=FL&county=hillsborough&entity=mortgage_company&category=fha&city=tampa",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "mortgage brokers New Jersey",
+      "parsed_hub": "lender",
+      "entity": "mortgage_broker",
+      "category": null,
+      "geography": {
+        "state": "NJ",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "empty",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=NJ&entity=mortgage_broker",
+      "assessment": "empty"
+    },
+    {
+      "query": "VA lenders Texas",
+      "parsed_hub": "lender",
+      "entity": "mortgage_company",
+      "category": "va",
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 35,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "physical_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_service_area",
+          "state_match",
+          "hmda_activity_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match",
+          "search_term_match"
+        ]
+      ],
+      "direct_profile": "https://www.lendertrusthub.com/lenders/benchmark-mortgage?src=ask&journey=directory&state=TX&entity=mortgage_company&category=va",
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=TX&entity=mortgage_company&category=va",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "loan officer Tampa",
+      "parsed_hub": "lender",
+      "entity": "loan_officer",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=FL&county=hillsborough&entity=mortgage_company&city=tampa",
+      "assessment": "unsupported"
+    },
+    {
+      "query": "refinance",
+      "parsed_hub": "lender",
+      "entity": "mortgage_company",
+      "category": "refinance",
+      "geography": null,
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&intent=refi&entity=mortgage_company&category=refinance",
+      "assessment": "unsupported"
+    },
+    {
+      "query": "auto insurance agencies Texas",
+      "parsed_hub": "insurance",
+      "entity": "insurance_agency",
+      "category": "auto",
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 27,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.insurancetrusthub.com/providers/a-r-schell-son-agency-inc-10030?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "view_more": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "insurance agencies Dallas TX",
+      "parsed_hub": "insurance",
+      "entity": "insurance_agency",
+      "category": null,
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 14,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.insurancetrusthub.com/providers/first-indemnity-insurance-agency-of-texas-inc-10623?src=ask&journey=directory&state=TX&county=dallas&entity=insurance_agency&city=dallas",
+      "view_more": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=TX&county=dallas&entity=insurance_agency&city=dallas",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "homeowners insurance agencies Miami FL",
+      "parsed_hub": "insurance",
+      "entity": "insurance_agency",
+      "category": "homeowners",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "empty",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=FL&county=miami-dade&entity=insurance_agency&category=homeowners&city=miami",
+      "assessment": "empty"
+    },
+    {
+      "query": "Medicare agents Indiana",
+      "parsed_hub": "insurance",
+      "entity": "medicare_agent",
+      "category": null,
+      "geography": {
+        "state": "IN",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=IN&entity=medicare_agent",
+      "assessment": "unsupported"
+    },
+    {
+      "query": "insurance company near me",
+      "parsed_hub": null,
+      "entity": null,
+      "category": null,
+      "geography": {
+        "state": null,
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "needs_clarification",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": null,
+      "assessment": "needs_clarification"
+    },
+    {
+      "query": "roofers Miami FL",
+      "parsed_hub": "contractor",
+      "entity": "contractor",
+      "category": "roofing",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 14,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ]
+      ],
+      "direct_profile": "https://www.contractortrusthub.com/contractors/ccc042809-a-k-g-inspection-services-inc?src=ask&journey=directory&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "view_more": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "HVAC contractors Tampa FL",
+      "parsed_hub": "contractor",
+      "entity": "contractor",
+      "category": "hvac",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 23,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "search_term_match"
+        ]
+      ],
+      "direct_profile": "https://www.contractortrusthub.com/contractors/cac042730-action-airconditioning-inc?src=ask&journey=directory&state=FL&county=hillsborough&entity=contractor&category=hvac&city=tampa",
+      "view_more": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=hillsborough&entity=contractor&category=hvac&city=tampa",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "general contractors Orlando FL",
+      "parsed_hub": "contractor",
+      "entity": "contractor",
+      "category": "general_contractor",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 23,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match",
+          "search_term_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "category_match",
+          "city_match",
+          "exact_physical_city",
+          "county_match",
+          "exact_physical_county",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.contractortrusthub.com/contractors/cgc036071-harbco-general-contractors-inc?src=ask&journey=directory&state=FL&county=orange&entity=contractor&category=general_contractor&city=orlando",
+      "view_more": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=orange&entity=contractor&category=general_contractor&city=orlando",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "electricians Jacksonville FL",
+      "parsed_hub": "contractor",
+      "entity": "contractor",
+      "category": "electrical",
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=duval&entity=contractor&category=electrical&city=jacksonville",
+      "assessment": "unsupported"
+    },
+    {
+      "query": "home inspectors Miami FL",
+      "parsed_hub": "contractor",
+      "entity": null,
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": null,
+      "assessment": "unsupported"
+    },
+    {
+      "query": "skilled nursing facilities Miami FL",
+      "parsed_hub": "senior",
+      "entity": "nursing_facility",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 1,
+      "displayed_count": 1,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.seniortrusthub.com/facility/cms/105005/coral-gables-nursing-and-rehabilitation-center-nursing-home-research?src=ask&journey=directory&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "view_more": "https://www.seniortrusthub.com/from-ask?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "nursing facilities New Jersey",
+      "parsed_hub": "senior",
+      "entity": "nursing_facility",
+      "category": null,
+      "geography": {
+        "state": "NJ",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 4,
+      "displayed_count": 4,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.seniortrusthub.com/facility/cms/315002/careone-at-somerset-valley-nursing-home-research?src=ask&journey=directory&state=NJ&entity=nursing_facility",
+      "view_more": "https://www.seniortrusthub.com/from-ask?src=ask&journey=senior_care&state=NJ&entity=nursing_facility",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "nursing homes Austin TX",
+      "parsed_hub": "senior",
+      "entity": "nursing_facility",
+      "category": null,
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "empty",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.seniortrusthub.com/from-ask?src=ask&journey=senior_care&state=TX&entity=nursing_facility&city=austin",
+      "assessment": "empty"
+    },
+    {
+      "query": "memory care Austin TX",
+      "parsed_hub": "senior",
+      "entity": "memory_care",
+      "category": null,
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": null,
+      "assessment": "unsupported"
+    },
+    {
+      "query": "assisted living Austin TX",
+      "parsed_hub": "senior",
+      "entity": "assisted_living",
+      "category": null,
+      "geography": {
+        "state": "TX",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": null,
+      "assessment": "unsupported"
+    },
+    {
+      "query": "RIA Boca Raton",
+      "parsed_hub": "investor",
+      "entity": "ria",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 2,
+      "displayed_count": 2,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.investortrusthub.com/firm/sec-crd-123116?src=ask&journey=directory&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "view_more": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "registered investment advisers Florida",
+      "parsed_hub": "investor",
+      "entity": "ria",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 14,
+      "displayed_count": 7,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ],
+        [
+          "hub_match",
+          "entity_match",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.investortrusthub.com/firm/sec-crd-123116?src=ask&journey=directory&state=FL&entity=ria",
+      "view_more": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=FL&entity=ria",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "investment advisory firms Miami FL",
+      "parsed_hub": "investor",
+      "entity": "ria",
+      "category": null,
+      "geography": {
+        "state": "FL",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "ok",
+      "eligible_count": 1,
+      "displayed_count": 1,
+      "match_reasons": [
+        [
+          "hub_match",
+          "entity_match",
+          "city_match",
+          "exact_physical_city",
+          "state_match",
+          "physical_state",
+          "name_match"
+        ]
+      ],
+      "direct_profile": "https://www.investortrusthub.com/firm/sec-crd-128059?src=ask&journey=directory&state=FL&county=miami-dade&entity=ria&city=miami",
+      "view_more": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=FL&county=miami-dade&entity=ria&city=miami",
+      "assessment": "supported; bounded and destination-complete"
+    },
+    {
+      "query": "ERA New York",
+      "parsed_hub": "investor",
+      "entity": "era",
+      "category": null,
+      "geography": {
+        "state": "NY",
+        "county": null,
+        "city": null,
+        "zip": null
+      },
+      "state": "empty",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=NY&entity=era",
+      "assessment": "empty"
+    },
+    {
+      "query": "Apple stock",
+      "parsed_hub": "investor",
+      "entity": null,
+      "category": null,
+      "geography": null,
+      "state": "unsupported",
+      "eligible_count": 0,
+      "displayed_count": 0,
+      "match_reasons": [],
+      "direct_profile": null,
+      "view_more": null,
+      "assessment": "unsupported"
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,292 @@
+{
+  "task": "ASK-SEARCH-009.1",
+  "generatedAt": "2026-08-24T13:08:53.890Z",
+  "failures": [],
+  "consoleErrors": [
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "desktop-1440x1000: Refused to execute script from 'http://127.0.0.1:3105/_vercel/insights/script.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.",
+    "desktop-1440x1000: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "mobile-390x844: Refused to execute script from 'http://127.0.0.1:3105/_vercel/insights/script.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.",
+    "mobile-390x844: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "external": [],
+  "records": [
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "move",
+      "askUrl": "http://127.0.0.1:3100/search?q=movers%20in%20Keansburg%20NJ",
+      "directUrl": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "viewMoreUrl": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "receivingUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "profileUrl": "http://127.0.0.1:3101/companies/amerisafe-van-lines",
+      "backUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "lender",
+      "askUrl": "http://127.0.0.1:3100/search?q=mortgage%20companies%20in%20Florida",
+      "directUrl": "https://www.lendertrusthub.com/lenders/floridas-va-mortgage-center?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "viewMoreUrl": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "receivingUrl": "http://127.0.0.1:3102/from-ask?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "profileUrl": "http://127.0.0.1:3102/lenders/united-wholesale-mortgage?from=%2Flocal-lenders%2Fflorida%3Fsrc%3Dask%26journey%3Ddirectory%26state%3DFL%26entity%3Dmortgage_company",
+      "backUrl": "http://127.0.0.1:3102/local-lenders/florida?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "insurance",
+      "askUrl": "http://127.0.0.1:3100/search?q=auto%20insurance%20agencies%20Texas",
+      "directUrl": "https://www.insurancetrusthub.com/providers/a-r-schell-son-agency-inc-10030?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "viewMoreUrl": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "receivingUrl": "http://127.0.0.1:3103/from-ask?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "profileUrl": "http://127.0.0.1:3103/providers/partners-llc-1440980?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "backUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&type=auto&category=auto&entity=insurance_agency&journey=directory",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "contractor",
+      "askUrl": "http://127.0.0.1:3100/search?q=roofers%20Miami%20FL",
+      "directUrl": "https://www.contractortrusthub.com/contractors/ccc042809-a-k-g-inspection-services-inc?src=ask&journey=directory&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "viewMoreUrl": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "receivingUrl": "http://127.0.0.1:3104/from-ask?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "profileUrl": "http://127.0.0.1:3104/contractors/ccc1335763-1-up-contracting-llc?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "backUrl": "http://127.0.0.1:3104/florida/miami-dade/roofers?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "senior",
+      "askUrl": "http://127.0.0.1:3100/search?q=skilled%20nursing%20facilities%20Miami%20FL",
+      "directUrl": "https://www.seniortrusthub.com/facility/cms/105005/coral-gables-nursing-and-rehabilitation-center-nursing-home-research?src=ask&journey=directory&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "viewMoreUrl": "https://www.seniortrusthub.com/from-ask?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "receivingUrl": "http://127.0.0.1:3105/from-ask?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "profileUrl": "http://127.0.0.1:3105/facility/cms/105903/azure-shores-rehab?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "backUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=FL&city=miami&county=miami-dade&journey=senior_care",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "desktop-1440x1000",
+      "hub": "investor",
+      "askUrl": "http://127.0.0.1:3100/search?q=RIA%20Boca%20Raton",
+      "directUrl": "https://www.investortrusthub.com/firm/sec-crd-123116?src=ask&journey=directory&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "viewMoreUrl": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "receivingUrl": "http://127.0.0.1:3106/from-ask?src=ask&journey=investing&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "profileUrl": "http://127.0.0.1:3106/firm/sec-crd-123116?src=ask&journey=investing&state=FL&entity=ria&city=boca-raton",
+      "backUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&city=boca-raton&entity=ria&journey=investing",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "move",
+      "askUrl": "http://127.0.0.1:3100/search?q=movers%20in%20Keansburg%20NJ",
+      "directUrl": "https://www.movetrusthub.com/companies/aero-mayflower-transit-company?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "viewMoreUrl": "https://www.movetrusthub.com/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "receivingUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "profileUrl": "http://127.0.0.1:3101/companies/amerisafe-van-lines",
+      "backUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "lender",
+      "askUrl": "http://127.0.0.1:3100/search?q=mortgage%20companies%20in%20Florida",
+      "directUrl": "https://www.lendertrusthub.com/lenders/floridas-va-mortgage-center?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "viewMoreUrl": "https://www.lendertrusthub.com/from-ask?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "receivingUrl": "http://127.0.0.1:3102/from-ask?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "profileUrl": "http://127.0.0.1:3102/lenders/united-wholesale-mortgage?from=%2Flocal-lenders%2Fflorida%3Fsrc%3Dask%26journey%3Ddirectory%26state%3DFL%26entity%3Dmortgage_company",
+      "backUrl": "http://127.0.0.1:3102/local-lenders/florida?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "insurance",
+      "askUrl": "http://127.0.0.1:3100/search?q=auto%20insurance%20agencies%20Texas",
+      "directUrl": "https://www.insurancetrusthub.com/providers/a-r-schell-son-agency-inc-10030?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "viewMoreUrl": "https://www.insurancetrusthub.com/from-ask?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "receivingUrl": "http://127.0.0.1:3103/from-ask?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "profileUrl": "http://127.0.0.1:3103/providers/partners-llc-1440980?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "backUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&type=auto&category=auto&entity=insurance_agency&journey=directory",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "contractor",
+      "askUrl": "http://127.0.0.1:3100/search?q=roofers%20Miami%20FL",
+      "directUrl": "https://www.contractortrusthub.com/contractors/ccc042809-a-k-g-inspection-services-inc?src=ask&journey=directory&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "viewMoreUrl": "https://www.contractortrusthub.com/from-ask?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "receivingUrl": "http://127.0.0.1:3104/from-ask?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "profileUrl": "http://127.0.0.1:3104/contractors/ccc1335763-1-up-contracting-llc?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "backUrl": "http://127.0.0.1:3104/florida/miami-dade/roofers?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "senior",
+      "askUrl": "http://127.0.0.1:3100/search?q=skilled%20nursing%20facilities%20Miami%20FL",
+      "directUrl": "https://www.seniortrusthub.com/facility/cms/105005/coral-gables-nursing-and-rehabilitation-center-nursing-home-research?src=ask&journey=directory&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "viewMoreUrl": "https://www.seniortrusthub.com/from-ask?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "receivingUrl": "http://127.0.0.1:3105/from-ask?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "profileUrl": "http://127.0.0.1:3105/facility/cms/105903/azure-shores-rehab?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "backUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=FL&city=miami&county=miami-dade&journey=senior_care",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    },
+    {
+      "viewport": "mobile-390x844",
+      "hub": "investor",
+      "askUrl": "http://127.0.0.1:3100/search?q=RIA%20Boca%20Raton",
+      "directUrl": "https://www.investortrusthub.com/firm/sec-crd-123116?src=ask&journey=directory&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "viewMoreUrl": "https://www.investortrusthub.com/from-ask?src=ask&journey=investing&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "receivingUrl": "http://127.0.0.1:3106/from-ask?src=ask&journey=investing&state=FL&county=palm-beach&entity=ria&city=boca-raton",
+      "profileUrl": "http://127.0.0.1:3106/firm/sec-crd-123116?src=ask&journey=investing&state=FL&entity=ria&city=boca-raton",
+      "backUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&city=boca-raton&entity=ria&journey=investing",
+      "statuses": {
+        "ask": 200,
+        "direct": 200,
+        "receiving": 200,
+        "profile": 200
+      },
+      "overflow": {
+        "ask": 0,
+        "receiving": 0,
+        "profile": 0,
+        "back": 0
+      }
+    }
+  ]
+}

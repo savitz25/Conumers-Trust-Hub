@@ -152,6 +152,9 @@ export const moveAdapter: HubSearchAdapter = {
   maturity: 'ready',
   buildSearchHandoff(intent) {
     const ctx = intentToHandoffContext(intent, { journey: 'directory' });
+    // Move's accepted receiving route is county/city evidence, not a ZIP service graph.
+    // Retain the resolved city/county context but do not trigger downstream ZIP filtering.
+    delete ctx.zip;
     const stateSlug = stateSlugFromIntent(intent);
     const citySlug = citySlugFromIntent(intent);
     const county = intent.location?.countySlug;

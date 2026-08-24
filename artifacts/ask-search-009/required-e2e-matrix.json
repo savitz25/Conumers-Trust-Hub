@@ -1,0 +1,136 @@
+{
+  "task": "ASK-SEARCH-009.1",
+  "failures": [],
+  "records": [
+    {
+      "hub": "move",
+      "query": "movers in Keansburg NJ",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "profileUrl": "http://127.0.0.1:3101/companies/amerisafe-van-lines",
+      "backUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth",
+      "ok": true
+    },
+    {
+      "hub": "move",
+      "query": "licensed movers around 07734",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth?src=ask&journey=directory&state=NJ&county=monmouth&entity=mover&city=keansburg",
+      "profileUrl": "http://127.0.0.1:3101/companies/amerisafe-van-lines",
+      "backUrl": "http://127.0.0.1:3101/local-movers/new-jersey/monmouth",
+      "ok": true
+    },
+    {
+      "hub": "lender",
+      "query": "mortgage companies in Florida",
+      "keyboard": true,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3102/local-lenders/florida?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "profileUrl": "http://127.0.0.1:3102/lenders/united-wholesale-mortgage?from=%2Flocal-lenders%2Fflorida%3Fsrc%3Dask%26journey%3Ddirectory%26state%3DFL%26entity%3Dmortgage_company",
+      "backUrl": "http://127.0.0.1:3102/local-lenders/florida?src=ask&journey=directory&state=FL&entity=mortgage_company",
+      "ok": true
+    },
+    {
+      "hub": "lender",
+      "query": "FHA lenders Tampa",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3102/local-lenders/florida/hillsborough?src=ask&journey=directory&state=FL&county=hillsborough&entity=mortgage_company&category=fha&city=tampa",
+      "profileUrl": "http://127.0.0.1:3102/lenders/united-wholesale-mortgage",
+      "backUrl": "http://127.0.0.1:3102/local-lenders/florida/hillsborough?src=ask&journey=directory&state=FL&county=hillsborough&entity=mortgage_company&category=fha&city=tampa",
+      "ok": true
+    },
+    {
+      "hub": "insurance",
+      "query": "auto insurance agencies Texas",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&type=auto&category=auto&entity=insurance_agency&journey=directory",
+      "profileUrl": "http://127.0.0.1:3103/providers/partners-llc-1440980?src=ask&journey=directory&state=TX&entity=insurance_agency&category=auto",
+      "backUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&type=auto&category=auto&entity=insurance_agency&journey=directory",
+      "ok": true
+    },
+    {
+      "hub": "insurance",
+      "query": "insurance agencies Dallas TX",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&city=dallas&county=dallas&entity=insurance_agency&journey=directory",
+      "profileUrl": "http://127.0.0.1:3103/providers/partners-llc-1440980?src=ask&journey=directory&state=TX&county=dallas&entity=insurance_agency&city=dallas",
+      "backUrl": "http://127.0.0.1:3103/directory?verified=true&src=ask&state=TX&city=dallas&county=dallas&entity=insurance_agency&journey=directory",
+      "ok": true
+    },
+    {
+      "hub": "contractor",
+      "query": "roofers Miami FL",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3104/florida/miami-dade/roofers?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "profileUrl": "http://127.0.0.1:3104/contractors/ccc1335763-1-up-contracting-llc?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "backUrl": "http://127.0.0.1:3104/florida/miami-dade/roofers?src=ask&journey=contractor&state=FL&county=miami-dade&entity=contractor&category=roofing&city=miami",
+      "ok": true
+    },
+    {
+      "hub": "contractor",
+      "query": "HVAC contractors Tampa FL",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3104/florida/hillsborough/air-conditioning?src=ask&journey=contractor&state=FL&county=hillsborough&entity=contractor&category=hvac&city=tampa",
+      "profileUrl": "http://127.0.0.1:3104/contractors/cac1819823-104-lcca-electric-ac-corporation?src=ask&journey=contractor&state=FL&county=hillsborough&entity=contractor&category=hvac&city=tampa",
+      "backUrl": "http://127.0.0.1:3104/florida/hillsborough/air-conditioning?src=ask&journey=contractor&state=FL&county=hillsborough&entity=contractor&category=hvac&city=tampa",
+      "ok": true
+    },
+    {
+      "hub": "contractor",
+      "query": "general contractors Orlando FL",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3104/florida/orange/general-contractors?src=ask&journey=contractor&state=FL&county=orange&entity=contractor&category=general_contractor&city=orlando",
+      "profileUrl": "http://127.0.0.1:3104/contractors/cgc1539725-305-builders-group-llc?src=ask&journey=contractor&state=FL&county=orange&entity=contractor&category=general_contractor&city=orlando",
+      "backUrl": "http://127.0.0.1:3104/florida/orange/general-contractors?src=ask&journey=contractor&state=FL&county=orange&entity=contractor&category=general_contractor&city=orlando",
+      "ok": true
+    },
+    {
+      "hub": "senior",
+      "query": "skilled nursing facilities Miami FL",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=FL&city=miami&county=miami-dade&journey=senior_care",
+      "profileUrl": "http://127.0.0.1:3105/facility/cms/105903/azure-shores-rehab?src=ask&journey=senior_care&state=FL&county=miami-dade&entity=nursing_facility&city=miami",
+      "backUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=FL&city=miami&county=miami-dade&journey=senior_care",
+      "ok": true
+    },
+    {
+      "hub": "senior",
+      "query": "nursing facilities New Jersey",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=NJ&journey=senior_care",
+      "profileUrl": "http://127.0.0.1:3105/facility/cms/315267/abigail-house-for-nursing-and-rehabilitation?src=ask&journey=senior_care&state=NJ&entity=nursing_facility",
+      "backUrl": "http://127.0.0.1:3105/search?src=ask&search=1&sort=name&entity=nursing_facility&state=NJ&journey=senior_care",
+      "ok": true
+    },
+    {
+      "hub": "investor",
+      "query": "RIA Boca Raton",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&city=boca-raton&entity=ria&journey=investing",
+      "profileUrl": "http://127.0.0.1:3106/firm/sec-crd-123116?src=ask&journey=investing&state=FL&entity=ria&city=boca-raton",
+      "backUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&city=boca-raton&entity=ria&journey=investing",
+      "ok": true
+    },
+    {
+      "hub": "investor",
+      "query": "registered investment advisers Florida",
+      "keyboard": false,
+      "directStatus": 200,
+      "receivingUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&entity=ria&journey=investing",
+      "profileUrl": "http://127.0.0.1:3106/firm/sec-crd-123116?src=ask&journey=investing&state=FL&entity=ria",
+      "backUrl": "http://127.0.0.1:3106/firms?src=ask&state=FL&entity=ria&journey=investing",
+      "ok": true
+    }
+  ]
+}
