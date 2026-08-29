@@ -178,12 +178,13 @@ export const ASK_HERO_NETWORK_PILLS = [
  * Switch Hub is a separate control, not a nav link.
  */
 export const ASK_HEADER_NAV = [
-  { href: '/#ask-network', label: 'Ask' },
+  { href: '/ask', label: 'Ask' },
   { href: '/#whats-happening', label: 'Path' },
   { href: '/my-trust-journey', label: 'My Journey' },
   { href: '/journeys', label: 'Journeys' },
   { href: '/guides', label: 'Guides' },
   { href: '/network', label: 'Network' },
+  { href: '/network/coverage', label: 'Coverage' },
   { href: '/methodology', label: 'Standard' },
   { href: '/trust', label: 'Trust' },
 ] as const;

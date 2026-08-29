@@ -18,5 +18,5 @@
     "paths": { "@/*": ["./*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "lib/network/prompt-1.test.ts"]
+  "exclude": ["node_modules", "lib/network/prompt-1.test.ts", "lib/network/prompt-2.test.ts"]
 }

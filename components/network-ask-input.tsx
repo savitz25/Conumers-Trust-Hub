@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState, type FormEvent } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 
 export type AskMode = 'find' | 'market' | 'compare' | 'decision';
@@ -46,43 +45,22 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
   },
 ];
 
-function looksLikeMoveIdentifier(q: string): boolean {
-  return /(?:dot|usdot|mc)\s*\d{4,}/i.test(q.trim());
-}
-
 export function NetworkAskInput() {
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState<AskMode>('find');
-  const { openChat } = useAskChat();
 
-  const route = useCallback(
-    (text: string, nextMode: AskMode, href?: string) => {
-      const q = text.trim();
-      if (looksLikeMoveIdentifier(q)) {
-        window.location.href = `https://www.movetrusthub.com/?q=${encodeURIComponent(q)}`;
-        return;
-      }
-      if (href && nextMode !== 'decision') {
-        window.location.href = href;
-        return;
-      }
-      openChat(
-        q
-          ? {
-              initialPrompt: `[${nextMode}] ${q}\nRoute me to the specialist TrustHub that owns this evidence. Do not invent regulatory facts.`,
-            }
-          : undefined
-      );
-    },
-    [openChat]
-  );
+  const route = useCallback((text: string) => {
+    const q = text.trim();
+    if (!q) return;
+    window.location.href = `/ask?q=${encodeURIComponent(q)}`;
+  }, []);
 
   const onSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-      route(query, mode);
+      route(query);
     },
-    [mode, query, route]
+    [query, route]
   );
 
   const chips = useMemo(() => EXAMPLES, []);
@@ -154,7 +132,7 @@ export function NetworkAskInput() {
               onClick={() => {
                 setQuery(ex.prompt);
                 setMode(ex.mode);
-                route(ex.prompt, ex.mode, ex.href);
+                route(ex.prompt);
               }}
             >
               {ex.label}
