@@ -49,16 +49,16 @@ export const VERIFICATION_STEPS = [
 
 export const TRUST_SCORE_PHILOSOPHY = [
   {
-    title: 'Composite, not a star average',
-    body: 'Trust Scores (where used) combine licensing standing, public risk signals, operational history, and attributed reputation. A high score is a research signal—not a guarantee of future performance.',
+    title: 'Not a network step',
+    body: 'AskTrustHub has no network Trust Score, grade, or ranking. Specialist hubs may still show historical composites on later pages; those are not the parent Standard.',
   },
   {
-    title: 'Explainable factors',
-    body: 'We avoid opaque ranking theater. Consumers should understand the main ingredients of a score and where judgment enters editorial curation.',
+    title: 'Unlike evidence stays unlike',
+    body: 'HMDA, CMS, Form ADV, and contractor boards answer different questions. We do not force one formula across markets.',
   },
   {
     title: 'Not for sale',
-    body: 'No fee improves a Trust Score. No package buys a badge. Score methodology is network policy, not a commercial product feature for providers.',
+    body: 'No fee buys ranking position, featured placement, or preferred display on Ask or the specialist hubs.',
   },
 ] as const;
 

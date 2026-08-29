@@ -12,6 +12,8 @@ import {
   ASK_NETWORK_OWNERSHIP_LINE,
   ASK_NETWORK_OWNERSHIP_SHORT,
 } from '@/lib/network/standard-version';
+import { NetworkLiveMosaic } from '@/components/network-live-mosaic';
+import { NetworkFindings } from '@/components/network-findings';
 import { TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 
 const networkOg = shareRouteOgImage('/network', 'The Ask Trust Hub Network');
@@ -114,6 +116,10 @@ export default function NetworkPage() {
           one research network with specialist domains, not unrelated companies. Verify providers
           with primary regulators before you commit.
         </p>
+        <div className="mt-10">
+          <NetworkLiveMosaic />
+          <NetworkFindings />
+        </div>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Specialist directories are expanding. If a ZIP or county has no listings yet, hub empty
           states point you to official sources (FMCSA, NMLS, state DOI / NAIC) rather than inventing

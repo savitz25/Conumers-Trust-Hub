@@ -55,8 +55,27 @@ export const STANDARD_PIPELINE: StandardPipelineStep[] = [
     ],
   },
   {
-    id: 'disclose',
+    id: 'explain',
     step: '03',
+    verb: 'EXPLAIN',
+    title: 'Translate regulator language into consumer context',
+    body: 'We match and explain public regulatory records. Terminology differs by market; explanation is not a score.',
+    means:
+      'Explain what a credential, observation, or filing actually is — and what it is not — without inventing a universal grade.',
+    includes: [
+      'Plain-language definitions of hub-specific records (authority, NMLS, CCN, Form ADV)',
+      'Keeping unlike evidence models separate',
+      'Routing consumers to the specialist hub that owns the record',
+    ],
+    notClaimed: [
+      'A network Trust Score, rate, rank, or grade',
+      'That explanation replaces reading the primary source',
+      'That Ask generated the underlying regulatory fact',
+    ],
+  },
+  {
+    id: 'disclose',
+    step: '04',
     verb: 'DISCLOSE',
     title: 'Show limits, independence, and funding honesty',
     body: 'Research tools without limitations language train false confidence. Disclosure is part of the product, not a footer afterthought.',
@@ -71,25 +90,6 @@ export const STANDARD_PIPELINE: StandardPipelineStep[] = [
       'That disclosure alone makes a decision “safe”',
       'That every edge case is listed on every page',
       'That commercial tools never exist — only that they cannot buy organic order',
-    ],
-  },
-  {
-    id: 'score',
-    step: '04',
-    verb: 'SCORE',
-    title: 'Optional comparison aids — never for sale',
-    body: 'Where a hub shows a composite score, it is a research aid for scanning public signals — not a guarantee, credit decision, or regulatory seal.',
-    means:
-      'Scoring is vertical-specific. There is no single universal numeric formula forced across moving, lending, and insurance. Industries differ; factors differ.',
-    includes: [
-      'Hub-specific factors published on that hub’s methodology (when scoring is used)',
-      'Explainable ingredients over opaque ranking theater',
-      'Hard rule: ranking position and scores are not sold',
-    ],
-    notClaimed: [
-      'A network-wide “Trust Score” that means the same thing in every industry',
-      'Creditworthiness, insurability, or regulatory approval',
-      'That identical high scores across a market are a feature (they are a bug)',
     ],
   },
   {
@@ -193,9 +193,9 @@ export const STANDARD_VOCABULARY = [
       'We matched key identity or authority fields to an attributable public source for that vertical — subject to data lag and matching limits. Not a promise of future performance.',
   },
   {
-    term: 'Trust Score / Reputation Score',
+    term: 'Optional hub composite (not a network step)',
     meaning:
-      'An optional composite research signal using vertical-specific public factors. Not a credit score, endorsement, or product you can buy. Not a single network-wide formula.',
+      'If a specialist hub still shows a historical composite on a later page, it is that hub’s research aid — not the AskTrustHub Standard, not for sale, and not a network Trust Score.',
   },
   {
     term: 'Primary source',

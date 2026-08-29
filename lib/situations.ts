@@ -206,7 +206,7 @@ export const TRUST_CENTER_LINKS = [
   {
     href: '/methodology',
     label: 'The Ask Trust Hub Standard',
-    detail: 'Network methodology · SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE',
+    detail: 'Network methodology · SOURCE → VERIFY → EXPLAIN → DISCLOSE → UPDATE → YOU DECIDE',
   },
   {
     href: '/data-sources',

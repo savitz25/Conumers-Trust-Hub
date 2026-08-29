@@ -48,8 +48,8 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         hubLabel: 'Lender Trust Hub',
         why: 'Loan terms shape what you can offer, when you close, and how much stress the rest of the transaction carries.',
         body: 'Before you fall in love with a property path, understand how mortgage research works. Public NMLS-oriented identifiers help you match a loan officer or company name to a license record. Educational calculators help you think about payments, down payment trade-offs, and cash-to-close ranges without treating modeled numbers as offers. Lender Trust Hub is the specialist research surface for that work: local lender research paths, educational tools, and NMLS-oriented context under the same network independence rules as Ask.',
-        href: 'https://www.lendertrusthub.com/local-lenders',
-        cta: 'Research lenders on Lender Trust Hub',
+        href: 'https://www.lendertrusthub.com/local-lenders/florida',
+        cta: 'Research Florida lenders on Lender Trust Hub',
         relatedGuides: [
           { href: '/guides/check-nmls-license', label: 'How to check an NMLS license' },
           {
@@ -68,8 +68,8 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         hubLabel: 'Insurance Trust Hub',
         why: 'Lenders and contracts often require coverage; waiting until the last week creates avoidable pressure.',
         body: 'Once financing research is underway, start educational research on homeowners insurance. Many purchase contracts and lenders require evidence of coverage by closing. Waiting until the final days compresses shopping into a single rushed quote, which is when people skip reading deductibles, exclusions, and producer licensing context. Insurance Trust Hub focuses on DOI / license pathways and coverage education — not selling policies or auctioning rankings. Use it to prepare questions, understand captive vs independent distribution language, and then re-check the relevant state Department of Insurance before you bind anything.',
-        href: 'https://www.insurancetrusthub.com/directory',
-        cta: 'Research homeowners coverage on Insurance Trust Hub',
+        href: 'https://www.insurancetrusthub.com/destinations/florida',
+        cta: 'Research Florida coverage on Insurance Trust Hub',
         relatedGuides: [
           {
             href: '/guides/verify-doi-producer-license',

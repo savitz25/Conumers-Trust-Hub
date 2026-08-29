@@ -32,7 +32,7 @@ export function HomeResearchStandard() {
               className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl"
               style={{ color: ASK_BRAND.navy }}
             >
-              Source → Verify → You decide
+              SOURCE → VERIFY → EXPLAIN → DISCLOSE → UPDATE → YOU DECIDE
             </h2>
             <p className="mt-2 text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
               Shared network pipeline. Full detail lives on the Standard page — not a homepage
