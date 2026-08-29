@@ -18,7 +18,7 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 export const metadata = createPageMetadata({
   title: 'The Ask Trust Hub Standard — Network Methodology',
   description:
-    'The Ask Trust Hub Standard: SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE. Shared research principles for the Ask Trust Hub network. Vertical-specific scoring. Rankings not for sale.',
+    'The Ask Trust Hub Standard: SOURCE → VERIFY → EXPLAIN → DISCLOSE → UPDATE → YOU DECIDE. Shared research principles for the Ask Trust Hub network. No network Trust Score. Rankings not for sale.',
   path: '/methodology',
 });
 
@@ -28,7 +28,7 @@ export default function MethodologyPage() {
       <PageHeader
         label="The Ask Trust Hub Standard"
         title="Shared research principles. Vertical-specific checks."
-        description="This is the network methodology for Ask Trust Hub. The framework is shared. Data sources and verification checks are owned by each specialist hub. Scoring—when used—is never a single formula forced across industries."
+        description="This is the network methodology for Ask Trust Hub. The framework is shared. Data sources and verification checks are owned by each specialist hub. There is no network Trust Score."
       />
 
       <div className="container-page py-14 sm:py-16">
@@ -67,7 +67,7 @@ export default function MethodologyPage() {
             className="mt-3 font-mono text-sm font-semibold tracking-wide sm:text-base"
             style={{ color: ASK_BRAND.navy }}
           >
-            SOURCE → VERIFY → DISCLOSE → SCORE → UPDATE → YOU DECIDE
+            SOURCE → VERIFY → EXPLAIN → DISCLOSE → UPDATE → YOU DECIDE
           </p>
         </div>
 

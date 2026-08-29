@@ -53,10 +53,10 @@ export const ASK_TAGLINE = 'SOURCES. VERIFIED. YOU DECIDE.';
 export const ASK_INDEPENDENCE_LINE =
   'Independent research — no paid placements, no lead fees. Common ownership · Separated research and listing order.';
 
-/** Homepage hero (Phase 2 simplified) — Concierge is the primary product */
-export const ASK_HERO_EYEBROW = 'ASK TRUST HUB  ·  KNOWLEDGE & CONCIERGE';
+/** Homepage hero — network command center (Prompt 1) */
+export const ASK_HERO_EYEBROW = 'THE TRUST HUB NETWORK';
 
-export const ASK_HERO_HEADLINE = 'Ask. Verify. Decide with confidence.';
+export const ASK_HERO_HEADLINE = 'Ask the TrustHub Network.';
 
 /** Semantic descriptor under H1 */
 export const ASK_HERO_DESCRIPTOR =
@@ -178,7 +178,7 @@ export const ASK_HERO_NETWORK_PILLS = [
  * Switch Hub is a separate control, not a nav link.
  */
 export const ASK_HEADER_NAV = [
-  { href: '/#ask', label: 'Ask' },
+  { href: '/#ask-network', label: 'Ask' },
   { href: '/#whats-happening', label: 'Path' },
   { href: '/my-trust-journey', label: 'My Journey' },
   { href: '/journeys', label: 'Journeys' },

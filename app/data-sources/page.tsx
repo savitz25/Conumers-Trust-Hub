@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { LastReviewed } from '@/components/last-reviewed';
 import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
+import { NetworkSourceLedgerTable } from '@/components/network-source-ledger-table';
 import { DATA_SOURCE_VERTICALS } from '@/lib/data-sources-library';
 import { formatReviewDate, TRUST_PAGE_REVIEWED } from '@/lib/trust-reviewed';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
@@ -39,24 +40,35 @@ export const metadata = createPageMetadata({
   path: '/data-sources',
 });
 
-export default function DataSourcesPage() {
+export default async function DataSourcesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ hub?: string }>;
+}) {
+  const { hub } = await searchParams;
   return (
     <>
       <PageHeader
         label="Data sources"
-        title="Primary-source library"
-        description="Licensing registries and public records first. Marketing claims last—if at all. Organized by vertical so you can re-check the same authorities we cite."
+        title="Network source ledger"
+        description="Hub, source organization, dataset, grain, official as-of, retrieved date, and limitation. Not a summed record count."
       />
 
       <div className="container-page py-14 sm:py-16">
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-            Each Trust Hub is only as good as its sources. Prefer primary regulatory systems over
-            secondary summaries. Specialist hubs may cite additional market-specific sources
-            on-page.
+            Official as-of is the source period. Retrieved is when TrustHub obtained it. Machine-readable:{' '}
+            <a href="/api/network/sources" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+              /api/network/sources
+            </a>
+            .
           </p>
           <LastReviewed date={TRUST_PAGE_REVIEWED.dataSources} />
         </div>
+        <NetworkSourceLedgerTable hub={hub} />
+        <h2 className="mt-16 text-2xl font-semibold tracking-tight" style={{ color: ASK_BRAND.navy }}>
+          Educational source library
+        </h2>
 
         <div className="space-y-16">
           {DATA_SOURCE_VERTICALS.map((vertical) => (

@@ -32,11 +32,20 @@ export function HomeLifeJourneys() {
               Start with a situation
             </h2>
             <p className="mt-2 text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              Editorial long-form paths. For a live plan with destination context, use{' '}
-              <Link href="/#whats-happening" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
-                What&apos;s happening?
-              </Link>
-              .
+              Situation paths after the intelligence layer. For a Florida purchase, known live
+              destinations include{' '}
+              <a href="https://www.lendertrusthub.com/local-lenders/florida" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                Lender Florida
+              </a>
+              ,{' '}
+              <a href="https://www.insurancetrusthub.com/destinations/florida" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                Insurance Florida
+              </a>
+              , and{' '}
+              <a href="https://www.movetrusthub.com/florida" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                Move Florida
+              </a>
+              . Do not invent deeper routes.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
