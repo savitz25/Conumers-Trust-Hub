@@ -1,0 +1,175 @@
+import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, type SpecialistHubId } from './registry.ts';
+
+/**
+ * Canonical Prompt 2 capability registry.
+ * Routing uses this file, not marketing copy or branch-only work.
+ * Audit date: 2026-08-29 production homepages.
+ */
+
+export type FederatedExecutionKind = 'execute' | 'handoff' | 'unsupported';
+export type HubAskStatus = 'live' | 'partial' | 'planned' | 'unsupported';
+
+export type HubCapabilityRecord = {
+  hubId: SpecialistHubId;
+  name: string;
+  origin: string;
+  askStatus: HubAskStatus;
+  /** Parent may construct a structured specialist Ask URL. Does not scrape or query specialist DBs. */
+  federatedExecution: FederatedExecutionKind;
+  structuredAskUrl?: string;
+  entityQuery: HubAskStatus;
+  identifierLookup: HubAskStatus;
+  marketAggregate: HubAskStatus;
+  stateCoverage: HubAskStatus;
+  countyCoverage: HubAskStatus;
+  evidenceLookup: HubAskStatus;
+  comparison: HubAskStatus;
+  nameSearch: HubAskStatus;
+  saveSupport: 'handoff' | 'unsupported';
+  publicSearchUrl?: string;
+  verifyUrl?: string;
+  notes: string[];
+};
+
+export const HUB_CAPABILITY_REGISTRY: Record<SpecialistHubId, HubCapabilityRecord> = {
+  move: {
+    hubId: 'move',
+    name: NETWORK_PUBLIC_NAMES.move,
+    origin: CANONICAL_ORIGINS.move,
+    askStatus: 'partial',
+    federatedExecution: 'handoff',
+    entityQuery: 'live',
+    identifierLookup: 'live',
+    marketAggregate: 'partial',
+    stateCoverage: 'partial',
+    countyCoverage: 'partial',
+    evidenceLookup: 'partial',
+    comparison: 'live',
+    nameSearch: 'live',
+    saveSupport: 'handoff',
+    publicSearchUrl: 'https://www.movetrusthub.com/?q=',
+    verifyUrl: 'https://www.movetrusthub.com/verify-dot',
+    notes: [
+      'Homepage searches 5,022 published research profiles. Not a federated JSON Ask API.',
+      'USDOT / MC lookup is live on /verify-dot.',
+      'Florida is the enhanced state intelligence page. County pages are statewide research, not Enhanced Local Research.',
+    ],
+  },
+  lender: {
+    hubId: 'lender',
+    name: NETWORK_PUBLIC_NAMES.lender,
+    origin: CANONICAL_ORIGINS.lender,
+    askStatus: 'planned',
+    federatedExecution: 'handoff',
+    entityQuery: 'partial',
+    identifierLookup: 'partial',
+    marketAggregate: 'partial',
+    stateCoverage: 'partial',
+    countyCoverage: 'planned',
+    evidenceLookup: 'partial',
+    comparison: 'partial',
+    nameSearch: 'partial',
+    saveSupport: 'handoff',
+    publicSearchUrl: 'https://www.lendertrusthub.com/lender',
+    notes: [
+      'No production /ask route. Do not treat Lender Ask as live.',
+      'Controlled public corpus: 181 national-searchable + 130 Florida-public profiles.',
+      'Florida /florida is enhanced state intelligence. County market intelligence pages are not published on the intelligence page.',
+      'NMLS lookup is a specialist search / NMLS Consumer Access handoff, not a live federated graph query.',
+    ],
+  },
+  insurance: {
+    hubId: 'insurance',
+    name: NETWORK_PUBLIC_NAMES.insurance,
+    origin: CANONICAL_ORIGINS.insurance,
+    askStatus: 'partial',
+    federatedExecution: 'handoff',
+    entityQuery: 'partial',
+    identifierLookup: 'planned',
+    marketAggregate: 'partial',
+    stateCoverage: 'partial',
+    countyCoverage: 'unsupported',
+    evidenceLookup: 'partial',
+    comparison: 'planned',
+    nameSearch: 'partial',
+    saveSupport: 'handoff',
+    publicSearchUrl: 'https://www.insurancetrusthub.com/directory',
+    notes: [
+      'Public directory is ZIP/listing search. Public people pages = 0. NPN is not a live Ask lookup.',
+      'Florida /florida is the only live state intelligence page.',
+      'TX, VT, MA, OH have directory filters, not Intelligence OS pages.',
+    ],
+  },
+  contractor: {
+    hubId: 'contractor',
+    name: NETWORK_PUBLIC_NAMES.contractor,
+    origin: CANONICAL_ORIGINS.contractor,
+    askStatus: 'live',
+    federatedExecution: 'execute',
+    structuredAskUrl: 'https://www.contractortrusthub.com/ask',
+    entityQuery: 'live',
+    identifierLookup: 'live',
+    marketAggregate: 'live',
+    stateCoverage: 'partial',
+    countyCoverage: 'partial',
+    evidenceLookup: 'partial',
+    comparison: 'live',
+    nameSearch: 'live',
+    saveSupport: 'handoff',
+    publicSearchUrl: 'https://www.contractortrusthub.com/verify?q=',
+    verifyUrl: 'https://www.contractortrusthub.com/verify',
+    notes: [
+      'Production structured Ask is live at /ask. Parent constructs the Ask URL with interpreted filters; it does not query the contractor database.',
+      'Live researched states: FL, TX, NJ, OR, WA, CA, AZ, LA, MS, KY.',
+      'Enhanced county intelligence currently published for Broward and Palm Beach, Florida.',
+    ],
+  },
+  senior: {
+    hubId: 'senior',
+    name: NETWORK_PUBLIC_NAMES.senior,
+    origin: CANONICAL_ORIGINS.senior,
+    askStatus: 'partial',
+    federatedExecution: 'handoff',
+    entityQuery: 'live',
+    identifierLookup: 'partial',
+    marketAggregate: 'partial',
+    stateCoverage: 'partial',
+    countyCoverage: 'planned',
+    evidenceLookup: 'partial',
+    comparison: 'partial',
+    nameSearch: 'live',
+    saveSupport: 'handoff',
+    publicSearchUrl: 'https://www.seniortrusthub.com/search',
+    notes: [
+      'CMS directory search is live. Classes stay separate (nursing home / home health / hospice).',
+      'CCN lookup is a specialist search handoff, not a parent CMS query.',
+      'Florida /florida is the only state intelligence page.',
+    ],
+  },
+  investor: {
+    hubId: 'investor',
+    name: NETWORK_PUBLIC_NAMES.investor,
+    origin: CANONICAL_ORIGINS.investor,
+    askStatus: 'partial',
+    federatedExecution: 'handoff',
+    entityQuery: 'live',
+    identifierLookup: 'live',
+    marketAggregate: 'partial',
+    stateCoverage: 'partial',
+    countyCoverage: 'unsupported',
+    evidenceLookup: 'partial',
+    comparison: 'planned',
+    nameSearch: 'live',
+    saveSupport: 'unsupported',
+    publicSearchUrl: 'https://www.investortrusthub.com/firms',
+    notes: [
+      'Firm search by name, CRD, or SEC file number is live. Public IAR/people search is not published.',
+      'Principal-office state is not client geography.',
+      'No enhanced state Intelligence OS pages.',
+    ],
+  },
+};
+
+export function capabilityFor(hubId: SpecialistHubId): HubCapabilityRecord {
+  return HUB_CAPABILITY_REGISTRY[hubId];
+}

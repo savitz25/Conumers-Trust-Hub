@@ -6,6 +6,7 @@ import { NetworkAskHero } from '@/components/network-ask-hero';
 import { NetworkFindings } from '@/components/network-findings';
 import { NetworkLiveMosaic } from '@/components/network-live-mosaic';
 import { NetworkSourcePreview } from '@/components/network-source-preview';
+import { HomePrompt2Previews } from '@/components/home-prompt-2-previews';
 import { WhatsHappeningPlanner } from '@/components/whats-happening-planner';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
@@ -25,6 +26,7 @@ export default function HomePage() {
       <NetworkLiveMosaic />
       <NetworkFindings />
       <NetworkSourcePreview />
+      <HomePrompt2Previews />
       <HomeConciergeDemoted />
       <WhatsHappeningPlanner />
       <HomeLifeJourneys />

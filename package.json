@@ -12,6 +12,7 @@
     "test": "node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs",
     "assert:network": "node scripts/assert-network-v2.mjs",
     "check:ask-2-prompt-1": "node scripts/check-ask-2-prompt-1.mjs && node --experimental-strip-types --test lib/network/prompt-1.test.ts",
+    "check:ask-2-prompt-2": "node --experimental-strip-types --test lib/network/prompt-2.test.ts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs"
   },
   "dependencies": {

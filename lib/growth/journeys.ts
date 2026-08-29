@@ -29,12 +29,12 @@ export type JourneyPage = {
 export const JOURNEY_PAGES: JourneyPage[] = [
   {
     slug: 'buying-a-home',
-    title: 'Buying a home: financing, coverage, then the move',
+    title: 'Buying a home in Florida: financing, coverage, contractor, then the move',
     metaTitle: 'Buying a Home Journey — Financing, Insurance & Moving Research',
     metaDescription:
       'A calm cross-hub path for home buyers: research NMLS lenders, then homeowners coverage, then FMCSA movers. Independent research — no paid placements.',
     summary:
-      'Home purchase is usually three regulated markets at once. Research them in a sensible order — financing, coverage, then the physical move — on the specialist hubs that own each domain.',
+      'A Florida purchase usually touches Lender, Insurance, Contractor, and Move research systems. Each step uses current capability metadata — not hardcoded rankings or invented counts.',
     intro: [
       'Buying a home is not a single product page. It is a sequence of high-stakes decisions: how you finance the purchase, how you insure the property, and how you move your household. Each step sits in a different regulated market with different public records and different failure modes.',
       'People often reverse the order under pressure. They tour homes, then scramble for a lender at the last minute, then bind coverage the week of closing, then hire the first mover who texts back. That sequence maximizes stress and minimizes time for license checks. A calmer path is: financing research first (so you know capacity and process), coverage research early enough that lender requirements are not a surprise, and mover research with written estimates and USDOT checks before deposits.',
@@ -47,9 +47,9 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         title: 'Financing research first',
         hubLabel: 'Lender Trust Hub',
         why: 'Loan terms shape what you can offer, when you close, and how much stress the rest of the transaction carries.',
-        body: 'Before you fall in love with a property path, understand how mortgage research works. Public NMLS-oriented identifiers help you match a loan officer or company name to a license record. Educational calculators help you think about payments, down payment trade-offs, and cash-to-close ranges without treating modeled numbers as offers. Lender Trust Hub is the specialist research surface for that work: local lender research paths, educational tools, and NMLS-oriented context under the same network independence rules as Ask.',
-        href: 'https://www.lendertrusthub.com/local-lenders/florida',
-        cta: 'Research Florida lenders on Lender Trust Hub',
+        body: 'LenderTrustHub currently has Florida mortgage-market research (OFR Chapter 494 company credentials and HMDA Florida state-grain activity). Lender Ask is not production-live — this step is a handoff to Florida Mortgage Intelligence, not a fabricated FHA ranking. PRIM COUNTY is not service territory. Always re-check NMLS Consumer Access.',
+        href: 'https://www.lendertrusthub.com/florida',
+        cta: 'Open Florida Mortgage Intelligence',
         relatedGuides: [
           { href: '/guides/check-nmls-license', label: 'How to check an NMLS license' },
           {
@@ -67,9 +67,9 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         title: 'Homeowners coverage research',
         hubLabel: 'Insurance Trust Hub',
         why: 'Lenders and contracts often require coverage; waiting until the last week creates avoidable pressure.',
-        body: 'Once financing research is underway, start educational research on homeowners insurance. Many purchase contracts and lenders require evidence of coverage by closing. Waiting until the final days compresses shopping into a single rushed quote, which is when people skip reading deductibles, exclusions, and producer licensing context. Insurance Trust Hub focuses on DOI / license pathways and coverage education — not selling policies or auctioning rankings. Use it to prepare questions, understand captive vs independent distribution language, and then re-check the relevant state Department of Insurance before you bind anything.',
-        href: 'https://www.insurancetrusthub.com/destinations/florida',
-        cta: 'Research Florida coverage on Insurance Trust Hub',
+        body: 'InsuranceTrustHub currently has Florida state intelligence (DFS credentials, OIR company identity, MIR residential extract). County inference from addresses is not published. Public people pages remain unpublished. This is state research, not a quote marketplace.',
+        href: 'https://www.insurancetrusthub.com/florida',
+        cta: 'Open Florida Insurance Intelligence',
         relatedGuides: [
           {
             href: '/guides/verify-doi-producer-license',
@@ -87,12 +87,22 @@ export const JOURNEY_PAGES: JourneyPage[] = [
       },
       {
         step: 3,
+        title: 'Florida contractor / property research',
+        hubLabel: 'Contractor Trust Hub',
+        why: 'A purchase often triggers roof, HVAC, or inspection-related contractor decisions. Those are state-board credentials, not a national ranking.',
+        body: 'ContractorTrustHub currently has enhanced Florida state intelligence plus Broward and Palm Beach county pages. Structured Ask is live. Mailing county is not service territory. Active credentials are not endorsements. Open Florida intelligence or county Place Lens rather than a parent-invented contractor count.',
+        href: 'https://www.contractortrusthub.com/florida',
+        cta: 'Open Florida Contractor Intelligence',
+        relatedGuides: [],
+      },
+      {
+        step: 4,
         title: 'Plan and verify the move',
         hubLabel: 'Move Trust Hub',
         why: 'Household goods moves are a frequent source of disputes when people skip federal licensing checks.',
-        body: 'Closer to closing, research the physical move. Interstate household goods moves often involve federal motor carrier rules and public FMCSA records. Move Trust Hub owns Verify DOT style tools, mover research surfaces, and educational planning utilities. Read estimate types carefully — binding vs non-binding language changes risk. Confirm which legal entity holds the USDOT number and who will physically transport goods. Always re-check USDOT and operating authority context on official FMCSA systems before you pay a deposit. Local-only moves may be governed more by state rules; still demand written terms you understand.',
-        href: 'https://www.movetrusthub.com/verify-dot',
-        cta: 'Verify movers on Move Trust Hub',
+        body: 'MoveTrustHub currently has federal directory research plus Florida Moving Intelligence (FDACS registrations). County landings are statewide research, not Enhanced Local Research. Use Verify DOT for USDOT/MC. Headquarters is not service territory.',
+        href: 'https://www.movetrusthub.com/florida',
+        cta: 'Open Florida Moving Intelligence',
         relatedGuides: [
           { href: '/guides/verify-usdot-number', label: 'How to verify a USDOT / DOT number' },
           { href: '/guides/broker-vs-carrier', label: 'Broker vs carrier (plain language)' },
@@ -109,7 +119,7 @@ export const JOURNEY_PAGES: JourneyPage[] = [
       'Public records lag; always re-verify licenses and written offers yourself.',
       'We do not guarantee loan approval, claim outcomes, on-time moves, or pricing.',
     ],
-    lastReviewed: '2026-08-07',
+    lastReviewed: '2026-08-29',
   },
   {
     slug: 'moving-to-another-state',

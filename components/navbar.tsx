@@ -10,7 +10,7 @@ import { SwitchHubMenu } from '@/components/switch-hub-menu';
 import { ASK_HEADER_CONCIERGE, ASK_HEADER_NAV } from '@/lib/design/ask-design-system';
 import { cn } from '@/lib/utils';
 
-const XL_ONLY = new Set(['Network', 'Standard', 'Trust']);
+const XL_ONLY = new Set(['Network', 'Coverage', 'Standard', 'Trust']);
 
 function navActive(pathname: string, href: string) {
   if (href.startsWith('/#')) return pathname === '/';

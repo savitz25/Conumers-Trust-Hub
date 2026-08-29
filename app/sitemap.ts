@@ -12,7 +12,13 @@ const CORE: {
   lastmod: string;
 }[] = [
   { path: '', priority: 1.0, changeFrequency: 'weekly', lastmod: '2026-08-07' },
-  { path: '/network', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },
+  { path: '/network', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/network/coverage', priority: 0.8, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/network/evidence', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/places', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/places/florida', priority: 0.8, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/places/florida/broward', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/places/florida/palm-beach', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/trust', priority: 0.85, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/promise', priority: 0.8, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/methodology', priority: 0.9, changeFrequency: 'monthly', lastmod: '2026-08-07' },

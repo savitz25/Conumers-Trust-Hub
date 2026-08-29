@@ -44,7 +44,7 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     pattern: /^(?:nmls)\s*\d{4,12}$/i,
     live: false,
     destinationHint: 'https://www.nmlsconsumeraccess.org/',
-    note: 'Ask routes to LenderTrustHub / NMLS Consumer Access. Do not present as a live Ask graph query.',
+    note: 'NMLS is a labeled handoff to NMLS Consumer Access and LenderTrustHub search. Not a live federated graph query.',
   },
   {
     id: 'npn',
@@ -53,8 +53,8 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     examples: ['NPN 1234567'],
     pattern: /^(?:npn)\s*\d{5,12}$/i,
     live: false,
-    destinationHint: 'https://www.insurancetrusthub.com',
-    note: 'Insurance producer identifiers are state/NAIC oriented. Not a live federated lookup in Prompt 1.',
+    destinationHint: 'https://www.insurancetrusthub.com/directory',
+    note: 'Public people pages are unpublished. NPN is not a live Ask lookup.',
   },
   {
     id: 'state_contractor_license',
@@ -62,9 +62,9 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     label: 'State contractor credential',
     examples: ['Florida CBC license'],
     pattern: /^(?:cbc|cgc|ccc)\s*[-#]?\s*\d+/i,
-    live: false,
-    destinationHint: 'https://www.contractortrusthub.com',
-    note: 'Credential formats collide across states. Do not treat a pattern match as a live lookup.',
+    live: true,
+    destinationHint: 'https://www.contractortrusthub.com/verify',
+    note: 'Florida CILB prefixes (CBC/CGC/CCC/…) route to ContractorTrustHub Verify. Other states need an explicit state. Pattern match is not a national license.',
   },
   {
     id: 'cms_ccn',
@@ -73,8 +73,8 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     examples: ['CCN 105502'],
     pattern: /^(?:ccn)?\s*\d{6}$/i,
     live: false,
-    destinationHint: 'https://www.seniortrusthub.com',
-    note: 'Documented for future Ask. Prompt 1 routes/explains rather than querying CMS.',
+    destinationHint: 'https://www.seniortrusthub.com/search',
+    note: 'CMS CCN can be searched on SeniorTrustHub. Ask does not query CMS. Labeled CCN only — bare 6-digit strings are ambiguous.',
   },
   {
     id: 'crd',
@@ -82,9 +82,9 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     label: 'CRD / SEC firm identifier',
     examples: ['CRD 123456'],
     pattern: /^(?:crd)\s*\d{4,10}$/i,
-    live: false,
-    destinationHint: 'https://www.investortrusthub.com',
-    note: 'InvestorTrustHub is firm/IARD research. CRD people lookup is not claimed live.',
+    live: true,
+    destinationHint: 'https://www.investortrusthub.com/firms',
+    note: 'Labeled CRD routes to InvestorTrustHub firm search. Public IAR/people lookup is not published. Labeled only — bare digits are ambiguous.',
   },
 ];
 
