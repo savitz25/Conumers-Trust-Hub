@@ -136,8 +136,8 @@ test('Insurance execute does not change contractor / senior / investor / lender 
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'handoff');
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
-  assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'handoff');
-  assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'partial');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'live');
 
   const contractor = buildNetworkAskPlan('Show active roofing contractors in Broward County.');
   assert.equal(contractor.hubs[0].hubId, 'contractor');
@@ -157,4 +157,5 @@ test('Insurance execute does not change contractor / senior / investor / lender 
 
   const move = buildNetworkAskPlan('USDOT 3244649');
   assert.equal(move.hubs[0].hubId, 'move');
+  assert.equal(move.hubs[0].capabilityStatus, 'execute');
 });

@@ -63,6 +63,18 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
     href: 'https://www.insurancetrusthub.com/ask',
   },
   {
+    label: 'Find USDOT 3244649',
+    prompt: 'Find USDOT 3244649.',
+    mode: 'find',
+    href: 'https://www.movetrusthub.com/ask',
+  },
+  {
+    label: 'Florida household-goods carriers',
+    prompt: 'Show current interstate household-goods carriers headquartered in Florida.',
+    mode: 'find',
+    href: 'https://www.movetrusthub.com/ask',
+  },
+  {
     label: 'Buying in Palm Beach County',
     prompt: 'I am buying a home in Palm Beach County. What should I research?',
     mode: 'decision',

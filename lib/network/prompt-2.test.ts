@@ -12,7 +12,7 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { STANDARD_PIPELINE } from '../standard.ts';
 
-test('capability registry: lender Ask is not live; contractor, senior, investor, and insurance Ask are live', () => {
+test('capability registry: lender Ask is not live; contractor, senior, investor, insurance, and move Ask are live', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
@@ -24,8 +24,11 @@ test('capability registry: lender Ask is not live; contractor, senior, investor,
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.askContract, 'investor-ask-v1');
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.structuredAskUrl, 'https://www.investortrusthub.com/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.structuredAskApiUrl, 'https://www.investortrusthub.com/api/ask');
-  assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'partial');
-  assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'handoff');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.askContract, 'move-ask-v1');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.structuredAskUrl, 'https://www.movetrusthub.com/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.structuredAskApiUrl, 'https://www.movetrusthub.com/api/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askContract, 'insurance-ask-v1');

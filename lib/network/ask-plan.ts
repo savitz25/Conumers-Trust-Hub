@@ -36,6 +36,16 @@ import {
   insuranceGeographyMeaning,
   type InsuranceAskPayload,
 } from './insurance-ask.ts';
+import {
+  MOVE_ASK_CONTRACT,
+  MOVE_ROLE_LABEL,
+  fetchMoveAsk,
+  moveAskMode,
+  moveAskUrl,
+  moveFailClosedReason,
+  moveGeographyMeaning,
+  type MoveAskPayload,
+} from './move-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -105,7 +115,7 @@ function identifierDestination(parsed: ParsedNetworkAsk): string | undefined {
   if (!id || id.ambiguous) return undefined;
   if (!id.family.live) return id.family.destinationHint;
   if (id.family.id === 'usdot' || id.family.id === 'mc') {
-    return `https://www.movetrusthub.com/verify-dot`;
+    return moveAskUrl(parsed.query);
   }
   if (id.family.id === 'state_contractor_license') {
     return `https://www.contractortrusthub.com/verify?q=${encodeURIComponent(id.raw)}`;
@@ -243,6 +253,64 @@ function insuranceHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   };
 }
 
+function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
+  const role = parsed.moveRegulatoryRole;
+  const roleLabel = role ? MOVE_ROLE_LABEL[role] : undefined;
+  const identifier = parsed.intent === 'identifier' && parsed.identifier && !parsed.identifier.ambiguous;
+  const mode = moveAskMode(parsed.query, { identifier: Boolean(identifier) });
+  const failReason = moveFailClosedReason(parsed.query);
+  const dest = moveAskUrl(parsed.query);
+  const geoMeaning = identifier
+    ? 'Identifier routing — labeled USDOT or MC, not geography.'
+    : moveGeographyMeaning(parsed.query);
+
+  return {
+    hubId: 'move',
+    name: NETWORK_PUBLIC_NAMES.move,
+    capabilityStatus: 'execute',
+    mode,
+    structuredFilters: {
+      contract: MOVE_ASK_CONTRACT,
+      role,
+      identifier: identifier ? parsed.identifier?.raw : undefined,
+    },
+    destination: dest,
+    reason:
+      'MoveTrustHub structured Ask is production-live (move-ask-v1). Parent constructs the Ask URL and may read GET /api/ask; it does not query the Move database.',
+    whatItCanAnswer: failReason
+      ? failReason
+      : roleLabel
+        ? `${roleLabel} research on MoveTrustHub. Carrier ≠ broker. Headquarters is not service territory. Florida IM registration is not interstate authority. Authority is not a recommendation.`
+        : 'MoveTrustHub Ask for carrier, broker, and Florida IM registration research. Grains stay separate.',
+    geographyCapability: geoMeaning,
+    preview: {
+      headline: failReason
+        ? failReason
+        : identifier
+          ? 'Open MoveTrustHub structured Ask for this labeled USDOT or MC.'
+          : `Open MoveTrustHub structured Ask${roleLabel ? ` for ${roleLabel}` : ''}.`,
+      grain: failReason
+        ? 'fail_closed'
+        : identifier
+          ? parsed.identifier?.family.id === 'mc'
+            ? 'Labeled MC docket identity — not a ranking'
+            : 'Labeled USDOT identity — not an endorsement'
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query)
+            ? 'FDACS Intrastate Mover registration rows'
+            : roleLabel
+              ? `directory ${roleLabel} profiles (dual-role disclosed, not double-counted)`
+              : 'FMCSA directory profiles',
+      limitation:
+        failReason ??
+        'Parent does not invent transporter identity, service territory, rankings, or a combined “moving companies” total. Open the specialist result.',
+      officialAsOf: 'See specialist result',
+      sourceFamily: /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query)
+        ? 'fdacs-florida'
+        : 'fmcsa-directory-cohort',
+    },
+  };
+}
+
 function seniorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   const cls = parsed.seniorProviderClass;
   const classLabel = cls ? SENIOR_PROVIDER_CLASS_LABEL[cls] : undefined;
@@ -327,6 +395,15 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
     (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'insurance');
   if (hubId === 'insurance' && insuranceExecute) {
     return insuranceHubPlan(parsed);
+  }
+
+  const moveExecute =
+    parsed.moveRegulatoryRole ||
+    parsed.identifier?.family.id === 'usdot' ||
+    parsed.identifier?.family.id === 'mc' ||
+    (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'move');
+  if (hubId === 'move' && moveExecute) {
+    return moveHubPlan(parsed);
   }
 
   if (parsed.intent === 'identifier' && parsed.identifier) {
@@ -507,7 +584,9 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
         geographyMeaning: h.geographyCapability,
         officialAsOf: h.preview?.officialAsOf ?? fam?.officialAsOf ?? 'See specialist page',
         identifier:
-          h.hubId === 'insurance' && plan.parsed.identifier && !plan.parsed.identifier.ambiguous
+          (h.hubId === 'insurance' || h.hubId === 'move') &&
+          plan.parsed.identifier &&
+          !plan.parsed.identifier.ambiguous
             ? plan.parsed.identifier.raw
             : undefined,
         specialistDestination: h.destination ?? capabilityFor(h.hubId).origin,
@@ -518,6 +597,8 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
               ? INVESTOR_ASK_CONTRACT
               : h.hubId === 'insurance'
                 ? INSURANCE_ASK_CONTRACT
+                : h.hubId === 'move'
+                  ? MOVE_ASK_CONTRACT
                 : capabilityFor(h.hubId).askContract,
         providerClass:
           h.hubId === 'senior'
@@ -532,6 +613,10 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
                 ? plan.parsed.insuranceEntityClass
                   ? INSURANCE_ENTITY_CLASS_LABEL[plan.parsed.insuranceEntityClass]
                   : undefined
+                : h.hubId === 'move'
+                  ? plan.parsed.moveRegulatoryRole
+                    ? MOVE_ROLE_LABEL[plan.parsed.moveRegulatoryRole]
+                    : undefined
                 : undefined,
       };
     });
@@ -707,6 +792,73 @@ function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPa
   return { ...answer, traces };
 }
 
+function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): NetworkAskAnswer {
+  const move = answer.plan.hubs.find((h) => h.hubId === 'move');
+  if (!move) return answer;
+  const failReason =
+    payload.query?.failReason ?? (payload.resultType === 'fail_closed' ? payload.query?.failReason : undefined);
+  const officialAsOf = payload.provenance?.officialAsOf ?? move.preview?.officialAsOf ?? 'See specialist result';
+  const sourceFamily = payload.provenance?.sourceFamily ?? move.preview?.sourceFamily ?? 'fmcsa-directory-cohort';
+  const geography =
+    payload.provenance?.geographyMeaning ?? payload.query?.jurisdiction?.meaning ?? move.geographyCapability;
+  const grain = payload.provenance?.grain ?? move.preview?.grain ?? move.mode;
+  const emptyExecuted =
+    !failReason &&
+    (payload.resultType === 'entity' || payload.resultType === 'identifier' || payload.resultType === 'evidence') &&
+    !(payload.results && payload.results.length) &&
+    !(payload.counts && payload.counts[0]?.value);
+  const countValue = payload.counts?.[0]?.value ?? payload.pagination?.total;
+  const firstName = payload.results?.[0]?.name;
+  const dataLimitation = emptyExecuted
+    ? payload.limitations?.[0] ??
+      'Specialist executed. Current indexed result set is empty. Absence is not inactive, unauthorized, or a clean record.'
+    : payload.limitations?.[0];
+
+  move.preview = {
+    headline: failReason
+      ? failReason
+      : emptyExecuted
+        ? (dataLimitation ?? 'Specialist executed. Current indexed result set is empty.')
+        : countValue
+          ? `Specialist count: ${countValue.toLocaleString('en-US')} (${grain ?? 'research identities'})`
+          : firstName
+            ? `${firstName}${payload.results?.[0]?.role ? ` · ${payload.results[0].role}` : ''}`
+            : move.preview?.headline ?? 'Open MoveTrustHub structured Ask.',
+    grain: grain ?? 'move-ask-v1',
+    limitation: failReason ?? dataLimitation ?? move.preview?.limitation ?? 'Specialist result is authoritative.',
+    officialAsOf: officialAsOf || 'See specialist result',
+    sourceFamily,
+  };
+  move.geographyCapability = geography;
+  if (failReason) {
+    move.mode = 'fail_closed';
+    move.whatItCanAnswer = failReason;
+  } else if (payload.query?.mode) {
+    move.mode = payload.query.mode;
+  }
+  move.capabilityStatus = 'execute';
+
+  const traces = tracesForPlan(answer.plan).map((row) =>
+    row.hubId === 'move'
+      ? {
+          ...row,
+          sourceFamily,
+          queryGrain: grain ?? row.queryGrain,
+          geographyMeaning: geography,
+          officialAsOf: officialAsOf || row.officialAsOf,
+          contract: MOVE_ASK_CONTRACT,
+          providerClass: payload.results?.[0]?.role ?? row.providerClass,
+          identifier:
+            payload.query?.identifier
+              ? `${(payload.query.identifier.type ?? '').toUpperCase()} ${payload.query.identifier.value ?? ''}`.trim()
+              : row.identifier,
+          specialistDestination: move.destination ?? row.specialistDestination,
+        }
+      : row,
+  );
+  return { ...answer, traces };
+}
+
 /** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
   let answer = assembleNetworkAnswer(query);
@@ -724,6 +876,11 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   if (insurance) {
     const payload = await fetchInsuranceAsk(query);
     if (payload) answer = applyInsurancePayload(answer, payload);
+  }
+  const move = answer.plan.hubs.find((h) => h.hubId === 'move' && h.capabilityStatus === 'execute');
+  if (move) {
+    const payload = await fetchMoveAsk(query);
+    if (payload) answer = applyMovePayload(answer, payload);
   }
   return answer;
 }
