@@ -96,6 +96,6 @@ BEGIN
 END;
 $$;
 
-COMMENT ON TABLE ath_business_profile_fields IS 'Layer C scalar fields supplied by an authorized business manager; never authoritative evidence.';
+COMMENT ON TABLE ath_business_profile_fields IS 'Layer C scalar fields supplied by an authorized business manager and never authoritative evidence.';
 COMMENT ON TABLE ath_business_profile_items IS 'Layer C repeating services, service areas, and languages with field-level provenance.';
 COMMENT ON TABLE ath_business_profile_hours IS 'Layer C business hours with field-level provenance.';
