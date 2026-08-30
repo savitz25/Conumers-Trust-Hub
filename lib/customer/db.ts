@@ -10,7 +10,11 @@ export { applyMigrations as applyCustomerMigrations, enableAppRole };
 let pool: Pool | null = null;
 
 export function askDatabaseUrl(): string | undefined {
-  return process.env.ASK_DATABASE_URL || undefined;
+  return (
+    process.env.neon_tech_database ||
+    process.env.ASK_DATABASE_URL ||
+    undefined
+  );
 }
 
 function getPool(): Pool {
@@ -18,7 +22,7 @@ function getPool(): Pool {
   const connectionString = askDatabaseUrl();
   if (!connectionString) {
     throw new Error(
-      'ASK_DATABASE_URL is not set. Ask customer data must use an Ask-owned Postgres database, not ContractorTrustHub.'
+      'Ask customer database is not configured. Set neon_tech_database or ASK_DATABASE_URL to the Ask-owned Neon Postgres URL. Do not use ContractorTrustHub DATABASE_URL.'
     );
   }
   const needsSsl =

@@ -16,6 +16,7 @@ import type { SqlClient } from '../lib/customer/sql.ts';
 import { LAYER_A_FINGERPRINT_SQL } from '../lib/customer/layer-a.ts';
 
 loadEnvFile(join(process.cwd(), '.env.local'));
+loadEnvFile(join(process.cwd(), '.env.vercel-audit.local'));
 loadEnvFile(join('C:/Users/makei/contractor-trust-hub/.env.local'));
 
 if (!process.env.ATH_HANDOFF_SECRET) {
@@ -99,7 +100,10 @@ const cth: CthDirectory = {
   },
 };
 
-const askUrl = process.env.ASK_DATABASE_URL;
+const askUrl = (process.env.neon_tech_database || process.env.ASK_DATABASE_URL || '').replace(
+  /&?channel_binding=require/g,
+  ''
+);
 let sql: SqlClient;
 let closeAsk: () => Promise<void> = async () => {};
 let askKind = 'pglite';
