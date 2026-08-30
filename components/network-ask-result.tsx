@@ -80,8 +80,14 @@ export async function NetworkAskResult({ query }: { query: string }) {
                 className="rounded-2xl border p-5"
                 style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.white, boxShadow: ASK_SHADOW.soft }}
               >
-                <h3 className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>
-                  {opt.name}
+                <h3 className="text-lg font-semibold">
+                  <a
+                    href={opt.destination.href}
+                    className="underline-offset-2 hover:underline"
+                    style={{ color: ASK_BRAND.indigo }}
+                  >
+                    {opt.name}
+                  </a>
                 </h3>
                 <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2" style={{ color: ASK_BRAND.ink }}>
                   {opt.fields.map((field) => (
@@ -93,19 +99,18 @@ export async function NetworkAskResult({ query }: { query: string }) {
                     </div>
                   ))}
                 </dl>
-                {opt.href ? (
-                  <a
-                    href={opt.href}
-                    className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold underline-offset-2 hover:underline"
-                    style={{ color: ASK_BRAND.indigo }}
-                  >
-                    Open research profile
-                  </a>
-                ) : (
-                  <p className="mt-3 text-xs" style={{ color: ASK_BRAND.ink }}>
+                {opt.destination.publicationState === 'research_identity' ? (
+                  <p className="mt-2 text-xs" style={{ color: ASK_BRAND.ink }}>
                     Research identity — a public profile is not currently published.
                   </p>
-                )}
+                ) : null}
+                <a
+                  href={opt.destination.href}
+                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold underline-offset-2 hover:underline"
+                  style={{ color: ASK_BRAND.indigo }}
+                >
+                  {opt.destination.ctaLabel}
+                </a>
               </li>
             ))}
           </ol>

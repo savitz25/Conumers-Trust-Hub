@@ -12,6 +12,11 @@ import { lenderAskUrl, lenderFailClosedReason, type LenderAskPayload } from './l
 import { moveAskUrl, moveFailClosedReason, type MoveAskPayload } from './move-ask.ts';
 import { seniorAskUrl, seniorFailClosedReason, type SeniorAskPayload } from './senior-ask.ts';
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
+import {
+  resolveEntityDestination,
+  type DestinationContext,
+  type EntityDestination,
+} from './entity-destination.ts';
 
 export type FailKind = 'hard' | 'soft';
 
@@ -19,9 +24,12 @@ export type ConsumerOption = {
   name: string;
   hubId: SpecialistHubId;
   fields: Array<{ label: string; value: string }>;
-  href?: string;
+  href: string;
   whyMatched?: string;
+  destination: EntityDestination;
 };
+
+const DEFAULT_DEST_CTX: DestinationContext = { originalQuery: '' };
 
 export type ConsumerFollowUp = {
   prompt: string;
@@ -146,26 +154,42 @@ export function seniorFollowUp(parsed: ParsedNetworkAsk): ConsumerFollowUp | und
   };
 }
 
-export function optionsFromMovePayload(payload: MoveAskPayload, limit = 10): ConsumerOption[] {
+export function optionsFromMovePayload(
+  payload: MoveAskPayload,
+  limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
+): ConsumerOption[] {
   return (payload.results ?? []).slice(0, limit).map((row) => {
     const fields: ConsumerOption['fields'] = [];
     if (row.role) fields.push({ label: 'Role', value: row.role });
     if (row.usdot) fields.push({ label: 'USDOT', value: String(row.usdot) });
     if (row.mc) fields.push({ label: 'MC', value: String(row.mc) });
-    const extra = row as { headquarters?: string; fmcsaStatus?: string; href?: string };
+    const extra = row as { headquarters?: string; fmcsaStatus?: string; href?: string; publicationNote?: string };
     if (extra.headquarters) fields.push({ label: 'Recorded HQ', value: extra.headquarters });
     if (extra.fmcsaStatus) fields.push({ label: 'Authority', value: extra.fmcsaStatus });
-    const href = extra.href
-      ? extra.href.startsWith('http')
-        ? extra.href
-        : `https://www.movetrusthub.com${extra.href}`
-      : undefined;
+    const identifier = row.usdot
+      ? { type: 'usdot' as const, value: String(row.usdot) }
+      : row.mc
+        ? { type: 'mc' as const, value: String(row.mc) }
+        : undefined;
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'move',
+        name: row.name ?? 'Unnamed mover',
+        entityType: row.role ?? 'carrier',
+        identifier,
+        specialistHref: extra.href,
+        publicationNote: extra.publicationNote,
+      },
+      ctx,
+    );
     return {
       name: row.name ?? 'Unnamed mover',
       hubId: 'move',
       fields,
-      href,
+      href: destination.href,
       whyMatched: row.whyMatched,
+      destination,
     };
   });
 }
@@ -185,6 +209,7 @@ export function optionsFromInvestorPayload(
     }>;
   },
   limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
 ): ConsumerOption[] {
   return (payload.results ?? []).slice(0, limit).map((row) => {
     const fields: ConsumerOption['fields'] = [];
@@ -196,17 +221,24 @@ export function optionsFromInvestorPayload(
       fields.push({ label: 'Compensation methods', value: row.compensationMethods.join(', ') });
     }
     if (row.publicationNote) fields.push({ label: 'Publication', value: row.publicationNote });
-    const href = row.href
-      ? row.href.startsWith('http')
-        ? row.href
-        : `https://www.investortrusthub.com${row.href}`
-      : undefined;
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'investor',
+        name: row.firmName ?? 'Unnamed firm',
+        entityType: row.firmType ?? 'ria',
+        identifier: row.crd ? { type: 'crd', value: row.crd } : undefined,
+        specialistHref: row.href,
+        publicationNote: row.publicationNote,
+      },
+      ctx,
+    );
     return {
       name: row.firmName ?? 'Unnamed firm',
       hubId: 'investor',
       fields,
-      href,
+      href: destination.href,
       whyMatched: row.whyMatched,
+      destination,
     };
   });
 }
@@ -216,6 +248,7 @@ export function optionsFromInsurancePayload(
     results?: Array<{
       name?: string;
       npn?: string | null;
+      naicCode?: string | null;
       entityClass?: string;
       href?: string | null;
       credentialJurisdiction?: string;
@@ -224,29 +257,47 @@ export function optionsFromInsurancePayload(
     }>;
   },
   limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
 ): ConsumerOption[] {
   return (payload.results ?? []).slice(0, limit).map((row) => {
     const fields: ConsumerOption['fields'] = [];
     if (row.entityClass) fields.push({ label: 'Class', value: row.entityClass });
     if (row.npn) fields.push({ label: 'NPN', value: String(row.npn) });
+    if (row.naicCode) fields.push({ label: 'NAIC', value: String(row.naicCode) });
     if (row.credentialJurisdiction) fields.push({ label: 'Credential jurisdiction', value: row.credentialJurisdiction });
     if (row.publicationNote) fields.push({ label: 'Publication', value: row.publicationNote });
-    const href = row.href
-      ? row.href.startsWith('http')
-        ? row.href
-        : `https://www.insurancetrusthub.com${row.href}`
-      : undefined;
+    const identifier = row.naicCode
+      ? { type: 'naic' as const, value: String(row.naicCode) }
+      : row.npn
+        ? { type: 'npn' as const, value: String(row.npn) }
+        : undefined;
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'insurance',
+        name: row.name ?? 'Unnamed insurance identity',
+        entityType: row.entityClass ?? 'agency',
+        identifier,
+        specialistHref: row.href,
+        publicationNote: row.publicationNote,
+      },
+      ctx,
+    );
     return {
       name: row.name ?? 'Unnamed insurance identity',
       hubId: 'insurance',
       fields,
-      href,
+      href: destination.href,
       whyMatched: row.whyMatched,
+      destination,
     };
   });
 }
 
-export function optionsFromLenderPayload(payload: LenderAskPayload, limit = 10): ConsumerOption[] {
+export function optionsFromLenderPayload(
+  payload: LenderAskPayload,
+  limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
+): ConsumerOption[] {
   return (payload.rows ?? []).slice(0, limit).map((row) => {
     const extra = row as typeof row & { href?: string; nmls?: string; originations?: number };
     const fields: ConsumerOption['fields'] = [];
@@ -256,16 +307,31 @@ export function optionsFromLenderPayload(payload: LenderAskPayload, limit = 10):
     if (row.lei) fields.push({ label: 'LEI', value: row.lei });
     if (extra.nmls) fields.push({ label: 'NMLS', value: extra.nmls });
     if (row.identityStatus) fields.push({ label: 'Identity status', value: row.identityStatus });
-    const href = extra.href
-      ? extra.href.startsWith('http')
-        ? extra.href
-        : `https://www.lendertrusthub.com${extra.href}`
-      : undefined;
-    return { name: row.displayName ?? 'Unnamed lender', hubId: 'lender', fields, href };
+    const identifier = row.lei
+      ? { type: 'lei' as const, value: row.lei }
+      : extra.nmls
+        ? { type: 'nmls' as const, value: extra.nmls }
+        : undefined;
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'lender',
+        name: row.displayName ?? 'Unnamed lender',
+        entityType: 'lender',
+        identifier,
+        specialistHref: extra.href,
+        identityStatus: row.identityStatus,
+      },
+      ctx,
+    );
+    return { name: row.displayName ?? 'Unnamed lender', hubId: 'lender', fields, href: destination.href, destination };
   });
 }
 
-export function optionsFromSeniorPayload(payload: SeniorAskPayload, limit = 10): ConsumerOption[] {
+export function optionsFromSeniorPayload(
+  payload: SeniorAskPayload,
+  limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
+): ConsumerOption[] {
   const results = (payload as { results?: Array<Record<string, unknown>> }).results ?? [];
   return results.slice(0, limit).map((row) => {
     const fields: ConsumerOption['fields'] = [];
@@ -276,17 +342,25 @@ export function optionsFromSeniorPayload(payload: SeniorAskPayload, limit = 10):
     if (ccn) fields.push({ label: 'CMS CCN', value: String(ccn) });
     if (loc) fields.push({ label: 'Address / office', value: loc });
     const hrefRaw = typeof row.href === 'string' ? row.href : undefined;
-    const href = hrefRaw
-      ? hrefRaw.startsWith('http')
-        ? hrefRaw
-        : `https://www.seniortrusthub.com${hrefRaw}`
-      : undefined;
+    const name = String(row.name ?? row.providerName ?? 'Unnamed provider');
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'senior',
+        name,
+        entityType: typeof cls === 'string' ? cls : 'nursing_home',
+        identifier: ccn ? { type: 'cms_ccn', value: String(ccn) } : undefined,
+        specialistHref: hrefRaw,
+        publicationNote: typeof row.publicationNote === 'string' ? row.publicationNote : undefined,
+      },
+      ctx,
+    );
     return {
-      name: String(row.name ?? row.providerName ?? 'Unnamed provider'),
+      name,
       hubId: 'senior',
       fields,
-      href,
+      href: destination.href,
       whyMatched: typeof row.whyMatched === 'string' ? row.whyMatched : undefined,
+      destination,
     };
   });
 }
@@ -396,7 +470,11 @@ export function applyConsumerPresentation<T extends ConsumerHubFields>(hub: T, p
   return { ...hub, searchQuery: parsed.query, followUp, compareHref };
 }
 
-export function parseContractorAskHtml(html: string, limit = 10): ConsumerOption[] {
+export function parseContractorAskHtml(
+  html: string,
+  limit = 10,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
+): ConsumerOption[] {
   const articles = html.match(/<article class="cth-intel-card[\s\S]*?<\/article>/gi) ?? [];
   const options: ConsumerOption[] = [];
   for (const article of articles) {
@@ -416,12 +494,23 @@ export function parseContractorAskHtml(html: string, limit = 10): ConsumerOption
     for (const fact of facts.slice(0, 3)) {
       if (fact) fields.push({ label: 'Fact', value: fact });
     }
+    const destination = resolveEntityDestination(
+      {
+        hubId: 'contractor',
+        name,
+        entityType: 'contractor',
+        identifier: license ? { type: 'license', value: license } : undefined,
+        specialistHref: hrefPath,
+      },
+      ctx,
+    );
     options.push({
       name,
       hubId: 'contractor',
       fields,
-      href: hrefPath ? `https://www.contractortrusthub.com${hrefPath}` : undefined,
+      href: destination.href,
       whyMatched: why,
+      destination,
     });
   }
   return options;
@@ -431,6 +520,7 @@ export async function fetchContractorAskOptions(
   parsed: ParsedNetworkAsk,
   query: string,
   timeoutMs = 8000,
+  ctx: DestinationContext = DEFAULT_DEST_CTX,
 ): Promise<ConsumerOption[] | null> {
   if (process.env.NODE_TEST_CONTEXT) return null;
   if (process.env.CONTRACTOR_ASK_FETCH === '0') return null;
@@ -444,7 +534,7 @@ export async function fetchContractorAskOptions(
     } as RequestInit);
     if (!res.ok) return null;
     const html = await res.text();
-    const options = parseContractorAskHtml(html, 10);
+    const options = parseContractorAskHtml(html, 10, { ...ctx, searchQuery: ctx.searchQuery ?? query });
     return options.length ? options : null;
   } catch {
     return null;

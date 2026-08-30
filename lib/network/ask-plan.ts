@@ -740,6 +740,15 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
   };
 }
 
+function destinationContext(answer: NetworkAskAnswer): { originalQuery: string; searchQuery?: string; geography?: string } {
+  const hub = answer.plan.hubs[0];
+  return {
+    originalQuery: answer.plan.query,
+    searchQuery: hub?.searchQuery,
+    geography: answer.plan.parsed.geography?.stateCode ?? answer.plan.parsed.geography?.countySlug,
+  };
+}
+
 function consumerOverlay(answer: NetworkAskAnswer): NetworkAskAnswer {
   const primary = answer.plan.hubs.length === 1 ? answer.plan.hubs[0] : undefined;
   if (!primary) return answer;
@@ -778,7 +787,7 @@ function applySeniorPayload(answer: NetworkAskAnswer, payload: SeniorAskPayload)
     senior.mode = 'fail_closed';
     senior.whatItCanAnswer = failReason;
   }
-  const seniorOptions = optionsFromSeniorPayload(payload);
+  const seniorOptions = optionsFromSeniorPayload(payload, 10, destinationContext(answer));
   if (seniorOptions.length) senior.options = seniorOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
@@ -820,7 +829,7 @@ function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayl
     investor.mode = 'fail_closed';
     investor.whatItCanAnswer = failReason;
   }
-  const investorOptions = optionsFromInvestorPayload(payload);
+  const investorOptions = optionsFromInvestorPayload(payload, 10, destinationContext(answer));
   if (investorOptions.length) investor.options = investorOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
@@ -883,7 +892,7 @@ function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPa
     insurance.mode = payload.query.mode;
   }
   insurance.capabilityStatus = 'execute';
-  const insuranceOptions = optionsFromInsurancePayload(payload);
+  const insuranceOptions = optionsFromInsurancePayload(payload, 10, destinationContext(answer));
   if (insuranceOptions.length) insurance.options = insuranceOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
@@ -957,7 +966,7 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
     move.mode = payload.query.mode;
   }
   move.capabilityStatus = 'execute';
-  const moveOptions = optionsFromMovePayload(payload);
+  const moveOptions = optionsFromMovePayload(payload, 10, destinationContext(answer));
   if (moveOptions.length) move.options = moveOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
@@ -1024,7 +1033,7 @@ function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload)
     lender.mode = payload.query.mode;
   }
   lender.capabilityStatus = 'execute';
-  const lenderOptions = optionsFromLenderPayload(payload);
+  const lenderOptions = optionsFromLenderPayload(payload, 10, destinationContext(answer));
   if (lenderOptions.length) lender.options = lenderOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
@@ -1080,7 +1089,7 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   }
   const contractor = live('contractor');
   if (contractor) {
-    const options = await fetchContractorAskOptions(answer.plan.parsed, qFor(contractor));
+    const options = await fetchContractorAskOptions(answer.plan.parsed, qFor(contractor), 8000, destinationContext(answer));
     if (options?.length) {
       contractor.options = options;
       answer = consumerOverlay(answer);
