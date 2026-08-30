@@ -12,6 +12,7 @@ export const ANALYTICS_EVENTS = {
   MANAGE_CONSOLE_VIEW: 'manage_console_view',
   BUSINESS_INFO_EDIT_STARTED: 'business_info_edit_started',
   BUSINESS_INFO_SAVED: 'business_info_saved',
+  BUSINESS_INFO_RECONFIRMED: 'business_info_reconfirmed',
   BUSINESS_INFO_VALIDATION_FAILED: 'business_info_validation_failed',
 } as const;
 

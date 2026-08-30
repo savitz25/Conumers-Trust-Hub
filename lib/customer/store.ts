@@ -13,6 +13,8 @@ import { customerLog } from './log.ts';
 import type { Mailer } from './mail.ts';
 import { one, type SqlClient } from './sql.ts';
 import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
+import { businessFreshness, oldestConfirmation } from './freshness.ts';
+import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public-profile.ts';
 import type {
   ClaimStatus,
   GrantStatus,
@@ -867,19 +869,84 @@ export class CustomerPlatform {
         `SELECT field_key,value_text,supplied_by_user_id,first_supplied_at::text,updated_at::text,last_confirmed_at::text,source
            FROM ath_business_profile_fields WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY field_key`,
         [access.org_id, access.hub_profile_id]);
-    const items = await this.deps.sql.query<{ category: string; value_text: string; position: number; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
-        `SELECT category,value_text,position,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
+    const items = await this.deps.sql.query<{ category: string; value_text: string; position: number; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; last_confirmed_at: string; source: string }>(
+        `SELECT category,value_text,position,supplied_by_user_id,first_supplied_at::text,updated_at::text,last_confirmed_at::text,source
            FROM ath_business_profile_items WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY category,position`,
         [access.org_id, access.hub_profile_id]);
-    const hours = await this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
-        `SELECT weekday,is_closed,opens_at::text,closes_at::text,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
+    const hours = await this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; last_confirmed_at: string; source: string }>(
+        `SELECT weekday,is_closed,opens_at::text,closes_at::text,supplied_by_user_id,first_supplied_at::text,updated_at::text,last_confirmed_at::text,source
            FROM ath_business_profile_hours WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY weekday`,
         [access.org_id, access.hub_profile_id]);
     const activity = await this.deps.sql.query<{ action: string; created_at: string; actor_user_id: string | null }>(
         `SELECT action,created_at::text,actor_user_id FROM ath_audit_events
           WHERE org_id=$1 AND object_type='ath_business_profile' AND object_id=$2
           ORDER BY created_at DESC LIMIT 10`, [access.org_id, access.hub_profile_id]);
-    return { access, version: revision?.version ?? 0, fields: fields.rows, items: items.rows, hours: hours.rows, activity: activity.rows };
+    const confirmed = oldestConfirmation([...fields.rows, ...items.rows, ...hours.rows]);
+    return { access, version: revision?.version ?? 0, fields: fields.rows, items: items.rows, hours: hours.rows, activity: activity.rows,
+      freshness: confirmed ? businessFreshness(confirmed, this.now()) : null };
+  }
+
+  async publicBusinessProfile(nativeProfileId: string): Promise<PublicBusinessProfile | null> {
+    const profile = await one<{ org_id: string; hub_profile_id: string; native_profile_id: string }>(this.deps.sql,
+      `SELECT g.org_id,p.id AS hub_profile_id,p.native_profile_id::text
+         FROM ath_management_grants g
+         JOIN ath_organizations o ON o.id=g.org_id AND o.status='active'
+         JOIN ath_hub_profiles p ON p.id=g.hub_profile_id AND p.hub_id='contractor'
+        WHERE p.native_profile_id=$1::uuid AND g.status='active'
+          AND EXISTS (SELECT 1 FROM ath_memberships m WHERE m.org_id=g.org_id AND m.status='active' AND m.role IN ('owner','manager','staff'))`,
+      [nativeProfileId]);
+    if (!profile) return null;
+    const fields = await this.deps.sql.query<{ field_key: string; value_text: string; last_confirmed_at: string }>(
+      `SELECT field_key,value_text,last_confirmed_at::text FROM ath_business_profile_fields
+        WHERE org_id=$1 AND hub_profile_id=$2 AND field_key=ANY($3::text[]) ORDER BY field_key`,
+      [profile.org_id, profile.hub_profile_id, [...PUBLIC_BUSINESS_FIELD_KEYS]]);
+    const items = await this.deps.sql.query<{ category: string; value_text: string; position: number; last_confirmed_at: string }>(
+      `SELECT category,value_text,position,last_confirmed_at::text FROM ath_business_profile_items
+        WHERE org_id=$1 AND hub_profile_id=$2 AND category IN ('service','service_area','language') ORDER BY category,position`,
+      [profile.org_id, profile.hub_profile_id]);
+    const hours = await this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; last_confirmed_at: string }>(
+      `SELECT weekday,is_closed,opens_at::text,closes_at::text,last_confirmed_at::text FROM ath_business_profile_hours
+        WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY weekday`, [profile.org_id, profile.hub_profile_id]);
+    const confirmations = [...fields.rows, ...items.rows, ...hours.rows];
+    const confirmed = oldestConfirmation(confirmations);
+    if (!confirmed) return null;
+    const publicFields: PublicBusinessProfile['fields'] = {};
+    for (const row of fields.rows) {
+      if (PUBLIC_BUSINESS_FIELD_KEYS.includes(row.field_key as (typeof PUBLIC_BUSINESS_FIELD_KEYS)[number])) {
+        publicFields[row.field_key as keyof typeof publicFields] = row.value_text;
+      }
+    }
+    const values = (category: string) => items.rows.filter((row) => row.category === category).map((row) => row.value_text);
+    return { contractVersion: 1, hub: 'contractor', nativeProfileId: profile.native_profile_id, managed: true,
+      source: 'BUSINESS_SUPPLIED', freshness: businessFreshness(confirmed, this.now()), fields: publicFields,
+      services: values('service'), serviceAreas: values('service_area'), languages: values('language'),
+      hours: hours.rows.map((row) => ({ weekday: Number(row.weekday), closed: row.is_closed,
+        opensAt: row.opens_at?.slice(0, 5), closesAt: row.closes_at?.slice(0, 5) })) };
+  }
+
+  async reconfirmBusinessProfile(input: { sessionToken: string; nativeProfileId: string; version: number; ctx?: RequestContext }) {
+    const access = await this.requireProfileAccess(input.sessionToken, input.nativeProfileId, true);
+    const revision = await one<{ version: number }>(this.deps.sql,
+      `SELECT version FROM ath_business_profile_revisions WHERE org_id=$1 AND hub_profile_id=$2 FOR UPDATE`,
+      [access.org_id, access.hub_profile_id]);
+    if (!revision || revision.version !== input.version) throw new ManagementError('stale_version');
+    const now = this.now().toISOString();
+    let affected = 0;
+    for (const table of ['ath_business_profile_fields','ath_business_profile_items','ath_business_profile_hours']) {
+      const result = await this.deps.sql.query<{ count: string }>(
+        `WITH changed AS (UPDATE ${table} SET last_confirmed_at=$3,supplied_by_user_id=$4,version=version+1
+          WHERE org_id=$1 AND hub_profile_id=$2 RETURNING 1) SELECT COUNT(*)::text AS count FROM changed`,
+        [access.org_id, access.hub_profile_id, now, access.user_id]);
+      affected += Number(result.rows[0]?.count ?? 0);
+    }
+    if (!affected) throw new ManagementError('not_found');
+    const nextVersion = revision.version + 1;
+    await this.deps.sql.query(`UPDATE ath_business_profile_revisions SET version=$3,updated_at=$4 WHERE org_id=$1 AND hub_profile_id=$2`,
+      [access.org_id, access.hub_profile_id, nextVersion, now]);
+    await this.audit({ actorUserId: access.user_id, orgId: access.org_id, objectType: 'ath_business_profile',
+      objectId: access.hub_profile_id, action: 'business_info_reconfirmed',
+      before: { version: revision.version }, after: { version: nextVersion, last_confirmed_at: now, field_count: affected }, ctx: input.ctx });
+    return { version: nextVersion, freshness: businessFreshness(now, this.now()) };
   }
 
   async saveBusinessProfile(input: { sessionToken: string; nativeProfileId: string; body: unknown; ctx?: RequestContext }) {
@@ -950,7 +1017,7 @@ export class CustomerPlatform {
       objectId: access.hub_profile_id, action: 'business_info_saved',
       before: { version: before.version, fields: before.fields, items: before.items, hours: before.hours },
       after: { version: nextVersion, fields: data.fields, services: data.services, serviceAreas: data.serviceAreas, languages: data.languages, hours: data.hours }, ctx: input.ctx });
-    return { version: nextVersion };
+    return { version: nextVersion, freshness: businessFreshness(now, this.now()) };
   }
 
   async managedHome(sessionToken: string) {

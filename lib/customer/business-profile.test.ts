@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { applyCustomerMigrations, enableAppRole } from './migrate.ts';
 import { CustomerPlatform, ManagementError } from './store.ts';
 import { BusinessProfileValidationError, validateBusinessProfile } from './business-profile.ts';
+import { businessFreshness } from './freshness.ts';
 import type { SqlClient } from './sql.ts';
 
 const PROFILE = '11111111-1111-4111-8111-111111111111';
@@ -65,5 +66,48 @@ test('new Layer C tables retain FORCE RLS and no evidence table is part of the m
   assert.ok(rows.rows.length >= 4); for (const row of rows.rows) { assert.equal(row.relrowsecurity, true); assert.equal(row.relforcerowsecurity, true); }
   const migration = readFileSync('schema/migrations/002_ath_business_profile.sql', 'utf8');
   assert.doesNotMatch(migration, /\b(?:UPDATE|INSERT INTO|DELETE FROM)\s+(?:contractors|licenses|discipline_actions|regulatory_source_observations)\b/i);
+  await db.close();
+});
+
+test('public contract is allowlisted and requires active exact-profile management', async () => {
+  const { db, sql, platform } = await boot(); const owner = await grant(sql, platform, 'owner@example.com');
+  await platform.saveBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILE, body: valid });
+  const publicProfile = await platform.publicBusinessProfile(PROFILE);
+  assert.equal(publicProfile?.managed, true); assert.equal(publicProfile?.nativeProfileId, PROFILE);
+  assert.equal(publicProfile?.fields.description, valid.fields.description); assert.deepEqual(publicProfile?.services, ['Roofing']);
+  const serialized = JSON.stringify(publicProfile);
+  for (const privateKey of ['orgId','org_id','userId','user_id','grantId','claim','audit']) {
+    assert.equal(serialized.includes(privateKey), false, `public contract leaked ${privateKey}`);
+  }
+  await sql.query(`UPDATE ath_management_grants SET status='revoked' WHERE id=$1`, [owner.grantId]);
+  assert.equal(await platform.publicBusinessProfile(PROFILE), null);
+  await sql.query(`UPDATE ath_management_grants SET status='active' WHERE id=$1`, [owner.grantId]);
+  await sql.query(`UPDATE ath_memberships SET status='revoked' WHERE org_id=$1`, [owner.orgId]);
+  assert.equal(await platform.publicBusinessProfile(PROFILE), null);
+  await db.close();
+});
+
+test('freshness thresholds are deterministic and never call content verified', () => {
+  const now = new Date('2026-08-30T12:00:00.000Z');
+  const daysAgo = (days: number) => new Date(now.getTime() - days * 86_400_000).toISOString();
+  assert.equal(businessFreshness(daysAgo(180), now).state, 'CURRENT');
+  assert.equal(businessFreshness(daysAgo(181), now).state, 'RECONFIRM_SOON');
+  assert.equal(businessFreshness(daysAgo(330), now).state, 'RECONFIRM_SOON');
+  const stale = businessFreshness(daysAgo(331), now);
+  assert.equal(stale.state, 'STALE'); assert.equal(stale.mayBeOutdated, true); assert.doesNotMatch(stale.label, /verif/i);
+});
+
+test('reconfirmation preserves values, requires current version, and writes durable audit', async () => {
+  const { db, sql, platform } = await boot(); const owner = await grant(sql, platform, 'owner@example.com');
+  const saved = await platform.saveBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILE, body: valid });
+  const before = await platform.businessProfile(owner.sessionToken, PROFILE);
+  const result = await platform.reconfirmBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILE, version: saved.version });
+  assert.equal(result.version, 2); assert.equal(result.freshness.state, 'CURRENT');
+  const after = await platform.businessProfile(owner.sessionToken, PROFILE);
+  assert.deepEqual(after.fields.map((row) => [row.field_key, row.value_text]), before.fields.map((row) => [row.field_key, row.value_text]));
+  assert.ok(after.activity.some((event) => event.action === 'business_info_reconfirmed'));
+  await assert.rejects(() => platform.reconfirmBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILE, version: 1 }), (e: unknown) => e instanceof ManagementError && e.code === 'stale_version');
+  await sql.query(`UPDATE ath_management_grants SET status='revoked' WHERE id=$1`, [owner.grantId]);
+  await assert.rejects(() => platform.reconfirmBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILE, version: 2 }), ManagementError);
   await db.close();
 });

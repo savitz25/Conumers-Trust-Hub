@@ -31,6 +31,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
     </header>
     <BusinessProfileEditor profileId={profileId} canEdit={canEdit} initial={{
       version: model.version, fields, services: items('service'), serviceAreas: items('service_area'), languages: items('language'),
+      freshness: model.freshness,
       hours: model.hours.map((h) => ({ weekday: Number(h.weekday), closed: Boolean(h.is_closed), opensAt: h.opens_at?.slice(0, 5), closesAt: h.closes_at?.slice(0, 5) })),
     }} />
     <section className="card-surface p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Official public record</p>
@@ -40,7 +41,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       <a className="link-inline mt-3 inline-block text-sm" href={`https://www.contractortrusthub.com/contractors/${model.access.native_slug}`}>Open the authoritative ContractorTrustHub profile</a>
     </section>
     <section className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">Recent activity</h2>
-      {model.activity.length ? <ul className="mt-3 space-y-2 text-sm">{model.activity.map((event, i) => <li key={`${event.created_at}-${i}`}>Business information saved · {new Date(event.created_at).toLocaleString('en-US')}</li>)}</ul> : <p className="mt-2 text-sm text-muted-foreground">No business-information changes yet.</p>}
+      {model.activity.length ? <ul className="mt-3 space-y-2 text-sm">{model.activity.map((event, i) => <li key={`${event.created_at}-${i}`}>{event.action === 'business_info_reconfirmed' ? 'Business information reconfirmed' : 'Business information saved'} · {new Date(event.created_at).toLocaleString('en-US')}</li>)}</ul> : <p className="mt-2 text-sm text-muted-foreground">No business-information changes yet.</p>}
     </section>
   </main>;
 }
