@@ -15,6 +15,7 @@ export function loadEnvFile(path) {
     ) {
       value = value.slice(1, -1);
     }
+    if (value === '[SENSITIVE]') continue;
     if (!process.env[key]) process.env[key] = value;
   }
 }
