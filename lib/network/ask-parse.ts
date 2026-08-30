@@ -8,6 +8,13 @@ import {
   isInsuranceClassQuery,
   type InsuranceEntityClass,
 } from './insurance-ask.ts';
+import {
+  detectMoveRole,
+  isAmbiguousCarrierQuery,
+  isMoveClassQuery,
+  moveGeographyMeaning,
+  type MoveRegulatoryRole,
+} from './move-ask.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -48,6 +55,7 @@ export type ParsedNetworkAsk = {
   seniorProviderClass?: SeniorProviderClass;
   investorFirmType?: InvestorFirmType;
   insuranceEntityClass?: InsuranceEntityClass;
+  moveRegulatoryRole?: MoveRegulatoryRole;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -116,6 +124,20 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
       return { family, raw: `NAIC ${naicInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
+  const usdotInSentence = trimmed.match(/\b(?:usdot|dot)\s*#?\s*(\d{3,8})\b/i);
+  if (usdotInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'usdot');
+    if (family) {
+      return { family, raw: `USDOT ${usdotInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
+  const mcInSentence = trimmed.match(/\bmc\s*#?-?\s*(\d{3,8})\b/i);
+  if (mcInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'mc');
+    if (family) {
+      return { family, raw: `MC ${mcInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
@@ -162,11 +184,15 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
   const lender = /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
-  const insurance = isInsuranceClassQuery(query) || /insur(ance|er)|doi|producer|agency license|\bnpn\b|\bnaic\b/i.test(query);
+  const mover = isMoveClassQuery(query);
+  const insurance =
+    isInsuranceClassQuery(query) ||
+    (/insur(ance|er)|doi|producer|agency license|\bnpn\b|\bnaic\b/i.test(query) && !mover);
   const insuranceEntityClass = detectInsuranceEntityClass(query);
   const investor = isInvestorClassQuery(query) || /adviser|advisor|form adv|iard|crd|ria\b|era\b|investment firm/i.test(query);
   const investorFirmType = detectInvestorFirmType(query);
-  const mover = /mover|usdot|fmcsa|moving compan/i.test(query);
+  const moveRegulatoryRole = mover ? detectMoveRole(query) : undefined;
+  const ambiguousCarrier = isAmbiguousCarrierQuery(query);
   const roofing = /roof/i.test(query);
   const fha = /\bfha\b/i.test(query);
 
@@ -220,6 +246,17 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     intent = 'market';
     hubs.push('lender');
     topic = fha ? 'FHA / mortgage-market research' : 'Lending research';
+  } else if (mover) {
+    intent = 'entity';
+    hubs.push('move');
+    topic =
+      moveRegulatoryRole === 'broker'
+        ? 'Household-goods broker research'
+        : moveRegulatoryRole === 'carrier_broker'
+          ? 'Carrier / broker research'
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(query)
+            ? 'Florida Intrastate Mover registration research'
+            : 'Household-goods motor carrier research';
   } else if (insurance) {
     intent = 'entity';
     hubs.push('insurance');
@@ -231,6 +268,9 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
           : insuranceEntityClass === 'agency'
             ? 'Insurance agency research'
             : 'Insurance regulatory research';
+  } else if (ambiguousCarrier) {
+    intent = 'definition';
+    topic = 'Ambiguous “carrier”';
   } else if (investor) {
     intent = 'entity';
     hubs.push('investor');
@@ -240,10 +280,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
         : investorFirmType === 'era'
           ? 'ERA research'
           : 'Investment-adviser firm research';
-  } else if (mover) {
-    intent = 'entity';
-    hubs.push('move');
-    topic = 'Mover identity research';
   } else if (geo) {
     intent = 'place';
     hubs.push('contractor', 'lender', 'insurance', 'move');
@@ -253,8 +289,33 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const interpretationLines: Array<{ label: string; value: string }> = [];
   if (intent === 'journey') interpretationLines.push({ label: 'Situation', value: topic });
   else interpretationLines.push({ label: 'Topic', value: topic });
+  const moveOnly = hubs.length === 1 && hubs[0] === 'move';
   const insuranceOnly = hubs.length === 1 && hubs[0] === 'insurance';
-  if (insuranceOnly) {
+  if (ambiguousCarrier && !hubs.length) {
+    interpretationLines.push({
+      label: 'Limitation',
+      value:
+        '“Carrier” is ambiguous. It may mean a household-goods motor carrier or an insurance legal insurer. Use a labeled USDOT/MC or a labeled NAIC, or say mover vs insurance.',
+    });
+  }
+  if (moveOnly) {
+    if (moveRegulatoryRole) {
+      interpretationLines.push({
+        label: 'Regulatory role',
+        value: moveRegulatoryRole === 'carrier_broker' ? 'Carrier / Broker' : moveRegulatoryRole === 'broker' ? 'Broker' : 'Carrier',
+      });
+    }
+    const geoMeaning = moveGeographyMeaning(query);
+    if (/\bintrastate mover registration\b/i.test(geoMeaning)) {
+      interpretationLines.push({ label: 'Geography', value: 'Florida IM registration — not FMCSA interstate authority, not service territory' });
+    } else if (geo?.stateName && !id) {
+      interpretationLines.push({ label: 'Geography (headquarters, not service territory)', value: geo.stateName });
+      interpretationLines.push({
+        label: 'Does not mean',
+        value: 'Serves only this state. Interstate carriers may operate in many states.',
+      });
+    }
+  } else if (insuranceOnly) {
     if (insuranceEntityClass) {
       interpretationLines.push({
         label: 'Entity class',
@@ -324,5 +385,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     seniorProviderClass,
     investorFirmType,
     insuranceEntityClass,
+    moveRegulatoryRole,
   };
 }

@@ -4,6 +4,8 @@
  * It does not query the Insurance graph or invent regulatory facts.
  */
 
+import { isMoveClassQuery } from './move-ask.ts';
+
 export const INSURANCE_ASK_CONTRACT = 'insurance-ask-v1' as const;
 export const INSURANCE_ASK_ROUTE = 'https://www.insurancetrusthub.com/ask';
 export const INSURANCE_ASK_API = 'https://www.insurancetrusthub.com/api/ask';
@@ -73,9 +75,18 @@ export function insuranceAskApiUrl(query: string): string {
   return `${INSURANCE_ASK_API}?${params.toString()}`;
 }
 
+function hasInsuranceDomain(q: string): boolean {
+  return /\b(insur(ance|er)|npn|naic|underwrit|homeowners|auto insurer|life insurer|polic(y|ies)|agency license|line of authority)\b/i.test(
+    q,
+  );
+}
+
 export function detectInsuranceEntityClass(q: string): InsuranceEntityClass | undefined {
+  if (isMoveClassQuery(q) && !hasInsuranceDomain(q)) return undefined;
   if (
-    /\b(legal insurers?|insurers?|carriers?|insurance compan(?:y|ies))\b/i.test(q) &&
+    /\b(legal insurers?|insurers?|insurance compan(?:y|ies)|insurance carriers?|underwriting compan(?:y|ies)|homeowners insurers?|auto insurers?|life insurers?)\b/i.test(
+      q,
+    ) &&
     !/\bagenc/i.test(q) &&
     !/\b(producer|agent|person)/i.test(q)
   ) {
@@ -87,6 +98,7 @@ export function detectInsuranceEntityClass(q: string): InsuranceEntityClass | un
 }
 
 export function isInsuranceClassQuery(q: string): boolean {
+  if (isMoveClassQuery(q) && !hasInsuranceDomain(q)) return false;
   return Boolean(
     detectInsuranceEntityClass(q) ||
       /\binsur(ance|er)|agency license|\bnpn\b|\bnaic\b|line of authority|\bloa\b/i.test(q) ||
@@ -96,9 +108,10 @@ export function isInsuranceClassQuery(q: string): boolean {
 }
 
 export function isInsuranceRankingQuery(q: string): boolean {
+  if (isMoveClassQuery(q) && !hasInsuranceDomain(q)) return false;
   return (
     /\b(best|safest|most trustworthy|cheapest|top[- ]?rated|most trusted|recommended|trust score)\b/i.test(q) &&
-    /\b(insurance|insurer|agenc|agent|producer|carrier|policy|homeowners)\b/i.test(q)
+    /\b(insurance|insurer|agenc|agent|producer|policy|homeowners)\b/i.test(q)
   );
 }
 
