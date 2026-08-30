@@ -13,6 +13,9 @@ export const ANALYTICS_EVENTS = {
   BUSINESS_INFO_EDIT_STARTED: 'business_info_edit_started',
   BUSINESS_INFO_SAVED: 'business_info_saved',
   BUSINESS_INFO_RECONFIRMED: 'business_info_reconfirmed',
+  RECORD_ISSUE_FORM_VIEW: 'record_issue_form_view',
+  RECORD_ISSUE_SUBMITTED: 'record_issue_submitted',
+  RECORD_ISSUE_STATUS_VIEW: 'record_issue_status_view',
   BUSINESS_INFO_VALIDATION_FAILED: 'business_info_validation_failed',
 } as const;
 

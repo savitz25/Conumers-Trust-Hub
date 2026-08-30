@@ -128,6 +128,15 @@ export function approvedEmail(opts: { displayName: string; manageUrl: string }):
   return { subject: 'You can manage this AskTrustHub profile', html, text };
 }
 
+export function recordIssueEmail(opts: { kind: 'submitted'|'needs_info'|'resolved'; issueId: string; profileName: string; note?: string }) {
+  const title = opts.kind === 'submitted' ? 'We received your record issue' : opts.kind === 'needs_info' ? 'We need more information' : 'Your record issue has been reviewed';
+  const body = opts.kind === 'submitted'
+    ? `We received record issue ${opts.issueId} for ${opts.profileName}. Filing an issue does not remove or change a public record automatically.`
+    : opts.kind === 'needs_info' ? `We need more information to continue reviewing record issue ${opts.issueId} for ${opts.profileName}. ${opts.note || ''}`
+    : `Record issue ${opts.issueId} for ${opts.profileName} has been reviewed. ${opts.note || ''}`;
+  return { subject: `${title} — AskTrustHub`, html: wrapEmail(title, `<p>${escapeHtml(body)}</p>`), text: body };
+}
+
 export function rejectedEmail(opts: { displayName: string; reason: string }): {
   subject: string;
   html: string;

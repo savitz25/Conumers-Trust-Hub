@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { BusinessProfileEditor } from '@/components/customer/BusinessProfileEditor';
 import { ManageConsoleView } from '@/components/customer/ManageConsoleView';
+import { RecordIssuesPanel } from '@/components/customer/RecordIssuesPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 
@@ -17,7 +18,8 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
   if (!token) return <div className="mx-auto max-w-xl px-4 py-12"><h1 className="text-xl font-semibold">Sign in required</h1><p className="mt-2 text-sm text-muted-foreground">Sign in to manage an authorized profile.</p></div>;
   const { profileId } = await params;
   let model;
-  try { model = await withPlatform((p) => p.businessProfile(token, profileId)); }
+  let recordIssues;
+  try { model = await withPlatform((p) => p.businessProfile(token, profileId)); recordIssues = await withPlatform((p) => p.recordIssues(token, profileId)); }
   catch (error) { if (error instanceof AuthError || error instanceof ManagementError) notFound(); throw error; }
   const fields = Object.fromEntries(model.fields.map((row) => [row.field_key, row.value_text]));
   const items = (category: string) => model.items.filter((row) => row.category === category).map((row) => row.value_text);
@@ -34,6 +36,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       freshness: model.freshness,
       hours: model.hours.map((h) => ({ weekday: Number(h.weekday), closed: Boolean(h.is_closed), opensAt: h.opens_at?.slice(0, 5), closesAt: h.closes_at?.slice(0, 5) })),
     }} />
+    <RecordIssuesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} issues={recordIssues.issues as never} />
     <section className="card-surface p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Official public record</p>
       <h2 className="mt-1 text-xl font-semibold text-navy">Florida DBPR identity</h2>
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Business name</dt><dd>{model.access.display_name_snapshot}</dd></div><div><dt className="text-muted-foreground">DBPR credential</dt><dd>{model.access.native_credential_key}</dd></div></dl>

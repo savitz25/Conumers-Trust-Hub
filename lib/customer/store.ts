@@ -1,11 +1,13 @@
 import { loadAndValidateProfile, type CthDirectory } from './adapter.ts';
 import { hashToken, isEmailShape, normalizeEmail, randomToken } from './crypto.ts';
+import { createHash } from 'node:crypto';
 import {
   approvedEmail,
   claimReceivedEmail,
   loginEmail,
   needsInfoEmail,
   rejectedEmail,
+  recordIssueEmail,
 } from './copy.ts';
 import { isFreeEmail } from './free-email.ts';
 import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
@@ -15,6 +17,7 @@ import { one, type SqlClient } from './sql.ts';
 import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
 import { businessFreshness, oldestConfirmation } from './freshness.ts';
 import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public-profile.ts';
+import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssueError, validateRecordIssue, type RecordIssueStatus } from './record-issues.ts';
 import type {
   ClaimStatus,
   GrantStatus,
@@ -1018,6 +1021,88 @@ export class CustomerPlatform {
       before: { version: before.version, fields: before.fields, items: before.items, hours: before.hours },
       after: { version: nextVersion, fields: data.fields, services: data.services, serviceAreas: data.serviceAreas, languages: data.languages, hours: data.hours }, ctx: input.ctx });
     return { version: nextVersion, freshness: businessFreshness(now, this.now()) };
+  }
+
+  private async recordIssueEvent(input: { issueId:string; orgId:string; hubProfileId:string; actorUserId:string; actorKind:'user'|'staff'; eventType:string; fromStatus?:string|null; toStatus:string; message?:string|null; visibility?:'CUSTOMER'|'INTERNAL' }) {
+    await this.deps.sql.query(`INSERT INTO ath_record_issue_events(issue_id,org_id,hub_profile_id,actor_user_id,actor_kind,event_type,from_status,to_status,message,visibility) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [input.issueId,input.orgId,input.hubProfileId,input.actorUserId,input.actorKind,input.eventType,input.fromStatus??null,input.toStatus,input.message??null,input.visibility??'CUSTOMER']);
+  }
+
+  async recordIssues(sessionToken:string,nativeProfileId:string) {
+    const access=await this.requireProfileAccess(sessionToken,nativeProfileId);
+    const issues=await this.deps.sql.query<Record<string,unknown>>(`SELECT id,issue_type,target_layer,target_record_type,target_record_id,explanation,status,version,customer_resolution_note,resolution_code,created_at::text,updated_at::text,resolved_at::text FROM ath_record_issues WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY created_at DESC`,[access.org_id,access.hub_profile_id]);
+    const ids=issues.rows.map((row)=>String(row.id));
+    const events=ids.length ? await this.deps.sql.query<Record<string,unknown>>(`SELECT issue_id,event_type,from_status,to_status,message,created_at::text FROM ath_record_issue_events WHERE issue_id=ANY($1::uuid[]) AND visibility='CUSTOMER' ORDER BY created_at,id`,[ids]) : {rows:[] as Record<string,unknown>[]};
+    return { issues:issues.rows.map((issue)=>({...issue,events:events.rows.filter((event)=>event.issue_id===issue.id)})), credentialKey:access.native_credential_key };
+  }
+
+  async createRecordIssue(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}) {
+    const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true); const data=validateRecordIssue(input.body);
+    if(data.targetRecordType==='DBPR_CREDENTIAL'&&data.targetRecordId!==access.native_credential_key) throw new RecordIssueError('validation_failed');
+    await this.hitRateLimit('record_issue_submit',`${access.user_id}:${access.hub_profile_id}`,5,60*60*1000).catch(()=>{throw new RecordIssueError('rate_limited')});
+    const count=await one<{n:string}>(this.deps.sql,`SELECT COUNT(*)::text n FROM ath_record_issues WHERE org_id=$1 AND hub_profile_id=$2 AND status IN ('OPEN','UNDER_REVIEW','NEEDS_INFORMATION')`,[access.org_id,access.hub_profile_id]);
+    if(Number(count?.n||0)>=10) throw new RecordIssueError('open_limit');
+    const fingerprint=createHash('sha256').update([data.issueType,data.targetRecordType,data.targetRecordId||'',data.explanation.toLowerCase().replace(/\s+/g,' ')].join('|')).digest('hex');
+    let issue;
+    try { issue=await one<{id:string;created_at:string}>(this.deps.sql,`INSERT INTO ath_record_issues(org_id,hub_profile_id,submitted_by_user_id,issue_type,target_layer,target_record_type,target_record_id,explanation,submission_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id,created_at::text`,[access.org_id,access.hub_profile_id,access.user_id,data.issueType,data.targetLayer,data.targetRecordType,data.targetRecordId,data.explanation,fingerprint]); }
+    catch(error){if((error as {code?:string}).code==='23505') throw new RecordIssueError('duplicate'); throw error;}
+    if(!issue) throw new RecordIssueError('validation_failed');
+    await this.deps.sql.query(`INSERT INTO ath_review_queue(work_type,object_type,object_id,status,risk_state) VALUES('record_issue','ath_record_issues',$1,'open','standard')`,[issue.id]);
+    await this.recordIssueEvent({issueId:issue.id,orgId:access.org_id,hubProfileId:access.hub_profile_id,actorUserId:access.user_id,actorKind:'user',eventType:'record_issue_created',toStatus:'OPEN'});
+    await this.audit({actorUserId:access.user_id,orgId:access.org_id,objectType:'ath_record_issues',objectId:issue.id,action:'record_issue_created',after:{status:'OPEN',issue_type:data.issueType,target_record_type:data.targetRecordType,target_record_id:data.targetRecordId},ctx:input.ctx});
+    const user=await one<{email:string}>(this.deps.sql,`SELECT email FROM ath_users WHERE id=$1`,[access.user_id]);
+    if(user){const mail=recordIssueEmail({kind:'submitted',issueId:issue.id,profileName:access.display_name_snapshot||access.native_slug});await this.deps.mailer({to:user.email,...mail});}
+    return {id:issue.id,status:'OPEN',createdAt:issue.created_at};
+  }
+
+  async customerRecordIssueAction(input:{sessionToken:string;nativeProfileId:string;issueId:string;action:'withdraw'|'respond';version:number;message?:string;ctx?:RequestContext}) {
+    const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
+    const issue=await one<{id:string;status:RecordIssueStatus;version:number}>(this.deps.sql,`SELECT id,status,version FROM ath_record_issues WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 FOR UPDATE`,[input.issueId,access.org_id,access.hub_profile_id]);
+    if(!issue) throw new RecordIssueError('not_found'); if(issue.version!==input.version) throw new RecordIssueError('stale_version');
+    const next=input.action==='withdraw'?'WITHDRAWN':'OPEN'; if(!CUSTOMER_TRANSITIONS[issue.status]?.includes(next)) throw new RecordIssueError('invalid_transition');
+    const message=String(input.message||'').trim(); if(input.action==='respond'&&(message.length<20||message.length>2000||/<\/?[a-z][\s\S]*>/i.test(message))) throw new RecordIssueError('validation_failed');
+    const now=this.now().toISOString(); const updated=await this.deps.sql.query(`UPDATE ath_record_issues SET status=$4,version=version+1,resolved_at=CASE WHEN $4='WITHDRAWN' THEN $5::timestamptz ELSE NULL END,resolution_code=CASE WHEN $4='WITHDRAWN' THEN 'WITHDRAWN' ELSE NULL END WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 AND version=$6 RETURNING version`,[issue.id,access.org_id,access.hub_profile_id,next,now,input.version]);
+    if(updated.rows.length===0) throw new RecordIssueError('stale_version');
+    if(next==='WITHDRAWN') await this.deps.sql.query(`UPDATE ath_review_queue SET status='cancelled',resolved_at=$2 WHERE object_type='ath_record_issues' AND object_id=$1 AND status IN ('open','in_progress')`,[issue.id,now]);
+    else await this.deps.sql.query(`UPDATE ath_review_queue SET status='open' WHERE object_type='ath_record_issues' AND object_id=$1`,[issue.id]);
+    const eventType=input.action==='withdraw'?'record_issue_withdrawn':'record_issue_customer_response';
+    await this.recordIssueEvent({issueId:issue.id,orgId:access.org_id,hubProfileId:access.hub_profile_id,actorUserId:access.user_id,actorKind:'user',eventType,fromStatus:issue.status,toStatus:next,message:message||null});
+    await this.audit({actorUserId:access.user_id,orgId:access.org_id,objectType:'ath_record_issues',objectId:issue.id,action:eventType,before:{status:issue.status,version:issue.version},after:{status:next,version:issue.version+1},ctx:input.ctx});
+    return {status:next,version:issue.version+1};
+  }
+
+  async listRecordIssueReviews(sessionToken:string,filter?:{issueType?:string;nativeProfileId?:string}) {
+    await this.requireStaff(sessionToken);
+    if(filter?.issueType&&!RECORD_ISSUE_TYPES.includes(filter.issueType as never)) throw new RecordIssueError('validation_failed');
+    if(filter?.nativeProfileId&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(filter.nativeProfileId)) throw new RecordIssueError('validation_failed');
+    const result=await this.deps.sql.query<Record<string,unknown>>(`SELECT i.id,i.issue_type,i.status,i.target_record_type,i.created_at::text,p.native_profile_id::text,p.native_slug,p.native_credential_key,p.display_name_snapshot FROM ath_record_issues i JOIN ath_hub_profiles p ON p.id=i.hub_profile_id WHERE i.status IN ('OPEN','UNDER_REVIEW','NEEDS_INFORMATION') AND ($1::text IS NULL OR i.issue_type=$1) AND ($2::uuid IS NULL OR p.native_profile_id=$2::uuid) ORDER BY i.created_at`,[filter?.issueType||null,filter?.nativeProfileId||null]); return result.rows;
+  }
+
+  async getRecordIssueReview(sessionToken:string,issueId:string) {
+    await this.requireStaff(sessionToken);
+    const issue=await one<Record<string,unknown>>(this.deps.sql,`SELECT i.*,u.email claimant_email,o.display_name org_name,p.native_profile_id::text,p.native_slug,p.native_credential_key,p.native_source_system,p.home_state,p.display_name_snapshot FROM ath_record_issues i JOIN ath_users u ON u.id=i.submitted_by_user_id JOIN ath_organizations o ON o.id=i.org_id JOIN ath_hub_profiles p ON p.id=i.hub_profile_id WHERE i.id=$1`,[issueId]);
+    if(!issue) throw new RecordIssueError('not_found');
+    const events=await this.deps.sql.query<Record<string,unknown>>(`SELECT event_type,from_status,to_status,message,visibility,actor_kind,created_at::text FROM ath_record_issue_events WHERE issue_id=$1 ORDER BY created_at,id`,[issueId]);
+    const remediation=await this.deps.sql.query<Record<string,unknown>>(`SELECT id,action_type,status,created_at::text,updated_at::text FROM ath_record_issue_remediation_tasks WHERE issue_id=$1 ORDER BY created_at`,[issueId]);
+    return {issue,events:events.rows,remediation:remediation.rows,remediationPolicy:'No evidence mutation. RESOLVED_CORRECTED creates a separate authoritative ingest/reconciliation remediation task.'};
+  }
+
+  async staffTransitionRecordIssue(input:{sessionToken:string;issueId:string;nextStatus:RecordIssueStatus;version:number;customerNote?:string;internalNote?:string;ctx?:RequestContext}) {
+    const staff=await this.requireStaff(input.sessionToken); await this.hitRateLimit('record_issue_review',staff.id,60,60*60*1000);
+    const issue=await one<{id:string;org_id:string;hub_profile_id:string;submitted_by_user_id:string;status:RecordIssueStatus;version:number}>(this.deps.sql,`SELECT id,org_id,hub_profile_id,submitted_by_user_id,status,version FROM ath_record_issues WHERE id=$1 FOR UPDATE`,[input.issueId]);
+    if(!issue) throw new RecordIssueError('not_found'); if(issue.version!==input.version) throw new RecordIssueError('stale_version'); if(!STAFF_TRANSITIONS[issue.status]?.includes(input.nextStatus)) throw new RecordIssueError('invalid_transition');
+    const customerNote=String(input.customerNote||'').trim(),internalNote=String(input.internalNote||'').trim(); if(customerNote.length>2000||internalNote.length>4000||/<\/?[a-z][\s\S]*>/i.test(customerNote+internalNote)) throw new RecordIssueError('validation_failed');
+    if(['NEEDS_INFORMATION','RESOLVED_CORRECTED','RESOLVED_NO_CHANGE','RESOLVED_SOURCE_PENDING','REJECTED'].includes(input.nextStatus)&&customerNote.length<10) throw new RecordIssueError('validation_failed');
+    const eventMap:Record<string,string>={UNDER_REVIEW:'record_issue_under_review',NEEDS_INFORMATION:'record_issue_more_info_requested',RESOLVED_CORRECTED:'record_issue_resolved_corrected',RESOLVED_NO_CHANGE:'record_issue_resolved_no_change',RESOLVED_SOURCE_PENDING:'record_issue_source_pending',REJECTED:'record_issue_rejected'};
+    const codeMap:Record<string,string>={RESOLVED_CORRECTED:'CORRECTED',RESOLVED_NO_CHANGE:'NO_CHANGE',RESOLVED_SOURCE_PENDING:'SOURCE_PENDING',REJECTED:'INVALID'}; const terminal=Boolean(codeMap[input.nextStatus]); const now=this.now().toISOString();
+    const updated=await this.deps.sql.query(`UPDATE ath_record_issues SET status=$2,version=version+1,customer_resolution_note=NULLIF($3,''),internal_resolution_note=NULLIF($4,''),resolved_at=CASE WHEN $5 THEN $6::timestamptz ELSE NULL END,resolved_by=CASE WHEN $5 THEN $7::uuid ELSE NULL END,resolution_code=$8 WHERE id=$1 AND version=$9 RETURNING version`,[issue.id,input.nextStatus,customerNote,internalNote,terminal,now,staff.id,codeMap[input.nextStatus]||null,input.version]); if(updated.rows.length===0) throw new RecordIssueError('stale_version');
+    await this.deps.sql.query(`UPDATE ath_review_queue SET status=$2,resolved_at=CASE WHEN $2='resolved' THEN $3::timestamptz ELSE NULL END WHERE object_type='ath_record_issues' AND object_id=$1`,[issue.id,terminal?'resolved':'in_progress',now]);
+    if(input.nextStatus==='RESOLVED_CORRECTED') await this.deps.sql.query(`INSERT INTO ath_record_issue_remediation_tasks(issue_id,created_by) VALUES($1,$2) ON CONFLICT(issue_id,action_type) DO NOTHING`,[issue.id,staff.id]);
+    const eventType=eventMap[input.nextStatus]; await this.recordIssueEvent({issueId:issue.id,orgId:issue.org_id,hubProfileId:issue.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType,fromStatus:issue.status,toStatus:input.nextStatus,message:customerNote||null});
+    if(internalNote) await this.recordIssueEvent({issueId:issue.id,orgId:issue.org_id,hubProfileId:issue.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType,fromStatus:issue.status,toStatus:input.nextStatus,message:internalNote,visibility:'INTERNAL'});
+    await this.audit({actorUserId:staff.id,actorKind:'staff',orgId:issue.org_id,objectType:'ath_record_issues',objectId:issue.id,action:eventType,before:{status:issue.status,version:issue.version},after:{status:input.nextStatus,version:issue.version+1,resolution_code:codeMap[input.nextStatus]||null},ctx:input.ctx});
+    if(input.nextStatus==='NEEDS_INFORMATION'||terminal){const recipient=await one<{email:string;display_name_snapshot:string}>(this.deps.sql,`SELECT u.email,p.display_name_snapshot FROM ath_users u,ath_hub_profiles p WHERE u.id=$1 AND p.id=$2`,[issue.submitted_by_user_id,issue.hub_profile_id]);if(recipient){const mail=recordIssueEmail({kind:input.nextStatus==='NEEDS_INFORMATION'?'needs_info':'resolved',issueId:issue.id,profileName:recipient.display_name_snapshot,note:customerNote});await this.deps.mailer({to:recipient.email,...mail});}}
+    return {status:input.nextStatus,version:issue.version+1};
   }
 
   async managedHome(sessionToken: string) {
