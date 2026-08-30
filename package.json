@@ -13,21 +13,27 @@
     "assert:network": "node scripts/assert-network-v2.mjs",
     "check:ask-2-prompt-1": "node scripts/check-ask-2-prompt-1.mjs && node --experimental-strip-types --test lib/network/prompt-1.test.ts",
     "check:ask-2-prompt-2": "node --experimental-strip-types --test lib/network/prompt-2.test.ts",
-    "check:journey-v21": "node scripts/check-journey-v21.mjs"
+    "check:journey-v21": "node scripts/check-journey-v21.mjs",
+    "check:ath-cust-002": "node scripts/check-ath-cust-002.mjs",
+    "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
+    "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.22.0",
     "next": "15.5.19",
+    "pg": "^8.23.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
