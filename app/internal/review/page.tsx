@@ -19,6 +19,7 @@ export default async function ReviewQueuePage() {
     return (
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-12">
         <h1 className="text-2xl font-semibold text-navy">Review queue</h1>
+        <Link href="/internal/record-issues" className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold">Open record-issue queue</Link>
         <p className="text-sm text-muted-foreground">Staff only. Entitlements do not change review order.</p>
         {rows.length === 0 ? <p>No open items.</p> : null}
         <ul className="space-y-3">
