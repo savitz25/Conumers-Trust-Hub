@@ -16,6 +16,16 @@ import {
   seniorGeographyMeaning,
   type SeniorAskPayload,
 } from './senior-ask.ts';
+import {
+  INVESTOR_ASK_CONTRACT,
+  INVESTOR_FIRM_TYPE_LABEL,
+  fetchInvestorAsk,
+  investorAskMode,
+  investorAskUrl,
+  investorFailClosedReason,
+  investorGeographyMeaning,
+  type InvestorAskPayload,
+} from './investor-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -90,7 +100,7 @@ function identifierDestination(parsed: ParsedNetworkAsk): string | undefined {
     return `https://www.contractortrusthub.com/verify?q=${encodeURIComponent(id.raw)}`;
   }
   if (id.family.id === 'crd') {
-    return `https://www.investortrusthub.com/firms?q=${encodeURIComponent(id.raw)}`;
+    return investorAskUrl(parsed.query);
   }
   if (id.family.id === 'cms_ccn') {
     return seniorAskUrl(parsed.query);
@@ -110,6 +120,59 @@ function lensFor(parsed: ParsedNetworkAsk): PlaceLens | undefined {
   if (parsed.geography?.countySlug === 'palm-beach') return palmBeachPlaceLens();
   if (parsed.geography?.stateCode === 'FL' && parsed.intent === 'place') return floridaPlaceLens();
   return undefined;
+}
+
+function investorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
+  const firmType = parsed.investorFirmType;
+  const identifier = parsed.intent === 'identifier' && parsed.identifier && !parsed.identifier.ambiguous;
+  const mode = investorAskMode(parsed.query, { identifier: Boolean(identifier) });
+  const failReason = investorFailClosedReason(parsed.query);
+  const dest = investorAskUrl(parsed.query);
+  const geoMeaning = identifier
+    ? 'Identifier routing — labeled CRD, not geography.'
+    : investorGeographyMeaning(parsed.query);
+
+  return {
+    hubId: 'investor',
+    name: NETWORK_PUBLIC_NAMES.investor,
+    capabilityStatus: 'execute',
+    mode,
+    structuredFilters: {
+      contract: INVESTOR_ASK_CONTRACT,
+      firmType,
+      identifier: identifier ? parsed.identifier?.raw : undefined,
+    },
+    destination: dest,
+    reason:
+      'InvestorTrustHub structured Ask is production-live (investor-ask-v1). Parent constructs the Ask URL and may read GET /api/ask; it does not query the Investor database.',
+    whatItCanAnswer: failReason
+      ? failReason
+      : firmType
+        ? `${INVESTOR_FIRM_TYPE_LABEL[firmType]} research on InvestorTrustHub. RIA is not ERA. Principal office is not client geography. RAUM is not performance. Item 5.E is not a fee amount.`
+        : 'InvestorTrustHub Ask for SEC/IARD firm research. RIA and ERA stay separate.',
+    geographyCapability: geoMeaning,
+    preview: {
+      headline: failReason
+        ? failReason
+        : identifier
+          ? 'Open InvestorTrustHub structured Ask for this labeled CRD.'
+          : `Open InvestorTrustHub structured Ask${firmType ? ` for ${INVESTOR_FIRM_TYPE_LABEL[firmType]}` : ''}.`,
+      grain: failReason
+        ? 'fail_closed'
+        : identifier
+          ? 'Labeled organization CRD identity'
+          : firmType === 'ria'
+            ? 'RIA firm facts (form_adv_firm_facts)'
+            : firmType === 'era'
+              ? 'ERA firm facts (form_adv_firm_facts)'
+              : 'SEC/IARD roster firm facts — RIA and ERA kept separate',
+      limitation:
+        failReason ??
+        'Parent does not invent RAUM, fees, rankings, or client geography. Open the specialist result.',
+      officialAsOf: 'See specialist result',
+      sourceFamily: 'sec-iard-adv',
+    },
+  };
 }
 
 function seniorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
@@ -179,6 +242,14 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
     (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'senior');
   if (hubId === 'senior' && seniorExecute) {
     return seniorHubPlan(parsed);
+  }
+
+  const investorExecute =
+    parsed.investorFirmType ||
+    parsed.identifier?.family.id === 'crd' ||
+    (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'investor');
+  if (hubId === 'investor' && investorExecute) {
+    return investorHubPlan(parsed);
   }
 
   if (parsed.intent === 'identifier' && parsed.identifier) {
@@ -350,6 +421,7 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
       const famId = h.preview?.sourceFamily;
       const fam = sources.find((s) => s.hubId === h.hubId && (!famId || s.id === famId)) ?? sources.find((s) => s.hubId === h.hubId);
       const cls = plan.parsed.seniorProviderClass;
+      const firmType = plan.parsed.investorFirmType;
       return {
         hubId: h.hubId,
         hubName: h.name,
@@ -358,8 +430,22 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
         geographyMeaning: h.geographyCapability,
         officialAsOf: h.preview?.officialAsOf ?? fam?.officialAsOf ?? 'See specialist page',
         specialistDestination: h.destination ?? capabilityFor(h.hubId).origin,
-        contract: h.hubId === 'senior' ? SENIOR_ASK_CONTRACT : capabilityFor(h.hubId).askContract,
-        providerClass: h.hubId === 'senior' ? (cls ? SENIOR_PROVIDER_CLASS_LABEL[cls] : undefined) : undefined,
+        contract:
+          h.hubId === 'senior'
+            ? SENIOR_ASK_CONTRACT
+            : h.hubId === 'investor'
+              ? INVESTOR_ASK_CONTRACT
+              : capabilityFor(h.hubId).askContract,
+        providerClass:
+          h.hubId === 'senior'
+            ? cls
+              ? SENIOR_PROVIDER_CLASS_LABEL[cls]
+              : undefined
+            : h.hubId === 'investor'
+              ? firmType
+                ? INVESTOR_FIRM_TYPE_LABEL[firmType]
+                : undefined
+              : undefined,
       };
     });
 }
@@ -425,12 +511,56 @@ function applySeniorPayload(answer: NetworkAskAnswer, payload: SeniorAskPayload)
   return { ...answer, traces };
 }
 
-/** Runtime overlay: read Senior's public JSON contract without changing routing. */
+function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayload): NetworkAskAnswer {
+  const investor = answer.plan.hubs.find((h) => h.hubId === 'investor');
+  if (!investor) return answer;
+  const failReason = payload.query?.failReason ?? (payload.resultType === 'fail_closed' ? payload.query?.failReason : undefined);
+  const officialAsOf = payload.provenance?.officialAsOf ?? investor.preview?.officialAsOf ?? 'See specialist result';
+  const sourceFamily = payload.provenance?.sourceFamily ?? investor.preview?.sourceFamily ?? 'sec-iard-adv';
+  const geography = payload.provenance?.geographyMeaning ?? payload.query?.geography?.meaning ?? investor.geographyCapability;
+  const grain = payload.provenance?.metric ?? investor.preview?.grain ?? investor.mode;
+
+  investor.preview = {
+    headline: failReason ?? investor.preview?.headline ?? 'Open InvestorTrustHub structured Ask.',
+    grain: grain ?? 'investor-ask-v1',
+    limitation: failReason ?? payload.limitations?.[0] ?? investor.preview?.limitation ?? 'Specialist result is authoritative.',
+    officialAsOf: officialAsOf || 'See specialist result',
+    sourceFamily,
+  };
+  investor.geographyCapability = geography;
+  if (failReason) {
+    investor.mode = 'fail_closed';
+    investor.whatItCanAnswer = failReason;
+  }
+
+  const traces = tracesForPlan(answer.plan).map((row) =>
+    row.hubId === 'investor'
+      ? {
+          ...row,
+          sourceFamily,
+          queryGrain: grain ?? row.queryGrain,
+          geographyMeaning: geography,
+          officialAsOf: officialAsOf || row.officialAsOf,
+          contract: INVESTOR_ASK_CONTRACT,
+          specialistDestination: investor.destination ?? row.specialistDestination,
+        }
+      : row
+  );
+  return { ...answer, traces };
+}
+
+/** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
-  const answer = assembleNetworkAnswer(query);
+  let answer = assembleNetworkAnswer(query);
   const senior = answer.plan.hubs.find((h) => h.hubId === 'senior' && h.capabilityStatus === 'execute');
-  if (!senior) return answer;
-  const payload = await fetchSeniorAsk(query);
-  if (!payload) return answer;
-  return applySeniorPayload(answer, payload);
+  if (senior) {
+    const payload = await fetchSeniorAsk(query);
+    if (payload) answer = applySeniorPayload(answer, payload);
+  }
+  const investor = answer.plan.hubs.find((h) => h.hubId === 'investor' && h.capabilityStatus === 'execute');
+  if (investor) {
+    const payload = await fetchInvestorAsk(query);
+    if (payload) answer = applyInvestorPayload(answer, payload);
+  }
+  return answer;
 }

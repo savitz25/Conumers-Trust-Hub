@@ -1,6 +1,7 @@
 import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, type IdentifierFamily } from './identifiers.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
+import { detectInvestorFirmType, isInvestorClassQuery, type InvestorFirmType } from './investor-ask.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -39,6 +40,7 @@ export type ParsedNetworkAsk = {
   topic: string;
   interpretationLines: Array<{ label: string; value: string }>;
   seniorProviderClass?: SeniorProviderClass;
+  investorFirmType?: InvestorFirmType;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -84,6 +86,13 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'cms_ccn');
     if (family) {
       return { family, raw: `CCN ${ccnInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
+  const crdInSentence = trimmed.match(/\bcrd\s*#?\s*(\d{4,10})\b/i);
+  if (crdInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'crd');
+    if (family) {
+      return { family, raw: `CRD ${crdInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
@@ -133,7 +142,8 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
   const lender = /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
   const insurance = /insur(ance|er)|doi|producer|agency license|npn/i.test(query);
-  const investor = /adviser|advisor|form adv|iard|crd|ria\b|era\b|investment firm/i.test(query);
+  const investor = isInvestorClassQuery(query) || /adviser|advisor|form adv|iard|crd|ria\b|era\b|investment firm/i.test(query);
+  const investorFirmType = detectInvestorFirmType(query);
   const mover = /mover|usdot|fmcsa|moving compan/i.test(query);
   const roofing = /roof/i.test(query);
   const fha = /\bfha\b/i.test(query);
@@ -195,7 +205,12 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   } else if (investor) {
     intent = 'entity';
     hubs.push('investor');
-    topic = 'Investment-adviser firm research';
+    topic =
+      investorFirmType === 'ria'
+        ? 'RIA research'
+        : investorFirmType === 'era'
+          ? 'ERA research'
+          : 'Investment-adviser firm research';
   } else if (mover) {
     intent = 'entity';
     hubs.push('move');
@@ -225,6 +240,18 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
             : 'Hospice',
     });
   }
+  if (investorFirmType && hubs.includes('investor') && hubs.length === 1) {
+    interpretationLines.push({
+      label: 'Firm type',
+      value: investorFirmType === 'ria' ? 'RIA' : investorFirmType === 'era' ? 'ERA' : 'RIA + ERA (kept separate)',
+    });
+    if (geo?.stateName) {
+      interpretationLines.push({
+        label: 'Principal-office state',
+        value: geo.stateName,
+      });
+    }
+  }
   if (hubs.length === 1) {
     interpretationLines.push({ label: 'Research system', value: hubs[0] });
   } else if (hubs.length > 1) {
@@ -243,5 +270,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     topic,
     interpretationLines,
     seniorProviderClass,
+    investorFirmType,
   };
 }

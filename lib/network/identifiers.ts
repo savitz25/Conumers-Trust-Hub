@@ -80,11 +80,11 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     id: 'crd',
     hubId: 'investor',
     label: 'CRD / SEC firm identifier',
-    examples: ['CRD 123456'],
+    examples: ['CRD 166089', 'Find CRD 166089'],
     pattern: /^(?:crd)\s*\d{4,10}$/i,
     live: true,
-    destinationHint: 'https://www.investortrusthub.com/firms',
-    note: 'Labeled CRD routes to InvestorTrustHub firm search. Public IAR/people lookup is not published. Labeled only — bare digits are ambiguous.',
+    destinationHint: 'https://www.investortrusthub.com/ask',
+    note: 'Labeled CRD executes on InvestorTrustHub Ask (investor-ask-v1). Public IAR/people lookup is not published. Bare digits fail closed.',
   },
 ];
 
