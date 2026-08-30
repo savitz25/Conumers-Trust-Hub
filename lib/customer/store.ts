@@ -859,27 +859,26 @@ export class CustomerPlatform {
 
   async businessProfile(sessionToken: string, nativeProfileId: string) {
     const access = await this.requireProfileAccess(sessionToken, nativeProfileId);
-    const [revision, fields, items, hours, activity] = await Promise.all([
-      one<{ version: number }>(this.deps.sql,
-        `SELECT version FROM ath_business_profile_revisions WHERE org_id=$1 AND hub_profile_id=$2`,
-        [access.org_id, access.hub_profile_id]),
-      this.deps.sql.query<{ field_key: string; value_text: string; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; last_confirmed_at: string; source: string }>(
+    // withPlatform uses one transactional pg Client; keep its queries sequential.
+    const revision = await one<{ version: number }>(this.deps.sql,
+      `SELECT version FROM ath_business_profile_revisions WHERE org_id=$1 AND hub_profile_id=$2`,
+      [access.org_id, access.hub_profile_id]);
+    const fields = await this.deps.sql.query<{ field_key: string; value_text: string; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; last_confirmed_at: string; source: string }>(
         `SELECT field_key,value_text,supplied_by_user_id,first_supplied_at::text,updated_at::text,last_confirmed_at::text,source
            FROM ath_business_profile_fields WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY field_key`,
-        [access.org_id, access.hub_profile_id]),
-      this.deps.sql.query<{ category: string; value_text: string; position: number; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
+        [access.org_id, access.hub_profile_id]);
+    const items = await this.deps.sql.query<{ category: string; value_text: string; position: number; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
         `SELECT category,value_text,position,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
            FROM ath_business_profile_items WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY category,position`,
-        [access.org_id, access.hub_profile_id]),
-      this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
+        [access.org_id, access.hub_profile_id]);
+    const hours = await this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
         `SELECT weekday,is_closed,opens_at::text,closes_at::text,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
            FROM ath_business_profile_hours WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY weekday`,
-        [access.org_id, access.hub_profile_id]),
-      this.deps.sql.query<{ action: string; created_at: string; actor_user_id: string | null }>(
+        [access.org_id, access.hub_profile_id]);
+    const activity = await this.deps.sql.query<{ action: string; created_at: string; actor_user_id: string | null }>(
         `SELECT action,created_at::text,actor_user_id FROM ath_audit_events
           WHERE org_id=$1 AND object_type='ath_business_profile' AND object_id=$2
-          ORDER BY created_at DESC LIMIT 10`, [access.org_id, access.hub_profile_id]),
-    ]);
+          ORDER BY created_at DESC LIMIT 10`, [access.org_id, access.hub_profile_id]);
     return { access, version: revision?.version ?? 0, fields: fields.rows, items: items.rows, hours: hours.rows, activity: activity.rows };
   }
 
