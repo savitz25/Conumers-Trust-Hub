@@ -21,7 +21,7 @@ export default async function ClaimContinuePage({
   const sessionToken = await readSessionToken();
   const ctx = await currentContext();
 
-  let intentError: string | null = sp.auth_error || null;
+  const intentError: string | null = sp.auth_error || null;
   let preview: {
     intentId: string;
     displayName: string;
