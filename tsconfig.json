@@ -18,5 +18,12 @@
     "paths": { "@/*": ["./*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "lib/network/prompt-1.test.ts", "lib/network/prompt-2.test.ts"]
+  "exclude": [
+    "node_modules",
+    "lib/network/prompt-1.test.ts",
+    "lib/network/prompt-2.test.ts",
+    "lib/customer/*.test.ts",
+    "scripts/ath-cust-002-proof.ts",
+    "scripts/ath-cust-002-migrate.ts"
+  ]
 }

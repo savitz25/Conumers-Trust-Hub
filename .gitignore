@@ -41,6 +41,7 @@ next-env.d.ts
 
 # Academic internal extracts and unlabeled ER candidates (never publish)
 /data/academic-internal/
+/data/ath-cust-002-proof.json
 
 __pycache__/
 **/__pycache__/
