@@ -151,7 +151,8 @@ test('contractor public Ask HTML parser extracts names and credentials', () => {
   const options = parseContractorAskHtml(html);
   assert.equal(options[0].name, '123 ROOFING, INC.');
   assert.equal(options[0].fields.find((f) => f.label === 'Credential')?.value, 'RC29027885');
-  assert.match(options[0].href ?? '', /contractortrusthub.com\/contractors\//);
+  assert.match(options[0].href, /contractortrusthub.com\/contractors\//);
+  assert.equal(options[0].destination.publicationState, 'public_profile');
 });
 
 test('stripJudgmentModifiers leaves the supported search intact', () => {
