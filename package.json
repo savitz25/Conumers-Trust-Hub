@@ -13,6 +13,7 @@
     "assert:network": "node scripts/assert-network-v2.mjs",
     "check:ask-2-prompt-1": "node scripts/check-ask-2-prompt-1.mjs && node --experimental-strip-types --test lib/network/prompt-1.test.ts",
     "check:ask-2-prompt-2": "node --experimental-strip-types --test lib/network/prompt-2.test.ts",
+    "check:ask-insurance-execute": "node --experimental-strip-types --test lib/network/insurance-execute.test.ts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs",
     "check:ath-cust-002": "node scripts/check-ath-cust-002.mjs",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",

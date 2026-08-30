@@ -49,12 +49,22 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
   {
     id: 'npn',
     hubId: 'insurance',
-    label: 'NPN / producer license',
-    examples: ['NPN 1234567'],
-    pattern: /^(?:npn)\s*\d{5,12}$/i,
-    live: false,
-    destinationHint: 'https://www.insurancetrusthub.com/directory',
-    note: 'Public people pages are unpublished. NPN is not a live Ask lookup.',
+    label: 'NPN',
+    examples: ['NPN 10391484', 'Find NPN 10391484'],
+    pattern: /^(?:npn)\s*#?\s*\d{4,12}$/i,
+    live: true,
+    destinationHint: 'https://www.insurancetrusthub.com/ask',
+    note: 'Labeled NPN executes on InsuranceTrustHub Ask (insurance-ask-v1). NPN may be an organization or a person; class is not assumed from the digits. Public people pages remain unpublished. Bare digits fail closed.',
+  },
+  {
+    id: 'naic_company_code',
+    hubId: 'insurance',
+    label: 'NAIC company code',
+    examples: ['NAIC 10064', 'Find insurer NAIC code 10064'],
+    pattern: /^(?:naic(?:\s+company)?(?:\s+code)?)\s*#?\s*\d{3,6}$/i,
+    live: true,
+    destinationHint: 'https://www.insurancetrusthub.com/ask',
+    note: 'Labeled NAIC company code executes on InsuranceTrustHub Ask as a legal insurer identity. A consumer brand is not assumed.',
   },
   {
     id: 'state_contractor_license',
@@ -89,5 +99,5 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
 ];
 
 export function collidingBareDigitsNote(): string {
-  return 'Bare digits can mean USDOT, NMLS, CCN, or CRD. Ask must preserve ambiguity and not auto-select a hub from digits alone.';
+  return 'Bare digits can mean USDOT, NMLS, CCN, CRD, NPN, or NAIC company code. Ask must preserve ambiguity and not auto-select a hub from digits alone.';
 }

@@ -2,6 +2,12 @@ import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, type IdentifierFamily } f
 import type { SpecialistHubId } from './registry.ts';
 import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
 import { detectInvestorFirmType, isInvestorClassQuery, type InvestorFirmType } from './investor-ask.ts';
+import {
+  detectInsuranceEntityClass,
+  insuranceGeographyMeaning,
+  isInsuranceClassQuery,
+  type InsuranceEntityClass,
+} from './insurance-ask.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -41,6 +47,7 @@ export type ParsedNetworkAsk = {
   interpretationLines: Array<{ label: string; value: string }>;
   seniorProviderClass?: SeniorProviderClass;
   investorFirmType?: InvestorFirmType;
+  insuranceEntityClass?: InsuranceEntityClass;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -95,6 +102,20 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
       return { family, raw: `CRD ${crdInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
+  const npnInSentence = trimmed.match(/\bnpn\s*#?\s*(\d{4,12})\b/i);
+  if (npnInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'npn');
+    if (family) {
+      return { family, raw: `NPN ${npnInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
+  const naicInSentence = trimmed.match(/\bnaic(?:\s+company)?(?:\s+code)?\s*#?\s*(\d{3,6})\b/i);
+  if (naicInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'naic_company_code');
+    if (family) {
+      return { family, raw: `NAIC ${naicInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
@@ -141,7 +162,8 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
   const lender = /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
-  const insurance = /insur(ance|er)|doi|producer|agency license|npn/i.test(query);
+  const insurance = isInsuranceClassQuery(query) || /insur(ance|er)|doi|producer|agency license|\bnpn\b|\bnaic\b/i.test(query);
+  const insuranceEntityClass = detectInsuranceEntityClass(query);
   const investor = isInvestorClassQuery(query) || /adviser|advisor|form adv|iard|crd|ria\b|era\b|investment firm/i.test(query);
   const investorFirmType = detectInvestorFirmType(query);
   const mover = /mover|usdot|fmcsa|moving compan/i.test(query);
@@ -201,7 +223,14 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   } else if (insurance) {
     intent = 'entity';
     hubs.push('insurance');
-    topic = 'Insurance licensing research';
+    topic =
+      insuranceEntityClass === 'person'
+        ? 'Insurance producer / individual research'
+        : insuranceEntityClass === 'insurer'
+          ? 'Legal insurer research'
+          : insuranceEntityClass === 'agency'
+            ? 'Insurance agency research'
+            : 'Insurance regulatory research';
   } else if (investor) {
     intent = 'entity';
     hubs.push('investor');
@@ -224,7 +253,30 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const interpretationLines: Array<{ label: string; value: string }> = [];
   if (intent === 'journey') interpretationLines.push({ label: 'Situation', value: topic });
   else interpretationLines.push({ label: 'Topic', value: topic });
-  if (geo?.countyName) interpretationLines.push({ label: 'Location', value: `${geo.countyName}, Florida` });
+  const insuranceOnly = hubs.length === 1 && hubs[0] === 'insurance';
+  if (insuranceOnly) {
+    if (insuranceEntityClass) {
+      interpretationLines.push({
+        label: 'Entity class',
+        value:
+          insuranceEntityClass === 'person'
+            ? 'Producer / individual'
+            : insuranceEntityClass === 'insurer'
+              ? 'Legal insurer'
+              : 'Agency',
+      });
+    }
+    const geoMeaning = insuranceGeographyMeaning(query);
+    if (/\bcredential jurisdiction\b/i.test(geoMeaning) && geo?.stateName) {
+      interpretationLines.push({ label: 'credential jurisdiction', value: geo.stateName });
+    } else if (/\bdomicile\b/i.test(geoMeaning) && geo?.stateName) {
+      interpretationLines.push({ label: 'regulatory domicile', value: geo.stateName });
+    } else if (geo?.countyName) {
+      interpretationLines.push({ label: 'Geography (not service territory)', value: `${geo.countyName}, Florida` });
+    } else if (geo?.stateName) {
+      interpretationLines.push({ label: 'Geography', value: geo.stateName });
+    }
+  } else if (geo?.countyName) interpretationLines.push({ label: 'Location', value: `${geo.countyName}, Florida` });
   else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });
   if (trade) interpretationLines.push({ label: 'Trade', value: trade });
   if (credentialStatus) interpretationLines.push({ label: 'Credential status', value: credentialStatus });
@@ -271,5 +323,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     interpretationLines,
     seniorProviderClass,
     investorFirmType,
+    insuranceEntityClass,
   };
 }

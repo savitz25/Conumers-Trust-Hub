@@ -51,6 +51,18 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
     href: 'https://www.investortrusthub.com/ask',
   },
   {
+    label: 'Florida-credentialed agencies',
+    prompt: 'Show insurance agencies credentialed in Florida.',
+    mode: 'find',
+    href: 'https://www.insurancetrusthub.com/ask',
+  },
+  {
+    label: 'Find NPN 10391484',
+    prompt: 'Find NPN 10391484.',
+    mode: 'find',
+    href: 'https://www.insurancetrusthub.com/ask',
+  },
+  {
     label: 'Buying in Palm Beach County',
     prompt: 'I am buying a home in Palm Beach County. What should I research?',
     mode: 'decision',

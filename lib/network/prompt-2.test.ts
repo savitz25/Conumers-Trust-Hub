@@ -12,7 +12,7 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { STANDARD_PIPELINE } from '../standard.ts';
 
-test('capability registry: lender Ask is not live; contractor, senior, and investor Ask are live', () => {
+test('capability registry: lender Ask is not live; contractor, senior, investor, and insurance Ask are live', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
@@ -26,10 +26,14 @@ test('capability registry: lender Ask is not live; contractor, senior, and inves
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.structuredAskApiUrl, 'https://www.investortrusthub.com/api/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'partial');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'handoff');
-  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askStatus, 'partial');
-  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'handoff');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askStatus, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askContract, 'insurance-ask-v1');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.structuredAskUrl, 'https://www.insurancetrusthub.com/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.structuredAskApiUrl, 'https://www.insurancetrusthub.com/api/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.identifierLookup, 'live');
-  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.identifierLookup, 'planned');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.identifierLookup, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'handoff');
 });
 
 test('Broward roofers route to contractor execute', () => {
@@ -56,7 +60,8 @@ test('identifier routing', () => {
   assert.equal(parseNetworkAsk('CRD 123456').identifier?.family.id, 'crd');
   assert.equal(buildNetworkAskPlan('CRD 123456').hubs[0].hubId, 'investor');
   assert.equal(parseNetworkAsk('NMLS 123456').identifier?.family.live, false);
-  assert.equal(parseNetworkAsk('NPN 1234567').identifier?.family.live, false);
+  assert.equal(parseNetworkAsk('NPN 1234567').identifier?.family.live, true);
+  assert.equal(parseNetworkAsk('NPN 1234567').identifier?.family.id, 'npn');
   assert.equal(parseNetworkAsk('CBC015082').identifier?.family.id, 'state_contractor_license');
   const ccn = parseNetworkAsk('CCN 105502');
   assert.equal(ccn.identifier?.family.id, 'cms_ccn');
@@ -139,7 +144,7 @@ test('Senior execute does not change contractor / lender / move / insurance / in
 
   const insurance = buildNetworkAskPlan('Find a Florida insurance agency license.');
   assert.equal(insurance.hubs[0].hubId, 'insurance');
-  assert.equal(insurance.hubs[0].capabilityStatus, 'handoff');
+  assert.equal(insurance.hubs[0].capabilityStatus, 'execute');
 
   const investor = buildNetworkAskPlan('Find CRD 166089.');
   assert.equal(investor.hubs[0].hubId, 'investor');
