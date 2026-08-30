@@ -26,6 +26,8 @@ export const FEDERATED_ASK_CONTRACT = 'network-ask-route-v1';
 export { SENIOR_ASK_CONTRACT } from './senior-ask.ts';
 export { INVESTOR_ASK_CONTRACT } from './investor-ask.ts';
 export { INSURANCE_ASK_CONTRACT } from './insurance-ask.ts';
+export { MOVE_ASK_CONTRACT } from './move-ask.ts';
+export { LENDER_ASK_CONTRACT } from './lender-ask.ts';
 export const SAVE_TO_RESEARCH_CONTRACT = 'save-to-research-handoff-v1';
 
 export type SaveToResearchEvent = {

@@ -24,7 +24,7 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
     label: 'FHA mortgages in Florida',
     prompt: 'Which lenders originated the most FHA mortgages in Florida?',
     mode: 'market',
-    href: 'https://www.lendertrusthub.com',
+    href: 'https://www.lendertrusthub.com/ask',
   },
   {
     label: 'Palm Beach nursing homes',

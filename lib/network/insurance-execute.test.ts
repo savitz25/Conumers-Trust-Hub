@@ -134,8 +134,8 @@ test('Insurance execute does not change contractor / senior / investor / lender 
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'execute');
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'handoff');
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'live');
 
@@ -153,7 +153,7 @@ test('Insurance execute does not change contractor / senior / investor / lender 
 
   const lender = buildNetworkAskPlan('Which lenders originated the most FHA mortgages in Florida?');
   assert.equal(lender.hubs[0].hubId, 'lender');
-  assert.equal(lender.hubs[0].capabilityStatus, 'handoff');
+  assert.equal(lender.hubs[0].capabilityStatus, 'execute');
 
   const move = buildNetworkAskPlan('USDOT 3244649');
   assert.equal(move.hubs[0].hubId, 'move');

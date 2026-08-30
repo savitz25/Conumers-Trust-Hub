@@ -152,8 +152,8 @@ test('Move execute does not change contractor / senior / investor / insurance / 
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'execute');
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'handoff');
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'live');
 
   const contractor = buildNetworkAskPlan('Show active roofing contractors in Broward County.');
   assert.equal(contractor.hubs[0].hubId, 'contractor');
@@ -173,5 +173,5 @@ test('Move execute does not change contractor / senior / investor / insurance / 
 
   const lender = buildNetworkAskPlan('Which lenders originated the most FHA mortgages in Florida?');
   assert.equal(lender.hubs[0].hubId, 'lender');
-  assert.equal(lender.hubs[0].capabilityStatus, 'handoff');
+  assert.equal(lender.hubs[0].capabilityStatus, 'execute');
 });

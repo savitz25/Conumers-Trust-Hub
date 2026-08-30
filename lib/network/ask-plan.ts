@@ -46,6 +46,15 @@ import {
   moveGeographyMeaning,
   type MoveAskPayload,
 } from './move-ask.ts';
+import {
+  LENDER_ASK_CONTRACT,
+  fetchLenderAsk,
+  lenderAskMode,
+  lenderAskUrl,
+  lenderFailClosedReason,
+  lenderGeographyMeaning,
+  type LenderAskPayload,
+} from './lender-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -311,6 +320,50 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   };
 }
 
+function lenderHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
+  const failReason = lenderFailClosedReason(parsed.query);
+  const mode = lenderAskMode(parsed.query);
+  const dest = lenderAskUrl(parsed.query);
+  const geoMeaning = lenderGeographyMeaning(parsed.query);
+  const complaint = /\bcomplaint\b|\bcfpb\b/i.test(parsed.query);
+
+  return {
+    hubId: 'lender',
+    name: NETWORK_PUBLIC_NAMES.lender,
+    capabilityStatus: 'execute',
+    mode: failReason ? 'fail_closed' : mode,
+    structuredFilters: {
+      contract: LENDER_ASK_CONTRACT,
+      loanType: /\bfha\b/i.test(parsed.query) ? ['FHA'] : undefined,
+      geography: parsed.geography?.countySlug ?? parsed.geography?.stateCode,
+    },
+    destination: dest,
+    reason:
+      'LenderTrustHub structured Ask is production-live (lender-ask-v1). Parent constructs the Ask URL and may read GET /api/ask; it does not query the Lender database.',
+    whatItCanAnswer: failReason
+      ? failReason
+      : complaint
+        ? 'CFPB mortgage complaint observations on LenderTrustHub. Complaints are not confirmed wrongdoing. Absence is not a clean record.'
+        : 'LenderTrustHub Ask for HMDA mortgage-market research. Most is a raw volume count, not a recommendation. Property geography is not headquarters or service territory.',
+    geographyCapability: geoMeaning,
+    preview: {
+      headline: failReason ? failReason : 'Open LenderTrustHub structured Ask for this HMDA / CFPB query.',
+      grain: failReason
+        ? 'fail_closed'
+        : complaint
+          ? 'CFPB mortgage complaint observations — not confirmed wrongdoing'
+          : parsed.geography?.countySlug
+            ? 'HMDA 2025 mortgaged-property county observations (not branch county, HQ, or service territory)'
+            : 'HMDA 2025 mortgaged-property state observations (not headquarters or service territory)',
+      limitation:
+        failReason ??
+        'Parent does not invent origination counts, rates, rankings, or service territory. Open the specialist result. Most is a raw count; a rate needs a denominator.',
+      officialAsOf: 'See specialist result',
+      sourceFamily: complaint ? 'cfpb-complaints' : 'hmda',
+    },
+  };
+}
+
 function seniorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   const cls = parsed.seniorProviderClass;
   const classLabel = cls ? SENIOR_PROVIDER_CLASS_LABEL[cls] : undefined;
@@ -406,6 +459,14 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
     return moveHubPlan(parsed);
   }
 
+  const lenderExecute =
+    parsed.intent !== 'identifier' &&
+    parsed.suggestedHubs.length === 1 &&
+    parsed.suggestedHubs[0] === 'lender';
+  if (hubId === 'lender' && lenderExecute) {
+    return lenderHubPlan(parsed);
+  }
+
   if (parsed.intent === 'identifier' && parsed.identifier) {
     const dest = identifierDestination(parsed);
     const live = parsed.identifier.family.live && parsed.identifier.family.hubId === hubId;
@@ -425,12 +486,19 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
 
   if (hubId === 'contractor' && (parsed.intent === 'entity' || parsed.trade)) {
     const dest = contractorAskUrl(parsed);
+    const hireClosed =
+      /\b(should i hire|who should i hire|best contractor|safest contractor|most trustworthy contractor|recommended contractor|hire this contractor)\b/i.test(
+        parsed.query,
+      );
+    const failReason = hireClosed
+      ? 'ContractorTrustHub does not recommend whom to hire. It researches licensing records. A credential is not a ranking.'
+      : undefined;
     const browardRoof = parsed.geography?.countySlug === 'broward' && parsed.trade === 'Roofing';
     return {
       hubId,
       name,
       capabilityStatus: 'execute',
-      mode: 'entity',
+      mode: failReason ? 'fail_closed' : 'entity',
       structuredFilters: {
         geo: parsed.geography?.countySlug,
         trade: parsed.trade?.toLowerCase(),
@@ -438,9 +506,17 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
       },
       destination: dest,
       reason: 'ContractorTrustHub structured Ask is production-live. Parent constructs the Ask URL; it does not query the contractor database.',
-      whatItCanAnswer: 'Indexed licensing records by geography, trade, and credential status.',
+      whatItCanAnswer: failReason ?? 'Indexed licensing records by geography, trade, and credential status.',
       geographyCapability: parsed.geography?.meaning ?? 'State/county as recorded on the credential — not service territory.',
-      preview: browardRoof
+      preview: failReason
+        ? {
+            headline: failReason,
+            grain: 'fail_closed',
+            limitation: failReason,
+            officialAsOf: '2026-08-28',
+            sourceFamily: 'fl-dbpr',
+          }
+        : browardRoof
         ? {
             headline: 'ContractorTrustHub published 924 active Broward roofing credentials on its county intelligence page.',
             grain: 'Certified CCC + registered RC with mailing/base county Broward. Credential records, not companies, not “trusted roofers.”',
@@ -455,19 +531,6 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
             officialAsOf: '2026-08-28',
             sourceFamily: 'fl-dbpr',
           },
-    };
-  }
-
-  if (hubId === 'lender' && parsed.intent === 'market') {
-    return {
-      hubId,
-      name,
-      capabilityStatus: 'handoff',
-      mode: 'market',
-      destination: parsed.geography?.stateCode === 'FL' ? 'https://www.lendertrusthub.com/florida' : 'https://www.lendertrusthub.com',
-      reason: 'LenderTrustHub Ask is not production-live. Do not fabricate FHA origination rankings from branch-only work.',
-      whatItCanAnswer: 'Florida mortgage intelligence and national HMDA activity on the specialist hub — not a federated FHA ranking.',
-      geographyCapability: 'HMDA property geography is not lender headquarters.',
     };
   }
 
@@ -538,10 +601,12 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
       geographyCapability: 'Name appearance is not identity.',
     }));
   } else if (parsed.intent === 'comparison') {
-    comparison = compareBrowardPalmBeach();
-    hubs = comparison.hubs.map((h) =>
-      hubPlan(h.hubId, parsed)
-    );
+    if (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'lender') {
+      hubs = [hubPlan('lender', parsed)];
+    } else {
+      comparison = compareBrowardPalmBeach();
+      hubs = comparison.hubs.map((h) => hubPlan(h.hubId, parsed));
+    }
   } else if (parsed.suggestedHubs.length) {
     hubs = parsed.suggestedHubs.map((id) => hubPlan(id, parsed));
   } else if (parsed.identifier?.ambiguous) {
@@ -599,7 +664,11 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
                 ? INSURANCE_ASK_CONTRACT
                 : h.hubId === 'move'
                   ? MOVE_ASK_CONTRACT
-                : capabilityFor(h.hubId).askContract,
+                  : h.hubId === 'lender'
+                    ? h.capabilityStatus === 'execute'
+                      ? LENDER_ASK_CONTRACT
+                      : undefined
+                    : capabilityFor(h.hubId).askContract,
         providerClass:
           h.hubId === 'senior'
             ? cls
@@ -859,6 +928,66 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
   return { ...answer, traces };
 }
 
+function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload): NetworkAskAnswer {
+  const lender = answer.plan.hubs.find((h) => h.hubId === 'lender');
+  if (!lender) return answer;
+  const failReason =
+    payload.query?.failReason ??
+    (payload.failClosed ? payload.headline ?? payload.query?.failClosedKind : undefined);
+  const officialAsOf = payload.period ?? payload.trace?.period ?? lender.preview?.officialAsOf ?? 'See specialist result';
+  const sourceFamily = /\bcfpb|complaint/i.test(answer.plan.query)
+    ? 'cfpb-complaints'
+    : lender.preview?.sourceFamily ?? 'hmda';
+  const geography =
+    payload.geographyWarning ?? payload.query?.geography?.note ?? lender.geographyCapability;
+  const grain = payload.grain ?? payload.trace?.grain ?? lender.preview?.grain ?? lender.mode;
+  const first = payload.rows?.[0];
+  const emptyExecuted = !failReason && !(payload.rows && payload.rows.length) && !(payload.facts && payload.facts.length);
+  const dataLimitation = emptyExecuted
+    ? payload.caveats?.[0] ??
+      'Specialist executed. Current indexed result set is empty. Absence is not a clean record or a ranking.'
+    : payload.caveats?.[0];
+
+  lender.preview = {
+    headline: failReason
+      ? failReason
+      : emptyExecuted
+        ? (dataLimitation ?? 'Specialist executed. Current indexed result set is empty.')
+        : payload.headline
+          ? payload.headline
+          : first
+            ? `${first.displayName ?? 'Lender'}${typeof first.metric === 'number' ? ` · ${first.metric.toLocaleString('en-US')}` : ''}`
+            : lender.preview?.headline ?? 'Open LenderTrustHub structured Ask.',
+    grain: grain ?? 'lender-ask-v1',
+    limitation: failReason ?? dataLimitation ?? lender.preview?.limitation ?? 'Specialist result is authoritative.',
+    officialAsOf: officialAsOf || 'See specialist result',
+    sourceFamily,
+  };
+  lender.geographyCapability = geography;
+  if (failReason || payload.failClosed) {
+    lender.mode = 'fail_closed';
+    lender.whatItCanAnswer = failReason ?? payload.headline ?? lender.whatItCanAnswer;
+  } else if (payload.query?.mode) {
+    lender.mode = payload.query.mode;
+  }
+  lender.capabilityStatus = 'execute';
+
+  const traces = tracesForPlan(answer.plan).map((row) =>
+    row.hubId === 'lender'
+      ? {
+          ...row,
+          sourceFamily,
+          queryGrain: grain ?? row.queryGrain,
+          geographyMeaning: geography,
+          officialAsOf: officialAsOf || row.officialAsOf,
+          contract: LENDER_ASK_CONTRACT,
+          specialistDestination: lender.destination ?? row.specialistDestination,
+        }
+      : row,
+  );
+  return { ...answer, traces };
+}
+
 /** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
   let answer = assembleNetworkAnswer(query);
@@ -881,6 +1010,11 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   if (move) {
     const payload = await fetchMoveAsk(query);
     if (payload) answer = applyMovePayload(answer, payload);
+  }
+  const lender = answer.plan.hubs.find((h) => h.hubId === 'lender' && h.capabilityStatus === 'execute');
+  if (lender) {
+    const payload = await fetchLenderAsk(query);
+    if (payload) answer = applyLenderPayload(answer, payload);
   }
   return answer;
 }
