@@ -52,10 +52,10 @@ export default async function AskPage({
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',
+              'Show nursing homes in Palm Beach County.',
+              'Find CMS CCN 105502.',
               "I'm buying a home in Broward County. What should I research?",
               'What does TrustHub know about Broward?',
-              'Search ABC Holdings across TrustHub',
-              'USDOT 3244649',
             ].map((ex) => (
               <li key={ex}>
                 <a

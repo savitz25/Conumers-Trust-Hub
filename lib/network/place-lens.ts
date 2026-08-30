@@ -201,7 +201,8 @@ export function floridaPlaceLens(): PlaceLens {
         ],
         destination: 'https://www.seniortrusthub.com/florida',
         destinationLabel: 'Open Florida senior-care intelligence',
-        limitation: 'Assisted living is state-regulated and is not a CMS national directory class.',
+        limitation:
+          'Structured Ask is live on SeniorTrustHub /ask (senior-ask-v1). Assisted living is state-regulated and is not a CMS national directory class. Classes stay separate.',
         researchAvailable: true,
       },
       {

@@ -472,6 +472,7 @@ export function seniorManifest(): TrustHubNetworkManifest {
       description: 'CMS-oriented senior care research. Nursing homes, home health, and hospice stay separate.',
       accent: '#7C3AED',
       exploreHref: 'https://www.seniortrusthub.com',
+      askHref: 'https://www.seniortrusthub.com/ask',
     },
     snapshot: {
       snapshotId: 'senior-cms-class-separation',
@@ -539,8 +540,21 @@ export function seniorManifest(): TrustHubNetworkManifest {
         organizationKind: 'regulator',
       },
     ],
-    askCapabilities: [{ mode: 'entity', status: 'partial' }],
-    limitations: ['Never publish a combined senior class total.'],
+    askCapabilities: [
+      { mode: 'entity', status: 'live' },
+      { mode: 'identifier', status: 'live' },
+      { mode: 'count', status: 'live' },
+      { mode: 'aggregate', status: 'live' },
+      { mode: 'comparison', status: 'live' },
+      { mode: 'evidence', status: 'live' },
+      { mode: 'definition', status: 'live' },
+      { mode: 'fail_closed', status: 'live' },
+    ],
+    limitations: [
+      'Never publish a combined senior class total.',
+      'Home Health county filtering is not supported. CHOW is Nursing Home only. Hospice has no overall CMS star.',
+      'Provider address/office geography is not service area. CMS ratings are not TrustHub recommendations.',
+    ],
   };
 }
 

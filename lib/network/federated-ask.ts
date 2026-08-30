@@ -10,7 +10,8 @@ export type NetworkAskMode =
   | 'definition'
   | 'identifier'
   | 'place'
-  | 'name_check';
+  | 'name_check'
+  | 'fail_closed';
 
 export type NetworkAskRoute = {
   hubId: SpecialistHubId;
@@ -22,6 +23,7 @@ export type NetworkAskRoute = {
 };
 
 export const FEDERATED_ASK_CONTRACT = 'network-ask-route-v1';
+export { SENIOR_ASK_CONTRACT } from './senior-ask.ts';
 export const SAVE_TO_RESEARCH_CONTRACT = 'save-to-research-handoff-v1';
 
 export type SaveToResearchEvent = {

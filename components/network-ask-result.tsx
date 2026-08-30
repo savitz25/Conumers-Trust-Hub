@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
-import { assembleNetworkAnswer } from '@/lib/network/ask-plan';
+import { assembleNetworkAnswerWithSpecialist } from '@/lib/network/ask-plan';
 import { CROSS_HUB_NAME_CHECK } from '@/lib/network/name-check';
 import { SAVE_TO_RESEARCH_CONTRACT } from '@/lib/network/federated-ask';
 
@@ -11,8 +11,8 @@ const STATUS_LABEL: Record<string, string> = {
   unavailable: 'Temporarily unavailable',
 };
 
-export function NetworkAskResult({ query }: { query: string }) {
-  const answer = assembleNetworkAnswer(query);
+export async function NetworkAskResult({ query }: { query: string }) {
+  const answer = await assembleNetworkAnswerWithSpecialist(query);
   const { plan } = answer;
 
   if (!query.trim()) {
@@ -181,6 +181,8 @@ export function NetworkAskResult({ query }: { query: string }) {
             <thead>
               <tr style={{ color: ASK_BRAND.navy }}>
                 <th scope="col" className="py-2 pr-3">Hub</th>
+                <th scope="col" className="py-2 pr-3">Contract</th>
+                <th scope="col" className="py-2 pr-3">Provider class</th>
                 <th scope="col" className="py-2 pr-3">Source family</th>
                 <th scope="col" className="py-2 pr-3">Query grain</th>
                 <th scope="col" className="py-2 pr-3">Geography meaning</th>
@@ -194,6 +196,8 @@ export function NetworkAskResult({ query }: { query: string }) {
                   <th scope="row" className="py-2 pr-3 font-medium">
                     {row.hubName}
                   </th>
+                  <td className="py-2 pr-3">{row.contract ?? '—'}</td>
+                  <td className="py-2 pr-3">{row.providerClass ?? '—'}</td>
                   <td className="py-2 pr-3">{row.sourceFamily}</td>
                   <td className="py-2 pr-3">{row.queryGrain}</td>
                   <td className="py-2 pr-3">{row.geographyMeaning}</td>

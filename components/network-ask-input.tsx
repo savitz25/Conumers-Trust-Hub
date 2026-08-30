@@ -27,10 +27,16 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
     href: 'https://www.lendertrusthub.com',
   },
   {
-    label: 'Nursing home by CCN',
-    prompt: 'Research a nursing home by CMS CCN.',
+    label: 'Palm Beach nursing homes',
+    prompt: 'Show nursing homes in Palm Beach County.',
     mode: 'find',
-    href: 'https://www.seniortrusthub.com',
+    href: 'https://www.seniortrusthub.com/ask',
+  },
+  {
+    label: 'Find CMS CCN 105502',
+    prompt: 'Find CMS CCN 105502.',
+    mode: 'find',
+    href: 'https://www.seniortrusthub.com/ask',
   },
   {
     label: 'Adviser by CRD',

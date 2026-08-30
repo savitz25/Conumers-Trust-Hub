@@ -17,6 +17,9 @@ export type HubCapabilityRecord = {
   /** Parent may construct a structured specialist Ask URL. Does not scrape or query specialist DBs. */
   federatedExecution: FederatedExecutionKind;
   structuredAskUrl?: string;
+  structuredAskApiUrl?: string;
+  askContract?: string;
+  supportedAskModes?: string[];
   entityQuery: HubAskStatus;
   identifierLookup: HubAskStatus;
   marketAggregate: HubAskStatus;
@@ -128,22 +131,28 @@ export const HUB_CAPABILITY_REGISTRY: Record<SpecialistHubId, HubCapabilityRecor
     hubId: 'senior',
     name: NETWORK_PUBLIC_NAMES.senior,
     origin: CANONICAL_ORIGINS.senior,
-    askStatus: 'partial',
-    federatedExecution: 'handoff',
+    askStatus: 'live',
+    federatedExecution: 'execute',
+    structuredAskUrl: 'https://www.seniortrusthub.com/ask',
+    structuredAskApiUrl: 'https://www.seniortrusthub.com/api/ask',
+    askContract: 'senior-ask-v1',
+    supportedAskModes: ['entity', 'identifier', 'count', 'aggregate', 'comparison', 'evidence', 'definition', 'fail_closed'],
     entityQuery: 'live',
-    identifierLookup: 'partial',
-    marketAggregate: 'partial',
-    stateCoverage: 'partial',
-    countyCoverage: 'planned',
-    evidenceLookup: 'partial',
-    comparison: 'partial',
+    identifierLookup: 'live',
+    marketAggregate: 'live',
+    stateCoverage: 'live',
+    countyCoverage: 'partial',
+    evidenceLookup: 'live',
+    comparison: 'live',
     nameSearch: 'live',
     saveSupport: 'handoff',
     publicSearchUrl: 'https://www.seniortrusthub.com/search',
     notes: [
-      'CMS directory search is live. Classes stay separate (nursing home / home health / hospice).',
-      'CCN lookup is a specialist search handoff, not a parent CMS query.',
-      'Florida /florida is the only state intelligence page.',
+      'Production structured Ask is live at /ask (senior-ask-v1). Public JSON: GET /api/ask?q=. Parent constructs the Ask URL and may read that public contract; it does not query the Senior database.',
+      'Supported classes: Nursing Home, Home Health, Hospice. Counts stay separate — never one “senior providers” total.',
+      'Labeled CMS CCN only. Bare six-digit numbers fail closed.',
+      'Nursing Home: state + address-county. Home Health: state/city/ZIP; county unsupported. Hospice: state + office-county. Address/office geography is not service area.',
+      'CHOW is Nursing Home only. Overall CMS star is Nursing Home only. Home Health uses Quality of Patient Care stars. Hospice has no overall CMS star. CMS ratings are not TrustHub recommendations.',
     ],
   },
   investor: {
