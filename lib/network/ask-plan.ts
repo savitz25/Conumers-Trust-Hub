@@ -6,6 +6,16 @@ import { listNetworkSourceRows } from './source-registry.ts';
 import { NETWORK_PUBLIC_NAMES, type SpecialistHubId } from './registry.ts';
 import { runNameCheck, type NameCheckResult } from './name-check.ts';
 import { IDENTIFIER_FAMILIES } from './identifiers.ts';
+import {
+  SENIOR_ASK_CONTRACT,
+  SENIOR_PROVIDER_CLASS_LABEL,
+  fetchSeniorAsk,
+  seniorAskMode,
+  seniorAskUrl,
+  seniorFailClosedReason,
+  seniorGeographyMeaning,
+  type SeniorAskPayload,
+} from './senior-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -47,6 +57,8 @@ export type TraceRow = {
   geographyMeaning: string;
   officialAsOf: string;
   specialistDestination: string;
+  contract?: string;
+  providerClass?: string;
 };
 
 export type NetworkAskAnswer = {
@@ -80,6 +92,9 @@ function identifierDestination(parsed: ParsedNetworkAsk): string | undefined {
   if (id.family.id === 'crd') {
     return `https://www.investortrusthub.com/firms?q=${encodeURIComponent(id.raw)}`;
   }
+  if (id.family.id === 'cms_ccn') {
+    return seniorAskUrl(parsed.query);
+  }
   return id.family.destinationHint;
 }
 
@@ -97,23 +112,76 @@ function lensFor(parsed: ParsedNetworkAsk): PlaceLens | undefined {
   return undefined;
 }
 
+function seniorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
+  const cls = parsed.seniorProviderClass;
+  const classLabel = cls ? SENIOR_PROVIDER_CLASS_LABEL[cls] : undefined;
+  const identifier = parsed.intent === 'identifier' && parsed.identifier && !parsed.identifier.ambiguous;
+  const mode = seniorAskMode(parsed.query, { identifier: Boolean(identifier) });
+  const failReason = seniorFailClosedReason(parsed.query);
+  const dest = seniorAskUrl(parsed.query);
+  const geoMeaning = identifier ? 'Identifier routing — labeled CMS CCN, not geography.' : seniorGeographyMeaning(parsed.query, cls);
+
+  return {
+    hubId: 'senior',
+    name: NETWORK_PUBLIC_NAMES.senior,
+    capabilityStatus: 'execute',
+    mode,
+    structuredFilters: {
+      contract: SENIOR_ASK_CONTRACT,
+      providerClass: cls,
+      identifier: identifier ? parsed.identifier?.raw : undefined,
+    },
+    destination: dest,
+    reason:
+      'SeniorTrustHub structured Ask is production-live (senior-ask-v1). Parent constructs the Ask URL and may read GET /api/ask; it does not query the Senior database.',
+    whatItCanAnswer: failReason
+      ? failReason
+      : classLabel
+        ? `${classLabel} research on SeniorTrustHub. Classes stay separate. CMS ratings are not TrustHub recommendations.`
+        : 'SeniorTrustHub Ask for Nursing Home, Home Health, or Hospice. Classes stay separate.',
+    geographyCapability: geoMeaning,
+    preview: {
+      headline: failReason
+        ? failReason
+        : identifier
+          ? 'Open SeniorTrustHub structured Ask for this labeled CMS CCN.'
+          : `Open SeniorTrustHub structured Ask${classLabel ? ` for ${classLabel}` : ''}.`,
+      grain: failReason ? 'fail_closed' : identifier ? 'Labeled CMS CCN identity' : `${classLabel ?? 'Provider class'} directory research`,
+      limitation:
+        failReason ??
+        'Parent does not invent provider facts, rankings, or a combined senior-provider total. Open the specialist result.',
+      officialAsOf: 'See specialist result',
+      sourceFamily: 'cms-care-compare',
+    },
+  };
+}
+
 function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   const cap = capabilityFor(hubId);
   const name = NETWORK_PUBLIC_NAMES[hubId];
   const lens = lensFor(parsed);
   const card = lens?.hubs.find((h) => h.hubId === hubId);
 
+  if (parsed.intent === 'identifier' && parsed.identifier?.ambiguous) {
+    return {
+      hubId,
+      name,
+      capabilityStatus: 'unsupported',
+      reason: collidingNote(),
+      whatItCanAnswer: 'Ask will not auto-select a hub from bare digits.',
+      geographyCapability: 'n/a',
+    };
+  }
+
+  const seniorExecute =
+    parsed.seniorProviderClass ||
+    parsed.identifier?.family.id === 'cms_ccn' ||
+    (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'senior');
+  if (hubId === 'senior' && seniorExecute) {
+    return seniorHubPlan(parsed);
+  }
+
   if (parsed.intent === 'identifier' && parsed.identifier) {
-    if (parsed.identifier.ambiguous) {
-      return {
-        hubId,
-        name,
-        capabilityStatus: 'unsupported',
-        reason: collidingNote(),
-        whatItCanAnswer: 'Ask will not auto-select a hub from bare digits.',
-        geographyCapability: 'n/a',
-      };
-    }
     const dest = identifierDestination(parsed);
     const live = parsed.identifier.family.live && parsed.identifier.family.hubId === hubId;
     return {
@@ -274,14 +342,14 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
   };
 }
 
-export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
-  const plan = buildNetworkAskPlan(query);
+function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
   const sources = listNetworkSourceRows();
-  const traces: TraceRow[] = plan.hubs
+  return plan.hubs
     .filter((h) => h.capabilityStatus !== 'unsupported')
     .map((h) => {
       const famId = h.preview?.sourceFamily;
       const fam = sources.find((s) => s.hubId === h.hubId && (!famId || s.id === famId)) ?? sources.find((s) => s.hubId === h.hubId);
+      const cls = plan.parsed.seniorProviderClass;
       return {
         hubId: h.hubId,
         hubName: h.name,
@@ -290,8 +358,15 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
         geographyMeaning: h.geographyCapability,
         officialAsOf: h.preview?.officialAsOf ?? fam?.officialAsOf ?? 'See specialist page',
         specialistDestination: h.destination ?? capabilityFor(h.hubId).origin,
+        contract: h.hubId === 'senior' ? SENIOR_ASK_CONTRACT : capabilityFor(h.hubId).askContract,
+        providerClass: h.hubId === 'senior' ? (cls ? SENIOR_PROVIDER_CLASS_LABEL[cls] : undefined) : undefined,
       };
     });
+}
+
+export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
+  const plan = buildNetworkAskPlan(query);
+  const traces = tracesForPlan(plan);
 
   const n = plan.hubs.filter((h) => h.capabilityStatus !== 'unsupported').length;
   const hubCountLabel =
@@ -305,4 +380,57 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
     traces,
     changeHref: `/ask?${params.toString()}#interpretation`,
   };
+}
+
+function applySeniorPayload(answer: NetworkAskAnswer, payload: SeniorAskPayload): NetworkAskAnswer {
+  const senior = answer.plan.hubs.find((h) => h.hubId === 'senior');
+  if (!senior) return answer;
+  const failReason = payload.failClosed?.reason ?? (payload.resultType === 'fail_closed' ? payload.query?.failReason : undefined);
+  const officialAsOf = payload.provenance?.officialAsOf ?? senior.preview?.officialAsOf ?? 'See specialist result';
+  const sourceFamily = payload.provenance?.sourceFamily ?? senior.preview?.sourceFamily ?? 'cms-care-compare';
+  const geography = payload.provenance?.geographyMeaning ?? payload.query?.geography?.meaning ?? senior.geographyCapability;
+  const grain = payload.provenance?.queryGrain ?? senior.preview?.grain ?? senior.mode;
+  const providerClass = payload.provenance?.providerClass ?? senior.structuredFilters?.providerClass;
+
+  senior.preview = {
+    headline: failReason ?? senior.preview?.headline ?? 'Open SeniorTrustHub structured Ask.',
+    grain: grain ?? 'senior-ask-v1',
+    limitation: failReason
+      ? (payload.failClosed?.alternatives?.join(' ') ?? failReason)
+      : (payload.limitations?.[0] ?? senior.preview?.limitation ?? 'Specialist result is authoritative.'),
+    officialAsOf: officialAsOf || 'See specialist result',
+    sourceFamily,
+  };
+  senior.geographyCapability = geography;
+  if (failReason) {
+    senior.mode = 'fail_closed';
+    senior.whatItCanAnswer = failReason;
+  }
+
+  const traces = tracesForPlan(answer.plan).map((row) =>
+    row.hubId === 'senior'
+      ? {
+          ...row,
+          sourceFamily,
+          queryGrain: grain ?? row.queryGrain,
+          geographyMeaning: geography,
+          officialAsOf: officialAsOf || row.officialAsOf,
+          contract: SENIOR_ASK_CONTRACT,
+          providerClass: typeof providerClass === 'string' ? providerClass : row.providerClass,
+          specialistDestination: senior.destination ?? row.specialistDestination,
+        }
+      : row
+  );
+
+  return { ...answer, traces };
+}
+
+/** Runtime overlay: read Senior's public JSON contract without changing routing. */
+export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
+  const answer = assembleNetworkAnswer(query);
+  const senior = answer.plan.hubs.find((h) => h.hubId === 'senior' && h.capabilityStatus === 'execute');
+  if (!senior) return answer;
+  const payload = await fetchSeniorAsk(query);
+  if (!payload) return answer;
+  return applySeniorPayload(answer, payload);
 }

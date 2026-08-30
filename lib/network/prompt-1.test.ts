@@ -53,7 +53,8 @@ test('name is not identity', () => {
 test('identifier map does not claim unsupported live lookups', () => {
   const live = IDENTIFIER_FAMILIES.filter((f) => f.live).map((f) => f.id);
   assert.ok(live.includes('usdot'));
-  assert.ok(!live.includes('cms_ccn'));
+  assert.ok(live.includes('cms_ccn'));
+  assert.ok(!live.includes('nmls'));
 });
 
 test('future schemas exist without claiming products complete', () => {

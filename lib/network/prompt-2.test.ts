@@ -12,10 +12,21 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { STANDARD_PIPELINE } from '../standard.ts';
 
-test('capability registry: lender Ask is not live; contractor Ask is live', () => {
+test('capability registry: lender Ask is not live; contractor and senior Ask are live', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.senior.askStatus, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.senior.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.senior.askContract, 'senior-ask-v1');
+  assert.equal(HUB_CAPABILITY_REGISTRY.senior.structuredAskUrl, 'https://www.seniortrusthub.com/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.senior.structuredAskApiUrl, 'https://www.seniortrusthub.com/api/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'partial');
+  assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'handoff');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askStatus, 'partial');
+  assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'handoff');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.askStatus, 'partial');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'handoff');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.identifierLookup, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.identifierLookup, 'planned');
 });
@@ -48,9 +59,90 @@ test('identifier routing', () => {
   assert.equal(parseNetworkAsk('CBC015082').identifier?.family.id, 'state_contractor_license');
   const ccn = parseNetworkAsk('CCN 105502');
   assert.equal(ccn.identifier?.family.id, 'cms_ccn');
-  assert.equal(ccn.identifier?.family.live, false);
+  assert.equal(ccn.identifier?.family.live, true);
   const bare = parseNetworkAsk('123456');
   assert.equal(bare.identifier?.ambiguous, true);
+});
+
+test('Senior execute: Florida / Palm Beach / 5-star NH / CCN / Florida HH / Florida hospice', () => {
+  const flNh = buildNetworkAskPlan('Show nursing homes in Florida.');
+  assert.deepEqual(flNh.hubs.map((h) => h.hubId), ['senior']);
+  assert.equal(flNh.hubs[0].capabilityStatus, 'execute');
+  assert.match(flNh.hubs[0].destination ?? '', /seniortrusthub.com\/ask/);
+  assert.equal(flNh.parsed.seniorProviderClass, 'nursing_home');
+
+  const palm = buildNetworkAskPlan('Show nursing homes in Palm Beach County.');
+  assert.deepEqual(palm.hubs.map((h) => h.hubId), ['senior']);
+  assert.equal(palm.hubs[0].capabilityStatus, 'execute');
+  assert.match(palm.hubs[0].geographyCapability, /address\/location county/i);
+
+  const stars = buildNetworkAskPlan('Show Florida nursing homes with 5 CMS overall stars.');
+  assert.equal(stars.hubs[0].hubId, 'senior');
+  assert.equal(stars.hubs[0].capabilityStatus, 'execute');
+  assert.notEqual(stars.hubs[0].mode, 'fail_closed');
+
+  const ccn = buildNetworkAskPlan('Find CMS CCN 105502.');
+  assert.equal(ccn.hubs[0].hubId, 'senior');
+  assert.equal(ccn.hubs[0].capabilityStatus, 'execute');
+  assert.equal(ccn.hubs[0].mode, 'identifier');
+  assert.match(ccn.hubs[0].destination ?? '', /seniortrusthub.com\/ask/);
+
+  const hh = buildNetworkAskPlan('Show home health agencies in Florida.');
+  assert.equal(hh.hubs[0].hubId, 'senior');
+  assert.equal(hh.hubs[0].capabilityStatus, 'execute');
+  assert.equal(hh.parsed.seniorProviderClass, 'home_health');
+  assert.notEqual(hh.hubs[0].mode, 'fail_closed');
+
+  const hospice = buildNetworkAskPlan('Show hospice providers in Florida.');
+  assert.equal(hospice.hubs[0].hubId, 'senior');
+  assert.equal(hospice.hubs[0].capabilityStatus, 'execute');
+  assert.equal(hospice.parsed.seniorProviderClass, 'hospice');
+});
+
+test('Senior fail-closed: HH county, 5-star hospice, safest NH, combined count', () => {
+  const hhCounty = buildNetworkAskPlan('Show home health agencies in Miami-Dade County.');
+  assert.equal(hhCounty.hubs[0].hubId, 'senior');
+  assert.equal(hhCounty.hubs[0].capabilityStatus, 'execute');
+  assert.equal(hhCounty.hubs[0].mode, 'fail_closed');
+  assert.match(hhCounty.hubs[0].whatItCanAnswer, /county/i);
+  assert.doesNotMatch(JSON.stringify(hhCounty), /serves Miami-Dade/i);
+
+  const hospiceStars = buildNetworkAskPlan('Show 5-star hospice providers.');
+  assert.equal(hospiceStars.hubs[0].mode, 'fail_closed');
+  assert.match(hospiceStars.hubs[0].whatItCanAnswer, /overall CMS star/i);
+
+  const safest = buildNetworkAskPlan('What is the safest nursing home in Florida?');
+  assert.equal(safest.hubs[0].hubId, 'senior');
+  assert.equal(safest.hubs[0].mode, 'fail_closed');
+  assert.match(safest.hubs[0].whatItCanAnswer, /does not publish a safest/i);
+  assert.doesNotMatch(JSON.stringify(safest), /#1 safest|ranking of nursing homes/i);
+
+  const combined = buildNetworkAskPlan('How many senior providers are there?');
+  assert.equal(combined.hubs[0].hubId, 'senior');
+  assert.equal(combined.hubs[0].mode, 'fail_closed');
+  assert.match(combined.hubs[0].whatItCanAnswer, /stay separate/i);
+  assert.doesNotMatch(JSON.stringify(combined), /senior providers total|summed/i);
+});
+
+test('Senior execute does not change contractor / lender / move / insurance / investor states', () => {
+  const contractor = buildNetworkAskPlan('Show active roofing contractors in Broward County.');
+  assert.equal(contractor.hubs[0].hubId, 'contractor');
+  assert.equal(contractor.hubs[0].capabilityStatus, 'execute');
+
+  const lender = buildNetworkAskPlan('Which lenders originated the most FHA mortgages in Florida?');
+  assert.equal(lender.hubs[0].hubId, 'lender');
+  assert.equal(lender.hubs[0].capabilityStatus, 'handoff');
+
+  const move = buildNetworkAskPlan('USDOT 3244649');
+  assert.equal(move.hubs[0].hubId, 'move');
+
+  const insurance = buildNetworkAskPlan('Find a Florida insurance agency license.');
+  assert.equal(insurance.hubs[0].hubId, 'insurance');
+  assert.equal(insurance.hubs[0].capabilityStatus, 'handoff');
+
+  const investor = buildNetworkAskPlan('Find an investment adviser firm by CRD.');
+  assert.equal(investor.hubs[0].hubId, 'investor');
+  assert.notEqual(investor.hubs[0].capabilityStatus, 'execute');
 });
 
 test('buying a home in Broward is multi-hub', () => {
@@ -124,5 +216,11 @@ test('integrity: no SCORE step, no mega-count in answers', () => {
   const blob = JSON.stringify(assembleNetworkAnswer("I'm buying a home in Broward County. What should I research?"));
   assert.doesNotMatch(blob, /24 million|Trust Score|best county/i);
   assert.ok(IDENTIFIER_FAMILIES.some((f) => f.id === 'usdot' && f.live));
+  assert.ok(IDENTIFIER_FAMILIES.some((f) => f.id === 'cms_ccn' && f.live));
   assert.ok(SPECIALIST_HUB_IDS.length === 6);
+  const seniorTrace = assembleNetworkAnswer('Show nursing homes in Palm Beach County with 5 CMS overall stars.');
+  assert.equal(seniorTrace.traces[0].hubId, 'senior');
+  assert.equal(seniorTrace.traces[0].contract, 'senior-ask-v1');
+  assert.equal(seniorTrace.traces[0].providerClass, 'Nursing Home');
+  assert.match(seniorTrace.traces[0].specialistDestination, /seniortrusthub.com\/ask/);
 });

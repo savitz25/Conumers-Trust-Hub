@@ -1,5 +1,6 @@
 import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, type IdentifierFamily } from './identifiers.ts';
 import type { SpecialistHubId } from './registry.ts';
+import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -37,6 +38,7 @@ export type ParsedNetworkAsk = {
   suggestedHubs: SpecialistHubId[];
   topic: string;
   interpretationLines: Array<{ label: string; value: string }>;
+  seniorProviderClass?: SeniorProviderClass;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -77,6 +79,13 @@ function geography(q: string): ParsedGeography | undefined {
 
 function matchIdentifier(q: string): ParsedIdentifier | undefined {
   const trimmed = q.trim();
+  const ccnInSentence = trimmed.match(/\b(?:cms\s+)?ccn\s*#?\s*(\d{6})\b/i);
+  if (ccnInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'cms_ccn');
+    if (family) {
+      return { family, raw: `CCN ${ccnInSentence[1]}`, ambiguous: false, note: family.note };
+    }
+  }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
@@ -117,7 +126,8 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
 
   const buying = /buy(ing)? (a )?(home|house)|home purchase|first[- ]time (home)?buyer/i.test(query);
   const moving = /mov(e|ing) to|relocating|interstate move/i.test(query);
-  const seniorCare = /nursing home|home health|hospice|aging parent|senior care|assisted living/i.test(query);
+  const seniorCare = isSeniorClassQuery(query);
+  const seniorProviderClass = detectSeniorProviderClass(query);
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
@@ -163,10 +173,11 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     hubs.push('move', 'insurance', 'lender');
     topic = 'Moving / relocating';
   } else if (seniorCare) {
-    intent = geo ? 'place' : 'entity';
+    intent = 'entity';
     hubs.push('senior');
-    if (geo?.stateCode === 'FL') hubs.push('insurance');
-    topic = 'Senior-care research';
+    topic = seniorProviderClass
+      ? `${seniorProviderClass === 'nursing_home' ? 'Nursing Home' : seniorProviderClass === 'home_health' ? 'Home Health' : 'Hospice'} research`
+      : 'Senior-care research';
   } else if (contractor) {
     intent = 'entity';
     hubs.push('contractor');
@@ -203,6 +214,17 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   if (trade) interpretationLines.push({ label: 'Trade', value: trade });
   if (credentialStatus) interpretationLines.push({ label: 'Credential status', value: credentialStatus });
   if (id && !id.ambiguous) interpretationLines.push({ label: 'Identifier', value: `${id.family.label}: ${id.raw}` });
+  if (seniorProviderClass) {
+    interpretationLines.push({
+      label: 'Provider class',
+      value:
+        seniorProviderClass === 'nursing_home'
+          ? 'Nursing Home'
+          : seniorProviderClass === 'home_health'
+            ? 'Home Health'
+            : 'Hospice',
+    });
+  }
   if (hubs.length === 1) {
     interpretationLines.push({ label: 'Research system', value: hubs[0] });
   } else if (hubs.length > 1) {
@@ -220,5 +242,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     suggestedHubs: hubs,
     topic,
     interpretationLines,
+    seniorProviderClass,
   };
 }

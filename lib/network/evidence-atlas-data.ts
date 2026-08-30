@@ -68,7 +68,7 @@ const ROWS: Cell[] = [
   { hubId: 'contractor', familyId: 'permits', status: 'planned', why: 'Selected Florida local research only. Missing export is not zero events.', destination: 'https://www.contractortrusthub.com/florida/broward' },
   { hubId: 'contractor', familyId: 'local_regulatory', status: 'partial', why: 'Broward and Palm Beach county intelligence pages exist. HQ/mailing county is not service area.', destination: 'https://www.contractortrusthub.com/florida/broward', sourceFamilyId: 'fl-dbpr' },
 
-  { hubId: 'senior', familyId: 'identity', status: 'deep', why: 'CMS CCN identities by class: nursing homes, home health, hospice stay separate.', destination: 'https://www.seniortrusthub.com', sourceFamilyId: 'cms-care-compare' },
+  { hubId: 'senior', familyId: 'identity', status: 'deep', why: 'CMS CCN identities by class: nursing homes, home health, hospice stay separate. Structured Ask is live (senior-ask-v1).', destination: 'https://www.seniortrusthub.com/ask', sourceFamilyId: 'cms-care-compare' },
   { hubId: 'senior', familyId: 'credential', status: 'available', why: 'CMS provider identity is the credential key. Assisted living is not a CMS national class.', destination: 'https://www.seniortrusthub.com', sourceFamilyId: 'cms-care-compare' },
   { hubId: 'senior', familyId: 'licensing', status: 'partial', why: 'Florida AHCA overlays on /florida. Most states have CMS directory only.', destination: 'https://www.seniortrusthub.com/florida' },
   { hubId: 'senior', familyId: 'registration', status: 'available', why: 'Current CMS class directories.', destination: 'https://www.seniortrusthub.com', sourceFamilyId: 'cms-care-compare' },
