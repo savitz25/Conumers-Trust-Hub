@@ -91,14 +91,19 @@ test('broker-as-transporter and safest remain fail_closed on Move execute', () =
 
   const safest = buildNetworkAskPlan('Which mover is the safest in Florida?');
   assert.equal(safest.hubs[0].hubId, 'move');
-  assert.equal(safest.hubs[0].mode, 'fail_closed');
+  assert.equal(safest.hubs[0].capabilityStatus, 'execute');
+  assert.notEqual(safest.hubs[0].mode, 'fail_closed');
+  assert.equal(safest.hubs[0].failKind, 'soft');
+  assert.match(safest.hubs[0].judgmentNote ?? '', /does not designate a single mover as “best.”/i);
   assert.doesNotMatch(JSON.stringify(safest), /ranked list|Trust Score/i);
 
   const best = buildNetworkAskPlan('Which mover is best?');
-  assert.equal(best.hubs[0].mode, 'fail_closed');
+  assert.equal(best.hubs[0].failKind, 'soft');
+  assert.notEqual(best.hubs[0].mode, 'fail_closed');
 
   const cheap = buildNetworkAskPlan('Which mover is cheapest?');
-  assert.equal(cheap.hubs[0].mode, 'fail_closed');
+  assert.equal(cheap.hubs[0].failKind, 'soft');
+  assert.notEqual(cheap.hubs[0].mode, 'fail_closed');
 
   const scam = buildNetworkAskPlan('Is this mover a scam?');
   assert.equal(scam.hubs[0].mode, 'fail_closed');

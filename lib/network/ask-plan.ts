@@ -55,6 +55,19 @@ import {
   lenderGeographyMeaning,
   type LenderAskPayload,
 } from './lender-ask.ts';
+import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
+import {
+  applyConsumerPresentation,
+  fetchContractorAskOptions,
+  optionsFromInsurancePayload,
+  optionsFromInvestorPayload,
+  optionsFromLenderPayload,
+  optionsFromMovePayload,
+  optionsFromSeniorPayload,
+  type ConsumerFollowUp,
+  type ConsumerOption,
+  type FailKind,
+} from './consumer-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -68,6 +81,13 @@ export type NetworkAskHubPlan = {
   reason: string;
   whatItCanAnswer: string;
   geographyCapability: string;
+  failKind?: FailKind;
+  judgmentNote?: string;
+  searchQuery?: string;
+  options?: ConsumerOption[];
+  followUp?: ConsumerFollowUp;
+  matchWhy?: string;
+  compareHref?: string;
   preview?: {
     headline: string;
     grain: string;
@@ -107,16 +127,16 @@ export type NetworkAskAnswer = {
   hubCountLabel: string;
   traces: TraceRow[];
   changeHref: string;
+  options?: ConsumerOption[];
+  judgmentNote?: string;
+  followUp?: ConsumerFollowUp;
+  matchWhy?: string;
+  limitation?: string;
+  compareHref?: string;
 };
 
 function contractorAskUrl(parsed: ParsedNetworkAsk): string {
-  const params = new URLSearchParams();
-  params.set('q', parsed.query);
-  if (parsed.geography?.countySlug === 'broward') params.set('geo', 'broward');
-  if (parsed.geography?.countySlug === 'palm-beach') params.set('geo', 'palm-beach');
-  if (parsed.trade?.toLowerCase() === 'roofing') params.set('trade', 'roofing');
-  if (parsed.credentialStatus) params.set('status', 'active_current');
-  return `https://www.contractortrusthub.com/ask?${params.toString()}`;
+  return contractorAskUrlFromParsed(parsed);
 }
 
 function identifierDestination(parsed: ParsedNetworkAsk): string | undefined {
@@ -620,6 +640,10 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     }));
   }
 
+  if (hubs.length === 1) {
+    hubs = [applyConsumerPresentation(hubs[0], parsed)];
+  }
+
   return {
     query: parsed.query,
     intent: parsed.intent,
@@ -699,6 +723,7 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
   const hubCountLabel =
     n <= 1 ? '' : `Your question touches ${n} TrustHub research systems`;
 
+  const primary = plan.hubs.length === 1 ? plan.hubs[0] : undefined;
   const params = new URLSearchParams({ q: plan.query });
   return {
     plan,
@@ -706,6 +731,26 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
     hubCountLabel,
     traces,
     changeHref: `/ask?${params.toString()}#interpretation`,
+    options: primary?.options,
+    judgmentNote: primary?.judgmentNote,
+    followUp: primary?.followUp,
+    matchWhy: primary?.matchWhy,
+    limitation: primary?.preview?.limitation ?? primary?.whatItCanAnswer,
+    compareHref: primary?.compareHref,
+  };
+}
+
+function consumerOverlay(answer: NetworkAskAnswer): NetworkAskAnswer {
+  const primary = answer.plan.hubs.length === 1 ? answer.plan.hubs[0] : undefined;
+  if (!primary) return answer;
+  return {
+    ...answer,
+    options: primary.options,
+    judgmentNote: primary.judgmentNote,
+    followUp: primary.followUp,
+    matchWhy: primary.matchWhy ?? primary.options?.[0]?.whyMatched,
+    limitation: primary.preview?.limitation ?? primary.whatItCanAnswer,
+    compareHref: primary.compareHref,
   };
 }
 
@@ -729,10 +774,12 @@ function applySeniorPayload(answer: NetworkAskAnswer, payload: SeniorAskPayload)
     sourceFamily,
   };
   senior.geographyCapability = geography;
-  if (failReason) {
+  if (failReason && senior.failKind !== 'soft') {
     senior.mode = 'fail_closed';
     senior.whatItCanAnswer = failReason;
   }
+  const seniorOptions = optionsFromSeniorPayload(payload);
+  if (seniorOptions.length) senior.options = seniorOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'senior'
@@ -749,7 +796,7 @@ function applySeniorPayload(answer: NetworkAskAnswer, payload: SeniorAskPayload)
       : row
   );
 
-  return { ...answer, traces };
+  return consumerOverlay({ ...answer, traces });
 }
 
 function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayload): NetworkAskAnswer {
@@ -769,10 +816,12 @@ function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayl
     sourceFamily,
   };
   investor.geographyCapability = geography;
-  if (failReason) {
+  if (failReason && investor.failKind !== 'soft') {
     investor.mode = 'fail_closed';
     investor.whatItCanAnswer = failReason;
   }
+  const investorOptions = optionsFromInvestorPayload(payload);
+  if (investorOptions.length) investor.options = investorOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'investor'
@@ -787,7 +836,7 @@ function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayl
         }
       : row
   );
-  return { ...answer, traces };
+  return consumerOverlay({ ...answer, traces });
 }
 
 function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPayload): NetworkAskAnswer {
@@ -827,13 +876,15 @@ function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPa
     sourceFamily,
   };
   insurance.geographyCapability = geography;
-  if (failReason) {
+  if (failReason && insurance.failKind !== 'soft') {
     insurance.mode = 'fail_closed';
     insurance.whatItCanAnswer = failReason;
-  } else if (payload.query?.mode) {
+  } else if (payload.query?.mode && insurance.failKind !== 'soft') {
     insurance.mode = payload.query.mode;
   }
   insurance.capabilityStatus = 'execute';
+  const insuranceOptions = optionsFromInsurancePayload(payload);
+  if (insuranceOptions.length) insurance.options = insuranceOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'insurance'
@@ -858,7 +909,7 @@ function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPa
         }
       : row,
   );
-  return { ...answer, traces };
+  return consumerOverlay({ ...answer, traces });
 }
 
 function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): NetworkAskAnswer {
@@ -899,13 +950,15 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
     sourceFamily,
   };
   move.geographyCapability = geography;
-  if (failReason) {
+  if (failReason && move.failKind !== 'soft') {
     move.mode = 'fail_closed';
     move.whatItCanAnswer = failReason;
-  } else if (payload.query?.mode) {
+  } else if (payload.query?.mode && move.failKind !== 'soft') {
     move.mode = payload.query.mode;
   }
   move.capabilityStatus = 'execute';
+  const moveOptions = optionsFromMovePayload(payload);
+  if (moveOptions.length) move.options = moveOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'move'
@@ -925,7 +978,7 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
         }
       : row,
   );
-  return { ...answer, traces };
+  return consumerOverlay({ ...answer, traces });
 }
 
 function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload): NetworkAskAnswer {
@@ -964,13 +1017,15 @@ function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload)
     sourceFamily,
   };
   lender.geographyCapability = geography;
-  if (failReason || payload.failClosed) {
+  if ((failReason || payload.failClosed) && lender.failKind !== 'soft') {
     lender.mode = 'fail_closed';
     lender.whatItCanAnswer = failReason ?? payload.headline ?? lender.whatItCanAnswer;
-  } else if (payload.query?.mode) {
+  } else if (payload.query?.mode && lender.failKind !== 'soft') {
     lender.mode = payload.query.mode;
   }
   lender.capabilityStatus = 'execute';
+  const lenderOptions = optionsFromLenderPayload(payload);
+  if (lenderOptions.length) lender.options = lenderOptions;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'lender'
@@ -985,36 +1040,51 @@ function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload)
         }
       : row,
   );
-  return { ...answer, traces };
+  return consumerOverlay({ ...answer, traces });
 }
 
 /** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
   let answer = assembleNetworkAnswer(query);
-  const senior = answer.plan.hubs.find((h) => h.hubId === 'senior' && h.capabilityStatus === 'execute');
+  const live = (hubId: SpecialistHubId) => {
+    const hub = answer.plan.hubs.find((h) => h.hubId === hubId && h.capabilityStatus === 'execute');
+    if (!hub || hub.failKind === 'hard') return undefined;
+    return hub;
+  };
+  const qFor = (hub: { searchQuery?: string }) => hub.searchQuery ?? query;
+
+  const senior = live('senior');
   if (senior) {
-    const payload = await fetchSeniorAsk(query);
+    const payload = await fetchSeniorAsk(qFor(senior));
     if (payload) answer = applySeniorPayload(answer, payload);
   }
-  const investor = answer.plan.hubs.find((h) => h.hubId === 'investor' && h.capabilityStatus === 'execute');
+  const investor = live('investor');
   if (investor) {
-    const payload = await fetchInvestorAsk(query);
+    const payload = await fetchInvestorAsk(qFor(investor));
     if (payload) answer = applyInvestorPayload(answer, payload);
   }
-  const insurance = answer.plan.hubs.find((h) => h.hubId === 'insurance' && h.capabilityStatus === 'execute');
+  const insurance = live('insurance');
   if (insurance) {
-    const payload = await fetchInsuranceAsk(query);
+    const payload = await fetchInsuranceAsk(qFor(insurance));
     if (payload) answer = applyInsurancePayload(answer, payload);
   }
-  const move = answer.plan.hubs.find((h) => h.hubId === 'move' && h.capabilityStatus === 'execute');
+  const move = live('move');
   if (move) {
-    const payload = await fetchMoveAsk(query);
+    const payload = await fetchMoveAsk(qFor(move));
     if (payload) answer = applyMovePayload(answer, payload);
   }
-  const lender = answer.plan.hubs.find((h) => h.hubId === 'lender' && h.capabilityStatus === 'execute');
+  const lender = live('lender');
   if (lender) {
-    const payload = await fetchLenderAsk(query);
+    const payload = await fetchLenderAsk(qFor(lender));
     if (payload) answer = applyLenderPayload(answer, payload);
+  }
+  const contractor = live('contractor');
+  if (contractor) {
+    const options = await fetchContractorAskOptions(answer.plan.parsed, qFor(contractor));
+    if (options?.length) {
+      contractor.options = options;
+      answer = consumerOverlay(answer);
+    }
   }
   return answer;
 }

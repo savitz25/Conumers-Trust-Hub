@@ -3,55 +3,205 @@ import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { assembleNetworkAnswerWithSpecialist } from '@/lib/network/ask-plan';
 import { CROSS_HUB_NAME_CHECK } from '@/lib/network/name-check';
 import { SAVE_TO_RESEARCH_CONTRACT } from '@/lib/network/federated-ask';
-
-const STATUS_LABEL: Record<string, string> = {
-  execute: 'Execute — structured specialist Ask',
-  handoff: 'Handoff — live research destination',
-  unsupported: 'Unsupported',
-  unavailable: 'Temporarily unavailable',
-};
+import { seniorSearchHref } from '@/lib/network/consumer-ask';
 
 export async function NetworkAskResult({ query }: { query: string }) {
   const answer = await assembleNetworkAnswerWithSpecialist(query);
   const { plan } = answer;
+  const primary = plan.hubs.length === 1 ? plan.hubs[0] : undefined;
+  const options = (answer.options ?? primary?.options ?? []).slice(0, 10);
+  const hardFail = primary?.failKind === 'hard' || (primary?.mode === 'fail_closed' && primary?.failKind !== 'soft');
 
   if (!query.trim()) {
     return (
       <p className="text-base" style={{ color: ASK_BRAND.ink }}>
-        Enter a question to route across the TrustHub Network.
+        Enter a question to research across the TrustHub Network.
       </p>
     );
   }
 
+  const researchHref =
+    primary?.hubId === 'senior' && !options.length
+      ? seniorSearchHref(plan.parsed)
+      : primary?.destination;
+
   return (
-    <div className="space-y-10">
-      <section
-        id="interpretation"
-        className="rounded-2xl border p-5 sm:p-6"
-        style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.white, boxShadow: ASK_SHADOW.card }}
-      >
-        <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: ASK_BRAND.indigo }}>
-          We interpreted your question as
+    <div className="space-y-8">
+      {answer.judgmentNote ? (
+        <p className="rounded-xl border px-4 py-3 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}>
+          {answer.judgmentNote}
         </p>
+      ) : null}
+
+      {answer.followUp ? (
+        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
+          <p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            {answer.followUp.prompt}
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {answer.followUp.choices.map((choice) => (
+              <li key={choice.href}>
+                <Link
+                  href={choice.href}
+                  className="inline-flex min-h-11 items-center rounded-full border px-3 text-sm font-semibold"
+                  style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.indigo }}
+                >
+                  {choice.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {hardFail && !options.length ? (
+        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
+          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+            No supported substitute for that claim
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            {primary?.whatItCanAnswer}
+          </p>
+        </section>
+      ) : null}
+
+      {options.length ? (
+        <section>
+          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+            Matching options
+          </h2>
+          <p className="mt-1 text-sm" style={{ color: ASK_BRAND.ink }}>
+            {options.length} research identities from {primary?.name ?? 'the specialist'}. Not a ranking.
+          </p>
+          <ol className="mt-4 space-y-4">
+            {options.map((opt) => (
+              <li
+                key={`${opt.hubId}-${opt.name}-${opt.href ?? opt.fields[0]?.value ?? ''}`}
+                className="rounded-2xl border p-5"
+                style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.white, boxShadow: ASK_SHADOW.soft }}
+              >
+                <h3 className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>
+                  {opt.name}
+                </h3>
+                <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2" style={{ color: ASK_BRAND.ink }}>
+                  {opt.fields.map((field) => (
+                    <div key={`${field.label}-${field.value}`}>
+                      <dt className="text-xs uppercase tracking-wide">{field.label}</dt>
+                      <dd className="font-medium" style={{ color: ASK_BRAND.navy }}>
+                        {field.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                {opt.href ? (
+                  <a
+                    href={opt.href}
+                    className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold underline-offset-2 hover:underline"
+                    style={{ color: ASK_BRAND.indigo }}
+                  >
+                    Open research profile
+                  </a>
+                ) : (
+                  <p className="mt-3 text-xs" style={{ color: ASK_BRAND.ink }}>
+                    Research identity — a public profile is not currently published.
+                  </p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {!hardFail && !options.length && primary?.capabilityStatus === 'execute' ? (
+        <p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+          Specialist research is available. Open the specialist result to see the current indexed identities.
+        </p>
+      ) : null}
+
+      {plan.nameCheck ? (
+        <p className="rounded-xl border p-4 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}>
+          {CROSS_HUB_NAME_CHECK.resultLanguage.disclaimer}
+        </p>
+      ) : null}
+
+      {(answer.matchWhy || answer.limitation || researchHref || answer.compareHref) && !hardFail ? (
+        <section className="rounded-2xl border p-5 space-y-3" style={{ borderColor: ASK_BRAND.border }}>
+          {answer.matchWhy ? (
+            <p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+              <span className="font-semibold" style={{ color: ASK_BRAND.navy }}>
+                Why these matched.{' '}
+              </span>
+              {answer.matchWhy}
+            </p>
+          ) : null}
+          {answer.limitation ? (
+            <p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+              <span className="font-semibold" style={{ color: ASK_BRAND.navy }}>
+                What TrustHub can and cannot conclude.{' '}
+              </span>
+              {answer.limitation}
+            </p>
+          ) : null}
+          <div className="flex flex-wrap gap-3">
+            {researchHref ? (
+              <a
+                href={researchHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white"
+                style={{ backgroundColor: ASK_BRAND.navy }}
+              >
+                Open specialist research
+              </a>
+            ) : null}
+            {answer.compareHref ? (
+              <a
+                href={answer.compareHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-semibold"
+                style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+              >
+                Compare
+              </a>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
+      {answer.hubCountLabel ? (
+        <p className="text-sm" style={{ color: ASK_BRAND.ink }}>
+          {answer.hubCountLabel}. Results are not merged across hubs.
+        </p>
+      ) : null}
+
+      {plan.placeLensHref ? (
+        <p className="text-sm">
+          <Link href={plan.placeLensHref} className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+            Open the Place Lens for this geography
+          </Link>
+        </p>
+      ) : null}
+
+      <details
+        id="interpretation"
+        className="rounded-2xl border p-5"
+        style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}
+      >
+        <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold" style={{ color: ASK_BRAND.navy }}>
+          How we interpreted this
+        </summary>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2">
           {answer.interpretation.map((row) => (
             <div key={row.label}>
               <dt className="text-xs uppercase" style={{ color: ASK_BRAND.ink }}>
                 {row.label}
               </dt>
-              <dd className="text-base font-semibold" style={{ color: ASK_BRAND.navy }}>
+              <dd className="text-sm font-semibold" style={{ color: ASK_BRAND.navy }}>
                 {row.value}
               </dd>
             </div>
           ))}
         </dl>
-        <p className="mt-4 text-sm" style={{ color: ASK_BRAND.ink }}>
-          Natural-language parsing and specialist execution stay separate. You can change this interpretation
-          and resubmit.
-        </p>
         <form action="/ask" method="get" className="mt-4 flex flex-col gap-2 sm:flex-row">
           <label htmlFor="ask-q-edit" className="sr-only">
-            Change interpretation
+            Change question
           </label>
           <input
             id="ask-q-edit"
@@ -65,115 +215,17 @@ export async function NetworkAskResult({ query }: { query: string }) {
             className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white"
             style={{ backgroundColor: ASK_BRAND.indigo }}
           >
-            Change interpretation
+            Ask again
           </button>
         </form>
-      </section>
-
-      {answer.hubCountLabel ? (
-        <p className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>
-          {answer.hubCountLabel}
-        </p>
-      ) : null}
-
-      {plan.placeLensHref ? (
-        <p className="text-sm">
-          <Link href={plan.placeLensHref} className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
-            Open the Place Lens for this geography
-          </Link>
-        </p>
-      ) : null}
-
-      {plan.nameCheck ? (
-        <p className="rounded-xl border p-4 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}>
-          {CROSS_HUB_NAME_CHECK.resultLanguage.disclaimer}
-        </p>
-      ) : null}
-
-      {plan.comparison ? (
-        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
-          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
-            Comparable now
-          </h2>
-          <p className="mt-2 text-sm" style={{ color: ASK_BRAND.ink }}>
-            Only equivalent metrics inside the same hub/data model. Contractor discipline is never scored against
-            lender complaints.
-          </p>
-          <ul className="mt-4 space-y-3">
-            {plan.comparison.hubs.map((h) => (
-              <li key={h.hubId} className="text-sm" style={{ color: ASK_BRAND.ink }}>
-                <span className="font-semibold" style={{ color: ASK_BRAND.navy }}>
-                  {h.hubId}
-                </span>{' '}
-                — {h.comparisonStatus.replace('_', ' ')}. {h.limitation}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      <ol className="grid gap-4 lg:grid-cols-2">
-        {plan.hubs.map((hub) => (
-          <li
-            key={hub.hubId}
-            className="flex flex-col rounded-2xl border p-5"
-            style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.white, boxShadow: ASK_SHADOW.soft }}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>
-                {hub.name}
-              </h3>
-              <span className="rounded-full border px-2 py-0.5 text-[11px] font-semibold" style={{ borderColor: ASK_BRAND.border }}>
-                {STATUS_LABEL[hub.capabilityStatus] ?? hub.capabilityStatus}
-              </span>
-            </div>
-            <p className="mt-3 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              <span className="font-semibold">What this hub can answer. </span>
-              {hub.whatItCanAnswer}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              <span className="font-semibold">Geography / capability. </span>
-              {hub.geographyCapability}
-            </p>
-            {hub.preview ? (
-              <div className="mt-3 rounded-xl border p-3 text-sm" style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}>
-                <p className="font-semibold" style={{ color: ASK_BRAND.navy }}>
-                  {hub.preview.headline}
-                </p>
-                <p className="mt-1" style={{ color: ASK_BRAND.ink }}>
-                  Grain: {hub.preview.grain}
-                </p>
-                <p className="mt-1 text-xs" style={{ color: ASK_BRAND.ink }}>
-                  {hub.preview.limitation}
-                </p>
-              </div>
-            ) : null}
-            <p className="mt-2 text-xs" style={{ color: ASK_BRAND.ink }}>
-              {hub.reason}
-            </p>
-            {hub.destination ? (
-              <a
-                href={hub.destination}
-                className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white"
-                style={{ backgroundColor: ASK_BRAND.navy }}
-              >
-                Open specialist research
-              </a>
-            ) : (
-              <p className="mt-4 text-sm" style={{ color: ASK_BRAND.ink }}>
-                No live destination for this capability.
-              </p>
-            )}
-          </li>
-        ))}
-      </ol>
+      </details>
 
       <details
         className="rounded-2xl border p-5"
         style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}
       >
         <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold" style={{ color: ASK_BRAND.navy }}>
-          Trace this answer
+          Trace / provenance
         </summary>
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-[48rem] w-full text-left text-sm">

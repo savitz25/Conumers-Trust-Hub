@@ -87,7 +87,7 @@ export function hasInsuranceDomain(q: string): boolean {
 
 export function isMoveClassQuery(q: string): boolean {
   return (
-    /\b(movers?|moving|household-?goods|hhg|motor carriers?|moving carriers?|moving brokers?|usdot|fmcsa|interstate movers?|operating authority|belongings|fdacs|intrastate movers?|im registration)\b/i.test(
+    /\b(movers?|moving compan(?:y|ies)|moving|household-?goods|hhg|motor carriers?|moving carriers?|moving brokers?|usdot|fmcsa|interstate movers?|operating authority|belongings|fdacs|intrastate movers?|im registration)\b/i.test(
       q,
     ) ||
     /\bdot number\b/i.test(q) ||

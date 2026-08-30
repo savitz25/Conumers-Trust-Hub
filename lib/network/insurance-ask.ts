@@ -101,7 +101,7 @@ export function isInsuranceClassQuery(q: string): boolean {
   if (isMoveClassQuery(q) && !hasInsuranceDomain(q)) return false;
   return Boolean(
     detectInsuranceEntityClass(q) ||
-      /\binsur(ance|er)|agency license|\bnpn\b|\bnaic\b|line of authority|\bloa\b/i.test(q) ||
+      /\binsur(ance|er)|insurance (agenc(?:y|ies)|compan(?:y|ies)|brokers?)|homeowners insurance|agency license|\bnpn\b|\bnaic\b|line of authority|\bloa\b/i.test(q) ||
       isInsuranceRankingQuery(q) ||
       isInsuranceAdviceQuery(q),
   );

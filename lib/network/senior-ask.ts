@@ -80,7 +80,7 @@ export function isSeniorClassQuery(q: string): boolean {
   return Boolean(
     detectSeniorProviderClass(q) ||
       /\b(?:cms\s+)?ccn\s*#?\s*\d{6}\b/i.test(q) ||
-      /\b(senior\s+providers?|senior care|aging parent|assisted living)\b/i.test(q)
+      /\b(senior\s+providers?|senior care|aging parent|assisted living|memory care|grandma|grandmother|grandpa|grandfather|nana|nursing home)\b/i.test(q)
   );
 }
 

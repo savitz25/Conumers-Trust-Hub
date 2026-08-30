@@ -133,8 +133,10 @@ test('Senior fail-closed: HH county, 5-star hospice, safest NH, combined count',
 
   const safest = buildNetworkAskPlan('What is the safest nursing home in Florida?');
   assert.equal(safest.hubs[0].hubId, 'senior');
-  assert.equal(safest.hubs[0].mode, 'fail_closed');
-  assert.match(safest.hubs[0].whatItCanAnswer, /does not publish a safest/i);
+  assert.equal(safest.hubs[0].capabilityStatus, 'execute');
+  assert.notEqual(safest.hubs[0].mode, 'fail_closed');
+  assert.equal(safest.hubs[0].failKind, 'soft');
+  assert.match(safest.hubs[0].judgmentNote ?? '', /does not designate a single senior-care provider/i);
   assert.doesNotMatch(JSON.stringify(safest), /#1 safest|ranking of nursing homes/i);
 
   const combined = buildNetworkAskPlan('How many senior providers are there?');
@@ -225,7 +227,10 @@ test('Investor fail-closed: ranking, fees, stocks, bare digits, serving ≠ clie
   ]) {
     const plan = buildNetworkAskPlan(q);
     assert.equal(plan.hubs[0].hubId, 'investor', q);
-    assert.equal(plan.hubs[0].mode, 'fail_closed', q);
+    assert.equal(plan.hubs[0].capabilityStatus, 'execute', q);
+    assert.notEqual(plan.hubs[0].mode, 'fail_closed', q);
+    assert.equal(plan.hubs[0].failKind, 'soft', q);
+    assert.match(plan.hubs[0].judgmentNote ?? '', /not performance|does not rank/i, q);
     assert.doesNotMatch(JSON.stringify(plan), /#1 adviser|trusted ranking/i);
   }
 

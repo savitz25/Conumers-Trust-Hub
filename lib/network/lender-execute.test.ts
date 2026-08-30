@@ -59,16 +59,28 @@ test('Broward vs Palm Beach mortgage applications route Lender only, not Place L
 });
 
 test('Lender fail-closed: best, safest, cheapest, lowest rate, discrimination, denial reasons, service territory', () => {
-  const cases: Array<[string, RegExp]> = [
-    ['Which lender is the best in Florida?', /does not rank|not a recommendation/i],
-    ['Which lender is safest?', /safest|not a recommendation/i],
-    ['Which lender is cheapest?', /pricing|rate sheet|not today/i],
+  const soft = [
+    'Which lender is the best in Florida?',
+    'Which lender is safest?',
+    'Which lender is cheapest?',
+  ];
+  for (const q of soft) {
+    const plan = buildNetworkAskPlan(q);
+    assert.equal(plan.hubs[0].hubId, 'lender', q);
+    assert.equal(plan.hubs[0].capabilityStatus, 'execute', q);
+    assert.notEqual(plan.hubs[0].mode, 'fail_closed', q);
+    assert.equal(plan.hubs[0].failKind, 'soft', q);
+    assert.match(plan.hubs[0].judgmentNote ?? '', /does not rank lenders/i, q);
+    assert.doesNotMatch(JSON.stringify(plan), /Trust Score|#1 lender/i);
+  }
+
+  const hard: Array<[string, RegExp]> = [
     ['Who has the lowest current mortgage rate?', /rate sheet|pricing|not today/i],
     ['Which lender discriminates in Florida?', /not a finding of discrimination/i],
     ['Why did this lender deny my loan?', /denial/i],
     ['Which lenders serve Florida?', /service territory/i],
   ];
-  for (const [q, expect] of cases) {
+  for (const [q, expect] of hard) {
     const plan = buildNetworkAskPlan(q);
     assert.equal(plan.hubs[0].hubId, 'lender', q);
     assert.equal(plan.hubs[0].capabilityStatus, 'execute', q);
@@ -183,16 +195,20 @@ test('network fail-closed: no ranking, no universal score, contractor hire is no
   assert.match(hire.hubs[0].whatItCanAnswer, /does not recommend/i);
 
   const safestMover = buildNetworkAskPlan('Which mover is the safest in Florida?');
-  assert.equal(safestMover.hubs[0].mode, 'fail_closed');
+  assert.equal(safestMover.hubs[0].failKind, 'soft');
+  assert.notEqual(safestMover.hubs[0].mode, 'fail_closed');
 
   const trustIns = buildNetworkAskPlan('Which insurance agency is most trustworthy?');
-  assert.equal(trustIns.hubs[0].mode, 'fail_closed');
+  assert.equal(trustIns.hubs[0].failKind, 'soft');
+  assert.notEqual(trustIns.hubs[0].mode, 'fail_closed');
 
   const adviser = buildNetworkAskPlan('Which adviser will give me the best returns?');
-  assert.equal(adviser.hubs[0].mode, 'fail_closed');
+  assert.equal(adviser.hubs[0].failKind, 'soft');
+  assert.notEqual(adviser.hubs[0].mode, 'fail_closed');
 
   const safestNh = buildNetworkAskPlan('What is the safest nursing home in Florida?');
-  assert.equal(safestNh.hubs[0].mode, 'fail_closed');
+  assert.equal(safestNh.hubs[0].failKind, 'soft');
+  assert.notEqual(safestNh.hubs[0].mode, 'fail_closed');
 });
 
 test('Trace / provenance: one execute example per hub', () => {
