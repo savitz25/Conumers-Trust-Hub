@@ -43,8 +43,11 @@ export default async function ManagePage() {
             <p className="text-sm text-muted-foreground">
               Florida DBPR credential {String(row.native_credential_key)}
             </p>
+            <Link className="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white" href={`/manage/${row.native_profile_id}`}>
+              Manage profile
+            </Link>
             <a
-              className="link-inline text-sm"
+              className="link-inline ml-4 text-sm"
               href={`https://www.contractortrusthub.com/contractors/${row.native_slug}`}
             >
               Open ContractorTrustHub profile

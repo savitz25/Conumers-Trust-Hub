@@ -9,6 +9,10 @@ export const ANALYTICS_EVENTS = {
   OUTBOUND_HUB: 'outbound_hub_click',
   INTERNAL_NAV: 'internal_nav_click',
   JOURNEY_HANDOFF: 'journey_handoff_click',
+  MANAGE_CONSOLE_VIEW: 'manage_console_view',
+  BUSINESS_INFO_EDIT_STARTED: 'business_info_edit_started',
+  BUSINESS_INFO_SAVED: 'business_info_saved',
+  BUSINESS_INFO_VALIDATION_FAILED: 'business_info_validation_failed',
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];

@@ -12,6 +12,7 @@ import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
 import { customerLog } from './log.ts';
 import type { Mailer } from './mail.ts';
 import { one, type SqlClient } from './sql.ts';
+import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
 import type {
   ClaimStatus,
   GrantStatus,
@@ -55,6 +56,15 @@ export class ClaimError extends Error {
   constructor(code: string) {
     super(code);
     this.name = 'ClaimError';
+    this.code = code;
+  }
+}
+
+export class ManagementError extends Error {
+  readonly code: 'forbidden' | 'not_found' | 'stale_version';
+  constructor(code: 'forbidden' | 'not_found' | 'stale_version') {
+    super(code);
+    this.name = 'ManagementError';
     this.code = code;
   }
 }
@@ -824,13 +834,133 @@ export class CustomerPlatform {
     customerLog('grant_revoked', { grantId: grant.id });
   }
 
+  private async requireProfileAccess(sessionToken: string, nativeProfileId: string, write = false) {
+    const user = await this.sessionUser(sessionToken);
+    if (!user) throw new AuthError('missing_session');
+    const access = await one<{
+      user_id: string; org_id: string; hub_profile_id: string; role: MembershipRole;
+      native_profile_id: string; native_slug: string; native_credential_key: string;
+      display_name_snapshot: string | null;
+    }>(this.deps.sql,
+      `SELECT u.id AS user_id, o.id AS org_id, p.id AS hub_profile_id, m.role,
+              p.native_profile_id::text, p.native_slug, p.native_credential_key, p.display_name_snapshot
+         FROM ath_users u
+         JOIN ath_memberships m ON m.user_id = u.id AND m.status = 'active'
+         JOIN ath_organizations o ON o.id = m.org_id AND o.status = 'active'
+         JOIN ath_management_grants g ON g.org_id = o.id AND g.status = 'active'
+         JOIN ath_hub_profiles p ON p.id = g.hub_profile_id
+        WHERE u.id = $1 AND p.native_profile_id = $2::uuid`,
+      [user.id, nativeProfileId]
+    );
+    if (!access) throw new ManagementError('forbidden');
+    if (write && !['owner', 'manager', 'staff'].includes(access.role)) throw new ManagementError('forbidden');
+    return access;
+  }
+
+  async businessProfile(sessionToken: string, nativeProfileId: string) {
+    const access = await this.requireProfileAccess(sessionToken, nativeProfileId);
+    const [revision, fields, items, hours, activity] = await Promise.all([
+      one<{ version: number }>(this.deps.sql,
+        `SELECT version FROM ath_business_profile_revisions WHERE org_id=$1 AND hub_profile_id=$2`,
+        [access.org_id, access.hub_profile_id]),
+      this.deps.sql.query<{ field_key: string; value_text: string; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; last_confirmed_at: string; source: string }>(
+        `SELECT field_key,value_text,supplied_by_user_id,first_supplied_at::text,updated_at::text,last_confirmed_at::text,source
+           FROM ath_business_profile_fields WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY field_key`,
+        [access.org_id, access.hub_profile_id]),
+      this.deps.sql.query<{ category: string; value_text: string; position: number; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
+        `SELECT category,value_text,position,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
+           FROM ath_business_profile_items WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY category,position`,
+        [access.org_id, access.hub_profile_id]),
+      this.deps.sql.query<{ weekday: number; is_closed: boolean; opens_at: string | null; closes_at: string | null; supplied_by_user_id: string; first_supplied_at: string; updated_at: string; source: string }>(
+        `SELECT weekday,is_closed,opens_at::text,closes_at::text,supplied_by_user_id,first_supplied_at::text,updated_at::text,source
+           FROM ath_business_profile_hours WHERE org_id=$1 AND hub_profile_id=$2 ORDER BY weekday`,
+        [access.org_id, access.hub_profile_id]),
+      this.deps.sql.query<{ action: string; created_at: string; actor_user_id: string | null }>(
+        `SELECT action,created_at::text,actor_user_id FROM ath_audit_events
+          WHERE org_id=$1 AND object_type='ath_business_profile' AND object_id=$2
+          ORDER BY created_at DESC LIMIT 10`, [access.org_id, access.hub_profile_id]),
+    ]);
+    return { access, version: revision?.version ?? 0, fields: fields.rows, items: items.rows, hours: hours.rows, activity: activity.rows };
+  }
+
+  async saveBusinessProfile(input: { sessionToken: string; nativeProfileId: string; body: unknown; ctx?: RequestContext }) {
+    const access = await this.requireProfileAccess(input.sessionToken, input.nativeProfileId, true);
+    const data: BusinessProfileInput = validateBusinessProfile(input.body, this.now());
+    await this.deps.sql.query(
+      `INSERT INTO ath_business_profile_revisions (org_id,hub_profile_id,version) VALUES ($1,$2,0)
+       ON CONFLICT (org_id,hub_profile_id) DO NOTHING`, [access.org_id, access.hub_profile_id]);
+    const revision = await one<{ version: number }>(this.deps.sql,
+      `SELECT version FROM ath_business_profile_revisions WHERE org_id=$1 AND hub_profile_id=$2 FOR UPDATE`,
+      [access.org_id, access.hub_profile_id]);
+    if (!revision || revision.version !== data.version) throw new ManagementError('stale_version');
+    const before = await this.businessProfile(input.sessionToken, input.nativeProfileId);
+    const now = this.now().toISOString();
+
+    for (const [key, value] of Object.entries(data.fields)) {
+      await this.deps.sql.query(
+        `INSERT INTO ath_business_profile_fields
+          (org_id,hub_profile_id,field_key,value_text,supplied_by_user_id,first_supplied_at,last_confirmed_at,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$6,$6,$6)
+         ON CONFLICT (org_id,hub_profile_id,field_key) DO UPDATE SET
+           value_text=EXCLUDED.value_text,supplied_by_user_id=EXCLUDED.supplied_by_user_id,
+           last_confirmed_at=EXCLUDED.last_confirmed_at,updated_at=EXCLUDED.updated_at,
+           version=ath_business_profile_fields.version+1`,
+        [access.org_id, access.hub_profile_id, key, value, access.user_id, now]);
+    }
+    await this.deps.sql.query(
+      `DELETE FROM ath_business_profile_fields WHERE org_id=$1 AND hub_profile_id=$2 AND NOT (field_key = ANY($3::text[]))`,
+      [access.org_id, access.hub_profile_id, Object.keys(data.fields)]);
+
+    const groups = { service: data.services, service_area: data.serviceAreas, language: data.languages } as const;
+    for (const [category, values] of Object.entries(groups)) {
+      await this.deps.sql.query(
+        `DELETE FROM ath_business_profile_items WHERE org_id=$1 AND hub_profile_id=$2 AND category=$3 AND NOT (value_text = ANY($4::text[]))`,
+        [access.org_id, access.hub_profile_id, category, values]);
+      for (const [position, value] of values.entries()) {
+        await this.deps.sql.query(
+          `INSERT INTO ath_business_profile_items
+            (org_id,hub_profile_id,category,value_text,position,supplied_by_user_id,first_supplied_at,last_confirmed_at,created_at,updated_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$7,$7,$7)
+           ON CONFLICT (org_id,hub_profile_id,category,value_text) DO UPDATE SET
+             position=EXCLUDED.position,supplied_by_user_id=EXCLUDED.supplied_by_user_id,
+             last_confirmed_at=EXCLUDED.last_confirmed_at,updated_at=EXCLUDED.updated_at,
+             version=ath_business_profile_items.version+1`,
+          [access.org_id, access.hub_profile_id, category, value, position, access.user_id, now]);
+      }
+    }
+
+    await this.deps.sql.query(
+      `DELETE FROM ath_business_profile_hours WHERE org_id=$1 AND hub_profile_id=$2 AND NOT (weekday = ANY($3::smallint[]))`,
+      [access.org_id, access.hub_profile_id, data.hours.map((h) => h.weekday)]);
+    for (const h of data.hours) {
+      await this.deps.sql.query(
+        `INSERT INTO ath_business_profile_hours
+          (org_id,hub_profile_id,weekday,is_closed,opens_at,closes_at,supplied_by_user_id,first_supplied_at,last_confirmed_at,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,$5::time,$6::time,$7,$8,$8,$8,$8)
+         ON CONFLICT (org_id,hub_profile_id,weekday) DO UPDATE SET
+           is_closed=EXCLUDED.is_closed,opens_at=EXCLUDED.opens_at,closes_at=EXCLUDED.closes_at,
+           supplied_by_user_id=EXCLUDED.supplied_by_user_id,last_confirmed_at=EXCLUDED.last_confirmed_at,
+           updated_at=EXCLUDED.updated_at,version=ath_business_profile_hours.version+1`,
+        [access.org_id, access.hub_profile_id, h.weekday, h.closed, h.opensAt ?? null, h.closesAt ?? null, access.user_id, now]);
+    }
+    const nextVersion = revision.version + 1;
+    await this.deps.sql.query(
+      `UPDATE ath_business_profile_revisions SET version=$3,updated_at=$4 WHERE org_id=$1 AND hub_profile_id=$2`,
+      [access.org_id, access.hub_profile_id, nextVersion, now]);
+    await this.audit({ actorUserId: access.user_id, orgId: access.org_id, objectType: 'ath_business_profile',
+      objectId: access.hub_profile_id, action: 'business_info_saved',
+      before: { version: before.version, fields: before.fields, items: before.items, hours: before.hours },
+      after: { version: nextVersion, fields: data.fields, services: data.services, serviceAreas: data.serviceAreas, languages: data.languages, hours: data.hours }, ctx: input.ctx });
+    return { version: nextVersion };
+  }
+
   async managedHome(sessionToken: string) {
     const user = await this.sessionUser(sessionToken);
     if (!user) throw new AuthError('missing_session');
     const res = await this.deps.sql.query(
       `SELECT g.id AS grant_id, g.status AS grant_status, g.granted_at,
               o.id AS org_id, o.display_name,
-              p.native_slug, p.native_credential_key, p.native_profile_id, p.display_name_snapshot,
+              p.id AS hub_profile_id, p.native_slug, p.native_credential_key, p.native_profile_id, p.display_name_snapshot,
               m.role, c.id AS claim_id, c.status AS claim_status
          FROM ath_management_grants g
          JOIN ath_organizations o ON o.id = g.org_id
