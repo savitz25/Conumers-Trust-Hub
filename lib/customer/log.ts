@@ -10,6 +10,7 @@ const REDACT = new Set([
   'CTH_READ_DATABASE_URL',
   'RESEND_API_KEY',
   'ATH_OPERATOR_SECRET',
+  'neon_tech_database',
 ]);
 
 function sanitize(fields?: LogFields): LogFields | undefined {

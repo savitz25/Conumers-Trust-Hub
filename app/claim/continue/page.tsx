@@ -9,6 +9,7 @@ import {
   withPlatform,
 } from '@/lib/customer/server';
 import { ClaimContinueForm } from './claim-continue-form';
+import { customerLog } from '@/lib/customer/log';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,7 +111,18 @@ export default async function ClaimContinuePage({
     );
   } catch (e) {
     const code =
-      e instanceof HandoffError ? e.code : e instanceof ClaimError ? e.code : 'unavailable';
+      e instanceof HandoffError || e instanceof ClaimError
+        ? e.code
+        : e && typeof e === 'object' && 'code' in e && typeof (e as { code: unknown }).code === 'string'
+          ? (e as { code: string }).code
+            : e instanceof Error
+            ? e.name
+            : 'unavailable';
+    customerLog(
+      'claim_continue_failed',
+      { code, errName: e instanceof Error ? e.name : 'unknown' },
+      'warn'
+    );
     return (
       <section className="card-surface p-6">
         <h1 className="text-xl font-semibold text-navy">This handoff could not be used</h1>
