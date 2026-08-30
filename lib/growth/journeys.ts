@@ -47,7 +47,7 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         title: 'Financing research first',
         hubLabel: 'Lender Trust Hub',
         why: 'Loan terms shape what you can offer, when you close, and how much stress the rest of the transaction carries.',
-        body: 'LenderTrustHub currently has Florida mortgage-market research (OFR Chapter 494 company credentials and HMDA Florida state-grain activity). Lender Ask is not production-live — this step is a handoff to Florida Mortgage Intelligence, not a fabricated FHA ranking. PRIM COUNTY is not service territory. Always re-check NMLS Consumer Access.',
+        body: 'LenderTrustHub currently has Florida mortgage-market research (OFR Chapter 494 company credentials and HMDA Florida state-grain activity). Structured Ask (lender-ask-v1) is live for HMDA property-geography queries. This journey step still opens Florida Mortgage Intelligence rather than inventing an FHA ranking. Property county is not service territory. Always re-check NMLS Consumer Access.',
         href: 'https://www.lendertrusthub.com/florida',
         cta: 'Open Florida Mortgage Intelligence',
         relatedGuides: [

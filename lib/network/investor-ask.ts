@@ -84,7 +84,7 @@ export function isInvestorClassQuery(q: string): boolean {
   return Boolean(
     detectInvestorFirmType(q) ||
       /\b(?:form\s+adv|iard|crd\s*#?\s*\d{1,10}|raum|regulatory assets|asset-based|fixed fees?|hourly (charges|fees)|compensation methods?)\b/i.test(q) ||
-      /\b(investment firm|investment adviser|financial adviser|financial advisor)\b/i.test(q) ||
+      /\b(investment firm|investment adviser|financial adviser|financial advisor|broker-?dealers?)\b/i.test(q) ||
       isInvestorRankingQuery(q) ||
       isInvestorAdviceQuery(q)
   );

@@ -120,6 +120,7 @@ export function lenderManifest(): TrustHubNetworkManifest {
       description: 'NMLS-oriented lender research and Florida state intelligence. Not loan origination.',
       accent: '#16A34A',
       exploreHref: 'https://www.lendertrusthub.com',
+      askHref: 'https://www.lendertrusthub.com/ask',
       methodologyHref: 'https://www.lendertrusthub.com/methodology',
     },
     snapshot: {
@@ -170,6 +171,7 @@ export function lenderManifest(): TrustHubNetworkManifest {
       { id: 'identity', label: 'Institution identity', status: 'available' },
       { id: 'market_activity', label: 'HMDA activity (separate grain)', status: 'partial' },
       { id: 'licensing', label: 'NMLS context', status: 'available' },
+      { id: 'structured_ask', label: 'Structured Ask (lender-ask-v1)', status: 'available' },
     ],
     geographyCoverage: [
       { geographyType: 'national', capabilityLevel: 'federal_core' },
@@ -247,10 +249,19 @@ export function lenderManifest(): TrustHubNetworkManifest {
         organizationKind: 'regulator',
       },
     ],
-    askCapabilities: [{ mode: 'entity', status: 'planned' }],
+    askCapabilities: [
+      { mode: 'entity', status: 'live' },
+      { mode: 'count', status: 'live' },
+      { mode: 'aggregate', status: 'live' },
+      { mode: 'comparison', status: 'live' },
+      { mode: 'evidence', status: 'live' },
+      { mode: 'definition', status: 'live' },
+      { mode: 'fail_closed', status: 'live' },
+    ],
     limitations: [
       'Institution identity is not a servicer identity.',
-      'Ask LenderTrustHub is not marked live in Prompt 1.',
+      'HMDA property geography is not headquarters, branch county, or service territory. Most is a raw count, not a rate or recommendation.',
+      'lender-ask-v1 has no identifier mode. NMLS remains a labeled Consumer Access handoff.',
     ],
   };
 }

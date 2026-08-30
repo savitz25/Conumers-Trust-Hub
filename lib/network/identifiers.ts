@@ -44,7 +44,7 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     pattern: /^(?:nmls)\s*\d{4,12}$/i,
     live: false,
     destinationHint: 'https://www.nmlsconsumeraccess.org/',
-    note: 'NMLS is a labeled handoff to NMLS Consumer Access and LenderTrustHub search. Not a live federated graph query.',
+    note: 'NMLS is a labeled handoff to NMLS Consumer Access. lender-ask-v1 has no identifier mode. Not a live federated graph query. Bare digits fail closed.',
   },
   {
     id: 'npn',

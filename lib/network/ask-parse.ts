@@ -15,6 +15,12 @@ import {
   moveGeographyMeaning,
   type MoveRegulatoryRole,
 } from './move-ask.ts';
+import {
+  isAmbiguousBrokerQuery,
+  isLenderClassQuery,
+  isLenderComparisonQuery,
+  lenderGeographyMeaning,
+} from './lender-ask.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -183,7 +189,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
-  const lender = /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
+  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
   const mover = isMoveClassQuery(query);
   const insurance =
     isInsuranceClassQuery(query) ||
@@ -193,6 +199,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const investorFirmType = detectInvestorFirmType(query);
   const moveRegulatoryRole = mover ? detectMoveRole(query) : undefined;
   const ambiguousCarrier = isAmbiguousCarrierQuery(query);
+  const ambiguousBroker = isAmbiguousBrokerQuery(query);
   const roofing = /roof/i.test(query);
   const fha = /\bfha\b/i.test(query);
 
@@ -214,6 +221,10 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     intent = 'name_check';
     nameQuery = query.replace(/^(search|find|look up|check)\s+/i, '').replace(/\s+across.*$/i, '').trim();
     topic = 'Cross-hub name check';
+  } else if (isLenderComparisonQuery(query)) {
+    intent = 'comparison';
+    hubs.push('lender');
+    topic = 'HMDA mortgage-market comparison';
   } else if (comparePlaces) {
     intent = 'comparison';
     hubs.push('contractor', 'lender', 'insurance', 'move');
@@ -268,9 +279,9 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
           : insuranceEntityClass === 'agency'
             ? 'Insurance agency research'
             : 'Insurance regulatory research';
-  } else if (ambiguousCarrier) {
+  } else if (ambiguousCarrier || ambiguousBroker) {
     intent = 'definition';
-    topic = 'Ambiguous “carrier”';
+    topic = ambiguousBroker ? 'Ambiguous “broker”' : 'Ambiguous “carrier”';
   } else if (investor) {
     intent = 'entity';
     hubs.push('investor');
@@ -291,11 +302,19 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   else interpretationLines.push({ label: 'Topic', value: topic });
   const moveOnly = hubs.length === 1 && hubs[0] === 'move';
   const insuranceOnly = hubs.length === 1 && hubs[0] === 'insurance';
+  const lenderOnly = hubs.length === 1 && hubs[0] === 'lender';
   if (ambiguousCarrier && !hubs.length) {
     interpretationLines.push({
       label: 'Limitation',
       value:
         '“Carrier” is ambiguous. It may mean a household-goods motor carrier or an insurance legal insurer. Use a labeled USDOT/MC or a labeled NAIC, or say mover vs insurance.',
+    });
+  }
+  if (ambiguousBroker && !hubs.length) {
+    interpretationLines.push({
+      label: 'Limitation',
+      value:
+        '“Broker” is ambiguous. It may mean a household-goods broker, a mortgage broker, an insurance broker, or a broker-dealer. Name the regulated role.',
     });
   }
   if (moveOnly) {
@@ -336,6 +355,19 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
       interpretationLines.push({ label: 'Geography (not service territory)', value: `${geo.countyName}, Florida` });
     } else if (geo?.stateName) {
       interpretationLines.push({ label: 'Geography', value: geo.stateName });
+    }
+  } else if (lenderOnly && intent !== 'identifier') {
+    interpretationLines.push({
+      label: 'Geography (HMDA property, not HQ)',
+      value: geo?.countyName ? `${geo.countyName}, Florida` : geo?.stateName ?? 'See specialist result',
+    });
+    interpretationLines.push({
+      label: 'Does not mean',
+      value: 'Lender headquarters, branch county, or service territory.',
+    });
+    const geoMeaning = lenderGeographyMeaning(query);
+    if (/rate|denominator/i.test(geoMeaning)) {
+      interpretationLines.push({ label: 'Limitation', value: geoMeaning });
     }
   } else if (geo?.countyName) interpretationLines.push({ label: 'Location', value: `${geo.countyName}, Florida` });
   else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });

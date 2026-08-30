@@ -12,8 +12,7 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { STANDARD_PIPELINE } from '../standard.ts';
 
-test('capability registry: lender Ask is not live; contractor, senior, investor, insurance, and move Ask are live', () => {
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
+test('capability registry: all six specialist Asks are live execute', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.askStatus, 'live');
@@ -36,7 +35,13 @@ test('capability registry: lender Ask is not live; contractor, senior, investor,
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.structuredAskApiUrl, 'https://www.insurancetrusthub.com/api/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.identifierLookup, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.identifierLookup, 'live');
-  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'handoff');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.askContract, 'lender-ask-v1');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.structuredAskUrl, 'https://www.lendertrusthub.com/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.lender.structuredAskApiUrl, 'https://www.lendertrusthub.com/api/ask');
+  assert.ok(!HUB_CAPABILITY_REGISTRY.lender.supportedAskModes?.includes('identifier'));
+  assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askContract, undefined);
 });
 
 test('Broward roofers route to contractor execute', () => {
@@ -49,12 +54,18 @@ test('Broward roofers route to contractor execute', () => {
   assert.doesNotMatch(plan.hubs[0].preview?.headline ?? '', /trusted roofers/i);
 });
 
-test('FHA Florida does not fabricate Lender Ask', () => {
+test('FHA Florida executes Lender Ask without inventing origination facts', () => {
   const plan = buildNetworkAskPlan('Which lenders originated the most FHA mortgages in Florida?');
   assert.equal(plan.hubs.length, 1);
   assert.equal(plan.hubs[0].hubId, 'lender');
-  assert.equal(plan.hubs[0].capabilityStatus, 'handoff');
-  assert.match(plan.hubs[0].reason, /not production-live/i);
+  assert.equal(plan.hubs[0].capabilityStatus, 'execute');
+  assert.notEqual(plan.hubs[0].mode, 'fail_closed');
+  assert.match(plan.hubs[0].destination ?? '', /lendertrusthub.com\/ask/);
+  assert.match(plan.hubs[0].geographyCapability, /property/i);
+  assert.doesNotMatch(plan.hubs[0].geographyCapability, /headquarters is Florida|service territory is Florida/i);
+  const answer = assembleNetworkAnswer(plan.query);
+  assert.equal(answer.traces[0].contract, 'lender-ask-v1');
+  assert.doesNotMatch(JSON.stringify(answer), /13216|Trust Score|best lender/i);
 });
 
 test('identifier routing', () => {
@@ -140,7 +151,7 @@ test('Senior execute does not change contractor / lender / move / insurance / in
 
   const lender = buildNetworkAskPlan('Which lenders originated the most FHA mortgages in Florida?');
   assert.equal(lender.hubs[0].hubId, 'lender');
-  assert.equal(lender.hubs[0].capabilityStatus, 'handoff');
+  assert.equal(lender.hubs[0].capabilityStatus, 'execute');
 
   const move = buildNetworkAskPlan('USDOT 3244649');
   assert.equal(move.hubs[0].hubId, 'move');

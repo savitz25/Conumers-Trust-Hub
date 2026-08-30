@@ -131,7 +131,7 @@ export function floridaPlaceLens(): PlaceLens {
         ],
         destination: 'https://www.lendertrusthub.com/florida',
         destinationLabel: 'Open Florida Mortgage Intelligence',
-        limitation: 'Lender Ask is not production-live. PRIM COUNTY is not service territory.',
+        limitation: 'Structured Ask (lender-ask-v1) is live. Place Lens Florida is state intelligence. Property county is not lender HQ or service territory.',
         researchAvailable: true,
       },
       {
@@ -289,7 +289,7 @@ export function browardPlaceLens(): PlaceLens {
         metrics: [],
         destination: 'https://www.lendertrusthub.com/florida',
         destinationLabel: 'Open Florida Mortgage Intelligence',
-        limitation: 'Lender Ask is not production-live. Do not invent Broward HMDA rankings.',
+        limitation: 'County mortgage intelligence pages are not published. Ask can execute county HMDA property-geography queries separately. Do not invent Broward HMDA rankings on this lens.',
         researchAvailable: true,
       },
       {
