@@ -53,7 +53,8 @@ export default async function AskPage({
             {[
               'Show active roofing contractors in Broward County.',
               'Show nursing homes in Palm Beach County.',
-              'Find CMS CCN 105502.',
+              'Show Florida RIAs reporting between $1 billion and $10 billion RAUM.',
+              'Find CRD 166089.',
               "I'm buying a home in Broward County. What should I research?",
               'What does TrustHub know about Broward?',
             ].map((ex) => (

@@ -39,10 +39,16 @@ const EXAMPLES: { label: string; prompt: string; mode: AskMode; href?: string }[
     href: 'https://www.seniortrusthub.com/ask',
   },
   {
-    label: 'Adviser by CRD',
-    prompt: 'Find an investment adviser firm by CRD / IARD identity.',
+    label: 'Florida RIAs $1B–$10B RAUM',
+    prompt: 'Show Florida RIAs reporting between $1 billion and $10 billion RAUM.',
     mode: 'find',
-    href: 'https://www.investortrusthub.com',
+    href: 'https://www.investortrusthub.com/ask',
+  },
+  {
+    label: 'Find CRD 166089',
+    prompt: 'Find CRD 166089.',
+    mode: 'find',
+    href: 'https://www.investortrusthub.com/ask',
   },
   {
     label: 'Buying in Palm Beach County',

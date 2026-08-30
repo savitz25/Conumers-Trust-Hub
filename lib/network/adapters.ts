@@ -568,6 +568,7 @@ export function investorManifest(): TrustHubNetworkManifest {
       description: 'SEC/IARD investment-firm research. Not stock advice or performance ranking.',
       accent: '#001F52',
       exploreHref: 'https://www.investortrusthub.com',
+      askHref: 'https://www.investortrusthub.com/ask',
     },
     snapshot: {
       snapshotId: 'inv-home-003',
@@ -637,8 +638,21 @@ export function investorManifest(): TrustHubNetworkManifest {
         organizationKind: 'regulator',
       },
     ],
-    askCapabilities: [{ mode: 'entity', status: 'planned' }],
-    limitations: ['Not personalized investment advice.'],
+    askCapabilities: [
+      { mode: 'entity', status: 'live' },
+      { mode: 'identifier', status: 'live' },
+      { mode: 'count', status: 'live' },
+      { mode: 'aggregate', status: 'live' },
+      { mode: 'comparison', status: 'live' },
+      { mode: 'evidence', status: 'live' },
+      { mode: 'definition', status: 'live' },
+      { mode: 'fail_closed', status: 'live' },
+    ],
+    limitations: [
+      'Not personalized investment advice.',
+      'RIA is not ERA. Principal office is not client geography. RAUM is not performance. Item 5.E is not a fee amount.',
+      'Ownership is confidence-gated. Disclosures are not an enforcement census.',
+    ],
   };
 }
 

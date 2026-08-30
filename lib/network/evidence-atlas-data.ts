@@ -83,7 +83,7 @@ const ROWS: Cell[] = [
   { hubId: 'senior', familyId: 'permits', status: 'not_applicable', why: 'Not a permit research hub.' },
   { hubId: 'senior', familyId: 'local_regulatory', status: 'partial', why: 'Florida AHCA identities and regulatory observations. Other states: CMS only.', destination: 'https://www.seniortrusthub.com/florida' },
 
-  { hubId: 'investor', familyId: 'identity', status: 'deep', why: 'Organization CRD is the firm identity key on the SEC/IARD roster.', destination: 'https://www.investortrusthub.com/firms', sourceFamilyId: 'sec-iard-adv' },
+  { hubId: 'investor', familyId: 'identity', status: 'deep', why: 'Organization CRD is the firm identity key on the SEC/IARD roster. Structured Ask is live (investor-ask-v1).', destination: 'https://www.investortrusthub.com/ask', sourceFamilyId: 'sec-iard-adv' },
   { hubId: 'investor', familyId: 'credential', status: 'deep', why: 'RIA vs ERA classification. ERA is not an RIA. Registration is not endorsement.', destination: 'https://www.investortrusthub.com/firms', sourceFamilyId: 'sec-iard-adv' },
   { hubId: 'investor', familyId: 'licensing', status: 'available', why: 'Reported registration class and source status text, not approval.', destination: 'https://www.investortrusthub.com', sourceFamilyId: 'sec-iard-adv' },
   { hubId: 'investor', familyId: 'registration', status: 'deep', why: 'Current monthly SEC IARD roster (RIA + ERA).', destination: 'https://www.investortrusthub.com', sourceFamilyId: 'sec-iard-adv' },

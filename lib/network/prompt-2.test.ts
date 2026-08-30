@@ -12,21 +12,22 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { STANDARD_PIPELINE } from '../standard.ts';
 
-test('capability registry: lender Ask is not live; contractor and senior Ask are live', () => {
+test('capability registry: lender Ask is not live; contractor, senior, and investor Ask are live', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.lender.askStatus, 'planned');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.contractor.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.askStatus, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.federatedExecution, 'execute');
   assert.equal(HUB_CAPABILITY_REGISTRY.senior.askContract, 'senior-ask-v1');
-  assert.equal(HUB_CAPABILITY_REGISTRY.senior.structuredAskUrl, 'https://www.seniortrusthub.com/ask');
-  assert.equal(HUB_CAPABILITY_REGISTRY.senior.structuredAskApiUrl, 'https://www.seniortrusthub.com/api/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.askStatus, 'live');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'execute');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.askContract, 'investor-ask-v1');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.structuredAskUrl, 'https://www.investortrusthub.com/ask');
+  assert.equal(HUB_CAPABILITY_REGISTRY.investor.structuredAskApiUrl, 'https://www.investortrusthub.com/api/ask');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.askStatus, 'partial');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.federatedExecution, 'handoff');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.askStatus, 'partial');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.federatedExecution, 'handoff');
-  assert.equal(HUB_CAPABILITY_REGISTRY.investor.askStatus, 'partial');
-  assert.equal(HUB_CAPABILITY_REGISTRY.investor.federatedExecution, 'handoff');
   assert.equal(HUB_CAPABILITY_REGISTRY.move.identifierLookup, 'live');
   assert.equal(HUB_CAPABILITY_REGISTRY.insurance.identifierLookup, 'planned');
 });
@@ -140,9 +141,89 @@ test('Senior execute does not change contractor / lender / move / insurance / in
   assert.equal(insurance.hubs[0].hubId, 'insurance');
   assert.equal(insurance.hubs[0].capabilityStatus, 'handoff');
 
-  const investor = buildNetworkAskPlan('Find an investment adviser firm by CRD.');
+  const investor = buildNetworkAskPlan('Find CRD 166089.');
   assert.equal(investor.hubs[0].hubId, 'investor');
-  assert.notEqual(investor.hubs[0].capabilityStatus, 'execute');
+  assert.equal(investor.hubs[0].capabilityStatus, 'execute');
+});
+
+test('Investor execute: Florida RIA/ERA, RAUM, compensation, counts, CRD', () => {
+  const flRia = buildNetworkAskPlan('Show SEC-registered RIAs in Florida.');
+  assert.deepEqual(flRia.hubs.map((h) => h.hubId), ['investor']);
+  assert.equal(flRia.hubs[0].capabilityStatus, 'execute');
+  assert.match(flRia.hubs[0].destination ?? '', /investortrusthub.com\/ask/);
+  assert.equal(flRia.parsed.investorFirmType, 'ria');
+  assert.match(flRia.hubs[0].geographyCapability, /principal-office/i);
+  assert.doesNotMatch(flRia.hubs[0].geographyCapability, /Serves Florida/i);
+
+  const flEra = buildNetworkAskPlan('Show ERAs in Florida.');
+  assert.equal(flEra.hubs[0].hubId, 'investor');
+  assert.equal(flEra.hubs[0].capabilityStatus, 'execute');
+  assert.equal(flEra.parsed.investorFirmType, 'era');
+
+  const raum = buildNetworkAskPlan('Show Florida RIAs reporting between $1 billion and $10 billion RAUM.');
+  assert.equal(raum.hubs[0].capabilityStatus, 'execute');
+  assert.equal(raum.parsed.investorFirmType, 'ria');
+  assert.doesNotMatch(JSON.stringify(raum), /performance ranking|best returns/i);
+  const raumTrace = assembleNetworkAnswer(raum.query);
+  assert.equal(raumTrace.traces[0].contract, 'investor-ask-v1');
+  assert.match(raumTrace.traces[0].geographyMeaning, /Principal-office/i);
+  assert.match(raumTrace.traces[0].queryGrain, /RIA firm facts/i);
+
+  const fees = buildNetworkAskPlan('Show firms reporting asset-based compensation.');
+  assert.equal(fees.hubs[0].hubId, 'investor');
+  assert.equal(fees.hubs[0].capabilityStatus, 'execute');
+  assert.notEqual(fees.hubs[0].mode, 'fail_closed');
+
+  const fixed = buildNetworkAskPlan('Show firms reporting fixed fees.');
+  assert.equal(fixed.hubs[0].capabilityStatus, 'execute');
+
+  const riaCount = buildNetworkAskPlan('How many RIAs are currently indexed?');
+  assert.equal(riaCount.hubs[0].mode, 'count');
+  assert.equal(riaCount.hubs[0].capabilityStatus, 'execute');
+
+  const eraCount = buildNetworkAskPlan('How many ERAs are currently indexed?');
+  assert.equal(eraCount.parsed.investorFirmType, 'era');
+  assert.equal(eraCount.hubs[0].capabilityStatus, 'execute');
+
+  const crd = buildNetworkAskPlan('Find CRD 166089.');
+  assert.equal(crd.hubs[0].mode, 'identifier');
+  assert.equal(crd.hubs[0].capabilityStatus, 'execute');
+  assert.match(crd.hubs[0].destination ?? '', /investortrusthub.com\/ask/);
+
+  const def = buildNetworkAskPlan('What does RAUM mean?');
+  assert.equal(def.hubs[0].hubId, 'investor');
+  assert.equal(def.hubs[0].mode, 'definition');
+});
+
+test('Investor fail-closed: ranking, fees, stocks, bare digits, serving ≠ client geography', () => {
+  for (const q of [
+    'Which adviser will give me the best returns?',
+    'Who is the best financial adviser?',
+    'Which adviser is safest?',
+    'Which adviser is most trustworthy?',
+    'Which adviser has the lowest fees?',
+    'Which RIA performs best?',
+  ]) {
+    const plan = buildNetworkAskPlan(q);
+    assert.equal(plan.hubs[0].hubId, 'investor', q);
+    assert.equal(plan.hubs[0].mode, 'fail_closed', q);
+    assert.doesNotMatch(JSON.stringify(plan), /#1 adviser|trusted ranking/i);
+  }
+
+  const stocks = buildNetworkAskPlan('What stocks should I buy?');
+  assert.equal(stocks.hubs[0].hubId, 'investor');
+  assert.equal(stocks.hubs[0].mode, 'fail_closed');
+  assert.match(stocks.hubs[0].whatItCanAnswer, /rather than recommending investments/i);
+
+  const bare = buildNetworkAskPlan('166089');
+  assert.equal(bare.parsed.identifier?.ambiguous, true);
+  assert.ok(bare.hubs.every((h) => h.capabilityStatus === 'unsupported'));
+
+  const serving = buildNetworkAskPlan('Show advisers serving Florida.');
+  assert.equal(serving.hubs[0].hubId, 'investor');
+  assert.equal(serving.hubs[0].capabilityStatus, 'execute');
+  assert.match(serving.hubs[0].geographyCapability, /principal office/i);
+  assert.doesNotMatch(serving.hubs[0].geographyCapability, /service territory is Florida/i);
 });
 
 test('buying a home in Broward is multi-hub', () => {
