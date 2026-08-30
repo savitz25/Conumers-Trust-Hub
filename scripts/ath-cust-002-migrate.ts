@@ -1,8 +1,7 @@
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Pool } from 'pg';
 import { loadEnvFile } from './load-env.mjs';
-import { splitSqlStatements } from '../lib/customer/migrate.ts';
+import { applyCustomerMigrations } from '../lib/customer/migrate.ts';
 
 loadEnvFile(join(process.cwd(), '.env.local'));
 loadEnvFile(join(process.cwd(), '.env.vercel-audit.local'));
@@ -14,7 +13,6 @@ if (!url) {
 }
 
 const connectionString = url.replace(/&?channel_binding=require/g, '');
-const sql = readFileSync(join(process.cwd(), 'schema/migrations/001_ath_customer_platform.sql'), 'utf8');
 const pool = new Pool({
   connectionString,
   ssl: /neon|supabase|sslmode=require|pooler/i.test(connectionString)
@@ -25,19 +23,8 @@ const pool = new Pool({
 const client = await pool.connect();
 try {
   await client.query("SELECT set_config('ath.app_role', 'server', true)");
-  for (const stmt of splitSqlStatements(sql)) {
-    try {
-      await client.query(stmt);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      if (/pgcrypto|extension/i.test(stmt) && /already exists|not available/i.test(message)) {
-        continue;
-      }
-      const preview = stmt.replace(/\s+/g, ' ').slice(0, 120);
-      throw new Error(`${message} :: ${preview}`);
-    }
-  }
-  console.log('ATH-CUST-002 migrations applied to Ask Neon customer database.');
+  await applyCustomerMigrations({ query: (text, params) => client.query(text, params) });
+  console.log('Ask customer migrations applied to Neon customer database.');
 } catch (err) {
   const message = err instanceof Error ? err.message : String(err);
   console.error('migration_failed', message.replace(/postgresql:\/\/[^@\s]+@/gi, 'postgresql://[redacted]@'));

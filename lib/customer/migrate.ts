@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { SqlClient } from './sql.ts';
 
@@ -49,25 +49,29 @@ function stripLeadingSqlComments(raw: string): string {
 }
 
 export async function applyCustomerMigrations(client: SqlClient): Promise<void> {
-  const sqlPath = join(process.cwd(), 'schema/migrations/001_ath_customer_platform.sql');
-  const sql = readFileSync(sqlPath, 'utf8');
-  if (client.exec) {
-    try {
-      await client.exec(sql);
-    } catch {
-      await client.exec(sql.replace(/CREATE EXTENSION IF NOT EXISTS pgcrypto;/g, ''));
-    }
-    return;
-  }
-  for (const stmt of splitSqlStatements(sql)) {
-    try {
-      await client.query(stmt);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      if (/pgcrypto|extension/i.test(stmt) && /does not exist|unavailable|not available/i.test(message)) {
-        continue;
+  const migrationDir = join(process.cwd(), 'schema/migrations');
+  const paths = readdirSync(migrationDir)
+    .filter((name) => /^\d+_.*\.sql$/.test(name) && !name.endsWith('.down.sql'))
+    .sort()
+    .map((name) => join(migrationDir, name));
+  for (const sqlPath of paths) {
+    const sql = readFileSync(sqlPath, 'utf8');
+    if (client.exec) {
+      try {
+        await client.exec(sql);
+      } catch {
+        await client.exec(sql.replace(/CREATE EXTENSION IF NOT EXISTS pgcrypto;/g, ''));
       }
-      throw err;
+      continue;
+    }
+    for (const stmt of splitSqlStatements(sql)) {
+      try {
+        await client.query(stmt);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (/pgcrypto|extension/i.test(stmt) && /does not exist|unavailable|not available/i.test(message)) continue;
+        throw err;
+      }
     }
   }
 }

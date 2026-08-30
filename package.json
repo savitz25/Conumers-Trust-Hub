@@ -19,6 +19,7 @@
     "check:ask-consumer-ux": "node --experimental-strip-types --test lib/network/consumer-ux.test.ts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs",
     "check:ath-cust-002": "node scripts/check-ath-cust-002.mjs",
+    "check:ath-cust-004": "node --experimental-strip-types --test lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
