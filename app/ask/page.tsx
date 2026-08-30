@@ -55,6 +55,8 @@ export default async function AskPage({
               'Show nursing homes in Palm Beach County.',
               'Show Florida RIAs reporting between $1 billion and $10 billion RAUM.',
               'Find CRD 166089.',
+              'Show insurance agencies credentialed in Florida.',
+              'Find NPN 10391484.',
               "I'm buying a home in Broward County. What should I research?",
               'What does TrustHub know about Broward?',
             ].map((ex) => (

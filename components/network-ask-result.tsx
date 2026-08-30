@@ -183,6 +183,7 @@ export async function NetworkAskResult({ query }: { query: string }) {
                 <th scope="col" className="py-2 pr-3">Hub</th>
                 <th scope="col" className="py-2 pr-3">Contract</th>
                 <th scope="col" className="py-2 pr-3">Provider class</th>
+                <th scope="col" className="py-2 pr-3">Identifier</th>
                 <th scope="col" className="py-2 pr-3">Source family</th>
                 <th scope="col" className="py-2 pr-3">Query grain</th>
                 <th scope="col" className="py-2 pr-3">Geography meaning</th>
@@ -198,6 +199,7 @@ export async function NetworkAskResult({ query }: { query: string }) {
                   </th>
                   <td className="py-2 pr-3">{row.contract ?? '—'}</td>
                   <td className="py-2 pr-3">{row.providerClass ?? '—'}</td>
+                  <td className="py-2 pr-3">{row.identifier ?? '—'}</td>
                   <td className="py-2 pr-3">{row.sourceFamily}</td>
                   <td className="py-2 pr-3">{row.queryGrain}</td>
                   <td className="py-2 pr-3">{row.geographyMeaning}</td>

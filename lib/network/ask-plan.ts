@@ -26,6 +26,16 @@ import {
   investorGeographyMeaning,
   type InvestorAskPayload,
 } from './investor-ask.ts';
+import {
+  INSURANCE_ASK_CONTRACT,
+  INSURANCE_ENTITY_CLASS_LABEL,
+  fetchInsuranceAsk,
+  insuranceAskMode,
+  insuranceAskUrl,
+  insuranceFailClosedReason,
+  insuranceGeographyMeaning,
+  type InsuranceAskPayload,
+} from './insurance-ask.ts';
 
 export type HubCapabilityStatus = 'execute' | 'handoff' | 'unsupported' | 'unavailable';
 
@@ -69,6 +79,7 @@ export type TraceRow = {
   specialistDestination: string;
   contract?: string;
   providerClass?: string;
+  identifier?: string;
 };
 
 export type NetworkAskAnswer = {
@@ -104,6 +115,9 @@ function identifierDestination(parsed: ParsedNetworkAsk): string | undefined {
   }
   if (id.family.id === 'cms_ccn') {
     return seniorAskUrl(parsed.query);
+  }
+  if (id.family.id === 'npn' || id.family.id === 'naic_company_code') {
+    return insuranceAskUrl(parsed.query);
   }
   return id.family.destinationHint;
 }
@@ -171,6 +185,60 @@ function investorHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
         'Parent does not invent RAUM, fees, rankings, or client geography. Open the specialist result.',
       officialAsOf: 'See specialist result',
       sourceFamily: 'sec-iard-adv',
+    },
+  };
+}
+
+function insuranceHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
+  const cls = parsed.insuranceEntityClass;
+  const classLabel = cls ? INSURANCE_ENTITY_CLASS_LABEL[cls] : undefined;
+  const identifier = parsed.intent === 'identifier' && parsed.identifier && !parsed.identifier.ambiguous;
+  const mode = insuranceAskMode(parsed.query, { identifier: Boolean(identifier) });
+  const failReason = insuranceFailClosedReason(parsed.query);
+  const dest = insuranceAskUrl(parsed.query);
+  const geoMeaning = identifier
+    ? 'Identifier routing — labeled NPN or NAIC company code, not geography.'
+    : insuranceGeographyMeaning(parsed.query);
+
+  return {
+    hubId: 'insurance',
+    name: NETWORK_PUBLIC_NAMES.insurance,
+    capabilityStatus: 'execute',
+    mode,
+    structuredFilters: {
+      contract: INSURANCE_ASK_CONTRACT,
+      entityClass: cls,
+      identifier: identifier ? parsed.identifier?.raw : undefined,
+    },
+    destination: dest,
+    reason:
+      'InsuranceTrustHub structured Ask is production-live (insurance-ask-v1). Parent constructs the Ask URL and may read GET /api/ask; it does not query the Insurance database.',
+    whatItCanAnswer: failReason
+      ? failReason
+      : classLabel
+        ? `${classLabel} research on InsuranceTrustHub. Person, agency, and legal insurer stay separate. Credential jurisdiction is not office, domicile, or service territory. LOA is not appointment.`
+        : 'InsuranceTrustHub Ask for person, agency, and legal-insurer research. Classes stay separate.',
+    geographyCapability: geoMeaning,
+    preview: {
+      headline: failReason
+        ? failReason
+        : identifier
+          ? 'Open InsuranceTrustHub structured Ask for this labeled identifier.'
+          : `Open InsuranceTrustHub structured Ask${classLabel ? ` for ${classLabel}` : ''}.`,
+      grain: failReason
+        ? 'fail_closed'
+        : identifier
+          ? parsed.identifier?.family.id === 'naic_company_code'
+            ? 'Labeled legal-insurer NAIC identity'
+            : 'Labeled NPN identity — class is not assumed from the digits'
+          : classLabel
+            ? `canonical ${cls} entity`
+            : 'canonical insurance identity (classes kept separate)',
+      limitation:
+        failReason ??
+        'Parent does not invent appointments, LOAs, rankings, or a combined insurance-providers total. Open the specialist result. Empty current-data results are not “no authority.”',
+      officialAsOf: 'See specialist result',
+      sourceFamily: 'state-doi',
     },
   };
 }
@@ -250,6 +318,15 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
     (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'investor');
   if (hubId === 'investor' && investorExecute) {
     return investorHubPlan(parsed);
+  }
+
+  const insuranceExecute =
+    parsed.insuranceEntityClass ||
+    parsed.identifier?.family.id === 'npn' ||
+    parsed.identifier?.family.id === 'naic_company_code' ||
+    (parsed.suggestedHubs.length === 1 && parsed.suggestedHubs[0] === 'insurance');
+  if (hubId === 'insurance' && insuranceExecute) {
+    return insuranceHubPlan(parsed);
   }
 
   if (parsed.intent === 'identifier' && parsed.identifier) {
@@ -362,7 +439,7 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
 }
 
 function collidingNote() {
-  return 'Bare digits can mean USDOT, NMLS, CCN, or CRD. Ask must preserve ambiguity and not auto-select a hub from digits alone.';
+  return 'Bare digits can mean USDOT, NMLS, CCN, CRD, NPN, or NAIC company code. Ask must preserve ambiguity and not auto-select a hub from digits alone.';
 }
 
 export function buildNetworkAskPlan(query: string): NetworkAskPlan {
@@ -391,7 +468,7 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
   } else if (parsed.suggestedHubs.length) {
     hubs = parsed.suggestedHubs.map((id) => hubPlan(id, parsed));
   } else if (parsed.identifier?.ambiguous) {
-    hubs = IDENTIFIER_FAMILIES.filter((f) => ['usdot', 'nmls', 'cms_ccn', 'crd'].includes(f.id)).map((f) => ({
+    hubs = IDENTIFIER_FAMILIES.filter((f) => ['usdot', 'nmls', 'cms_ccn', 'crd', 'npn'].includes(f.id)).map((f) => ({
       hubId: f.hubId,
       name: NETWORK_PUBLIC_NAMES[f.hubId],
       capabilityStatus: 'unsupported' as const,
@@ -429,13 +506,19 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
         queryGrain: h.preview?.grain ?? h.whatItCanAnswer,
         geographyMeaning: h.geographyCapability,
         officialAsOf: h.preview?.officialAsOf ?? fam?.officialAsOf ?? 'See specialist page',
+        identifier:
+          h.hubId === 'insurance' && plan.parsed.identifier && !plan.parsed.identifier.ambiguous
+            ? plan.parsed.identifier.raw
+            : undefined,
         specialistDestination: h.destination ?? capabilityFor(h.hubId).origin,
         contract:
           h.hubId === 'senior'
             ? SENIOR_ASK_CONTRACT
             : h.hubId === 'investor'
               ? INVESTOR_ASK_CONTRACT
-              : capabilityFor(h.hubId).askContract,
+              : h.hubId === 'insurance'
+                ? INSURANCE_ASK_CONTRACT
+                : capabilityFor(h.hubId).askContract,
         providerClass:
           h.hubId === 'senior'
             ? cls
@@ -445,7 +528,11 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
               ? firmType
                 ? INVESTOR_FIRM_TYPE_LABEL[firmType]
                 : undefined
-              : undefined,
+              : h.hubId === 'insurance'
+                ? plan.parsed.insuranceEntityClass
+                  ? INSURANCE_ENTITY_CLASS_LABEL[plan.parsed.insuranceEntityClass]
+                  : undefined
+                : undefined,
       };
     });
 }
@@ -549,6 +636,77 @@ function applyInvestorPayload(answer: NetworkAskAnswer, payload: InvestorAskPayl
   return { ...answer, traces };
 }
 
+function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPayload): NetworkAskAnswer {
+  const insurance = answer.plan.hubs.find((h) => h.hubId === 'insurance');
+  if (!insurance) return answer;
+  const failReason =
+    payload.query?.failReason ?? (payload.resultType === 'fail_closed' ? payload.query?.failReason : undefined);
+  const officialAsOf = payload.provenance?.officialAsOf ?? insurance.preview?.officialAsOf ?? 'See specialist result';
+  const sourceFamily = payload.provenance?.sourceFamily ?? insurance.preview?.sourceFamily ?? 'state-doi';
+  const geography =
+    payload.provenance?.geographyMeaning ?? payload.query?.jurisdiction?.meaning ?? insurance.geographyCapability;
+  const grain = payload.provenance?.grain ?? insurance.preview?.grain ?? insurance.mode;
+  const emptyExecuted =
+    !failReason &&
+    (payload.resultType === 'entity' || payload.resultType === 'identifier' || payload.resultType === 'evidence') &&
+    !(payload.results && payload.results.length) &&
+    !(payload.counts && payload.counts[0]?.value);
+  const countValue = payload.counts?.[0]?.value ?? payload.pagination?.total;
+  const dataLimitation =
+    emptyExecuted
+      ? payload.limitations?.[0] ??
+        'Specialist executed. Current indexed result set is empty. Empty is not a finding that authority does not exist.'
+      : payload.limitations?.[0];
+
+  insurance.preview = {
+    headline: failReason
+      ? failReason
+      : emptyExecuted
+        ? (dataLimitation ??
+          'Specialist executed. Current indexed result set is empty. Empty is not a finding that authority does not exist.')
+        : countValue
+          ? `Specialist count: ${countValue.toLocaleString('en-US')} (${grain ?? 'canonical identities'})`
+          : insurance.preview?.headline ?? 'Open InsuranceTrustHub structured Ask.',
+    grain: grain ?? 'insurance-ask-v1',
+    limitation: failReason ?? dataLimitation ?? insurance.preview?.limitation ?? 'Specialist result is authoritative.',
+    officialAsOf: officialAsOf || 'See specialist result',
+    sourceFamily,
+  };
+  insurance.geographyCapability = geography;
+  if (failReason) {
+    insurance.mode = 'fail_closed';
+    insurance.whatItCanAnswer = failReason;
+  } else if (payload.query?.mode) {
+    insurance.mode = payload.query.mode;
+  }
+  insurance.capabilityStatus = 'execute';
+
+  const traces = tracesForPlan(answer.plan).map((row) =>
+    row.hubId === 'insurance'
+      ? {
+          ...row,
+          sourceFamily,
+          queryGrain: grain ?? row.queryGrain,
+          geographyMeaning: geography,
+          officialAsOf: officialAsOf || row.officialAsOf,
+          contract: INSURANCE_ASK_CONTRACT,
+          providerClass:
+            typeof payload.entityClass === 'string'
+              ? payload.entityClass === 'person'
+                ? 'Producer / individual'
+                : payload.entityClass === 'insurer'
+                  ? 'Legal insurer'
+                  : payload.entityClass === 'agency'
+                    ? 'Agency'
+                    : row.providerClass
+              : row.providerClass,
+          specialistDestination: insurance.destination ?? row.specialistDestination,
+        }
+      : row,
+  );
+  return { ...answer, traces };
+}
+
 /** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
   let answer = assembleNetworkAnswer(query);
@@ -561,6 +719,11 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   if (investor) {
     const payload = await fetchInvestorAsk(query);
     if (payload) answer = applyInvestorPayload(answer, payload);
+  }
+  const insurance = answer.plan.hubs.find((h) => h.hubId === 'insurance' && h.capabilityStatus === 'execute');
+  if (insurance) {
+    const payload = await fetchInsuranceAsk(query);
+    if (payload) answer = applyInsurancePayload(answer, payload);
   }
   return answer;
 }

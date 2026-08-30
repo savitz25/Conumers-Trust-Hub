@@ -313,6 +313,7 @@ export function insuranceManifest(): TrustHubNetworkManifest {
     capabilities: [
       { id: 'identity', label: 'Agency / producer / insurer identity', status: 'partial' },
       { id: 'licensing', label: 'State license context', status: 'available' },
+      { id: 'structured_ask', label: 'Structured Ask (insurance-ask-v1)', status: 'available' },
     ],
     geographyCoverage: [{ geographyType: 'state', capabilityLevel: 'state_research' }],
     sourceFamilies: [
