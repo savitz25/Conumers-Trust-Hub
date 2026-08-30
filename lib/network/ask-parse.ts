@@ -21,6 +21,7 @@ import {
   isLenderComparisonQuery,
   lenderGeographyMeaning,
 } from './lender-ask.ts';
+import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -33,10 +34,11 @@ export type NetworkAskIntent =
   | 'name_check';
 
 export type ParsedGeography = {
-  stateCode?: 'FL';
-  stateName?: 'Florida';
+  stateCode?: string;
+  stateName?: string;
   countySlug?: 'broward' | 'palm-beach';
   countyName?: string;
+  city?: string;
   meaning: string;
 };
 
@@ -71,13 +73,21 @@ const PALM = /\bpalm\s*beach\b/i;
 function geography(q: string): ParsedGeography | undefined {
   const broward = BROWARD.test(q);
   const palm = PALM.test(q);
-  const florida = FL.test(q) || broward || palm;
+  const tampa = /\btampa(\s+bay)?\b/i.test(q);
+  const miami = /\bmiami([-\s]?dade)?\b/i.test(q);
+  const florida = FL.test(q) || broward || palm || tampa || miami;
+
+  let city: string | undefined;
+  if (tampa) city = 'Tampa';
+  else if (miami) city = 'Miami';
+
   if (broward) {
     return {
       stateCode: 'FL',
       stateName: 'Florida',
       countySlug: 'broward',
       countyName: 'Broward County',
+      city,
       meaning: 'Broward County, Florida. County meaning differs by hub (mailing county ≠ service territory; HMDA property county ≠ HQ).',
     };
   }
@@ -87,6 +97,7 @@ function geography(q: string): ParsedGeography | undefined {
       stateName: 'Florida',
       countySlug: 'palm-beach',
       countyName: 'Palm Beach County',
+      city,
       meaning: 'Palm Beach County, Florida. County meaning differs by hub.',
     };
   }
@@ -94,8 +105,38 @@ function geography(q: string): ParsedGeography | undefined {
     return {
       stateCode: 'FL',
       stateName: 'Florida',
-      meaning: 'Florida. State licensing is not physical location; principal office is not client geography.',
+      city,
+      meaning: city
+        ? `${city}, Florida. Recorded/address geography is not service territory.`
+        : 'Florida. State licensing is not physical location; principal office is not client geography.',
     };
+  }
+
+  const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
+    const nameRe = new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i');
+    return nameRe.test(q);
+  });
+  if (byName) {
+    return {
+      stateCode: byName.code,
+      stateName: byName.name,
+      city,
+      meaning: `${byName.name}. Geography meaning stays source-specific to the specialist.`,
+    };
+  }
+
+  const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?)\b/i);
+  if (postal) {
+    const raw = postal[0].replace(/\./g, '').toUpperCase();
+    const j = US_JURISDICTIONS.find((row) => row.code === raw);
+    if (j) {
+      return {
+        stateCode: j.code,
+        stateName: j.name,
+        city,
+        meaning: `${j.name}. Geography meaning stays source-specific to the specialist.`,
+      };
+    }
   }
   return undefined;
 }
@@ -188,8 +229,8 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const seniorProviderClass = detectSeniorProviderClass(query);
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
-  const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|dbpr|cilb/i.test(query);
-  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|nmls|loan officer/i.test(query);
+  const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|builder|remodeler|dbpr|cilb/i.test(query);
+  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer/i.test(query);
   const mover = isMoveClassQuery(query);
   const insurance =
     isInsuranceClassQuery(query) ||
@@ -205,7 +246,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
 
   let intent: NetworkAskIntent = 'definition';
   const hubs: SpecialistHubId[] = [];
-  let topic = 'Network research routing';
+  let topic = 'Research question';
   let trade: string | undefined;
   let credentialStatus: string | undefined;
   let nameQuery: string | undefined;
@@ -252,7 +293,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     hubs.push('contractor');
     topic = 'Contractor licensing research';
     if (roofing) trade = 'Roofing';
-    if (/active|current/i.test(query)) credentialStatus = 'Active/current';
+    if (/active|current/i.test(query) || (roofing && geo?.countySlug)) credentialStatus = 'Active/current';
   } else if (fha || (lender && !buying)) {
     intent = 'market';
     hubs.push('lender');

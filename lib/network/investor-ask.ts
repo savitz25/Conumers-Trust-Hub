@@ -56,6 +56,18 @@ export type InvestorAskPayload = {
     identifierMethod?: string;
   };
   limitations?: string[];
+  results?: Array<{
+    firmName?: string;
+    crd?: string;
+    firmType?: string;
+    principalOffice?: string;
+    raum?: string;
+    compensationMethods?: string[];
+    href?: string | null;
+    publicationNote?: string;
+    whyMatched?: string;
+  }>;
+  pagination?: { total?: number };
 };
 
 export function investorAskUrl(query: string): string {
@@ -84,7 +96,7 @@ export function isInvestorClassQuery(q: string): boolean {
   return Boolean(
     detectInvestorFirmType(q) ||
       /\b(?:form\s+adv|iard|crd\s*#?\s*\d{1,10}|raum|regulatory assets|asset-based|fixed fees?|hourly (charges|fees)|compensation methods?)\b/i.test(q) ||
-      /\b(investment firm|investment adviser|financial adviser|financial advisor|broker-?dealers?)\b/i.test(q) ||
+      /\b(investment firm|investment compan(?:y|ies)|investment adviser|investments?|wealth management|financial adviser|financial advisor|broker-?dealers?)\b/i.test(q) ||
       isInvestorRankingQuery(q) ||
       isInvestorAdviceQuery(q)
   );

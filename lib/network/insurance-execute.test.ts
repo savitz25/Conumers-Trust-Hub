@@ -64,17 +64,22 @@ test('Insurance fail-closed: ranking, quotes, clean record, class sum, domicile,
   const best = buildNetworkAskPlan('Which insurance agency is the best in Florida?');
   assert.equal(best.hubs[0].hubId, 'insurance');
   assert.equal(best.hubs[0].capabilityStatus, 'execute');
-  assert.equal(best.hubs[0].mode, 'fail_closed');
+  assert.notEqual(best.hubs[0].mode, 'fail_closed');
+  assert.equal(best.hubs[0].failKind, 'soft');
+  assert.match(best.hubs[0].judgmentNote ?? '', /does not rank/i);
 
   const safest = buildNetworkAskPlan('Which insurer is safest?');
-  assert.equal(safest.hubs[0].mode, 'fail_closed');
+  assert.equal(safest.hubs[0].failKind, 'soft');
+  assert.notEqual(safest.hubs[0].mode, 'fail_closed');
 
   const trust = buildNetworkAskPlan('Which insurance agency is most trustworthy?');
   assert.equal(trust.hubs[0].hubId, 'insurance');
-  assert.equal(trust.hubs[0].mode, 'fail_closed');
+  assert.equal(trust.hubs[0].failKind, 'soft');
+  assert.notEqual(trust.hubs[0].mode, 'fail_closed');
 
   const cheap = buildNetworkAskPlan('Which insurer has the cheapest homeowners policy?');
-  assert.equal(cheap.hubs[0].mode, 'fail_closed');
+  assert.equal(cheap.hubs[0].failKind, 'soft');
+  assert.notEqual(cheap.hubs[0].mode, 'fail_closed');
 
   const hire = buildNetworkAskPlan('Which agent should I hire?');
   assert.equal(hire.hubs[0].hubId, 'insurance');

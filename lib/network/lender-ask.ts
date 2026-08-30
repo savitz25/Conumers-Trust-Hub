@@ -69,7 +69,7 @@ export function lenderAskApiUrl(query: string): string {
 }
 
 export function isLenderClassQuery(q: string): boolean {
-  return /\b(lenders?|mortgage|hmda|fha|nmls|loan officers?|mortgage brokers?|originat|loan estimate)\b/i.test(q);
+  return /\b(lenders?|mortgage(?:\s+compan(?:y|ies)|\s+brokers?)?|hmda|fha|\bva\b|home loans?|nmls|loan officers?|originat|loan estimate)\b/i.test(q);
 }
 
 export function lenderGeographyMeaning(q: string): string {
@@ -86,7 +86,11 @@ export function lenderFailClosedReason(q: string): string | undefined {
   if (/\b(best|top lender|recommended|safest|most trustworthy|trust score)\b/i.test(q)) {
     return 'LenderTrustHub does not rank “best,” safest, or most trustworthy lenders. Most is a raw volume count, not a recommendation.';
   }
-  if (/\b(cheapest|lowest (current )?(rate|apr)|current (mortgage )?rate|live rate|interest rates? today)\b/i.test(q)) {
+  if (
+    /\b(lowest (current )?(rate|apr)|current (mortgage )?rates?|live rate|interest rates? today|rates? tomorrow|what will .{0,24}rates?)\b/i.test(
+      q,
+    )
+  ) {
     return 'HMDA is a 2025 reporting vintage, not today’s advertised rate sheet. There is no consumer pricing dataset on this Ask layer.';
   }
   if (/\bdiscriminat/i.test(q)) {
