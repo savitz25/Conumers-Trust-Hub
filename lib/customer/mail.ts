@@ -18,7 +18,7 @@ export function askFromEmail(): string {
 export const resendMailer: Mailer = async (message) => {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
-    customerLog('mail_preview', { to: message.to, subject: message.subject });
+    customerLog('mail_preview', { subject: message.subject });
     return { sent: false, preview: message.text };
   }
   const res = await fetch('https://api.resend.com/emails', {
@@ -36,10 +36,10 @@ export const resendMailer: Mailer = async (message) => {
     }),
   });
   if (!res.ok) {
-    const body = await res.text();
-    customerLog('mail_failed', { status: res.status, body: body.slice(0, 200) }, 'error');
+    await res.body?.cancel();
+    customerLog('mail_failed', { status: res.status }, 'error');
     return { sent: false };
   }
-  customerLog('mail_sent', { to: message.to, subject: message.subject });
+  customerLog('mail_sent', { subject: message.subject });
   return { sent: true };
 };

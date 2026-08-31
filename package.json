@@ -24,7 +24,7 @@
     "check:ath-cust-006": "node --experimental-strip-types --test lib/customer/record-issues.test.ts lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
     "check:ath-cust-007": "node --experimental-strip-types --test lib/customer/business-replies.test.ts lib/customer/record-issues.test.ts lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
     "check:ath-cust-008": "node --experimental-strip-types --test lib/customer/monitoring.test.ts lib/customer/business-replies.test.ts lib/customer/record-issues.test.ts lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
-    "check:ath-cust-009": "node --experimental-strip-types --test lib/customer/organization.test.ts lib/customer/monitoring.test.ts lib/customer/business-replies.test.ts lib/customer/record-issues.test.ts lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
+    "check:ath-cust-009": "node --experimental-strip-types --test lib/customer/mail.test.ts lib/customer/organization.test.ts lib/customer/monitoring.test.ts lib/customer/business-replies.test.ts lib/customer/record-issues.test.ts lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
@@ -33,10 +33,10 @@
     "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.22.0",
-    "next": "15.5.19",
+    "next": "16.3.3",
     "pg": "^8.23.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
@@ -45,10 +45,10 @@
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "eslint": "^9",
-    "eslint-config-next": "15.5.19",
+    "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
