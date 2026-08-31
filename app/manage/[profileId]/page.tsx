@@ -5,6 +5,7 @@ import { BusinessProfileEditor } from '@/components/customer/BusinessProfileEdit
 import { ManageConsoleView } from '@/components/customer/ManageConsoleView';
 import { RecordIssuesPanel } from '@/components/customer/RecordIssuesPanel';
 import { BusinessRepliesPanel } from '@/components/customer/BusinessRepliesPanel';
+import { MonitoringPanel } from '@/components/customer/MonitoringPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 
@@ -21,7 +22,13 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
   let model;
   let recordIssues;
   let businessReplies;
-  try { model = await withPlatform((p) => p.businessProfile(token, profileId)); recordIssues = await withPlatform((p) => p.recordIssues(token, profileId)); businessReplies = await withPlatform((p)=>p.businessReplies(token,profileId)); }
+  let monitoring;
+  try {
+    [model,recordIssues,businessReplies,monitoring]=await Promise.all([
+      withPlatform((p)=>p.businessProfile(token,profileId)),withPlatform((p)=>p.recordIssues(token,profileId)),
+      withPlatform((p)=>p.businessReplies(token,profileId)),withPlatform((p)=>p.monitoring(token,profileId)),
+    ]);
+  }
   catch (error) { if (error instanceof AuthError || error instanceof ManagementError) notFound(); throw error; }
   const fields = Object.fromEntries(model.fields.map((row) => [row.field_key, row.value_text]));
   const items = (category: string) => model.items.filter((row) => row.category === category).map((row) => row.value_text);
@@ -38,8 +45,9 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       freshness: model.freshness,
       hours: model.hours.map((h) => ({ weekday: Number(h.weekday), closed: Boolean(h.is_closed), opensAt: h.opens_at?.slice(0, 5), closesAt: h.closes_at?.slice(0, 5) })),
     }} />
-    <BusinessRepliesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} replies={businessReplies.replies as never}/>
-    <RecordIssuesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} issues={recordIssues.issues as never} />
+    <MonitoringPanel profileId={profileId} canEdit={canEdit} initial={monitoring.subscription as never} notifications={monitoring.notifications as never}/>
+    <div id="business-responses"><BusinessRepliesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} replies={businessReplies.replies as never}/></div>
+    <div id="record-issues"><RecordIssuesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} issues={recordIssues.issues as never} /></div>
     <section className="card-surface p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Official public record</p>
       <h2 className="mt-1 text-xl font-semibold text-navy">Florida DBPR identity</h2>
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Business name</dt><dd>{model.access.display_name_snapshot}</dd></div><div><dt className="text-muted-foreground">DBPR credential</dt><dd>{model.access.native_credential_key}</dd></div></dl>
