@@ -16,6 +16,9 @@ export const ANALYTICS_EVENTS = {
   RECORD_ISSUE_FORM_VIEW: 'record_issue_form_view',
   RECORD_ISSUE_SUBMITTED: 'record_issue_submitted',
   RECORD_ISSUE_STATUS_VIEW: 'record_issue_status_view',
+  BUSINESS_REPLY_STARTED: 'business_reply_started',
+  BUSINESS_REPLY_SUBMITTED: 'business_reply_submitted',
+  BUSINESS_REPLY_PUBLISHED: 'business_reply_published',
   BUSINESS_INFO_VALIDATION_FAILED: 'business_info_validation_failed',
 } as const;
 
