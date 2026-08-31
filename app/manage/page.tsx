@@ -52,7 +52,7 @@ export default async function ManagePage() {
             >
               Open ContractorTrustHub profile
             </a>
-            <p className="pt-3 text-sm text-muted-foreground">Monitoring: Coming in a future Customer Platform task.</p>
+            <p className="pt-3 text-sm text-muted-foreground">Monitoring is available inside this managed profile and is always optional.</p>
           </article>
         ))
       )}

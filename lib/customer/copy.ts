@@ -143,6 +143,16 @@ export function businessReplyEmail(opts:{kind:'submitted'|'changes'|'approved'|'
   return{subject:`${title} — AskTrustHub`,html:wrapEmail(title,`<p>${escapeHtml(body)}</p><p>Publication review is not factual endorsement by TrustHub.</p>`),text:`${body}\nPublication review is not factual endorsement by TrustHub.`};
 }
 
+export function regulatoryAlertEmail(opts:{profileName:string;title:string;summary:string;source:string;detectedAt:string;effectiveAt:string|null;manageUrl:string}) {
+  const source=opts.source==='fl_dbpr'?'Florida DBPR':opts.source;
+  const details=`${opts.title} for ${opts.profileName}. ${opts.summary} Source: ${source}. Detected: ${new Date(opts.detectedAt).toLocaleDateString('en-US')}.${opts.effectiveAt?` Source/effective date: ${new Date(opts.effectiveAt).toLocaleDateString('en-US')}.`:''}`;
+  return {
+    subject:`Official record change detected for ${opts.profileName}`,
+    html:wrapEmail('Official record change detected',`<p>${escapeHtml(details)}</p><p>This notice reports a detected public-record change. It does not imply misconduct or change the underlying evidence.</p>`,{label:'View monitoring alert',href:opts.manageUrl}),
+    text:`${details}\n\nThis notice does not imply misconduct or change the underlying evidence.\n${opts.manageUrl}`,
+  };
+}
+
 export function rejectedEmail(opts: { displayName: string; reason: string }): {
   subject: string;
   html: string;

@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS ath_notification_deliveries;
+DROP TABLE IF EXISTS ath_monitoring_sync_cursors;
+DROP INDEX IF EXISTS ath_notifications_monitoring_unread_idx;
+DROP INDEX IF EXISTS ath_notifications_monitoring_org_idx;
+DROP INDEX IF EXISTS ath_notifications_monitoring_dedupe_idx;
+ALTER TABLE ath_notifications DROP COLUMN IF EXISTS read_at;
+ALTER TABLE ath_notifications DROP COLUMN IF EXISTS monitoring_event_id;
+ALTER TABLE ath_notifications DROP COLUMN IF EXISTS monitoring_subscription_id;
+ALTER TABLE ath_notifications DROP COLUMN IF EXISTS hub_profile_id;
+DROP TABLE IF EXISTS ath_regulatory_change_events;
+DROP TABLE IF EXISTS ath_monitoring_subscriptions;

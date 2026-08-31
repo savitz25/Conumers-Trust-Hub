@@ -9,6 +9,7 @@ import {
   rejectedEmail,
   recordIssueEmail,
   businessReplyEmail,
+  regulatoryAlertEmail,
 } from './copy.ts';
 import { isFreeEmail } from './free-email.ts';
 import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
@@ -21,6 +22,7 @@ import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public
 import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssueError, validateRecordIssue, type RecordIssueStatus } from './record-issues.ts';
 import { BUSINESS_REPLY_STATUSES, BusinessReplyError, STAFF_REPLY_TRANSITIONS, validateBusinessReply, type BusinessReplyStatus } from './business-replies.ts';
 import type { PublicBusinessReplies } from './public-replies.ts';
+import { isValidContractorEvent, monitoringSummary, validateMonitoringSettings, MonitoringError, type ContractorMonitoringEvent } from './monitoring.ts';
 import type {
   ClaimStatus,
   GrantStatus,
@@ -816,9 +818,9 @@ export class CustomerPlatform {
     ctx?: RequestContext;
   }): Promise<void> {
     const staff = await this.requireStaff(input.sessionToken);
-    const grant = await one<{ id: string; org_id: string; status: string }>(
+    const grant = await one<{ id: string; org_id: string; hub_profile_id: string; status: string }>(
       this.deps.sql,
-      `SELECT id, org_id, status FROM ath_management_grants WHERE id = $1`,
+      `SELECT id, org_id, hub_profile_id, status FROM ath_management_grants WHERE id = $1`,
       [input.grantId]
     );
     if (!grant) throw new ClaimError('missing_intent');
@@ -839,6 +841,12 @@ export class CustomerPlatform {
       after: { status: 'revoked' },
       ctx: input.ctx,
     });
+    const stopped = await this.deps.sql.query<{id:string}>(
+      `UPDATE ath_monitoring_subscriptions SET enabled=false,version=version+1,updated_at=$3
+        WHERE org_id=$1 AND hub_profile_id=$2 AND enabled RETURNING id`,
+      [grant.org_id,grant.hub_profile_id,this.now().toISOString()]);
+    for(const subscription of stopped.rows) await this.audit({actorUserId:staff.id,actorKind:'staff',orgId:grant.org_id,
+      objectType:'ath_monitoring_subscriptions',objectId:subscription.id,action:'monitoring_disabled',after:{reason:'management_grant_revoked'}});
     customerLog('grant_revoked', { grantId: grant.id });
   }
 
@@ -1129,6 +1137,141 @@ export class CustomerPlatform {
   async staffTransitionBusinessReply(input:{sessionToken:string;replyId:string;nextStatus:BusinessReplyStatus;version:number;customerNote?:string;internalNote?:string;ctx?:RequestContext}){const staff=await this.requireStaff(input.sessionToken);if(!BUSINESS_REPLY_STATUSES.includes(input.nextStatus)||!['UNDER_REVIEW','NEEDS_INFORMATION','APPROVED','REJECTED','ARCHIVED'].includes(input.nextStatus))throw new BusinessReplyError('invalid_transition');const reply=await one<{id:string;org_id:string;hub_profile_id:string;submitted_by_user_id:string;status:BusinessReplyStatus;version:number;active_revision_id:string}>(this.deps.sql,`SELECT id,org_id,hub_profile_id,submitted_by_user_id,status,version,active_revision_id FROM ath_business_replies WHERE id=$1 FOR UPDATE`,[input.replyId]);if(!reply)throw new BusinessReplyError('not_found');if(reply.version!==input.version||!STAFF_REPLY_TRANSITIONS[reply.status]?.includes(input.nextStatus))throw new BusinessReplyError(reply.version!==input.version?'stale_version':'invalid_transition');const customerNote=String(input.customerNote||'').trim(),internalNote=String(input.internalNote||'').trim();if((['NEEDS_INFORMATION','REJECTED'].includes(input.nextStatus)&&customerNote.length<10)||customerNote.length>2000||internalNote.length>4000||/<\/?[a-z][\s\S]*>/i.test(customerNote+internalNote))throw new BusinessReplyError('validation_failed');if(input.nextStatus==='APPROVED'){const authority=await one(this.deps.sql,`SELECT 1 FROM ath_management_grants g JOIN ath_memberships m ON m.org_id=g.org_id AND m.status='active' AND m.role IN ('owner','manager','staff') WHERE g.org_id=$1 AND g.hub_profile_id=$2 AND g.status='active'`,[reply.org_id,reply.hub_profile_id]);if(!authority)throw new BusinessReplyError('forbidden');}const now=this.now().toISOString(),eventMap:Record<string,string>={UNDER_REVIEW:'business_reply_updated',NEEDS_INFORMATION:'business_reply_changes_requested',APPROVED:'business_reply_approved',REJECTED:'business_reply_rejected',ARCHIVED:'business_reply_archived'},approved=input.nextStatus==='APPROVED';await this.deps.sql.query(`UPDATE ath_business_reply_revisions SET moderation_status=$2,approved_at=CASE WHEN $3 THEN $4::timestamptz ELSE approved_at END WHERE id=$1`,[reply.active_revision_id,input.nextStatus,approved,now]);await this.deps.sql.query(`UPDATE ath_business_replies SET status=$2,version=version+1,customer_note=NULLIF($3,''),internal_note=NULLIF($4,''),reviewed_at=$5,published_revision_id=CASE WHEN $6 THEN active_revision_id ELSE published_revision_id END,published_at=CASE WHEN $6 THEN $5::timestamptz ELSE published_at END WHERE id=$1 AND version=$7`,[reply.id,input.nextStatus,customerNote,internalNote,now,approved,input.version]);await this.businessReplyEvent({replyId:reply.id,orgId:reply.org_id,hubProfileId:reply.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType:eventMap[input.nextStatus],revisionId:reply.active_revision_id,fromStatus:reply.status,toStatus:input.nextStatus,message:customerNote||null});if(internalNote)await this.businessReplyEvent({replyId:reply.id,orgId:reply.org_id,hubProfileId:reply.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType:eventMap[input.nextStatus],revisionId:reply.active_revision_id,fromStatus:reply.status,toStatus:input.nextStatus,message:internalNote,visibility:'INTERNAL'});await this.audit({actorUserId:staff.id,actorKind:'staff',orgId:reply.org_id,objectType:'ath_business_replies',objectId:reply.id,action:eventMap[input.nextStatus],before:{status:reply.status},after:{status:input.nextStatus},ctx:input.ctx});const recipient=await one<{email:string;display_name_snapshot:string}>(this.deps.sql,`SELECT u.email,p.display_name_snapshot FROM ath_users u,ath_hub_profiles p WHERE u.id=$1 AND p.id=$2`,[reply.submitted_by_user_id,reply.hub_profile_id]);if(recipient&&['NEEDS_INFORMATION','APPROVED','REJECTED'].includes(input.nextStatus)){const kind=input.nextStatus==='NEEDS_INFORMATION'?'changes':input.nextStatus==='APPROVED'?'approved':'rejected';await this.deps.mailer({to:recipient.email,...businessReplyEmail({kind,replyId:reply.id,profileName:recipient.display_name_snapshot,note:customerNote})})}return{status:input.nextStatus,version:reply.version+1}}
 
   async publicBusinessReplies(nativeProfileId:string):Promise<PublicBusinessReplies>{const rows=await this.deps.sql.query<{id:string;reply_type:string;target_type:string;target_record_id:string|null;body:string;published_at:string;created_at:string;revision_number:number}>(`SELECT r.id,r.reply_type,r.target_type,r.target_record_id,v.body,r.published_at::text,v.created_at::text,v.revision_number FROM ath_business_replies r JOIN ath_hub_profiles p ON p.id=r.hub_profile_id AND p.hub_id='contractor' JOIN ath_business_reply_revisions v ON v.id=r.published_revision_id AND v.moderation_status='APPROVED' WHERE p.native_profile_id=$1::uuid AND r.published_revision_id IS NOT NULL AND r.withdrawn_at IS NULL ORDER BY r.published_at`,[nativeProfileId]);return{contractVersion:1,hub:'contractor',nativeProfileId,replies:rows.rows.map(r=>({id:r.id,replyType:r.reply_type,targetType:r.target_type,targetRecordId:r.target_record_id,body:r.body,source:'BUSINESS_RESPONSE',publishedAt:r.published_at,updatedAt:r.revision_number>1?r.created_at:null}))}}
+
+  async monitoring(sessionToken:string,nativeProfileId:string) {
+    const access=await this.requireProfileAccess(sessionToken,nativeProfileId);
+    const subscription=await one<Record<string,unknown>>(this.deps.sql,
+      `SELECT enabled,email_enabled,in_app_enabled,baseline_at::text,version,updated_at::text
+         FROM ath_monitoring_subscriptions WHERE org_id=$1 AND hub_profile_id=$2`,[access.org_id,access.hub_profile_id]);
+    const notifications=await this.deps.sql.query<Record<string,unknown>>(
+      `SELECT n.id,n.title,n.body AS summary,n.read_at::text,n.created_at::text,e.change_type,e.source_system,
+              e.source_dataset,e.source_record_id,e.prior_state,e.current_state,
+              e.source_effective_at::text,e.detected_at::text
+         FROM ath_notifications n
+         JOIN ath_regulatory_change_events e ON e.id=n.monitoring_event_id
+         JOIN ath_monitoring_subscriptions s ON s.id=n.monitoring_subscription_id
+        WHERE n.org_id=$1 AND n.hub_profile_id=$2 AND s.in_app_enabled
+        ORDER BY n.created_at DESC LIMIT 100`,[access.org_id,access.hub_profile_id]);
+    return {access,subscription:subscription||{enabled:false,email_enabled:false,in_app_enabled:true,baseline_at:null,version:0},notifications:notifications.rows};
+  }
+
+  async monitoringNotifications(sessionToken:string) {
+    const user=await this.sessionUser(sessionToken); if(!user) throw new AuthError('missing_session');
+    const rows=await this.deps.sql.query<Record<string,unknown>>(
+      `SELECT n.id,n.title,n.body AS summary,n.read_at::text,n.created_at::text,e.change_type,e.source_system,
+              e.source_record_id,e.prior_state,e.current_state,e.source_effective_at::text,e.detected_at::text,
+              p.native_profile_id::text,p.native_slug,p.display_name_snapshot
+         FROM ath_notifications n
+         JOIN ath_monitoring_subscriptions s ON s.id=n.monitoring_subscription_id AND s.in_app_enabled
+         JOIN ath_regulatory_change_events e ON e.id=n.monitoring_event_id
+         JOIN ath_hub_profiles p ON p.id=n.hub_profile_id
+         JOIN ath_memberships m ON m.org_id=n.org_id AND m.user_id=$1 AND m.status='active'
+         JOIN ath_organizations o ON o.id=n.org_id AND o.status='active'
+         JOIN ath_management_grants g ON g.org_id=n.org_id AND g.hub_profile_id=n.hub_profile_id AND g.status='active'
+        ORDER BY n.created_at DESC LIMIT 200`,[user.id]);
+    return rows.rows;
+  }
+
+  async saveMonitoring(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}) {
+    const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
+    const data=validateMonitoringSettings(input.body),now=this.now().toISOString();
+    const existing=await one<{id:string;enabled:boolean;version:number;baseline_at:string|null}>(this.deps.sql,
+      `SELECT id,enabled,version,baseline_at::text FROM ath_monitoring_subscriptions
+        WHERE org_id=$1 AND hub_profile_id=$2 FOR UPDATE`,[access.org_id,access.hub_profile_id]);
+    if((existing?.version??0)!==data.version) throw new MonitoringError('stale_version');
+    let id:string;
+    if(!existing){
+      const created=await one<{id:string}>(this.deps.sql,
+        `INSERT INTO ath_monitoring_subscriptions
+          (org_id,hub_profile_id,enabled,email_enabled,in_app_enabled,created_by_user_id,activated_at,baseline_at,updated_at)
+         VALUES($1,$2,$3,$4,$5,$6,CASE WHEN $3 THEN $7::timestamptz END,CASE WHEN $3 THEN $7::timestamptz END,$7) RETURNING id`,
+        [access.org_id,access.hub_profile_id,data.enabled,data.emailEnabled,data.inAppEnabled,access.user_id,now]);
+      id=created!.id;
+    } else {
+      const updated=await this.deps.sql.query<{id:string}>(
+        `UPDATE ath_monitoring_subscriptions SET enabled=$2,email_enabled=$3,in_app_enabled=$4,
+           activated_at=CASE WHEN $2 AND NOT enabled THEN $5::timestamptz ELSE activated_at END,
+           baseline_at=CASE WHEN $2 AND NOT enabled THEN $5::timestamptz ELSE baseline_at END,
+           version=version+1,updated_at=$5 WHERE id=$1 AND version=$6 RETURNING id`,
+        [existing.id,data.enabled,data.emailEnabled,data.inAppEnabled,now,data.version]);
+      if(!updated.rows.length) throw new MonitoringError('stale_version'); id=existing.id;
+    }
+    const action=data.enabled?(existing?.enabled?'monitoring_preferences_changed':'monitoring_enabled'):'monitoring_disabled';
+    await this.audit({actorUserId:access.user_id,orgId:access.org_id,objectType:'ath_monitoring_subscriptions',objectId:id,action,
+      before:existing?{enabled:existing.enabled,version:existing.version}:null,after:{enabled:data.enabled,email_enabled:data.emailEnabled,in_app_enabled:data.inAppEnabled,version:data.version+1},ctx:input.ctx});
+    return {enabled:data.enabled,emailEnabled:data.emailEnabled,inAppEnabled:data.inAppEnabled,version:data.version+1,baselineAt:data.enabled?(existing?.enabled?existing.baseline_at:now):existing?.baseline_at||null};
+  }
+
+  async markMonitoringNotificationRead(input:{sessionToken:string;nativeProfileId:string;notificationId:string;ctx?:RequestContext}) {
+    const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId);
+    const updated=await this.deps.sql.query<{id:string}>(
+      `UPDATE ath_notifications SET read_at=COALESCE(read_at,$4::timestamptz)
+        WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 RETURNING id`,
+      [input.notificationId,access.org_id,access.hub_profile_id,this.now().toISOString()]);
+    if(!updated.rows.length) throw new MonitoringError('not_found');
+    await this.audit({actorUserId:access.user_id,orgId:access.org_id,objectType:'ath_notifications',objectId:input.notificationId,action:'regulatory_notification_read',ctx:input.ctx});
+    return {read:true};
+  }
+
+  async ingestMonitoringEvents(events:unknown[]):Promise<{accepted:number;notifications:number;lastSequence:number}> {
+    let accepted=0,notifications=0,lastSequence=0;
+    for(const raw of events){
+      if(!isValidContractorEvent(raw)) continue;
+      const event=raw as ContractorMonitoringEvent; lastSequence=Math.max(lastSequence,Number(event.sequence_id));
+      const profile=await one<{id:string}>(this.deps.sql,`SELECT id FROM ath_hub_profiles WHERE hub_id='contractor' AND native_profile_id=$1::uuid`,[event.native_profile_id]);
+      const inserted=await one<{id:string}>(this.deps.sql,
+        `INSERT INTO ath_regulatory_change_events
+          (contractor_sequence,hub_profile_id,native_profile_id,source_system,source_dataset,source_record_id,change_type,prior_state,current_state,source_effective_at,detected_at,fingerprint_sha256,provenance)
+         VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10,$11,$12,$13::jsonb)
+         ON CONFLICT(fingerprint_sha256) DO NOTHING RETURNING id`,
+        [event.sequence_id,profile?.id||null,event.native_profile_id,event.source_system,event.source_dataset,event.source_record_id,event.change_type,
+         event.prior_state===null?null:JSON.stringify(event.prior_state),JSON.stringify(event.current_state),event.source_effective_at,event.detected_at,event.fingerprint_sha256,JSON.stringify(event.provenance||{})]);
+      if(!inserted) continue; accepted++;
+      await this.audit({actorKind:'system',objectType:'ath_regulatory_change_events',objectId:inserted.id,action:'regulatory_change_detected',after:{change_type:event.change_type,native_profile_id:event.native_profile_id,source_system:event.source_system}});
+      if(!profile) continue;
+      const copy=monitoringSummary(event.change_type,event.current_state);
+      const created=await this.deps.sql.query<{id:string;org_id:string}>(
+        `INSERT INTO ath_notifications(monitoring_subscription_id,monitoring_event_id,org_id,hub_profile_id,event_key,title,body,payload)
+         SELECT s.id,$1,s.org_id,s.hub_profile_id,'regulatory_change',$2,$3,'{}'::jsonb FROM ath_monitoring_subscriptions s
+         JOIN ath_organizations o ON o.id=s.org_id AND o.status='active'
+         WHERE s.hub_profile_id=$4 AND s.enabled AND s.baseline_at < $5::timestamptz
+           AND EXISTS(SELECT 1 FROM ath_management_grants g WHERE g.org_id=s.org_id AND g.hub_profile_id=s.hub_profile_id AND g.status='active')
+           AND EXISTS(SELECT 1 FROM ath_memberships m WHERE m.org_id=s.org_id AND m.status='active' AND m.role IN('owner','manager','staff'))
+         ON CONFLICT(monitoring_subscription_id,monitoring_event_id) WHERE monitoring_subscription_id IS NOT NULL AND monitoring_event_id IS NOT NULL DO NOTHING RETURNING id,org_id`,[inserted.id,copy.title,copy.summary,profile.id,event.detected_at]);
+      notifications+=created.rows.length;
+      for(const notification of created.rows){
+        await this.deps.sql.query(`INSERT INTO ath_notification_deliveries(notification_id,channel,status)
+          SELECT $1,'email','PENDING' FROM ath_monitoring_subscriptions s JOIN ath_notifications n ON n.monitoring_subscription_id=s.id
+          WHERE n.id=$1 AND s.email_enabled ON CONFLICT DO NOTHING`,[notification.id]);
+        await this.audit({actorKind:'system',orgId:notification.org_id,objectType:'ath_notifications',objectId:notification.id,action:'regulatory_notification_created'});
+      }
+    }
+    return {accepted,notifications,lastSequence};
+  }
+
+  async deliverMonitoringEmails(limit=50):Promise<{sent:number;failed:number}> {
+    const rows=await this.deps.sql.query<{delivery_id:string;notification_id:string;org_id:string;email:string;display_name_snapshot:string;title:string;summary:string;detected_at:string;source_effective_at:string|null;source_system:string}>(
+      `SELECT d.id delivery_id,n.id notification_id,n.org_id,u.email,p.display_name_snapshot,n.title,n.body AS summary,
+              e.detected_at::text,e.source_effective_at::text,e.source_system
+         FROM ath_notification_deliveries d JOIN ath_notifications n ON n.id=d.notification_id
+         JOIN ath_monitoring_subscriptions s ON s.id=n.monitoring_subscription_id AND s.enabled AND s.email_enabled
+         JOIN ath_hub_profiles p ON p.id=n.hub_profile_id
+         JOIN ath_users u ON u.id=s.created_by_user_id
+         JOIN ath_memberships m ON m.org_id=s.org_id AND m.user_id=u.id AND m.status='active' AND m.role IN('owner','manager','staff')
+         JOIN ath_management_grants g ON g.org_id=s.org_id AND g.hub_profile_id=s.hub_profile_id AND g.status='active'
+         JOIN ath_organizations o ON o.id=s.org_id AND o.status='active'
+         JOIN ath_regulatory_change_events e ON e.id=n.monitoring_event_id
+        WHERE d.status IN('PENDING','FAILED') AND d.attempts<3 ORDER BY d.created_at LIMIT $1 FOR UPDATE OF d SKIP LOCKED`,[limit]);
+    let sent=0,failed=0;
+    for(const row of rows.rows){
+      const result=await this.deps.mailer({to:row.email,...regulatoryAlertEmail({profileName:row.display_name_snapshot,title:row.title,summary:row.summary,source:row.source_system,detectedAt:row.detected_at,effectiveAt:row.source_effective_at,manageUrl:`${this.deps.siteUrl}/manage/notifications`})});
+      await this.deps.sql.query(`UPDATE ath_notification_deliveries SET status=$2,attempts=attempts+1,sent_at=CASE WHEN $2='SENT' THEN $3::timestamptz ELSE sent_at END,last_error_code=CASE WHEN $2='FAILED' THEN 'provider_failed' ELSE NULL END,updated_at=$3 WHERE id=$1`,[row.delivery_id,result.sent?'SENT':'FAILED',this.now().toISOString()]);
+      await this.audit({actorKind:'system',orgId:row.org_id,objectType:'ath_notification_deliveries',objectId:row.delivery_id,action:result.sent?'regulatory_email_sent':'regulatory_email_failed'});
+      if (result.sent) sent += 1;
+      else failed += 1;
+    }
+    return {sent,failed};
+  }
 
   async managedHome(sessionToken: string) {
     const user = await this.sessionUser(sessionToken);

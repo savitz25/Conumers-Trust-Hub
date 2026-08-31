@@ -20,6 +20,10 @@ export const ANALYTICS_EVENTS = {
   BUSINESS_REPLY_SUBMITTED: 'business_reply_submitted',
   BUSINESS_REPLY_PUBLISHED: 'business_reply_published',
   BUSINESS_INFO_VALIDATION_FAILED: 'business_info_validation_failed',
+  MONITORING_SETTINGS_VIEW: 'monitoring_settings_view',
+  MONITORING_ENABLED: 'monitoring_enabled',
+  MONITORING_DISABLED: 'monitoring_disabled',
+  REGULATORY_ALERT_OPENED: 'regulatory_alert_opened',
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
