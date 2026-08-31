@@ -21,9 +21,10 @@ export default async function ClaimContinuePage({
 
   const result = await withPlatform(async (p) => {
     const user = await p.sessionUser(sessionToken);
-    if (!existing) return { intent: null, user };
+    if (!existing) return { intent: null, user, organizations: [] };
     const intent = await p.intentPreview(existing);
-    return { intent, user };
+    const organizations=user?await p.claimOrganizations(sessionToken||''):[];
+    return { intent, user, organizations };
   });
 
   if (!result.intent) {
@@ -68,6 +69,7 @@ export default async function ClaimContinuePage({
         email={user?.email ?? ''}
         relationships={Object.entries(RELATIONSHIP_LABELS) as [RelationshipType, string][]}
         expectedCredential={intent.payload.external_key}
+        organizations={result.organizations}
       />
     </section>
   );

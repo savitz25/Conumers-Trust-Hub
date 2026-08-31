@@ -10,6 +10,8 @@ import {
   recordIssueEmail,
   businessReplyEmail,
   regulatoryAlertEmail,
+  organizationInvitationEmail,
+  organizationMembershipEmail,
 } from './copy.ts';
 import { isFreeEmail } from './free-email.ts';
 import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
@@ -23,6 +25,7 @@ import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssu
 import { BUSINESS_REPLY_STATUSES, BusinessReplyError, STAFF_REPLY_TRANSITIONS, validateBusinessReply, type BusinessReplyStatus } from './business-replies.ts';
 import type { PublicBusinessReplies } from './public-replies.ts';
 import { isValidContractorEvent, monitoringSummary, validateMonitoringSettings, MonitoringError, type ContractorMonitoringEvent } from './monitoring.ts';
+import { INVITATION_TTL_MS, OrganizationError, validateInvitationInput, validateMemberRole } from './organization.ts';
 import type {
   ClaimStatus,
   GrantStatus,
@@ -403,6 +406,7 @@ export class CustomerPlatform {
   async submitClaim(input: {
     sessionToken: string;
     intentId: string;
+    orgId?: string;
     relationshipType: RelationshipType;
     legalName?: string;
     credentialAttestation: string;
@@ -453,19 +457,22 @@ export class CustomerPlatform {
       [hub!.id]
     );
 
-    const orgName = (input.legalName || adapter.profile.displayName).trim();
-    const org = await one<{ id: string }>(
-      this.deps.sql,
-      `INSERT INTO ath_organizations (display_name, legal_name, status)
-       VALUES ($1,$2,'active') RETURNING id`,
-      [orgName, input.legalName?.trim() || null]
-    );
-
-    await this.deps.sql.query(
-      `INSERT INTO ath_memberships (org_id, user_id, role, status)
-       VALUES ($1,$2,'owner','invited')`,
-      [org!.id, user.id]
-    );
+    let org: { id: string } | null = null;
+    if (input.orgId) {
+      org = await one<{ id: string }>(this.deps.sql,
+        `SELECT o.id FROM ath_organizations o
+         JOIN ath_memberships m ON m.org_id=o.id AND m.user_id=$2 AND m.status='active' AND m.role='owner'
+         WHERE o.id=$1::uuid AND o.status='active'`, [input.orgId,user.id]);
+      if (!org) throw new ClaimError('forbidden_organization');
+    } else {
+      const orgName = (input.legalName || adapter.profile.displayName).trim();
+      org = await one<{ id: string }>(this.deps.sql,
+        `INSERT INTO ath_organizations (display_name, legal_name, status)
+         VALUES ($1,$2,'active') RETURNING id`, [orgName,input.legalName?.trim()||null]);
+      await this.deps.sql.query(
+        `INSERT INTO ath_memberships (org_id,user_id,role,status) VALUES ($1,$2,'owner','invited')`,
+        [org!.id,user.id]);
+    }
 
     const freeEmail = isFreeEmail(user.email);
     const verificationMethod: VerificationMethod = 'manual_review';
@@ -1190,10 +1197,11 @@ export class CustomerPlatform {
     } else {
       const updated=await this.deps.sql.query<{id:string}>(
         `UPDATE ath_monitoring_subscriptions SET enabled=$2,email_enabled=$3,in_app_enabled=$4,
+           created_by_user_id=$7,
            activated_at=CASE WHEN $2 AND NOT enabled THEN $5::timestamptz ELSE activated_at END,
            baseline_at=CASE WHEN $2 AND NOT enabled THEN $5::timestamptz ELSE baseline_at END,
            version=version+1,updated_at=$5 WHERE id=$1 AND version=$6 RETURNING id`,
-        [existing.id,data.enabled,data.emailEnabled,data.inAppEnabled,now,data.version]);
+        [existing.id,data.enabled,data.emailEnabled,data.inAppEnabled,now,data.version,access.user_id]);
       if(!updated.rows.length) throw new MonitoringError('stale_version'); id=existing.id;
     }
     const action=data.enabled?(existing?.enabled?'monitoring_preferences_changed':'monitoring_enabled'):'monitoring_disabled';
@@ -1273,19 +1281,197 @@ export class CustomerPlatform {
     return {sent,failed};
   }
 
+  async claimOrganizations(sessionToken:string) {
+    const user=await this.sessionUser(sessionToken);
+    if(!user) return [];
+    const rows=await this.deps.sql.query<{id:string;display_name:string}>(
+      `SELECT o.id,o.display_name FROM ath_organizations o
+       JOIN ath_memberships m ON m.org_id=o.id AND m.user_id=$1 AND m.status='active' AND m.role='owner'
+       WHERE o.status='active' ORDER BY o.display_name,o.id`,[user.id]);
+    return rows.rows;
+  }
+
+  private async requireOrganizationAccess(sessionToken:string,orgId:string,ownerOnly=false) {
+    const user=await this.sessionUser(sessionToken);
+    if(!user) throw new AuthError('missing_session');
+    const access=await one<{org_id:string;display_name:string;status:string;membership_id:string;role:MembershipRole}>(this.deps.sql,
+      `SELECT o.id org_id,o.display_name,o.status,m.id membership_id,m.role
+       FROM ath_organizations o JOIN ath_memberships m ON m.org_id=o.id AND m.user_id=$2 AND m.status='active'
+       WHERE o.id=$1::uuid AND o.status='active'`,[orgId,user.id]);
+    if(!access||ownerOnly&&access.role!=='owner') throw new OrganizationError('forbidden');
+    return {...access,user};
+  }
+
+  async organizationConsole(sessionToken:string,orgId:string) {
+    const access=await this.requireOrganizationAccess(sessionToken,orgId);
+    await this.deps.sql.query(
+      `UPDATE ath_organization_invitations SET status='EXPIRED',version=version+1,updated_at=$2
+       WHERE org_id=$1 AND status='PENDING' AND expires_at<=$2::timestamptz`,[orgId,this.now().toISOString()]);
+    const members=await this.deps.sql.query<{id:string;email:string;role:MembershipRole;status:string;created_at:string;updated_at:string}>(
+        `SELECT m.id,u.email,m.role,m.status,m.created_at::text,m.updated_at::text FROM ath_memberships m
+         JOIN ath_users u ON u.id=m.user_id WHERE m.org_id=$1 AND m.status='active' ORDER BY CASE m.role WHEN 'owner' THEN 0 WHEN 'manager' THEN 1 WHEN 'staff' THEN 2 ELSE 3 END,u.email`,[orgId]);
+    const invites=await this.deps.sql.query<{id:string;invited_email_normalized:string;invited_role:string;status:string;expires_at:string;created_at:string;version:number}>(
+        `SELECT id,invited_email_normalized,invited_role,status,expires_at::text,created_at::text,version
+         FROM ath_organization_invitations WHERE org_id=$1 AND status='PENDING' ORDER BY created_at DESC`,[orgId]);
+    const profiles=await this.deps.sql.query<Record<string,unknown>>(
+        `SELECT g.id grant_id,g.status grant_status,g.granted_at::text,p.hub_id,p.native_profile_id::text,p.native_slug,
+                p.native_credential_key,p.display_name_snapshot,s.enabled monitoring_enabled
+         FROM ath_management_grants g JOIN ath_hub_profiles p ON p.id=g.hub_profile_id
+         LEFT JOIN ath_monitoring_subscriptions s ON s.org_id=g.org_id AND s.hub_profile_id=g.hub_profile_id
+         WHERE g.org_id=$1 AND g.status='active' ORDER BY p.hub_id,p.display_name_snapshot,p.native_profile_id`,[orgId]);
+    const activity=await this.deps.sql.query<Record<string,unknown>>(
+        `SELECT action,before_state,after_state,created_at::text FROM ath_audit_events
+         WHERE org_id=$1 AND action LIKE 'organization_%' ORDER BY created_at DESC LIMIT 20`,[orgId]);
+    return {organization:{id:access.org_id,displayName:access.display_name,status:access.status},currentRole:access.role,
+      canAdmin:access.role==='owner',members:members.rows,invitations:invites.rows,profiles:profiles.rows,activity:activity.rows};
+  }
+
+  async createOrganizationInvitation(input:{sessionToken:string;orgId:string;body:unknown;ctx?:RequestContext}) {
+    const access=await this.requireOrganizationAccess(input.sessionToken,input.orgId,true);
+    const data=validateInvitationInput(input.body);
+    await this.hitRateLimit('organization_invite_actor',access.user.id,20,60*60*1000);
+    await this.hitRateLimit('organization_invite_recipient',`${input.orgId}:${data.email}`,5,24*60*60*1000);
+    const member=await one(this.deps.sql,
+      `SELECT 1 FROM ath_memberships m JOIN ath_users u ON u.id=m.user_id
+       WHERE m.org_id=$1 AND u.email_normalized=$2 AND m.status='active'`,[input.orgId,data.email]);
+    if(member) throw new OrganizationError('already_member');
+    const pending=await one(this.deps.sql,
+      `SELECT 1 FROM ath_organization_invitations WHERE org_id=$1 AND invited_email_normalized=$2 AND status='PENDING'`,[input.orgId,data.email]);
+    if(pending) throw new OrganizationError('duplicate_invitation');
+    const token=randomToken(32),expiresAt=new Date(this.now().getTime()+INVITATION_TTL_MS).toISOString();
+    const invitation=await one<{id:string}>(this.deps.sql,
+      `INSERT INTO ath_organization_invitations(org_id,invited_email_normalized,invited_role,invited_by_user_id,status,token_hash,expires_at)
+       VALUES($1,$2,$3,$4,'PENDING',$5,$6) RETURNING id`,[input.orgId,data.email,data.role,access.user.id,hashToken(token),expiresAt]);
+    await this.audit({actorUserId:access.user.id,orgId:input.orgId,objectType:'ath_organization_invitations',objectId:invitation!.id,
+      action:'organization_invite_created',after:{invited_email:data.email,role:data.role,expires_at:expiresAt},ctx:input.ctx});
+    const acceptUrl=`${this.deps.siteUrl.replace(/\/$/,'')}/manage/invitations/accept?token=${encodeURIComponent(token)}`;
+    const result=await this.deps.mailer({to:data.email,...organizationInvitationEmail({organizationName:access.display_name,role:data.role,expiresAt,acceptUrl,inviterEmail:access.user.email})});
+    return {id:invitation!.id,status:'PENDING',expiresAt,emailSent:result.sent,preview:result.preview};
+  }
+
+  async resendOrganizationInvitation(input:{sessionToken:string;orgId:string;invitationId:string;version:number;ctx?:RequestContext}) {
+    const access=await this.requireOrganizationAccess(input.sessionToken,input.orgId,true);
+    await this.hitRateLimit('organization_invite_resend',`${input.orgId}:${input.invitationId}`,3,24*60*60*1000);
+    const invite=await one<{id:string;invited_email_normalized:string;invited_role:string;status:string;version:number}>(this.deps.sql,
+      `SELECT id,invited_email_normalized,invited_role,status,version FROM ath_organization_invitations
+       WHERE id=$1 AND org_id=$2 FOR UPDATE`,[input.invitationId,input.orgId]);
+    if(!invite) throw new OrganizationError('not_found');
+    if(invite.status!=='PENDING') throw new OrganizationError(invite.status==='REVOKED'?'revoked_invitation':'consumed_invitation');
+    if(invite.version!==input.version) throw new OrganizationError('stale_version');
+    const token=randomToken(32),expiresAt=new Date(this.now().getTime()+INVITATION_TTL_MS).toISOString();
+    await this.deps.sql.query(`UPDATE ath_organization_invitations SET token_hash=$2,expires_at=$3,version=version+1,updated_at=$3 WHERE id=$1`,
+      [invite.id,hashToken(token),expiresAt]);
+    await this.audit({actorUserId:access.user.id,orgId:input.orgId,objectType:'ath_organization_invitations',objectId:invite.id,
+      action:'organization_invite_resent',after:{role:invite.invited_role,expires_at:expiresAt},ctx:input.ctx});
+    const acceptUrl=`${this.deps.siteUrl.replace(/\/$/,'')}/manage/invitations/accept?token=${encodeURIComponent(token)}`;
+    const result=await this.deps.mailer({to:invite.invited_email_normalized,...organizationInvitationEmail({organizationName:access.display_name,role:invite.invited_role,expiresAt,acceptUrl,inviterEmail:access.user.email})});
+    return {version:invite.version+1,expiresAt,emailSent:result.sent,preview:result.preview};
+  }
+
+  async revokeOrganizationInvitation(input:{sessionToken:string;orgId:string;invitationId:string;version:number;ctx?:RequestContext}) {
+    const access=await this.requireOrganizationAccess(input.sessionToken,input.orgId,true);
+    const changed=await this.deps.sql.query<{id:string}>(
+      `UPDATE ath_organization_invitations SET status='REVOKED',revoked_at=$4,version=version+1,updated_at=$4
+       WHERE id=$1 AND org_id=$2 AND status='PENDING' AND version=$3 RETURNING id`,
+      [input.invitationId,input.orgId,input.version,this.now().toISOString()]);
+    if(!changed.rows.length) throw new OrganizationError('stale_version');
+    await this.audit({actorUserId:access.user.id,orgId:input.orgId,objectType:'ath_organization_invitations',objectId:input.invitationId,
+      action:'organization_invite_revoked',ctx:input.ctx});
+    return {status:'REVOKED'};
+  }
+
+  async invitationPreview(token:string) {
+    if(!token) throw new OrganizationError('not_found');
+    const invite=await one<{id:string;organization_name:string;invited_role:string;status:string;expires_at:string}>(this.deps.sql,
+      `SELECT i.id,o.display_name organization_name,i.invited_role,i.status,i.expires_at::text
+       FROM ath_organization_invitations i JOIN ath_organizations o ON o.id=i.org_id
+       WHERE i.token_hash=$1`,[hashToken(token)]);
+    if(!invite) throw new OrganizationError('not_found');
+    return invite;
+  }
+
+  async acceptOrganizationInvitation(input:{sessionToken:string;token:string;ctx?:RequestContext}) {
+    const user=await this.sessionUser(input.sessionToken);
+    if(!user) throw new AuthError('missing_session');
+    if(!user.emailConfirmedAt) throw new AuthError('not_confirmed');
+    await this.hitRateLimit('organization_invite_accept',user.id,10,60*60*1000);
+    const invite=await one<{id:string;org_id:string;organization_name:string;invited_email_normalized:string;invited_role:MembershipRole;invited_by_user_id:string;status:string;expires_at:string;version:number}>(this.deps.sql,
+      `SELECT i.id,i.org_id,o.display_name organization_name,i.invited_email_normalized,i.invited_role,i.invited_by_user_id,i.status,i.expires_at::text,i.version
+       FROM ath_organization_invitations i JOIN ath_organizations o ON o.id=i.org_id AND o.status='active'
+       WHERE i.token_hash=$1 FOR UPDATE OF i`,[hashToken(input.token)]);
+    if(!invite) throw new OrganizationError('not_found');
+    if(invite.status==='REVOKED') throw new OrganizationError('revoked_invitation');
+    if(invite.status==='ACCEPTED') throw new OrganizationError('consumed_invitation');
+    if(invite.status!=='PENDING') throw new OrganizationError('expired_invitation');
+    if(new Date(invite.expires_at).getTime()<=this.now().getTime()) {
+      await this.deps.sql.query(`UPDATE ath_organization_invitations SET status='EXPIRED',version=version+1,updated_at=$2 WHERE id=$1`,[invite.id,this.now().toISOString()]);
+      throw new OrganizationError('expired_invitation');
+    }
+    if(normalizeEmail(user.email)!==invite.invited_email_normalized) throw new OrganizationError('email_mismatch');
+    const existing=await one<{id:string;status:string}>(this.deps.sql,
+      `SELECT id,status FROM ath_memberships WHERE org_id=$1 AND user_id=$2 ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,[invite.org_id,user.id]);
+    if(existing?.status==='active') throw new OrganizationError('already_member');
+    let membershipId:string;
+    if(existing){await this.deps.sql.query(`UPDATE ath_memberships SET role=$2,status='active',updated_at=$3 WHERE id=$1`,[existing.id,invite.invited_role,this.now().toISOString()]);membershipId=existing.id;}
+    else {const membership=await one<{id:string}>(this.deps.sql,
+      `INSERT INTO ath_memberships(org_id,user_id,role,status) VALUES($1,$2,$3,'active') RETURNING id`,[invite.org_id,user.id,invite.invited_role]);membershipId=membership!.id;}
+    const now=this.now().toISOString();
+    await this.deps.sql.query(`UPDATE ath_organization_invitations SET status='ACCEPTED',accepted_by_user_id=$2,accepted_at=$3,version=version+1,updated_at=$3 WHERE id=$1`,[invite.id,user.id,now]);
+    await this.audit({actorUserId:user.id,orgId:invite.org_id,objectType:'ath_organization_invitations',objectId:invite.id,
+      action:'organization_invite_accepted',after:{membership_id:membershipId,role:invite.invited_role},ctx:input.ctx});
+    const inviter=await one<{email:string}>(this.deps.sql,`SELECT email FROM ath_users WHERE id=$1`,[invite.invited_by_user_id]);
+    if(inviter) await this.deps.mailer({to:inviter.email,...organizationMembershipEmail({kind:'accepted',organizationName:invite.organization_name,manageUrl:`${this.deps.siteUrl}/manage/organization/${invite.org_id}`})});
+    return {orgId:invite.org_id,membershipId,role:invite.invited_role};
+  }
+
+  async changeOrganizationMemberRole(input:{sessionToken:string;orgId:string;membershipId:string;role:unknown;ctx?:RequestContext}) {
+    const access=await this.requireOrganizationAccess(input.sessionToken,input.orgId,true),role=validateMemberRole(input.role);
+    const target=await one<{id:string;user_id:string;email:string;role:MembershipRole;status:string}>(this.deps.sql,
+      `SELECT m.id,m.user_id,u.email,m.role,m.status FROM ath_memberships m JOIN ath_users u ON u.id=m.user_id
+       WHERE m.id=$1 AND m.org_id=$2 FOR UPDATE`,[input.membershipId,input.orgId]);
+    if(!target||target.status!=='active') throw new OrganizationError('not_found');
+    if(target.role==='owner') {
+      const owners=await one<{n:string}>(this.deps.sql,`SELECT count(*)::text n FROM ath_memberships WHERE org_id=$1 AND status='active' AND role='owner'`,[input.orgId]);
+      if(Number(owners?.n||0)<=1) throw new OrganizationError('last_owner');
+    }
+    await this.deps.sql.query(`UPDATE ath_memberships SET role=$2,updated_at=$3 WHERE id=$1`,[target.id,role,this.now().toISOString()]);
+    await this.audit({actorUserId:access.user.id,orgId:input.orgId,objectType:'ath_memberships',objectId:target.id,
+      action:'organization_member_role_changed',before:{role:target.role},after:{role},ctx:input.ctx});
+    await this.deps.mailer({to:target.email,...organizationMembershipEmail({kind:'role_changed',organizationName:access.display_name,role,manageUrl:`${this.deps.siteUrl}/manage/organization/${input.orgId}`})});
+    return {role};
+  }
+
+  async removeOrganizationMember(input:{sessionToken:string;orgId:string;membershipId:string;ctx?:RequestContext}) {
+    const access=await this.requireOrganizationAccess(input.sessionToken,input.orgId,true);
+    const target=await one<{id:string;user_id:string;email:string;role:MembershipRole;status:string}>(this.deps.sql,
+      `SELECT m.id,m.user_id,u.email,m.role,m.status FROM ath_memberships m JOIN ath_users u ON u.id=m.user_id
+       WHERE m.id=$1 AND m.org_id=$2 FOR UPDATE`,[input.membershipId,input.orgId]);
+    if(!target||target.status!=='active') throw new OrganizationError('not_found');
+    if(target.role==='owner') {
+      const owners=await one<{n:string}>(this.deps.sql,`SELECT count(*)::text n FROM ath_memberships WHERE org_id=$1 AND status='active' AND role='owner'`,[input.orgId]);
+      if(Number(owners?.n||0)<=1) throw new OrganizationError('last_owner');
+    }
+    await this.deps.sql.query(`UPDATE ath_memberships SET status='revoked',updated_at=$2 WHERE id=$1`,[target.id,this.now().toISOString()]);
+    await this.audit({actorUserId:access.user.id,orgId:input.orgId,objectType:'ath_memberships',objectId:target.id,
+      action:'organization_member_removed',before:{status:'active',role:target.role},after:{status:'revoked'},ctx:input.ctx});
+    await this.deps.mailer({to:target.email,...organizationMembershipEmail({kind:'removed',organizationName:access.display_name,manageUrl:`${this.deps.siteUrl}/manage`})});
+    return {status:'revoked'};
+  }
+
   async managedHome(sessionToken: string) {
     const user = await this.sessionUser(sessionToken);
     if (!user) throw new AuthError('missing_session');
     const res = await this.deps.sql.query(
       `SELECT g.id AS grant_id, g.status AS grant_status, g.granted_at,
               o.id AS org_id, o.display_name,
-              p.id AS hub_profile_id, p.native_slug, p.native_credential_key, p.native_profile_id, p.display_name_snapshot,
-              m.role, c.id AS claim_id, c.status AS claim_status
+              p.id AS hub_profile_id,p.hub_id,p.native_slug,p.native_credential_key,p.native_profile_id,p.display_name_snapshot,
+              m.role,c.id AS claim_id,c.status AS claim_status,s.enabled AS monitoring_enabled
          FROM ath_management_grants g
-         JOIN ath_organizations o ON o.id = g.org_id
+         JOIN ath_organizations o ON o.id = g.org_id AND o.status='active'
          JOIN ath_hub_profiles p ON p.id = g.hub_profile_id
          JOIN ath_memberships m ON m.org_id = o.id AND m.user_id = $1 AND m.status = 'active'
          JOIN ath_claims c ON c.id = g.granted_from_claim_id
+         LEFT JOIN ath_monitoring_subscriptions s ON s.org_id=g.org_id AND s.hub_profile_id=g.hub_profile_id
         WHERE g.status = 'active'
         ORDER BY g.granted_at DESC`,
       [user.id]

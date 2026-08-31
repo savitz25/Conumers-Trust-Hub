@@ -153,6 +153,18 @@ export function regulatoryAlertEmail(opts:{profileName:string;title:string;summa
   };
 }
 
+export function organizationInvitationEmail(opts:{organizationName:string;role:string;expiresAt:string;acceptUrl:string;inviterEmail:string}) {
+  const role=opts.role.charAt(0).toUpperCase()+opts.role.slice(1);
+  const body=`${opts.inviterEmail} invited you to join ${opts.organizationName} as ${role}. The invitation expires ${new Date(opts.expiresAt).toLocaleDateString('en-US')}. Accepting gives organization access according to this role; it is not proof of ownership or a TrustHub endorsement.`;
+  return {subject:"You've been invited to manage a TrustHub organization",html:wrapEmail('Organization invitation',`<p>${escapeHtml(body)}</p>`,{label:'Review invitation',href:opts.acceptUrl}),text:`${body}\n\n${opts.acceptUrl}`};
+}
+
+export function organizationMembershipEmail(opts:{kind:'accepted'|'role_changed'|'removed';organizationName:string;role?:string;manageUrl:string}) {
+  const title=opts.kind==='accepted'?'Organization invitation accepted':opts.kind==='role_changed'?'Your organization role changed':'Your organization access was removed';
+  const detail=opts.kind==='accepted'?`A member accepted an invitation to ${opts.organizationName}.`:opts.kind==='role_changed'?`Your role in ${opts.organizationName} is now ${opts.role}.`:`Your access to ${opts.organizationName} was removed. Your Ask account remains active.`;
+  return {subject:`${title} — AskTrustHub`,html:wrapEmail(title,`<p>${escapeHtml(detail)}</p>`,opts.kind==='removed'?undefined:{label:'Open organization',href:opts.manageUrl}),text:`${detail}${opts.kind==='removed'?'':`\n${opts.manageUrl}`}`};
+}
+
 export function rejectedEmail(opts: { displayName: string; reason: string }): {
   subject: string;
   html: string;

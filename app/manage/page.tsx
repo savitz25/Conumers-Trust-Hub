@@ -38,7 +38,7 @@ export default async function ManagePage() {
         rows.map((row) => (
           <article key={String(row.grant_id)} className="card-surface space-y-2 p-5">
             <h2 className="text-lg font-medium">{String(row.display_name || row.display_name_snapshot)}</h2>
-            <p className="text-sm text-muted-foreground">Role: {String(row.role)}</p>
+            <p className="text-sm text-muted-foreground">{String(row.hub_id)} TrustHub · Role: {String(row.role)}</p>
             <p className="text-sm text-muted-foreground">Status: {String(row.grant_status)}</p>
             <p className="text-sm text-muted-foreground">
               Florida DBPR credential {String(row.native_credential_key)}
@@ -46,12 +46,13 @@ export default async function ManagePage() {
             <Link className="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white" href={`/manage/${row.native_profile_id}`}>
               Manage profile
             </Link>
-            <a
+            <Link className="ml-2 inline-flex min-h-11 items-center text-sm underline" href={`/manage/organization/${row.org_id}`}>Team &amp; organization</Link>
+            {row.hub_id==='contractor'?<a
               className="link-inline ml-4 text-sm"
               href={`https://www.contractortrusthub.com/contractors/${row.native_slug}`}
             >
               Open ContractorTrustHub profile
-            </a>
+            </a>:null}
             <p className="pt-3 text-sm text-muted-foreground">Monitoring is available inside this managed profile and is always optional.</p>
           </article>
         ))
