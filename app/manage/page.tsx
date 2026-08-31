@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { PUBLIC_LANGUAGE } from '@/lib/customer/copy';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
+import { AccountSignIn } from '@/components/customer/AccountSignIn';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,7 @@ export default async function ManagePage() {
       <div className="mx-auto max-w-xl px-4 py-12">
         <h1 className="text-xl font-semibold">Sign in required</h1>
         <p className="mt-2 text-sm text-muted-foreground">This area is for authorized business representatives.</p>
+        <AccountSignIn />
       </div>
     );
   }
