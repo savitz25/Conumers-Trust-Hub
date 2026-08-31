@@ -4,6 +4,7 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { BusinessProfileEditor } from '@/components/customer/BusinessProfileEditor';
 import { ManageConsoleView } from '@/components/customer/ManageConsoleView';
 import { RecordIssuesPanel } from '@/components/customer/RecordIssuesPanel';
+import { BusinessRepliesPanel } from '@/components/customer/BusinessRepliesPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 
@@ -19,7 +20,8 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
   const { profileId } = await params;
   let model;
   let recordIssues;
-  try { model = await withPlatform((p) => p.businessProfile(token, profileId)); recordIssues = await withPlatform((p) => p.recordIssues(token, profileId)); }
+  let businessReplies;
+  try { model = await withPlatform((p) => p.businessProfile(token, profileId)); recordIssues = await withPlatform((p) => p.recordIssues(token, profileId)); businessReplies = await withPlatform((p)=>p.businessReplies(token,profileId)); }
   catch (error) { if (error instanceof AuthError || error instanceof ManagementError) notFound(); throw error; }
   const fields = Object.fromEntries(model.fields.map((row) => [row.field_key, row.value_text]));
   const items = (category: string) => model.items.filter((row) => row.category === category).map((row) => row.value_text);
@@ -36,6 +38,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       freshness: model.freshness,
       hours: model.hours.map((h) => ({ weekday: Number(h.weekday), closed: Boolean(h.is_closed), opensAt: h.opens_at?.slice(0, 5), closesAt: h.closes_at?.slice(0, 5) })),
     }} />
+    <BusinessRepliesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} replies={businessReplies.replies as never}/>
     <RecordIssuesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} issues={recordIssues.issues as never} />
     <section className="card-surface p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Official public record</p>
       <h2 className="mt-1 text-xl font-semibold text-navy">Florida DBPR identity</h2>

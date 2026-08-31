@@ -137,6 +137,12 @@ export function recordIssueEmail(opts: { kind: 'submitted'|'needs_info'|'resolve
   return { subject: `${title} — AskTrustHub`, html: wrapEmail(title, `<p>${escapeHtml(body)}</p>`), text: body };
 }
 
+export function businessReplyEmail(opts:{kind:'submitted'|'changes'|'approved'|'rejected';replyId:string;profileName:string;note?:string}){
+  const title=opts.kind==='submitted'?'We received your business response':opts.kind==='changes'?'Changes are requested for your business response':opts.kind==='approved'?'Your business response has been published':'Your business response was not published';
+  const body=`${title} for ${opts.profileName}. Reference ${opts.replyId}. ${opts.note||''}`.trim();
+  return{subject:`${title} — AskTrustHub`,html:wrapEmail(title,`<p>${escapeHtml(body)}</p><p>Publication review is not factual endorsement by TrustHub.</p>`),text:`${body}\nPublication review is not factual endorsement by TrustHub.`};
+}
+
 export function rejectedEmail(opts: { displayName: string; reason: string }): {
   subject: string;
   html: string;
