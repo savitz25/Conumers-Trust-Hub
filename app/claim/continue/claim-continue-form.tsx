@@ -9,11 +9,13 @@ export function ClaimContinueForm({
   email,
   relationships,
   expectedCredential,
+  organizations,
 }: {
   authed: boolean;
   email: string;
   relationships: [RelationshipType, string][];
   expectedCredential: string;
+  organizations: { id: string; display_name: string }[];
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -51,6 +53,7 @@ export function ClaimContinueForm({
         legalName: formData.get('legalName'),
         credentialAttestation: formData.get('credentialAttestation'),
         authorized: formData.get('authorized') === 'on',
+        orgId: formData.get('orgId') || undefined,
       }),
     });
     const json = (await res.json()) as { ok?: boolean; error?: string; claimId?: string };
@@ -97,6 +100,7 @@ export function ClaimContinueForm({
   return (
     <form action={submitClaim} className="card-surface space-y-4 p-5">
       <p className="text-sm text-muted-foreground">Signed in as {email}</p>
+      {organizations.length?<label className="block text-sm font-medium">Organization for this profile<select name="orgId" className="mt-1 min-h-11 w-full rounded-lg border border-border bg-white px-3"><option value="">Create a new organization</option>{organizations.map(org=><option key={org.id} value={org.id}>{org.display_name}</option>)}</select><span className="mt-1 block text-xs font-normal text-muted-foreground">Choose an organization you already own to avoid duplicate business organizations.</span></label>:null}
       <label className="block text-sm font-medium">
         How are you connected to this business?
         <select

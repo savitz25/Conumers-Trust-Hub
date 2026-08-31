@@ -14,12 +14,14 @@ export async function POST(request: Request) {
     legalName?: string;
     credentialAttestation?: string;
     authorized?: boolean;
+    orgId?: string;
   };
   try {
     const result = await withPlatform((p) =>
       p.submitClaim({
         sessionToken: sessionToken || '',
         intentId,
+        orgId: body.orgId,
         relationshipType: body.relationshipType || 'owner',
         legalName: body.legalName,
         credentialAttestation: body.credentialAttestation || '',
