@@ -27,6 +27,9 @@ export async function NetworkAskResult({ query }: { query: string }) {
 
   return (
     <div className="space-y-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: ASK_BRAND.indigo }}>
+        {answer.resultClass.replaceAll('_', ' ')}
+      </p>
       {answer.judgmentNote ? (
         <p className="rounded-xl border px-4 py-3 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}>
           {answer.judgmentNote}
@@ -54,7 +57,21 @@ export async function NetworkAskResult({ query }: { query: string }) {
         </section>
       ) : null}
 
-      {hardFail && !options.length ? (
+      {answer.noResult ? (
+        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
+          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>{answer.noResult.headline}</h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{answer.noResult.understood}</p>
+          <h3 className="mt-4 text-sm font-semibold" style={{ color: ASK_BRAND.navy }}>What you can try next</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm" style={{ color: ASK_BRAND.ink }}>
+            {answer.noResult.actions.map((action) => <li key={action}>{action}</li>)}
+          </ul>
+          {researchHref ? (
+            <a href={researchHref} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white" style={{ backgroundColor: ASK_BRAND.navy }}>
+              Continue on the specialist Trust Hub
+            </a>
+          ) : null}
+        </section>
+      ) : hardFail && !options.length ? (
         <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
           <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
             No supported substitute for that claim
@@ -68,10 +85,10 @@ export async function NetworkAskResult({ query }: { query: string }) {
       {options.length ? (
         <section>
           <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
-            Matching options
+            {answer.resultClass === 'RESEARCH_COHORT' ? 'Research cohort' : answer.resultClass === 'AMBIGUOUS_IDENTITIES' ? 'Multiple published regulatory identities use this name' : 'Matching identities'}
           </h2>
           <p className="mt-1 text-sm" style={{ color: ASK_BRAND.ink }}>
-            {options.length} research identities from {primary?.name ?? 'the specialist'}. Not a ranking.
+            {options.length} research identities from {primary?.name ?? 'the specialist'}. Source order only — not a ranking.
           </p>
           <ol className="mt-4 space-y-4">
             {options.map((opt) => (

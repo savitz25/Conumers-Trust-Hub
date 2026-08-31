@@ -56,6 +56,7 @@ import {
   type LenderAskPayload,
 } from './lender-ask.ts';
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
+import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import {
   applyConsumerPresentation,
   fetchContractorAskOptions,
@@ -133,6 +134,10 @@ export type NetworkAskAnswer = {
   matchWhy?: string;
   limitation?: string;
   compareHref?: string;
+  resultClass: AskResultClass;
+  identityResolutionClass?: IdentityResolutionClass;
+  noResult?: { headline: string; understood: string; actions: string[] };
+  diagnostics: AskDiagnostics;
 };
 
 function contractorAskUrl(parsed: ParsedNetworkAsk): string {
@@ -540,7 +545,7 @@ function hubPlan(hubId: SpecialistHubId, parsed: ParsedNetworkAsk): NetworkAskHu
         ? {
             headline: 'ContractorTrustHub published 924 active Broward roofing credentials on its county intelligence page.',
             grain: 'Certified CCC + registered RC with mailing/base county Broward. Credential records, not companies, not “trusted roofers.”',
-            limitation: 'Open structured Ask for the live query. Ask does not rewrite 924 as a recommendation.',
+            limitation: 'Credential records are shown for research only. Their order is not a ranking or recommendation.',
             officialAsOf: '2026-08-10',
             sourceFamily: 'fl-dbpr',
           }
@@ -716,6 +721,7 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
 }
 
 export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
+  const overallStarted = Date.now();
   const plan = buildNetworkAskPlan(query);
   const traces = tracesForPlan(plan);
 
@@ -724,6 +730,23 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
     n <= 1 ? '' : `Your question touches ${n} TrustHub research systems`;
 
   const primary = plan.hubs.length === 1 ? plan.hubs[0] : undefined;
+  const specificIdentity = isSpecificIdentityRequest(plan.parsed);
+  const resultClass: AskResultClass = /\b(one|universal|single|combined)\s+(trust\s+)?score\b/i.test(plan.query)
+    ? 'UNSUPPORTED_QUERY'
+    : plan.parsed.identifier?.ambiguous
+    ? 'UNSUPPORTED_QUERY'
+    : plan.hubs.length > 1 && plan.intent === 'journey'
+      ? 'HANDOFF'
+      : plan.intent === 'place'
+        ? 'MARKET_OR_PLACE_RESEARCH'
+        : specificIdentity && plan.parsed.identifier
+          ? 'EXACT_IDENTITY'
+          : specificIdentity
+            ? 'HANDOFF'
+            : plan.hubs.length === 0
+              ? 'UNSUPPORTED_QUERY'
+              : 'RESEARCH_COHORT';
+  const identityResolutionClass = plan.parsed.identifier && !plan.parsed.identifier.ambiguous ? 'EXACT_IDENTIFIER' as const : undefined;
   const params = new URLSearchParams({ q: plan.query });
   return {
     plan,
@@ -737,6 +760,22 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
     matchWhy: primary?.matchWhy,
     limitation: primary?.preview?.limitation ?? primary?.whatItCanAnswer,
     compareHref: primary?.compareHref,
+    resultClass,
+    identityResolutionClass,
+    diagnostics: {
+      interpretedIntent: plan.intent,
+      selectedHubs: plan.hubs.map((hub) => hub.hubId),
+      resultClass,
+      identityResolutionClass,
+      capabilityUsed: plan.hubs.map((hub) => `${hub.hubId}:${hub.mode ?? hub.capabilityStatus}`),
+      fallbackPath: plan.hubs.length ? 'specialist_handoff' : 'unsupported',
+      resultCount: primary?.options?.length ?? 0,
+      sourceContract: traces.map((row) => row.contract).filter((value): value is string => Boolean(value)),
+      parserLatencyMs: 0,
+      routingLatencyMs: plan.routingMs,
+      resolverLatencyMs: 0,
+      overallLatencyMs: Date.now() - overallStarted,
+    },
   };
 }
 
@@ -921,7 +960,7 @@ function applyInsurancePayload(answer: NetworkAskAnswer, payload: InsuranceAskPa
   return consumerOverlay({ ...answer, traces });
 }
 
-function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): NetworkAskAnswer {
+export function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): NetworkAskAnswer {
   const move = answer.plan.hubs.find((h) => h.hubId === 'move');
   if (!move) return answer;
   const failReason =
@@ -931,6 +970,33 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
   const geography =
     payload.provenance?.geographyMeaning ?? payload.query?.jurisdiction?.meaning ?? move.geographyCapability;
   const grain = payload.provenance?.grain ?? move.preview?.grain ?? move.mode;
+  const resolver = (payload as MoveAskPayload & { identityResolution?: { class?: IdentityResolutionClass } }).identityResolution;
+  if (isSpecificIdentityRequest(answer.plan.parsed) && !answer.plan.parsed.identifier && !resolver) {
+    const requestedName = requestedIdentityName(answer.plan.parsed);
+    move.options = undefined;
+    move.mode = 'fail_closed';
+    move.failKind = 'hard';
+    move.whatItCanAnswer = 'No unrelated movers were substituted for the company name you entered.';
+    move.preview = {
+      headline: `We couldn't find a confident published identity matching “${requestedName}.”`,
+      grain: 'specific_company_identity',
+      limitation: 'The current specialist contract returned a research cohort, not a canonical name-resolution result. Ask discarded that cohort.',
+      officialAsOf,
+      sourceFamily,
+    };
+    return {
+      ...consumerOverlay(answer),
+      options: undefined,
+      resultClass: 'NO_CONFIDENT_MATCH',
+      identityResolutionClass: 'NO_CONFIDENT_MATCH',
+      noResult: {
+        headline: move.preview.headline,
+        understood: `Ask understood this as a search for the specific company “${requestedName},” not a market list.`,
+        actions: ['Try the legal company name', 'Search a USDOT or MC number', 'Continue on MoveTrustHub Search'],
+      },
+      diagnostics: { ...answer.diagnostics, resultClass: 'NO_CONFIDENT_MATCH', identityResolutionClass: 'NO_CONFIDENT_MATCH', fallbackPath: 'identity_cohort_firewall', resultCount: 0 },
+    };
+  }
   const emptyExecuted =
     !failReason &&
     (payload.resultType === 'entity' || payload.resultType === 'identifier' || payload.resultType === 'evidence') &&
@@ -968,6 +1034,7 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
   move.capabilityStatus = 'execute';
   const moveOptions = optionsFromMovePayload(payload, 10, destinationContext(answer));
   if (moveOptions.length) move.options = moveOptions;
+  if (resolver?.class === 'FUZZY_CANDIDATES' || resolver?.class === 'NO_CONFIDENT_MATCH') move.options = undefined;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'move'
@@ -987,7 +1054,17 @@ function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPayload): Ne
         }
       : row,
   );
-  return consumerOverlay({ ...answer, traces });
+  const overlaid = consumerOverlay({ ...answer, traces });
+  const resultClass: AskResultClass = answer.plan.parsed.identifier
+    ? 'EXACT_IDENTITY'
+    : resolver?.class === 'AMBIGUOUS_NAME'
+      ? 'AMBIGUOUS_IDENTITIES'
+      : resolver?.class === 'FUZZY_CANDIDATES' || resolver?.class === 'NO_CONFIDENT_MATCH'
+        ? 'NO_CONFIDENT_MATCH'
+        : resolver
+          ? 'EXACT_IDENTITY'
+          : 'RESEARCH_COHORT';
+  return { ...overlaid, options: move.options, resultClass, identityResolutionClass: resolver?.class ?? answer.identityResolutionClass, diagnostics: { ...answer.diagnostics, resultClass, identityResolutionClass: resolver?.class ?? answer.identityResolutionClass, resultCount: move.options?.length ?? 0, fallbackPath: 'none' } };
 }
 
 function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload): NetworkAskAnswer {
@@ -1054,6 +1131,8 @@ function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload)
 
 /** Runtime overlay: read live specialist JSON contracts without changing routing. */
 export async function assembleNetworkAnswerWithSpecialist(query: string): Promise<NetworkAskAnswer> {
+  const overallStarted = Date.now();
+  let resolverLatencyMs = 0;
   let answer = assembleNetworkAnswer(query);
   const live = (hubId: SpecialistHubId) => {
     const hub = answer.plan.hubs.find((h) => h.hubId === hubId && h.capabilityStatus === 'execute');
@@ -1061,39 +1140,43 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
     return hub;
   };
   const qFor = (hub: { searchQuery?: string }) => hub.searchQuery ?? query;
+  const timed = async <T,>(operation: () => Promise<T>): Promise<T> => {
+    const started = Date.now();
+    try { return await operation(); } finally { resolverLatencyMs += Date.now() - started; }
+  };
 
   const senior = live('senior');
   if (senior) {
-    const payload = await fetchSeniorAsk(qFor(senior));
+    const payload = await timed(() => fetchSeniorAsk(qFor(senior)));
     if (payload) answer = applySeniorPayload(answer, payload);
   }
   const investor = live('investor');
   if (investor) {
-    const payload = await fetchInvestorAsk(qFor(investor));
+    const payload = await timed(() => fetchInvestorAsk(qFor(investor)));
     if (payload) answer = applyInvestorPayload(answer, payload);
   }
   const insurance = live('insurance');
   if (insurance) {
-    const payload = await fetchInsuranceAsk(qFor(insurance));
+    const payload = await timed(() => fetchInsuranceAsk(qFor(insurance)));
     if (payload) answer = applyInsurancePayload(answer, payload);
   }
   const move = live('move');
   if (move) {
-    const payload = await fetchMoveAsk(qFor(move));
+    const payload = await timed(() => fetchMoveAsk(qFor(move)));
     if (payload) answer = applyMovePayload(answer, payload);
   }
   const lender = live('lender');
   if (lender) {
-    const payload = await fetchLenderAsk(qFor(lender));
+    const payload = await timed(() => fetchLenderAsk(qFor(lender)));
     if (payload) answer = applyLenderPayload(answer, payload);
   }
   const contractor = live('contractor');
   if (contractor) {
-    const options = await fetchContractorAskOptions(answer.plan.parsed, qFor(contractor), 8000, destinationContext(answer));
+    const options = await timed(() => fetchContractorAskOptions(answer.plan.parsed, qFor(contractor), 8000, destinationContext(answer)));
     if (options?.length) {
       contractor.options = options;
       answer = consumerOverlay(answer);
     }
   }
-  return answer;
+  return { ...answer, diagnostics: { ...answer.diagnostics, resolverLatencyMs, overallLatencyMs: Date.now() - overallStarted } };
 }
