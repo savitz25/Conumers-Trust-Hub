@@ -27,7 +27,7 @@ export type GuidedGeography = {
   meaning?: string;
 };
 
-export type GuidedSessionSnapshot = {
+export type GuidedResearchSession = {
   phase: GuidedPhase;
   hub?: GuidedPilotHub;
   entityClass?: string;
@@ -37,9 +37,6 @@ export type GuidedSessionSnapshot = {
   regulatoryRole?: 'Carrier' | 'Broker' | 'Carrier/Broker';
   geography?: GuidedGeography;
   selectedFilters: Record<string, string>;
-};
-
-export type GuidedResearchSession = GuidedSessionSnapshot & {
   version: typeof GUIDED_SESSION_VERSION;
   sessionId: string;
   originalQuestion: string;
@@ -56,6 +53,9 @@ export type GuidedResearchSession = GuidedSessionSnapshot & {
   updatedAt: string;
   history: GuidedSessionSnapshot[];
 };
+
+export type GuidedSessionSnapshot = Omit<GuidedResearchSession,
+  'version' | 'sessionId' | 'originalQuestion' | 'createdAt' | 'updatedAt' | 'history'>;
 
 export type GuidedRefinement = {
   id: string;
@@ -101,6 +101,7 @@ export type GuidedAction =
   | { type: 'SET_GEOGRAPHY'; value: string }
   | { type: 'SET_FILTER'; field: string; value: string }
   | { type: 'CLEAR_FILTER'; field: string }
+  | { type: 'CLEAR_ALL_FILTERS' }
   | { type: 'BACK' }
   | { type: 'RESET' }
   | { type: 'RESUME' }

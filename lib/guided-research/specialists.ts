@@ -95,7 +95,7 @@ async function executeMove(session: GuidedResearchSession): Promise<GuidedExecut
   } : {
     contract: SPECIALIST_EXECUTION_CONTRACT, queryType: 'cohort',
     entityClass: session.moveMode === 'auto_transport' ? 'auto_transport' : 'mover',
-    role: session.regulatoryRole,
+    role: session.selectedFilters.role as GuidedResearchSession['regulatoryRole'] ?? session.regulatoryRole,
     geography: session.geography ? {
       stateCode: session.geography.stateCode ?? (session.geography.type === 'state' ? session.geography.value : undefined),
       stateName: session.geography.stateName,
@@ -129,7 +129,8 @@ async function executeMove(session: GuidedResearchSession): Promise<GuidedExecut
       facts: [mc ? { label: 'MC', value: mc } : null, text(row.role) ? { label: 'Role', value: text(row.role)! } : null].filter(Boolean) as Array<{label:string;value:string}>,
     };
   }).filter((row) => Boolean(row.destination.href));
-  return supported(session, payload, rows, outcome.latencyMs, normalizeRefinements(payload.availableRefinements));
+  const refinements = session.identityName || session.identifier ? [] : normalizeRefinements(payload.availableRefinements).filter((row) => row.id === 'role');
+  return supported(session, payload, rows, outcome.latencyMs, refinements);
 }
 
 async function executeSenior(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
@@ -202,7 +203,7 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
       facts:[text(row.occupationCode)?{label:'Occupation code',value:text(row.occupationCode)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
     };
   }).filter((row)=>Boolean(row.destination.href));
-  return supported(session,payload,rows,outcome.latencyMs,normalizeRefinements(payload.availableRefinements));
+  return supported(session,payload,rows,outcome.latencyMs,normalizeRefinements(payload.availableRefinements).filter((row)=>row.id==='credentialStatus'));
 }
 
 function supported(session: GuidedResearchSession, payload: Record<string, unknown>, rows: GuidedResultRow[], latencyMs: number, refinements: GuidedRefinement[]): GuidedExecutionResult {

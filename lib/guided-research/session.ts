@@ -19,12 +19,9 @@ const MOVE_CHOICES: GuidedChoice[] = [
 ];
 
 function snapshot(session: GuidedResearchSession): GuidedSessionSnapshot {
-  return {
-    phase: session.phase, hub: session.hub, entityClass: session.entityClass,
-    providerClass: session.providerClass, trade: session.trade, moveMode: session.moveMode,
-    regulatoryRole: session.regulatoryRole, geography: session.geography,
-    selectedFilters: { ...session.selectedFilters },
-  };
+  const state = structuredClone(session) as GuidedResearchSession & Record<string, unknown>;
+  for (const key of ['version','sessionId','originalQuestion','createdAt','updatedAt','history']) delete state[key];
+  return state;
 }
 
 export function validateGuidedSession(value: unknown): GuidedResearchSession | null {
@@ -115,7 +112,11 @@ export function pushHistory(session: GuidedResearchSession): GuidedResearchSessi
 export function restorePrevious(session: GuidedResearchSession): GuidedResearchSession {
   const previous = session.history.at(-1);
   if (!previous) return session;
-  return { ...session, ...previous, history: session.history.slice(0, -1), availableRefinements: [], resultCount: undefined, updatedAt: new Date().toISOString() };
+  return {
+    version:session.version,sessionId:session.sessionId,originalQuestion:session.originalQuestion,
+    createdAt:session.createdAt,updatedAt:new Date().toISOString(),history:session.history.slice(0,-1),
+    ...structuredClone(previous),
+  };
 }
 
 export { CARE_CHOICES, TRADE_CHOICES, MOVE_CHOICES };

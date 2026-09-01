@@ -12,3 +12,5 @@ The additive boundary is:
 6. Insurance, Lender, Investor, Concierge, homepage Intelligence, and customer systems remain unchanged.
 
 No specialist parser, identity index, publication rule, regulatory fact, database session store, or cross-hub score was created.
+
+ATH-GUIDED-001A corrected two state-integrity gaps without changing this boundary: history now restores the complete prior consumer state, and active refinements are visible, removable individually or together, and validated/re-executed by the server. A sessionStorage failure can disable refresh restoration without turning a successful specialist response into an error.

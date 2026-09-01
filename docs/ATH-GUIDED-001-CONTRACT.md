@@ -8,7 +8,7 @@ The universal classifier remains authoritative. Guided Research collects missing
 
 ## Session and phases
 
-The session carries a version, random session ID, original question, phase, universal query type, pilot hub, source-native class/trade/role, identifier or identity name, recorded geography, selected filters, missing fields, action choices, returned refinements, bounded history, timestamps, and result count.
+The session carries a version, random session ID, original question, phase, universal query type, pilot hub, source-native class/trade/role, identifier or identity name, recorded geography, selected filters, missing fields, action choices, returned refinements, bounded history, timestamps, and result count. Each history entry is a deep-copied, nonrecursive snapshot derived from the session type; it includes every mutable consumer-visible and execution field while excluding identity, immutable question, timestamps, and history itself.
 
 The browser uses sessionStorage under a query-derived key. Sessions expire after 30 minutes. No evidence rows are stored. The server validates version, phase, hub, action, choice, geography, filters, and expiry on every request.
 
@@ -16,7 +16,7 @@ Phases are UNDERSTAND, CLARIFY, COLLECT, EXECUTE, REFINE, DEEP_LINK, and ERROR_R
 
 ## Actions and orchestration
 
-Actions are START, RESUME, SELECT_CHOICE, SET_GEOGRAPHY, SET_FILTER, CLEAR_FILTER, BACK, RESET, and EXECUTE. RESUME returns an incomplete session to its current focused question and re-executes evidence only for a prior result/recovery phase. Choices are actions rather than navigation links.
+Actions are START, RESUME, SELECT_CHOICE, SET_GEOGRAPHY, SET_FILTER, CLEAR_FILTER, CLEAR_ALL_FILTERS, BACK, RESET, and EXECUTE. RESUME returns an incomplete session to its current focused question and re-executes evidence only for a prior result/recovery phase. BACK restores a complete snapshot and re-executes only when the restored state bears results. Refinement fields and values are checked against server-owned, class-specific capability allowlists and the last advertised specialist refinements. Choices are actions rather than navigation links.
 
 POST /api/guided-research accepts the session and one action. The server calls at most one selected specialist. Evidence-producing actions re-execute the specialist; client rows are never trusted. Timeout is five seconds.
 
