@@ -172,8 +172,10 @@ function seniorRefinements(session: GuidedResearchSession): GuidedRefinement[] {
 }
 
 async function executeContractor(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
+  const state=session.geography?.stateCode;
+  if (!state) return failure(session,'INVALID_QUERY',0,'missing_state','Add a state so ContractorTrustHub can select the correct source-backed credential system.');
   const body = {
-    trade: session.trade, state: 'FL',
+    trade: session.trade, state,
     county: session.geography?.county ?? (session.geography?.type === 'county' ? session.geography.value : undefined),
     city: session.geography?.city ?? (session.geography?.type === 'city' ? session.geography.value : undefined),
     credentialStatus: session.selectedFilters.credentialStatus ?? 'active_current', page: 1, limit: 10,
@@ -182,17 +184,24 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
   if ('error' in outcome) return failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
   const payload = outcome.body;
   if (text(payload.contract) !== SPECIALIST_EXECUTION_CONTRACT) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'contract_mismatch');
-  if (outcome.status === 422 || text(payload.status) === 'unsupported_capability') {
-    const result = failure(session, 'UNSUPPORTED_CAPABILITY', outcome.latencyMs, text(payload.errorCode) ?? 'unsupported_capability',
+  const unsupportedCode=text(payload.errorCode) ?? text(payload.error);
+  if (outcome.status === 422 || text(payload.status) === 'unsupported_capability' || unsupportedCode === 'unsupported_state') {
+    const result = failure(session, 'UNSUPPORTED_CAPABILITY', outcome.latencyMs, unsupportedCode ?? 'unsupported_capability',
       text(payload.errorCode) === 'unsupported_florida_electrical_source'
         ? 'We understood that you are looking for Florida electrical-contractor research in Boca Raton. The current accepted Florida construction source used by ContractorTrustHub does not include Florida electrical credentials.'
-        : undefined);
+        : unsupportedCode === 'unsupported_state'
+          ? `We understood ${session.geography?.stateName ?? state} contractor research, but the current ContractorTrustHub V2 execution endpoint does not yet expose that state's source-backed cohort. This is unsupported execution coverage, not zero contractors.`
+          : undefined);
     result.limitations = [text(payload.limitation)].filter(Boolean) as string[];
     const resolved=record(payload.resolvedGeography);
     const resolvedLabel=[text(resolved.city),text(resolved.county)?`${text(resolved.county)} County`:undefined,text(resolved.state)].filter(Boolean).join(', ');
     if (resolvedLabel) result.interpretation.push({label:'Resolved geography',value:resolvedLabel});
     if (text(payload.errorCode) === 'unsupported_florida_electrical_source') result.limitations.push('This does not mean no electricians exist. No substitute trade or out-of-state records were used.');
+    if (unsupportedCode === 'unsupported_state') {
+      result.limitations.push('ContractorTrustHub owns the state credential evidence. Ask did not substitute Florida rows, infer service territory, or query the specialist database directly.');
+    }
     result.destinations = records(payload.supportedAlternatives).flatMap((row) => text(row.destination) ? [{ type:'VERIFY' as const, href:text(row.destination)!, label:text(row.label) ?? 'Continue with the official source' }] : []);
+    if (unsupportedCode === 'unsupported_state' && !result.destinations.length) result.destinations.push({type:'VERIFY',href:'https://www.contractortrusthub.com/verify',label:`Verify a ${session.geography?.stateName ?? state} credential`});
     return result;
   }
   if (outcome.status >= 500) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'execution_unavailable');
@@ -202,7 +211,7 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
     return {
       name:text(row.name) ?? 'Published credential holder',hub:'contractor',identifier:credential?{label:'Credential',value:credential}:undefined,
       classLabel:text(row.trade),recordedLocation:[text(geo.city),text(geo.county),text(geo.state)].filter(Boolean).join(', '),
-      status:text(row.status),sourceDate:text(source.observedAt),whyShown:'Matched the selected Florida DBPR trade, status, and recorded-geography filters.',
+      status:text(row.status),sourceDate:text(source.observedAt),whyShown:`Matched the selected ${session.geography?.stateName ?? state} source-owned trade, status, and recorded-geography filters.`,
       destination:{type:'PROFILE',href:text(row.destination)!,label:'Open ContractorTrustHub profile'},
       facts:[text(row.occupationCode)?{label:'Occupation code',value:text(row.occupationCode)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
     };

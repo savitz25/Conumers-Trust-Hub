@@ -45,6 +45,14 @@ export function validateGuidedSession(value: unknown): GuidedResearchSession | n
 export function parseGuidedGeography(raw: string): GuidedGeography | null {
   const value = raw.trim().replace(/[.,]+$/g, '');
   if (!value) return null;
+  // Summit is a city in Union County. Never accept the contradictory
+  // "Summit County, New Jersey" combination as a source geography.
+  if (/^summit\s+county(?:\s*,?\s*(?:new\s+jersey|nj))?$/i.test(value)) return null;
+  if (/^summit(?:\s*,?\s*(?:new\s+jersey|nj))$/i.test(value)) return {
+    type: 'city', value: 'Summit, New Jersey', city: 'Summit', county: 'Union',
+    stateCode: 'NJ', stateName: 'New Jersey',
+    meaning: 'Recorded Summit city geography in Union County, New Jersey; not service territory.',
+  };
   if (/^\d{5}$/.test(value)) return { type: 'zip', value, meaning: 'Recorded ZIP in the specialist source; not service availability.' };
   const parsed = parseNetworkAsk(`providers in ${value}`);
   if (parsed.geography?.countyName) return { type: 'county', value: parsed.geography.countyName.replace(/ County$/i, ''), county: parsed.geography.countyName.replace(/ County$/i, ''), stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded county geography; not service territory.' };
@@ -53,6 +61,15 @@ export function parseGuidedGeography(raw: string): GuidedGeography | null {
   if (/broward/i.test(value)) return { type: 'county', value: 'Broward', county: 'Broward', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Broward County geography; not service territory.' };
   if (/palm\s*beach/i.test(value)) return { type: 'county', value: 'Palm Beach', county: 'Palm Beach', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Palm Beach County geography; not service territory.' };
   return { type: 'city', value, city: value, meaning: 'Recorded city/address geography where supported; not service territory.' };
+}
+
+function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): GuidedGeography | undefined {
+  const geography = parsed.geography;
+  if (!geography) return undefined;
+  const stateSuffix = geography.stateName ? `, ${geography.stateName}` : '';
+  if (geography.city) return parseGuidedGeography(`${geography.city}${stateSuffix}`) ?? undefined;
+  if (geography.countyName) return parseGuidedGeography(`${geography.countyName}${stateSuffix}`) ?? undefined;
+  return parseGuidedGeography(geography.stateName ?? geography.stateCode ?? '') ?? undefined;
 }
 
 function base(question: string): GuidedResearchSession {
@@ -72,7 +89,7 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   const parsed = parseNetworkAsk(q);
   const session = base(q);
   if (/\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
-    const geography=parsed.geography?parseGuidedGeography(parsed.geography.countyName??parsed.geography.city??parsed.geography.stateName??'')??undefined:undefined;
+    const geography=geographyFromParsed(parsed);
     return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
   }
   const grandma = /\b(?:grandma|grandmother|grandpa|grandfather|senior|elderly parent)\b/i.test(q) && /\b(?:home|care|facility|help|place)\b/i.test(q);
@@ -83,7 +100,7 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   session.hub = hub;
   session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
   session.identityName = parsed.queryClassification.type === 'IDENTITY_NAME' ? q : undefined;
-  if (parsed.geography) session.geography = parseGuidedGeography(parsed.geography.countyName ?? parsed.geography.city ?? parsed.geography.stateName ?? '') ?? undefined;
+  if (parsed.geography) session.geography = geographyFromParsed(parsed);
 
   if (hub === 'senior') {
     session.providerClass = parsed.seniorProviderClass;
@@ -97,6 +114,8 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
     session.trade = trade === 'general contractor' ? 'general' : trade;
     session.entityClass = 'credential_record';
     session.identityName = undefined;
+    const conflictingSummit = /\bsummit\s+county\b/i.test(q) && parsed.geography?.stateCode === 'NJ';
+    if (conflictingSummit) return { ...session, geography: undefined, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Summit is a city in Union County, New Jersey. Enter “Summit, New Jersey” or another valid state, county, city or ZIP.' };
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
     if (!session.trade) return { ...session, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'What kind of work do you need?' };
     return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where is the property?' };

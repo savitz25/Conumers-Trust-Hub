@@ -30,6 +30,7 @@ export function GuidedResearch({query}:{query:string}) {
   },[query,session]);
 
   useEffect(()=>{
+    setSession(null);setResult(null);setError('');setBusy(true);
     let restored:GuidedResearchSession|null=null;
     try{const raw=sessionStorage.getItem(storageKey(query));if(raw){const parsed=JSON.parse(raw) as GuidedResearchSession;if(parsed.version===GUIDED_SESSION_VERSION&&parsed.originalQuestion===query)restored=parsed;}}catch{}
     void send(restored?{type:'RESUME'}:{type:'START',question:query},restored);

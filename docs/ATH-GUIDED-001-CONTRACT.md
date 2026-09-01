@@ -26,6 +26,7 @@ Normalized states remain distinct: SUPPORTED_RESULTS, ZERO_MATCHING_ROWS, UNSUPP
 
 - Senior: life situations, Nursing Home, Home Health, Hospice, current CMS CCN, supported geography and class-native ratings.
 - Contractor: consumer-labeled Roofing, Air conditioning / HVAC, Plumbing, Electrical, General / building construction, Pool / spa, Mechanical, and Other / I’m not sure choices; supported Florida DBPR execution; credential status; supported county mapping; and the exact electrical-source limitation. Electrical remains selectable because coverage is jurisdiction-specific. The Other path uses bounded deterministic mapping and explicit confirmation, never an LLM trade guess.
+- Contractor state integrity: Ask sends the validated consumer state instead of substituting Florida, and a generic contractor class never implies the General trade. Unsupported state execution remains distinct from invalid geography and zero matching rows. If a specialist supports statewide but not local execution, Ask may offer an explicit statewide action without claiming county or service-area coverage. Geography conflicts return to clarification: Summit is a city in Union County, New Jersey, so “Summit County, New Jersey” is never silently accepted.
 - Move: household mover and Auto Transport cohorts, recorded-HQ state, role, USDOT/MC, company identity, and service-territory fail-closed behavior.
 
 ## Privacy and recovery

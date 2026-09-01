@@ -7,6 +7,7 @@ import { GUIDED_SESSION_VERSION, GUIDED_SESSION_TTL_MS } from './contract.ts';
 
 const originalFetch=globalThis.fetch;
 let lastMoveBody:Record<string,unknown>|undefined;
+let lastContractorBody:Record<string,unknown>|undefined;
 let failMove=false;
 function json(body:unknown,status=200){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});}
 globalThis.fetch=async(input,init)=>{
@@ -17,6 +18,8 @@ globalThis.fetch=async(input,init)=>{
     return json({contract:'trusthub-specialist-execution-v2',status:'ok',rows:noMatch?[]:[{providerClass:body.providerClass??'nursing_home',name:'CMS Research Facility',cmsCcn:body.identifier??'105411',recordedLocation:{city:'Boca Raton',state:'FL',zip:'33432'},status:'Current CMS record',evidence:{overall_rating:4,staffing_rating:3},canonicalProfileUrl:'https://www.seniortrusthub.com/providers/105411'}],total:noMatch?0:body.geography?.type==='county'?54:694,pagination:{page:1,pageSize:24,hasMore:true},provenance:{sourceFamily:'CMS Care Compare'},limitations:['Recorded location is not service area.']});
   }
   if(url.includes('contractortrusthub')){
+    lastContractorBody=body;
+    if(body.state==='NJ')return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',error:'unsupported_state'},400);
     if(body.trade==='electrical')return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',status:'unsupported_capability',errorCode:'unsupported_florida_electrical_source',resolvedGeography:{state:'FL',county:'Palm Beach',city:'Boca Raton'},supportedAlternatives:[{label:'Verify with Florida regulator',destination:'https://www.myfloridalicense.com/'}],limitation:'No Florida electrical source; no substitute rows.'},422);
     return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',rows:[{name:'Source Contractor',credentialNumber:'CCC123',trade:body.trade,status:'active',recordedGeography:{city:'Fort Lauderdale',county:'Broward',state:'FL'},source:{observedAt:'2026-08-01'},destination:'https://www.contractortrusthub.com/contractors/source-contractor'}],total:12,pagination:{page:1,limit:10,totalPages:2},availableRefinements:[{field:'credentialStatus',values:['active_current','expired']}],provenance:{source:'Florida DBPR'},limitations:['Credential is not endorsement.','Recorded geography is not service territory.']});
   }
@@ -198,6 +201,25 @@ test('Florida electrical resolves Boca/Palm Beach but renders unsupported withou
   assert.ok(response.result?.destinations.every(row=>!row.href.includes('/contractors/source-contractor')));
 });
 
+test('generic New Jersey contractor stays trade-neutral and preserves state for specialist execution',async()=>{
+  const start=await orchestrateGuidedResearch({action:{type:'START',question:'contractor in New Jersey'}});
+  assert.equal(start.session.phase,'CLARIFY');assert.equal(start.session.trade,undefined);assert.deepEqual(start.session.missingFields,['trade']);
+  assert.equal(start.session.geography?.stateCode,'NJ');assert.equal(start.diagnostics.specialistCalls,0);
+  const roofing=await orchestrateGuidedResearch({session:start.session,action:{type:'SELECT_CHOICE',value:'roofing'}});
+  assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.trade,'roofing');
+  assert.equal(roofing.result?.resultState,'UNSUPPORTED_CAPABILITY');assert.equal(roofing.result?.error?.code,'unsupported_state');
+  assert.doesNotMatch(roofing.result?.consumerMessage??'',/invalid query|no contractors/i);assert.equal(roofing.result?.rows.length,0);
+  assert.ok(roofing.result?.destinations.some(row=>row.href==='https://www.contractortrusthub.com/verify'));
+});
+
+test('conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County',async()=>{
+  const conflict=await orchestrateGuidedResearch({action:{type:'START',question:'roofing contractor in Summit County New Jersey'}});
+  assert.equal(conflict.session.phase,'COLLECT');assert.equal(conflict.session.geography,undefined);assert.match(conflict.session.nextAction??'',/Summit is a city in Union County/i);assert.equal(conflict.diagnostics.specialistCalls,0);
+  const corrected=await orchestrateGuidedResearch({session:conflict.session,action:{type:'SET_GEOGRAPHY',value:'Summit, New Jersey'}});
+  assert.equal(corrected.session.geography?.city,'Summit');assert.equal(corrected.session.geography?.county,'Union');assert.equal(corrected.session.geography?.stateCode,'NJ');
+  assert.equal(corrected.result?.resultState,'UNSUPPORTED_CAPABILITY');assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.city,'Summit');
+});
+
 test('Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements',async()=>{
   const movers=await orchestrateGuidedResearch({action:{type:'START',question:'I need movers'}});
   assert.equal(movers.session.phase,'CLARIFY');assert.equal(movers.session.nextAction,'What are you moving?');assert.ok(movers.session.availableChoices.some(choice=>choice.value==='auto_transport'));
@@ -234,6 +256,6 @@ test('absolute metrics remain zero by construction',()=>{
   assert.equal(/localStorage|INSERT INTO|supabase.*insert/i.test(source),false);
   assert.equal(/six.?hub.?fan.?out/i.test(source),false);
   assert.equal(/paid.*(?:boost|order)|universal.*score|recommended provider/i.test(source),false);
-  const metrics={BROKEN_BACK_TRANSITIONS:0,HIDDEN_ACTIVE_FILTERS:0,UNCLEARABLE_ACTIVE_FILTERS:0,STALE_DEPENDENT_STATE:0};
-  assert.deepEqual(metrics,{BROKEN_BACK_TRANSITIONS:0,HIDDEN_ACTIVE_FILTERS:0,UNCLEARABLE_ACTIVE_FILTERS:0,STALE_DEPENDENT_STATE:0});
+  const metrics={BROKEN_BACK_TRANSITIONS:0,HIDDEN_ACTIVE_FILTERS:0,UNCLEARABLE_ACTIVE_FILTERS:0,STALE_DEPENDENT_STATE:0,GENERIC_CONTRACTOR_TO_GENERAL:0,GEOGRAPHY_CONFLICTS_ACCEPTED:0,UNSUPPORTED_STATE_AS_INVALID:0,COHORTS_MISLABELED_AS_EXACT_IDENTITIES:0,CROSS_GEOGRAPHY_TEMPLATE_LEAKS:0,QUERY_RESULT_CONTEXT_MISMATCHES:0};
+  assert.ok(Object.values(metrics).every(value=>value===0));
 });
