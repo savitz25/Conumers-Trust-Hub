@@ -837,6 +837,11 @@ function consumerOverlay(answer: NetworkAskAnswer): NetworkAskAnswer {
     matchWhy: primary.matchWhy ?? primary.options?.[0]?.whyMatched,
     limitation: primary.preview?.limitation ?? primary.whatItCanAnswer,
     compareHref: primary.compareHref,
+    diagnostics: {
+      ...answer.diagnostics,
+      resultCount: primary.options?.length ?? 0,
+      fallbackPath: primary.options?.length ? 'none' : answer.diagnostics.fallbackPath,
+    },
   };
 }
 

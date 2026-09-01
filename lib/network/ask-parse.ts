@@ -24,6 +24,7 @@ import {
   lenderGeographyMeaning,
 } from './lender-ask.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
+import { classifyUniversalQuery, type UniversalQueryClassification } from './query-classification.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -67,6 +68,7 @@ export type ParsedNetworkAsk = {
   insuranceEntityClass?: InsuranceEntityClass;
   moveRegulatoryRole?: MoveRegulatoryRole;
   moveResearchCategory?: MoveResearchCategory;
+  queryClassification: UniversalQueryClassification;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -78,11 +80,13 @@ function geography(q: string): ParsedGeography | undefined {
   const palm = PALM.test(q);
   const tampa = /\btampa(\s+bay)?\b/i.test(q);
   const miami = /\bmiami([-\s]?dade)?\b/i.test(q);
-  const florida = FL.test(q) || broward || palm || tampa || miami;
+  const bocaRaton = /\bboca\s+raton\b/i.test(q);
+  const florida = FL.test(q) || broward || palm || tampa || miami || bocaRaton;
 
   let city: string | undefined;
   if (tampa) city = 'Tampa';
   else if (miami) city = 'Miami';
+  else if (bocaRaton) city = 'Boca Raton';
 
   if (broward) {
     return {
@@ -120,6 +124,8 @@ function geography(q: string): ParsedGeography | undefined {
     return nameRe.test(q);
   });
   if (byName) {
+    const beforeState = q.match(new RegExp(`\\b(?:in|near|around)\\s+([a-z][a-z .'-]{1,40}?)\\s+${byName.name.replace(/\s+/g, '\\s+')}\\b`, 'i'));
+    if (!city && beforeState?.[1]) city = beforeState[1].trim().replace(/\b\w/g, (letter) => letter.toUpperCase());
     return {
       stateCode: byName.code,
       stateName: byName.name,
@@ -133,6 +139,8 @@ function geography(q: string): ParsedGeography | undefined {
     const raw = postal[0].replace(/\./g, '').toUpperCase();
     const j = US_JURISDICTIONS.find((row) => row.code === raw);
     if (j) {
+      const beforeState = q.match(new RegExp(`\\b(?:in|near|around)\\s+([a-z][a-z .'-]{1,40}?)\\s+${postal[0].replace(/\./g, '\\.?')}\\b`, 'i'));
+      if (!city && beforeState?.[1]) city = beforeState[1].trim().replace(/\b\w/g, (letter) => letter.toUpperCase());
       return {
         stateCode: j.code,
         stateName: j.name,
@@ -297,6 +305,10 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     hubs.push('contractor');
     topic = 'Contractor licensing research';
     if (roofing) trade = 'Roofing';
+    else if (/electrical|electrician/i.test(query)) trade = 'Electrical';
+    else if (/\bhvac\b/i.test(query)) trade = 'HVAC';
+    else if (/plumb/i.test(query)) trade = 'Plumbing';
+    else if (/general contractor/i.test(query)) trade = 'General Contractor';
     if (/active|current/i.test(query) || (roofing && geo?.countySlug)) credentialStatus = 'Active/current';
   } else if (fha || (lender && !buying)) {
     intent = 'market';
@@ -343,6 +355,15 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     hubs.push('contractor', 'lender', 'insurance', 'move');
     topic = geo.countyName ? `${geo.countyName} research` : 'Florida research';
   }
+
+  const queryClassification = classifyUniversalQuery({
+    query,
+    exactIdentifier: Boolean(id && !id.ambiguous),
+    ambiguousIdentifier: id?.ambiguous,
+    suggestedHubs: hubs,
+    geography: geo,
+    intentHint: intent,
+  });
 
   const interpretationLines: Array<{ label: string; value: string }> = [];
   if (intent === 'journey') interpretationLines.push({ label: 'Situation', value: topic });
@@ -436,8 +457,8 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
             : 'Hospice',
     });
   }
-  if (investorFirmType && hubs.includes('investor') && hubs.length === 1) {
-    interpretationLines.push({
+  if (hubs[0] === 'investor' && hubs.length === 1) {
+    if (investorFirmType) interpretationLines.push({
       label: 'Firm type',
       value: investorFirmType === 'ria' ? 'RIA' : investorFirmType === 'era' ? 'ERA' : 'RIA + ERA (kept separate)',
     });
@@ -470,5 +491,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     insuranceEntityClass,
     moveRegulatoryRole,
     moveResearchCategory,
+    queryClassification,
   };
 }
