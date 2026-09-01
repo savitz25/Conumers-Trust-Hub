@@ -18,6 +18,8 @@
     "check:ask-lender-execute": "node --experimental-strip-types --test lib/network/lender-execute.test.ts lib/network/v1-complete.test.ts",
     "check:ask-consumer-ux": "node --experimental-strip-types --test lib/network/consumer-ux.test.ts",
     "check:ask-entity-link": "node --experimental-strip-types --test lib/network/entity-destination.test.ts",
+    "check:ath-search-001": "node --experimental-strip-types --test lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts",
+    "check:ath-search-002": "node --experimental-strip-types --test lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs",
     "check:ath-cust-002": "node scripts/check-ath-cust-002.mjs",
     "check:ath-cust-004": "node --experimental-strip-types --test lib/customer/business-profile.test.ts lib/customer/platform.test.ts",
@@ -37,6 +39,8 @@
     "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

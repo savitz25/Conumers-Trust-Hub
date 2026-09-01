@@ -5,6 +5,16 @@ import { CROSS_HUB_NAME_CHECK } from '@/lib/network/name-check';
 import { SAVE_TO_RESEARCH_CONTRACT } from '@/lib/network/federated-ask';
 import { seniorSearchHref } from '@/lib/network/consumer-ask';
 
+const RESULT_LABELS = {
+  EXACT_IDENTITY: 'Exact regulatory identity',
+  AMBIGUOUS_IDENTITIES: 'Multiple or possible published identities',
+  RESEARCH_COHORT: 'Research cohort',
+  MARKET_OR_PLACE_RESEARCH: 'Market research',
+  HANDOFF: 'Continue with the specialist research hub',
+  NO_CONFIDENT_MATCH: 'No confident match found',
+  UNSUPPORTED_QUERY: "Ask can't answer this as requested",
+} as const;
+
 export async function NetworkAskResult({ query }: { query: string }) {
   const answer = await assembleNetworkAnswerWithSpecialist(query);
   const { plan } = answer;
@@ -27,6 +37,9 @@ export async function NetworkAskResult({ query }: { query: string }) {
 
   return (
     <div className="space-y-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: ASK_BRAND.indigo }}>
+        {RESULT_LABELS[answer.resultClass]}
+      </p>
       {answer.judgmentNote ? (
         <p className="rounded-xl border px-4 py-3 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}>
           {answer.judgmentNote}
@@ -54,7 +67,21 @@ export async function NetworkAskResult({ query }: { query: string }) {
         </section>
       ) : null}
 
-      {hardFail && !options.length ? (
+      {answer.noResult ? (
+        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
+          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>{answer.noResult.headline}</h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{answer.noResult.understood}</p>
+          <h3 className="mt-4 text-sm font-semibold" style={{ color: ASK_BRAND.navy }}>What you can try next</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm" style={{ color: ASK_BRAND.ink }}>
+            {answer.noResult.actions.map((action) => <li key={action}>{action}</li>)}
+          </ul>
+          {researchHref ? (
+            <a href={researchHref} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white" style={{ backgroundColor: ASK_BRAND.navy }}>
+              Continue on the specialist Trust Hub
+            </a>
+          ) : null}
+        </section>
+      ) : hardFail && !options.length ? (
         <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
           <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
             No supported substitute for that claim
@@ -68,10 +95,16 @@ export async function NetworkAskResult({ query }: { query: string }) {
       {options.length ? (
         <section>
           <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
-            Matching options
+            {answer.resultClass === 'RESEARCH_COHORT'
+              ? 'Research cohort'
+              : answer.resultClass === 'AMBIGUOUS_IDENTITIES' && answer.identityResolutionClass === 'FUZZY_CANDIDATES'
+                ? 'Possible published identities'
+                : answer.resultClass === 'AMBIGUOUS_IDENTITIES'
+                  ? 'Multiple published identities use this name'
+                  : 'Exact regulatory identity'}
           </h2>
           <p className="mt-1 text-sm" style={{ color: ASK_BRAND.ink }}>
-            {options.length} research identities from {primary?.name ?? 'the specialist'}. Not a ranking.
+            {options.length} research identities from {primary?.name ?? 'the specialist'}. Source order only — not a ranking.
           </p>
           <ol className="mt-4 space-y-4">
             {options.map((opt) => (
@@ -242,8 +275,8 @@ export async function NetworkAskResult({ query }: { query: string }) {
                 <th scope="col" className="py-2 pr-3">Provider class</th>
                 <th scope="col" className="py-2 pr-3">Identifier</th>
                 <th scope="col" className="py-2 pr-3">Source family</th>
-                <th scope="col" className="py-2 pr-3">Query grain</th>
-                <th scope="col" className="py-2 pr-3">Geography meaning</th>
+                <th scope="col" className="py-2 pr-3">What we searched</th>
+                <th scope="col" className="py-2 pr-3">What the place means here</th>
                 <th scope="col" className="py-2 pr-3">Official as-of</th>
                 <th scope="col" className="py-2">Destination</th>
               </tr>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Loader2, Send, Sparkles, X } from 'lucide-react';
 import { AiConciergeDisclosure } from '@/components/ask-chat/ai-disclosure';
+import { SafeConciergeMarkdown } from '@/components/ask-chat/safe-markdown';
 import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { ASK_CONCIERGE_WELCOME } from '@/lib/ai/system-prompt';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
@@ -213,7 +214,7 @@ export function AskChatPanel() {
                       }
                 }
               >
-                {m.content}
+                {m.role === 'assistant' ? <SafeConciergeMarkdown content={m.content} /> : m.content}
               </div>
             </div>
           ))}

@@ -25,7 +25,7 @@ export function AiConciergeDisclosure({ className, compact = false }: Props) {
     >
       {compact ? (
         <>
-          Responses are <strong className="font-semibold">AI-generated</strong>. Verify important
+          Responses are <strong className="font-semibold">AI-generated</strong> and powered by xAI. Verify important
           facts against primary sources.{' '}
           <Link
             href="/editorial-standards"
@@ -38,7 +38,7 @@ export function AiConciergeDisclosure({ className, compact = false }: Props) {
         </>
       ) : (
         <>
-          <strong className="font-semibold">AI-generated guidance.</strong> The Concierge uses AI to
+          <strong className="font-semibold">AI-generated guidance • powered by xAI.</strong> The Concierge uses AI to
           help route and explain research. Always verify important facts against primary sources
           (FMCSA, NMLS, state DOI/NAIC, and the company itself).{' '}
           <Link
