@@ -45,6 +45,7 @@ test('handoff is useful, explicit, source-owned, and never fabricates a cohort',
   assert.match(hub.preview?.headline ?? '', /Auto Transport research.*Carrier/i);
   assert.match(hub.reason, /MoveTrustHub owns.*Ask routes.*does not construct it/i);
   assert.equal(hub.destination, 'https://www.movetrusthub.com/companies?services=Auto+Transport');
+  assert.match(hub.whatItCanAnswer, /268-company.*carriers, brokers, dual-role identities.*unknown regulatory role/i);
   assert.match(hub.preview?.grain ?? '', /source-backed Auto Transport cohort handoff.*no cohort executed by Ask/i);
   assert.match(hub.preview?.limitation ?? '', /specific vehicle|service territory/i);
   assert.equal(answer.options, undefined);
