@@ -308,7 +308,7 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
       structuredFilters: { researchCategory: 'auto_transport', role },
       destination: MOVE_COMPANY_RESEARCH_ROUTE,
       reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and source-backed Auto Transport qualification. Ask routes to that accepted specialist cohort and does not construct it.',
-      whatItCanAnswer: 'Continue on MoveTrustHub to research its source-backed Auto Transport cohort and each published moving-company identity.',
+      whatItCanAnswer: 'Continue on MoveTrustHub to research its source-backed 268-company Auto Transport cohort. The cohort includes carriers, brokers, dual-role identities, and identities with an unknown regulatory role; use the role shown on each result.',
       geographyCapability: 'Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.',
       judgmentNote: ranking
         ? 'Ask does not rank Auto Transport companies. Continue with neutral MoveTrustHub research and verify the exact regulatory identity.'
