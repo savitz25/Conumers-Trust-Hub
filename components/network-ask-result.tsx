@@ -90,6 +90,18 @@ export async function NetworkAskResult({ query }: { query: string }) {
             {primary?.whatItCanAnswer}
           </p>
         </section>
+      ) : primary?.capabilityStatus === 'handoff' && !options.length ? (
+        <section className="rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border }}>
+          <h2 className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+            {primary.preview?.headline ?? `Continue with ${primary.name}`}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            {primary.reason}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+            {primary.whatItCanAnswer}
+          </p>
+        </section>
       ) : null}
 
       {options.length ? (

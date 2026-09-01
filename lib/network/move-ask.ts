@@ -9,6 +9,9 @@ export const MOVE_ASK_ROUTE = 'https://www.movetrusthub.com/ask';
 export const MOVE_ASK_API = 'https://www.movetrusthub.com/api/ask';
 
 export type MoveRegulatoryRole = 'carrier' | 'broker' | 'carrier_broker';
+export type MoveResearchCategory = 'auto_transport';
+
+export const MOVE_COMPANY_RESEARCH_ROUTE = 'https://www.movetrusthub.com/companies';
 
 export type MoveAskMode =
   | 'entity'
@@ -90,8 +93,23 @@ export function hasInsuranceDomain(q: string): boolean {
   );
 }
 
+/** Bounded consumer vocabulary for transporting a motor vehicle, not insuring one. */
+export function isAutoTransportQuery(q: string): boolean {
+  if (hasInsuranceDomain(q)) return false;
+  return (
+    /\b(?:auto|automobile|vehicle|car)\s+(?:transport(?:er|ers|ation)?|shipping|carrier|carriers)\b/i.test(q) ||
+    /\b(?:auto|vehicle)\s+transport\s+(?:compan(?:y|ies)|carriers?|brokers?)\b/i.test(q) ||
+    /\bcar\s+shipping\s+compan(?:y|ies)\b/i.test(q) ||
+    /\bship\s+(?:my|a|the)\s+(?:car|vehicle)\b/i.test(q) ||
+    /\bshipping\s+(?:my|a|the)\s+(?:car|vehicle)\b/i.test(q) ||
+    /\btransport\s+(?:my|a|the)\s+(?:car|vehicle)\b/i.test(q) ||
+    /\b(?:someone|company|carrier|broker)\s+to\s+(?:ship|transport)\s+(?:my|a|the)\s+(?:car|vehicle)\b/i.test(q)
+  );
+}
+
 export function isMoveClassQuery(q: string): boolean {
   return (
+    isAutoTransportQuery(q) ||
     /\b(two men and a truck|shifl|colleg(?:e)? hunks)\b/i.test(q) ||
     /\b(movers?|moving compan(?:y|ies)|moving|household-?goods|hhg|motor carriers?|moving carriers?|moving brokers?|usdot|fmcsa|interstate movers?|operating authority|belongings|fdacs|intrastate movers?|im registration)\b/i.test(
       q,

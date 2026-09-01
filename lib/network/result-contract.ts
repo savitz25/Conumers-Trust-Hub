@@ -11,6 +11,7 @@ const LOOKUP = /\b(is|find|look up|search|check|verify|know about)\b/i;
 
 /** Detects identity intent only. Identity resolution remains specialist-owned. */
 export function isSpecificIdentityRequest(parsed: ParsedNetworkAsk): boolean {
+  if (parsed.moveResearchCategory) return false;
   if (parsed.identifier && !parsed.identifier.ambiguous) return true;
   if (parsed.suggestedHubs.length !== 1 || ['place', 'journey', 'comparison', 'market'].includes(parsed.intent)) return false;
   if (COHORT.test(parsed.query) && !LOOKUP.test(parsed.query)) return false;

@@ -38,6 +38,7 @@ import {
 } from './insurance-ask.ts';
 import {
   MOVE_ASK_CONTRACT,
+  MOVE_COMPANY_RESEARCH_ROUTE,
   MOVE_ROLE_LABEL,
   fetchMoveAsk,
   moveAskMode,
@@ -291,6 +292,38 @@ function insuranceHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
 function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
   const role = parsed.moveRegulatoryRole;
   const roleLabel = role ? MOVE_ROLE_LABEL[role] : undefined;
+  if (parsed.moveResearchCategory === 'auto_transport') {
+    const ranking = /\b(best|top|safest|recommended|most trusted|top[- ]?rated)\b/i.test(parsed.query);
+    const pricing = /\b(cheap(?:est)?|lowest price|quote|how much|cost)\b/i.test(parsed.query);
+    const roleMeaning = role === 'broker'
+      ? 'A broker may arrange vehicle transportation without physically hauling the vehicle.'
+      : role === 'carrier_broker'
+        ? 'Carrier and broker are separate regulatory roles; a broker role does not prove who physically hauls a vehicle.'
+        : 'Carrier/broker role does not prove who will physically transport a specific vehicle.';
+    return {
+      hubId: 'move',
+      name: NETWORK_PUBLIC_NAMES.move,
+      capabilityStatus: 'handoff',
+      mode: 'auto_transport_handoff',
+      structuredFilters: { researchCategory: 'auto_transport', role },
+      destination: MOVE_COMPANY_RESEARCH_ROUTE,
+      reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and any source-backed Auto Transport qualification. Ask does not construct or claim this cohort.',
+      whatItCanAnswer: 'Continue on MoveTrustHub to research published moving-company identities and their source-owned evidence.',
+      geographyCapability: 'Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.',
+      judgmentNote: ranking
+        ? 'Ask does not rank Auto Transport companies. Continue with neutral MoveTrustHub research and verify the exact regulatory identity.'
+        : pricing
+          ? 'Ask and MoveTrustHub research regulatory identity and evidence; they do not provide live vehicle-shipping quotes or price rankings.'
+          : undefined,
+      preview: {
+        headline: `Auto Transport research${roleLabel ? ` · ${roleLabel}` : ''}`,
+        grain: 'MoveTrustHub public research handoff; no Auto Transport cohort executed by Ask',
+        limitation: `${roleMeaning} Auto Transport evidence does not establish service territory, route availability, price, safety, or recommendation.`,
+        officialAsOf: 'See MoveTrustHub research',
+        sourceFamily: 'MoveTrustHub public research handoff',
+      },
+    };
+  }
   const identifier = parsed.intent === 'identifier' && parsed.identifier && !parsed.identifier.ambiguous;
   const mode = moveAskMode(parsed.query, { identifier: Boolean(identifier) });
   const failReason = moveFailClosedReason(parsed.query);
@@ -674,7 +707,9 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
       return {
         hubId: h.hubId,
         hubName: h.name,
-        sourceFamily: fam?.datasetName ?? h.preview?.sourceFamily ?? 'See specialist methodology',
+        sourceFamily: plan.parsed.moveResearchCategory === 'auto_transport' && h.hubId === 'move'
+          ? h.preview?.sourceFamily ?? 'MoveTrustHub public research handoff'
+          : fam?.datasetName ?? h.preview?.sourceFamily ?? 'See specialist methodology',
         queryGrain: h.preview?.grain ?? h.whatItCanAnswer,
         geographyMeaning: h.geographyCapability,
         officialAsOf: h.preview?.officialAsOf ?? fam?.officialAsOf ?? 'See specialist page',
@@ -693,7 +728,7 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
               : h.hubId === 'insurance'
                 ? INSURANCE_ASK_CONTRACT
                 : h.hubId === 'move'
-                  ? MOVE_ASK_CONTRACT
+                  ? plan.parsed.moveResearchCategory ? undefined : MOVE_ASK_CONTRACT
                   : h.hubId === 'lender'
                     ? h.capabilityStatus === 'execute'
                       ? LENDER_ASK_CONTRACT
@@ -746,6 +781,8 @@ export function assembleNetworkAnswer(query: string): NetworkAskAnswer {
             ? 'HANDOFF'
             : plan.hubs.length === 0
               ? 'UNSUPPORTED_QUERY'
+              : plan.parsed.moveResearchCategory === 'auto_transport' && primary?.capabilityStatus === 'handoff'
+                ? 'HANDOFF'
               : 'RESEARCH_COHORT';
   const identityResolutionClass = plan.parsed.identifier && !plan.parsed.identifier.ambiguous ? 'EXACT_IDENTIFIER' as const : undefined;
   const params = new URLSearchParams({ q: plan.query });
