@@ -4,6 +4,7 @@
   "description": "AskTrustHub.com — thin parent brand for the independent consumer research network",
   "private": true,
   "scripts": {
+    "check:ask-home-001": "node --experimental-strip-types --test lib/network-intelligence/ask-home-001.test.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
