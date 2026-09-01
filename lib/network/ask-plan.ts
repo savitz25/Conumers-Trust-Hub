@@ -57,6 +57,7 @@ import {
 } from './lender-ask.ts';
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
+import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
   applyConsumerPresentation,
   fetchContractorAskOptions,
@@ -1034,7 +1035,7 @@ export function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPaylo
   move.capabilityStatus = 'execute';
   const moveOptions = optionsFromMovePayload(payload, 10, destinationContext(answer));
   if (moveOptions.length) move.options = moveOptions;
-  if (resolver?.class === 'FUZZY_CANDIDATES' || resolver?.class === 'NO_CONFIDENT_MATCH') move.options = undefined;
+  if (resolver?.class === 'NO_CONFIDENT_MATCH') move.options = undefined;
 
   const traces = tracesForPlan(answer.plan).map((row) =>
     row.hubId === 'move'
@@ -1059,12 +1060,84 @@ export function applyMovePayload(answer: NetworkAskAnswer, payload: MoveAskPaylo
     ? 'EXACT_IDENTITY'
     : resolver?.class === 'AMBIGUOUS_NAME'
       ? 'AMBIGUOUS_IDENTITIES'
-      : resolver?.class === 'FUZZY_CANDIDATES' || resolver?.class === 'NO_CONFIDENT_MATCH'
+      : resolver?.class === 'FUZZY_CANDIDATES'
+        ? 'AMBIGUOUS_IDENTITIES'
+      : resolver?.class === 'NO_CONFIDENT_MATCH'
         ? 'NO_CONFIDENT_MATCH'
         : resolver
           ? 'EXACT_IDENTITY'
           : 'RESEARCH_COHORT';
   return { ...overlaid, options: move.options, resultClass, identityResolutionClass: resolver?.class ?? answer.identityResolutionClass, diagnostics: { ...answer.diagnostics, resultClass, identityResolutionClass: resolver?.class ?? answer.identityResolutionClass, resultCount: move.options?.length ?? 0, fallbackPath: 'none' } };
+}
+
+export function applyMoveNetworkOutcome(answer: NetworkAskAnswer, outcome: MoveNetworkResolverOutcome): NetworkAskAnswer {
+  const move = answer.plan.hubs.find((hub) => hub.hubId === 'move');
+  if (!move) return answer;
+  if (!outcome.ok) {
+    const invalid = outcome.kind === 'invalid_query';
+    move.capabilityStatus = invalid ? 'unsupported' : 'unavailable';
+    move.mode = 'fail_closed';
+    move.failKind = 'hard';
+    move.whatItCanAnswer = invalid
+      ? 'Check the identifier or company name and try again.'
+      : 'Mover identity research is temporarily unavailable. Continue on MoveTrustHub or try again shortly.';
+    move.preview = {
+      headline: invalid ? 'Ask could not use that mover identity query' : 'Move identity research is temporarily unavailable',
+      grain: 'specific_company_identity',
+      limitation: outcome.message,
+      officialAsOf: 'Unavailable',
+      sourceFamily: 'MoveTrustHub canonical resolver',
+    };
+    const resultClass: AskResultClass = invalid ? 'UNSUPPORTED_QUERY' : 'HANDOFF';
+    return { ...consumerOverlay(answer), resultClass, options: undefined, noResult: undefined, diagnostics: { ...answer.diagnostics, resultClass, fallbackPath: invalid ? 'unsupported' : 'specialist_handoff', resultCount: 0, sourceContract: [MOVE_NETWORK_RESOLVER_VERSION] } };
+  }
+
+  const payload = outcome.payload;
+  const adapted: MoveAskPayload = {
+    contract: MOVE_NETWORK_RESOLVER_VERSION,
+    resultType: payload.resolutionClass === 'EXACT_IDENTIFIER' ? 'identifier' : 'entity',
+    results: payload.results.map((row) => ({
+      name: row.publicDisplayName,
+      legalName: row.legalName,
+      usdot: row.usdot,
+      mc: row.mc,
+      role: row.role,
+      whyMatched: row.matchReason,
+      headquarters: [row.recordedHq.city, row.recordedHq.state].filter(Boolean).join(', ') || row.recordedHq.raw || undefined,
+      fmcsaStatus: row.authorityState ?? undefined,
+      href: row.canonicalUrl,
+    })),
+    pagination: { total: payload.totalMatchingIdentityCount },
+    provenance: {
+      sourceFamily: payload.trace.sourceContract || 'FMCSA',
+      officialAsOf: payload.sourceClock.latestObserved,
+      geographyMeaning: 'Recorded headquarters. Headquarters is not service territory.',
+      grain: 'MoveTrustHub published mover identity',
+    },
+    limitations: payload.limitations,
+    identityResolution: { class: payload.resolutionClass, totalMatchingIdentityCount: payload.totalMatchingIdentityCount, duplicateNameCount: payload.duplicateNameCount },
+  };
+  let applied = applyMovePayload(answer, adapted);
+  const resultClass: AskResultClass = payload.resolutionClass === 'NO_CONFIDENT_MATCH'
+    ? 'NO_CONFIDENT_MATCH'
+    : payload.resolutionClass === 'AMBIGUOUS_NAME' || payload.resolutionClass === 'FUZZY_CANDIDATES'
+      ? 'AMBIGUOUS_IDENTITIES'
+      : 'EXACT_IDENTITY';
+  if (payload.resolutionClass === 'NO_CONFIDENT_MATCH') {
+    const requested = requestedIdentityName(answer.plan.parsed);
+    applied = { ...applied, noResult: { headline: `We couldn't find a confident published identity matching “${requested}.”`, understood: `Ask understood this as a search for the specific company “${requested},” not a market list.`, actions: ['Try the legal business name', 'Search a USDOT number', 'Search an MC number', 'Continue on MoveTrustHub', 'Research the market separately'] } };
+  }
+  if (payload.resolutionClass === 'AMBIGUOUS_NAME') {
+    applied = { ...applied, matchWhy: `${payload.totalMatchingIdentityCount.toLocaleString('en-US')} published MoveTrustHub identities currently use this public name. The displayed identities remain separate and are shown in source order, not ranked.` };
+  } else if (payload.resolutionClass === 'FUZZY_CANDIDATES') {
+    applied = { ...applied, matchWhy: 'MoveTrustHub found possible published identities. None has been asserted as the exact company you meant, and the candidates are not recommendations.' };
+  }
+  return {
+    ...applied,
+    resultClass,
+    identityResolutionClass: payload.resolutionClass,
+    diagnostics: { ...applied.diagnostics, resultClass, identityResolutionClass: payload.resolutionClass, sourceContract: [MOVE_NETWORK_RESOLVER_VERSION], resultCount: payload.returnedResultCount, fallbackPath: 'none' },
+  };
 }
 
 function applyLenderPayload(answer: NetworkAskAnswer, payload: LenderAskPayload): NetworkAskAnswer {
@@ -1162,8 +1235,13 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   }
   const move = live('move');
   if (move) {
-    const payload = await timed(() => fetchMoveAsk(qFor(move)));
-    if (payload) answer = applyMovePayload(answer, payload);
+    if (isSpecificIdentityRequest(answer.plan.parsed)) {
+      const outcome = await timed(() => fetchMoveNetworkIdentity(query));
+      answer = applyMoveNetworkOutcome(answer, outcome);
+    } else {
+      const payload = await timed(() => fetchMoveAsk(qFor(move)));
+      if (payload) answer = applyMovePayload(answer, payload);
+    }
   }
   const lender = live('lender');
   if (lender) {

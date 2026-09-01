@@ -50,10 +50,14 @@ export type MoveAskPayload = {
   resultType?: string;
   results?: Array<{
     name?: string;
+    legalName?: string | null;
     usdot?: string | null;
     mc?: string | null;
     role?: string;
     whyMatched?: string;
+    headquarters?: string;
+    fmcsaStatus?: string;
+    href?: string;
   }>;
   counts?: Array<{ label?: string; value?: number; grain?: string }>;
   pagination?: { total?: number };
@@ -65,6 +69,7 @@ export type MoveAskPayload = {
   };
   limitations?: string[];
   definition?: { title?: string; body?: string };
+  identityResolution?: { class?: import('./result-contract.ts').IdentityResolutionClass; totalMatchingIdentityCount?: number; duplicateNameCount?: number };
 };
 
 export function moveAskUrl(query: string): string {
