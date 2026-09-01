@@ -10,10 +10,12 @@ import {
 } from './insurance-ask.ts';
 import {
   detectMoveRole,
+  isAutoTransportQuery,
   isAmbiguousCarrierQuery,
   isMoveClassQuery,
   moveGeographyMeaning,
   type MoveRegulatoryRole,
+  type MoveResearchCategory,
 } from './move-ask.ts';
 import {
   isAmbiguousBrokerQuery,
@@ -64,6 +66,7 @@ export type ParsedNetworkAsk = {
   investorFirmType?: InvestorFirmType;
   insuranceEntityClass?: InsuranceEntityClass;
   moveRegulatoryRole?: MoveRegulatoryRole;
+  moveResearchCategory?: MoveResearchCategory;
 };
 
 const FL = /\bflorida\b|\bfl\b/i;
@@ -232,6 +235,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|builder|remodeler|dbpr|cilb/i.test(query);
   const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer/i.test(query);
   const mover = isMoveClassQuery(query);
+  const moveResearchCategory = isAutoTransportQuery(query) ? 'auto_transport' as const : undefined;
   const insurance =
     isInsuranceClassQuery(query) ||
     (/insur(ance|er)|doi|producer|agency license|\bnpn\b|\bnaic\b/i.test(query) && !mover);
@@ -299,10 +303,12 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     hubs.push('lender');
     topic = fha ? 'FHA / mortgage-market research' : 'Lending research';
   } else if (mover) {
-    intent = 'entity';
+    intent = moveResearchCategory ? 'market' : 'entity';
     hubs.push('move');
     topic =
-      moveRegulatoryRole === 'broker'
+      moveResearchCategory
+        ? 'Auto transport research'
+        : moveRegulatoryRole === 'broker'
         ? 'Household-goods broker research'
         : moveRegulatoryRole === 'carrier_broker'
           ? 'Carrier / broker research'
@@ -359,6 +365,10 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     });
   }
   if (moveOnly) {
+    interpretationLines.push({ label: 'Specialist', value: 'MoveTrustHub' });
+    if (moveResearchCategory === 'auto_transport') {
+      interpretationLines.push({ label: 'Research topic', value: 'Auto transport' });
+    }
     if (moveRegulatoryRole) {
       interpretationLines.push({
         label: 'Regulatory role',
@@ -459,5 +469,6 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     investorFirmType,
     insuranceEntityClass,
     moveRegulatoryRole,
+    moveResearchCategory,
   };
 }
