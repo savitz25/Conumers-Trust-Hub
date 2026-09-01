@@ -2,6 +2,8 @@ import { NetworkAskResult } from '@/components/network-ask-result';
 import { PageHeader } from '@/components/page-header';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import type { Metadata } from 'next';
+import { GuidedResearch } from '@/components/guided-research';
+import { isGuidedResearchCandidate } from '@/lib/guided-research/session';
 
 export const revalidate = 3600;
 
@@ -48,7 +50,7 @@ export default async function AskPage({
             </button>
           </div>
         </form>
-        {query ? <NetworkAskResult query={query} /> : (
+        {query ? (isGuidedResearchCandidate(query) ? <GuidedResearch query={query} /> : <NetworkAskResult query={query} />) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',
