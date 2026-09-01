@@ -40,17 +40,19 @@ export function GuidedResearch({query}:{query:string}) {
   function submit(event:FormEvent){event.preventDefault();if(value.trim()){void send({type:'SET_GEOGRAPHY',value:value.trim()});setValue('');}}
   const question=session?.nextAction??'Understanding your research goal…';
   const progress=session?({CLARIFY:'Choosing the research path',COLLECT:'Adding the information needed',EXECUTE:'Researching public records',REFINE:'Reviewing and narrowing public records',DEEP_LINK:'Continuing detailed research',ERROR_RECOVERY:'Recovering this research request',UNDERSTAND:'Understanding the question'} as const)[session.phase]:'';
+  const currentResearch=session?(session.providerClass?.replaceAll('_',' ')??session.trade?.replaceAll('_',' ')??session.moveMode?.replaceAll('_',' ')):undefined;
   return <section className="space-y-6" aria-busy={busy}>
     <div className="rounded-2xl border bg-white p-5 sm:p-6" style={{borderColor:ASK_BRAND.border,boxShadow:ASK_SHADOW.soft}}>
       <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{color:ASK_BRAND.indigo}}>Guided Research</p>
       <p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Original question:</span> {query}</p>
       <h2 ref={headingRef} tabIndex={-1} className="mt-5 text-xl font-semibold outline-none sm:text-2xl" style={{color:ASK_BRAND.navy}}>{question}</h2>
       {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {session.hub==='senior'?'SeniorTrustHub':session.hub==='contractor'?'ContractorTrustHub':'MoveTrustHub'}</p>:null}
+      {currentResearch?<p className="mt-1 text-sm capitalize" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch}{session?.geography?` · ${session.geography.value}`:''}</p>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Preparing the next research step…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
       {!busy&&session?.availableChoices.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">{session.availableChoices.map((choice)=><li key={choice.id}><button type="button" onClick={()=>void send({type:'SELECT_CHOICE',value:choice.value})} className="min-h-12 w-full rounded-xl border p-3 text-left font-semibold focus-visible:outline-none focus-visible:ring-2" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}>{choice.label}{choice.description?<span className="mt-1 block text-xs font-normal leading-relaxed" style={{color:ASK_BRAND.ink}}>{choice.description}</span>:null}</button></li>)}</ul>:null}
       {!busy&&session?.phase==='COLLECT'?<form onSubmit={submit} className="mt-4">
-        <label htmlFor="guided-value" className="block text-sm font-semibold" style={{color:ASK_BRAND.navy}}>{session.missingFields.includes('geography')?'State, county, city or ZIP':session.missingFields.includes('identifier')?'USDOT or MC number':'Company name'}</label>
+        <label htmlFor="guided-value" className="block text-sm font-semibold" style={{color:ASK_BRAND.navy}}>{session.missingFields.includes('geography')?'State, county, city or ZIP':session.missingFields.includes('identifier')?'USDOT or MC number':session.missingFields.includes('tradeDescription')?'Short project description':'Company name'}</label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row"><input id="guided-value" value={value} onChange={event=>setValue(event.target.value)} className="min-h-12 flex-1 rounded-xl border px-4" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}/><button className="min-h-12 rounded-xl px-5 font-semibold text-white" style={{backgroundColor:ASK_BRAND.indigo}}>Continue</button></div>
         {session.missingFields.includes('geography')&&session.hub==='senior'?<p className="mt-2 text-xs" style={{color:ASK_BRAND.ink}}>You may enter Florida to review statewide records, or narrow by a supported city, county or ZIP.</p>:null}
       </form>:null}

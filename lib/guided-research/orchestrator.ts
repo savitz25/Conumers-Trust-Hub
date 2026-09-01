@@ -1,5 +1,5 @@
 import type { GuidedAction, GuidedApiResponse, GuidedResearchSession } from './contract.ts';
-import { createGuidedSession, parseGuidedGeography, pushHistory, restorePrevious, validateGuidedSession } from './session.ts';
+import { createGuidedSession, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
 import { executeGuidedSpecialist } from './specialists.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
@@ -35,9 +35,12 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
   if (session.hub === 'senior') {
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
-    return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where is care needed?' });
+    return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
   }
   if (session.hub === 'contractor') {
+    if (value === 'other_trade') return touch({ ...clearExecutionState(next),trade:undefined,geography:undefined,identifier:undefined,identityName:undefined,availableChoices:[],missingFields:['tradeDescription'],phase:'COLLECT',nextAction:'Briefly describe the work you need.' });
+    if (value === 'choose_trade') return touch({ ...clearExecutionState(next),trade:undefined,availableChoices:structuredClone(TRADE_CHOICES),missingFields:['trade'],phase:'CLARIFY',nextAction:'Tell us what kind of work you need.' });
+    if (value.startsWith('confirm_trade:')) value=value.slice('confirm_trade:'.length);
     if (!['roofing','hvac','plumbing','general','pool_spa','mechanical','electrical'].includes(value)) throw new Error('invalid_choice');
     return touch({ ...clearExecutionState(next), trade: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where is the property?' });
   }
@@ -52,7 +55,15 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
 }
 
 function collectValue(session: GuidedResearchSession, value: string): GuidedResearchSession {
-  const next=pushHistory(session);
+  const returnContractorResultsToTradeMenu=session.hub==='contractor'&&session.missingFields.includes('geography')&&session.history.at(-1)?.phase==='CLARIFY';
+  const next=returnContractorResultsToTradeMenu?session:pushHistory(session);
+  if (session.missingFields.includes('tradeDescription')) {
+    const description=value.trim().slice(0,160);
+    const mappings:Array<[RegExp,string,string]>=[[/\broof/i,'roofing','Roofing'],[/\b(?:air\s*condition|hvac)\b/i,'hvac','Air conditioning / HVAC'],[/\bplumb/i,'plumbing','Plumbing'],[/\belectr/i,'electrical','Electrical'],[/\b(?:general|building|construction)\b/i,'general','General / building construction'],[/\b(?:pool|spa)\b/i,'pool_spa','Pool / spa'],[/\bmechanic/i,'mechanical','Mechanical']];
+    const match=mappings.find(([pattern])=>pattern.test(description));
+    if (!match) return touch({...next,phase:'CLARIFY',missingFields:['trade'],availableChoices:structuredClone(TRADE_CHOICES),nextAction:'Choose the closest supported source category. Ask will not guess a regulatory trade.'});
+    return touch({...next,trade:undefined,phase:'CLARIFY',missingFields:['tradeConfirmation'],availableChoices:[{id:`confirm-${match[1]}`,label:`Yes — ${match[2]}`,action:'SELECT_CHOICE',value:`confirm_trade:${match[1]}`},{id:'choose-trade',label:'Choose a different category',action:'SELECT_CHOICE',value:'choose_trade'}],nextAction:`Did you mean ${match[2]}?`});
+  }
   if (session.missingFields.includes('geography')) {
     const geography=parseGuidedGeography(value);
     if (!geography) throw new Error('invalid_geography');

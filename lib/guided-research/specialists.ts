@@ -31,7 +31,7 @@ function heading(state: GuidedResultState): string {
   return {
     SUPPORTED_RESULTS: 'Research results',
     ZERO_MATCHING_ROWS: 'No records match these exact filters',
-    UNSUPPORTED_CAPABILITY: 'This specific research is not supported by the current public source',
+    UNSUPPORTED_CAPABILITY: 'This source does not currently support that research',
     INVALID_QUERY: 'We need to correct part of this request',
     BACKEND_UNAVAILABLE: 'This specialist research system is temporarily unavailable',
     TIMEOUT: 'This research request took too long',
@@ -188,6 +188,10 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
         ? 'We understood that you are looking for Florida electrical-contractor research in Boca Raton. The current accepted Florida construction source used by ContractorTrustHub does not include Florida electrical credentials.'
         : undefined);
     result.limitations = [text(payload.limitation)].filter(Boolean) as string[];
+    const resolved=record(payload.resolvedGeography);
+    const resolvedLabel=[text(resolved.city),text(resolved.county)?`${text(resolved.county)} County`:undefined,text(resolved.state)].filter(Boolean).join(', ');
+    if (resolvedLabel) result.interpretation.push({label:'Resolved geography',value:resolvedLabel});
+    if (text(payload.errorCode) === 'unsupported_florida_electrical_source') result.limitations.push('This does not mean no electricians exist. No substitute trade or out-of-state records were used.');
     result.destinations = records(payload.supportedAlternatives).flatMap((row) => text(row.destination) ? [{ type:'VERIFY' as const, href:text(row.destination)!, label:text(row.label) ?? 'Continue with the official source' }] : []);
     return result;
   }
@@ -210,8 +214,17 @@ function supported(session: GuidedResearchSession, payload: Record<string, unkno
   const total = Number(payload.total ?? rows.length);
   const state: GuidedResultState = total === 0 ? 'ZERO_MATCHING_ROWS' : 'SUPPORTED_RESULTS';
   const pagination=record(payload.pagination); const provenance=record(payload.provenance);
+  const resolution=text(record(payload.queryInterpretation).resolutionClass);
+  const consumerHeading=state==='ZERO_MATCHING_ROWS'
+    ? session.identityName?'No confident match found':'No public records match these exact filters'
+    : session.identifier?'Exact regulatory identity'
+      : session.identityName&&resolution==='FUZZY_CANDIDATES'?'Possible published identities'
+        : session.identityName?'Multiple published identities'
+          : session.providerClass?`${session.providerClass.replaceAll('_',' ').replace(/\b\w/g,(letter)=>letter.toUpperCase())} research results`
+            : session.trade?'Contractor credential research results'
+              : session.moveMode==='auto_transport'?'Auto Transport research results':'Mover research results';
   return {
-    specialist:session.hub!,resultState:state,consumerHeading:heading(state),
+    specialist:session.hub!,resultState:state,consumerHeading,
     consumerMessage:state==='SUPPORTED_RESULTS'?`${total.toLocaleString('en-US')} public records match these source-owned filters. Source order only — not a ranking.`:'The specialist executed the supported filters and returned zero matching public records.',
     interpretation:interpretation(session),rows,total,
     pagination:{page:Number(pagination.page??1),limit:Number(pagination.limit??pagination.pageSize??10),hasMore:Boolean(pagination.hasMore??(Number(pagination.totalPages??1)>1))},

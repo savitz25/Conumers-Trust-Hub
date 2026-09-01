@@ -9,8 +9,15 @@ const CARE_CHOICES: GuidedChoice[] = [
   { id: 'care-explain', label: "I'm not sure — explain the differences", action: 'SELECT_CHOICE', value: 'explain_care' },
 ];
 const TRADE_CHOICES: GuidedChoice[] = [
-  ['roofing', 'Roofing'], ['hvac', 'HVAC'], ['plumbing', 'Plumbing'], ['general', 'General/building construction'], ['pool_spa', 'Pool/spa'], ['mechanical', 'Mechanical'],
-].map(([value, label]) => ({ id: `trade-${value}`, label, action: 'SELECT_CHOICE' as const, value }));
+  { id:'trade-roofing',label:'Roofing',action:'SELECT_CHOICE',value:'roofing' },
+  { id:'trade-hvac',label:'Air conditioning / HVAC',action:'SELECT_CHOICE',value:'hvac' },
+  { id:'trade-plumbing',label:'Plumbing',action:'SELECT_CHOICE',value:'plumbing' },
+  { id:'trade-electrical',label:'Electrical',action:'SELECT_CHOICE',value:'electrical',description:'Electrical-contractor source coverage varies by jurisdiction.' },
+  { id:'trade-general',label:'General / building construction',action:'SELECT_CHOICE',value:'general' },
+  { id:'trade-pool-spa',label:'Pool / spa',action:'SELECT_CHOICE',value:'pool_spa' },
+  { id:'trade-mechanical',label:'Mechanical',action:'SELECT_CHOICE',value:'mechanical' },
+  { id:'trade-other',label:"Other / I’m not sure",action:'SELECT_CHOICE',value:'other_trade',description:'Describe the project briefly, then confirm a supported source category before research runs.' },
+];
 const MOVE_CHOICES: GuidedChoice[] = [
   { id: 'move-household', label: 'Household belongings', action: 'SELECT_CHOICE', value: 'mover' },
   { id: 'move-auto', label: 'A car or vehicle', action: 'SELECT_CHOICE', value: 'auto_transport' },
@@ -64,6 +71,10 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   if (!q) return null;
   const parsed = parseNetworkAsk(q);
   const session = base(q);
+  if (/\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
+    const geography=parsed.geography?parseGuidedGeography(parsed.geography.countyName??parsed.geography.city??parsed.geography.stateName??'')??undefined:undefined;
+    return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
+  }
   const grandma = /\b(?:grandma|grandmother|grandpa|grandfather|senior|elderly parent)\b/i.test(q) && /\b(?:home|care|facility|help|place)\b/i.test(q);
   if (grandma) return { ...session, hub: 'senior', phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
 
@@ -79,12 +90,13 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
     session.entityClass = parsed.seniorProviderClass;
     if (session.identifier || session.providerClass && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
     if (!session.providerClass) return { ...session, phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
-    return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where is care needed?' };
+    return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where does she need care?' };
   }
   if (hub === 'contractor') {
     const trade = parsed.trade?.toLowerCase();
     session.trade = trade === 'general contractor' ? 'general' : trade;
     session.entityClass = 'credential_record';
+    session.identityName = undefined;
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
     if (!session.trade) return { ...session, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'What kind of work do you need?' };
     return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where is the property?' };
