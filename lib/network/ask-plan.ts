@@ -307,8 +307,8 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
       mode: 'auto_transport_handoff',
       structuredFilters: { researchCategory: 'auto_transport', role },
       destination: MOVE_COMPANY_RESEARCH_ROUTE,
-      reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and any source-backed Auto Transport qualification. Ask does not construct or claim this cohort.',
-      whatItCanAnswer: 'Continue on MoveTrustHub to research published moving-company identities and their source-owned evidence.',
+      reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and source-backed Auto Transport qualification. Ask routes to that accepted specialist cohort and does not construct it.',
+      whatItCanAnswer: 'Continue on MoveTrustHub to research its source-backed Auto Transport cohort and each published moving-company identity.',
       geographyCapability: 'Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.',
       judgmentNote: ranking
         ? 'Ask does not rank Auto Transport companies. Continue with neutral MoveTrustHub research and verify the exact regulatory identity.'
@@ -317,10 +317,10 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
           : undefined,
       preview: {
         headline: `Auto Transport research${roleLabel ? ` · ${roleLabel}` : ''}`,
-        grain: 'MoveTrustHub public research handoff; no Auto Transport cohort executed by Ask',
+        grain: 'MoveTrustHub source-backed Auto Transport cohort handoff; no cohort executed by Ask',
         limitation: `${roleMeaning} Auto Transport evidence does not establish service territory, route availability, price, safety, or recommendation.`,
-        officialAsOf: 'See MoveTrustHub research',
-        sourceFamily: 'MoveTrustHub public research handoff',
+        officialAsOf: 'FMCSA Company Census rows updated 2026-08-30; retrieved by MoveTrustHub 2026-09-01',
+        sourceFamily: 'FMCSA Company Census cargo evidence (Move DIR-001)',
       },
     };
   }
@@ -708,7 +708,7 @@ function tracesForPlan(plan: NetworkAskPlan): TraceRow[] {
         hubId: h.hubId,
         hubName: h.name,
         sourceFamily: plan.parsed.moveResearchCategory === 'auto_transport' && h.hubId === 'move'
-          ? h.preview?.sourceFamily ?? 'MoveTrustHub public research handoff'
+          ? h.preview?.sourceFamily ?? 'FMCSA Company Census cargo evidence (Move DIR-001)'
           : fam?.datasetName ?? h.preview?.sourceFamily ?? 'See specialist methodology',
         queryGrain: h.preview?.grain ?? h.whatItCanAnswer,
         geographyMeaning: h.geographyCapability,
