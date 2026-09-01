@@ -1,17 +1,15 @@
-import { HomeConciergeDemoted } from '@/components/home-concierge-demoted';
-import { HomeLifeJourneys } from '@/components/home-life-journeys';
-import { HomeResearchStandard } from '@/components/home-research-standard';
-import { HomeTrustSignals } from '@/components/home-trust-signals';
-import { NetworkAskHero } from '@/components/network-ask-hero';
-import { NetworkFindings } from '@/components/network-findings';
-import { NetworkLiveMosaic } from '@/components/network-live-mosaic';
-import { NetworkSourcePreview } from '@/components/network-source-preview';
-import { HomePrompt2Previews } from '@/components/home-prompt-2-previews';
-import { WhatsHappeningPlanner } from '@/components/whats-happening-planner';
+import type { Metadata } from 'next';
+import { NetworkIntelligenceHome } from '@/components/network-intelligence-home';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { buildHomepageGraph } from '@/lib/seo/schemas';
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: 'AskTrustHub — Public Regulatory Research Across the Trust Hub Network',
+  description: 'Research public and regulatory evidence across moving, lending, insurance, senior care, contractors, and investment advisers.',
+  alternates: { canonical: '/' },
+};
 
 /**
  * AskTrustHub 2.0 Prompt 1 IA:
@@ -22,16 +20,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={buildHomepageGraph()} />
-      <NetworkAskHero />
-      <NetworkLiveMosaic />
-      <NetworkFindings />
-      <NetworkSourcePreview />
-      <HomePrompt2Previews />
-      <HomeConciergeDemoted />
-      <WhatsHappeningPlanner />
-      <HomeLifeJourneys />
-      <HomeResearchStandard />
-      <HomeTrustSignals />
+      <NetworkIntelligenceHome />
     </>
   );
 }

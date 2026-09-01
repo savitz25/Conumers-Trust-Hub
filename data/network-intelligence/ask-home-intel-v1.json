@@ -1,0 +1,29 @@
+{
+  "version":"ask-home-intel-v1",
+  "network_contract_version":"ask-network-intel-v1",
+  "network_contract_fingerprint":"834dadcfa800e84914cb0e328f21234f42d7a7314c29d497f801dab2e8d202e1",
+  "presentation_version":"network-intelligence-homepage-v1",
+  "displayed_metric_ids":{
+    "move":["move_public_profiles","move_authority_recorded"],
+    "lender":["lender_institutions","hmda_applications_2025"],
+    "insurance":["insurance_agencies","insurance_legal_insurers"],
+    "senior":[],
+    "contractor":["contractor_live_credentials","contractor_active_credentials"],
+    "investor":["investor_iard_roster","investor_ria_firms","investor_era_firms"]
+  },
+  "derived_display_metrics":[
+    {"metric_id":"network_hub_count","value":6,"calculation":"count of accepted hub manifests"},
+    {"metric_id":"normalized_publisher_count","value":11,"calculation":"distinct publisher strings in network-source-ledger-v1"},
+    {"metric_id":"normalized_dataset_entry_count","value":11,"calculation":"ledger source-entry count"},
+    {"metric_id":"paid_ranking_signal_count","value":0,"calculation":"global paid-ordering policy assertion"}
+  ],
+  "section_order":["hero_search","state_of_network","what_data_says","evidence_depth","research_pathways","coverage","methodology","source_freshness","limitations_what_changed","concierge","final_cta"],
+  "coverage_mode":"contract_driven_matrix",
+  "source_ledger_view":"nine_representative_publishers_plus_full_ledger_link",
+  "methodology_version":"SOURCE_IDENTIFY_VERIFY_ORGANIZE_TRACE_UPDATE_YOU_DECIDE",
+  "limitations_version":"network-limitations-v1",
+  "what_changed_mode":"initial_baseline",
+  "runtime_data_strategy":"build_time_local_snapshot",
+  "client_components":["accepted_federated_search_input","accepted_concierge_entry"],
+  "forbidden_features":["cross_hub_entity_total","universal_trust_score","paid_ordering","aggregate_rating","live_six_hub_fanout"]
+}
