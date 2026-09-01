@@ -43,15 +43,15 @@ test('handoff is useful, explicit, source-owned, and never fabricates a cohort',
   const answer = assembleNetworkAnswer('auto transport carrier');
   const hub = answer.plan.hubs[0];
   assert.match(hub.preview?.headline ?? '', /Auto Transport research.*Carrier/i);
-  assert.match(hub.reason, /MoveTrustHub owns.*Ask does not construct or claim this cohort/i);
-  assert.match(hub.destination ?? '', /^https:\/\/www\.movetrusthub\.com\/companies$/);
-  assert.match(hub.preview?.grain ?? '', /handoff.*no Auto Transport cohort executed/i);
+  assert.match(hub.reason, /MoveTrustHub owns.*Ask routes.*does not construct it/i);
+  assert.equal(hub.destination, 'https://www.movetrusthub.com/companies?services=Auto+Transport');
+  assert.match(hub.preview?.grain ?? '', /source-backed Auto Transport cohort handoff.*no cohort executed by Ask/i);
   assert.match(hub.preview?.limitation ?? '', /specific vehicle|service territory/i);
   assert.equal(answer.options, undefined);
   assert.equal(answer.diagnostics.resultCount, 0);
   assert.equal(answer.diagnostics.fallbackPath, 'specialist_handoff');
   assert.equal(answer.traces[0].contract, undefined);
-  assert.match(answer.traces[0].sourceFamily, /public research handoff/i);
+  assert.match(answer.traces[0].sourceFamily, /FMCSA Company Census cargo evidence.*Move DIR-001/i);
   assert.ok(answer.interpretation.some((row) => row.label === 'Research topic' && row.value === 'Auto transport'));
   assert.ok(answer.interpretation.some((row) => row.label === 'Regulatory role' && row.value === 'Carrier'));
 });
@@ -110,7 +110,7 @@ test('accepted prior search goldens retain their hub and safety outcomes', () =>
 
 test('capability describes a handoff rather than a canonical Auto Transport resolver', () => {
   assert.ok(HUB_CAPABILITY_CONTRACTS.move.filters.includes('auto_transport_handoff'));
-  assert.match(HUB_CAPABILITY_CONTRACTS.move.publicationSemantics, /specialist handoff, not an Ask-owned cohort/i);
+  assert.match(HUB_CAPABILITY_CONTRACTS.move.publicationSemantics, /source-backed specialist handoff, not an Ask-owned cohort/i);
 });
 
 test('homepage, network intelligence, and zero-write locks remain unchanged', () => {

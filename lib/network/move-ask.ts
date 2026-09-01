@@ -11,7 +11,7 @@ export const MOVE_ASK_API = 'https://www.movetrusthub.com/api/ask';
 export type MoveRegulatoryRole = 'carrier' | 'broker' | 'carrier_broker';
 export type MoveResearchCategory = 'auto_transport';
 
-export const MOVE_COMPANY_RESEARCH_ROUTE = 'https://www.movetrusthub.com/companies';
+export const MOVE_COMPANY_RESEARCH_ROUTE = 'https://www.movetrusthub.com/companies?services=Auto+Transport';
 
 export type MoveAskMode =
   | 'entity'

@@ -24,6 +24,10 @@ The carrier ambiguity firewall is behaving correctly; the missing domain vocabul
 
 Until PR #107 is accepted, Ask will not claim or render an Auto Transport cohort. It will classify the topic and regulatory role, return a useful `HANDOFF`, and link to MoveTrustHub's general public company-research surface. MoveTrustHub remains responsible for qualification, ordering, publication, and evidence semantics.
 
+## Release reconciliation
+
+Move PR #107 merged during Ask release QA at `3e8ef1f867cd287ca8fbfe0061b10e24ccbf3871`. Production now exposes the accepted `/companies?services=Auto+Transport` destination with 268 published identities qualified by the FMCSA Company Census File (`az4n-8mr2`) motor-vehicles/driveaway-towaway cargo evidence. Ask's final destination was updated to that source-owned filtered surface; Ask still returns `HANDOFF` and never reconstructs the cohort.
+
 ## Locked boundaries
 
 No Move repository edits, database writes, identity logic, ranking, pricing, service-territory inference, homepage/network count changes, Concierge changes, or customer-platform changes are authorized by this hotfix.
