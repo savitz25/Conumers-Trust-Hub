@@ -1,7 +1,8 @@
 export const HUB_CONTRACTOR = 'contractor' as const;
 export const HUB_MOVE = 'move' as const;
 export const HUB_LENDER = 'lender' as const;
-export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER] as const;
+export const HUB_SENIOR = 'senior' as const;
+export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER, HUB_SENIOR] as const;
 export type CustomerHubId = (typeof CUSTOMER_HUBS)[number];
 export const SOURCE_FL_DBPR = 'fl_dbpr' as const;
 export const HOME_STATE_FL = 'FL' as const;
@@ -50,8 +51,10 @@ export type HandoffPayload = {
   external_key: string;
   source_system: string;
   home_state: string | null;
-  identifier_namespace?: 'credential' | 'USDOT' | 'NMLS';
-  entity_class?: 'contractor' | 'mover' | 'institution';
+  identifier_namespace?: 'credential' | 'USDOT' | 'NMLS' | 'CMS_CCN';
+  entity_class?: 'contractor' | 'mover' | 'institution' | SeniorProviderClass;
+  provider_class?: SeniorProviderClass;
+  canonical_profile_url?: string;
   display_name?: string;
   iat: number;
   exp: number;
@@ -72,9 +75,11 @@ export type CthProfileRecord = {
 export type CustomerProfileRecord = CthProfileRecord & {
   hubId: CustomerHubId;
   publicationEligible: boolean;
-  entityClass: 'contractor' | 'mover' | 'institution';
+  entityClass: 'contractor' | 'mover' | 'institution' | SeniorProviderClass;
   canonicalUrl: string;
 };
+
+export type SeniorProviderClass = 'nursing_home' | 'home_health' | 'hospice';
 
 export type AdapterFailure =
   | 'missing_profile'
@@ -83,7 +88,10 @@ export type AdapterFailure =
   | 'unsupported_state'
   | 'unsupported_source'
   | 'slug_mismatch'
-  | 'credential_mismatch';
+  | 'credential_mismatch'
+  | 'historical_profile'
+  | 'profile_not_public'
+  | 'specialist_unavailable';
 
 export type RequestContext = {
   ip?: string | null;

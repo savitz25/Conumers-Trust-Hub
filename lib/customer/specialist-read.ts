@@ -2,7 +2,7 @@ import 'server-only';
 import type { CustomerProfileDirectory } from './adapter.ts';
 import type { CustomerProfileRecord, HandoffPayload } from './types.ts';
 
-const ENDPOINTS={move:'https://www.movetrusthub.com/api/specialist-execution/v2',lender:'https://www.lendertrusthub.com/api/specialist-execution/v2'} as const;
+const ENDPOINTS={move:'https://www.movetrusthub.com/api/specialist-execution/v2',lender:'https://www.lendertrusthub.com/api/specialist-execution/v2',senior:'https://www.seniortrusthub.com/api/customer-profile-validation/v1'} as const;
 async function post(url:string,body:unknown){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:controller.signal,cache:'no-store'});if(!r.ok&&r.status>=500)throw new Error('specialist_unavailable');return await r.json() as Record<string,unknown>}finally{clearTimeout(timer)}}
 function slugFrom(value:string){try{return new URL(value).pathname.split('/').filter(Boolean).at(-1)||''}catch{return value.split('/').filter(Boolean).at(-1)||''}}
 
@@ -14,6 +14,20 @@ export const specialistCustomerDirectory:CustomerProfileDirectory={async getExac
     const url=String(row?.canonicalProfileUrl||'');
     if(data.resultType!=='SUPPORTED_RESULTS'||Number(data.total)!==1||String(row?.usdot)!==p.external_key||slugFrom(url)!==p.slug)return null;
     return{id:p.native_profile_id,hubId:'move',slug:p.slug,displayName:String(row?.publicDisplayName||p.display_name||''),isThin:false,publicationEligible:true,homeState:(row?.recordedHq as Record<string,unknown>|undefined)?.state as string|null??null,licenseState:null,externalKey:p.external_key,sourceSystem:p.source_system,entityClass:'mover',canonicalUrl:url};
+  }
+  if(p.hub_id==='senior'){
+    if(!p.provider_class||!p.canonical_profile_url) return null;
+    const data=await post(ENDPOINTS.senior,{providerClass:p.provider_class,cmsCcn:p.external_key,nativeProfileId:p.native_profile_id,canonicalProfileUrl:p.canonical_profile_url});
+    if(data.status==='rejected'){
+      const code=String(data.errorCode||'');
+      if(code==='historical_profile')throw new Error('historical_profile');
+      if(code==='profile_not_public'||code==='publication_hold')throw new Error('profile_not_public');
+      if(code==='backend_unavailable')throw new Error('specialist_unavailable');
+      return null;
+    }
+    if(data.contract!=='senior-customer-profile-validation-v1'||data.contractVersion!=='1.0.0'||data.schemaFingerprint!=='f207e69d07f0a9cf660f514219908e0848af4fc270c1dcef151f24b8a1022cf1'||data.contractFingerprint!=='cf0475d70df34de062bf66bd189810e6c79cb99e994a8047dd4896065b0a9798')throw new Error('specialist_unavailable');
+    if(data.providerClass!==p.provider_class||data.nativeProfileId!==p.native_profile_id||data.cmsCcn!==p.external_key||data.publicationState!=='public'||data.current!==true||data.canonicalProfileUrl!==p.canonical_profile_url)return null;
+    return{id:p.native_profile_id,hubId:'senior',slug:p.slug,displayName:String(data.displayName||p.display_name||''),isThin:false,publicationEligible:true,homeState:null,licenseState:null,externalKey:p.external_key,sourceSystem:p.source_system,entityClass:p.provider_class,canonicalUrl:p.canonical_profile_url};
   }
   const data=await post(ENDPOINTS.lender,{contract:'trusthub-specialist-execution-v2',queryType:'identifier',identifier:{type:'NMLS',value:p.external_key}});
   const identity=data.identity as Record<string,unknown>|undefined,destination=identity?.destination as Record<string,unknown>|undefined;

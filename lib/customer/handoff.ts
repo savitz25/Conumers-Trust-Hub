@@ -55,8 +55,10 @@ export function mintHandoffToken(
     nonce?: string;
     sourceSystem?: string;
     homeState?: string | null;
-    identifierNamespace?: 'credential' | 'USDOT' | 'NMLS';
-    entityClass?: 'contractor' | 'mover' | 'institution';
+    identifierNamespace?: HandoffPayload['identifier_namespace'];
+    entityClass?: HandoffPayload['entity_class'];
+    providerClass?: HandoffPayload['provider_class'];
+    canonicalProfileUrl?: string;
     displayName?: string;
   }
 ): { token: string; payload: HandoffPayload } {
@@ -76,6 +78,8 @@ export function mintHandoffToken(
     home_state: input.homeState === undefined ? HOME_STATE_FL : input.homeState,
     identifier_namespace: input.identifierNamespace,
     entity_class: input.entityClass,
+    provider_class: input.providerClass,
+    canonical_profile_url: input.canonicalProfileUrl,
     display_name: input.displayName,
     iat: Math.floor(now.getTime() / 1000),
     exp: Math.floor(now.getTime() / 1000) + ttl,

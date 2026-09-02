@@ -3,7 +3,7 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { PUBLIC_LANGUAGE } from '@/lib/customer/copy';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AccountSignIn } from '@/components/customer/AccountSignIn';
-import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
+import { CUSTOMER_HUB_REGISTRY, customerEntityClassLabel } from '@/lib/customer/hub-registry';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +46,7 @@ export default async function ManagePage() {
           <article key={String(row.grant_id)} className="card-surface space-y-2 p-5">
             <h2 className="text-lg font-medium">{String(row.display_name || row.display_name_snapshot)}</h2>
             <p className="text-sm text-muted-foreground">{CUSTOMER_HUB_REGISTRY[row.hub_id as keyof typeof CUSTOMER_HUB_REGISTRY].displayName} · Role: {String(row.role)}</p>
+            <p className="text-sm text-muted-foreground">Profile class: {customerEntityClassLabel(row.entity_class)}</p>
             <p className="text-sm text-muted-foreground">Status: {String(row.grant_status)}</p>
             <p className="text-sm text-muted-foreground">
               {String(row.identifier_namespace||'Credential')} {String(row.native_credential_key)}

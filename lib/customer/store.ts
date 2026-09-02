@@ -374,7 +374,7 @@ export class CustomerPlatform {
       intentId: intent!.id,
       payload,
       displayName: adapter.profile.displayName,
-      profileHref: payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
+      profileHref: 'canonicalUrl' in adapter.profile ? String(adapter.profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
     };
   }
 
@@ -399,7 +399,7 @@ export class CustomerPlatform {
     return {
       payload,
       displayName: adapter.profile.displayName,
-      profileHref: payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
+      profileHref: 'canonicalUrl' in adapter.profile ? String(adapter.profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
       consumed: Boolean(row.consumed_at),
     };
   }
@@ -455,8 +455,8 @@ export class CustomerPlatform {
         adapter.profile.displayName,
         this.now().toISOString(),
         customerHub(intent.payload.hub_id)!.identifierNamespace,
-        customerHub(intent.payload.hub_id)!.identityClass,
-        intent.payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:intent.payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
+        'entityClass' in adapter.profile ? String(adapter.profile.entityClass) : 'contractor',
+        'canonicalUrl' in adapter.profile ? String(adapter.profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
       ]
     );
 
@@ -876,10 +876,10 @@ export class CustomerPlatform {
     const access = await one<{
       user_id: string; org_id: string; hub_profile_id: string; role: MembershipRole;
       native_profile_id: string; native_slug: string; native_credential_key: string;
-      display_name_snapshot: string | null; hub_id:import('./types.ts').CustomerHubId;native_source_system:string;canonical_url:string|null;
+      display_name_snapshot: string | null; hub_id:import('./types.ts').CustomerHubId;native_source_system:string;canonical_url:string|null;entity_class:string|null;
     }>(this.deps.sql,
       `SELECT u.id AS user_id, o.id AS org_id, p.id AS hub_profile_id, m.role,
-              p.native_profile_id::text, p.native_slug, p.native_credential_key, p.display_name_snapshot,p.hub_id,p.native_source_system,p.canonical_url
+              p.native_profile_id::text, p.native_slug, p.native_credential_key, p.display_name_snapshot,p.hub_id,p.native_source_system,p.canonical_url,p.entity_class
          FROM ath_users u
          JOIN ath_memberships m ON m.user_id = u.id AND m.status = 'active'
          JOIN ath_organizations o ON o.id = m.org_id AND o.status = 'active'
