@@ -244,21 +244,26 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
   const rows = records(payload.rows).map((row): GuidedResultRow => {
     const geo=record(row.recordedGeography); const source=record(row.source); const credential=text(row.credentialNumber);
     const destination=normalizeContractorDestinations(row)[0];
+    const jurisdiction=state==='NJ'?'New Jersey':state==='FL'?'Florida':state;
     return {
       name:text(row.name) ?? 'Published credential holder',hub:'contractor',identifier:credential?{label:'Credential',value:credential}:undefined,
       classLabel:text(row.credentialClass)??text(row.trade),recordedLocation:[text(geo.city),text(geo.county),text(geo.state)].filter(Boolean).join(', '),
       status:text(row.status),sourceDate:text(source.observedAt),whyShown:`Matched the selected ${session.geography?.stateName ?? state} source-owned trade, status, and recorded-geography filters.`,
       destination,
-      facts:[text(row.occupationCode)?{label:'Source class',value:text(row.occupationCode)!}:null,text(source.label)?{label:'Source',value:text(source.label)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
+      facts:[jurisdiction?{label:'Credential jurisdiction',value:jurisdiction}:null,text(row.occupationCode)?{label:'Source class',value:text(row.occupationCode)!}:null,text(source.label)?{label:'Source',value:text(source.label)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
     };
   });
   const result=supported(session,payload,rows,outcome.latencyMs,normalizeRefinements(payload.availableRefinements).filter((row)=>row.id==='credentialStatus'));
   if(stateResult==='EXACT_IDENTITY')result.resultState='EXACT_IDENTITY';
   const interpretation=record(payload.queryInterpretation);const sourceTrade=text(interpretation.trade);const sourceGeo=record(interpretation.geography);
-  if(state==='NJ'&&sourceTrade){result.consumerHeading=`New Jersey ${sourceTrade.toLowerCase()} research results`;result.consumerMessage=`${result.total.toLocaleString('en-US')} publication-safe New Jersey credential records match these source-owned filters. Source order only — not a ranking.`;}
+  if(state==='NJ'&&sourceTrade){result.consumerHeading=`New Jersey ${formatCredentialClass(sourceTrade)} research results`;result.consumerMessage=`${result.total.toLocaleString('en-US')} publication-safe New Jersey credential records match these source-owned filters. New Jersey is the credential jurisdiction; a registrant's recorded address may be outside New Jersey. Source order only — not a ranking.`;result.limitations.push('Credential jurisdiction and recorded address are different fields. A recorded address does not prove headquarters, service territory, or current availability.');}
   if(sourceGeo.fallbackApplied===true)result.interpretation.push({label:'Geography scope',value:'Statewide New Jersey credential records — explicitly confirmed'});
   result.destinations=[...new Map(rows.flatMap((row)=>row.destination?[row.destination]:[]).map((destination)=>[destination.href,destination])).values()];
   return result;
+}
+
+function formatCredentialClass(value:string):string {
+  return value.toLowerCase().replace(/\bhvacr\b/g,'HVACR').replace(/\bhvac\b/g,'HVAC').replace(/\bhic\b/g,'HIC');
 }
 
 function normalizeContractorDestinations(value: unknown): NonNullable<GuidedResultRow['destination']>[] {

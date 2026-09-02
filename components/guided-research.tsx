@@ -13,16 +13,19 @@ export function GuidedResearch({query}:{query:string}) {
   const [result,setResult]=useState<GuidedExecutionResult|null>(null);
   const [busy,setBusy]=useState(true);
   const [error,setError]=useState('');
+  const [resumeRecovery,setResumeRecovery]=useState(false);
   const [value,setValue]=useState('');
   const headingRef=useRef<HTMLHeadingElement>(null);
 
   const send=useCallback(async(action:GuidedAction,current?:GuidedResearchSession|null)=>{
-    setBusy(true);setError('');
+    setBusy(true);setError('');setResumeRecovery(false);
     try{
       const response=await fetch('/api/guided-research',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({session:current??session,action})});
       const body=await response.json() as GuidedApiResponse&{message?:string};
       if(!response.ok)throw new Error(body.message??'Guided Research could not continue.');
+      const missingRestoredResult=action.type==='RESUME'&&Boolean(body.session.lastExecution)&&!body.result;
       setSession(body.session);setResult(body.result??null);
+      if(missingRestoredResult){setError('The specialist explanation could not be restored. Retry the public-source research.');setResumeRecovery(true);}
       try{sessionStorage.setItem(storageKey(query),JSON.stringify(body.session));}catch{/* Current in-memory research remains usable when tab storage is unavailable. */}
       requestAnimationFrame(()=>headingRef.current?.focus());
     }catch(reason){setError(reason instanceof Error?reason.message:'Guided Research could not continue.');}
@@ -30,7 +33,7 @@ export function GuidedResearch({query}:{query:string}) {
   },[query,session]);
 
   useEffect(()=>{
-    setSession(null);setResult(null);setError('');setBusy(true);
+    setSession(null);setResult(null);setError('');setResumeRecovery(false);setBusy(true);
     let restored:GuidedResearchSession|null=null;
     try{const raw=sessionStorage.getItem(storageKey(query));if(raw){const parsed=JSON.parse(raw) as GuidedResearchSession;if(parsed.version===GUIDED_SESSION_VERSION&&parsed.originalQuestion===query)restored=parsed;}}catch{}
     void send(restored?{type:'RESUME'}:{type:'START',question:query},restored);
@@ -41,16 +44,17 @@ export function GuidedResearch({query}:{query:string}) {
   function submit(event:FormEvent){event.preventDefault();if(value.trim()){void send({type:'SET_GEOGRAPHY',value:value.trim()});setValue('');}}
   const question=session?.nextAction??'Understanding your research goal…';
   const progress=session?({CLARIFY:'Choosing the research path',COLLECT:'Adding the information needed',EXECUTE:'Researching public records',REFINE:'Reviewing and narrowing public records',DEEP_LINK:'Continuing detailed research',ERROR_RECOVERY:'Recovering this research request',UNDERSTAND:'Understanding the question'} as const)[session.phase]:'';
-  const currentResearch=session?(session.providerClass?.replaceAll('_',' ')??session.trade?.replaceAll('_',' ')??session.moveMode?.replaceAll('_',' ')):undefined;
-  return <section className="space-y-6" aria-busy={busy}>
+  const currentResearch=session?formatResearchLabel(session.providerClass??session.trade??session.moveMode):undefined;
+  return <section className="space-y-6 pb-24 sm:pb-6" aria-busy={busy}>
     <div className="rounded-2xl border bg-white p-5 sm:p-6" style={{borderColor:ASK_BRAND.border,boxShadow:ASK_SHADOW.soft}}>
       <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{color:ASK_BRAND.indigo}}>Guided Research</p>
       <p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Original question:</span> {query}</p>
       <h2 ref={headingRef} tabIndex={-1} className="mt-5 text-xl font-semibold outline-none sm:text-2xl" style={{color:ASK_BRAND.navy}}>{question}</h2>
       {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {session.hub==='senior'?'SeniorTrustHub':session.hub==='contractor'?'ContractorTrustHub':'MoveTrustHub'}</p>:null}
-      {currentResearch||session?.geography?<p className="mt-1 text-sm capitalize" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?` · ${session.geography.value}`:''}</p>:null}
+      {currentResearch||session?.geography?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?` · ${session.geography.value}`:''}</p>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Preparing the next research step…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
+      {resumeRecovery?<button type="button" disabled={busy} onClick={()=>void send({type:'RESUME'})} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry specialist explanation</button>:null}
       {!busy&&session?.availableChoices.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">{session.availableChoices.map((choice)=><li key={choice.id}><button type="button" onClick={()=>void send({type:'SELECT_CHOICE',value:choice.value})} className="min-h-12 w-full rounded-xl border p-3 text-left font-semibold focus-visible:outline-none focus-visible:ring-2" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}>{choice.label}{choice.description?<span className="mt-1 block text-xs font-normal leading-relaxed" style={{color:ASK_BRAND.ink}}>{choice.description}</span>:null}</button></li>)}</ul>:null}
       {!busy&&session?.phase==='COLLECT'?<form onSubmit={submit} className="mt-4">
         <label htmlFor="guided-value" className="block text-sm font-semibold" style={{color:ASK_BRAND.navy}}>{session.missingFields.includes('geography')?'State, county, city or ZIP':session.missingFields.includes('identifier')?'USDOT or MC number':session.missingFields.includes('tradeDescription')?'Short project description':'Company name'}</label>
@@ -76,7 +80,7 @@ function GuidedResults({result,session,onAction}:{result:GuidedExecutionResult;s
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
         {row.identifier?<div><dt className="text-xs uppercase tracking-wide" style={{color:ASK_BRAND.ink}}>{row.identifier.label}</dt><dd className="break-all font-semibold" style={{color:ASK_BRAND.navy}}>{row.identifier.value}</dd></div>:null}
         {row.classLabel?<Fact label="Class / role / trade" value={row.classLabel}/>:null}
-        {row.recordedLocation?<Fact label="Recorded location" value={row.recordedLocation}/>:null}
+        {row.recordedLocation?<Fact label={row.hub==='contractor'?'Recorded address':'Recorded location'} value={row.recordedLocation}/>:null}
         {row.status?<Fact label="Source status" value={row.status}/>:null}
         {row.sourceDate?<Fact label="Source checked" value={row.sourceDate}/>:null}
         {row.facts.map(fact=><Fact key={fact.label} label={fact.label} value={fact.value}/>)}
@@ -92,3 +96,4 @@ function GuidedResults({result,session,onAction}:{result:GuidedExecutionResult;s
   </div>;
 }
 function Fact({label,value}:{label:string;value:string}){return <div><dt className="text-xs uppercase tracking-wide" style={{color:ASK_BRAND.ink}}>{label}</dt><dd className="font-medium" style={{color:ASK_BRAND.navy}}>{value}</dd></div>}
+function formatResearchLabel(value:string|undefined){if(!value)return undefined;const acronyms=new Set(['hvac','cms','ccn','usdot','mc','hic','npn','naic']);return value.split('_').map(word=>acronyms.has(word.toLowerCase())?word.toUpperCase():word.charAt(0).toUpperCase()+word.slice(1)).join(' ');}

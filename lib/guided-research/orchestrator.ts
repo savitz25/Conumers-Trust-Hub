@@ -7,7 +7,7 @@ function touch(session: GuidedResearchSession): GuidedResearchSession {
 }
 
 function clearExecutionState(session: GuidedResearchSession) {
-  return { ...session, selectedFilters: {}, availableRefinements: [], resultCount: undefined };
+  return { ...session, selectedFilters: {}, availableRefinements: [], lastExecution: undefined, resultCount: undefined };
 }
 
 function allowedRefinementValues(session: GuidedResearchSession): Record<string, string[]> {
@@ -118,7 +118,7 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     else if (input.action.type==='RESET') session=createGuidedSession(session.originalQuestion)!;
   }
   let result;
-  const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY');
+  const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   if (session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults) {
     validateSelectedFilters(session);
     specialistCalls=1;
@@ -126,7 +126,7 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     const hasChoices=Boolean(result.choices?.length);
     const phase=result.resultState==='BACKEND_UNAVAILABLE'||result.resultState==='TIMEOUT'?'ERROR_RECOVERY':hasChoices?'CLARIFY':'REFINE';
     const choicePrompt=result.error?.code==='new_jersey_credential_class_required'?'What kind of credential or work do you want to research?':result.error?.code==='summit_is_city_in_union_county'?'Choose the corrected New Jersey geography.':result.error?.code==='statewide_fallback_confirmation_required'?'Would you like to broaden this to statewide New Jersey credential records?':'Choose a source-backed research option.';
-    session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
+    session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,lastExecution:{source:'specialist',resultState:result.resultState,errorCode:result.error?.code,resultBearing:true,choicesBearing:hasChoices,executedAt:new Date().toISOString()},resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
   }
   return {session,result,diagnostics:{requestId,hub:session.hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:result?.total??0,specialistCalls}};
 }

@@ -48,6 +48,14 @@ export type GuidedResearchSession = {
   missingFields: string[];
   availableChoices: GuidedChoice[];
   availableRefinements: GuidedRefinement[];
+  lastExecution?: {
+    source: 'specialist';
+    resultState: GuidedResultState;
+    errorCode?: string;
+    resultBearing: true;
+    choicesBearing: boolean;
+    executedAt: string;
+  };
   resultCount?: number;
   nextAction?: string;
   createdAt: string;

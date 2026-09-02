@@ -49,6 +49,7 @@ Verified 2026-09-01 before implementation; Contractor V2.1 reverified 2026-09-02
 - Contractor HIC, New Jersey: HTTP 200; 25,111 active/current total.
 - Contractor Electrical, New Jersey: HTTP 200; 13,091 active/current total.
 - Contractor HIC, Summit/Union County: HTTP 200; 29 active/current total.
+- Contractor HIC row audit: `#1 GARAGE DOOR LLC`, credential `13VH13627900`, is an active, publication-safe New Jersey DCA HIC record with an Orlando, Florida recorded address and a source-provided public profile. Ask retains the valid NJ credential while displaying credential jurisdiction separately from recorded address; neither proves service territory.
 - Move Auto Transport, New York recorded HQ: HTTP 200; 6 total.
 
 Totals are source responses, not application constants.
