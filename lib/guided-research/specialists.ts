@@ -10,13 +10,15 @@ export const CONTRACTOR_CONTRACT_VERSION = '2.1.0';
 export const CONTRACTOR_SCHEMA_FINGERPRINT = '4c22013742744eab394f6d644ab1ffc4a287d9205a73545815e8a1619a0f79b5';
 export const CONTRACTOR_CONTRACT_FINGERPRINT = '441f0e7c1f62bc4c5f9ed3720c56095d2b10748dcb9ff9130ad7eb62ea2f5eb7';
 export const SPECIALIST_TIMEOUT_MS = 5_000;
+export const CONTRACTOR_SPECIALIST_TIMEOUT_MS = 8_000;
 
 type FetchOutcome = { status: number; body: Record<string, unknown>; latencyMs: number } | { error: 'TIMEOUT' | 'BACKEND_UNAVAILABLE'; latencyMs: number };
 
 async function specialistFetch(hub: keyof typeof ENDPOINTS, body: unknown): Promise<FetchOutcome> {
   const started = performance.now();
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), SPECIALIST_TIMEOUT_MS);
+  const timeoutMs = hub === 'contractor' ? CONTRACTOR_SPECIALIST_TIMEOUT_MS : SPECIALIST_TIMEOUT_MS;
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(ENDPOINTS[hub], {
       method: 'POST', signal: controller.signal,
