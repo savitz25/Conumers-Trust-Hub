@@ -6,7 +6,7 @@ export type CustomerHubCapability = {
   claim: 'SUPPORTED';
   identityClass: CustomerProfileRecord['entityClass'];
   identityClasses?: readonly CustomerProfileRecord['entityClass'][];
-  identifierNamespace: 'credential' | 'USDOT' | 'NMLS' | 'CMS_CCN' | 'CRD';
+  identifierNamespace: 'credential' | 'USDOT' | 'NMLS' | 'CMS_CCN' | 'CRD' | 'NAIC';
   publicationRequired: true;
   layerC: true;
   businessResponse: true;
@@ -21,6 +21,7 @@ export const CUSTOMER_HUB_REGISTRY: Record<CustomerHubId, CustomerHubCapability>
   lender: { hubId:'lender',displayName:'LenderTrustHub',claim:'SUPPORTED',identityClass:'institution',identifierNamespace:'NMLS',publicationRequired:true,layerC:true,businessResponse:true,monitoring:'UNAVAILABLE',identifierLabel:'NMLS',destinationOrigin:'https://www.lendertrusthub.com' },
   senior: { hubId:'senior',displayName:'SeniorTrustHub',claim:'SUPPORTED',identityClass:'nursing_home',identityClasses:['nursing_home','home_health','hospice'],identifierNamespace:'CMS_CCN',publicationRequired:true,layerC:true,businessResponse:true,monitoring:'UNAVAILABLE',identifierLabel:'CMS CCN',destinationOrigin:'https://www.seniortrusthub.com' },
   investor: { hubId:'investor',displayName:'InvestorTrustHub',claim:'SUPPORTED',identityClass:'firm',identifierNamespace:'CRD',publicationRequired:true,layerC:true,businessResponse:true,monitoring:'UNAVAILABLE',identifierLabel:'CRD',destinationOrigin:'https://www.investortrusthub.com' },
+  insurance: { hubId:'insurance',displayName:'InsuranceTrustHub',claim:'SUPPORTED',identityClass:'legal_insurer',identifierNamespace:'NAIC',publicationRequired:true,layerC:true,businessResponse:true,monitoring:'UNAVAILABLE',identifierLabel:'NAIC',destinationOrigin:'https://www.insurancetrusthub.com' },
 };
 
 export function customerHub(value: unknown): CustomerHubCapability | null {
@@ -46,5 +47,5 @@ export function handoffCapability(payload: HandoffPayload): CustomerHubCapabilit
 }
 
 export function customerEntityClassLabel(value: unknown): string {
-  return value==='nursing_home'?'Nursing Home':value==='home_health'?'Home Health':value==='hospice'?'Hospice':value==='institution'?'Institution':value==='firm'?'Firm':value==='mover'?'Mover':'Contractor';
+  return value==='nursing_home'?'Nursing Home':value==='home_health'?'Home Health':value==='hospice'?'Hospice':value==='institution'?'Institution':value==='firm'?'Firm':value==='legal_insurer'?'Legal Insurer':value==='mover'?'Mover':'Contractor';
 }

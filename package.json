@@ -37,6 +37,7 @@
     "check:ath-cust-011b": "node --experimental-strip-types --test lib/customer/ath-cust-011b.test.ts",
     "check:ath-cust-012a": "node --experimental-strip-types --test lib/customer/ath-cust-012a.test.ts",
     "check:ath-cust-013a": "node --experimental-strip-types --test lib/customer/ath-cust-013a.test.ts",
+    "check:ath-cust-014a": "node --experimental-strip-types --test lib/customer/ath-cust-014a.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"

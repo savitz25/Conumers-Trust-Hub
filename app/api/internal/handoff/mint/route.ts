@@ -46,11 +46,12 @@ export async function POST(request: Request) {
   const capability=customerHub(body.hubId||'contractor');
   if(!capability)return NextResponse.json({ok:false,error:'unsupported_customer_hub'},{status:400});
   if(capability.hubId==='investor'&&body.entityType&&body.entityType!=='firm')return NextResponse.json({ok:false,error:'unsupported_source'},{status:400});
+  if(capability.hubId==='insurance'&&body.entityType&&body.entityType!=='legal_insurer')return NextResponse.json({ok:false,error:'unsupported_source'},{status:400});
   const payload:HandoffPayload={
       v:(capability.hubId==='contractor'?1:2) as 1|2,aud:'asktrusthub' as const,
       hub_id: capability.hubId,
       native_profile_id: body.nativeProfileId,
-      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':'cms'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
+      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':capability.hubId==='insurance'?'naic':'cms'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
       identifier_namespace:capability.identifierNamespace,entity_class:capability.hubId==='senior'?body.providerClass:capability.identityClass,provider_class:body.providerClass,canonical_profile_url:body.canonicalProfileUrl,iat:0,exp:0,nonce:''
     };
   const directory=compositeCustomerDirectory(cthReadDirectory);
