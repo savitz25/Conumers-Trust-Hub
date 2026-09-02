@@ -6,6 +6,9 @@ const ENDPOINTS = {
   contractor: process.env.CONTRACTOR_SPECIALIST_EXECUTION_URL ?? 'https://www.contractortrusthub.com/api/specialist-execution/v2',
 } as const;
 export const SPECIALIST_EXECUTION_CONTRACT = 'trusthub-specialist-execution-v2';
+export const CONTRACTOR_CONTRACT_VERSION = '2.1.0';
+export const CONTRACTOR_SCHEMA_FINGERPRINT = '4c22013742744eab394f6d644ab1ffc4a287d9205a73545815e8a1619a0f79b5';
+export const CONTRACTOR_CONTRACT_FINGERPRINT = '441f0e7c1f62bc4c5f9ed3720c56095d2b10748dcb9ff9130ad7eb62ea2f5eb7';
 export const SPECIALIST_TIMEOUT_MS = 5_000;
 
 type FetchOutcome = { status: number; body: Record<string, unknown>; latencyMs: number } | { error: 'TIMEOUT' | 'BACKEND_UNAVAILABLE'; latencyMs: number };
@@ -31,6 +34,12 @@ function heading(state: GuidedResultState): string {
   return {
     SUPPORTED_RESULTS: 'Research results',
     ZERO_MATCHING_ROWS: 'No records match these exact filters',
+    CLARIFICATION_REQUIRED: 'Choose the credential class to research',
+    INVALID_GEOGRAPHY: 'Let’s correct this location',
+    UNSUPPORTED_STATE_CAPABILITY: 'This source does not currently support that state research',
+    UNSUPPORTED_TRADE_CAPABILITY: 'This source does not currently support that credential class',
+    PUBLICATION_RESTRICTED: 'No publication-safe records are available for this request',
+    EXACT_IDENTITY: 'Exact regulatory identity',
     UNSUPPORTED_CAPABILITY: 'This source does not currently support that research',
     INVALID_QUERY: 'We need to correct part of this request',
     BACKEND_UNAVAILABLE: 'This specialist research system is temporarily unavailable',
@@ -128,7 +137,7 @@ async function executeMove(session: GuidedResearchSession): Promise<GuidedExecut
       destination: { type: 'PROFILE', href: text(row.canonicalProfileUrl)!, label: 'Open MoveTrustHub profile' },
       facts: [mc ? { label: 'MC', value: mc } : null, text(row.role) ? { label: 'Role', value: text(row.role)! } : null].filter(Boolean) as Array<{label:string;value:string}>,
     };
-  }).filter((row) => Boolean(row.destination.href));
+  }).filter((row) => Boolean(row.destination?.href));
   const refinements = session.identityName || session.identifier ? [] : normalizeRefinements(payload.availableRefinements).filter((row) => row.id === 'role');
   return supported(session, payload, rows, outcome.latencyMs, refinements);
 }
@@ -161,7 +170,7 @@ async function executeSenior(session: GuidedResearchSession): Promise<GuidedExec
       status: text(row.status), whyShown: 'Matched the selected CMS provider class and recorded geography.',
       destination: { type: 'PROFILE', href: text(row.canonicalProfileUrl)!, label: 'Open SeniorTrustHub profile' }, facts,
     };
-  }).filter((row) => Boolean(row.destination.href));
+  }).filter((row) => Boolean(row.destination?.href));
   return supported(session, payload, rows, outcome.latencyMs, seniorRefinements(session));
 }
 
@@ -173,50 +182,92 @@ function seniorRefinements(session: GuidedResearchSession): GuidedRefinement[] {
 
 async function executeContractor(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
   const state=session.geography?.stateCode;
-  if (!state) return failure(session,'INVALID_QUERY',0,'missing_state','Add a state so ContractorTrustHub can select the correct source-backed credential system.');
-  const body = {
-    trade: session.trade, state,
-    county: session.geography?.county ?? (session.geography?.type === 'county' ? session.geography.value : undefined),
-    city: session.geography?.city ?? (session.geography?.type === 'city' ? session.geography.value : undefined),
-    credentialStatus: session.selectedFilters.credentialStatus ?? 'active_current', page: 1, limit: 10,
+  if (!state&&!session.identifier) return failure(session,'INVALID_QUERY',0,'missing_state','Add a state so ContractorTrustHub can select the correct source-backed credential system.');
+  const serviceIntent=/\bserv(?:e|es|ing)|\bwork(?:s|ing)?\s+in\b|near me\b/i.test(session.originalQuestion);
+  const body = session.identifier ? {
+    contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identifier',state,identifier:session.identifier.value,page:1,limit:10,
+  } : {
+    contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',trade:session.trade,state,
+    county:session.geography?.county ?? (session.geography?.type==='county'?session.geography.value:undefined),
+    city:session.geography?.city ?? (session.geography?.type==='city'?session.geography.value:undefined),
+    zip:session.geography?.type==='zip'?session.geography.value:undefined,
+    confirmStatewide:session.confirmStatewide||undefined,
+    geography:serviceIntent?{stateCode:state,intent:'SERVICE_TERRITORY'}:undefined,
+    credentialStatus:session.selectedFilters.credentialStatus??'active_current',page:1,limit:10,
   };
   const outcome = await specialistFetch('contractor', body);
   if ('error' in outcome) return failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
   const payload = outcome.body;
   if (text(payload.contract) !== SPECIALIST_EXECUTION_CONTRACT) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'contract_mismatch');
-  const unsupportedCode=text(payload.errorCode) ?? text(payload.error);
-  if (outcome.status === 422 || text(payload.status) === 'unsupported_capability' || unsupportedCode === 'unsupported_state') {
-    const result = failure(session, 'UNSUPPORTED_CAPABILITY', outcome.latencyMs, unsupportedCode ?? 'unsupported_capability',
-      text(payload.errorCode) === 'unsupported_florida_electrical_source'
-        ? 'We understood that you are looking for Florida electrical-contractor research in Boca Raton. The current accepted Florida construction source used by ContractorTrustHub does not include Florida electrical credentials.'
-        : unsupportedCode === 'unsupported_state'
-          ? `We understood ${session.geography?.stateName ?? state} contractor research, but the current ContractorTrustHub V2 execution endpoint does not yet expose that state's source-backed cohort. This is unsupported execution coverage, not zero contractors.`
-          : undefined);
-    result.limitations = [text(payload.limitation)].filter(Boolean) as string[];
-    const resolved=record(payload.resolvedGeography);
-    const resolvedLabel=[text(resolved.city),text(resolved.county)?`${text(resolved.county)} County`:undefined,text(resolved.state)].filter(Boolean).join(', ');
-    if (resolvedLabel) result.interpretation.push({label:'Resolved geography',value:resolvedLabel});
-    if (text(payload.errorCode) === 'unsupported_florida_electrical_source') result.limitations.push('This does not mean no electricians exist. No substitute trade or out-of-state records were used.');
-    if (unsupportedCode === 'unsupported_state') {
-      result.limitations.push('ContractorTrustHub owns the state credential evidence. Ask did not substitute Florida rows, infer service territory, or query the specialist database directly.');
-    }
-    result.destinations = records(payload.supportedAlternatives).flatMap((row) => text(row.destination) ? [{ type:'VERIFY' as const, href:text(row.destination)!, label:text(row.label) ?? 'Continue with the official source' }] : []);
-    if (unsupportedCode === 'unsupported_state' && !result.destinations.length) result.destinations.push({type:'VERIFY',href:'https://www.contractortrusthub.com/verify',label:`Verify a ${session.geography?.stateName ?? state} credential`});
+  if (text(payload.contractVersion)!==CONTRACTOR_CONTRACT_VERSION || text(payload.schemaFingerprint)!==CONTRACTOR_SCHEMA_FINGERPRINT || text(payload.contractFingerprint)!==CONTRACTOR_CONTRACT_FINGERPRINT) return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_version_mismatch','ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.');
+  const rawState=text(payload.resultState);
+  const contractorStates=['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','CLARIFICATION_REQUIRED','INVALID_GEOGRAPHY','UNSUPPORTED_STATE_CAPABILITY','UNSUPPORTED_TRADE_CAPABILITY','PUBLICATION_RESTRICTED','INVALID_QUERY','BACKEND_UNAVAILABLE','TIMEOUT','EXACT_IDENTITY'] as const;
+  if (!rawState || !contractorStates.includes(rawState as typeof contractorStates[number])) return failure(session,outcome.status>=500?'BACKEND_UNAVAILABLE':'INVALID_QUERY',outcome.latencyMs,'unknown_result_state');
+  const stateResult=rawState as typeof contractorStates[number];
+  if (stateResult!=='SUPPORTED_RESULTS' && stateResult!=='ZERO_MATCHING_ROWS' && stateResult!=='EXACT_IDENTITY') {
+    const errorCode=text(payload.errorCode)??text(payload.error)??stateResult.toLowerCase();
+    const consumerState=stateResult==='BACKEND_UNAVAILABLE'||stateResult==='TIMEOUT'||stateResult==='INVALID_QUERY'||stateResult==='INVALID_GEOGRAPHY'||stateResult==='CLARIFICATION_REQUIRED'||stateResult==='PUBLICATION_RESTRICTED'||stateResult==='UNSUPPORTED_STATE_CAPABILITY'||stateResult==='UNSUPPORTED_TRADE_CAPABILITY'?stateResult:'UNSUPPORTED_CAPABILITY';
+    const message=errorCode==='new_jersey_credential_class_required'
+      ? 'Choose the New Jersey credential class you want to research. ContractorTrustHub keeps HIC and each specialty separate.'
+      : errorCode==='no_new_jersey_statewide_general_contractor_class'
+        ? 'New Jersey does not have one unified statewide General Contractor credential class in this source. Home Improvement Contractor registration is not being relabeled General; choose HIC or a supported specialty.'
+        : errorCode==='summit_is_city_in_union_county'
+          ? 'Summit is a city in Union County, New Jersey. “Summit County, New Jersey” was not executed as a county.'
+          : errorCode==='statewide_fallback_confirmation_required'
+            ? 'The requested local geography is not authoritative for cohort filtering. You may explicitly choose statewide New Jersey credential records.'
+            : errorCode==='unsupported_service_territory'
+              ? 'ContractorTrustHub researches credential jurisdiction and recorded addresses, not service territory or current availability.'
+              : errorCode==='unsupported_florida_electrical_source'
+                ? 'We understood Florida electrical-contractor research. The accepted Florida construction source does not include the separately regulated electrical credentials.'
+                : undefined;
+    const result=failure(session,consumerState,outcome.latencyMs,errorCode,message);
+    result.limitations=Array.isArray(payload.limitations)?payload.limitations.filter((x):x is string=>typeof x==='string'):[];
+    const supportedTrades=new Set(['home_improvement','electrical','plumbing','hvac','mechanical','alarm','telecom','locksmith','hearth','general','building','roofing','pool_spa']);
+    result.choices=records(payload.capabilityChoices).flatMap((choice)=>{
+      if (choice.supported!==true || !text(choice.id) || !text(choice.label)) return [];
+      const id=text(choice.id)!;
+      if(id!=='statewide'&&id!=='summit_city'&&!supportedTrades.has(id))return [];
+      const value=id==='statewide'?'contractor_statewide':id==='summit_city'?'contractor_geography:summit_city':`contractor_trade:${id}`;
+      return [{id:`contractor-${id}`,label:text(choice.label)!,action:'SELECT_CHOICE' as const,value,description:text(choice.limitation)}];
+    });
+    const interpretation=record(payload.queryInterpretation);const geography=record(interpretation.geography);const correction=record(interpretation.correction);
+    const resolvedLabel=[text(geography.city)??text(correction.city),text(record(geography.county).label)??text(correction.county),text(geography.state)??text(correction.state)].filter(Boolean).join(', ');
+    if(resolvedLabel)result.interpretation.push({label:'Source geography',value:resolvedLabel});
+    result.destinations=normalizeContractorDestinations(payload);
+    for(const choice of records(payload.capabilityChoices)){const href=text(choice.destination);if(href&&/^https:\/\//i.test(href))result.destinations.push({type:'VERIFY',href,label:text(choice.label)??'Continue with credential verification'});}
+    result.destinations=result.destinations.filter((destination,index,all)=>all.findIndex((other)=>other.href===destination.href)===index);
+    result.firstUsefulResult=stateResult==='CLARIFICATION_REQUIRED'||stateResult==='INVALID_GEOGRAPHY'||stateResult==='UNSUPPORTED_TRADE_CAPABILITY';
     return result;
   }
-  if (outcome.status >= 500) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'execution_unavailable');
-  if (outcome.status >= 400) return failure(session, 'INVALID_QUERY', outcome.latencyMs, text(payload.error) ?? 'invalid_query');
   const rows = records(payload.rows).map((row): GuidedResultRow => {
     const geo=record(row.recordedGeography); const source=record(row.source); const credential=text(row.credentialNumber);
+    const destination=normalizeContractorDestinations(row)[0];
     return {
       name:text(row.name) ?? 'Published credential holder',hub:'contractor',identifier:credential?{label:'Credential',value:credential}:undefined,
-      classLabel:text(row.trade),recordedLocation:[text(geo.city),text(geo.county),text(geo.state)].filter(Boolean).join(', '),
+      classLabel:text(row.credentialClass)??text(row.trade),recordedLocation:[text(geo.city),text(geo.county),text(geo.state)].filter(Boolean).join(', '),
       status:text(row.status),sourceDate:text(source.observedAt),whyShown:`Matched the selected ${session.geography?.stateName ?? state} source-owned trade, status, and recorded-geography filters.`,
-      destination:{type:'PROFILE',href:text(row.destination)!,label:'Open ContractorTrustHub profile'},
-      facts:[text(row.occupationCode)?{label:'Occupation code',value:text(row.occupationCode)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
+      destination,
+      facts:[text(row.occupationCode)?{label:'Source class',value:text(row.occupationCode)!}:null,text(source.label)?{label:'Source',value:text(source.label)!}:null].filter(Boolean) as Array<{label:string;value:string}>,
     };
-  }).filter((row)=>Boolean(row.destination.href));
-  return supported(session,payload,rows,outcome.latencyMs,normalizeRefinements(payload.availableRefinements).filter((row)=>row.id==='credentialStatus'));
+  });
+  const result=supported(session,payload,rows,outcome.latencyMs,normalizeRefinements(payload.availableRefinements).filter((row)=>row.id==='credentialStatus'));
+  if(stateResult==='EXACT_IDENTITY')result.resultState='EXACT_IDENTITY';
+  const interpretation=record(payload.queryInterpretation);const sourceTrade=text(interpretation.trade);const sourceGeo=record(interpretation.geography);
+  if(state==='NJ'&&sourceTrade){result.consumerHeading=`New Jersey ${sourceTrade.toLowerCase()} research results`;result.consumerMessage=`${result.total.toLocaleString('en-US')} publication-safe New Jersey credential records match these source-owned filters. Source order only — not a ranking.`;}
+  if(sourceGeo.fallbackApplied===true)result.interpretation.push({label:'Geography scope',value:'Statewide New Jersey credential records — explicitly confirmed'});
+  result.destinations=[...new Map(rows.flatMap((row)=>row.destination?[row.destination]:[]).map((destination)=>[destination.href,destination])).values()];
+  return result;
+}
+
+function normalizeContractorDestinations(value: unknown): NonNullable<GuidedResultRow['destination']>[] {
+  const row=record(value);const candidates=records(row.destinations);
+  if(text(row.destination))candidates.unshift({type:'PUBLIC_PROFILE',url:text(row.destination)});
+  const allowed=new Set(['PUBLIC_PROFILE','CONTRACTORTRUSTHUB_VERIFY','OFFICIAL_BOARD_VERIFICATION']);
+  return candidates.flatMap((candidate)=>{
+    const kind=text(candidate.type);const href=text(candidate.url)??text(candidate.destination);
+    if(!kind||!href||!allowed.has(kind)||!/^https:\/\//i.test(href))return [];
+    return [{type:kind==='PUBLIC_PROFILE'?'PROFILE' as const:'VERIFY' as const,href,label:kind==='PUBLIC_PROFILE'?'Open ContractorTrustHub profile':kind==='CONTRACTORTRUSTHUB_VERIFY'?'Verify on ContractorTrustHub':'Verify with the official board'}];
+  }).filter((destination,index,all)=>all.findIndex((other)=>other.href===destination.href)===index);
 }
 
 function supported(session: GuidedResearchSession, payload: Record<string, unknown>, rows: GuidedResultRow[], latencyMs: number, refinements: GuidedRefinement[]): GuidedExecutionResult {
@@ -239,7 +290,7 @@ function supported(session: GuidedResearchSession, payload: Record<string, unkno
     pagination:{page:Number(pagination.page??1),limit:Number(pagination.limit??pagination.pageSize??10),hasMore:Boolean(pagination.hasMore??(Number(pagination.totalPages??1)>1))},
     refinements,provenance:Object.fromEntries(Object.entries(provenance).filter(([,v])=>typeof v==='string')) as Record<string,string>,
     limitations:Array.isArray(payload.limitations)?payload.limitations.filter((x):x is string=>typeof x==='string'):[],
-    destinations:[...new Map(rows.map((row)=>[row.destination.href,row.destination])).values()],
+    destinations:[...new Map(rows.flatMap((row)=>row.destination?[[row.destination.href,row.destination] as const]:[])).values()],
     latencyMs,firstUsefulResult:rows.length>0,
   };
 }

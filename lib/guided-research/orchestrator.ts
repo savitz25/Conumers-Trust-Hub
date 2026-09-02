@@ -38,18 +38,18 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
     return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
   }
   if (session.hub === 'contractor') {
-    if (value === 'use_statewide_geography') {
+    if (value === 'contractor_statewide') {
       if (!session.geography?.stateCode || !session.geography.stateName) throw new Error('statewide_geography_unavailable');
-      return touch({ ...pushHistory(session), geography: {
-        type: 'state', value: session.geography.stateCode, stateCode: session.geography.stateCode,
-        stateName: session.geography.stateName,
-        meaning: `Recorded statewide ${session.geography.stateName} credential geography; not service territory.`,
-      }, availableChoices: [], phase: 'EXECUTE', nextAction: 'execute' });
+      return touch({ ...pushHistory(session),confirmStatewide:true,availableChoices:[],phase:'EXECUTE',nextAction:'execute' });
+    }
+    if(value==='contractor_geography:summit_city'){
+      return touch({...pushHistory(session),geography:{type:'city',value:'Summit, New Jersey',city:'Summit',county:'Union',stateCode:'NJ',stateName:'New Jersey',meaning:'Recorded Summit city geography in Union County, New Jersey; not service territory.'},confirmStatewide:false,availableChoices:[],phase:'EXECUTE',nextAction:'execute'});
     }
     if (value === 'other_trade') return touch({ ...clearExecutionState(next),trade:undefined,geography:undefined,identifier:undefined,identityName:undefined,availableChoices:[],missingFields:['tradeDescription'],phase:'COLLECT',nextAction:'Briefly describe the work you need.' });
     if (value === 'choose_trade') return touch({ ...clearExecutionState(next),trade:undefined,availableChoices:structuredClone(TRADE_CHOICES),missingFields:['trade'],phase:'CLARIFY',nextAction:'Tell us what kind of work you need.' });
     if (value.startsWith('confirm_trade:')) value=value.slice('confirm_trade:'.length);
-    if (!['roofing','hvac','plumbing','general','pool_spa','mechanical','electrical'].includes(value)) throw new Error('invalid_choice');
+    if (value.startsWith('contractor_trade:')) value=value.slice('contractor_trade:'.length);
+    if (!['roofing','hvac','plumbing','general','building','pool_spa','mechanical','electrical','home_improvement','alarm','telecom','locksmith','hearth'].includes(value)) throw new Error('invalid_choice');
     const geography=session.geography;
     return touch({ ...clearExecutionState(next), trade: value, geography, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: geography?[]:['geography'], phase: geography?'EXECUTE':'COLLECT', nextAction: geography?'execute':'Where is the property?' });
   }
@@ -123,10 +123,10 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     validateSelectedFilters(session);
     specialistCalls=1;
     result=await executeGuidedSpecialist(session);
-    if (session.hub==='contractor' && result.resultState==='UNSUPPORTED_CAPABILITY' && session.geography?.type!=='state' && session.geography?.stateCode && result.error?.code!=='unsupported_state') {
-      session={...session,availableChoices:[{id:'statewide-contractor',label:`Show statewide ${session.geography.stateName ?? session.geography.stateCode} records`,action:'SELECT_CHOICE',value:'use_statewide_geography',description:'Use the specialist’s statewide credential cohort without implying county or service-area coverage.'}]};
-    }
-    session=touch({...session,phase:result.resultState==='BACKEND_UNAVAILABLE'||result.resultState==='TIMEOUT'?'ERROR_RECOVERY':'REFINE',availableRefinements:result.refinements,resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'?'Narrow these results or open a specialist profile.':'Review the limitation and choose a useful next action.'});
+    const hasChoices=Boolean(result.choices?.length);
+    const phase=result.resultState==='BACKEND_UNAVAILABLE'||result.resultState==='TIMEOUT'?'ERROR_RECOVERY':hasChoices?'CLARIFY':'REFINE';
+    const choicePrompt=result.error?.code==='new_jersey_credential_class_required'?'What kind of credential or work do you want to research?':result.error?.code==='summit_is_city_in_union_county'?'Choose the corrected New Jersey geography.':result.error?.code==='statewide_fallback_confirmation_required'?'Would you like to broaden this to statewide New Jersey credential records?':'Choose a source-backed research option.';
+    session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
   }
   return {session,result,diagnostics:{requestId,hub:session.hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:result?.total??0,specialistCalls}};
 }

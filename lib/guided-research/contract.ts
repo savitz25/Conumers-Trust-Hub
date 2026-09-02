@@ -6,7 +6,7 @@ export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move'] as const;
 export type GuidedPilotHub = (typeof GUIDED_PILOT_HUBS)[number];
 export const GUIDED_PHASES = ['UNDERSTAND', 'CLARIFY', 'COLLECT', 'EXECUTE', 'REFINE', 'DEEP_LINK', 'ERROR_RECOVERY'] as const;
 export type GuidedPhase = (typeof GUIDED_PHASES)[number];
-export const GUIDED_RESULT_STATES = ['SUPPORTED_RESULTS', 'ZERO_MATCHING_ROWS', 'UNSUPPORTED_CAPABILITY', 'INVALID_QUERY', 'BACKEND_UNAVAILABLE', 'TIMEOUT'] as const;
+export const GUIDED_RESULT_STATES = ['SUPPORTED_RESULTS', 'ZERO_MATCHING_ROWS', 'CLARIFICATION_REQUIRED', 'INVALID_GEOGRAPHY', 'UNSUPPORTED_STATE_CAPABILITY', 'UNSUPPORTED_TRADE_CAPABILITY', 'PUBLICATION_RESTRICTED', 'EXACT_IDENTITY', 'UNSUPPORTED_CAPABILITY', 'INVALID_QUERY', 'BACKEND_UNAVAILABLE', 'TIMEOUT'] as const;
 export type GuidedResultState = (typeof GUIDED_RESULT_STATES)[number];
 
 export type GuidedChoice = {
@@ -36,6 +36,7 @@ export type GuidedResearchSession = {
   moveMode?: 'mover' | 'auto_transport' | 'identity_name' | 'identifier';
   regulatoryRole?: 'Carrier' | 'Broker' | 'Carrier/Broker';
   geography?: GuidedGeography;
+  confirmStatewide?: boolean;
   selectedFilters: Record<string, string>;
   version: typeof GUIDED_SESSION_VERSION;
   sessionId: string;
@@ -73,7 +74,7 @@ export type GuidedResultRow = {
   status?: string;
   sourceDate?: string;
   whyShown: string;
-  destination: { type: 'PROFILE' | 'DIRECTORY' | 'VERIFY' | 'STATE_RESEARCH' | 'COUNTY_RESEARCH'; href: string; label: string };
+  destination?: { type: 'PROFILE' | 'DIRECTORY' | 'VERIFY' | 'STATE_RESEARCH' | 'COUNTY_RESEARCH'; href: string; label: string };
   facts: Array<{ label: string; value: string }>;
 };
 
@@ -87,9 +88,10 @@ export type GuidedExecutionResult = {
   total: number;
   pagination?: { page: number; limit: number; hasMore: boolean };
   refinements: GuidedRefinement[];
+  choices?: GuidedChoice[];
   provenance: Record<string, string>;
   limitations: string[];
-  destinations: Array<{ type: GuidedResultRow['destination']['type']; href: string; label: string }>;
+  destinations: Array<{ type: NonNullable<GuidedResultRow['destination']>['type']; href: string; label: string }>;
   error?: { code: string; retryable: boolean };
   latencyMs: number;
   firstUsefulResult: boolean;

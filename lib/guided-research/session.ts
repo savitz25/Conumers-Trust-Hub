@@ -47,7 +47,10 @@ export function parseGuidedGeography(raw: string): GuidedGeography | null {
   if (!value) return null;
   // Summit is a city in Union County. Never accept the contradictory
   // "Summit County, New Jersey" combination as a source geography.
-  if (/^summit\s+county(?:\s*,?\s*(?:new\s+jersey|nj))?$/i.test(value)) return null;
+  if (/^summit\s+county(?:\s*,?\s*(?:new\s+jersey|nj))?$/i.test(value)) return {
+    type:'county',value:'Summit County, New Jersey',county:'Summit County',stateCode:'NJ',stateName:'New Jersey',
+    meaning:'Submitted geography requires source validation; New Jersey has no Summit County.',
+  };
   if (/^summit(?:\s*,?\s*(?:new\s+jersey|nj))$/i.test(value)) return {
     type: 'city', value: 'Summit, New Jersey', city: 'Summit', county: 'Union',
     stateCode: 'NJ', stateName: 'New Jersey',
@@ -70,6 +73,17 @@ function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): Guided
   if (geography.city) return parseGuidedGeography(`${geography.city}${stateSuffix}`) ?? undefined;
   if (geography.countyName) return parseGuidedGeography(`${geography.countyName}${stateSuffix}`) ?? undefined;
   return parseGuidedGeography(geography.stateName ?? geography.stateCode ?? '') ?? undefined;
+}
+
+function newJerseyTrade(question:string,stateCode?:string):string|undefined {
+  if(stateCode!=='NJ')return undefined;
+  const choices:Array<[RegExp,string]>=[
+    [/\bhome\s+improvement(?:\s+contractors?)?\b/i,'home_improvement'],[/\b(?:electricians?|electrical(?:\s+contractors?)?)\b/i,'electrical'],
+    [/\b(?:plumbers?|plumbing(?:\s+contractors?)?)\b/i,'plumbing'],[/\b(?:hvac|air\s+conditioning)(?:\s+contractors?)?\b/i,'hvac'],
+    [/\bmechanical(?:\s+contractors?)?\b/i,'mechanical'],[/\balarm(?:\s+contractors?)?\b/i,'alarm'],[/\btelecom(?:munications?)?(?:\s+contractors?)?\b/i,'telecom'],
+    [/\blocksmiths?\b/i,'locksmith'],[/\bhearth(?:\s+specialists?)?\b/i,'hearth'],[/\bgeneral\s+contractors?\b/i,'general'],
+  ];
+  return choices.find(([pattern])=>pattern.test(question))?.[1];
 }
 
 function base(question: string): GuidedResearchSession {
@@ -95,12 +109,19 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   const grandma = /\b(?:grandma|grandmother|grandpa|grandfather|senior|elderly parent)\b/i.test(q) && /\b(?:home|care|facility|help|place)\b/i.test(q);
   if (grandma) return { ...session, hub: 'senior', phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
 
-  const hub = parsed.suggestedHubs.length === 1 && GUIDED_PILOT_HUBS.includes(parsed.suggestedHubs[0] as never) ? parsed.suggestedHubs[0] as GuidedResearchSession['hub'] : undefined;
+  let parsedGeography=geographyFromParsed(parsed);
+  if(parsedGeography?.stateCode==='NJ'&&parsedGeography.type==='state'){
+    const local=q.match(/\bin\s+([A-Za-z][A-Za-z .'-]*?)\s*,?\s*(?:New\s+Jersey|NJ)\b/i)?.[1]?.trim();
+    if(local)parsedGeography=/^summit$/i.test(local)?parseGuidedGeography('Summit, New Jersey')??parsedGeography:{type:'city',value:`${local}, New Jersey`,city:local,stateCode:'NJ',stateName:'New Jersey',meaning:'Requested New Jersey city geography pending specialist source validation; not service territory.'};
+  }
+  const njTrade=newJerseyTrade(q,parsedGeography?.stateCode);
+  const parsedHub = parsed.suggestedHubs.length === 1 && GUIDED_PILOT_HUBS.includes(parsed.suggestedHubs[0] as never) ? parsed.suggestedHubs[0] as GuidedResearchSession['hub'] : undefined;
+  const hub = parsedHub ?? (njTrade?'contractor':undefined);
   if (!hub) return null;
   session.hub = hub;
   session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
   session.identityName = parsed.queryClassification.type === 'IDENTITY_NAME' ? q : undefined;
-  if (parsed.geography) session.geography = geographyFromParsed(parsed);
+  if (parsed.geography) session.geography = parsedGeography;
 
   if (hub === 'senior') {
     session.providerClass = parsed.seniorProviderClass;
@@ -111,12 +132,14 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   }
   if (hub === 'contractor') {
     const trade = parsed.trade?.toLowerCase();
-    session.trade = trade === 'general contractor' ? 'general' : trade;
+    session.trade = njTrade ?? (trade === 'general contractor' ? 'general' : trade);
     session.entityClass = 'credential_record';
     session.identityName = undefined;
+    if(session.identifier)return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
     const conflictingSummit = /\bsummit\s+county\b/i.test(q) && parsed.geography?.stateCode === 'NJ';
-    if (conflictingSummit) return { ...session, geography: undefined, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Summit is a city in Union County, New Jersey. Enter “Summit, New Jersey” or another valid state, county, city or ZIP.' };
+    if (conflictingSummit) return { ...session, phase:'EXECUTE',missingFields:[],nextAction:'execute' };
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
+    if (!session.trade && session.geography?.stateCode==='NJ') return { ...session, phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute' };
     if (!session.trade) return { ...session, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'What kind of work do you need?' };
     return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where is the property?' };
   }

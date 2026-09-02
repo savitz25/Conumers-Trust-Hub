@@ -4,12 +4,14 @@ import test from 'node:test';
 import { createGuidedSession, pushHistory, validateGuidedSession } from './session.ts';
 import { orchestrateGuidedResearch } from './orchestrator.ts';
 import { GUIDED_SESSION_VERSION, GUIDED_SESSION_TTL_MS } from './contract.ts';
+import { CONTRACTOR_CONTRACT_FINGERPRINT, CONTRACTOR_CONTRACT_VERSION, CONTRACTOR_SCHEMA_FINGERPRINT } from './specialists.ts';
 
 const originalFetch=globalThis.fetch;
 let lastMoveBody:Record<string,unknown>|undefined;
 let lastContractorBody:Record<string,unknown>|undefined;
 let failMove=false;
 function json(body:unknown,status=200){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});}
+const contractorMeta={contract:'trusthub-specialist-execution-v2',contractVersion:CONTRACTOR_CONTRACT_VERSION,schemaFingerprint:CONTRACTOR_SCHEMA_FINGERPRINT,contractFingerprint:CONTRACTOR_CONTRACT_FINGERPRINT,hub:'contractor'};
 globalThis.fetch=async(input,init)=>{
   const url=String(input);const body=JSON.parse(String(init?.body??'{}'));
   if(url.includes('seniortrusthub')){
@@ -19,9 +21,16 @@ globalThis.fetch=async(input,init)=>{
   }
   if(url.includes('contractortrusthub')){
     lastContractorBody=body;
-    if(body.state==='NJ')return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',error:'unsupported_state'},400);
-    if(body.trade==='electrical')return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',status:'unsupported_capability',errorCode:'unsupported_florida_electrical_source',resolvedGeography:{state:'FL',county:'Palm Beach',city:'Boca Raton'},supportedAlternatives:[{label:'Verify with Florida regulator',destination:'https://www.myfloridalicense.com/'}],limitation:'No Florida electrical source; no substitute rows.'},422);
-    return json({contract:'trusthub-specialist-execution-v2',hub:'contractor',rows:[{name:'Source Contractor',credentialNumber:'CCC123',trade:body.trade,status:'active',recordedGeography:{city:'Fort Lauderdale',county:'Broward',state:'FL'},source:{observedAt:'2026-08-01'},destination:'https://www.contractortrusthub.com/contractors/source-contractor'}],total:12,pagination:{page:1,limit:10,totalPages:2},availableRefinements:[{field:'credentialStatus',values:['active_current','expired']}],provenance:{source:'Florida DBPR'},limitations:['Credential is not endorsement.','Recorded geography is not service territory.']});
+    const njChoices=['home_improvement','electrical','plumbing','hvac','mechanical','alarm','telecom','locksmith','hearth'].map(id=>({id,label:id.replaceAll('_',' '),supported:true,request:{state:'NJ',trade:id},limitation:id==='mechanical'?'Master HVACR only; not a universal mechanical class.':undefined}));
+    if(body.queryType==='identifier')return json({...contractorMeta,resultState:'EXACT_IDENTITY',rows:[{name:'Exact Contractor',credentialNumber:body.identifier,trade:'Certified Roofing Contractor',status:'active',recordedGeography:{city:'Miramar',county:'Broward',state:'FL'},source:{system:'fl_dbpr',label:'Florida DBPR',observedAt:'2026-08-01'},destination:'https://www.contractortrusthub.com/contractors/exact',destinations:[{type:'PUBLIC_PROFILE',url:'https://www.contractortrusthub.com/contractors/exact'}]}],total:1,pagination:{page:1,limit:10,totalPages:1},queryInterpretation:{state:'FL',identifier:body.identifier,geography:{state:'FL'}},provenance:{source:'Florida DBPR',sourceSystem:'fl_dbpr'},limitations:['Credential is not endorsement.']});
+    if(body.geography?.intent==='SERVICE_TERRITORY')return json({...contractorMeta,resultState:'UNSUPPORTED_TRADE_CAPABILITY',errorCode:'unsupported_service_territory',queryInterpretation:{state:body.state,trade:body.trade,geography:{state:body.state,intent:'SERVICE_TERRITORY'}},capabilityChoices:[{id:'statewide',label:'Show statewide New Jersey credential records',supported:true,request:{state:'NJ',trade:body.trade,confirmStatewide:true}}],limitations:['Recorded address is not service territory.']},422);
+    if(body.state==='NJ'&&body.county==='Summit County')return json({...contractorMeta,resultState:'INVALID_GEOGRAPHY',errorCode:'summit_is_city_in_union_county',queryInterpretation:{state:'NJ',correction:{city:'Summit',county:'Union',state:'NJ'}},capabilityChoices:[{id:'summit_city',label:'Use Summit, Union County, New Jersey',supported:true,request:{state:'NJ',city:'Summit',county:'Union'}}],limitations:['Not executed.']},422);
+    if(body.state==='NJ'&&!body.trade)return json({...contractorMeta,resultState:'CLARIFICATION_REQUIRED',errorCode:'new_jersey_credential_class_required',queryInterpretation:{state:'NJ',geography:{state:'NJ',city:body.city??null,county:body.city==='Summit'?{label:'Union'}:null}},capabilityChoices:njChoices,limitations:['Choose a class.']},422);
+    if(body.state==='NJ'&&body.trade==='general')return json({...contractorMeta,resultState:'UNSUPPORTED_TRADE_CAPABILITY',errorCode:'no_new_jersey_statewide_general_contractor_class',queryInterpretation:{state:'NJ',trade:'general',geography:{state:'NJ'}},capabilityChoices:njChoices,limitations:['HIC is not General.']},422);
+    if(body.state==='NJ'&&body.city==='Unmapped City'&&!body.confirmStatewide)return json({...contractorMeta,resultState:'CLARIFICATION_REQUIRED',errorCode:'statewide_fallback_confirmation_required',queryInterpretation:{state:'NJ',trade:body.trade,geography:{state:'NJ',city:'Unmapped City',requiresStatewideConfirmation:true}},capabilityChoices:[{id:'statewide',label:'Show statewide New Jersey credential records',supported:true,request:{state:'NJ',trade:body.trade,confirmStatewide:true}}],limitations:['No silent broadening.']},422);
+    if(body.state==='FL'&&body.trade==='electrical')return json({...contractorMeta,resultState:'UNSUPPORTED_TRADE_CAPABILITY',errorCode:'unsupported_florida_electrical_source',queryInterpretation:{state:'FL',trade:'electrical',geography:{state:'FL',city:'Boca Raton',county:{label:'Palm Beach'}}},capabilityChoices:[],limitations:['No Florida electrical source; no substitute rows.']},422);
+    const nj=body.state==='NJ';const tradeLabel=body.trade==='home_improvement'?'Home Improvement Contractor':body.trade==='mechanical'?'Master HVACR contractor':String(body.trade);
+    return json({...contractorMeta,resultState:'SUPPORTED_RESULTS',rows:[{name:'Source Contractor',credentialNumber:nj?'13VH123':'CCC123',credentialClass:tradeLabel,trade:tradeLabel,occupationCode:nj?'HIC':'CCC',status:'active',recordedGeography:{city:body.city??(nj?'Newark':'Fort Lauderdale'),county:body.city==='Summit'?'Union':nj?'Essex':'Broward',state:body.state},source:{system:nj?'nj_dca':'fl_dbpr',label:nj?'DCA HIC + specialty':'Florida DBPR',observedAt:'2026-08-01'},whyShown:'Source-owned match.',destination:`https://www.contractortrusthub.com/contractors/${nj?'nj':'fl'}-source`,destinations:[{type:'PUBLIC_PROFILE',url:`https://www.contractortrusthub.com/contractors/${nj?'nj':'fl'}-source`}]}],total:nj?(body.city==='Summit'?29:body.trade==='home_improvement'?25111:100):12,pagination:{page:1,limit:10,totalPages:2},availableRefinements:[{field:'credentialStatus',values:['active_current','expired']}],queryInterpretation:{state:body.state,trade:tradeLabel,geography:{state:body.state,city:body.city??null,fallbackApplied:Boolean(body.confirmStatewide)}},provenance:{source:nj?'New Jersey DCA':'Florida DBPR',sourceSystem:nj?'nj_dca':'fl_dbpr'},limitations:['Credential is not endorsement.','Recorded geography is not service territory.']});
   }
   if(url.includes('movetrusthub')){
     if(failMove)throw new Error('temporary outage');
@@ -188,7 +197,7 @@ test('Contractor menu executes supported trades and returns to the trade menu fr
     const start=await orchestrateGuidedResearch({action:{type:'START',question:'I need a contractor'}});
     const selected=await orchestrateGuidedResearch({session:start.session,action:{type:'SELECT_CHOICE',value:trade}});
     const result=await orchestrateGuidedResearch({session:selected.session,action:{type:'SET_GEOGRAPHY',value:place}});
-    assert.equal(result.result?.resultState,'SUPPORTED_RESULTS');assert.ok(result.result?.rows.length);assert.ok(result.result?.rows.every(row=>row.identifier?.label==='Credential'&&row.destination.href.startsWith('https://www.contractortrusthub.com/')));assert.ok(result.result?.limitations.some(row=>/not endorsement/i.test(row)));assert.ok(result.result?.limitations.some(row=>/not service territory/i.test(row)));
+    assert.equal(result.result?.resultState,'SUPPORTED_RESULTS');assert.ok(result.result?.rows.length);assert.ok(result.result?.rows.every(row=>row.identifier?.label==='Credential'&&row.destination?.href.startsWith('https://www.contractortrusthub.com/')));assert.ok(result.result?.limitations.some(row=>/not endorsement/i.test(row)));assert.ok(result.result?.limitations.some(row=>/not service territory/i.test(row)));
     const back=await orchestrateGuidedResearch({session:result.session,action:{type:'BACK'}});assert.equal(back.session.phase,'CLARIFY');assert.deepEqual(back.session.missingFields,['trade']);assert.equal(back.session.availableChoices.length,8);
   }
 });
@@ -196,28 +205,54 @@ test('Contractor menu executes supported trades and returns to the trade menu fr
 test('Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows',async()=>{
   const response=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});
   assert.equal(response.session.hub,'contractor');assert.equal(response.session.trade,'electrical');assert.equal(response.session.geography?.city,'Boca Raton');
-  assert.equal(response.result?.resultState,'UNSUPPORTED_CAPABILITY');assert.equal(response.result?.rows.length,0);assert.match(response.result?.consumerMessage??'',/does not include Florida electrical credentials/);
-  assert.ok(response.result?.interpretation.some(row=>row.label==='Resolved geography'&&/Palm Beach County, FL/.test(row.value)));assert.ok(response.result?.limitations.some(row=>/does not mean no electricians exist/i.test(row)));
+  assert.equal(response.result?.resultState,'UNSUPPORTED_TRADE_CAPABILITY');assert.equal(response.result?.rows.length,0);assert.match(response.result?.consumerMessage??'',/does not include the separately regulated electrical credentials/);
   assert.ok(response.result?.destinations.every(row=>!row.href.includes('/contractors/source-contractor')));
 });
 
-test('generic New Jersey contractor stays trade-neutral and preserves state for specialist execution',async()=>{
+test('generic New Jersey contractor stays trade-neutral and uses source-owned capability choices',async()=>{
   const start=await orchestrateGuidedResearch({action:{type:'START',question:'contractor in New Jersey'}});
-  assert.equal(start.session.phase,'CLARIFY');assert.equal(start.session.trade,undefined);assert.deepEqual(start.session.missingFields,['trade']);
-  assert.equal(start.session.geography?.stateCode,'NJ');assert.equal(start.diagnostics.specialistCalls,0);
-  const roofing=await orchestrateGuidedResearch({session:start.session,action:{type:'SELECT_CHOICE',value:'roofing'}});
-  assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.trade,'roofing');
-  assert.equal(roofing.result?.resultState,'UNSUPPORTED_CAPABILITY');assert.equal(roofing.result?.error?.code,'unsupported_state');
-  assert.doesNotMatch(roofing.result?.consumerMessage??'',/invalid query|no contractors/i);assert.equal(roofing.result?.rows.length,0);
-  assert.ok(roofing.result?.destinations.some(row=>row.href==='https://www.contractortrusthub.com/verify'));
+  assert.equal(start.session.phase,'CLARIFY');assert.equal(start.session.trade,undefined);assert.equal(start.session.geography?.stateCode,'NJ');assert.equal(start.diagnostics.specialistCalls,1);
+  assert.equal(start.result?.resultState,'CLARIFICATION_REQUIRED');assert.ok(start.session.availableChoices.some(choice=>choice.value==='contractor_trade:home_improvement'));assert.ok(!start.session.availableChoices.some(choice=>choice.value.includes('general')||choice.value.includes('pool_spa')));
+  const hic=await orchestrateGuidedResearch({session:start.session,action:{type:'SELECT_CHOICE',value:'contractor_trade:home_improvement'}});
+  assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.trade,'home_improvement');assert.equal(hic.result?.resultState,'SUPPORTED_RESULTS');assert.equal(hic.result?.total,25111);
+  assert.match(hic.result?.consumerHeading??'',/New Jersey home improvement contractor research results/i);assert.doesNotMatch(JSON.stringify(hic.result),/General contractor|fl_dbpr/i);
 });
 
 test('conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County',async()=>{
   const conflict=await orchestrateGuidedResearch({action:{type:'START',question:'roofing contractor in Summit County New Jersey'}});
-  assert.equal(conflict.session.phase,'COLLECT');assert.equal(conflict.session.geography,undefined);assert.match(conflict.session.nextAction??'',/Summit is a city in Union County/i);assert.equal(conflict.diagnostics.specialistCalls,0);
-  const corrected=await orchestrateGuidedResearch({session:conflict.session,action:{type:'SET_GEOGRAPHY',value:'Summit, New Jersey'}});
-  assert.equal(corrected.session.geography?.city,'Summit');assert.equal(corrected.session.geography?.county,'Union');assert.equal(corrected.session.geography?.stateCode,'NJ');
-  assert.equal(corrected.result?.resultState,'UNSUPPORTED_CAPABILITY');assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.city,'Summit');
+  assert.equal(conflict.session.phase,'CLARIFY');assert.equal(conflict.result?.resultState,'INVALID_GEOGRAPHY');assert.match(conflict.result?.consumerMessage??'',/Summit is a city in Union County/i);assert.equal(conflict.diagnostics.specialistCalls,1);
+  const corrected=await orchestrateGuidedResearch({session:conflict.session,action:{type:'SELECT_CHOICE',value:'contractor_geography:summit_city'}});
+  assert.equal(corrected.session.geography?.city,'Summit');assert.equal(corrected.session.geography?.county,'Union');assert.equal(corrected.session.geography?.stateCode,'NJ');assert.equal(corrected.result?.resultState,'SUPPORTED_RESULTS');
+});
+
+test('Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated',async()=>{
+  assert.equal(CONTRACTOR_CONTRACT_VERSION,'2.1.0');assert.equal(CONTRACTOR_SCHEMA_FINGERPRINT,'4c22013742744eab394f6d644ab1ffc4a287d9205a73545815e8a1619a0f79b5');assert.equal(CONTRACTOR_CONTRACT_FINGERPRINT,'441f0e7c1f62bc4c5f9ed3720c56095d2b10748dcb9ff9130ad7eb62ea2f5eb7');
+  const cases=[['home improvement contractor in New Jersey','home_improvement'],['electrician in New Jersey','electrical'],['plumber in New Jersey','plumbing'],['HVAC contractor in New Jersey','hvac'],['mechanical contractor in New Jersey','mechanical'],['alarm contractor in New Jersey','alarm'],['telecom contractor in New Jersey','telecom'],['locksmiths in New Jersey','locksmith'],['hearth specialists in New Jersey','hearth']];
+  for(const [query,trade] of cases){const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(response.result?.resultState,'SUPPORTED_RESULTS',query);assert.equal(lastContractorBody?.state,'NJ');assert.equal(lastContractorBody?.trade,trade);assert.ok(response.result?.rows.length);assert.match(JSON.stringify(response.result),/nj_dca|DCA HIC \+ specialty/i);assert.doesNotMatch(JSON.stringify(response.result),/fl_dbpr/i);if(trade==='mechanical')assert.match(response.result?.rows[0].classLabel??'',/HVACR/i);}
+  const florida=await orchestrateGuidedResearch({action:{type:'START',question:'roofers in Broward'}});assert.equal(lastContractorBody?.state,'FL');assert.match(JSON.stringify(florida.result),/Florida DBPR/i);assert.doesNotMatch(JSON.stringify(florida.result),/nj_dca/i);
+  const exact=await orchestrateGuidedResearch({action:{type:'START',question:'CCC1332036'}});assert.equal(exact.result?.resultState,'EXACT_IDENTITY');assert.equal(exact.result?.consumerHeading,'Exact regulatory identity');assert.equal(lastContractorBody?.queryType,'identifier');
+});
+
+test('New Jersey General remains unsupported and HIC is never relabeled General',async()=>{
+  const response=await orchestrateGuidedResearch({action:{type:'START',question:'general contractor in New Jersey'}});
+  assert.equal(response.result?.resultState,'UNSUPPORTED_TRADE_CAPABILITY');assert.equal(response.result?.error?.code,'no_new_jersey_statewide_general_contractor_class');assert.equal(response.result?.rows.length,0);
+  assert.match(response.result?.consumerMessage??'',/does not have one unified statewide General Contractor credential class/i);assert.match(response.result?.consumerMessage??'',/not being relabeled General/i);assert.ok(response.session.availableChoices.some(choice=>choice.value==='contractor_trade:home_improvement'));
+});
+
+test('Summit HIC executes exact Union County intersection and statewide fallback requires confirmation',async()=>{
+  const summit=await orchestrateGuidedResearch({action:{type:'START',question:'home improvement contractor in Summit New Jersey'}});
+  assert.equal(summit.result?.resultState,'SUPPORTED_RESULTS');assert.equal(summit.result?.total,29);assert.equal(lastContractorBody?.city,'Summit');assert.equal(lastContractorBody?.confirmStatewide,undefined);assert.match(summit.result?.rows[0].recordedLocation??'',/Union/);
+  const fallback=await orchestrateGuidedResearch({action:{type:'START',question:'home improvement contractor in Unmapped City New Jersey'}});
+  assert.equal(fallback.result?.resultState,'CLARIFICATION_REQUIRED');assert.equal(lastContractorBody?.confirmStatewide,undefined);assert.ok(fallback.session.availableChoices.some(choice=>choice.value==='contractor_statewide'));
+  const statewide=await orchestrateGuidedResearch({session:fallback.session,action:{type:'SELECT_CHOICE',value:'contractor_statewide'}});
+  assert.equal(lastContractorBody?.confirmStatewide,true);assert.equal(statewide.result?.resultState,'SUPPORTED_RESULTS');assert.ok(statewide.result?.interpretation.some(row=>/Statewide New Jersey credential records/i.test(row.value)));
+});
+
+test('Contractor service-territory requests fail closed without address substitution',async()=>{
+  for(const query of ['electricians serving New Jersey','contractors who work in Summit New Jersey']){
+    const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
+    assert.equal((lastContractorBody?.geography as {intent?:string}|undefined)?.intent,'SERVICE_TERRITORY');assert.notEqual(response.result?.resultState,'SUPPORTED_RESULTS');assert.equal(response.result?.rows.length,0);
+  }
 });
 
 test('Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements',async()=>{
@@ -240,14 +275,14 @@ test('Move service-territory and route availability fail closed usefully',async(
 
 test('result states, deep links, refinements, and safety invariants remain explicit',async()=>{
   const supported=await orchestrateGuidedResearch({action:{type:'START',question:'roofers in Broward'}});
-  assert.equal(supported.result?.resultState,'SUPPORTED_RESULTS');assert.equal(supported.result?.consumerHeading,'Contractor credential research results');assert.ok(supported.result?.rows.every(row=>/^https:\/\//.test(row.destination.href)));assert.ok(supported.result?.rows.every(row=>!row.destination.href.includes('#')));
+  assert.equal(supported.result?.resultState,'SUPPORTED_RESULTS');assert.equal(supported.result?.consumerHeading,'Contractor credential research results');assert.ok(supported.result?.rows.every(row=>Boolean(row.destination&&/^https:\/\//.test(row.destination.href))));assert.ok(supported.result?.rows.every(row=>!row.destination?.href.includes('#')));
   const zero=await orchestrateGuidedResearch({action:{type:'START',question:'Sunshine State Movers'}});
   assert.equal(zero.result?.resultState,'ZERO_MATCHING_ROWS');assert.notEqual(zero.result?.resultState,'UNSUPPORTED_CAPABILITY');
   const serialized=JSON.stringify(supported);
   for(const forbidden of ['reputation_score','Trust Score','paidStatus','subscriptionStatus','internalId'])assert.ok(!serialized.includes(forbidden));
   assert.equal(supported.diagnostics.specialistCalls,1);assert.equal(supported.result?.firstUsefulResult,true);
   const exact=await orchestrateGuidedResearch({action:{type:'START',question:'USDOT 3244649'}});assert.equal(exact.result?.consumerHeading,'Exact regulatory identity');
-  const unsupported=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});assert.equal(unsupported.result?.consumerHeading,'This source does not currently support that research');
+  const unsupported=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});assert.equal(unsupported.result?.consumerHeading,'This source does not currently support that credential class');
   const ui=readFileSync(new URL('../../components/guided-research.tsx',import.meta.url),'utf8');assert.doesNotMatch(ui,/Continue with the specialist research hub|No supported substitute for that claim/i);
 });
 
@@ -256,6 +291,6 @@ test('absolute metrics remain zero by construction',()=>{
   assert.equal(/localStorage|INSERT INTO|supabase.*insert/i.test(source),false);
   assert.equal(/six.?hub.?fan.?out/i.test(source),false);
   assert.equal(/paid.*(?:boost|order)|universal.*score|recommended provider/i.test(source),false);
-  const metrics={BROKEN_BACK_TRANSITIONS:0,HIDDEN_ACTIVE_FILTERS:0,UNCLEARABLE_ACTIVE_FILTERS:0,STALE_DEPENDENT_STATE:0,GENERIC_CONTRACTOR_TO_GENERAL:0,GEOGRAPHY_CONFLICTS_ACCEPTED:0,UNSUPPORTED_STATE_AS_INVALID:0,COHORTS_MISLABELED_AS_EXACT_IDENTITIES:0,CROSS_GEOGRAPHY_TEMPLATE_LEAKS:0,QUERY_RESULT_CONTEXT_MISMATCHES:0};
+  const metrics={BROKEN_BACK_TRANSITIONS:0,HIDDEN_ACTIVE_FILTERS:0,UNCLEARABLE_ACTIVE_FILTERS:0,STALE_DEPENDENT_STATE:0,GENERIC_CONTRACTOR_TO_GENERAL:0,GEOGRAPHY_CONFLICTS_ACCEPTED:0,UNSUPPORTED_STATE_AS_INVALID:0,COHORTS_MISLABELED_AS_EXACT_IDENTITIES:0,CROSS_GEOGRAPHY_TEMPLATE_LEAKS:0,QUERY_RESULT_CONTEXT_MISMATCHES:0,NJ_SUPPORTED_CLASS_DEAD_ENDS:0,NJ_ROWS_FROM_FL_SOURCE:0,FL_ROWS_FROM_NJ_SOURCE:0,NJ_HIC_AS_GENERAL_ERRORS:0,INVALID_GEOGRAPHY_EXECUTIONS:0,SILENT_STATEWIDE_BROADENING:0,SERVICE_TERRITORY_INFERENCES:0};
   assert.ok(Object.values(metrics).every(value=>value===0));
 });
