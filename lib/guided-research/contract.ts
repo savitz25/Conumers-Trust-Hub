@@ -2,11 +2,11 @@ import type { UniversalQueryType } from '../network/query-classification.ts';
 
 export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v1' as const;
 export const GUIDED_SESSION_TTL_MS = 30 * 60 * 1000;
-export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move'] as const;
+export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move', 'investor', 'insurance', 'lender'] as const;
 export type GuidedPilotHub = (typeof GUIDED_PILOT_HUBS)[number];
 export const GUIDED_PHASES = ['UNDERSTAND', 'CLARIFY', 'COLLECT', 'EXECUTE', 'REFINE', 'DEEP_LINK', 'ERROR_RECOVERY'] as const;
 export type GuidedPhase = (typeof GUIDED_PHASES)[number];
-export const GUIDED_RESULT_STATES = ['SUPPORTED_RESULTS', 'ZERO_MATCHING_ROWS', 'CLARIFICATION_REQUIRED', 'INVALID_GEOGRAPHY', 'UNSUPPORTED_STATE_CAPABILITY', 'UNSUPPORTED_TRADE_CAPABILITY', 'PUBLICATION_RESTRICTED', 'EXACT_IDENTITY', 'UNSUPPORTED_CAPABILITY', 'INVALID_QUERY', 'BACKEND_UNAVAILABLE', 'TIMEOUT'] as const;
+export const GUIDED_RESULT_STATES = ['SUPPORTED_RESULTS', 'ZERO_MATCHING_ROWS', 'CLARIFICATION_REQUIRED', 'INVALID_GEOGRAPHY', 'UNSUPPORTED_STATE_CAPABILITY', 'UNSUPPORTED_TRADE_CAPABILITY', 'PUBLICATION_RESTRICTED', 'EXACT_IDENTITY', 'NO_CONFIDENT_MATCH', 'AMBIGUOUS_IDENTITIES', 'IDENTITY_COLLISION', 'UNSUPPORTED_CAPABILITY', 'INVALID_QUERY', 'BACKEND_UNAVAILABLE', 'TIMEOUT'] as const;
 export type GuidedResultState = (typeof GUIDED_RESULT_STATES)[number];
 
 export type GuidedChoice = {
@@ -35,6 +35,17 @@ export type GuidedResearchSession = {
   trade?: string;
   moveMode?: 'mover' | 'auto_transport' | 'identity_name' | 'identifier';
   regulatoryRole?: 'Carrier' | 'Broker' | 'Carrier/Broker';
+  investorResearchMode?: 'firm_cohort' | 'identity_name' | 'identifier';
+  investorFirmClass?: 'ria' | 'era' | 'ria_and_era' | 'individual_representative';
+  minimumRaum?: number;
+  maximumRaum?: number;
+  compensationMethod?: string;
+  insuranceEntityClass?: 'agency' | 'producer' | 'legal_insurer';
+  insuranceResearchMode?: 'cohort' | 'identity_name' | 'identifier' | 'complaints';
+  insuranceLineOfAuthority?: string;
+  lenderResearchMode?: 'property_market' | 'identity_name' | 'identifier' | 'complaints' | 'unsupported_person_branch';
+  hmdaAction?: 'application' | 'origination' | 'denial';
+  loanType?: 'Conventional' | 'FHA' | 'VA' | 'USDA' | 'Other';
   geography?: GuidedGeography;
   confirmStatewide?: boolean;
   selectedFilters: Record<string, string>;
@@ -82,7 +93,7 @@ export type GuidedResultRow = {
   status?: string;
   sourceDate?: string;
   whyShown: string;
-  destination?: { type: 'PROFILE' | 'DIRECTORY' | 'VERIFY' | 'STATE_RESEARCH' | 'COUNTY_RESEARCH'; href: string; label: string };
+  destination?: { type: 'PROFILE' | 'DIRECTORY' | 'VERIFY' | 'STATE_RESEARCH' | 'COUNTY_RESEARCH' | 'OFFICIAL_SOURCE' | 'RESEARCH_IDENTITY'; href: string; label: string };
   facts: Array<{ label: string; value: string }>;
 };
 
