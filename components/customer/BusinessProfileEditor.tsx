@@ -8,6 +8,7 @@ type Hour = { weekday: number; closed: boolean; opensAt?: string; closesAt?: str
 type Freshness = { state: 'CURRENT' | 'RECONFIRM_SOON' | 'STALE'; lastConfirmedAt: string; label: string; mayBeOutdated: boolean };
 type Props = {
   profileId: string;
+  hubId?: string;
   initial: {
     version: number;
     fields: Record<string, string>;
@@ -23,7 +24,7 @@ type Props = {
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const splitList = (value: string) => value.split(',').map((v) => v.trim()).filter(Boolean);
 
-export function BusinessProfileEditor({ profileId, initial, canEdit }: Props) {
+export function BusinessProfileEditor({ profileId, hubId = 'contractor', initial, canEdit }: Props) {
   const [version, setVersion] = useState(initial.version);
   const [fields, setFields] = useState(initial.fields);
   const [services, setServices] = useState(initial.services.join(', '));
@@ -37,7 +38,7 @@ export function BusinessProfileEditor({ profileId, initial, canEdit }: Props) {
   function begin() {
     if (started) return;
     setStarted(true);
-    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_EDIT_STARTED, { hub: 'contractor', profile_id: profileId });
+    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_EDIT_STARTED, { hub: hubId, profile_id: profileId });
   }
   function field(key: string, value: string) { begin(); setFields((old) => ({ ...old, [key]: value })); }
   function hourFor(day: number): Hour { return hours.find((h) => h.weekday === day) ?? { weekday: day, closed: true }; }
@@ -55,13 +56,13 @@ export function BusinessProfileEditor({ profileId, initial, canEdit }: Props) {
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
       setStatus(response.status === 409 ? 'This profile changed in another session. Reload before saving.' : 'Please review the information and try again.');
-      trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_VALIDATION_FAILED, { hub: 'contractor', profile_id: profileId, reason: String(result.error || response.status) });
+      trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_VALIDATION_FAILED, { hub: hubId, profile_id: profileId, reason: String(result.error || response.status) });
       return;
     }
     setVersion(result.version);
     setFreshness(result.freshness);
     setStatus('Saved. Your update is recorded as information provided by the business.');
-    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_SAVED, { hub: 'contractor', profile_id: profileId });
+    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_SAVED, { hub: hubId, profile_id: profileId });
   }
   async function reconfirm() {
     setStatus('Reconfirming...');
@@ -76,7 +77,7 @@ export function BusinessProfileEditor({ profileId, initial, canEdit }: Props) {
     setVersion(result.version);
     setFreshness(result.freshness);
     setStatus('Confirmed. The information is still accurate.');
-    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_RECONFIRMED, { hub: 'contractor', profile_id: profileId });
+    trackEvent(ANALYTICS_EVENTS.BUSINESS_INFO_RECONFIRMED, { hub: hubId, profile_id: profileId });
   }
 
   const inputClass = 'mt-1 w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-navy disabled:bg-slate-50';
@@ -99,7 +100,7 @@ export function BusinessProfileEditor({ profileId, initial, canEdit }: Props) {
     <fieldset><legend className="text-sm font-medium">Business hours</legend><div className="mt-2 space-y-2">
       {DAYS.map((name, day) => { const h = hourFor(day); return <div key={name} className="grid grid-cols-2 items-center gap-2 text-sm sm:grid-cols-[6rem_5rem_1fr_1fr]"><span>{name}</span><label><input type="checkbox" disabled={!canEdit} checked={h.closed} onChange={(e) => setHour(day, { closed: e.target.checked, opensAt: e.target.checked ? undefined : '09:00', closesAt: e.target.checked ? undefined : '17:00' })} /> Closed</label><input className="min-w-0 rounded border border-border px-2 py-1" aria-label={`${name} opens`} type="time" disabled={!canEdit || h.closed} value={h.opensAt || ''} onChange={(e) => setHour(day, { opensAt: e.target.value })} /><input className="min-w-0 rounded border border-border px-2 py-1" aria-label={`${name} closes`} type="time" disabled={!canEdit || h.closed} value={h.closesAt || ''} onChange={(e) => setHour(day, { closesAt: e.target.value })} /></div>; })}
     </div></fieldset>
-    {freshness ? <p className="text-sm text-muted-foreground">{freshness.label}</p> : null}
+    {freshness ? <p className="text-sm text-muted-foreground"><strong>Last confirmed by business:</strong> {new Date(freshness.lastConfirmedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}. {freshness.mayBeOutdated ? 'Confirm this information is still current.' : freshness.label}</p> : null}
     {canEdit ? <div className="flex flex-wrap gap-3"><button type="button" onClick={save} className="min-h-11 rounded-lg bg-navy px-5 py-2 text-sm font-semibold text-white">Save business information</button>{freshness ? <button type="button" onClick={reconfirm} className="min-h-11 rounded-lg border border-navy px-5 py-2 text-sm font-semibold text-navy">Confirm information is still accurate</button> : null}</div> : <p className="text-sm text-muted-foreground">Your membership role can view this information but cannot edit it.</p>}
     <p aria-live="polite" className="text-sm text-muted-foreground">{status}</p>
   </section>;

@@ -546,6 +546,8 @@ export class CustomerPlatform {
       displayName: adapter.profile.displayName,
       credentialKey: adapter.profile.externalKey,
       status,
+      hubName: customerHub(intent.payload.hub_id)!.displayName,
+      identifierLabel: customerHub(intent.payload.hub_id)!.identifierLabel,
     });
     await this.deps.mailer({ to: user.email, ...mail });
 
@@ -558,9 +560,9 @@ export class CustomerPlatform {
     const row = await one<Record<string, unknown>>(
       this.deps.sql,
       `SELECT c.id, c.status, c.free_email, c.relationship_type, c.decision_reason,
-              c.org_id, c.hub_profile_id, c.claimant_user_id,
+              c.org_id, c.hub_profile_id, c.claimant_user_id, c.created_at, c.submitted_at, c.reviewed_at,
               o.display_name AS org_name,
-              p.native_slug, p.native_credential_key, p.native_profile_id, p.display_name_snapshot,
+              p.hub_id, p.native_slug, p.native_credential_key, p.native_profile_id, p.display_name_snapshot, p.canonical_url,
               m.role AS membership_role, m.status AS membership_status
          FROM ath_claims c
          JOIN ath_organizations o ON o.id = c.org_id
@@ -580,7 +582,7 @@ export class CustomerPlatform {
       `SELECT q.id, q.work_type, q.risk_state, q.status, q.created_at,
               c.id AS claim_id, c.status AS claim_status, c.free_email,
               u.email AS claimant_email,
-              p.native_slug, p.native_credential_key, p.display_name_snapshot
+              p.hub_id, p.native_slug, p.native_credential_key, p.display_name_snapshot
          FROM ath_review_queue q
          JOIN ath_claims c ON c.id = q.object_id
          JOIN ath_users u ON u.id = c.claimant_user_id
@@ -597,7 +599,8 @@ export class CustomerPlatform {
       this.deps.sql,
       `SELECT c.*, u.email AS claimant_email, u.email_confirmed_at,
               o.display_name AS org_name,
-              p.native_profile_id, p.native_slug, p.native_credential_key, p.display_name_snapshot, p.home_state
+              p.hub_id,p.native_profile_id, p.native_slug, p.native_credential_key, p.display_name_snapshot, p.home_state,
+              p.identifier_namespace,p.entity_class,p.native_source_system
          FROM ath_claims c
          JOIN ath_users u ON u.id = c.claimant_user_id
          JOIN ath_organizations o ON o.id = c.org_id
@@ -1493,6 +1496,18 @@ export class CustomerPlatform {
         WHERE g.status = 'active'
         ORDER BY g.granted_at DESC`,
       [user.id]
+    );
+    return res.rows;
+  }
+
+  async customerClaims(sessionToken: string) {
+    const user = await this.sessionUser(sessionToken);
+    if (!user) throw new AuthError('missing_session');
+    const res = await this.deps.sql.query(
+      `SELECT c.id,c.status,c.created_at,c.submitted_at,c.reviewed_at,c.decision_reason,
+              p.hub_id,p.native_profile_id,p.native_credential_key,p.display_name_snapshot
+         FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id
+        WHERE c.claimant_user_id=$1 ORDER BY c.created_at DESC`, [user.id]
     );
     return res.rows;
   }

@@ -77,11 +77,13 @@ export function claimReceivedEmail(opts: {
   displayName: string;
   credentialKey: string;
   status: ClaimStatus;
+  hubName?: string;
+  identifierLabel?: string;
 }): { subject: string; html: string; text: string } {
   const status = CLAIM_STATUS_COPY[opts.status];
   const html = wrapEmail(
     'We received your profile-management request',
-    `<p>You asked to manage business-supplied information for <strong>${escapeHtml(opts.displayName)}</strong> (Florida DBPR credential ${escapeHtml(opts.credentialKey)}).</p>
+    `<p>You asked to manage business-supplied information for <strong>${escapeHtml(opts.displayName)}</strong> (${escapeHtml(opts.hubName || 'TrustHub')} ${escapeHtml(opts.identifierLabel || 'public identifier')} ${escapeHtml(opts.credentialKey)}).</p>
      <p>Current state: <strong>${escapeHtml(status.title)}</strong>. ${escapeHtml(status.body)}</p>
      <p>This is not an endorsement, ranking, or “verified business” badge. Public research on ContractorTrustHub is unchanged.</p>`
   );
@@ -89,6 +91,7 @@ export function claimReceivedEmail(opts: {
     `You asked to manage business-supplied information for ${opts.displayName} (${opts.credentialKey}).`,
     `${status.title}. ${status.body}`,
     'This is not an endorsement.',
+    'Need help? Visit https://www.asktrusthub.com/claim/help',
   ].join('\n');
   return { subject: 'We received your AskTrustHub management request', html, text };
 }
