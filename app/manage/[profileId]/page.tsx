@@ -8,6 +8,7 @@ import { BusinessRepliesPanel } from '@/components/customer/BusinessRepliesPanel
 import { MonitoringPanel } from '@/components/customer/MonitoringPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
+import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
 
 export const dynamic = 'force-dynamic';
 export const metadata = createPageMetadata({
@@ -33,6 +34,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
   const fields = Object.fromEntries(model.fields.map((row) => [row.field_key, row.value_text]));
   const items = (category: string) => model.items.filter((row) => row.category === category).map((row) => row.value_text);
   const canEdit = ['owner', 'manager', 'staff'].includes(model.access.role);
+  const capability=CUSTOMER_HUB_REGISTRY[model.access.hub_id];
   return <main className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:py-12">
     <ManageConsoleView profileId={profileId} />
     <header><Link href="/manage" className="text-sm text-muted-foreground underline">All managed profiles</Link>
@@ -45,14 +47,14 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       freshness: model.freshness,
       hours: model.hours.map((h) => ({ weekday: Number(h.weekday), closed: Boolean(h.is_closed), opensAt: h.opens_at?.slice(0, 5), closesAt: h.closes_at?.slice(0, 5) })),
     }} />
-    <MonitoringPanel profileId={profileId} canEdit={canEdit} initial={monitoring.subscription as never} notifications={monitoring.notifications as never}/>
+    {capability.monitoring==='SUPPORTED'?<MonitoringPanel profileId={profileId} canEdit={canEdit} initial={monitoring.subscription as never} notifications={monitoring.notifications as never}/>:<section className="card-surface p-5"><h2 className="font-semibold text-navy">Monitoring unavailable</h2><p className="mt-2 text-sm text-muted-foreground">Exact-profile source monitoring is not yet available for {capability.displayName}.</p></section>}
     <div id="business-responses"><BusinessRepliesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} replies={businessReplies.replies as never}/></div>
     <div id="record-issues"><RecordIssuesPanel profileId={profileId} credentialKey={recordIssues.credentialKey} issues={recordIssues.issues as never} /></div>
     <section className="card-surface p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Official public record</p>
-      <h2 className="mt-1 text-xl font-semibold text-navy">Florida DBPR identity</h2>
-      <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Business name</dt><dd>{model.access.display_name_snapshot}</dd></div><div><dt className="text-muted-foreground">DBPR credential</dt><dd>{model.access.native_credential_key}</dd></div></dl>
+      <h2 className="mt-1 text-xl font-semibold text-navy">{capability.displayName} identity</h2>
+      <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Business name</dt><dd>{model.access.display_name_snapshot}</dd></div><div><dt className="text-muted-foreground">{capability.identifierLabel}</dt><dd>{model.access.native_credential_key}</dd></div></dl>
       <p className="mt-3 text-sm text-muted-foreground">This government-sourced record cannot be changed here. Business-supplied information never replaces it.</p>
-      <a className="link-inline mt-3 inline-block text-sm" href={`https://www.contractortrusthub.com/contractors/${model.access.native_slug}`}>Open the authoritative ContractorTrustHub profile</a>
+      {model.access.canonical_url?<a className="link-inline mt-3 inline-block text-sm" href={model.access.canonical_url}>Open the authoritative {capability.displayName} profile</a>:null}
     </section>
     <section className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">Recent activity</h2>
       {model.activity.length ? <ul className="mt-3 space-y-2 text-sm">{model.activity.map((event, i) => <li key={`${event.created_at}-${i}`}>{event.action === 'business_info_reconfirmed' ? 'Business information reconfirmed' : 'Business information saved'} · {new Date(event.created_at).toLocaleString('en-US')}</li>)}</ul> : <p className="mt-2 text-sm text-muted-foreground">No business-information changes yet.</p>}

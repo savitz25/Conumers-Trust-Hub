@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { timingSafeEqualText } from '@/lib/customer/crypto';
 import { mintHandoffToken } from '@/lib/customer/handoff';
 import { cthReadDirectory } from '@/lib/customer/cth-read';
-import { validateContractorAdapter } from '@/lib/customer/adapter';
+import { validateCustomerProfile } from '@/lib/customer/adapter';
+import { compositeCustomerDirectory } from '@/lib/customer/specialist-read';
+import { customerHub } from '@/lib/customer/hub-registry';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
-import { HOME_STATE_FL, HUB_CONTRACTOR, SOURCE_FL_DBPR } from '@/lib/customer/types';
+import { HOME_STATE_FL, SOURCE_FL_DBPR, type HandoffPayload } from '@/lib/customer/types';
 
 export const runtime = 'nodejs';
 
@@ -30,32 +32,35 @@ export async function POST(request: Request) {
     nativeProfileId?: string;
     slug?: string;
     externalKey?: string;
+    hubId?: string;
+    sourceSystem?: string;
   };
   if (!body.nativeProfileId) {
     return NextResponse.json({ ok: false, error: 'nativeProfileId required' }, { status: 400 });
   }
 
-  const profile = await cthReadDirectory.getById(body.nativeProfileId);
-  const check = validateContractorAdapter(
-    {
-      hub_id: HUB_CONTRACTOR,
+  const capability=customerHub(body.hubId||'contractor');
+  if(!capability)return NextResponse.json({ok:false,error:'unsupported_customer_hub'},{status:400});
+  const payload:HandoffPayload={
+      v:(capability.hubId==='contractor'?1:2) as 1|2,aud:'asktrusthub' as const,
+      hub_id: capability.hubId,
       native_profile_id: body.nativeProfileId,
-      slug: body.slug || profile?.slug || '',
-      external_key: body.externalKey || profile?.externalKey || '',
-      source_system: SOURCE_FL_DBPR,
-      home_state: HOME_STATE_FL,
-    },
-    profile
-  );
+      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':'nmls'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
+      identifier_namespace:capability.identifierNamespace,entity_class:capability.identityClass,iat:0,exp:0,nonce:''
+    };
+  const directory=compositeCustomerDirectory(cthReadDirectory),profile=await directory.getExact(payload);
+  const check=validateCustomerProfile(payload,profile);
   if (!check.ok) {
     return NextResponse.json({ ok: false, error: check.code }, { status: 400 });
   }
 
   const secret = process.env.ATH_HANDOFF_SECRET || '';
   const minted = mintHandoffToken(secret, {
+    hubId:capability.hubId,
     nativeProfileId: check.profile.id,
     slug: check.profile.slug,
     externalKey: check.profile.externalKey,
+    sourceSystem:check.profile.sourceSystem,homeState:check.profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:capability.identityClass,displayName:check.profile.displayName,
   });
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com';
   return NextResponse.json({
@@ -64,6 +69,7 @@ export async function POST(request: Request) {
     continueUrl: `${origin.replace(/\/$/, '')}/claim/continue?handoff=${encodeURIComponent(minted.token)}`,
     payload: {
       native_profile_id: minted.payload.native_profile_id,
+      hub_id: minted.payload.hub_id,
       slug: minted.payload.slug,
       external_key: minted.payload.external_key,
       exp: minted.payload.exp,

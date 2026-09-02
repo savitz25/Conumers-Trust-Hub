@@ -2,6 +2,7 @@ import 'server-only';
 import { cookies, headers } from 'next/headers';
 import { withAskTx } from './db';
 import { cthReadDirectory } from './cth-read';
+import { compositeCustomerDirectory } from './specialist-read';
 import { resendMailer } from './mail';
 import { CustomerPlatform, parseStaffEmails } from './store';
 import { INTENT_COOKIE, SESSION_COOKIE, sessionCookieOptions } from './cookies';
@@ -28,7 +29,7 @@ export async function withPlatform<T>(fn: (platform: CustomerPlatform, sql: SqlC
     const sql = asSql(client);
     const platform = new CustomerPlatform({
       sql,
-      cth: cthReadDirectory,
+      cth: compositeCustomerDirectory(cthReadDirectory),
       mailer: resendMailer,
       handoffSecret: secret,
       staffEmails: parseStaffEmails(process.env.ATH_STAFF_EMAILS),

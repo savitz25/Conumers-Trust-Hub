@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {withPlatform} from '@/lib/customer/server';import {customerHub} from '@/lib/customer/hub-registry';
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,headers={'Cache-Control':'public, max-age=0, s-maxage=60','X-Robots-Tag':'noindex, nofollow'};
+export async function GET(_r:Request,{params}:{params:Promise<{hubId:string;profileId:string}>}){const{hubId,profileId}=await params,hub=customerHub(hubId);if(!hub||!UUID.test(profileId))return NextResponse.json({error:'not_found'},{status:404,headers});return NextResponse.json(await withPlatform(p=>p.publicBusinessReplies(hub.hubId,profileId)),{headers})}

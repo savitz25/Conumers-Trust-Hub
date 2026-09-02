@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/customer/types';
 import { readIntentId, readSessionToken, withPlatform } from '@/lib/customer/server';
 import { ClaimContinueForm } from './claim-continue-form';
+import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
+import { ClaimRecoveryCard } from '@/components/customer/ClaimRecoveryCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,33 +30,25 @@ export default async function ClaimContinuePage({
   });
 
   if (!result.intent) {
-    return (
-      <section className="card-surface p-6">
-        <h1 className="text-xl font-semibold text-navy">Claim context missing</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          This page needs a valid signed handoff from ContractorTrustHub. Public claim buttons
-          are not live yet (ATH-CUST-003). Internal operators can mint a test token.
-        </p>
-        {intentError ? <p className="mt-3 text-sm text-destructive">{intentError.replaceAll('_', ' ')}</p> : null}
-      </section>
-    );
+    return <ClaimRecoveryCard code={intentError || 'HANDOFF_INVALID'} />;
   }
 
   const { intent, user } = result;
+  const capability=CUSTOMER_HUB_REGISTRY[intent.payload.hub_id];
   return (
     <section className="space-y-6">
       <header>
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo">AskTrustHub</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-navy">
-          Manage this ContractorTrustHub profile
+          Manage this {capability.displayName} profile
         </h1>
       </header>
       <div className="card-surface p-5">
         <p className="text-lg font-medium text-foreground">{intent.displayName}</p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Florida DBPR credential: {intent.payload.external_key}
+          {capability.identifierLabel}: {intent.payload.external_key}
         </p>
-        <p className="text-sm text-muted-foreground">Florida</p>
+        {intent.payload.home_state?<p className="text-sm text-muted-foreground">Recorded state: {intent.payload.home_state}</p>:null}
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           You are requesting permission to manage business-supplied information associated with
           this specific TrustHub profile. Confirming your email does not verify ownership.
@@ -69,6 +63,7 @@ export default async function ClaimContinuePage({
         email={user?.email ?? ''}
         relationships={Object.entries(RELATIONSHIP_LABELS) as [RelationshipType, string][]}
         expectedCredential={intent.payload.external_key}
+        identifierLabel={capability.identifierLabel}
         organizations={result.organizations}
       />
     </section>
