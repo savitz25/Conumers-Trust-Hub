@@ -3,7 +3,8 @@ export const HUB_MOVE = 'move' as const;
 export const HUB_LENDER = 'lender' as const;
 export const HUB_SENIOR = 'senior' as const;
 export const HUB_INVESTOR = 'investor' as const;
-export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER, HUB_SENIOR, HUB_INVESTOR] as const;
+export const HUB_INSURANCE = 'insurance' as const;
+export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER, HUB_SENIOR, HUB_INVESTOR, HUB_INSURANCE] as const;
 export type CustomerHubId = (typeof CUSTOMER_HUBS)[number];
 export const SOURCE_FL_DBPR = 'fl_dbpr' as const;
 export const HOME_STATE_FL = 'FL' as const;
@@ -52,8 +53,8 @@ export type HandoffPayload = {
   external_key: string;
   source_system: string;
   home_state: string | null;
-  identifier_namespace?: 'credential' | 'USDOT' | 'NMLS' | 'CMS_CCN' | 'CRD';
-  entity_class?: 'contractor' | 'mover' | 'institution' | 'firm' | SeniorProviderClass;
+  identifier_namespace?: 'credential' | 'USDOT' | 'NMLS' | 'CMS_CCN' | 'CRD' | 'NAIC';
+  entity_class?: 'contractor' | 'mover' | 'institution' | 'firm' | 'legal_insurer' | SeniorProviderClass;
   provider_class?: SeniorProviderClass;
   canonical_profile_url?: string;
   display_name?: string;
@@ -76,7 +77,7 @@ export type CthProfileRecord = {
 export type CustomerProfileRecord = CthProfileRecord & {
   hubId: CustomerHubId;
   publicationEligible: boolean;
-  entityClass: 'contractor' | 'mover' | 'institution' | 'firm' | SeniorProviderClass;
+  entityClass: 'contractor' | 'mover' | 'institution' | 'firm' | 'legal_insurer' | SeniorProviderClass;
   canonicalUrl: string;
 };
 

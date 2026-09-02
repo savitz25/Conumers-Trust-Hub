@@ -2,8 +2,9 @@ import 'server-only';
 import type { CustomerProfileDirectory } from './adapter.ts';
 import type { CustomerProfileRecord, HandoffPayload } from './types.ts';
 import { INVESTOR_CUSTOMER_VALIDATION_LOCK, resolveInvestorValidation } from './investor-validation.ts';
+import { INSURANCE_CUSTOMER_VALIDATION_LOCK, resolveInsuranceValidation } from './insurance-validation.ts';
 
-const ENDPOINTS={move:'https://www.movetrusthub.com/api/specialist-execution/v2',lender:'https://www.lendertrusthub.com/api/specialist-execution/v2',senior:'https://www.seniortrusthub.com/api/customer-profile-validation/v1',investor:'https://www.investortrusthub.com/api/customer-claim-validation/v1'} as const;
+const ENDPOINTS={move:'https://www.movetrusthub.com/api/specialist-execution/v2',lender:'https://www.lendertrusthub.com/api/specialist-execution/v2',senior:'https://www.seniortrusthub.com/api/customer-profile-validation/v1',investor:'https://www.investortrusthub.com/api/customer-claim-validation/v1',insurance:'https://www.insurancetrusthub.com/api/customer-claim-validation/v1'} as const;
 async function post(url:string,body:unknown){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:controller.signal,cache:'no-store'});if(!r.ok&&r.status>=500)throw new Error('specialist_unavailable');return await r.json() as Record<string,unknown>}catch(error){if(error instanceof Error&&(error.name==='AbortError'||error instanceof TypeError))throw new Error('specialist_unavailable');throw error}finally{clearTimeout(timer)}}
 function slugFrom(value:string){try{return new URL(value).pathname.split('/').filter(Boolean).at(-1)||''}catch{return value.split('/').filter(Boolean).at(-1)||''}}
 
@@ -35,6 +36,15 @@ export const specialistCustomerDirectory:CustomerProfileDirectory={async getExac
     const lock=INVESTOR_CUSTOMER_VALIDATION_LOCK;
     const data=await post(ENDPOINTS.investor,{contract:lock.contract,entityType:'firm',nativeProfileId:p.native_profile_id,firmCrd:p.external_key,canonicalProfileUrl:p.canonical_profile_url});
     const resolved=resolveInvestorValidation(p,data);
+    if(resolved.kind==='unavailable')throw new Error('specialist_unavailable');
+    if(resolved.kind==='not_public')throw new Error('profile_not_public');
+    return resolved.kind==='profile'?resolved.profile:null;
+  }
+  if(p.hub_id==='insurance'){
+    if(p.entity_class!=='legal_insurer'||!p.canonical_profile_url) return null;
+    const lock=INSURANCE_CUSTOMER_VALIDATION_LOCK;
+    const data=await post(ENDPOINTS.insurance,{contract:lock.contract,entityClass:'legal_insurer',nativeProfileId:p.native_profile_id,naicCode:p.external_key,canonicalProfileUrl:p.canonical_profile_url});
+    const resolved=resolveInsuranceValidation(p,data);
     if(resolved.kind==='unavailable')throw new Error('specialist_unavailable');
     if(resolved.kind==='not_public')throw new Error('profile_not_public');
     return resolved.kind==='profile'?resolved.profile:null;
