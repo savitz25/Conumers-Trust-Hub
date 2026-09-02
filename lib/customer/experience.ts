@@ -23,9 +23,9 @@ export const CLAIM_EXPERIENCE: Record<ClaimStatus, ClaimExperience> = {
 };
 
 export function hubLabel(hub: CustomerHubId): string {
-  return hub === 'contractor' ? 'ContractorTrustHub' : hub === 'move' ? 'MoveTrustHub' : 'LenderTrustHub';
+  return hub === 'contractor' ? 'ContractorTrustHub' : hub === 'move' ? 'MoveTrustHub' : hub === 'lender' ? 'LenderTrustHub' : 'SeniorTrustHub';
 }
 
 export function identifierLabel(hub: CustomerHubId): string {
-  return hub === 'move' ? 'USDOT' : hub === 'lender' ? 'Institution NMLS' : 'Credential';
+  return hub === 'move' ? 'USDOT' : hub === 'lender' ? 'Institution NMLS' : hub === 'senior' ? 'CMS CCN' : 'Credential';
 }

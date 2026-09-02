@@ -8,7 +8,7 @@ import { BusinessRepliesPanel } from '@/components/customer/BusinessRepliesPanel
 import { MonitoringPanel } from '@/components/customer/MonitoringPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
-import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
+import { CUSTOMER_HUB_REGISTRY, customerEntityClassLabel } from '@/lib/customer/hub-registry';
 
 export const dynamic = 'force-dynamic';
 export const metadata = createPageMetadata({
@@ -43,7 +43,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
       <p className="mt-2 text-sm text-muted-foreground">Management status: Active · Role: {model.access.role}</p>
     </header>
     <nav aria-label="Profile workspace" className="card-surface flex flex-wrap gap-2 p-3 text-sm"><a className="btn-secondary" href="#overview">Overview</a><a className="btn-secondary" href="#business-information">Business information</a><a className="btn-secondary" href="#official-evidence">Official evidence</a><a className="btn-secondary" href="#record-issues">Issues &amp; corrections</a><a className="btn-secondary" href="#business-responses">Business response</a><a className="btn-secondary" href="#monitoring">Monitoring</a><a className="btn-secondary" href="#activity">Activity</a><Link className="btn-secondary" href={`/manage/organization/${model.access.org_id}`}>Team / access</Link></nav>
-    <section id="overview" className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">Overview</h2><p className="mt-2 text-sm text-muted-foreground">This is a managed profile. Control verified, not endorsement. Official records remain read-only and independent from information supplied by the business.</p><dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3"><div><dt className="text-muted-foreground">Owning Trust Hub</dt><dd>{capability.displayName}</dd></div><div><dt className="text-muted-foreground">{capability.identifierLabel}</dt><dd className="break-all">{model.access.native_credential_key}</dd></div><div><dt className="text-muted-foreground">Your role</dt><dd>{model.access.role}</dd></div></dl></section>
+    <section id="overview" className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">Overview</h2><p className="mt-2 text-sm text-muted-foreground">This is a managed profile. Control verified, not endorsement. Official records remain read-only and independent from information supplied by the business.</p><dl className="mt-4 grid gap-3 text-sm sm:grid-cols-4"><div><dt className="text-muted-foreground">Owning Trust Hub</dt><dd>{capability.displayName}</dd></div><div><dt className="text-muted-foreground">Provider class</dt><dd>{customerEntityClassLabel(model.access.entity_class)}</dd></div><div><dt className="text-muted-foreground">{capability.identifierLabel}</dt><dd className="break-all">{model.access.native_credential_key}</dd></div><div><dt className="text-muted-foreground">Your role</dt><dd>{model.access.role}</dd></div></dl></section>
     <div id="business-information"><BusinessProfileEditor profileId={profileId} hubId={model.access.hub_id} canEdit={canEdit} initial={{
       version: model.version, fields, services: items('service'), serviceAreas: items('service_area'), languages: items('language'),
       freshness: model.freshness,

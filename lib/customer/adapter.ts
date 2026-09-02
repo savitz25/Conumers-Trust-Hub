@@ -49,7 +49,10 @@ export async function loadAndValidateProfile(
   directory: CthDirectory | CustomerProfileDirectory,
   handoff: HandoffPayload
 ): Promise<AdapterResult> {
-  if ('getExact' in directory) return validateCustomerProfile(handoff,await directory.getExact(handoff));
+  if ('getExact' in directory) {
+    try{return validateCustomerProfile(handoff,await directory.getExact(handoff));}
+    catch(error){const code=error instanceof Error?error.message:'';if(code==='historical_profile'||code==='profile_not_public'||code==='specialist_unavailable')return{ok:false,code};throw error;}
+  }
   const profile = await directory.getById(handoff.native_profile_id);
   return validateContractorAdapter(handoff, profile);
 }
@@ -60,10 +63,12 @@ export function validateCustomerProfile(handoff:HandoffPayload,profile:CustomerP
   if(!profile || profile.id!==handoff.native_profile_id) return {ok:false,code:'missing_profile'};
   if(profile.hubId!==handoff.hub_id) return {ok:false,code:'unsupported_hub'};
   if(!profile.publicationEligible || profile.isThin) return {ok:false,code:'thin_profile'};
-  if(profile.entityClass!==cap.identityClass) return {ok:false,code:'unsupported_source'};
+  const expectedClass=handoff.hub_id==='senior'?handoff.provider_class:cap.identityClass;
+  if(profile.entityClass!==expectedClass) return {ok:false,code:'unsupported_source'};
   if(profile.slug!==handoff.slug) return {ok:false,code:'slug_mismatch'};
   if(profile.externalKey!==handoff.external_key) return {ok:false,code:'credential_mismatch'};
   if(profile.sourceSystem!==handoff.source_system) return {ok:false,code:'unsupported_source'};
+  if(handoff.hub_id==='senior' && profile.canonicalUrl!==handoff.canonical_profile_url) return {ok:false,code:'slug_mismatch'};
   if(!customerHub(profile.hubId) || !publicProfileDestination(profile)) return {ok:false,code:'missing_profile'};
   return {ok:true,profile};
 }

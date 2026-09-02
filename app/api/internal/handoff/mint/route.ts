@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { timingSafeEqualText } from '@/lib/customer/crypto';
 import { mintHandoffToken } from '@/lib/customer/handoff';
 import { cthReadDirectory } from '@/lib/customer/cth-read';
-import { validateCustomerProfile } from '@/lib/customer/adapter';
 import { compositeCustomerDirectory } from '@/lib/customer/specialist-read';
 import { customerHub } from '@/lib/customer/hub-registry';
+import { resolveProfileForHandoffMint } from '@/lib/customer/handoff-mint-resolution';
+import { customerLog } from '@/lib/customer/log';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { HOME_STATE_FL, SOURCE_FL_DBPR, type HandoffPayload } from '@/lib/customer/types';
 
@@ -34,6 +35,8 @@ export async function POST(request: Request) {
     externalKey?: string;
     hubId?: string;
     sourceSystem?: string;
+    providerClass?: 'nursing_home'|'home_health'|'hospice';
+    canonicalProfileUrl?: string;
   };
   if (!body.nativeProfileId) {
     return NextResponse.json({ ok: false, error: 'nativeProfileId required' }, { status: 400 });
@@ -45,22 +48,26 @@ export async function POST(request: Request) {
       v:(capability.hubId==='contractor'?1:2) as 1|2,aud:'asktrusthub' as const,
       hub_id: capability.hubId,
       native_profile_id: body.nativeProfileId,
-      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':'nmls'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
-      identifier_namespace:capability.identifierNamespace,entity_class:capability.identityClass,iat:0,exp:0,nonce:''
+      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':'cms'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
+      identifier_namespace:capability.identifierNamespace,entity_class:capability.hubId==='senior'?body.providerClass:capability.identityClass,provider_class:body.providerClass,canonical_profile_url:body.canonicalProfileUrl,iat:0,exp:0,nonce:''
     };
-  const directory=compositeCustomerDirectory(cthReadDirectory),profile=await directory.getExact(payload);
-  const check=validateCustomerProfile(payload,profile);
-  if (!check.ok) {
-    return NextResponse.json({ ok: false, error: check.code }, { status: 400 });
+  const directory=compositeCustomerDirectory(cthReadDirectory);
+  const resolution=await resolveProfileForHandoffMint(directory,payload);
+  if (!resolution.ok) {
+    if (resolution.status === 500) {
+      customerLog('internal_handoff_profile_resolution_failed', { category: 'unexpected' }, 'error');
+    }
+    return NextResponse.json({ ok: false, error: resolution.error }, { status: resolution.status });
   }
+  const profile=resolution.profile;
 
   const secret = process.env.ATH_HANDOFF_SECRET || '';
   const minted = mintHandoffToken(secret, {
     hubId:capability.hubId,
-    nativeProfileId: check.profile.id,
-    slug: check.profile.slug,
-    externalKey: check.profile.externalKey,
-    sourceSystem:check.profile.sourceSystem,homeState:check.profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:capability.identityClass,displayName:check.profile.displayName,
+    nativeProfileId: profile.id,
+    slug: profile.slug,
+    externalKey: profile.externalKey,
+    sourceSystem:profile.sourceSystem,homeState:profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:('entityClass' in profile?profile.entityClass:'contractor') as HandoffPayload['entity_class'],providerClass:body.providerClass,canonicalProfileUrl:'canonicalUrl' in profile?String(profile.canonicalUrl):undefined,displayName:profile.displayName,
   });
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com';
   return NextResponse.json({
