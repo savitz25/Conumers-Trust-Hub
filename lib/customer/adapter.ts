@@ -68,7 +68,7 @@ export function validateCustomerProfile(handoff:HandoffPayload,profile:CustomerP
   if(profile.slug!==handoff.slug) return {ok:false,code:'slug_mismatch'};
   if(profile.externalKey!==handoff.external_key) return {ok:false,code:'credential_mismatch'};
   if(profile.sourceSystem!==handoff.source_system) return {ok:false,code:'unsupported_source'};
-  if(handoff.hub_id==='senior' && profile.canonicalUrl!==handoff.canonical_profile_url) return {ok:false,code:'slug_mismatch'};
+  if((handoff.hub_id==='senior'||handoff.hub_id==='investor') && profile.canonicalUrl!==handoff.canonical_profile_url) return {ok:false,code:'slug_mismatch'};
   if(!customerHub(profile.hubId) || !publicProfileDestination(profile)) return {ok:false,code:'missing_profile'};
   return {ok:true,profile};
 }
