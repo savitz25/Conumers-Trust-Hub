@@ -4,6 +4,7 @@ import { readIntentId, readSessionToken, withPlatform } from '@/lib/customer/ser
 import { ClaimContinueForm } from './claim-continue-form';
 import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
 import { ClaimRecoveryCard } from '@/components/customer/ClaimRecoveryCard';
+import { ClaimProgress } from '@/components/customer/ClaimProgress';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +38,7 @@ export default async function ClaimContinuePage({
   const capability=CUSTOMER_HUB_REGISTRY[intent.payload.hub_id];
   return (
     <section className="space-y-6">
+      <ClaimProgress current={user ? 2 : 1} />
       <header>
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo">AskTrustHub</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-navy">
@@ -54,6 +56,10 @@ export default async function ClaimContinuePage({
           this specific TrustHub profile. Confirming your email does not verify ownership.
           Authorization is not an endorsement.
         </p>
+        <div className="mt-4 rounded-lg border border-border bg-slate-50 p-4 text-sm">
+          <p><strong>Claiming lets you:</strong> manage information supplied by the business, submit corrections and use eligible account tools.</p>
+          <p className="mt-2"><strong>Claiming does not:</strong> change official evidence, search ordering, publication, or TrustHub findings.</p>
+        </div>
         <a className="link-inline mt-3 inline-block text-sm" href={intent.profileHref}>
           View public Trust Report
         </a>
