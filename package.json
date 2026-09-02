@@ -25,6 +25,7 @@
     "check:ath-search-hotfix-001": "node --experimental-strip-types --test lib/network/ath-search-hotfix-001.test.ts",
     "check:ath-cohort-001": "node --experimental-strip-types --test lib/network/ath-cohort-001.test.ts",
     "check:ath-guided-001": "node --experimental-strip-types --test lib/guided-research/ath-guided-001.test.ts",
+    "check:ath-guided-003": "node --experimental-strip-types --test lib/guided-research/ath-guided-003.test.ts",
     "check:journey-v21": "node scripts/check-journey-v21.mjs",
     "check:ath-cust-002": "node scripts/check-ath-cust-002.mjs",
     "check:ath-cust-004": "node --experimental-strip-types --test lib/customer/business-profile.test.ts lib/customer/platform.test.ts",

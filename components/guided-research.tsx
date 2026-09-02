@@ -44,20 +44,21 @@ export function GuidedResearch({query}:{query:string}) {
   function submit(event:FormEvent){event.preventDefault();if(value.trim()){void send({type:'SET_GEOGRAPHY',value:value.trim()});setValue('');}}
   const question=session?.nextAction??'Understanding your research goal…';
   const progress=session?({CLARIFY:'Choosing the research path',COLLECT:'Adding the information needed',EXECUTE:'Researching public records',REFINE:'Reviewing and narrowing public records',DEEP_LINK:'Continuing detailed research',ERROR_RECOVERY:'Recovering this research request',UNDERSTAND:'Understanding the question'} as const)[session.phase]:'';
-  const currentResearch=session?formatResearchLabel(session.providerClass??session.trade??session.moveMode):undefined;
+  const currentResearch=session?formatResearchLabel(session.providerClass??session.trade??session.moveMode??session.investorFirmClass??session.insuranceEntityClass??session.lenderResearchMode):undefined;
+  const specialistName=session?({senior:'SeniorTrustHub',contractor:'ContractorTrustHub',move:'MoveTrustHub',investor:'InvestorTrustHub',insurance:'InsuranceTrustHub',lender:'LenderTrustHub'} as const)[session.hub!]:undefined;
   return <section className="space-y-6 pb-24 sm:pb-6" aria-busy={busy}>
     <div className="rounded-2xl border bg-white p-5 sm:p-6" style={{borderColor:ASK_BRAND.border,boxShadow:ASK_SHADOW.soft}}>
       <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{color:ASK_BRAND.indigo}}>Guided Research</p>
       <p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Original question:</span> {query}</p>
       <h2 ref={headingRef} tabIndex={-1} className="mt-5 text-xl font-semibold outline-none sm:text-2xl" style={{color:ASK_BRAND.navy}}>{question}</h2>
-      {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {session.hub==='senior'?'SeniorTrustHub':session.hub==='contractor'?'ContractorTrustHub':'MoveTrustHub'}</p>:null}
+      {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {specialistName}</p>:null}
       {currentResearch||session?.geography?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?` · ${session.geography.value}`:''}</p>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Preparing the next research step…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
       {resumeRecovery?<button type="button" disabled={busy} onClick={()=>void send({type:'RESUME'})} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry specialist explanation</button>:null}
       {!busy&&session?.availableChoices.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">{session.availableChoices.map((choice)=><li key={choice.id}><button type="button" onClick={()=>void send({type:'SELECT_CHOICE',value:choice.value})} className="min-h-12 w-full rounded-xl border p-3 text-left font-semibold focus-visible:outline-none focus-visible:ring-2" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}>{choice.label}{choice.description?<span className="mt-1 block text-xs font-normal leading-relaxed" style={{color:ASK_BRAND.ink}}>{choice.description}</span>:null}</button></li>)}</ul>:null}
       {!busy&&session?.phase==='COLLECT'?<form onSubmit={submit} className="mt-4">
-        <label htmlFor="guided-value" className="block text-sm font-semibold" style={{color:ASK_BRAND.navy}}>{session.missingFields.includes('geography')?'State, county, city or ZIP':session.missingFields.includes('identifier')?'USDOT or MC number':session.missingFields.includes('tradeDescription')?'Short project description':'Company name'}</label>
+        <label htmlFor="guided-value" className="block text-sm font-semibold" style={{color:ASK_BRAND.navy}}>{session.missingFields.includes('geography')?'State, county, city or ZIP':session.missingFields.includes('identifier')?identifierPrompt(session):session.missingFields.includes('tradeDescription')?'Short project description':session.hub==='investor'?'Firm name':session.hub==='lender'?'Lender name':'Company name'}</label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row"><input id="guided-value" value={value} onChange={event=>setValue(event.target.value)} className="min-h-12 flex-1 rounded-xl border px-4" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}/><button className="min-h-12 rounded-xl px-5 font-semibold text-white" style={{backgroundColor:ASK_BRAND.indigo}}>Continue</button></div>
         {session.missingFields.includes('geography')&&session.hub==='senior'?<p className="mt-2 text-xs" style={{color:ASK_BRAND.ink}}>You may enter Florida to review statewide records, or narrow by a supported city, county or ZIP.</p>:null}
       </form>:null}
@@ -80,7 +81,7 @@ function GuidedResults({result,session,onAction}:{result:GuidedExecutionResult;s
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
         {row.identifier?<div><dt className="text-xs uppercase tracking-wide" style={{color:ASK_BRAND.ink}}>{row.identifier.label}</dt><dd className="break-all font-semibold" style={{color:ASK_BRAND.navy}}>{row.identifier.value}</dd></div>:null}
         {row.classLabel?<Fact label="Class / role / trade" value={row.classLabel}/>:null}
-        {row.recordedLocation?<Fact label={row.hub==='contractor'?'Recorded address':'Recorded location'} value={row.recordedLocation}/>:null}
+        {row.recordedLocation?<Fact label={row.hub==='contractor'?'Recorded address':row.hub==='investor'?'Principal office':row.hub==='insurance'?'Credential jurisdiction':row.hub==='lender'?'HMDA property geography':'Recorded location'} value={row.recordedLocation}/>:null}
         {row.status?<Fact label="Source status" value={row.status}/>:null}
         {row.sourceDate?<Fact label="Source checked" value={row.sourceDate}/>:null}
         {row.facts.map(fact=><Fact key={fact.label} label={fact.label} value={fact.value}/>)}
@@ -96,4 +97,5 @@ function GuidedResults({result,session,onAction}:{result:GuidedExecutionResult;s
   </div>;
 }
 function Fact({label,value}:{label:string;value:string}){return <div><dt className="text-xs uppercase tracking-wide" style={{color:ASK_BRAND.ink}}>{label}</dt><dd className="font-medium" style={{color:ASK_BRAND.navy}}>{value}</dd></div>}
-function formatResearchLabel(value:string|undefined){if(!value)return undefined;const acronyms=new Set(['hvac','cms','ccn','usdot','mc','hic','npn','naic']);return value.split('_').map(word=>acronyms.has(word.toLowerCase())?word.toUpperCase():word.charAt(0).toUpperCase()+word.slice(1)).join(' ');}
+function formatResearchLabel(value:string|undefined){if(!value)return undefined;const acronyms=new Set(['hvac','hvacr','cms','ccn','usdot','mc','hic','npn','naic','nmls','lei','ria','era','raum','hmda','cfpb']);return value.split('_').map(word=>acronyms.has(word.toLowerCase())?word.toUpperCase():word.charAt(0).toUpperCase()+word.slice(1)).join(' ');}
+function identifierPrompt(session:GuidedResearchSession){return session.hub==='investor'?'Organization CRD':session.hub==='insurance'?'NPN or NAIC company code':session.hub==='lender'?'NMLS or LEI':'USDOT or MC number';}

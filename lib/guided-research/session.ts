@@ -24,6 +24,26 @@ const MOVE_CHOICES: GuidedChoice[] = [
   { id: 'move-company', label: 'I have a specific company to research', action: 'SELECT_CHOICE', value: 'identity_name' },
   { id: 'move-id', label: 'I have a USDOT or MC number', action: 'SELECT_CHOICE', value: 'identifier' },
 ];
+const INVESTOR_CHOICES: GuidedChoice[] = [
+  {id:'investor-firms',label:'Research investment adviser firms',action:'SELECT_CHOICE',value:'investor_mode:firm_cohort',description:'RIA and ERA firms remain separate source-native classes.'},
+  {id:'investor-crd',label:'Research an exact CRD',action:'SELECT_CHOICE',value:'investor_mode:identifier'},
+  {id:'investor-name',label:'Research a specific firm name',action:'SELECT_CHOICE',value:'investor_mode:identity_name'},
+  {id:'investor-unsure',label:"I’m not sure",action:'SELECT_CHOICE',value:'investor_mode:explain',description:'Firm research does not publish individual investment-adviser representatives.'},
+];
+const INSURANCE_CHOICES: GuidedChoice[] = [
+  {id:'insurance-agency',label:'Insurance agency',action:'SELECT_CHOICE',value:'insurance_class:agency'},
+  {id:'insurance-insurer',label:'Insurance company / legal insurer',action:'SELECT_CHOICE',value:'insurance_class:legal_insurer'},
+  {id:'insurance-producer',label:'Individual agent / producer',action:'SELECT_CHOICE',value:'insurance_class:producer',description:'Mass person publication is restricted.'},
+  {id:'insurance-id',label:'I have an NPN or NAIC code',action:'SELECT_CHOICE',value:'insurance_mode:identifier'},
+  {id:'insurance-unsure',label:"I’m not sure",action:'SELECT_CHOICE',value:'insurance_mode:explain',description:'Agency, producer, and legal insurer are different regulatory classes.'},
+];
+const LENDER_CHOICES: GuidedChoice[] = [
+  {id:'lender-market',label:'Mortgage activity for properties in an area',action:'SELECT_CHOICE',value:'lender_mode:property_market',description:'HMDA property geography is not headquarters or service territory.'},
+  {id:'lender-name',label:'A specific lender',action:'SELECT_CHOICE',value:'lender_mode:identity_name'},
+  {id:'lender-id',label:'An NMLS or LEI',action:'SELECT_CHOICE',value:'lender_mode:identifier'},
+  {id:'lender-complaints',label:'Complaint evidence about a known lender',action:'SELECT_CHOICE',value:'lender_mode:complaints'},
+  {id:'lender-unsure',label:"I’m not sure",action:'SELECT_CHOICE',value:'lender_mode:explain',description:'Institutions, branches, and individual MLOs remain separate.'},
+];
 
 function snapshot(session: GuidedResearchSession): GuidedSessionSnapshot {
   const state = structuredClone(session) as GuidedResearchSession & Record<string, unknown>;
@@ -103,6 +123,51 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   if (!q) return null;
   const parsed = parseNetworkAsk(q);
   const session = base(q);
+  const financialGeography=geographyFromParsed(parsed);
+  const labeledIdentifier=q.match(/\b(CRD|NPN|NAIC|NMLS|LEI)\s*#?\s*([A-Z0-9-]+)\b/i);
+  if(labeledIdentifier)session.identifier={type:labeledIdentifier[1].toUpperCase(),value:labeledIdentifier[2].toUpperCase()};
+
+  const investorIntent=/\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
+  if(investorIntent){
+    session.hub='investor';session.geography=financialGeography;
+    if(/^i\s+need\s+an?\s+investment\s+advis(?:er|or)\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['investorResearchMode'],availableChoices:INVESTOR_CHOICES,nextAction:'What would you like to research?'};
+    session.investorResearchMode=session.identifier?'identifier':/\bnamed\s+(.+)$/i.test(q)?'identity_name':'firm_cohort';
+    session.identityName=q.match(/\bnamed\s+(.+)$/i)?.[1]?.trim();
+    session.investorFirmClass=/\bindividual\b|representatives?/i.test(q)?'individual_representative':/\bERAs?\b|exempt\s+reporting/i.test(q)?'era':/\bRIAs?\b|registered\s+investment/i.test(q)?'ria':'ria_and_era';
+    session.entityClass=session.investorFirmClass;
+    if(/\b(?:1|one)\s*billion\b/i.test(q))session.minimumRaum=1_000_000_000;
+    if(/\b10\s*billion\b/i.test(q))session.maximumRaum=10_000_000_000;
+    if(/\b2\s*billion\b/i.test(q))session.minimumRaum=2_000_000_000;
+    if(/percentage\s+of\s+assets/i.test(q))session.compensationMethod='percentage_of_assets';
+    session.requestedEvidence=/highest-performing|\bperformance\b/i.test(q)?['PERFORMANCE']:/\bsafest\b/i.test(q)?['SAFETY_RANKING']:[];
+    return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
+  }
+
+  const insuranceIntent=/\b(?:insurance|insurers?|\bNPN\b|\bNAIC\b)\b/i.test(q);
+  if(insuranceIntent){
+    session.hub='insurance';session.geography=financialGeography;
+    if(/^i\s+need\s+help\s+with\s+insurance\s*[?.!]*$/i.test(q)||/\binsurance\s+provider\b/i.test(q)||/insurance\s+complaints\s+against\s+a\s+company/i.test(q)||/insurance\s+professional\s+near\s+me/i.test(q))return {...session,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:INSURANCE_CHOICES,nextAction:'What kind of insurance entity do you want to research?'};
+    session.insuranceResearchMode=session.identifier?'identifier':'cohort';
+    session.insuranceEntityClass=/\b(?:agents?|producers?|professional)\b/i.test(q)?'producer':/\b(?:legal\s+insurers?|insurance\s+compan(?:y|ies)|insurers?)\b/i.test(q)?'legal_insurer':'agency';
+    session.entityClass=session.insuranceEntityClass;
+    if(/\blife\s+insurance\b/i.test(q))session.insuranceLineOfAuthority='life';
+    return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
+  }
+
+  const lenderIntent=/\b(?:mortgage|lenders?|\bNMLS\b|\bLEI\b|HMDA|Rocket\s+Mortgage|Newrez)\b/i.test(q);
+  if(lenderIntent){
+    session.hub='lender';session.geography=financialGeography;
+    if(/^i\s+need\s+a\s+mortgage\s+lender\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What would you like to research?'};
+    const genericStateLenders=/^lenders?\s+in\s+(?:Texas|TX)\s*[?.!]*$/i.test(q);
+    session.lenderResearchMode=session.identifier?'identifier':/complaints?\s+about/i.test(q)?'complaints':/brokers?\s+near\s+me/i.test(q)?'unsupported_person_branch':genericStateLenders?undefined:'property_market';
+    if(genericStateLenders)return {...session,lenderResearchMode:undefined,entityClass:undefined,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What do you mean by lenders in this state?'};
+    session.identityName=q.match(/complaints?\s+about\s+(.+)$/i)?.[1]?.trim();
+    session.requestedEvidence=session.lenderResearchMode==='complaints'?['CFPB_COMPLAINTS']:[];
+    session.hmdaAction=/\bdenials?\b/i.test(q)?'denial':/\bapplications?\b/i.test(q)?'application':'origination';
+    session.loanType=/\bFHA\b/i.test(q)?'FHA':/\bVA\b/i.test(q)?'VA':/\bUSDA\b/i.test(q)?'USDA':/\bconventional\b/i.test(q)?'Conventional':undefined;
+    session.entityClass=session.lenderResearchMode==='unsupported_person_branch'?'mlo_or_branch':'hmda_reporting_institution';
+    return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
+  }
   if (/\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
     const geography=geographyFromParsed(parsed);
     return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
@@ -174,4 +239,4 @@ export function restorePrevious(session: GuidedResearchSession): GuidedResearchS
   };
 }
 
-export { CARE_CHOICES, TRADE_CHOICES, MOVE_CHOICES };
+export { CARE_CHOICES, TRADE_CHOICES, MOVE_CHOICES, INVESTOR_CHOICES, INSURANCE_CHOICES, LENDER_CHOICES };

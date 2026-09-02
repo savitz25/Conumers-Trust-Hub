@@ -1,5 +1,5 @@
 import type { GuidedAction, GuidedApiResponse, GuidedResearchSession } from './contract.ts';
-import { createGuidedSession, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import { createGuidedSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
 import { executeGuidedSpecialist } from './specialists.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
@@ -15,6 +15,12 @@ function allowedRefinementValues(session: GuidedResearchSession): Record<string,
   if (session.hub === 'senior' && session.providerClass === 'home_health') return {qpcStars:['1','2','3','4','5']};
   if (session.hub === 'contractor') return {credentialStatus:['active_current','expired','all']};
   if (session.hub === 'move' && !session.identityName && !session.identifier) return {role:['Carrier','Broker','Carrier/Broker']};
+  if (session.hub === 'investor') return {
+    firmClass:['ria','era','ria_and_era'],minimumRaum:['1000000000','2000000000'],maximumRaum:['10000000000'],
+    compensationMethods:['percentage_of_assets','hourly_charges','subscription_fees','fixed_fees','commissions','performance_based_fees','other_compensation'],
+  };
+  if (session.hub === 'insurance' && session.insuranceEntityClass === 'agency') return {credentialJurisdiction:['FL','TX','MA','OH','VT'],lineOfAuthority:['life']};
+  if (session.hub === 'lender' && session.lenderResearchMode === 'property_market') return {action:['application','origination','denial'],loanType:['Conventional','FHA','VA','USDA','Other']};
   return {};
 }
 
@@ -60,6 +66,30 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
     const missing=mode==='mover'?'geography':mode==='identity_name'?'identityName':'identifier';
     return touch({ ...clearExecutionState(next),moveMode:mode,entityClass:mode,geography:undefined,identityName:undefined,identifier:undefined,phase:'COLLECT',missingFields:[missing],availableChoices:[],nextAction:mode==='mover'?'Enter a state for recorded-headquarters research.':mode==='identity_name'?'What company name should we research?':'Enter a USDOT or MC number.' });
   }
+  if(session.hub==='investor'){
+    if(value==='investor_mode:explain')return touch({...next,phase:'CLARIFY',missingFields:['investorResearchMode'],availableChoices:structuredClone(INVESTOR_CHOICES),nextAction:'Choose firm research, a CRD, or a specific firm name. Individual representatives are not published.'});
+    if(value==='investor_mode:firm_cohort')return touch({...clearExecutionState(next),investorResearchMode:'firm_cohort',investorFirmClass:'ria_and_era',entityClass:'ria_and_era',phase:'COLLECT',missingFields:['geography'],availableChoices:[],nextAction:'Which principal-office state should we research?'});
+    if(value==='investor_mode:identifier')return touch({...clearExecutionState(next),investorResearchMode:'identifier',phase:'COLLECT',missingFields:['identifier'],availableChoices:[],nextAction:'Enter an organization CRD.'});
+    if(value==='investor_mode:identity_name')return touch({...clearExecutionState(next),investorResearchMode:'identity_name',phase:'COLLECT',missingFields:['identityName'],availableChoices:[],nextAction:'What firm name should we research?'});
+  }
+  if(session.hub==='insurance'){
+    if(value==='insurance_mode:explain')return touch({...next,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:structuredClone(INSURANCE_CHOICES),nextAction:'Choose agency, legal insurer, producer, or an exact identifier.'});
+    if(value==='insurance_mode:identifier')return touch({...clearExecutionState(next),insuranceResearchMode:'identifier',insuranceEntityClass:undefined,entityClass:undefined,phase:'COLLECT',missingFields:['identifier'],availableChoices:[],nextAction:'Enter an NPN or NAIC company code.'});
+    if(value.startsWith('insurance_class:')){
+      const cls=value.slice('insurance_class:'.length);
+      if(!['agency','producer','legal_insurer'].includes(cls))throw new Error('invalid_choice');
+      const insuranceEntityClass=cls as GuidedResearchSession['insuranceEntityClass'];
+      const needsGeography=insuranceEntityClass==='agency';
+      return touch({...clearExecutionState(next),insuranceResearchMode:'cohort',insuranceEntityClass,entityClass:insuranceEntityClass,phase:needsGeography?'COLLECT':'EXECUTE',missingFields:needsGeography?['geography']:[],availableChoices:[],nextAction:needsGeography?'Which credential jurisdiction should we research?':'execute'});
+    }
+  }
+  if(session.hub==='lender'){
+    if(value==='lender_mode:explain')return touch({...next,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:structuredClone(LENDER_CHOICES),nextAction:'Choose property-market activity, a lender name, an identifier, or complaint evidence.'});
+    if(value==='lender_mode:property_market'||value==='lender_property_market')return touch({...clearExecutionState(next),lenderResearchMode:'property_market',entityClass:'hmda_reporting_institution',phase:'COLLECT',missingFields:['geography'],availableChoices:[],nextAction:'Which property market should we research?'});
+    if(value==='lender_mode:identity_name')return touch({...clearExecutionState(next),lenderResearchMode:'identity_name',phase:'COLLECT',missingFields:['identityName'],availableChoices:[],nextAction:'What lender name should we research?'});
+    if(value==='lender_mode:identifier')return touch({...clearExecutionState(next),lenderResearchMode:'identifier',phase:'COLLECT',missingFields:['identifier'],availableChoices:[],nextAction:'Enter an NMLS or LEI.'});
+    if(value==='lender_mode:complaints')return touch({...clearExecutionState(next),lenderResearchMode:'complaints',requestedEvidence:['CFPB_COMPLAINTS'],phase:'COLLECT',missingFields:['identityName'],availableChoices:[],nextAction:'Which known lender should we examine for attached CFPB evidence?'});
+  }
   throw new Error('invalid_hub');
 }
 
@@ -85,9 +115,10 @@ function collectValue(session: GuidedResearchSession, value: string): GuidedRese
     return touch({ ...next,identityName:name,missingFields:[],phase:'EXECUTE',nextAction:'execute' });
   }
   if (session.missingFields.includes('identifier')) {
-    const match=value.trim().match(/^(USDOT|DOT|MC)\s*#?-?\s*(\d{3,8})$/i);
+    const match=value.trim().match(/^(USDOT|DOT|MC|CRD|NPN|NAIC|NMLS|LEI)\s*#?-?\s*([A-Z0-9-]{3,24})$/i);
     if (!match) throw new Error('invalid_identifier');
-    return touch({ ...next,identifier:{type:/mc/i.test(match[1])?'MC':'USDOT',value:match[2]},missingFields:[],phase:'EXECUTE',nextAction:'execute' });
+    const type=/^dot$/i.test(match[1])?'USDOT':match[1].toUpperCase();
+    return touch({ ...next,identifier:{type,value:match[2].toUpperCase()},missingFields:[],phase:'EXECUTE',nextAction:'execute' });
   }
   throw new Error('nothing_to_collect');
 }
