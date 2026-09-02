@@ -8,7 +8,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
   const { profileId } = await params;
   if (!UUID.test(profileId)) return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
   try {
-    const profile = await withPlatform((p) => p.publicBusinessProfile(profileId));
+    const profile = await withPlatform((p) => p.publicBusinessProfile('contractor',profileId));
     if (!profile) return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
     return NextResponse.json(profile, { headers });
   } catch {

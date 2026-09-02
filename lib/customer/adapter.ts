@@ -4,8 +4,10 @@ import {
   SOURCE_FL_DBPR,
   type AdapterFailure,
   type CthProfileRecord,
+  type CustomerProfileRecord,
   type HandoffPayload,
 } from './types.ts';
+import { customerHub, handoffCapability, publicProfileDestination } from './hub-registry.ts';
 
 export type AdapterOk = { ok: true; profile: CthProfileRecord };
 export type AdapterErr = { ok: false; code: AdapterFailure };
@@ -13,6 +15,10 @@ export type AdapterResult = AdapterOk | AdapterErr;
 
 export type CthDirectory = {
   getById(id: string): Promise<CthProfileRecord | null>;
+};
+
+export type CustomerProfileDirectory = {
+  getExact(payload: HandoffPayload): Promise<CustomerProfileRecord | null>;
 };
 
 export function floridaEligible(profile: CthProfileRecord): boolean {
@@ -40,9 +46,24 @@ export function validateContractorAdapter(
 }
 
 export async function loadAndValidateProfile(
-  directory: CthDirectory,
+  directory: CthDirectory | CustomerProfileDirectory,
   handoff: HandoffPayload
 ): Promise<AdapterResult> {
+  if ('getExact' in directory) return validateCustomerProfile(handoff,await directory.getExact(handoff));
   const profile = await directory.getById(handoff.native_profile_id);
   return validateContractorAdapter(handoff, profile);
+}
+
+export function validateCustomerProfile(handoff:HandoffPayload,profile:CustomerProfileRecord|null):AdapterResult {
+  const cap=handoffCapability(handoff);
+  if(!cap) return {ok:false,code:'unsupported_hub'};
+  if(!profile || profile.id!==handoff.native_profile_id) return {ok:false,code:'missing_profile'};
+  if(profile.hubId!==handoff.hub_id) return {ok:false,code:'unsupported_hub'};
+  if(!profile.publicationEligible || profile.isThin) return {ok:false,code:'thin_profile'};
+  if(profile.entityClass!==cap.identityClass) return {ok:false,code:'unsupported_source'};
+  if(profile.slug!==handoff.slug) return {ok:false,code:'slug_mismatch'};
+  if(profile.externalKey!==handoff.external_key) return {ok:false,code:'credential_mismatch'};
+  if(profile.sourceSystem!==handoff.source_system) return {ok:false,code:'unsupported_source'};
+  if(!customerHub(profile.hubId) || !publicProfileDestination(profile)) return {ok:false,code:'missing_profile'};
+  return {ok:true,profile};
 }

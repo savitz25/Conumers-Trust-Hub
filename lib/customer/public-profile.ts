@@ -6,8 +6,8 @@ export const PUBLIC_BUSINESS_FIELD_KEYS = [
 ] as const;
 
 export type PublicBusinessProfile = {
-  contractVersion: 1;
-  hub: 'contractor';
+  contractVersion: 1 | 2;
+  hub: import('./types.ts').CustomerHubId;
   nativeProfileId: string;
   managed: true;
   source: 'BUSINESS_SUPPLIED';

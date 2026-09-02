@@ -3,6 +3,7 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { PUBLIC_LANGUAGE } from '@/lib/customer/copy';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AccountSignIn } from '@/components/customer/AccountSignIn';
+import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,22 +41,22 @@ export default async function ManagePage() {
         rows.map((row) => (
           <article key={String(row.grant_id)} className="card-surface space-y-2 p-5">
             <h2 className="text-lg font-medium">{String(row.display_name || row.display_name_snapshot)}</h2>
-            <p className="text-sm text-muted-foreground">{String(row.hub_id)} TrustHub · Role: {String(row.role)}</p>
+            <p className="text-sm text-muted-foreground">{CUSTOMER_HUB_REGISTRY[row.hub_id as keyof typeof CUSTOMER_HUB_REGISTRY].displayName} · Role: {String(row.role)}</p>
             <p className="text-sm text-muted-foreground">Status: {String(row.grant_status)}</p>
             <p className="text-sm text-muted-foreground">
-              Florida DBPR credential {String(row.native_credential_key)}
+              {String(row.identifier_namespace||'Credential')} {String(row.native_credential_key)}
             </p>
             <Link className="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white" href={`/manage/${row.native_profile_id}`}>
               Manage profile
             </Link>
             <Link className="ml-2 inline-flex min-h-11 items-center text-sm underline" href={`/manage/organization/${row.org_id}`}>Team &amp; organization</Link>
-            {row.hub_id==='contractor'?<a
+            {row.canonical_url?<a
               className="link-inline ml-4 text-sm"
-              href={`https://www.contractortrusthub.com/contractors/${row.native_slug}`}
+              href={String(row.canonical_url)}
             >
-              Open ContractorTrustHub profile
+              Open public specialist profile
             </a>:null}
-            <p className="pt-3 text-sm text-muted-foreground">Monitoring is available inside this managed profile and is always optional.</p>
+            <p className="pt-3 text-sm text-muted-foreground">{CUSTOMER_HUB_REGISTRY[row.hub_id as keyof typeof CUSTOMER_HUB_REGISTRY].monitoring==='SUPPORTED'?'Monitoring is available inside this managed profile and is always optional.':'Monitoring is not yet available for this specialist source.'}</p>
           </article>
         ))
       )}

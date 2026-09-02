@@ -4,6 +4,7 @@ import {
   HOME_STATE_FL,
   HUB_CONTRACTOR,
   SOURCE_FL_DBPR,
+  type CustomerHubId,
   type HandoffPayload,
 } from './types.ts';
 import { hmacSha256, randomToken, timingSafeEqualText } from './crypto.ts';
@@ -35,7 +36,7 @@ function decodePayload(raw: string): HandoffPayload | null {
   try {
     const json = Buffer.from(raw, 'base64url').toString('utf8');
     const parsed = JSON.parse(json) as HandoffPayload;
-    if (parsed?.v !== 1) return null;
+    if (parsed?.v !== 1 && parsed?.v !== 2) return null;
     return parsed;
   } catch {
     return null;
@@ -45,12 +46,18 @@ function decodePayload(raw: string): HandoffPayload | null {
 export function mintHandoffToken(
   secret: string,
   input: {
+    hubId?: CustomerHubId;
     nativeProfileId: string;
     slug: string;
     externalKey: string;
     now?: Date;
     ttlSeconds?: number;
     nonce?: string;
+    sourceSystem?: string;
+    homeState?: string | null;
+    identifierNamespace?: 'credential' | 'USDOT' | 'NMLS';
+    entityClass?: 'contractor' | 'mover' | 'institution';
+    displayName?: string;
   }
 ): { token: string; payload: HandoffPayload } {
   if (!secret || secret.length < 32) {
@@ -59,14 +66,17 @@ export function mintHandoffToken(
   const now = input.now ?? new Date();
   const ttl = input.ttlSeconds ?? HANDOFF_TTL_SECONDS;
   const payload: HandoffPayload = {
-    v: 1,
+    v: input.hubId && input.hubId !== HUB_CONTRACTOR ? 2 : 1,
     aud: HANDOFF_AUDIENCE,
-    hub_id: HUB_CONTRACTOR,
+    hub_id: input.hubId ?? HUB_CONTRACTOR,
     native_profile_id: input.nativeProfileId,
     slug: input.slug,
     external_key: input.externalKey,
-    source_system: SOURCE_FL_DBPR,
-    home_state: HOME_STATE_FL,
+    source_system: input.sourceSystem ?? SOURCE_FL_DBPR,
+    home_state: input.homeState === undefined ? HOME_STATE_FL : input.homeState,
+    identifier_namespace: input.identifierNamespace,
+    entity_class: input.entityClass,
+    display_name: input.displayName,
     iat: Math.floor(now.getTime() / 1000),
     exp: Math.floor(now.getTime() / 1000) + ttl,
     nonce: input.nonce ?? randomToken(24),
@@ -93,10 +103,10 @@ export function parseAndAuthenticateHandoff(
   const payload = decodePayload(body);
   if (!payload) throw new HandoffError('malformed');
   if (payload.aud !== HANDOFF_AUDIENCE) throw new HandoffError('wrong_audience');
-  if (payload.hub_id !== HUB_CONTRACTOR) throw new HandoffError('unsupported_hub');
-  if (payload.home_state !== HOME_STATE_FL) throw new HandoffError('unsupported_state');
-  if (payload.source_system !== SOURCE_FL_DBPR) throw new HandoffError('unsupported_source');
   if (payload.exp < Math.floor(now.getTime() / 1000)) throw new HandoffError('expired');
+  if (payload.v === 1 && payload.hub_id !== HUB_CONTRACTOR) throw new HandoffError('unsupported_hub');
+  if (payload.v === 1 && payload.home_state !== HOME_STATE_FL) throw new HandoffError('unsupported_state');
+  if (payload.v === 1 && payload.source_system !== SOURCE_FL_DBPR) throw new HandoffError('unsupported_source');
   return payload;
 }
 

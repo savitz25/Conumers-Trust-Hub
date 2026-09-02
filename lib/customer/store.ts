@@ -1,4 +1,4 @@
-import { loadAndValidateProfile, type CthDirectory } from './adapter.ts';
+import { loadAndValidateProfile, type CthDirectory, type CustomerProfileDirectory } from './adapter.ts';
 import { hashToken, isEmailShape, normalizeEmail, randomToken } from './crypto.ts';
 import { createHash } from 'node:crypto';
 import {
@@ -35,6 +35,7 @@ import type {
   RequestContext,
   VerificationMethod,
 } from './types.ts';
+import { customerHub } from './hub-registry.ts';
 
 const MAGIC_TTL_MS = 30 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -84,7 +85,7 @@ export class ManagementError extends Error {
 
 export type PlatformDeps = {
   sql: SqlClient;
-  cth: CthDirectory;
+  cth: CthDirectory | CustomerProfileDirectory;
   mailer: Mailer;
   handoffSecret: string;
   staffEmails: string[];
@@ -373,7 +374,7 @@ export class CustomerPlatform {
       intentId: intent!.id,
       payload,
       displayName: adapter.profile.displayName,
-      profileHref: `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
+      profileHref: payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
     };
   }
 
@@ -398,7 +399,7 @@ export class CustomerPlatform {
     return {
       payload,
       displayName: adapter.profile.displayName,
-      profileHref: `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
+      profileHref: payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
       consumed: Boolean(row.consumed_at),
     };
   }
@@ -433,20 +434,29 @@ export class CustomerPlatform {
     const hub = await one<{ id: string }>(
       this.deps.sql,
       `INSERT INTO ath_hub_profiles
-        (hub_id, native_profile_id, native_slug, native_credential_key, native_source_system, home_state, display_name_snapshot, last_validated_at)
-       VALUES ('contractor', $1, $2, $3, 'fl_dbpr', 'FL', $4, $5)
+        (hub_id, native_profile_id, native_slug, native_credential_key, native_source_system, home_state, display_name_snapshot, last_validated_at, identifier_namespace, entity_class, canonical_url, publication_state)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'public')
        ON CONFLICT (hub_id, native_profile_id) DO UPDATE SET
          native_slug = EXCLUDED.native_slug,
          native_credential_key = EXCLUDED.native_credential_key,
          display_name_snapshot = EXCLUDED.display_name_snapshot,
+         identifier_namespace = EXCLUDED.identifier_namespace,
+         entity_class = EXCLUDED.entity_class,
+         canonical_url = EXCLUDED.canonical_url,
          last_validated_at = EXCLUDED.last_validated_at
        RETURNING id`,
       [
+        intent.payload.hub_id,
         intent.payload.native_profile_id,
         adapter.profile.slug,
         adapter.profile.externalKey,
+        adapter.profile.sourceSystem,
+        adapter.profile.homeState || intent.payload.home_state || 'NA',
         adapter.profile.displayName,
         this.now().toISOString(),
+        customerHub(intent.payload.hub_id)!.identifierNamespace,
+        customerHub(intent.payload.hub_id)!.identityClass,
+        intent.payload.hub_id==='contractor'?`https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`:intent.payload.hub_id==='move'?`https://www.movetrusthub.com/companies/${adapter.profile.slug}`:`https://www.lendertrusthub.com/lender/${adapter.profile.slug}`,
       ]
     );
 
@@ -863,16 +873,22 @@ export class CustomerPlatform {
     const access = await one<{
       user_id: string; org_id: string; hub_profile_id: string; role: MembershipRole;
       native_profile_id: string; native_slug: string; native_credential_key: string;
-      display_name_snapshot: string | null;
+      display_name_snapshot: string | null; hub_id:import('./types.ts').CustomerHubId;native_source_system:string;canonical_url:string|null;
     }>(this.deps.sql,
       `SELECT u.id AS user_id, o.id AS org_id, p.id AS hub_profile_id, m.role,
-              p.native_profile_id::text, p.native_slug, p.native_credential_key, p.display_name_snapshot
+              p.native_profile_id::text, p.native_slug, p.native_credential_key, p.display_name_snapshot,p.hub_id,p.native_source_system,p.canonical_url
          FROM ath_users u
          JOIN ath_memberships m ON m.user_id = u.id AND m.status = 'active'
          JOIN ath_organizations o ON o.id = m.org_id AND o.status = 'active'
          JOIN ath_management_grants g ON g.org_id = o.id AND g.status = 'active'
          JOIN ath_hub_profiles p ON p.id = g.hub_profile_id
-        WHERE u.id = $1 AND p.native_profile_id = $2::uuid`,
+        WHERE u.id = $1 AND p.native_profile_id = $2::uuid
+          AND NOT EXISTS (
+            SELECT 1 FROM ath_hub_profiles p2
+            JOIN ath_management_grants g2 ON g2.hub_profile_id=p2.id AND g2.status='active'
+            JOIN ath_memberships m2 ON m2.org_id=g2.org_id AND m2.user_id=$1 AND m2.status='active'
+            WHERE p2.native_profile_id=p.native_profile_id AND p2.id<>p.id
+          )`,
       [user.id, nativeProfileId]
     );
     if (!access) throw new ManagementError('forbidden');
@@ -907,15 +923,16 @@ export class CustomerPlatform {
       freshness: confirmed ? businessFreshness(confirmed, this.now()) : null };
   }
 
-  async publicBusinessProfile(nativeProfileId: string): Promise<PublicBusinessProfile | null> {
+  async publicBusinessProfile(hubOrProfile: import('./types.ts').CustomerHubId|string, profileId?: string): Promise<PublicBusinessProfile | null> {
+    const legacy=!profileId,hubId=profileId?hubOrProfile as import('./types.ts').CustomerHubId:'contractor',nativeProfileId=profileId??hubOrProfile;
     const profile = await one<{ org_id: string; hub_profile_id: string; native_profile_id: string }>(this.deps.sql,
       `SELECT g.org_id,p.id AS hub_profile_id,p.native_profile_id::text
          FROM ath_management_grants g
          JOIN ath_organizations o ON o.id=g.org_id AND o.status='active'
-         JOIN ath_hub_profiles p ON p.id=g.hub_profile_id AND p.hub_id='contractor'
-        WHERE p.native_profile_id=$1::uuid AND g.status='active'
+         JOIN ath_hub_profiles p ON p.id=g.hub_profile_id AND p.hub_id=$1
+        WHERE p.native_profile_id=$2::uuid AND g.status='active'
           AND EXISTS (SELECT 1 FROM ath_memberships m WHERE m.org_id=g.org_id AND m.status='active' AND m.role IN ('owner','manager','staff'))`,
-      [nativeProfileId]);
+      [hubId,nativeProfileId]);
     if (!profile) return null;
     const fields = await this.deps.sql.query<{ field_key: string; value_text: string; last_confirmed_at: string }>(
       `SELECT field_key,value_text,last_confirmed_at::text FROM ath_business_profile_fields
@@ -938,7 +955,7 @@ export class CustomerPlatform {
       }
     }
     const values = (category: string) => items.rows.filter((row) => row.category === category).map((row) => row.value_text);
-    return { contractVersion: 1, hub: 'contractor', nativeProfileId: profile.native_profile_id, managed: true,
+    return { contractVersion: legacy?1:2, hub: hubId, nativeProfileId: profile.native_profile_id, managed: true,
       source: 'BUSINESS_SUPPLIED', freshness: businessFreshness(confirmed, this.now()), fields: publicFields,
       services: values('service'), serviceAreas: values('service_area'), languages: values('language'),
       hours: hours.rows.map((row) => ({ weekday: Number(row.weekday), closed: row.is_closed,
@@ -1143,7 +1160,7 @@ export class CustomerPlatform {
   async getBusinessReplyReview(sessionToken:string,id:string){await this.requireStaff(sessionToken);const reply=await one<Record<string,unknown>>(this.deps.sql,`SELECT r.*,v.body,v.revision_number,o.display_name org_name,p.native_profile_id::text,p.native_slug,p.native_credential_key,p.native_source_system,p.display_name_snapshot FROM ath_business_replies r JOIN ath_business_reply_revisions v ON v.id=r.active_revision_id JOIN ath_organizations o ON o.id=r.org_id JOIN ath_hub_profiles p ON p.id=r.hub_profile_id WHERE r.id=$1`,[id]);if(!reply)throw new BusinessReplyError('not_found');const events=await this.deps.sql.query<Record<string,unknown>>(`SELECT event_type,message,visibility,created_at::text FROM ath_business_reply_events WHERE reply_id=$1 ORDER BY created_at,id`,[id]);return{reply,events:events.rows}}
   async staffTransitionBusinessReply(input:{sessionToken:string;replyId:string;nextStatus:BusinessReplyStatus;version:number;customerNote?:string;internalNote?:string;ctx?:RequestContext}){const staff=await this.requireStaff(input.sessionToken);if(!BUSINESS_REPLY_STATUSES.includes(input.nextStatus)||!['UNDER_REVIEW','NEEDS_INFORMATION','APPROVED','REJECTED','ARCHIVED'].includes(input.nextStatus))throw new BusinessReplyError('invalid_transition');const reply=await one<{id:string;org_id:string;hub_profile_id:string;submitted_by_user_id:string;status:BusinessReplyStatus;version:number;active_revision_id:string}>(this.deps.sql,`SELECT id,org_id,hub_profile_id,submitted_by_user_id,status,version,active_revision_id FROM ath_business_replies WHERE id=$1 FOR UPDATE`,[input.replyId]);if(!reply)throw new BusinessReplyError('not_found');if(reply.version!==input.version||!STAFF_REPLY_TRANSITIONS[reply.status]?.includes(input.nextStatus))throw new BusinessReplyError(reply.version!==input.version?'stale_version':'invalid_transition');const customerNote=String(input.customerNote||'').trim(),internalNote=String(input.internalNote||'').trim();if((['NEEDS_INFORMATION','REJECTED'].includes(input.nextStatus)&&customerNote.length<10)||customerNote.length>2000||internalNote.length>4000||/<\/?[a-z][\s\S]*>/i.test(customerNote+internalNote))throw new BusinessReplyError('validation_failed');if(input.nextStatus==='APPROVED'){const authority=await one(this.deps.sql,`SELECT 1 FROM ath_management_grants g JOIN ath_memberships m ON m.org_id=g.org_id AND m.status='active' AND m.role IN ('owner','manager','staff') WHERE g.org_id=$1 AND g.hub_profile_id=$2 AND g.status='active'`,[reply.org_id,reply.hub_profile_id]);if(!authority)throw new BusinessReplyError('forbidden');}const now=this.now().toISOString(),eventMap:Record<string,string>={UNDER_REVIEW:'business_reply_updated',NEEDS_INFORMATION:'business_reply_changes_requested',APPROVED:'business_reply_approved',REJECTED:'business_reply_rejected',ARCHIVED:'business_reply_archived'},approved=input.nextStatus==='APPROVED';await this.deps.sql.query(`UPDATE ath_business_reply_revisions SET moderation_status=$2,approved_at=CASE WHEN $3 THEN $4::timestamptz ELSE approved_at END WHERE id=$1`,[reply.active_revision_id,input.nextStatus,approved,now]);await this.deps.sql.query(`UPDATE ath_business_replies SET status=$2,version=version+1,customer_note=NULLIF($3,''),internal_note=NULLIF($4,''),reviewed_at=$5,published_revision_id=CASE WHEN $6 THEN active_revision_id ELSE published_revision_id END,published_at=CASE WHEN $6 THEN $5::timestamptz ELSE published_at END WHERE id=$1 AND version=$7`,[reply.id,input.nextStatus,customerNote,internalNote,now,approved,input.version]);await this.businessReplyEvent({replyId:reply.id,orgId:reply.org_id,hubProfileId:reply.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType:eventMap[input.nextStatus],revisionId:reply.active_revision_id,fromStatus:reply.status,toStatus:input.nextStatus,message:customerNote||null});if(internalNote)await this.businessReplyEvent({replyId:reply.id,orgId:reply.org_id,hubProfileId:reply.hub_profile_id,actorUserId:staff.id,actorKind:'staff',eventType:eventMap[input.nextStatus],revisionId:reply.active_revision_id,fromStatus:reply.status,toStatus:input.nextStatus,message:internalNote,visibility:'INTERNAL'});await this.audit({actorUserId:staff.id,actorKind:'staff',orgId:reply.org_id,objectType:'ath_business_replies',objectId:reply.id,action:eventMap[input.nextStatus],before:{status:reply.status},after:{status:input.nextStatus},ctx:input.ctx});const recipient=await one<{email:string;display_name_snapshot:string}>(this.deps.sql,`SELECT u.email,p.display_name_snapshot FROM ath_users u,ath_hub_profiles p WHERE u.id=$1 AND p.id=$2`,[reply.submitted_by_user_id,reply.hub_profile_id]);if(recipient&&['NEEDS_INFORMATION','APPROVED','REJECTED'].includes(input.nextStatus)){const kind=input.nextStatus==='NEEDS_INFORMATION'?'changes':input.nextStatus==='APPROVED'?'approved':'rejected';await this.deps.mailer({to:recipient.email,...businessReplyEmail({kind,replyId:reply.id,profileName:recipient.display_name_snapshot,note:customerNote})})}return{status:input.nextStatus,version:reply.version+1}}
 
-  async publicBusinessReplies(nativeProfileId:string):Promise<PublicBusinessReplies>{const rows=await this.deps.sql.query<{id:string;reply_type:string;target_type:string;target_record_id:string|null;body:string;published_at:string;created_at:string;revision_number:number}>(`SELECT r.id,r.reply_type,r.target_type,r.target_record_id,v.body,r.published_at::text,v.created_at::text,v.revision_number FROM ath_business_replies r JOIN ath_hub_profiles p ON p.id=r.hub_profile_id AND p.hub_id='contractor' JOIN ath_business_reply_revisions v ON v.id=r.published_revision_id AND v.moderation_status='APPROVED' WHERE p.native_profile_id=$1::uuid AND r.published_revision_id IS NOT NULL AND r.withdrawn_at IS NULL ORDER BY r.published_at`,[nativeProfileId]);return{contractVersion:1,hub:'contractor',nativeProfileId,replies:rows.rows.map(r=>({id:r.id,replyType:r.reply_type,targetType:r.target_type,targetRecordId:r.target_record_id,body:r.body,source:'BUSINESS_RESPONSE',publishedAt:r.published_at,updatedAt:r.revision_number>1?r.created_at:null}))}}
+  async publicBusinessReplies(hubOrProfile:import('./types.ts').CustomerHubId|string,profileId?:string):Promise<PublicBusinessReplies>{const legacy=!profileId,hubId=profileId?hubOrProfile as import('./types.ts').CustomerHubId:'contractor',nativeProfileId=profileId??hubOrProfile;const rows=await this.deps.sql.query<{id:string;reply_type:string;target_type:string;target_record_id:string|null;body:string;published_at:string;created_at:string;revision_number:number}>(`SELECT r.id,r.reply_type,r.target_type,r.target_record_id,v.body,r.published_at::text,v.created_at::text,v.revision_number FROM ath_business_replies r JOIN ath_hub_profiles p ON p.id=r.hub_profile_id AND p.hub_id=$1 JOIN ath_business_reply_revisions v ON v.id=r.published_revision_id AND v.moderation_status='APPROVED' WHERE p.native_profile_id=$2::uuid AND r.published_revision_id IS NOT NULL AND r.withdrawn_at IS NULL ORDER BY r.published_at`,[hubId,nativeProfileId]);return{contractVersion:legacy?1:2,hub:hubId,nativeProfileId,replies:rows.rows.map(r=>({id:r.id,replyType:r.reply_type,targetType:r.target_type,targetRecordId:r.target_record_id,body:r.body,source:'BUSINESS_RESPONSE',publishedAt:r.published_at,updatedAt:r.revision_number>1?r.created_at:null}))}}
 
   async monitoring(sessionToken:string,nativeProfileId:string) {
     const access=await this.requireProfileAccess(sessionToken,nativeProfileId);
@@ -1181,6 +1198,7 @@ export class CustomerPlatform {
 
   async saveMonitoring(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}) {
     const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
+    if(customerHub(access.hub_id)?.monitoring!=='SUPPORTED') throw new MonitoringError('forbidden');
     const data=validateMonitoringSettings(input.body),now=this.now().toISOString();
     const existing=await one<{id:string;enabled:boolean;version:number;baseline_at:string|null}>(this.deps.sql,
       `SELECT id,enabled,version,baseline_at::text FROM ath_monitoring_subscriptions
@@ -1464,7 +1482,7 @@ export class CustomerPlatform {
     const res = await this.deps.sql.query(
       `SELECT g.id AS grant_id, g.status AS grant_status, g.granted_at,
               o.id AS org_id, o.display_name,
-              p.id AS hub_profile_id,p.hub_id,p.native_slug,p.native_credential_key,p.native_profile_id,p.display_name_snapshot,
+              p.id AS hub_profile_id,p.hub_id,p.native_slug,p.native_credential_key,p.native_profile_id,p.display_name_snapshot,p.native_source_system,p.canonical_url,p.identifier_namespace,p.entity_class,
               m.role,c.id AS claim_id,c.status AS claim_status,s.enabled AS monitoring_enabled
          FROM ath_management_grants g
          JOIN ath_organizations o ON o.id = g.org_id AND o.status='active'

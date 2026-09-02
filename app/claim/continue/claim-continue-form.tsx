@@ -10,12 +10,14 @@ export function ClaimContinueForm({
   relationships,
   expectedCredential,
   organizations,
+  identifierLabel,
 }: {
   authed: boolean;
   email: string;
   relationships: [RelationshipType, string][];
   expectedCredential: string;
   organizations: { id: string; display_name: string }[];
+  identifierLabel:string;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -121,7 +123,7 @@ export function ClaimContinueForm({
         <input name="legalName" className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2" />
       </label>
       <label className="block text-sm font-medium">
-        Confirm the Florida DBPR credential for this profile
+        Confirm the {identifierLabel} for this profile
         <input
           required
           name="credentialAttestation"

@@ -1,4 +1,8 @@
 export const HUB_CONTRACTOR = 'contractor' as const;
+export const HUB_MOVE = 'move' as const;
+export const HUB_LENDER = 'lender' as const;
+export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER] as const;
+export type CustomerHubId = (typeof CUSTOMER_HUBS)[number];
 export const SOURCE_FL_DBPR = 'fl_dbpr' as const;
 export const HOME_STATE_FL = 'FL' as const;
 export const HANDOFF_AUDIENCE = 'asktrusthub' as const;
@@ -38,14 +42,17 @@ export type ReviewWorkType = 'claim_review' | 'competing_claim' | 'record_issue'
 export type ReviewQueueStatus = 'open' | 'in_progress' | 'resolved' | 'cancelled';
 
 export type HandoffPayload = {
-  v: 1;
+  v: 1 | 2;
   aud: typeof HANDOFF_AUDIENCE;
-  hub_id: typeof HUB_CONTRACTOR;
+  hub_id: CustomerHubId;
   native_profile_id: string;
   slug: string;
   external_key: string;
-  source_system: typeof SOURCE_FL_DBPR;
-  home_state: typeof HOME_STATE_FL;
+  source_system: string;
+  home_state: string | null;
+  identifier_namespace?: 'credential' | 'USDOT' | 'NMLS';
+  entity_class?: 'contractor' | 'mover' | 'institution';
+  display_name?: string;
   iat: number;
   exp: number;
   nonce: string;
@@ -60,6 +67,13 @@ export type CthProfileRecord = {
   licenseState: string | null;
   externalKey: string;
   sourceSystem: string;
+};
+
+export type CustomerProfileRecord = CthProfileRecord & {
+  hubId: CustomerHubId;
+  publicationEligible: boolean;
+  entityClass: 'contractor' | 'mover' | 'institution';
+  canonicalUrl: string;
 };
 
 export type AdapterFailure =
