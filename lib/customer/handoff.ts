@@ -43,6 +43,21 @@ function decodePayload(raw: string): HandoffPayload | null {
   }
 }
 
+function isCompleteV2(payload: HandoffPayload): boolean {
+  const capability = payload.hub_id === 'contractor'
+    ? { namespace: 'credential', entityClass: 'contractor' }
+    : null;
+  if (!capability) return true;
+  return payload.identifier_namespace === capability.namespace
+    && payload.entity_class === capability.entityClass
+    && payload.source_system === SOURCE_FL_DBPR
+    && payload.home_state === HOME_STATE_FL
+    && typeof payload.canonical_profile_url === 'string'
+    && payload.canonical_profile_url.length > 0
+    && typeof payload.display_name === 'string'
+    && payload.display_name.trim().length > 0;
+}
+
 export function mintHandoffToken(
   secret: string,
   input: {
@@ -60,6 +75,7 @@ export function mintHandoffToken(
     providerClass?: HandoffPayload['provider_class'];
     canonicalProfileUrl?: string;
     displayName?: string;
+    version?: 1 | 2;
   }
 ): { token: string; payload: HandoffPayload } {
   if (!secret || secret.length < 32) {
@@ -67,8 +83,13 @@ export function mintHandoffToken(
   }
   const now = input.now ?? new Date();
   const ttl = input.ttlSeconds ?? HANDOFF_TTL_SECONDS;
+  const completeContractorV2 = input.hubId === HUB_CONTRACTOR
+    && input.identifierNamespace === 'credential'
+    && input.entityClass === 'contractor'
+    && Boolean(input.canonicalProfileUrl)
+    && Boolean(input.displayName?.trim());
   const payload: HandoffPayload = {
-    v: input.hubId && input.hubId !== HUB_CONTRACTOR ? 2 : 1,
+    v: input.version ?? (input.hubId === HUB_CONTRACTOR || !input.hubId ? (completeContractorV2 ? 2 : 1) : 2),
     aud: HANDOFF_AUDIENCE,
     hub_id: input.hubId ?? HUB_CONTRACTOR,
     native_profile_id: input.nativeProfileId,
@@ -111,6 +132,7 @@ export function parseAndAuthenticateHandoff(
   if (payload.v === 1 && payload.hub_id !== HUB_CONTRACTOR) throw new HandoffError('unsupported_hub');
   if (payload.v === 1 && payload.home_state !== HOME_STATE_FL) throw new HandoffError('unsupported_state');
   if (payload.v === 1 && payload.source_system !== SOURCE_FL_DBPR) throw new HandoffError('unsupported_source');
+  if (payload.v === 2 && !isCompleteV2(payload)) throw new HandoffError('malformed');
   return payload;
 }
 
