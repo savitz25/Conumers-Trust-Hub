@@ -1,0 +1,58 @@
+{
+  "county": "Monmouth",
+  "county_fips": "34025",
+  "source_family": "sheriff_sales",
+  "source_name": "CivilView SalesWeb foreclosure listing (Monmouth County Sheriff)",
+  "source_url": "https://salesweb.civilview.com/Sales/SalesSearch?countyId=8",
+  "county_page": "https://mcsonj.org/foreclosure-sales/",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "acquisition_status": "STATUS_INVENTORY_ACQUIRED",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "last_updated_on_page": "2026-09-03 10:00:00 AM",
+  "grain": "sheriff-sale listing row",
+  "result_count_on_page": 99,
+  "parsed_row_count": 99,
+  "sale_schedule_note": "Sheriff sales are held every other Monday at 1:00 p.m. at the Monmouth County Sheriff's Office Public Safety Center, 2500 Kozloski Road, Freehold, NJ 07728.",
+  "supported_listing_fields": [
+    "sheriff_number",
+    "status",
+    "sales_date",
+    "plaintiff",
+    "defendant",
+    "address"
+  ],
+  "fields_captured_in_this_fixture": ["status", "status_class"],
+  "fields_deliberately_omitted": [
+    "defendant",
+    "property_address",
+    "plaintiff"
+  ],
+  "omit_reason": "This ticket does not create a foreclosure marketing list or homeowner/borrower dossier. Status inventory is the high-ROI extract.",
+  "status_counts": {
+    "Scheduled": 34,
+    "Adjournment Defendant": 38,
+    "Adjournment Plaintiff": 17,
+    "Court Ordered Defendant Adjournment": 4,
+    "Court Ordered Plaintiff Adjournment": 3,
+    "Bankrupt": 3
+  },
+  "status_class_counts": {
+    "SCHEDULED_NOT_COMPLETED": 34,
+    "ADJOURNED_NOT_COMPLETED": 62,
+    "BANKRUPTCY_NOT_COMPLETED": 3,
+    "COMPLETED_SALE": 0
+  },
+  "completed_sale_count": 0,
+  "semantics": [
+    "Scheduled is not a completed sale.",
+    "Adjourned is not a completed sale.",
+    "Bankruptcy is not a completed sale.",
+    "No Purchased/Sold rows were present on this snapshot.",
+    "CivilView is a public summary listing, not an official record of title."
+  ],
+  "terms_notes": "Monmouth County Sheriff's Office provides CivilView as a public service and does not warrant accuracy, completeness, or timeliness. Interested parties should confirm status at the Sheriff's Office before a sale.",
+  "refresh_method": "Re-open the current listing page. Do not scrape SaleDetails, historical archives, or defendant indexes.",
+  "blocker": null,
+  "recommended_next_action": "Treat as a live status feed for Lender/Investor context. Do not productize as a buyer list."
+}

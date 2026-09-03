@@ -1,0 +1,86 @@
+{
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "source_family": "county_gis",
+  "source_name": "Middlesex County Zoning FeatureServer",
+  "source_url": "https://services6.arcgis.com/u1cLUtFdrWfOeWwq/ArcGIS/rest/services/Middlesex_County_Zoning/FeatureServer/0",
+  "service_item_id": "be5d52d532cb4da281cd6849b9bdd223",
+  "related_agol_item": {
+    "id": "1aca303b04204a4496c22f82a9ce7c61",
+    "title": "Base Zoning in Middlesex County, NJ",
+    "owner": "middlesexgis",
+    "org_id": "BnY3izA2Kwu6jVHq"
+  },
+  "access_class": "OPEN_GIS_SERVICE",
+  "acquisition_status": "METADATA_AND_COUNTS_ACQUIRED",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "grain": "zoning district polygon",
+  "feature_count": 2794,
+  "municipality_count": 25,
+  "max_record_count": 2000,
+  "supports_pagination": true,
+  "return_geometry_in_git": false,
+  "identifier_fields": ["FID", "Muni_Zone", "Zone_code"],
+  "geography_fields": ["MUNI"],
+  "attribute_fields": [
+    "MUNI",
+    "ZONENAME",
+    "Zone_code",
+    "Use_",
+    "Redevelopm",
+    "Muni_Zone"
+  ],
+  "sample_rows_no_geometry": [
+    {
+      "MUNI": "Woodbridge",
+      "ZONENAME": "Avenel Arts Village",
+      "Zone_code": "AAV",
+      "Use_": "C",
+      "Redevelopm": "Redevelopment with Condemnation",
+      "Muni_Zone": "25_AAV"
+    },
+    {
+      "MUNI": "Woodbridge",
+      "ZONENAME": "Cooper Towers Rehabilitation",
+      "Zone_code": "CTR",
+      "Use_": "P",
+      "Redevelopm": "Rehabilitation",
+      "Muni_Zone": "25_CTR"
+    }
+  ],
+  "municipality_polygon_counts": {
+    "Woodbridge": 474,
+    "Edison": 291,
+    "South Brunswick": 264,
+    "Old Bridge": 223,
+    "Monroe": 159,
+    "New Brunswick": 158,
+    "Sayreville": 148,
+    "Piscataway": 132,
+    "East Brunswick": 125,
+    "North Brunswick": 102,
+    "Perth Amboy": 101,
+    "Highland Park": 72,
+    "Middlesex": 59,
+    "South Plainfield": 58,
+    "Milltown": 55,
+    "Carteret": 54,
+    "South River": 46,
+    "Jamesburg": 41,
+    "Spotswood": 40,
+    "Metuchen": 38,
+    "Helmetta": 37,
+    "Cranbury": 35,
+    "South Amboy": 30,
+    "Plainsboro": 30,
+    "Dunellen": 22
+  },
+  "semantics": [
+    "Municipal governments designate and administer zoning in New Jersey.",
+    "This layer is a planning compilation. Confirm with the municipality before any land-use decision.",
+    "Parcel geometry is not a legal survey. Zoning polygons here are not a substitute for the adopted ordinance map."
+  ],
+  "reusable_query": "GET FeatureServer/0/query?where=1=1&outFields=MUNI,ZONENAME,Zone_code,Use_,Redevelopm,Muni_Zone&returnGeometry=false&resultRecordCount=2000&resultOffset={n}&f=json",
+  "recommended_next_action": "Keep as a county zoning overlay for Contractor/Investor/Ask. Do not ingest geometries into git."
+}

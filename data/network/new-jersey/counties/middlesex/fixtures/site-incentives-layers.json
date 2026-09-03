@@ -1,0 +1,42 @@
+{
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "source_family": "economic_development_gis",
+  "source_name": "Middlesex County Site Specific Incentives Map",
+  "source_url": "https://services.arcgis.com/BnY3izA2Kwu6jVHq/arcgis/rest/services/Site_Specific_Incentives_Map/FeatureServer",
+  "service_item_id": "4e96db8e3621407c83cc3674364ddded",
+  "org_id": "BnY3izA2Kwu6jVHq",
+  "access_class": "OPEN_GIS_SERVICE",
+  "acquisition_status": "METADATA_AND_COUNTS_ACQUIRED",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "grain": "incentive / designation polygon or site",
+  "max_record_count": 1000,
+  "supports_pagination": true,
+  "return_geometry_in_git": false,
+  "layers": [
+    { "id": 0, "name": "Portfields", "feature_count": 6 },
+    { "id": 1, "name": "Main Street", "feature_count": 2 },
+    { "id": 2, "name": "Special Improvement Districts", "feature_count": 8 },
+    { "id": 3, "name": "Brownfield Development Areas", "feature_count": 5 },
+    { "id": 4, "name": "Foreign Trade Zones", "feature_count": 5 },
+    { "id": 5, "name": "Urban Enterprise Zone", "feature_count": 3 },
+    { "id": 6, "name": "Redevelopment Areas", "feature_count": 426 },
+    { "id": 7, "name": "Transit Villages", "feature_count": 4 }
+  ],
+  "hub_value": {
+    "ASK": "MEDIUM",
+    "MOVE": "NONE",
+    "LENDER": "LOW",
+    "INSURANCE": "NONE",
+    "SENIOR": "NONE",
+    "CONTRACTOR": "HIGH",
+    "INVESTOR": "HIGH"
+  },
+  "semantics": [
+    "This is a site-selection / economic-development overlay, not a commercial real-estate database.",
+    "A redevelopment-area polygon is not a project, permit, or contractor finding.",
+    "A brownfield designation is not an environmental score for a household."
+  ],
+  "recommended_next_action": "Use layer metadata and counts for Investor/Contractor county context. Do not expand into a CRE listing product."
+}

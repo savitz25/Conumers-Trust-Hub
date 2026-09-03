@@ -1,0 +1,41 @@
+{
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "source_family": "statewide_parcels_modiv",
+  "source_name": "NJGIN Parcels and MOD-IV Composite of NJ (Web Mercator)",
+  "source_url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+  "hub_item_id": "533599bbfbaa4748bf39faf1375a8a9c",
+  "download_index": "https://njogis-newjersey.opendata.arcgis.com/documents/406cf6860390467d9f328ed19daa359d/about",
+  "access_class": "OPEN_GIS_SERVICE",
+  "acquisition_status": "REFERENCED_NOT_REACQUIRED",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "grain": "tax parcel polygon joined to selected MOD-IV attributes",
+  "feature_count_where_county_middlesex": 243019,
+  "count_query": "where=COUNTY='MIDDLESEX'&returnCountOnly=true",
+  "max_record_count": 2000,
+  "supports_pagination": true,
+  "identifier_fields": ["PAMS_PIN", "GIS_PIN", "PCL_GUID"],
+  "geography_fields": ["COUNTY", "MUN_NAME", "PCL_MUN", "PROP_LOC"],
+  "parcel_id_fields": ["PCLBLOCK", "PCLLOT", "PCLQCODE"],
+  "selected_modiv_fields": [
+    "PROP_CLASS",
+    "LAND_VAL",
+    "IMPRVT_VAL",
+    "NET_VALUE",
+    "SALE_PRICE",
+    "DEED_DATE",
+    "DEED_BOOK",
+    "DEED_PAGE",
+    "YR_CONSTR",
+    "CALC_ACRE"
+  ],
+  "owner_name_field": "OWNER_NAME",
+  "daniels_law": "OWNER_NAME is redacted on the public web service per Daniel's Law. Do not attempt to restore owner names from county search portals into this layer.",
+  "semantics": [
+    "Parcel geometry is not a legal survey.",
+    "County data absence is not zero.",
+    "This is statewide NJGIN coverage filtered to Middlesex, not a new county-authored parcel product."
+  ],
+  "recommended_next_action": "Reuse statewide NJGIN service with COUNTY='MIDDLESEX' filter. Do not commit geometries to git."
+}

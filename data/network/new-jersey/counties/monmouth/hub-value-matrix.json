@@ -1,0 +1,88 @@
+{
+  "ticket": "ATH-NJ-COUNTY-001A",
+  "county": "Monmouth",
+  "county_fips": "34025",
+  "as_of": "2026-09-03",
+  "scoring": "HIGH | MEDIUM | LOW | NONE",
+  "hubs": ["ASK", "MOVE", "LENDER", "INSURANCE", "SENIOR", "CONTRACTOR", "INVESTOR"],
+  "by_source": [
+    {
+      "source_id": "monmouth-geohub",
+      "ASK": "MEDIUM",
+      "MOVE": "LOW",
+      "LENDER": "HIGH",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "LOW",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "njgin-parcels-monmouth",
+      "ASK": "MEDIUM",
+      "MOVE": "LOW",
+      "LENDER": "HIGH",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "monmouth-oprs",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "monmouth-sheriff-civilview",
+      "ASK": "LOW",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "monmouth-consumer-affairs",
+      "ASK": "HIGH",
+      "MOVE": "HIGH",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "MEDIUM",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "LOW"
+    },
+    {
+      "source_id": "monmouth-adrc-senior-centers",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "NONE",
+      "INSURANCE": "LOW",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "NONE"
+    }
+  ],
+  "county_roll_up": {
+    "ASK": "HIGH",
+    "MOVE": "HIGH",
+    "LENDER": "HIGH",
+    "INSURANCE": "MEDIUM",
+    "SENIOR": "HIGH",
+    "CONTRACTOR": "HIGH",
+    "INVESTOR": "HIGH"
+  },
+  "roll_up_notes": {
+    "ASK": "Consumer-affairs history plus place/parcel context.",
+    "MOVE": "County complaint-history lookup is the incremental Move signal; statewide PMW remains the roster source.",
+    "LENDER": "Parcels/MOD-IV + OPRS + sheriff status.",
+    "INSURANCE": "Property/flood geography only; no county insurer roster.",
+    "SENIOR": "ADRC and senior-center directory.",
+    "CONTRACTOR": "OPRS liens/trade names if a metadata index arrives; consumer-affairs complaints. Complaint != violation. Lien != wrongdoing.",
+    "INVESTOR": "Parcels, OPRS, sheriff status. Not a foreclosure marketing list."
+  }
+}
