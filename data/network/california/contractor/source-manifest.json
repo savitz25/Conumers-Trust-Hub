@@ -1,0 +1,825 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "contractor",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-cslb-master-list",
+    "ca-cslb-personnel",
+    "ca-cslb-workers-comp",
+    "ca-cslb-classifications",
+    "ca-cslb-instant-license-check",
+    "ca-cslb-full-file-paid",
+    "ca-cslb-public-sales-custom",
+    "ca-cslb-soap-api",
+    "ca-cslb-enforcement-report",
+    "ca-cslb-revoked-licenses",
+    "ca-dir-pwcr",
+    "ca-dir-dlse-debarment",
+    "ca-dir-electrician-certified",
+    "ca-dir-electrician-trainee"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-cslb-master-list",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "CSLB Public Data Portal \u2014 License Master",
+      "regulator": "Contractors State License Board (Department of Consumer Affairs)",
+      "source_url": "https://www.cslb.ca.gov/onlineservices/dataportal/ContractorList",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CSLB license number",
+      "source_as_of": "2026-09-02",
+      "last_checked": "2026-09-03",
+      "grain": "contractor license",
+      "record_count": "UNKNOWN",
+      "active_count": "UNKNOWN",
+      "count_notes": "Free file covers currently renewed OR expired-but-renewable licenses. Cancelled, revoked, and expired-non-renewable are omitted. Portal label: Updated as of 9/2/2026. This ticket's CSV postback transferred 27,890,218 bytes then dropped (IncompleteRead). Do not treat homepage snapshots as file row counts.",
+      "identifier_fields": [
+        "license number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27 \u2014 emails are not provided"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0,
+          "note": "not in official field list"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN",
+          "note": "portal describes address; mailing vs physical not split in the public description"
+        }
+      },
+      "other_fields": [
+        "business name",
+        "license status",
+        "issue date",
+        "expiration date",
+        "classification(s)",
+        "bond information",
+        "workers compensation information"
+      ],
+      "terms_notes": "No charge. Disclaimer: current as of the date under the download link. Verify current status via Instant License Check. CA.gov Conditions of Use + DCA privacy policy.",
+      "redistribution_notes": "Do not commit the full master CSV. Do not treat missing cancelled/revoked rows as zero discipline.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "LOW"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_TRANSFER_INCOMPLETE",
+      "blocker": "ASP.NET postback to ctl00$MainContent$lbMasterCSV started a file (>=27.8MB) then the HTTP body truncated. Not a CAPTCHA. Retry with streaming next ticket.",
+      "recommended_next_action": "Stream the official CSV/XLS postback to data/raw (gitignored). Profile phone occupancy. Commit header+3-row fixture only."
+    },
+    {
+      "source_id": "ca-cslb-personnel",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_personnel",
+      "source_name": "CSLB Public Data Portal \u2014 Personnel",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/onlineservices/dataportal/ContractorList",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CSLB license number + currently associated personnel name/title",
+      "source_as_of": "2026-09-02",
+      "last_checked": "2026-09-03",
+      "grain": "person currently associated with a license",
+      "record_count": "UNKNOWN",
+      "active_count": "UNKNOWN",
+      "identifier_fields": [
+        "license number",
+        "personnel name",
+        "title"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "classification(s)",
+        "bond information"
+      ],
+      "terms_notes": "Disassociated personnel are not included in the free file.",
+      "redistribution_notes": "Personnel names are official license associations, not a consumer contact list. Do not infer personal phone/email.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_NOT_DOWNLOADED",
+      "blocker": "Master CSV transfer failed first; personnel download not attempted.",
+      "recommended_next_action": "Download after master succeeds. Join on license number only."
+    },
+    {
+      "source_id": "ca-cslb-workers-comp",
+      "hub_home": "CONTRACTOR",
+      "source_family": "insurance_coverage",
+      "source_name": "CSLB Public Data Portal \u2014 Workers Compensation",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/onlineservices/dataportal/ContractorList",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CSLB license number",
+      "source_as_of": "2026-09-02",
+      "last_checked": "2026-09-03",
+      "grain": "workers compensation policy row for a license",
+      "record_count": "UNKNOWN",
+      "identifier_fields": [
+        "license number",
+        "policy number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "coverage type",
+        "workers comp company",
+        "policy dates"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_NOT_DOWNLOADED",
+      "recommended_next_action": "Download with master. Missing WC != uninsured without Instant Check."
+    },
+    {
+      "source_id": "ca-cslb-classifications",
+      "hub_home": "CONTRACTOR",
+      "source_family": "classification_taxonomy",
+      "source_name": "CSLB Licensing Classifications",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/About_Us/Library/Licensing_Classifications/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "license classification code",
+      "record_count": 46,
+      "count_notes": "Official page lists A, B, B-2, and 43 C-codes (C-2 through C-61 as published), plus ASB and HAZ certifications. C-61 Limited Specialty has additional D-subclasses not enumerated here.",
+      "identifier_fields": [
+        "classification code"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "INVENTORIED",
+      "recommended_next_action": "Use as taxonomy. Do not scrape every D-subclass page this ticket."
+    },
+    {
+      "source_id": "ca-cslb-instant-license-check",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_lookup",
+      "source_name": "CSLB Instant License Check",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/CheckLicense.aspx",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "single license lookup",
+      "record_count": "UNKNOWN",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "terms_notes": "Portal page matched a captcha token in HTML. Do not scrape. Current-status source of record for a single license.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "blocker": "Interactive lookup. Possible CAPTCHA. Not a bulk API.",
+      "recommended_next_action": "Keep as consumer verify link. Do not automate."
+    },
+    {
+      "source_id": "ca-cslb-full-file-paid",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "CSLB License Master Full File / Update File",
+      "regulator": "Contractors State License Board \u2014 Data Services Unit",
+      "source_url": "https://www.cslb.ca.gov/about_us/library/forms_and_applications.aspx",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "contractor license including cancelled/revoked/expired 10+ years",
+      "record_count": "830000+",
+      "count_notes": "Official forms page: FULL file provides 830,000+ records. Fee $235 non-refundable per file. Text file, not Excel. Personnel is a separate 1.3+ million Business Principle Full File. Emails are not included.",
+      "identifier_fields": [
+        "LICENSE NUMBER"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "REQUEST_DRAFTED_NOT_SUBMITTED",
+      "recommended_next_action": "Do not wait. Free master is the first universe. Draft is in docs/california/requests/cslb-full-file.md."
+    },
+    {
+      "source_id": "ca-cslb-public-sales-custom",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "CSLB Public Sales Custom Order",
+      "regulator": "Contractors State License Board \u2014 Data Services Unit",
+      "source_url": "https://www.cslb.ca.gov/Resources/FormsAndApplications/publicsalesorderformlabelslistscd.pdf",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-06",
+      "last_checked": "2026-09-03",
+      "grain": "filtered currently renewed licenses",
+      "record_count": "UNKNOWN",
+      "count_notes": "Fee $245. Currently renewed only. No expired/cancelled/revoked. No personnel. No email. Form Rev. 06/2026.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "SKIP_FREE_PORTAL_FIRST",
+      "recommended_next_action": "Skip unless a filtered extract is needed after the free master lands."
+    },
+    {
+      "source_id": "ca-cslb-soap-api",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_api",
+      "source_name": "CSLB Data Portal SOAP GetbyClassification",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/onlineservices/DataPortalAPI/GetbyClassification.asmx?WSDL",
+      "access_class": "FREE_ACCOUNT_REQUIRED",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "classification extract",
+      "record_count": "UNKNOWN",
+      "count_notes": "WSDL live. Empty-token GetDataByClassification(C-10) returned HTTP 200 with errorMessage Missing Classification or Token. Not an open anonymous API.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "TOKEN_REQUIRED",
+      "blocker": "Token required. Do not claim OPEN_API.",
+      "recommended_next_action": "Prefer the free master CSV. Do not guess tokens."
+    },
+    {
+      "source_id": "ca-cslb-enforcement-report",
+      "hub_home": "CONTRACTOR",
+      "source_family": "enforcement_aggregate",
+      "source_name": "CSLB FY 2024-25 Enforcement Report",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/Resources/Reports/Enforcement/CSLB_FY_2024-25_Enforcement_Report.pdf",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "source_as_of": "2025-09-15",
+      "last_checked": "2026-09-03",
+      "grain": "fiscal-year aggregate",
+      "record_count": "UNKNOWN",
+      "count_notes": "Report totals are not a license roster. FY 2024/25: 19,257 complaints received; 591 licenses revoked; 455 licenses suspended (report figures). Complaint != violation. Accusation != finding.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "AGGREGATE_ONLY",
+      "recommended_next_action": "Publish as coverage evidence. Never auto-attach to a profile from this PDF."
+    },
+    {
+      "source_id": "ca-cslb-revoked-licenses",
+      "hub_home": "CONTRACTOR",
+      "source_family": "enforcement",
+      "source_name": "CSLB revoked licenses listing",
+      "regulator": "Contractors State License Board",
+      "source_url": "https://www.cslb.ca.gov/RevokedLicenses",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "revoked license row",
+      "record_count": "UNKNOWN",
+      "count_notes": "Summer 2026 newsletter points consumers to cslb.ca.gov/RevokedLicenses. Disciplinary_Actions.aspx returned a Page Not Found title on 2026-09-03. Instant License Check remains the per-license disclosure path. Do not scrape.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Confirm page shape next contractor ticket. Join only on license number."
+    },
+    {
+      "source_id": "ca-dir-pwcr",
+      "hub_home": "CONTRACTOR",
+      "source_family": "public_works_registration",
+      "source_name": "DIR Public Works Contractor Registration (PWCR)",
+      "regulator": "California Department of Industrial Relations",
+      "source_url": "https://www.dir.ca.gov/public-works/contractor-registration.html",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "PWCR number",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "public works contractor registration",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk CSV on data.ca.gov. Legacy Salesforce search cadir.my.salesforce-sites.com/ContractorSearch returned HTTP 503 this ticket. services.dir.ca.gov/pw returned HTTP 200 (LETF Dashboard / Public Works Portal HTML). Local debarment downloads may require captcha for public users. PWCR != CSLB license.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "SEARCH_PORTAL_NO_BULK",
+      "blocker": "No documented public bulk roster. Do not scrape. Do not captcha-bypass local debarment Excel.",
+      "recommended_next_action": "Keep as search capability. Do not wait on PRA."
+    },
+    {
+      "source_id": "ca-dir-dlse-debarment",
+      "hub_home": "CONTRACTOR",
+      "source_family": "debarment",
+      "source_name": "DIR DLSE Public Works Debarments",
+      "regulator": "Labor Commissioner's Office (DLSE), Department of Industrial Relations",
+      "source_url": "https://www.dir.ca.gov/dlse/debar.html",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CSLB license number when stated",
+      "source_as_of": "2025-07",
+      "last_checked": "2026-09-03",
+      "grain": "debarment order / contractor-person grouping",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML table live (page dated July 2025 in footer). Parser saw 67 period strings and 62 table data rows. Two-digit years such as 4/1/44 are ambiguous, so currently-in-force count is UNKNOWN. Distinct from DIR local debarment list. Federal EPLS/SAM is a separate list.",
+      "identifier_fields": [
+        "CSLB license number when published",
+        "decision number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN",
+          "note": "some historical rows include an address"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "HTML_TABLE_LIVE",
+      "recommended_next_action": "Parse into a small reviewed fixture. Attach to profiles only on exact CSLB number. Preserve unmatched rows."
+    },
+    {
+      "source_id": "ca-dir-electrician-certified",
+      "hub_home": "CONTRACTOR",
+      "source_family": "trade_certification",
+      "source_name": "DIR Electrician Certification Unit \u2014 Certified Electrician List",
+      "regulator": "Department of Industrial Relations \u2014 Electrician Certification Unit",
+      "source_url": "https://data.ca.gov/dataset/dir-electrician-certification-unit-ecu",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "CERTIFICATE_NUMBER (person)",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "certified electrician (person)",
+      "record_count": 36983,
+      "active_count": "UNKNOWN",
+      "count_notes": "CKAN datastore total 36,983 on 2026-09-03. Fields: ELECTRICIAN_NAME, ZIP_CODE, CERTIFICATE_NUMBER, EXPIRATION_DATE. This is not a contractor-business universe and not a C-10 roster.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Keep as person-level enrichment. Never auto-attach to a contractor profile from name+zip."
+    },
+    {
+      "source_id": "ca-dir-electrician-trainee",
+      "hub_home": "CONTRACTOR",
+      "source_family": "trade_certification",
+      "source_name": "DIR Electrician Certification Unit \u2014 Trainee List",
+      "regulator": "Department of Industrial Relations \u2014 Electrician Certification Unit",
+      "source_url": "https://data.ca.gov/dataset/dir-electrician-certification-unit-ecu",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "electrician trainee (person)",
+      "record_count": 19661,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Do not use as a contractor business list."
+    }
+  ]
+}

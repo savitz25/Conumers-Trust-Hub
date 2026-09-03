@@ -1,0 +1,16 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-dfpi-investment-adviser",
+  "last_checked": "2026-09-03",
+  "search_url": "https://dfpi.ca.gov/licensee-and-financial-service-provider-search/",
+  "bulk_roster": "UNKNOWN — no California RIA bulk file on data.ca.gov this ticket",
+  "federal_verify": [
+    "https://adviserinfo.sec.gov/",
+    "https://brokercheck.finra.org/"
+  ],
+  "do_not_confuse": [
+    "CA principal office != complete state-RIA denominator",
+    "CRD firm != representative CRD",
+    "DFPI search != SEC IARD bulk"
+  ]
+}

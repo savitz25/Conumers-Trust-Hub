@@ -1,0 +1,23 @@
+{
+  "ticket": "ATH-CA-001",
+  "universe": "CSLB contractor licenses",
+  "priority_order": [
+    "ca-cslb-master-list",
+    "ca-cslb-personnel",
+    "ca-cslb-workers-comp",
+    "ca-cslb-classifications",
+    "ca-dir-dlse-debarment",
+    "ca-dir-pwcr",
+    "ca-cslb-enforcement-report",
+    "ca-cslb-full-file-paid",
+    "ca-dgs-purchase-order-data",
+    "ca-dir-electrician-certified"
+  ],
+  "do_not_confuse": [
+    "PWCR != CSLB license",
+    "DGS vendor != licensed contractor",
+    "electrician certificate != C-10 business",
+    "HIS registration != contractor license",
+    "cancelled/revoked omission in free file != clean history"
+  ]
+}

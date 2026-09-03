@@ -1,0 +1,626 @@
+{
+  "ticket": "ATH-CA-001",
+  "rank_order": [
+    "OFFICIAL_REGULATOR",
+    "OFFICIAL_VENDOR_REGISTRY",
+    "OFFICIAL_GOVERNMENT_PROGRAM",
+    "OFFICIAL_BUSINESS_REGISTRY",
+    "OTHER_OFFICIAL_SOURCE"
+  ],
+  "rules": [
+    "Do not overwrite stronger contact evidence with weaker source data.",
+    "Do not infer personal contact information.",
+    "CSLB emails are withheld under BPC 27.",
+    "CalHFA program phones do not replace DFPI/NMLS regulator phones.",
+    "SOS entity addresses do not replace CSLB license addresses."
+  ],
+  "inventory": [
+    {
+      "source_id": "ca-cslb-master-list",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27 \u2014 emails are not provided"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0,
+          "note": "not in official field list"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN",
+          "note": "portal describes address; mailing vs physical not split in the public description"
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-personnel",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-workers-comp",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-classifications",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-instant-license-check",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0,
+          "note": "BPC 27"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-full-file-paid",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-public-sales-custom",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-cslb-enforcement-report",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-dir-pwcr",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-dir-dlse-debarment",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN",
+          "note": "some historical rows include an address"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-dir-electrician-certified",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-dir-electrician-trainee",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-dgs-purchase-order-data",
+      "contact_rank": "OFFICIAL_VENDOR_REGISTRY",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-chhs-elms-locations",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 13560
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": 12435,
+          "note": "CONTACT_EMAIL may be an administrator mailbox. Do not treat as a personal consumer email harvest."
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 15097
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-hcai-current-listing",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 10871
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-ccld-rcfe",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 12522,
+          "note": "CKAN COUNT(column) is non-null, not non-blank. Sample phones are populated. Exact non-empty excluding 'Unavailable' is UNKNOWN without a dump profile."
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 12522
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-ccld-hco",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-dmhc-enforcement-trend",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-cdi-health-insurer-list",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 28
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": true,
+          "count": 27,
+          "note": "Prudential row has a phone and a blank website cell on the published table."
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-dfpi-crmla",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-calhfa-approved-lenders",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      }
+    },
+    {
+      "source_id": "ca-bhgs-household-movers",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "source_id": "ca-sos-bizfile",
+      "contact_rank": "OFFICIAL_BUSINESS_REGISTRY",
+      "fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      }
+    }
+  ]
+}

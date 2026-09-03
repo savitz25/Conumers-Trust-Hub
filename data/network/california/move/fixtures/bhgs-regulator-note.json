@@ -1,0 +1,17 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-bhgs-household-movers",
+  "last_checked": "2026-09-03",
+  "regulator": "Bureau of Household Goods and Services (DCA)",
+  "not_the_regulator": "California Public Utilities Commission (household-goods authority transferred 2018)",
+  "identity": "CAL-T number",
+  "search_url": "https://search.dca.ca.gov/",
+  "home_url": "https://bhgs.dca.ca.gov/",
+  "enforcement_url": "https://bhgs.dca.ca.gov/enforcement/lookup.shtml",
+  "bulk_roster": "UNKNOWN — no household-mover package on data.ca.gov",
+  "do_not_confuse": [
+    "CAL-T != USDOT",
+    "intrastate household mover != interstate FMCSA authority",
+    "CSLB C-21 building moving/demolition != household goods mover"
+  ]
+}

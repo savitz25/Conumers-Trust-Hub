@@ -1,0 +1,32 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-dir-dlse-debarment",
+  "source_url": "https://www.dir.ca.gov/dlse/debar.html",
+  "source_as_of": "2025-07",
+  "last_checked": "2026-09-03",
+  "note": "Public DLSE debarment rows copied from the official HTML table. Sample only. Debarment period must be read from the source. Stayed orders remain on the page. Attach to a contractor profile only on an exact CSLB license number. Preserve unmatched rows.",
+  "rows": [
+    {
+      "name": "MILES CONSTRUCTION GROUP, INC.; COLTON JAMES WHITE, CEO/RME",
+      "cslb_license_number": "976339",
+      "period": "7/23/2025 through 7/23/2028",
+      "decision": "40-63204",
+      "stayed": false
+    },
+    {
+      "name": "UNIQUE CONSTRUCTION & DEVELOPMENT, INC.; CHONG GIL LEE, CEO; JAMES LEE, CFO",
+      "cslb_license_number": "830772",
+      "period": "7/1/2025 through 7/1/2028",
+      "decision": "40-76516-977",
+      "stayed": false
+    },
+    {
+      "name": "MICHAEL FLOORING, INC.; BENNY MICHAEL",
+      "cslb_license_number": "874947",
+      "period": "9/13/24 through 9/13/27",
+      "decision": "SC 7278",
+      "stayed": true,
+      "stay_note": "The debarment order is currently stayed by order of the Kern County Superior Court"
+    }
+  ]
+}

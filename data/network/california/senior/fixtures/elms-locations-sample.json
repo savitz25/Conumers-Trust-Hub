@@ -1,0 +1,46 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-chhs-elms-locations",
+  "source_url": "https://data.chhs.ca.gov/dataset/healthcare-facility-locations",
+  "data_date": "2026-08-17",
+  "last_checked": "2026-09-03",
+  "note": "Two official ELMS rows. Administrator personal names omitted from this fixture. CONTACT_EMAIL is the official facility contact field, not a harvested personal inbox. FACID is the CDPH identity. CCN is CMS. This file is not RCFE.",
+  "rows": [
+    {
+      "FACID": "10000001",
+      "CCN": "555120",
+      "LICENSE_NUMBER": "10000102",
+      "HCAI_ID": "206492251",
+      "FACNAME": "VINEYARD POST ACUTE",
+      "BUSINESS_NAME": "PETALUMAIDENCE OPCO, LLC",
+      "FAC_FDR": "SKILLED NURSING FACILITY",
+      "LICENSE_STATUS_DESCRIPTION": "ACTIVE",
+      "FAC_STATUS_TYPE_CODE": "OPEN",
+      "ADDRESS": "101 MONROE ST",
+      "CITY": "PETALUMA",
+      "ZIP": "94954",
+      "COUNTY_NAME": "SONOMA",
+      "CONTACT_PHONE_NUMBER": "(707) 763-4109",
+      "CONTACT_EMAIL": "KEVAN.BILLS@VINEYARDPOSTACUTE.COM",
+      "CAPACITY": 99
+    },
+    {
+      "FACID": "10000003",
+      "CCN": "56090",
+      "LICENSE_NUMBER": "10000011",
+      "HCAI_ID": "206490940",
+      "FACNAME": "BLUE OAK POST-ACUTE",
+      "BUSINESS_NAME": "MACAO HOLDINGS LLC",
+      "FAC_FDR": "SKILLED NURSING FACILITY",
+      "LICENSE_STATUS_DESCRIPTION": "ACTIVE",
+      "FAC_STATUS_TYPE_CODE": "OPEN",
+      "ADDRESS": "850 SONOMA AVE",
+      "CITY": "SANTA ROSA",
+      "ZIP": "95404",
+      "COUNTY_NAME": "SONOMA",
+      "CONTACT_PHONE_NUMBER": "(408) 320-9897",
+      "CONTACT_EMAIL": "RYAN@SPYGLASSHC.COM",
+      "CAPACITY": 181
+    }
+  ]
+}

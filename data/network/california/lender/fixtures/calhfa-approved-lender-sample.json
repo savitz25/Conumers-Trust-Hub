@@ -1,0 +1,19 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-calhfa-approved-lenders",
+  "source_url": "https://www.calhfa.ca.gov/apps/approvedlenders/",
+  "last_checked": "2026-09-03",
+  "note": "Official CalHFA approved-lender directory sample. Branch row != unique legal entity. CalHFA program approval != DFPI CRMLA license and != NMLS authorization. Do not treat Top Hero loan officers as a Trust Hub ranking.",
+  "rows": [
+    {
+      "lender_name": "ABILITY AMBECK MORTGAGE",
+      "branch_address": "1215 W. CENTER STREET., SUITE #102 MANTECA, CA 95337",
+      "phone": "209.614.6048"
+    },
+    {
+      "lender_name": "ACCESS REAL ESTATE LENDING",
+      "branch_address": "116 W 2ND STREET, SUITE 1 CHICO, CA 95928",
+      "phone": "530.897.4090"
+    }
+  ]
+}

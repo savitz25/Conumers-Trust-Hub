@@ -1,0 +1,46 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "investor",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-dfpi-investment-adviser"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-dfpi-investment-adviser",
+      "hub_home": "INVESTOR",
+      "source_family": "investment_adviser",
+      "source_name": "DFPI investment adviser / financial service provider search",
+      "regulator": "Department of Financial Protection and Innovation",
+      "source_url": "https://dfpi.ca.gov/licensee-and-financial-service-provider-search/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD / DFPI license number",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "state-registered adviser or other DFPI licensee",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk California RIA roster on data.ca.gov (investment adviser package_search returned unrelated FTB data). SEC IARD / FINRA BrokerCheck remain federal. CA principal office != complete state-RIA denominator.",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "SEARCH_ONLY_NO_BULK",
+      "recommended_next_action": "Keep search-only. Do not scrape."
+    }
+  ]
+}

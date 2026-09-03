@@ -1,0 +1,238 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "lender",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-dfpi-crmla",
+    "ca-dfpi-docqnet",
+    "ca-nmls-consumer-access",
+    "ca-caldre-license-lookup",
+    "ca-calhfa-approved-lenders"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-dfpi-crmla",
+      "hub_home": "LENDER",
+      "source_family": "mortgage_license",
+      "source_name": "DFPI California Residential Mortgage Lending Act",
+      "regulator": "Department of Financial Protection and Innovation",
+      "source_url": "https://dfpi.ca.gov/regulated-industries/california-residential-mortgage-lending-act/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID / DFPI license number",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "CRMLA company or branch",
+      "record_count": "UNKNOWN",
+      "count_notes": "No Florida-OFR-style free bulk mortgage roster on data.ca.gov. Official page sends the public to NMLS Consumer Access and DOCQNET. 2024 CRMLA Annual Report snapshot: 389 licensees and 5,104 branches as of December 31, 2024 \u2014 that is a report figure, not a live file row count.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "SEARCH_ONLY_NO_BULK",
+      "blocker": "No free bulk CRMLA roster found. NMLS root returned Cloudflare 403 to this user-agent.",
+      "recommended_next_action": "Use NMLS Consumer Access as the public verify path. Do not scrape DOCQNET."
+    },
+    {
+      "source_id": "ca-dfpi-docqnet",
+      "hub_home": "LENDER",
+      "source_family": "license_lookup",
+      "source_name": "DFPI DOCQNET License Search",
+      "regulator": "Department of Financial Protection and Innovation",
+      "source_url": "https://docqnet.dfpi.ca.gov/licensesearch",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "DFPI licensee search result",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTTP 200. Page states Individual MLO licenses should be checked through NMLS Consumer Access.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Do not scrape."
+    },
+    {
+      "source_id": "ca-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "source_family": "nmls",
+      "source_name": "NMLS Consumer Access",
+      "regulator": "Nationwide Multistate Licensing System (state-license records; not a California regulator)",
+      "source_url": "https://www.nmlsconsumeraccess.org/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "NMLS company, branch, or individual",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTTP 403 Cloudflare from this user-agent. DFPI and CalDRE both point consumers here. State vs NMLS: NMLS is the system of record display for many CA mortgage licenses, not a California bulk download.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "CLOUDFLARE_403",
+      "blocker": "Do not bypass Cloudflare.",
+      "recommended_next_action": "Browser verify link only."
+    },
+    {
+      "source_id": "ca-caldre-license-lookup",
+      "hub_home": "LENDER",
+      "source_family": "real_estate_license",
+      "source_name": "CalDRE Public License Lookup",
+      "regulator": "California Department of Real Estate",
+      "source_url": "https://www2.dre.ca.gov/PublicASP/pplinfo.asp",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "DRE license number; MLO endorsement is not a CRMLA license",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "real estate licensee",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTTP 200. DRE MLO endorsement != DFPI CRMLA/CFL company license. No bulk roster found this ticket.",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Keep distinct from DFPI. Do not merge MLO endorsement into a mortgage-company universe."
+    },
+    {
+      "source_id": "ca-calhfa-approved-lenders",
+      "hub_home": "LENDER",
+      "source_family": "government_program",
+      "source_name": "CalHFA Approved Lenders directory",
+      "regulator": "California Housing Finance Agency",
+      "source_url": "https://www.calhfa.ca.gov/apps/approvedlenders/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "approved lender branch row",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official HTML table of CalHFA-approved lender branches with street address and phone and program flags. Unique legal-entity count UNKNOWN (many repeated branch rows). CalHFA approval != DFPI license and != NMLS authorization.",
+      "identifier_fields": [
+        "lender display name",
+        "branch address"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "HTML_TABLE_LIVE",
+      "recommended_next_action": "Parse branch table next Lender ticket. Do not rank 'top hero' officers as Trust Hub ranking."
+    }
+  ]
+}

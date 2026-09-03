@@ -1,0 +1,24 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-ccld-rcfe",
+  "source_url": "https://data.chhs.ca.gov/dataset/ccl-facilities",
+  "file_date": "2025-05-25",
+  "last_checked": "2026-09-03",
+  "note": "Official CCLD RCFE datastore sample. facility_number is the CDSS identity. RCFE != SNF. Snapshot is older than the 2026-08-17 ELMS file. Missing later months != zero facilities.",
+  "rows": [
+    {
+      "facility_number": 15601302,
+      "facility_type": "RCFE-CONTINUING CARE RETIREMENT COMMUNITY",
+      "facility_name": "ACACIA CREEK - UNION CITY",
+      "licensee": "MASONIC HOMES CAL & ACACIA CREEK, MASONIC SEN LIV",
+      "facility_status": "LICENSED",
+      "facility_address": "34400 MISSION BLVD.",
+      "facility_city": "UNION CITY",
+      "facility_state": "CA",
+      "facility_zip": "94587",
+      "county_name": "ALAMEDA",
+      "facility_telephone_number": "(510) 441-3700",
+      "facility_capacity": 376
+    }
+  ]
+}

@@ -43,5 +43,8 @@ next-env.d.ts
 /data/academic-internal/
 /data/ath-cust-002-proof.json
 
+# Local official dumps (ATH-CA-001). Never commit huge raw datasets.
+/data/raw/
+
 __pycache__/
 **/__pycache__/

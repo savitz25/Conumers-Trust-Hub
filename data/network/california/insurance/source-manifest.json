@@ -1,0 +1,275 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "insurance",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-dmhc-enforcement-trend",
+    "ca-dmhc-imr-trend",
+    "ca-cdi-health-insurer-list",
+    "ca-cdi-company-lookup",
+    "ca-cdi-mailing-lists-paid",
+    "ca-fair-plan"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-dmhc-enforcement-trend",
+      "hub_home": "INSURANCE",
+      "source_family": "enforcement",
+      "source_name": "DMHC Enforcement Actions, Trend",
+      "regulator": "Department of Managed Health Care",
+      "source_url": "https://data.chhs.ca.gov/dataset/enforcement-actions-trend",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "source_as_of": "2026-06-01",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement action row",
+      "record_count": 5435,
+      "count_notes": "Datastore total 5,435. Action mix includes Letter of Agreement 4,212; Settlement Agreement 606; Cease and Desist Order 240; Accusation 53. OrganizationName is not NAIC. Accusation != finding. This is Knox-Keene / DMHC, not CDI admitted P&C.",
+      "identifier_fields": [
+        "OrganizationName",
+        "ActionDate",
+        "EnforcementAction"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Use as source-level evidence. Profile attach only with EXACT NAIC/plan ID crosswalk \u2014 none is in this file."
+    },
+    {
+      "source_id": "ca-dmhc-imr-trend",
+      "hub_home": "INSURANCE",
+      "source_family": "appeals",
+      "source_name": "DMHC Independent Medical Review Determinations, Trend",
+      "regulator": "Department of Managed Health Care",
+      "source_url": "https://data.chhs.ca.gov/dataset/independent-medical-review-imr-determinations-trend",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "source_as_of": "2026-06-01",
+      "last_checked": "2026-09-03",
+      "grain": "IMR determination",
+      "record_count": 42749,
+      "count_notes": "Datastore total 42,749. No plan NAIC in the dumped columns. PatientGender/AgeRange are aggregate attributes of the review, not a consumer PII dump we republish. Do not attach to a named issuer without an official plan identifier.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Aggregate coverage only. 84MB dump stays gitignored."
+    },
+    {
+      "source_id": "ca-cdi-health-insurer-list",
+      "hub_home": "INSURANCE",
+      "source_family": "company_list",
+      "source_name": "CDI List of Insurers Providing Health Insurance Coverage",
+      "regulator": "California Department of Insurance",
+      "source_url": "https://www.insurance.ca.gov/01-consumers/110-health/20-look/hcpcarriers.cfm",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "HIGH_CONFIDENCE",
+      "source_as_of": "2025-12-31",
+      "last_checked": "2026-09-03",
+      "grain": "CDI-licensed health insurance company on this list",
+      "record_count": 28,
+      "active_count": 28,
+      "count_notes": "Official HTML table: currently licensed to provide health insurance coverage as of December 31, 2025. Licensed != currently selling. This is not the full admitted-company universe and not DMHC Knox-Keene plans.",
+      "identifier_fields": [
+        "company name",
+        "CDI company profile id in URL"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 28
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": true,
+          "count": 27,
+          "note": "Prudential row has a phone and a blank website cell on the published table."
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "HTML_TABLE_COUNTED",
+      "recommended_next_action": "Fixture the 28 rows. Join to NAIC via CDI company profile, not via name web search."
+    },
+    {
+      "source_id": "ca-cdi-company-lookup",
+      "hub_home": "INSURANCE",
+      "source_family": "company_lookup",
+      "source_name": "CDI Insurance Company Lookup / Profiles",
+      "regulator": "California Department of Insurance",
+      "source_url": "https://www.insurance.ca.gov/01-consumers/120-company/lookup/index.cfm",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "admitted company profile",
+      "record_count": "UNKNOWN",
+      "count_notes": "Interactive company search. No free bulk admitted roster found. Paid mailing lists exist.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Consumer verify. Do not scrape APEX apps."
+    },
+    {
+      "source_id": "ca-cdi-mailing-lists-paid",
+      "hub_home": "INSURANCE",
+      "source_family": "producer_list",
+      "source_name": "CDI Producer Licensing Bureau mailing lists",
+      "regulator": "California Department of Insurance",
+      "source_url": "https://www.insurance.ca.gov/0200-industry/0130-mailing-lists/",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "licensed producer / admitted company extract",
+      "record_count": "UNKNOWN",
+      "count_notes": "Paid lists. Agent/agency qualification lists priced from $75 minimum to greater than $4,000. Company appointment list $363 per NAIC. Check required. ~400,000 licensed agents/brokers is a Find-an-Agent marketing figure, not a verified extract count from this ticket.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "REQUEST_NOT_DRAFTED",
+      "recommended_next_action": "Low effort this ticket. Company-level CDI HTML list is the easy win."
+    },
+    {
+      "source_id": "ca-fair-plan",
+      "hub_home": "INSURANCE",
+      "source_family": "residual_market",
+      "source_name": "California FAIR Plan",
+      "regulator": "California FAIR Plan Association (industry residual market; CDI oversight context)",
+      "source_url": "https://www.fairplan.org/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OTHER_OFFICIAL_SOURCE",
+      "identity_bar": "UNSAFE",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "program landing page",
+      "record_count": "UNKNOWN",
+      "count_notes": "Root URL returned a JS lander redirect. Not a company roster. Not acquired.",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "LANDER_ONLY",
+      "recommended_next_action": "Skip this ticket."
+    }
+  ]
+}

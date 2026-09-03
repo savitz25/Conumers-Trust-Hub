@@ -1,0 +1,86 @@
+{
+  "ticket": "ATH-CA-001",
+  "checked": "2026-09-03",
+  "acquired_this_ticket": [
+    {
+      "source_id": "ca-chhs-elms-locations",
+      "method": "CKAN datastore/dump",
+      "rows": 15097,
+      "phone_nonempty": 13560,
+      "email_nonempty": 12435,
+      "committed": false
+    },
+    {
+      "source_id": "ca-hcai-current-listing",
+      "method": "CKAN datastore/dump",
+      "rows": 10871,
+      "phone_nonempty": 0,
+      "email_nonempty": 0,
+      "committed": false
+    },
+    {
+      "source_id": "ca-dir-electrician-certified",
+      "method": "CKAN datastore/dump",
+      "rows": 36983,
+      "committed": false
+    },
+    {
+      "source_id": "ca-dir-electrician-trainee",
+      "method": "CKAN datastore/dump",
+      "rows": 19661,
+      "committed": false
+    },
+    {
+      "source_id": "ca-dmhc-enforcement-trend",
+      "method": "CKAN datastore/dump",
+      "rows": 5435,
+      "committed": false
+    },
+    {
+      "source_id": "ca-dmhc-imr-trend",
+      "method": "CKAN datastore/dump",
+      "rows": 42749,
+      "committed": false,
+      "note": "84MB local dump gitignored"
+    },
+    {
+      "source_id": "ca-ccld-rcfe",
+      "method": "CKAN datastore_search total",
+      "rows": 12522,
+      "licensed": 7939,
+      "committed": false
+    },
+    {
+      "source_id": "ca-cdi-health-insurer-list",
+      "method": "official HTML table count",
+      "rows": 28,
+      "committed": true
+    },
+    {
+      "source_id": "ca-dir-dlse-debarment",
+      "method": "official HTML table",
+      "table_data_rows_parsed": 62,
+      "committed": true,
+      "note": "sample fixture only"
+    }
+  ],
+  "attempted_incomplete": [
+    {
+      "source_id": "ca-cslb-master-list",
+      "method": "ASP.NET postback lbMasterCSV",
+      "result": "IncompleteRead 27890218 bytes",
+      "row_count": "UNKNOWN"
+    }
+  ],
+  "not_acquired": [
+    "CSLB personnel/WC files",
+    "CSLB paid Full File",
+    "DIR PWCR roster",
+    "Cal eProcure (HTTP 403)",
+    "NMLS (Cloudflare 403)",
+    "SOS BizFile (Incapsula)",
+    "BHGS mover roster",
+    "DFPI CRMLA bulk",
+    "CDI admitted-company paid lists"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ticket": "ATH-CA-001",
+  "source_id": "ca-cdi-health-insurer-list",
+  "source_url": "https://www.insurance.ca.gov/01-consumers/110-health/20-look/hcpcarriers.cfm",
+  "source_as_of": "2025-12-31",
+  "last_checked": "2026-09-03",
+  "note": "Official CDI HTML table. Licensed to provide health insurance coverage as of December 31, 2025. Licensed != currently selling. Not the full admitted-company universe. Not DMHC Knox-Keene plans.",
+  "row_count": 28,
+  "phone_count": 28,
+  "website_count": 27,
+  "rows": [
+    {
+      "company_name": "4 Ever Life Insurance Company",
+      "phone": "800-621-9125",
+      "website": "https://4everlife.com/new/"
+    },
+    {
+      "company_name": "Aetna Life Insurance Company",
+      "phone": "800-872-3862",
+      "website": "https://www.aetna.com/"
+    },
+    {
+      "company_name": "Kaiser Permanente Insurance Company",
+      "phone": "800-788-0710",
+      "website": "http://www.kp.org/"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "ticket": "ATH-CA-001",
+  "bars": {
+    "EXACT": "official identifier match (license, NMLS, NPN, NAIC, CRD, CMS CCN, state facility ID, USDOT, CAL-T, FACID, PWCR, source-native stable ID)",
+    "HIGH_CONFIDENCE": "exact legal name + exact official business address, or an approved deterministic crosswalk",
+    "REVIEW_REQUIRED": "name + city; DBA ambiguity; common-name conflict; person/company ambiguity",
+    "UNSAFE": "name alone; phone alone; search-engine matching"
+  },
+  "rules": [
+    "Never auto-attach adverse evidence from unsafe identity.",
+    "Preserve unmatched official evidence.",
+    "Profile-level negative/regulatory evidence requires the higher identity bar.",
+    "Aggregate/source-level evidence can be published with incomplete identity."
+  ],
+  "crosswalks": [
+    {
+      "from": "CSLB license number",
+      "to": "DIR DLSE debarment CSLB number",
+      "bar": "EXACT"
+    },
+    {
+      "from": "FACID",
+      "to": "HCAI/OSHPD_ID",
+      "bar": "EXACT",
+      "via": "ca-chhs-facility-crosswalk"
+    },
+    {
+      "from": "FACID",
+      "to": "CMS CCN",
+      "bar": "EXACT",
+      "via": "ELMS CCN field when populated"
+    },
+    {
+      "from": "CCLD facility_number",
+      "to": "ELMS FACID",
+      "bar": "REVIEW_REQUIRED",
+      "note": "different regulators; no approved crosswalk acquired this ticket"
+    },
+    {
+      "from": "CalHFA lender display name",
+      "to": "NMLS ID",
+      "bar": "REVIEW_REQUIRED"
+    },
+    {
+      "from": "electrician CERTIFICATE_NUMBER",
+      "to": "CSLB C-10 license",
+      "bar": "REVIEW_REQUIRED"
+    },
+    {
+      "from": "DGS vendor name",
+      "to": "CSLB license",
+      "bar": "REVIEW_REQUIRED"
+    }
+  ]
+}

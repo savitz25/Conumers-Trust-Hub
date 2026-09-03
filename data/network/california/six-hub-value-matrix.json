@@ -1,0 +1,786 @@
+{
+  "ticket": "ATH-CA-001",
+  "note": "Prioritization, not consumer ranking. No Trust Score.",
+  "sources": [
+    {
+      "source_id": "ca-cslb-master-list",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "LOW"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cslb-personnel",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cslb-workers-comp",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cslb-classifications",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-cslb-instant-license-check",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-cslb-full-file-paid",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST"
+    },
+    {
+      "source_id": "ca-cslb-public-sales-custom",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST"
+    },
+    {
+      "source_id": "ca-cslb-soap-api",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "FREE_ACCOUNT_REQUIRED"
+    },
+    {
+      "source_id": "ca-cslb-enforcement-report",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cslb-revoked-licenses",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dir-pwcr",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dir-dlse-debarment",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-dir-electrician-certified",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-dir-electrician-trainee",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-dgs-purchase-order-data",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "LOW"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-caleprocure",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "LOW"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "SOURCE_ACCESS_BLOCKED"
+    },
+    {
+      "source_id": "ca-dca-box-licensee-lists",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "MEDIUM",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-chhs-elms-locations",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-hcai-current-listing",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-chhs-facility-crosswalk",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-ccld-rcfe",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-ccld-hco",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-ccld-arf",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "MEDIUM",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-ccld-search",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dmhc-enforcement-trend",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-dmhc-imr-trend",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cdi-health-insurer-list",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "LOW",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-cdi-company-lookup",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-cdi-mailing-lists-paid",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST"
+    },
+    {
+      "source_id": "ca-fair-plan",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dfpi-crmla",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dfpi-docqnet",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-nmls-consumer-access",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-caldre-license-lookup",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-calhfa-approved-lenders",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "ca-bhgs-household-movers",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-bhgs-enforcement",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-dfpi-investment-adviser",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "ca-sos-bizfile",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "MEDIUM"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    }
+  ]
+}

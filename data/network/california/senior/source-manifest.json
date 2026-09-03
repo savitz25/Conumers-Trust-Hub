@@ -1,0 +1,369 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "senior",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-chhs-elms-locations",
+    "ca-hcai-current-listing",
+    "ca-chhs-facility-crosswalk",
+    "ca-ccld-rcfe",
+    "ca-ccld-hco",
+    "ca-ccld-arf",
+    "ca-ccld-search"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-chhs-elms-locations",
+      "hub_home": "SENIOR",
+      "source_family": "facility_license",
+      "source_name": "CDPH Licensed and Certified Healthcare Facility Locations (ELMS)",
+      "regulator": "California Department of Public Health \u2014 Center for Health Care Quality",
+      "source_url": "https://data.chhs.ca.gov/dataset/healthcare-facility-locations",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "FACID; CCN; LICENSE_NUMBER; HCAI_ID",
+      "source_as_of": "2026-08-17",
+      "last_checked": "2026-09-03",
+      "grain": "licensed/certified healthcare facility location",
+      "record_count": 15097,
+      "active_count": 13401,
+      "count_notes": "Datastore total 15,097. FAC_STATUS_TYPE_CODE=OPEN for all 15,097 dumped rows. LICENSE_STATUS_DESCRIPTION: ACTIVE 13,401; blank 1,357; INACTIVE - CAPEN DECISION 339. DATA_DATE 2026-08-17. Facility types include Home Health Agency 4,137; Hospice 2,114; SNF 1,186. This is not RCFE.",
+      "identifier_fields": [
+        "FACID",
+        "CCN",
+        "LICENSE_NUMBER",
+        "HCAI_ID",
+        "NPI",
+        "ASPEN_FACID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 13560
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": 12435,
+          "note": "CONTACT_EMAIL may be an administrator mailbox. Do not treat as a personal consumer email harvest."
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 15097
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Primary Senior state universe for CDPH-licensed facilities. Commit small fixtures only."
+    },
+    {
+      "source_id": "ca-hcai-current-listing",
+      "hub_home": "SENIOR",
+      "source_family": "facility_listing",
+      "source_name": "HCAI Current California Healthcare Facility Listing",
+      "regulator": "Department of Health Care Access and Information (HCAI)",
+      "source_url": "https://data.chhs.ca.gov/dataset/licensed-healthcare-facility-listing",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "OSHPD_ID; LICENSE_NUM",
+      "source_as_of": "2026-09-01",
+      "last_checked": "2026-09-03",
+      "grain": "HCAI facility listing row",
+      "record_count": 10871,
+      "active_count": 10856,
+      "count_notes": "Datastore total 10,871. FACILITY_STATUS_DESC Open 10,856; Suspense 14; Closed 1. No phone/email fields. Categories include Home Health Agency 4,310; Hospice 2,669; SNF 1,078; GACH 458.",
+      "identifier_fields": [
+        "OSHPD_ID",
+        "PERM_ID",
+        "LICENSE_NUM"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 10871
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DOWNLOADED_NOT_COMMITTED",
+      "recommended_next_action": "Crosswalk to ELMS via licensed-facility-crosswalk. Do not invent phones from this file."
+    },
+    {
+      "source_id": "ca-chhs-facility-crosswalk",
+      "hub_home": "SENIOR",
+      "source_family": "identity_crosswalk",
+      "source_name": "Licensed Facility Crosswalk (ELMS-ASPEN-OSHPD)",
+      "regulator": "CDPH / HCAI",
+      "source_url": "https://data.chhs.ca.gov/dataset/licensed-facility-crosswalk",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2024-10",
+      "last_checked": "2026-09-03",
+      "grain": "FACID / ASPEN / OSHPD crosswalk row",
+      "record_count": "UNKNOWN",
+      "count_notes": "XLSX resources exist (ELMS-ASPEN-OSHPD, ELMS-ASPEN, ELMS-OSHPD). Last-modified metadata on the XLSX is 2024. Approved deterministic crosswalk when IDs match.",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "INVENTORIED_XLSX",
+      "recommended_next_action": "Acquire XLSX next Senior ticket. Do not commit the full workbook."
+    },
+    {
+      "source_id": "ca-ccld-rcfe",
+      "hub_home": "SENIOR",
+      "source_family": "facility_license",
+      "source_name": "CDSS CCLD Residential Care Facilities for the Elderly",
+      "regulator": "California Department of Social Services \u2014 Community Care Licensing Division",
+      "source_url": "https://data.chhs.ca.gov/dataset/ccl-facilities",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "facility_number",
+      "source_as_of": "2025-05-25",
+      "last_checked": "2026-09-03",
+      "grain": "RCFE / CCRC facility",
+      "record_count": 12522,
+      "active_count": 7939,
+      "count_notes": "Datastore resource 744d1583-f9eb-45b6-b0f8-b9a9dab936a6. file_date 05/25/2025. LICENSED 7,939; CLOSED 3,821; PENDING 739; ON PROBATION 23. Types: RESIDENTIAL CARE ELDERLY 12,389; RCFE-CONTINUING CARE RETIREMENT COMMUNITY 132. This snapshot is older than ELMS. Live search remains https://www.ccld.dss.ca.gov/carefacilitysearch/. Missing later months != zero facilities.",
+      "identifier_fields": [
+        "facility_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 12522,
+          "note": "CKAN COUNT(column) is non-null, not non-blank. Sample phones are populated. Exact non-empty excluding 'Unavailable' is UNKNOWN without a dump profile."
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 12522
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DATASTORE_COUNTED",
+      "recommended_next_action": "Dump CSV next Senior ticket. RCFE != SNF. CCRC rows are a subtype, not a separate regulator."
+    },
+    {
+      "source_id": "ca-ccld-hco",
+      "hub_home": "SENIOR",
+      "source_family": "home_care",
+      "source_name": "CDSS CCLD Home Care Organization",
+      "regulator": "California Department of Social Services \u2014 CCLD",
+      "source_url": "https://data.chhs.ca.gov/dataset/ccl-facilities",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "facility_number",
+      "source_as_of": "2025-05-25",
+      "last_checked": "2026-09-03",
+      "grain": "home care organization",
+      "record_count": 3654,
+      "active_count": "UNKNOWN",
+      "count_notes": "Datastore total 3,654 as of file_date 05/25/2025. Home care organization != home health agency (CDPH).",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DATASTORE_COUNTED",
+      "recommended_next_action": "Keep distinct from CDPH home health."
+    },
+    {
+      "source_id": "ca-ccld-arf",
+      "hub_home": "SENIOR",
+      "source_family": "adult_residential",
+      "source_name": "CDSS CCLD Adult Residential Facilities",
+      "regulator": "California Department of Social Services \u2014 CCLD",
+      "source_url": "https://data.chhs.ca.gov/dataset/ccl-facilities",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2025-05-25",
+      "last_checked": "2026-09-03",
+      "grain": "adult residential / adult day program",
+      "record_count": 10498,
+      "count_notes": "Not all rows are senior-specific. Do not collapse into RCFE.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "MEDIUM",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "DATASTORE_COUNTED",
+      "recommended_next_action": "Filter by facility_type before any Senior profile use."
+    },
+    {
+      "source_id": "ca-ccld-search",
+      "hub_home": "SENIOR",
+      "source_family": "facility_lookup",
+      "source_name": "CCLD Care Facility Search (Transparency Website)",
+      "regulator": "California Department of Social Services \u2014 CCLD",
+      "source_url": "https://www.ccld.dss.ca.gov/carefacilitysearch/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "facility search result",
+      "record_count": "UNKNOWN",
+      "count_notes": "Live search. Page advertises a Download Data feature. The CHHS ccl-facilities CSVs are the bulk path used here. Do not scrape the search UI.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Consumer verify link. Use CHHS dumps for bulk."
+    }
+  ]
+}

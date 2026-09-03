@@ -1,0 +1,10 @@
+{
+  "ticket": "ATH-CA-001",
+  "note": "Statewide sources live once. Do not duplicate per hub.",
+  "sources": [
+    "ca-dgs-purchase-order-data",
+    "ca-caleprocure",
+    "ca-dca-box-licensee-lists",
+    "ca-sos-bizfile"
+  ]
+}

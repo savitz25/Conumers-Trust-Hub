@@ -1,0 +1,103 @@
+{
+  "ticket": "ATH-CA-001",
+  "hub": "move",
+  "state": "CA",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "ca-bhgs-household-movers",
+    "ca-bhgs-enforcement"
+  ],
+  "sources": [
+    {
+      "source_id": "ca-bhgs-household-movers",
+      "hub_home": "MOVE",
+      "source_family": "mover_permit",
+      "source_name": "BHGS Household Movers licensing",
+      "regulator": "Bureau of Household Goods and Services (Department of Consumer Affairs)",
+      "source_url": "https://bhgs.dca.ca.gov/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CAL-T number",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "household mover permit",
+      "record_count": "UNKNOWN",
+      "count_notes": "Intrastate household-goods authority transferred from CPUC to BHGS (2018). License search is via DCA search.dca.ca.gov and BHGS Connect (connect.dca.ca.gov/bhgs). No household-mover bulk file on data.ca.gov (package_search count 0). CAL-T != USDOT. CPUC is not the current regulator.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "SEARCH_ONLY_NO_BULK",
+      "blocker": "No open bulk roster found. Do not scrape Connect or DCA search.",
+      "recommended_next_action": "Watch DCA Box dumps for a BHGS HHM list. Citations/disciplinary pages are HTML."
+    },
+    {
+      "source_id": "ca-bhgs-enforcement",
+      "hub_home": "MOVE",
+      "source_family": "enforcement",
+      "source_name": "BHGS Citations and Disciplinary Actions",
+      "regulator": "Bureau of Household Goods and Services",
+      "source_url": "https://bhgs.dca.ca.gov/enforcement/lookup.shtml",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "citation / disciplinary action",
+      "record_count": "UNKNOWN",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "DOCUMENTED_NO_SCRAPE",
+      "recommended_next_action": "Per-license disclosure. Do not auto-attach from name search."
+    }
+  ]
+}
