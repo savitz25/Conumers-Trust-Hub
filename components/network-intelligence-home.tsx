@@ -4,6 +4,9 @@ import { NetworkAskInput } from '@/components/network-ask-input';
 import { HomeConciergeDemoted } from '@/components/home-concierge-demoted';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { loadHubManifests, readArtifact, type CountRecord, type HubManifest } from '@/lib/network-intelligence/contract';
+import { loadSpecialistNetworkCards } from '@/lib/network-metrics/load.ts';
+import { consumerMetricLabel } from '@/lib/network-metrics/consumer-labels.ts';
+import { SpecialistNetworkCard } from '@/components/specialist-network-card';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
 
 type CoverageCell = { level: string; entities: string[]; evidenceFamilies: string[]; routes: string[]; asOf: string; limitations: string[] };
@@ -16,7 +19,7 @@ const CARD_CONFIG: Record<string, { eyebrow: string; metricIds: string[]; href: 
   lender: { eyebrow: 'Lending', metricIds: ['lender_institutions', 'hmda_applications_2025'], href: 'https://www.lendertrusthub.com', action: 'Research lenders' },
   insurance: { eyebrow: 'Insurance', metricIds: ['insurance_agencies', 'insurance_legal_insurers'], href: 'https://www.insurancetrusthub.com', action: 'Research insurance' },
   senior: { eyebrow: 'Senior care', metricIds: [], href: 'https://www.seniortrusthub.com', action: 'Research senior care' },
-  contractor: { eyebrow: 'Contractors', metricIds: ['contractor_live_credentials', 'contractor_active_credentials'], href: 'https://www.contractortrusthub.com', action: 'Research credentials' },
+  contractor: { eyebrow: 'Contractors', metricIds: [], href: 'https://www.contractortrusthub.com', action: 'Research credentials' },
   investor: { eyebrow: 'Investment', metricIds: ['investor_iard_roster', 'investor_ria_firms', 'investor_era_firms'], href: 'https://www.investortrusthub.com', action: 'Research advisers' },
 };
 
@@ -56,6 +59,8 @@ function Trace({ hub, metric }: { hub: HubManifest; metric: CountRecord }) {
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-none focus-visible:ring-2">Trace this number</summary>
       <dl className="grid gap-3 border-t py-3 text-sm sm:grid-cols-2" style={{ borderColor: ASK_BRAND.border }}>
         <div><dt className="text-xs font-semibold uppercase text-slate-500">Hub / metric</dt><dd>{hub.hub_name} · {metric.metric_id}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase text-slate-500">Public label</dt><dd>{consumerMetricLabel(metric.metric_id, metric.label)}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase text-slate-500">Source label</dt><dd>{metric.label}</dd></div>
         <div><dt className="text-xs font-semibold uppercase text-slate-500">Value</dt><dd>{formatValue(metric.value)}</dd></div>
         <div><dt className="text-xs font-semibold uppercase text-slate-500">Grain</dt><dd>{metric.grain}</dd></div>
         <div><dt className="text-xs font-semibold uppercase text-slate-500">Scope</dt><dd>{metric.scope}</dd></div>
@@ -79,7 +84,7 @@ function HubCard({ hub }: { hub: HubManifest }) {
           {hub.entity_classes.map((entity) => <div key={entity.id} className="rounded-xl bg-slate-50 px-2 py-3">{entity.label}</div>)}
         </div>
       ) : (
-        <div className="mt-4 space-y-4">{metrics.map((metric) => <div key={metric.metric_id}><p className="text-2xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>{formatValue(metric.value)}</p><p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{metric.label}</p><Trace hub={hub} metric={metric} /></div>)}</div>
+        <div className="mt-4 space-y-4">{metrics.map((metric) => <div key={metric.metric_id}><p className="text-2xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>{formatValue(metric.value)}</p><p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{consumerMetricLabel(metric.metric_id, metric.label)}</p><Trace hub={hub} metric={metric} /></div>)}</div>
       )}
       <p className="mt-5 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{hub.evidence_families.slice(0, 4).map((item) => item.subtype).join(' · ')}</p>
       <p className="mt-3 text-xs leading-relaxed text-slate-600">{hub.limitations[0]}</p>
@@ -92,8 +97,9 @@ function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: stri
   return <div><p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: ASK_BRAND.indigo }}>{eyebrow}</p><h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl" style={{ color: ASK_BRAND.navy }}>{title}</h2><p className="mt-3 max-w-3xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>{copy}</p></div>;
 }
 
-export function NetworkIntelligenceHome() {
+export async function NetworkIntelligenceHome() {
   const hubs = loadHubManifests();
+  const specialistCards = await loadSpecialistNetworkCards();
   const coverage = readArtifact<CoverageArtifact>('network-coverage-v1.json');
   const ledger = readArtifact<LedgerArtifact>('network-source-ledger-v1.json');
   const florida = coverage.jurisdictions['US-FL'];
@@ -114,7 +120,7 @@ export function NetworkIntelligenceHome() {
         </div>
       </section>
 
-      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
+      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together. Contractor and Senior counts are owned by the specialist hubs and consumed here." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => hub.hub_id === 'contractor' || hub.hub_id === 'senior' ? <SpecialistNetworkCard key={hub.hub_id} card={specialistCards[hub.hub_id]} /> : <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
 
       <section className="section-block border-b bg-white" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="findings-heading"><div className="container-page"><SectionHeading eyebrow="What the data says" title="The structure of the record matters." copy="These findings describe how public evidence works across regulated markets. They do not compare provider quality." /><div className="mt-8 grid gap-5 lg:grid-cols-3">{[
         ['Identity systems differ by market', 'USDOT, NMLS, NPN, CMS CCN, state credentials, and CRD identify different regulated entities.', 'A similar name is not proof of a shared legal identity.'],

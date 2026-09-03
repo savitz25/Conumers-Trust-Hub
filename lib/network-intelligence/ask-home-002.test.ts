@@ -85,7 +85,7 @@ test('one H1, factual metadata, and no ranking structured data', () => {
 });
 
 test('snapshot rendering and homepage fingerprint are deterministic', () => {
-  assert.equal(home.runtime_data_strategy, 'build_time_local_snapshot');
+  assert.equal(home.runtime_data_strategy, 'specialist_upstream_revalidate_3600_with_fallback');
   assert.equal(home.coverage_mode, 'contract_driven_matrix');
   assert.equal(fingerprint(home), acceptedHomeFingerprint['ask-home-intel-v1']);
   assert.equal(fingerprint(readArtifact<HomeContract>('ask-home-intel-v1.json')), acceptedHomeFingerprint['ask-home-intel-v1']);
