@@ -26,6 +26,7 @@ import {
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { classifyUniversalQuery, type UniversalQueryClassification } from './query-classification.ts';
 import { detectNjCounty } from './nj-network.ts';
+import { detectNjPilotCountySlug } from './nj-counties.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -40,7 +41,7 @@ export type NetworkAskIntent =
 export type ParsedGeography = {
   stateCode?: string;
   stateName?: string;
-  countySlug?: 'broward' | 'palm-beach';
+  countySlug?: 'broward' | 'palm-beach' | 'monmouth-county' | 'middlesex-county' | 'somerset-county' | 'union-county';
   countyName?: string;
   city?: string;
   meaning: string;
@@ -133,15 +134,18 @@ function geography(q: string): ParsedGeography | undefined {
   const njCounty = detectNjCounty(q);
   const newark = /\bnewark\b/i.test(q);
   const njNamed = /\bnew\s+jersey\b|\bn\.?j\.?\b/i.test(q) || newark;
-  const njStrongCounty = /\b(bergen|hudson|middlesex|monmouth)\s+county\b/i.test(q);
+  const njStrongCounty =
+    /\b(bergen|hudson|middlesex|monmouth|somerset|union)\s+county\b/i.test(q);
   const otherStateNamed = US_JURISDICTIONS.some(
     (j) => j.code !== 'NJ' && j.code !== 'FL' && new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i').test(q),
   );
   const newJersey = njNamed || (Boolean(njCounty) && njStrongCounty && !otherStateNamed);
   if (newJersey) {
+    const pilotSlug = detectNjPilotCountySlug(q);
     return {
       stateCode: 'NJ',
       stateName: 'New Jersey',
+      countySlug: pilotSlug,
       countyName: njCounty,
       city: newark ? 'Newark' : city,
       meaning: njCounty

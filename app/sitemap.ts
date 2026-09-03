@@ -3,6 +3,7 @@ import { BRAND } from '@/lib/brand';
 import { getAllGuideSlugs } from '@/lib/growth/guides';
 import { getAllJourneySlugs } from '@/lib/growth/journeys';
 import { njReleaseGatePassed } from '@/lib/network/nj-network';
+import { listNjPilotCounties } from '@/lib/network/nj-counties';
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
 
@@ -21,7 +22,20 @@ const CORE: {
   { path: '/places/florida/broward', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/places/florida/palm-beach', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   ...(njReleaseGatePassed()
-    ? [{ path: '/new-jersey', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-03' }]
+    ? [
+        { path: '/new-jersey', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-03' },
+        // ATH-NJ-COUNTY-002 indexed county gateways:
+        // /new-jersey/monmouth-county
+        // /new-jersey/middlesex-county
+        // /new-jersey/somerset-county
+        // /new-jersey/union-county
+        ...listNjPilotCounties().map((c) => ({
+          path: c.ask_path,
+          priority: 0.8,
+          changeFrequency: 'weekly' as const,
+          lastmod: '2026-09-03',
+        })),
+      ]
     : []),
   { path: '/trust', priority: 0.85, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/promise', priority: 0.8, changeFrequency: 'monthly', lastmod: '2026-08-07' },

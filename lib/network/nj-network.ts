@@ -1,6 +1,7 @@
 import manifestJson from '../../data/network/new-jersey-publication-manifest.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
+import { detectNjPilotCountySlug, njCountySpecialistUrl } from './nj-counties.ts';
 
 export const NJ_NETWORK_CONTRACT = 'ath-nj-network-v1' as const;
 
@@ -68,7 +69,8 @@ export function queryLooksLikeNewJersey(query: string): boolean {
   if (/\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(query)) return true;
   const county = detectNjCounty(query);
   if (!county) return false;
-  const strong = /\b(bergen|hudson|middlesex|monmouth|camden|morris)\s+county\b/i.test(query);
+  const strong =
+    /\b(bergen|hudson|middlesex|monmouth|camden|morris|somerset|union)\s+county\b/i.test(query);
   const otherState = /\b(florida|texas|new york|california|pennsylvania|massachusetts)\b/i.test(query);
   return strong && !otherState;
 }
@@ -117,7 +119,7 @@ export function classifyNjHub(query: string): SpecialistHubId | undefined {
   if (/\b(mover|movers|moving|warehouse|fmcsa|usdot|household[- ]goods)\b/.test(q)) return 'move';
   if (/\b(mortgage|lender|hmda|njhmfa|down[- ]payment|dpa|denial rate|first[- ]time buyer)\b/.test(q)) return 'lender';
   if (/\b(insurance|insurer|dobi|ihc|seh|get covered|surplus|financial examination)\b/.test(q)) return 'insurance';
-  if (/\b(assisted[- ]living|nursing homes?|staffing|residents per staff|pace|medicaid|senior care|ltc)\b/.test(q)) {
+  if (/\b(assisted[- ]living|nursing homes?|staffing|residents per staff|pace|medicaid|senior[- ]care|ltc)\b/.test(q)) {
     return 'senior';
   }
   if (/\b(contractor|construction|wall|wage watchlist|treasury debarment|permit data|public works|2\.68 million)\b/.test(q)) {
@@ -137,11 +139,12 @@ export function routeNjAsk(query: string): NjRoute | undefined {
   if (!queryLooksLikeNewJersey(query)) return undefined;
   const hubId = classifyNjHub(query);
   if (!hubId) return undefined;
+  const countySlug = detectNjPilotCountySlug(query);
   return {
     hubId,
     stateCode: 'NJ',
     intentFamily: hubId,
-    destination: njSpecialistUrl(hubId),
+    destination: njCountySpecialistUrl(hubId, countySlug),
     caveat: njCaveatForHub(hubId),
   };
 }
@@ -174,6 +177,9 @@ export function njConciergeContext(): string {
     .join('\n');
   return `## New Jersey network context
 AskTrustHub /new-jersey is the network gateway. Specialist /new-jersey pages own detailed evidence.
+Four Ask county gateways exist: Monmouth, Middlesex, Somerset, Union. Do not invent other NJ county pages.
+Contractor and Lender have dedicated county pages. Senior county pages are live only when the county release gate says so.
+Insurance, Move, and Investor stay on specialist /new-jersey with county context.
 Live NJ specialist pages: ${live.map((h) => h.hub_id).join(', ') || 'none'}.
 Pending: ${pending.map((h) => h.hub_id).join(', ') || 'none'}.
 Do not claim all six NJ hubs are live unless every specialist /new-jersey URL is HTTP 200.

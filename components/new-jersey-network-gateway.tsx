@@ -111,6 +111,54 @@ export function NewJerseyNetworkGateway({
         </ul>
       </section>
 
+      <section className="mt-12" aria-labelledby="county-research">
+        <h2 id="county-research" className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
+          Deep county research
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+          Four counties currently have deeper local research coverage. This is not a claim that all 21 New
+          Jersey counties have Ask county gateways.
+        </p>
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          <li>
+            <Link
+              href="/new-jersey/monmouth-county"
+              className="inline-flex min-h-11 w-full items-center rounded-xl border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2"
+              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+            >
+              Monmouth County
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/new-jersey/middlesex-county"
+              className="inline-flex min-h-11 w-full items-center rounded-xl border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2"
+              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+            >
+              Middlesex County
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/new-jersey/somerset-county"
+              className="inline-flex min-h-11 w-full items-center rounded-xl border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2"
+              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+            >
+              Somerset County
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/new-jersey/union-county"
+              className="inline-flex min-h-11 w-full items-center rounded-xl border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2"
+              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
+            >
+              Union County
+            </Link>
+          </li>
+        </ul>
+      </section>
+
       <section className="mt-12" aria-labelledby="starters">
         <h2 id="starters" className="text-xl font-semibold" style={{ color: ASK_BRAND.navy }}>
           Questions you can ask

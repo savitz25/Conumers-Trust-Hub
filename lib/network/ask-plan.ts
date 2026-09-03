@@ -58,6 +58,7 @@ import {
 } from './lender-ask.ts';
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
 import { njCaveatForHub, njSpecialistUrl, routeNjAsk } from './nj-network.ts';
+import { isNjPilotCountySlug, njCountyAskPath } from './nj-counties.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -173,7 +174,11 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.countySlug === 'broward') return '/places/florida/broward';
   if (parsed.geography?.countySlug === 'palm-beach') return '/places/florida/palm-beach';
   if (parsed.geography?.stateCode === 'FL') return '/places/florida';
-  if (parsed.geography?.stateCode === 'NJ') return '/new-jersey';
+  if (parsed.geography?.stateCode === 'NJ') {
+    const slug = parsed.geography.countySlug;
+    if (slug && isNjPilotCountySlug(slug)) return njCountyAskPath(slug);
+    return '/new-jersey';
+  }
   return undefined;
 }
 
