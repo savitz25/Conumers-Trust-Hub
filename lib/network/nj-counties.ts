@@ -65,10 +65,7 @@ export function njCountySpecialistUrl(hubId: SpecialistHubId, slug?: NjPilotCoun
   const county = njCountyBySlug(slug);
   if (!county) return stateUrl;
   const route = county.specialist_routes[hubId];
-  if (hubId === 'senior') {
-    if (seniorCountyGatePassed() && 'county_page_when_live' in route && route.county_page_when_live) {
-      return route.county_page_when_live;
-    }
+  if (hubId === 'senior' && !seniorCountyGatePassed()) {
     return withCountyIntent(stateUrl, slug);
   }
   if (route.dedicated_county_page) return route.url;
@@ -115,8 +112,8 @@ export const NJ_COUNTY_CARD_FACTS: Record<
       'Eligible borrowers may qualify for up to $22,000 potential NJHMFA DPA. County does not establish eligibility.',
     ],
     senior: [
-      'SeniorTrustHub county pages are not yet published. Use New Jersey senior-care research at the state page.',
-      'A county senior resource is not a licensed facility. A facility office is not a service area.',
+      'NJDOH county projections include 86 All_LTC records and 99 All_Acute records. These are separate licensed universes, not one senior-provider total.',
+      'County aging resources include ADRC, 12 senior centers, and meal programs. A county resource is not a licensed facility. BoldAge PACE Oceanport is listed as operating; a center address is not a service area.',
     ],
     insurance: [
       'Flood, hazard, and property context can inform consumer research. Insurer authorization and regulatory evidence remain primarily state-level.',
@@ -149,8 +146,8 @@ export const NJ_COUNTY_CARD_FACTS: Record<
       'Same current NJHMFA 12-county DPA group: eligible borrowers may qualify for up to $22,000. County does not establish eligibility.',
     ],
     senior: [
-      'SeniorTrustHub county pages are not yet published. Use New Jersey senior-care research at the state page.',
-      'A county senior resource is not a licensed facility. A facility office is not a service area.',
+      'NJDOH county projections include 81 All_LTC records and 109 All_Acute records. These universes stay separate.',
+      'Official county pages list congregate meal sites and municipal senior centers. A listed center is a county resource, not a licensed facility. BoldAge PACE East Brunswick is listed as operating; a center address is not a service area.',
     ],
     insurance: [
       'Flood, hazard, and property context can inform consumer research. Insurer authorization and regulatory evidence remain primarily state-level.',
@@ -183,8 +180,8 @@ export const NJ_COUNTY_CARD_FACTS: Record<
       'Same current NJHMFA 12-county DPA group: eligible borrowers may qualify for up to $22,000.',
     ],
     senior: [
-      'SeniorTrustHub county pages are not yet published, so Somerset Housing Options figures are not copied here.',
-      'A county senior resource is not a licensed facility. A facility office is not a service area.',
+      'NJDOH county projections include 45 All_LTC records and 51 All_Acute records. These universes stay separate.',
+      'A separate May 2023 Somerset County planning inventory lists 58 senior-related Housing Options records. Planning inventory is not NJDOH licensure. Senior LIFE Bridgewater is listed as in development, not operating.',
     ],
     insurance: [
       'Flood, hazard, and property context can inform consumer research. Insurer authorization remains primarily state-level.',
@@ -217,8 +214,8 @@ export const NJ_COUNTY_CARD_FACTS: Record<
       'Same current NJHMFA 12-county DPA group: eligible borrowers may qualify for up to $22,000.',
     ],
     senior: [
-      'SeniorTrustHub county pages are not yet published, so Union senior home-repair figures are not copied here.',
-      'A county senior resource is not a licensed facility. A facility office is not a service area.',
+      'NJDOH county projections include 46 All_LTC records and 74 All_Acute records. These universes stay separate.',
+      'Union County ADRC and dated Senior Home Improvement Grant information (ages 62+, cap $10,000 as of 2026-01-14) are county programs, not licensed facilities. Lutheran Senior LIFE at Union is listed as operating; a center address is not a service area.',
     ],
     insurance: [
       'Flood, hazard, and property context can inform consumer research. Insurer authorization remains primarily state-level.',

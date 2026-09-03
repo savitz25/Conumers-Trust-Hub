@@ -5,10 +5,10 @@
   "release_gate": {
     "contractor": true,
     "lender": true,
-    "senior": false,
+    "senior": true,
     "ask_gateways": true,
-    "passed": false,
-    "blocker": "WAITING ON SENIOR COUNTY RELEASE",
+    "passed": true,
+    "blocker": null,
     "rule": "Ask county gateways may publish only when Contractor and Lender county pages are live. Direct Senior county links require HTTP 200, indexable, correct county headline, and not a 404 shell."
   },
   "discovery_copy": "Four counties currently have deeper local research coverage.",
@@ -19,7 +19,7 @@
       "county_fips": "34025",
       "ask_url": "https://www.asktrusthub.com/new-jersey/monmouth-county",
       "ask_path": "/new-jersey/monmouth-county",
-      "coverage_summary": "Ask gateway to Contractor and Lender county research, plus state-level Insurance, Move, and Investor research with county intent.",
+      "coverage_summary": "Ask gateway to Contractor, Lender, and Senior county research, plus state-level Insurance, Move, and Investor research with county intent.",
       "local_source_families": [
         "OPRS land-record search (OPEN_SEARCH_ONLY)",
         "NJGIN / property context",
@@ -37,9 +37,8 @@
           "dedicated_county_page": true
         },
         "senior": {
-          "url": "https://www.seniortrusthub.com/new-jersey",
-          "dedicated_county_page": false,
-          "county_page_when_live": "https://www.seniortrusthub.com/new-jersey/monmouth-county"
+          "url": "https://www.seniortrusthub.com/new-jersey/monmouth-county",
+          "dedicated_county_page": true
         },
         "insurance": {
           "url": "https://www.insurancetrusthub.com/new-jersey",
@@ -61,7 +60,7 @@
       "county_fips": "34023",
       "ask_url": "https://www.asktrusthub.com/new-jersey/middlesex-county",
       "ask_path": "/new-jersey/middlesex-county",
-      "coverage_summary": "Ask gateway to Contractor and Lender county research, plus state-level Insurance, Move, and Investor research with county intent.",
+      "coverage_summary": "Ask gateway to Contractor, Lender, and Senior county research, plus state-level Insurance, Move, and Investor research with county intent.",
       "local_source_families": [
         "SearchNG land-record search (OPEN_SEARCH_ONLY)",
         "NJGIN / property context",
@@ -80,9 +79,8 @@
           "dedicated_county_page": true
         },
         "senior": {
-          "url": "https://www.seniortrusthub.com/new-jersey",
-          "dedicated_county_page": false,
-          "county_page_when_live": "https://www.seniortrusthub.com/new-jersey/middlesex-county"
+          "url": "https://www.seniortrusthub.com/new-jersey/middlesex-county",
+          "dedicated_county_page": true
         },
         "insurance": {
           "url": "https://www.insurancetrusthub.com/new-jersey",
@@ -104,7 +102,7 @@
       "county_fips": "34035",
       "ask_url": "https://www.asktrusthub.com/new-jersey/somerset-county",
       "ask_path": "/new-jersey/somerset-county",
-      "coverage_summary": "Ask gateway to Contractor and Lender county research, plus state-level Insurance, Move, and Investor research with county intent.",
+      "coverage_summary": "Ask gateway to Contractor, Lender, and Senior county research, plus state-level Insurance, Move, and Investor research with county intent.",
       "local_source_families": [
         "Somerset GIS Hub",
         "Housing Options FeatureServer",
@@ -123,9 +121,8 @@
           "dedicated_county_page": true
         },
         "senior": {
-          "url": "https://www.seniortrusthub.com/new-jersey",
-          "dedicated_county_page": false,
-          "county_page_when_live": "https://www.seniortrusthub.com/new-jersey/somerset-county"
+          "url": "https://www.seniortrusthub.com/new-jersey/somerset-county",
+          "dedicated_county_page": true
         },
         "insurance": {
           "url": "https://www.insurancetrusthub.com/new-jersey",
@@ -147,7 +144,7 @@
       "county_fips": "34039",
       "ask_url": "https://www.asktrusthub.com/new-jersey/union-county",
       "ask_path": "/new-jersey/union-county",
-      "coverage_summary": "Ask gateway to Contractor and Lender county research, plus state-level Insurance, Move, and Investor research with county intent.",
+      "coverage_summary": "Ask gateway to Contractor, Lender, and Senior county research, plus state-level Insurance, Move, and Investor research with county intent.",
       "local_source_families": [
         "Clerk UCPA land-record search (OPEN_SEARCH_ONLY)",
         "Consumer Affairs",
@@ -166,9 +163,8 @@
           "dedicated_county_page": true
         },
         "senior": {
-          "url": "https://www.seniortrusthub.com/new-jersey",
-          "dedicated_county_page": false,
-          "county_page_when_live": "https://www.seniortrusthub.com/new-jersey/union-county"
+          "url": "https://www.seniortrusthub.com/new-jersey/union-county",
+          "dedicated_county_page": true
         },
         "insurance": {
           "url": "https://www.insurancetrusthub.com/new-jersey",

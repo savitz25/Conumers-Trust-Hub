@@ -73,19 +73,26 @@ test('contractor and lender county handoffs; insurance/move/investor stay state'
   assert.equal(dedicatedCountyPage('investor', 'union-county'), false);
 });
 
-test('senior county links withheld until gate; hub intent stays primary', () => {
-  assert.equal(seniorCountyGatePassed(), false);
+test('senior county links live after gate; hub intent stays primary', () => {
+  assert.equal(seniorCountyGatePassed(), true);
   const senior = routeNjAsk('Find senior care in Somerset County');
   assert.equal(senior?.hubId, 'senior');
-  assert.equal(njCountySpecialistUrl('senior', 'somerset-county').startsWith('https://www.seniortrusthub.com/new-jersey'), true);
-  assert.doesNotMatch(njCountySpecialistUrl('senior', 'somerset-county'), /somerset-county/);
-  assert.doesNotMatch(countyUi, /https:\/\/www\.seniortrusthub\.com\/new-jersey\/monmouth-county/);
-  assert.match(countyUi, /not published yet/);
+  assert.equal(
+    njCountySpecialistUrl('senior', 'somerset-county'),
+    'https://www.seniortrusthub.com/new-jersey/somerset-county',
+  );
+  assert.equal(dedicatedCountyPage('senior', 'monmouth-county'), true);
+  assert.equal(NJ_COUNTY_MANIFEST.release_gate.senior, true);
+  assert.equal(NJ_COUNTY_MANIFEST.release_gate.passed, true);
+  assert.equal(NJ_COUNTY_MANIFEST.release_gate.blocker, null);
+  assert.equal(njCountyPilotComplete(), true);
 
   assert.equal(classifyNjHub('What insurance research is available for Union County?'), 'insurance');
   assert.notEqual(classifyNjHub('What insurance research is available for Union County?'), 'contractor');
-  assert.equal(njCountyPilotComplete(), false);
-  assert.equal(NJ_COUNTY_MANIFEST.release_gate.blocker, 'WAITING ON SENIOR COUNTY RELEASE');
+  assert.match(countyFacts, /86 All_LTC records and 99 All_Acute records/);
+  assert.match(countyFacts, /58 senior-related Housing Options/);
+  assert.doesNotMatch(countyFacts, /96 senior providers/);
+  assert.match(countyUi, /not published yet/);
 });
 
 test('semantics, JSON-LD, concierge, Florida and customer surfaces', () => {
