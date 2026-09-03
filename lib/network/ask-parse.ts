@@ -25,6 +25,7 @@ import {
 } from './lender-ask.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { classifyUniversalQuery, type UniversalQueryClassification } from './query-classification.ts';
+import { detectNjCounty } from './nj-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -82,6 +83,16 @@ function geography(q: string): ParsedGeography | undefined {
   const miami = /\bmiami([-\s]?dade)?\b/i.test(q);
   const bocaRaton = /\bboca\s+raton\b/i.test(q);
   const florida = FL.test(q) || broward || palm || tampa || miami || bocaRaton;
+  const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
+  if (njNamedEarly && florida) {
+    return {
+      stateCode: 'NJ',
+      stateName: 'New Jersey',
+      city: /\bnewark\b/i.test(q) ? 'Newark' : undefined,
+      meaning:
+        'New Jersey origin with Florida mentioned as destination. New Jersey state mover authority is not FMCSA interstate authority.',
+    };
+  }
 
   let city: string | undefined;
   if (tampa) city = 'Tampa';
@@ -116,6 +127,28 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: city
         ? `${city}, Florida. Recorded/address geography is not service territory.`
         : 'Florida. State licensing is not physical location; principal office is not client geography.',
+    };
+  }
+
+  const njCounty = detectNjCounty(q);
+  const newark = /\bnewark\b/i.test(q);
+  const njNamed = /\bnew\s+jersey\b|\bn\.?j\.?\b/i.test(q) || newark;
+  const njStrongCounty = /\b(bergen|hudson|middlesex|monmouth)\s+county\b/i.test(q);
+  const otherStateNamed = US_JURISDICTIONS.some(
+    (j) => j.code !== 'NJ' && j.code !== 'FL' && new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i').test(q),
+  );
+  const newJersey = njNamed || (Boolean(njCounty) && njStrongCounty && !otherStateNamed);
+  if (newJersey) {
+    return {
+      stateCode: 'NJ',
+      stateName: 'New Jersey',
+      countyName: njCounty,
+      city: newark ? 'Newark' : city,
+      meaning: njCounty
+        ? `${njCounty}, New Jersey. County meaning stays source-specific to the specialist hub.`
+        : newark
+          ? 'Newark, New Jersey. City is not automatically a license territory.'
+          : 'New Jersey. State licensing is not physical location; specialist geography meaning differs by hub.',
     };
   }
 
@@ -239,9 +272,9 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const seniorCare = isSeniorClassQuery(query);
   const seniorProviderClass = detectSeniorProviderClass(query);
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
-  const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida/i.test(query);
+  const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida|about new jersey|research in new jersey|research new jersey/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|builder|remodeler|dbpr|cilb/i.test(query);
-  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer/i.test(query);
+  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate/i.test(query);
   const mover = isMoveClassQuery(query);
   const moveResearchCategory = isAutoTransportQuery(query) ? 'auto_transport' as const : undefined;
   const insurance =
