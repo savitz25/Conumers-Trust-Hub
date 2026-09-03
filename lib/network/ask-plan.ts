@@ -57,6 +57,7 @@ import {
   type LenderAskPayload,
 } from './lender-ask.ts';
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
+import { njCaveatForHub, njSpecialistUrl, routeNjAsk } from './nj-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -172,6 +173,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.countySlug === 'broward') return '/places/florida/broward';
   if (parsed.geography?.countySlug === 'palm-beach') return '/places/florida/palm-beach';
   if (parsed.geography?.stateCode === 'FL') return '/places/florida';
+  if (parsed.geography?.stateCode === 'NJ') return '/new-jersey';
   return undefined;
 }
 
@@ -681,6 +683,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
 
   if (hubs.length === 1) {
     hubs = [applyConsumerPresentation(hubs[0], parsed)];
+  }
+
+  if (parsed.geography?.stateCode === 'NJ') {
+    const njRoute = routeNjAsk(parsed.query);
+    if (njRoute) {
+      const already = hubs.some((h) => h.hubId === njRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: njRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[njRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: njRoute.destination,
+            reason: njRoute.caveat,
+            whatItCanAnswer: `New Jersey research on ${NETWORK_PUBLIC_NAMES[njRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'New Jersey',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === njRoute.hubId
+            ? {
+                ...h,
+                destination: njRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${njRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === njRoute.hubId), ...hubs.filter((h) => h.hubId !== njRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: njSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${njCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
   }
 
   return {

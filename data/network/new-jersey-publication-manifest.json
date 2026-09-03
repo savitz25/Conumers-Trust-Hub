@@ -1,0 +1,122 @@
+{
+  "state_code": "NJ",
+  "state_name": "New Jersey",
+  "ask_path": "/new-jersey",
+  "ask_canonical": "https://www.asktrusthub.com/new-jersey",
+  "version": "ath-nj-network-v1",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": ["move", "lender", "insurance", "senior", "contractor", "investor"],
+    "blocker": null,
+    "rule": "All six specialist /new-jersey pages must return HTTP 200 as intended state intelligence pages before Ask NJ is indexable and before six-hub complete is declared."
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "canonical_state_url": "https://www.movetrusthub.com/new-jersey",
+      "topic": "Movers and household-goods transportation",
+      "research_topics": [
+        "New Jersey mover/warehouse authority",
+        "interstate FMCSA authority",
+        "Operation Safe Move enforcement",
+        "complaint/tariff/source coverage"
+      ],
+      "identifier_types": ["USDOT", "MC"],
+      "coverage_summary": "NJ state mover authority is not FMCSA interstate authority. Incomplete NJ roster is not a finding of zero.",
+      "routing_intents": ["mover licensed in New Jersey", "interstate move from Newark", "New Jersey mover citation"],
+      "publication_status": "live",
+      "gap_examples": ["PM/PW/PC complete roster request"]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "canonical_state_url": "https://www.lendertrusthub.com/new-jersey",
+      "topic": "Mortgage lending and housing finance",
+      "research_topics": [
+        "2025 HMDA mortgage activity",
+        "21 counties",
+        "NJHMFA programs/DPA",
+        "NJDOBI regulatory evidence"
+      ],
+      "identifier_types": ["NMLS"],
+      "coverage_summary": "HMDA market evidence is not a New Jersey mortgage-license roster.",
+      "routing_intents": ["Bergen County denial rate", "New Jersey down payment assistance", "NJHMFA activity list"],
+      "publication_status": "live",
+      "gap_examples": ["RMLA/servicer roster"]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "canonical_state_url": "https://www.insurancetrusthub.com/new-jersey",
+      "topic": "Insurance companies and regulatory evidence",
+      "research_topics": [
+        "authorized insurers",
+        "DOBI enforcement",
+        "market-conduct/financial exams",
+        "auto complaint intelligence",
+        "IHC/SEH",
+        "residual markets"
+      ],
+      "identifier_types": ["NAIC", "NPN"],
+      "coverage_summary": "A complaint is not a violation. An exam is not enforcement. Admitted is not surplus lines.",
+      "routing_intents": ["authorized in New Jersey", "auto complaint information", "Get Covered New Jersey"],
+      "publication_status": "live",
+      "gap_examples": ["SERFF blocked", "CRIB republication restricted"]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "canonical_state_url": "https://www.seniortrusthub.com/new-jersey",
+      "topic": "Senior care facilities and staffing",
+      "research_topics": [
+        "NJDOH LTC/acute facilities",
+        "staffing",
+        "enforcement",
+        "Medicaid assisted-living rates",
+        "PACE",
+        "CMS context"
+      ],
+      "identifier_types": ["CMS CCN"],
+      "coverage_summary": "Facility office is not service area. Unresolved enforcement is not a clean history.",
+      "routing_intents": ["assisted living in Bergen County", "New Jersey staffing data", "nursing home enforcement"],
+      "publication_status": "live",
+      "gap_examples": ["CCRC/service-area crosswalk"]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "canonical_state_url": "https://www.contractortrusthub.com/new-jersey",
+      "topic": "Contractors and construction reporting",
+      "research_topics": [
+        "NJ construction source activity",
+        "municipality reporting",
+        "WALL/Wage/Treasury regulatory evidence",
+        "lead/asbestos/fire programs",
+        "Safe House HIC notices"
+      ],
+      "identifier_types": ["state contractor/license identifiers when exact"],
+      "coverage_summary": "2.678 million source records are not permits or projects. Statewide construction rows have no contractor attribution.",
+      "routing_intents": ["contractor in New Jersey", "Middlesex construction activity", "public works list"],
+      "publication_status": "live",
+      "gap_examples": ["PWCR roster", "contractor attribution on statewide construction rows"]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "canonical_state_url": "https://www.investortrusthub.com/new-jersey",
+      "topic": "Investment advisers and securities",
+      "research_topics": [
+        "NJ Bureau of Securities evidence",
+        "annual IA examination themes",
+        "SEC/IARD NJ firms",
+        "issuer/exemption framework"
+      ],
+      "identifier_types": ["CRD"],
+      "coverage_summary": "SEC/IARD NJ firms are not the NJ state-RIA denominator. An annual questionnaire is not a firm score.",
+      "routing_intents": ["investment advisers in New Jersey", "AI questionnaire", "Bureau of Securities enforcement"],
+      "publication_status": "live",
+      "gap_examples": ["complete state-RIA roster"]
+    }
+  ]
+}

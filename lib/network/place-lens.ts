@@ -452,4 +452,5 @@ export const PLACE_LENS_INDEX = [
   { href: '/places/florida', label: 'Florida', detail: 'What can TrustHub research in Florida?' },
   { href: '/places/florida/broward', label: 'Broward County', detail: 'County lens — contractor enhanced; others state/federal.' },
   { href: '/places/florida/palm-beach', label: 'Palm Beach County', detail: 'County lens — same contractor grain, different page, no copied Broward counts.' },
+  { href: '/new-jersey', label: 'New Jersey', detail: 'Network gateway to specialist New Jersey research pages. Not a county page.' },
 ] as const;

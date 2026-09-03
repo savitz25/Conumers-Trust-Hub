@@ -1,0 +1,86 @@
+{
+  "verified_at": "2026-09-03T13:09:22.555Z",
+  "release_gate_passed": true,
+  "missing": [],
+  "blocker": null,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "url": "https://www.movetrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Movers, Moving Authority &amp; Enforcement Intelligence | Move Trust Hub",
+      "headline": "New Jersey Moving &amp; Warehousing Intelligence",
+      "intended_intelligence_page": true
+    },
+    {
+      "hub_id": "lender",
+      "url": "https://www.lendertrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Mortgage &amp; Lending Intelligence | LenderTrustHub | Lender Trust Hub",
+      "headline": "New Jersey Mortgage &amp; Lending Intelligence",
+      "intended_intelligence_page": true
+    },
+    {
+      "hub_id": "insurance",
+      "url": "https://www.insurancetrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Insurance Market &amp; Regulatory Intelligence | InsuranceTrustHub | InsuranceTrustHub",
+      "headline": "New Jersey Insurance Market &amp; Regulatory Intelligence",
+      "intended_intelligence_page": true
+    },
+    {
+      "hub_id": "senior",
+      "url": "https://www.seniortrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Senior Care Research — NJDOH Licensing, Staffing &amp; Enforcement | SeniorTrustHub",
+      "headline": "New Jersey Senior Care Research",
+      "intended_intelligence_page": true
+    },
+    {
+      "hub_id": "contractor",
+      "url": "https://www.contractortrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Contractor &amp; Construction Intelligence | ContractorTrustHub · Contractor Trust Hub",
+      "headline": "New Jersey Contractor &amp; Construction Intelligence",
+      "intended_intelligence_page": true
+    },
+    {
+      "hub_id": "investor",
+      "url": "https://www.investortrusthub.com/new-jersey",
+      "publication_status": "live",
+      "verified_at": "2026-09-03T13:09:22.555Z",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/new-jersey",
+      "robots": "index, follow",
+      "title": "New Jersey Investment Adviser &amp; Securities Intelligence · InvestorTrustHub",
+      "headline": "New Jersey investment adviser &amp; securities intelligence",
+      "intended_intelligence_page": true
+    }
+  ]
+}
