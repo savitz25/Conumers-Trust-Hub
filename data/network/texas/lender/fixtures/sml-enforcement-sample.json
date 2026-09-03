@@ -1,0 +1,19 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-sml-enforcement-orders",
+  "source_url": "https://www.sml.texas.gov/wp-content/uploads/2025/10/sml_enforcement_orders_data_10_16_2025.csv",
+  "source_as_of": "2025-10-16",
+  "note": "Only rows with NMLS ID. Name-only orders are UNSAFE for adverse attach. 2,493 / 3,981 rows have NMLS ID.",
+  "row_count_file": 3981,
+  "nmls_nonempty": 2493,
+  "rows": [
+    {
+      "NMLS ID": "374994",
+      "Name": "(EMC) EQUITY MORTGAGE CONSULTING SERVICES, INC.",
+      "Description": "Exam Deficiency",
+      "Title of Order": "Agreed Order to Take Affirmative Action",
+      "Order Signed": "4/17/2017",
+      "Status": "Compliant"
+    }
+  ]
+}

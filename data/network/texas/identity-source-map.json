@@ -1,0 +1,131 @@
+{
+  "ticket": "ATH-TX-001",
+  "bars": {
+    "EXACT": "official identifier match (TDLR ID, NPN, NAIC, NMLS, TxDMV, USDOT, CRD, HHSC ID, CMS CCN, CMBL vendor ID, TSBPE LICENSE_NBR, TBPELS firm number, SOS file number, TDI license number)",
+    "HIGH_CONFIDENCE": "exact legal name + exact official government business address, or an approved deterministic crosswalk",
+    "REVIEW_REQUIRED": "name + city; DBA; person/company ambiguity; TxDOT bidder name to TDLR",
+    "UNSAFE": "name alone; phone alone; search-engine matching"
+  },
+  "rules": [
+    "Never auto-attach adverse evidence from unsafe identity.",
+    "Preserve unmatched official evidence.",
+    "No name-only attach of SML orders, SSB orders, or TDLR enforcement.",
+    "Person NPN/CRD/NMLS is not a business profile."
+  ],
+  "exact_ids": [
+    {
+      "id": "TDLR license type + number",
+      "source_ids": [
+        "tx-tdlr-official-all-licenses-csv",
+        "tx-tdlr-electrical-contractor",
+        "tx-tdlr-ac-contractor"
+      ]
+    },
+    {
+      "id": "TSBPE LICENSE_NBR",
+      "source_ids": [
+        "tx-tsbpe-responsible-master-plumber"
+      ]
+    },
+    {
+      "id": "NPN",
+      "source_ids": [
+        "tx-tdi-agencies",
+        "tx-tdi-agency-appointments"
+      ]
+    },
+    {
+      "id": "NAIC",
+      "source_ids": [
+        "tx-tdi-agency-appointments",
+        "tx-tdi-authorized-companies"
+      ]
+    },
+    {
+      "id": "NMLS",
+      "source_ids": [
+        "tx-sml-enforcement-orders",
+        "tx-nmls-consumer-access"
+      ]
+    },
+    {
+      "id": "CMBL WEB_VID",
+      "source_ids": [
+        "tx-cmbl-active-vendors"
+      ]
+    },
+    {
+      "id": "CRD / TX file number",
+      "source_ids": [
+        "tx-ssb-certificate-search"
+      ]
+    },
+    {
+      "id": "CMS CCN",
+      "source_ids": [
+        "tx-cms-nursing-home-overlay"
+      ]
+    },
+    {
+      "id": "HHSC ID",
+      "source_ids": [
+        "tx-hhsc-tulip-ltc-provider-search"
+      ]
+    },
+    {
+      "id": "TxDMV / USDOT",
+      "source_ids": [
+        "tx-txdmv-household-goods"
+      ]
+    },
+    {
+      "id": "TDLR tow CERTIFICATE_NUMBER / TDI_NBR",
+      "source_ids": [
+        "tx-tdlr-tow-companies"
+      ]
+    }
+  ],
+  "crosswalks": [
+    {
+      "from": "TDI agency NPN",
+      "to": "appointment NAIC",
+      "bar": "EXACT",
+      "via": "tx-tdi-agency-appointments"
+    },
+    {
+      "from": "TSBPE LICENSE_NBR",
+      "to": "PLUMB_COMPANY",
+      "bar": "EXACT",
+      "note": "same row; company name is associated, not a second license"
+    },
+    {
+      "from": "CMBL WEB_VID",
+      "to": "TDLR license",
+      "bar": "REVIEW_REQUIRED",
+      "note": "vendor \u2260 license"
+    },
+    {
+      "from": "TxDOT bidder name",
+      "to": "TDLR/TSBPE",
+      "bar": "REVIEW_REQUIRED"
+    },
+    {
+      "from": "CMS CCN",
+      "to": "HHSC ID",
+      "bar": "REVIEW_REQUIRED",
+      "note": "no approved crosswalk this ticket"
+    },
+    {
+      "from": "USDOT",
+      "to": "TxDMV household-goods certificate",
+      "bar": "REVIEW_REQUIRED",
+      "note": "TX authority \u2260 USDOT"
+    },
+    {
+      "from": "IARD CRD with TX principal office",
+      "to": "Texas state-RIA registration",
+      "bar": "REVIEW_REQUIRED",
+      "note": "TX principal office \u2260 state registration"
+    }
+  ]
+}

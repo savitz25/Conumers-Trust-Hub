@@ -1,0 +1,2468 @@
+{
+  "ticket": "ATH-TX-001",
+  "state": "TX",
+  "scope": "STATE_LEVEL_ONLY",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "publication": {
+    "public_texas_routes": false,
+    "sitemap_changes": false,
+    "trust_score": false,
+    "paid_ranking": false,
+    "people_publication": false,
+    "county_work": false,
+    "specialist_repo_edits": false
+  },
+  "principles": [
+    "STATE_LEVEL_ONLY",
+    "missing_source_is_not_zero",
+    "TEXAS_HAS_NO_STATEWIDE_GENERAL_CONTRACTOR_LICENSE",
+    "vendor_is_not_contractor_license",
+    "TDLR_trade_is_not_CSLB",
+    "person_credential_is_not_business_profile",
+    "TX_state_authority_is_not_USDOT",
+    "USDOT_is_not_interstate_operating_authority_by_itself",
+    "license_existence_is_not_current_insurance_unless_source_proves_it",
+    "TX_principal_office_is_not_state_registration",
+    "HHSC_CCL_daycare_is_not_senior_care",
+    "complaint_is_not_violation",
+    "accusation_is_not_finding",
+    "no_unsafe_adverse_attach"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-tdlr-official-all-licenses-csv",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TDLR official All Licenses CSV (dbproduction2/ltlicfile.csv)",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/ltlicfile.csv",
+      "index_url": "https://www.tdlr.texas.gov/dbproduction2/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR license type + license number",
+      "source_as_of": "2026-09-03",
+      "source_clock": "file last update 9/3/2026 6:20:35 AM; Content-Length 187404606",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official daily CSV is 187.40 Mb. This ticket did not ingest the giant file. SODA copy 7358-krk7 has 983,494 rows but is a lagging portal extract (rowsUpdatedAt ~2026-07-16). Prefer dbproduction2 CSVs over SODA. Texas has NO statewide general-contractor license. Trade subsets were counted from official per-type CSVs.",
+      "identifier_fields": [
+        "LICENSE TYPE",
+        "LICENSE NUMBER"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 99720
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 108037
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "contact_notes": "SODA occupancy on the lagging 7358-krk7 extract: business_telephone nonempty 99,720 / 983,494; business_address_line1 nonempty 108,037. No email/website columns. A/C Contractor subset has 0 phones and 0 business addresses in both SODA and the official ltairref.csv.",
+      "other_fields": [
+        "BUSINESS NAME",
+        "OWNER NAME",
+        "LICENSE EXPIRATION DATE",
+        "LICENSE SUBTYPE",
+        "BUSINESS COUNTY"
+      ],
+      "terms_notes": "Public license listing. Verify current status via TDLR License Search. Data last updated on search UI 9/3/2026 06:01.",
+      "redistribution_notes": "Do not commit ltlicfile.csv. Person-named rows are person credentials, not business profiles.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "MEDIUM",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_NOT_INGESTED_GIANT_FILE",
+      "recommended_next_action": "Stream official per-trade CSVs (A/C, electrical, elevator, appliance, water well, mold, solar, tow companies). Do not treat 983,494 as a contractor universe."
+    },
+    {
+      "source_id": "tx-tdlr-soda-all-licenses",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TDLR - All Licenses (data.texas.gov 7358-krk7)",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://data.texas.gov/dataset/TDLR-All-Licenses/7358-krk7",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR license type + license number",
+      "source_as_of": "2026-07-16",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": 983494,
+      "count_notes": "Live SODA count 983,494 on 2026-09-03. Lagging vs official CSV clock 2026-09-03. Top types are person-heavy: Apprentice Electrician 253,611; Cosmetology Operator 197,266; A/C Technician 59,405. Contractor-relevant business types are a minority.",
+      "identifier_fields": [
+        "license_type",
+        "license_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 99720
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 108037
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdlr-ac-contractor",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TDLR Airconditioning Contractors CSV",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/ltairref.csv",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR A/C Contractor license number",
+      "source_as_of": "2026-09-03",
+      "source_clock": "9/3/2026 6:18:14 AM; 3,654,963 bytes",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 20427,
+      "active_count": "UNKNOWN",
+      "count_notes": "Official CSV 20,427 rows. SODA A/C Contractor 20,323. NAME is often a person; BUSINESS NAME is the company. BUSINESS PHONE and BUSINESS ADDRESS columns exist but occupancy is 0 in both the official CSV and SODA. Do not treat missing phones as unlisted businesses.",
+      "identifier_fields": [
+        "LICENSE NUMBER"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 20427
+    },
+    {
+      "source_id": "tx-tdlr-electrical-contractor",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TDLR Electrical Contractors CSV",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/Lteecele.csv",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR Electrical Contractor license number",
+      "source_as_of": "2026-09-03",
+      "source_clock": "9/3/2026 6:18:34 AM; 3,793,622 bytes",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 14036,
+      "count_notes": "Official CSV 14,036. SODA Electrical Contractor 13,917. BUSINESS PHONE nonempty 14,031 / 14,036. BUSINESS ADDRESS nonempty 14,017. Person electrician types (apprentice/journeyman/master) are separate files and are person credentials.",
+      "identifier_fields": [
+        "LICENSE NUMBER"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 14031
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 14017
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 14036
+    },
+    {
+      "source_id": "tx-tdlr-other-trade-contractors",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TDLR other contractor-relevant official CSVs",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR license number",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "PARTIAL",
+      "count_notes": "SODA (lagging): Appliance Installation Contractor 835; Electrical Sign Contractor 654; Elevator Contractor 365; Water Well Driller/Pump Installer 1,740. Official Versa files also include Mold Assessment/Remediation Companies and Solar Residential Retailers. Counts for Versa files UNKNOWN this ticket (not downloaded).",
+      "identifier_fields": [
+        "LICENSE NUMBER"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "INDEXED_NOT_FULLY_COUNTED"
+    },
+    {
+      "source_id": "tx-tdlr-enforcement-search",
+      "hub_home": "CONTRACTOR",
+      "source_family": "enforcement",
+      "source_name": "TDLR penalties and administrative orders search",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/cimsfo/fosearch.asp",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR license number when present on the order",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search form. Do not scrape. FY2025 TDLR published aggregate stats (PDF) are not a roster.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk enforcement roster found. Do not scrape the search form."
+    },
+    {
+      "source_id": "tx-no-statewide-general-contractor-license",
+      "hub_home": "CONTRACTOR",
+      "source_family": "coverage_gap",
+      "source_name": "Texas has no statewide general-contractor license",
+      "regulator": "none \u2014 coverage statement",
+      "source_url": "https://www.tdlr.texas.gov/",
+      "access_class": "NOT_A_DATASET",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "last_checked": "2026-09-03",
+      "grain": "coverage_statement",
+      "record_count": 0,
+      "count_notes": "Missing != zero unlicensed. Municipal/county permits are out of scope. Roofing and general building are not a TDLR statewide license class.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "NONE"
+      },
+      "acquisition_status": "DOCUMENTED_GAP"
+    },
+    {
+      "source_id": "tx-tsbpe-responsible-master-plumber",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TSBPE Responsible Master Plumber List (official CSV)",
+      "regulator": "Texas State Board of Plumbing Examiners",
+      "source_url": "https://tsbpe.texas.gov/wp-content/uploads/2015/03/RMP.csv",
+      "index_url": "https://tsbpe.texas.gov/free-licensee-list/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TSBPE LICENSE_NBR",
+      "source_as_of": "2026-09-03",
+      "source_clock": "agency page: tables updated daily; this file 1,982,197 bytes",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential_with_associated_company",
+      "record_count": 9360,
+      "active_count": 8570,
+      "count_notes": "9,360 rows; LIC_STATUS Current 8,570 / Expired 790. A company offering plumbing to the public must have at least one Responsible Master Plumber and a current certificate of insurance on file. SODA qced-zkby returned HTTP 404 \u2014 do not use it. Person names are person credentials; do not publish people this ticket.",
+      "identifier_fields": [
+        "LICENSE_NBR"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 4778
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "other_fields": [
+        "PLUMB_COMPANY",
+        "INSURANCE_COMPANY",
+        "INS_EXPIRY_DTE",
+        "LIC_STATUS"
+      ],
+      "insurance_fields": {
+        "INSURANCE_COMPANY_nonempty": 9347,
+        "INS_EXPIRY_DTE_nonempty": 9348,
+        "note": "License existence is not current insurance unless these fields are populated and unexpired. This file proves insurance filing for RMPs."
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 9360
+    },
+    {
+      "source_id": "tx-tsbpe-master-plumber",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TSBPE Master Plumber List (official CSV)",
+      "regulator": "Texas State Board of Plumbing Examiners",
+      "source_url": "https://tsbpe.texas.gov/wp-content/uploads/2015/03/MP.csv",
+      "index_url": "https://tsbpe.texas.gov/free-licensee-list/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TSBPE LICENSE_NBR",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential",
+      "record_count": 4325,
+      "count_notes": "Master plumber license is not by itself the public-contracting RMP credential. Journeyman CSV URL from the 2015/03 path 404'd this ticket; other lists remain on the free-licensee-list page. Count UNKNOWN for Journeyman/Apprentice/Inspector.",
+      "identifier_fields": [
+        "LICENSE_NBR"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 4325
+    },
+    {
+      "source_id": "tx-cmbl-active-vendors",
+      "hub_home": "CONTRACTOR",
+      "source_family": "vendor_registry",
+      "source_name": "Comptroller Active CMBL/VetHUB Vendors Master File",
+      "regulator": "Texas Comptroller of Public Accounts \u2014 Statewide Procurement Division",
+      "source_url": "https://comptroller.texas.gov/auto-data/purchasing/web_name.csv",
+      "index_url": "https://comptroller.texas.gov/purchasing/downloads",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_VENDOR_REGISTRY",
+      "identity_bar": "EXACT",
+      "identity_field": "WEB_VID / WEB_VENDOR_NO (CMBL vendor ID)",
+      "source_as_of": "2026-09-03",
+      "source_clock": "Last-Modified Thu, 03 Sep 2026 04:06:22 GMT; 4,069,729 bytes; refreshed each night per layout",
+      "last_checked": "2026-09-03",
+      "grain": "vendor",
+      "record_count": 12000,
+      "count_notes": "12,000 active CMBL/VetHUB vendor rows in web_name.csv. VENDOR \u2260 contractor license. Construction NIGP class mapping is in vnr_clas.csv (49,245 class rows). Class-code prefixes 01=235, 02=325, 03=742, 91=7,970 \u2014 do not treat prefix counts as unique vendors. All active+inactive file web_all_name.csv is 16,995,588 bytes, row count UNKNOWN this ticket.",
+      "identifier_fields": [
+        "WEB_VID",
+        "WEB_VENDOR_NO"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 12000
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": 11998
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 12000
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "other_fields": [
+        "WEB_CONTACT",
+        "WEB_HUB_STATUS",
+        "WEB_DESC",
+        "WEB_FAX"
+      ],
+      "terms_notes": "Published under Texas Government Code \u00a72155.263 and \u00a72161.064. Public domain / Comptroller privacy policy.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 12000
+    },
+    {
+      "source_id": "tx-cmbl-class-codes",
+      "hub_home": "CONTRACTOR",
+      "source_family": "vendor_registry",
+      "source_name": "CMBL class data and VIDs for active vendors",
+      "regulator": "Texas Comptroller of Public Accounts",
+      "source_url": "https://comptroller.texas.gov/auto-data/purchasing/vnr_clas.csv",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_VENDOR_REGISTRY",
+      "identity_bar": "EXACT",
+      "identity_field": "CLASS_VID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "vendor_class_code",
+      "record_count": 49245,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 49245
+    },
+    {
+      "source_id": "tx-dir-cooperative-contracts",
+      "hub_home": "CONTRACTOR",
+      "source_family": "vendor_registry",
+      "source_name": "DIR current active cooperative contracts",
+      "regulator": "Texas Department of Information Resources",
+      "source_url": "https://data.texas.gov/dataset/Official-DIR-Current-Active-Cooperative-Contracts/vipt-h4ye",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_VENDOR_REGISTRY",
+      "identity_bar": "EXACT",
+      "identity_field": "DIR contract_number + primary_vendor_name",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "vendor_contract",
+      "record_count": 5174,
+      "count_notes": "IT cooperative contracts, not construction licenses. Vendor contact email is in the schema.",
+      "identifier_fields": [
+        "contract_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-txdot-bid-tabulations",
+      "hub_home": "CONTRACTOR",
+      "source_family": "project_letting",
+      "source_name": "TxDOT Bid Tabulations",
+      "regulator": "Texas Department of Transportation",
+      "source_url": "https://data.texas.gov/dataset/Bid-Tabulations/de7b-7dna",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "vendor/contractor name on a bid \u2014 not a TDLR license",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "project_bid_item",
+      "record_count": 1057488,
+      "count_notes": "1,057,488 rows / 42 columns. Previous 24 months. Bid totals are not an award. Project grain, not a contractor license roster. Join to TDLR/TSBPE/CMBL is REVIEW_REQUIRED on name unless an exact vendor ID appears.",
+      "identifier_fields": [
+        "CCSJ / contract identifiers when present"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-txdot-project-information",
+      "hub_home": "CONTRACTOR",
+      "source_family": "project_letting",
+      "source_name": "TxDOT Project Information",
+      "regulator": "Texas Department of Transportation",
+      "source_url": "https://data.texas.gov/dataset/Project-Information/drau-zphx",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "last_checked": "2026-09-03",
+      "grain": "project",
+      "record_count": 8605,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tbpels-engineering-firm-roster",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TBPELS Engineering Firm Roster ZIP/CSV",
+      "regulator": "Texas Board of Professional Engineers and Land Surveyors",
+      "source_url": "https://pels.texas.gov/search",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TBPELS firm number (F-xxxxx)",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Agency states roster files are updated daily and available as zipped CSV. Guessed direct URLs 404'd this ticket. Firm search publishes phone and address. Individual PE mailing addresses/phones removed under SB 510 (2023). Exact download URL UNKNOWN. Do not scrape the 2,000-row search cap.",
+      "identifier_fields": [
+        "firm_num"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "acquisition_status": "PORTAL_LIVE_URL_NOT_PINNED",
+      "blocker": "Bulk ZIP exists per agency page; exact file URL not confirmed."
+    },
+    {
+      "source_id": "tx-tceq-landscape-irrigator",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "TCEQ landscape irrigator / company registration search",
+      "regulator": "Texas Commission on Environmental Quality",
+      "source_url": "https://www2.tceq.texas.gov/lic_dpa/index.cfm?fuseaction=licall.searchindiv",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TCEQ license number (LI\u2026)",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search by name or license number. No bulk irrigator roster found this ticket. Do not scrape.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-tdi-agencies",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI insurance agencies and businesses",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-agencies-and-businesses-approved-to-mana/3yqc-fcdt",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN + TDI agency_license_number",
+      "source_as_of": "2026-09-03",
+      "source_clock": "SODA live 2026-09-03; portal last updated 2026-08-17 on dataset page",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 56625,
+      "unique_npn": 43597,
+      "tx_state_rows": 23004,
+      "count_notes": "56,625 license rows; 43,597 unique NPN; 23,004 rows with state=TX. One agency may hold multiple licenses. Top type General Lines Agency 45,267. No phone, email, or street address in the published 12 columns \u2014 city/state/zip only.",
+      "identifier_fields": [
+        "npn",
+        "agency_license_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "org_name",
+        "agency_type",
+        "license_type",
+        "qualification",
+        "expiration_date",
+        "city",
+        "state",
+        "pstl_cd"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "LOW",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-agency-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI active insurance company appointments for agencies and businesses",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Active-insurance-company-appointments-for-agencies/avjc-7u2m",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Agency NPN + NAIC ID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "agency_company_appointment",
+      "record_count": 622019,
+      "unique_agency_npn": 35168,
+      "unique_naic": 1414,
+      "count_notes": "622,019 active agency-to-company appointments. 35,168 unique agency NPN. 1,414 unique NAIC IDs. This is the publishable appointment graph (business-to-company). Person appointments are a separate 4.40M file \u2014 do not publish people.",
+      "identifier_fields": [
+        "npn",
+        "naic_id",
+        "ein"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "company",
+        "agency_name",
+        "appointment_type",
+        "active_date",
+        "city",
+        "state",
+        "zip"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-agent-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI active insurance company appointments for agents and adjusters",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Active-insurance-company-appointments-for-agents-a/bupb-23s9",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Agent NPN + NAIC ID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential",
+      "record_count": 4400210,
+      "count_notes": "4,400,210 person-to-company appointments. Do not publish people this ticket. Old dataset id ft7p-v8a7 returned HTTP 403; current id is bupb-23s9. Portal still advertised ~4.32M on the old id page.",
+      "identifier_fields": [
+        "agent_npn",
+        "naic_id"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_DO_NOT_PUBLISH_PEOPLE",
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-person-licenses",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI insurance agents, adjusters, and people",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-agents-adjusters-and-people-approved-to-/kxv3-diwf",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN + TDI license_number",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential",
+      "record_count": 962001,
+      "count_notes": "962,001 person license rows. Do not publish people. General Lines Agent 546,310; Adjuster 167,956; Life Agent 132,472. No phone/email.",
+      "identifier_fields": [
+        "npn",
+        "license_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_DO_NOT_PUBLISH_PEOPLE",
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-surplus-lines",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI surplus lines agent and agency status detail",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Surplus-lines-agent-and-agency-status-detail/7isd-ex6t",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDI license_number",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": 18816,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-title-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI title agency appointments by county and underwriter",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Title-agency-title-direct-operations-appointments-/y9ze-ft94",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDI agy_lic_nbr",
+      "last_checked": "2026-09-03",
+      "grain": "title_agency_county_appointment",
+      "record_count": 23115,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "LOW",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-business-relationships",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI business relationships between agents, agencies, adjusters, and companies",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Business-relationships-between-agents-agencies-adj/kvqi-vsrr",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / EIN / NAIC on each side of the relationship",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_relationship",
+      "record_count": 132253,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-complaints-all",
+      "hub_home": "INSURANCE",
+      "source_family": "complaints",
+      "source_name": "TDI insurance complaints: all data",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-complaints-All-data/ubdr-4uff",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "company identifiers when present; complaint is not a violation",
+      "last_checked": "2026-09-03",
+      "grain": "complaint_row",
+      "record_count": 305156,
+      "count_notes": "Complaint \u2260 violation. One-record/complaint companion jjc8-mxkg has 289,359 rows. Complaint index pa9u-9s9w has 5,966 company-level index rows.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-complaint-index",
+      "hub_home": "INSURANCE",
+      "source_family": "complaints",
+      "source_name": "TDI complaint indexes and policy counts for insurance companies",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Complaint-indexes-and-policy-counts-for-insurance-/pa9u-9s9w",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NAIC / company name as published",
+      "last_checked": "2026-09-03",
+      "grain": "company_complaint_index",
+      "record_count": 5966,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-rate-filings",
+      "hub_home": "INSURANCE",
+      "source_family": "rate_filings",
+      "source_name": "TDI home and auto rate filings",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Home-and-auto-rate-filings/iubg-btfs",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "company_name + SERFF ID",
+      "last_checked": "2026-09-03",
+      "grain": "rate_filing",
+      "record_count": 18001,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-authorized-companies",
+      "hub_home": "INSURANCE",
+      "source_family": "company_roster",
+      "source_name": "TDI authorized insurance companies report",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://appscenter.tdi.texas.gov/tdireports/p/externalReports",
+      "index_url": "https://www.tdi.texas.gov/webinfo/colists.html",
+      "access_class": "OPEN_REPORT_TOOL",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NAIC number + TDI license/EID number",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official company lists (authorized companies, TPAs, premium finance, RRGs) are generated from the TDI reports tool under Company licensing. Fields described by TDI include license number, EIN, NAIC, mailing address, phone, licensed lines. This is not a SODA dataset. HTTP 200 on the reports app. Row count UNKNOWN until the report is run and exported. Do not scrape company-profile search.",
+      "identifier_fields": [
+        "NAIC",
+        "TDI license number",
+        "EIN"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "acquisition_status": "PORTAL_LIVE_COUNT_UNKNOWN"
+    },
+    {
+      "source_id": "tx-hhsc-tulip-ltc-provider-search",
+      "hub_home": "SENIOR",
+      "source_family": "facility_roster",
+      "source_name": "HHSC TULIP Long-Term Care Provider Search",
+      "regulator": "Texas Health and Human Services Commission",
+      "source_url": "https://tulip.hhs.texas.gov/TULIP/s/ltc-provider-information",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "HHSC facility/provider ID when displayed",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official search for nursing homes, ALFs, ICFs, DAHS, HCSSA (home health/hospice/PAS). No bulk LTC roster found on data.texas.gov. DNS to tulip.hhs.texas.gov failed from this research host; URL is still the official search. Do not scrape. Missing != zero Texas facilities.",
+      "identifier_fields": [
+        "HHSC ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk TULIP extract. Search only."
+    },
+    {
+      "source_id": "tx-hhsc-ccl-daycare",
+      "hub_home": "SENIOR",
+      "source_family": "facility_roster",
+      "source_name": "HHSC CCL daycare and residential operations",
+      "regulator": "Texas Health and Human Services Commission \u2014 Child Care Regulation",
+      "source_url": "https://data.texas.gov/dataset/HHSC-CCL-Daycare-and-Residential-Operations-Data/bc5r-88dy",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "OPERATION_ID / OPERATION_NUMBER",
+      "last_checked": "2026-09-03",
+      "grain": "facility",
+      "record_count": 14973,
+      "count_notes": "14,973 child-care / residential child-care operations. THIS IS NOT SENIOR CARE. Phone, website, email columns exist. Administrator/director names are people \u2014 omit from fixtures. Do not present as nursing-home quality.",
+      "identifier_fields": [
+        "operation_id",
+        "operation_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_A_SENIOR_ROSTER"
+    },
+    {
+      "source_id": "tx-cms-nursing-home-overlay",
+      "hub_home": "SENIOR",
+      "source_family": "facility_quality",
+      "source_name": "CMS Provider Data Catalog \u2014 nursing homes (Texas filter)",
+      "regulator": "Centers for Medicare & Medicaid Services",
+      "source_url": "https://data.cms.gov/provider-data/topics/nursing-homes",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CMS CCN",
+      "last_checked": "2026-09-03",
+      "grain": "facility",
+      "record_count": "UNKNOWN",
+      "count_notes": "National architecture. Texas principal-office/state filter is not HHSC licensure. CMS CCN \u2260 HHSC ID without a crosswalk. Live count query returned HTTP 400 this ticket. Missing != zero. Plan a CMS overlay in a Senior specialist ticket; do not scrape TULIP.",
+      "identifier_fields": [
+        "CMS CCN"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PLANNED_NATIONAL_OVERLAY_COUNT_UNKNOWN"
+    },
+    {
+      "source_id": "tx-sml-enforcement-orders",
+      "hub_home": "LENDER",
+      "source_family": "enforcement",
+      "source_name": "Texas SML enforcement orders CSV",
+      "regulator": "Texas Department of Savings and Mortgage Lending",
+      "source_url": "https://www.sml.texas.gov/wp-content/uploads/2025/10/sml_enforcement_orders_data_10_16_2025.csv",
+      "index_url": "https://www.sml.texas.gov/consumers/enforcement/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID when populated",
+      "source_as_of": "2025-10-16",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement_order",
+      "record_count": 3981,
+      "count_notes": "3,981 orders. NMLS ID nonempty 2,493. 1,488 rows have empty NMLS ID (name-only). Name-only adverse attach is UNSAFE. This is not a license roster. Clock is 2025-10-16 \u2014 may be stale vs current NMLS status.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 3981
+    },
+    {
+      "source_id": "tx-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "source_family": "license_roster",
+      "source_name": "NMLS Consumer Access (Texas SML / OCCC / DOB)",
+      "regulator": "NMLS / Texas SML / Texas OCCC / Texas DOB",
+      "source_url": "https://www.nmlsconsumeraccess.org",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "No Texas bulk mortgage-company roster found. Texas has two RMLO agencies (SML and OCCC). Do not scrape NMLS. No Florida-OFR-style state bulk file.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-tdhca-approved-lenders",
+      "hub_home": "LENDER",
+      "source_family": "program_directory",
+      "source_name": "TDHCA / TSAHC approved lender directories",
+      "regulator": "Texas Department of Housing and Community Affairs / Texas State Affordable Housing Corporation",
+      "source_url": "https://www.tdhca.texas.gov/",
+      "access_class": "OPEN_HTML_TABLE",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "program lender name; NMLS when the page prints it",
+      "last_checked": "2026-09-03",
+      "grain": "program_participant",
+      "record_count": "UNKNOWN",
+      "count_notes": "Guessed /homebuyers/approved-lenders URL 404'd. Program lists are not a statewide mortgage-license roster. Count UNKNOWN.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "acquisition_status": "URL_NOT_PINNED"
+    },
+    {
+      "source_id": "tx-txdmv-household-goods",
+      "hub_home": "MOVE",
+      "source_family": "operating_authority",
+      "source_name": "TxDMV TxMCCS / household-goods motor carrier search",
+      "regulator": "Texas Department of Motor Vehicles",
+      "source_url": "https://txmccs.txdmv.gov",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TxDMV certificate / USDOT when the record prints both",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "TxMCCS replaced MCCS/eLINC. Household-goods movers require Form E (liability) and Form H&I (cargo) insurance filings. Truck Stop search publishes filings. HTTP 200 but tiny body (likely JS app). TX authority \u2260 USDOT. USDOT \u2260 interstate operating authority by itself. License existence \u2260 current insurance unless the filing record proves it. Do not scrape.",
+      "identifier_fields": [
+        "TxDMV certificate",
+        "USDOT"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk household-goods roster. Insurance filing status is in the search UI, not a file."
+    },
+    {
+      "source_id": "tx-tdlr-tow-companies",
+      "hub_home": "MOVE",
+      "source_family": "license_roster",
+      "source_name": "TDLR Tow Truck Companies certificate file",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/TowCompanies.csv",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR CERTIFICATE_NUMBER",
+      "source_as_of": "2026-09-03",
+      "source_clock": "9/3/2026 6:15:09 AM; 1,074,594 bytes",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 3797,
+      "count_notes": "3,797 tow companies. NOT household-goods movers. Certificate format includes TDI_NBR, INSURANCE_COMPANY_NAME, POLICY_TYPE, coverage, effective/cancel dates. Occupancy: phone 3,689; TDI_NBR 3,797; insurance company 3,796; policy type 3,797. Policy type 10 = Form E per ttvsfformat.txt. This is current insurance-filing evidence for tow companies.",
+      "identifier_fields": [
+        "CERTIFICATE_NUMBER",
+        "TDI_NBR"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 3689
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 3797
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "MEDIUM",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 3797
+    },
+    {
+      "source_id": "tx-ssb-certificate-search",
+      "hub_home": "INVESTOR",
+      "source_family": "license_roster",
+      "source_name": "Texas State Securities Board certificate of registration search",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/securities-professionals/certificate-search",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Firm CRD/IARD number or TX file number",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search by CRD/IARD or TX file number. Certificates include firm name, address, expiration, designated officer. No bulk state-RIA roster found. State-RIA count UNKNOWN. TX principal office \u2260 Texas state registration. Do not name-only attach orders.",
+      "identifier_fields": [
+        "CRD",
+        "TX file number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-ssb-enforcement",
+      "hub_home": "INVESTOR",
+      "source_family": "enforcement",
+      "source_name": "Texas State Securities Board enforcement / administrative orders / alerts",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "order/docket ID + CRD when present",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk enforcement file found this ticket. Attach only on CRD, TX file number, or order/docket ID. Name-only adverse attach is UNSAFE.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-state-ria-bulk",
+      "hub_home": "INVESTOR",
+      "source_family": "license_roster",
+      "source_name": "Texas state-registered investment adviser bulk roster",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/",
+      "access_class": "UNKNOWN",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD / IARD",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk Texas state-RIA file found. Count UNKNOWN, not zero. Plan a separate SEC/IARD State Investment Adviser XML overlay. TX principal office \u2260 state registration. IARD is national.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "NOT_FOUND_COUNT_UNKNOWN"
+    },
+    {
+      "source_id": "tx-comptroller-sales-tax-permits",
+      "hub_home": "ASK",
+      "source_family": "business_registry",
+      "source_name": "Comptroller active sales tax permit holders",
+      "regulator": "Texas Comptroller of Public Accounts",
+      "source_url": "https://data.texas.gov/dataset/Active-Sales-Tax-Permit-Holders/jrea-zgmq",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_BUSINESS_REGISTRY",
+      "identity_bar": "EXACT",
+      "identity_field": "taxpayer_number + outlet_number",
+      "last_checked": "2026-09-03",
+      "grain": "tax_outlet",
+      "record_count": 885278,
+      "count_notes": "885,278 active sales-tax outlets. Address present. No phone/email in schema. Sales-tax permit \u2260 professional license. Public domain.",
+      "identifier_fields": [
+        "taxpayer_number",
+        "outlet_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "LOW"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-sos-sosdirect",
+      "hub_home": "ASK",
+      "source_family": "business_registry",
+      "source_name": "Texas Secretary of State SOSDirect / BEST bulk",
+      "regulator": "Texas Secretary of State",
+      "source_url": "https://direct.sos.state.tx.us/",
+      "access_class": "PAID_BULK_AND_PAID_SEARCH",
+      "contact_rank": "OFFICIAL_BUSINESS_REGISTRY",
+      "identity_bar": "EXACT",
+      "identity_field": "SOS file number",
+      "last_checked": "2026-09-03",
+      "grain": "legal_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "SOSDirect search is $1/search. Master Unload is paid bulk (not acquired). No free bulk entity dump. SOS address does not overwrite regulator addresses.",
+      "identifier_fields": [
+        "SOS file number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "MEDIUM"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "PAID_NOT_ACQUIRED"
+    },
+    {
+      "source_id": "tx-twc-employer-records",
+      "hub_home": "ASK",
+      "source_family": "employer_records",
+      "source_name": "Texas Workforce Commission employer / wage records",
+      "regulator": "Texas Workforce Commission",
+      "source_url": "https://www.twc.texas.gov/services/open-records",
+      "access_class": "CONFIDENTIAL_NOT_PUBLIC",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "last_checked": "2026-09-03",
+      "grain": "employer",
+      "record_count": "UNKNOWN",
+      "count_notes": "Unemployment compensation and employer tax records are confidential under TUCA. TexasLMI Find Employers is a DataAxle vendor overlay, not TWC wage records. Skip.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE"
+      },
+      "acquisition_status": "DELIBERATELY_SKIPPED_CONFIDENTIAL"
+    }
+  ]
+}

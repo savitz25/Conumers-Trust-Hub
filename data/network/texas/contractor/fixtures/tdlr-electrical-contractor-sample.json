@@ -1,0 +1,26 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-tdlr-electrical-contractor",
+  "source_url": "https://www.tdlr.texas.gov/dbproduction2/Lteecele.csv",
+  "source_as_of": "2026-09-03",
+  "note": "Three official Electrical Contractor rows. Exact ID is TDLR license number. Person electrician files are out of this fixture.",
+  "row_count_file": 14036,
+  "rows": [
+    {
+      "LICENSE TYPE": "Electrical Contractor",
+      "LICENSE NUMBER": "17000",
+      "BUSINESS NAME": "TORRES ELECTRICAL SERVICE",
+      "BUSINESS CITY, STATE ZIP": "HOUSTON TX 77031-2516",
+      "BUSINESS PHONE": "7135622862",
+      "BUSINESS COUNTY": "HARRIS"
+    },
+    {
+      "LICENSE TYPE": "Electrical Contractor",
+      "LICENSE NUMBER": "17001",
+      "BUSINESS NAME": "ELECTRICAL INNOVATIONS OF TEXAS",
+      "BUSINESS CITY, STATE ZIP": "PASADENA TX 77503",
+      "BUSINESS PHONE": "2815426301",
+      "BUSINESS COUNTY": "HARRIS"
+    }
+  ]
+}

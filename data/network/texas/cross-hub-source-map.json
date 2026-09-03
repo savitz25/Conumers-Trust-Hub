@@ -1,0 +1,67 @@
+{
+  "ticket": "ATH-TX-001",
+  "note": "Statewide sources live once. Do not duplicate per hub. Texas counties are out of scope.",
+  "sources": [
+    {
+      "source_id": "tx-open-data-portal",
+      "name": "Texas Open Data (data.texas.gov)",
+      "url": "https://data.texas.gov",
+      "priority": [
+        "business identity",
+        "enforcement",
+        "vendor data",
+        "geography"
+      ]
+    },
+    {
+      "source_id": "tx-cmbl-active-vendors",
+      "priority": [
+        "business identity",
+        "contacts",
+        "vendor data"
+      ]
+    },
+    {
+      "source_id": "tx-comptroller-sales-tax-permits",
+      "priority": [
+        "business identity",
+        "geography"
+      ]
+    },
+    {
+      "source_id": "tx-dir-cooperative-contracts",
+      "priority": [
+        "vendor data",
+        "contacts"
+      ]
+    },
+    {
+      "source_id": "tx-txdot-bid-tabulations",
+      "priority": [
+        "vendor data",
+        "geography"
+      ]
+    },
+    {
+      "source_id": "tx-sos-sosdirect",
+      "priority": [
+        "business identity"
+      ],
+      "access": "PAID"
+    },
+    {
+      "source_id": "tx-twc-employer-records",
+      "priority": [
+        "contacts"
+      ],
+      "access": "CONFIDENTIAL_SKIP"
+    },
+    {
+      "source_id": "tx-tceq-landscape-irrigator",
+      "priority": [
+        "business identity"
+      ],
+      "access": "SEARCH_ONLY"
+    }
+  ]
+}

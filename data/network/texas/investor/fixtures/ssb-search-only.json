@@ -1,0 +1,13 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-ssb-certificate-search",
+  "source_url": "https://www.ssb.texas.gov/securities-professionals/certificate-search",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "identity": [
+    "CRD",
+    "TX file number"
+  ],
+  "state_ria_bulk_count": "UNKNOWN",
+  "note": "No bulk Texas state-RIA file. TX principal office \u2260 state registration. Plan SEC/IARD overlay. No name-only attach.",
+  "rows": []
+}

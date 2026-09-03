@@ -1,0 +1,27 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-tdi-agencies",
+  "source_url": "https://data.texas.gov/resource/3yqc-fcdt.json",
+  "source_as_of": "2026-09-03",
+  "note": "Exact IDs are NPN and TDI agency license number. No phone/email in official columns.",
+  "row_count_soda": 56625,
+  "unique_npn": 43597,
+  "rows": [
+    {
+      "npn": "10003569",
+      "agency_license_number": "2282655",
+      "org_name": "CHELSEA MORGAN SECURITIES INC",
+      "license_type": "Life Agency",
+      "city": "STATEN ISLAND",
+      "state": "NY"
+    },
+    {
+      "npn": "10004153",
+      "agency_license_number": "1478443",
+      "org_name": "JOHNSON FEED AND WESTERN WEAR, INC.",
+      "license_type": "Specialty Insurance Agency",
+      "city": "ALPINE",
+      "state": "TX"
+    }
+  ]
+}

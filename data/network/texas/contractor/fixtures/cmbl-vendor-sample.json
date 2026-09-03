@@ -1,0 +1,26 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-cmbl-active-vendors",
+  "source_url": "https://comptroller.texas.gov/auto-data/purchasing/web_name.csv",
+  "source_as_of": "2026-09-03",
+  "note": "VENDOR \u2260 contractor license. Exact ID is WEB_VID.",
+  "row_count_file": 12000,
+  "rows": [
+    {
+      "WEB_VID": "1273176862300",
+      "WEB_NAME_VENDOR_NAME": "STUDIO OUTSIDE",
+      "WEB_CITY": "DALLAS",
+      "WEB_PHONE": "214-954-7160",
+      "WEB_EMAIL_ADDRESS": "smarshall@studiooutside.us",
+      "WEB_VENDOR_NO": "507129"
+    },
+    {
+      "WEB_VID": "1883662123700",
+      "WEB_NAME_VENDOR_NAME": "GALAXY EHS CORPORATION",
+      "WEB_CITY": "HOUSTON",
+      "WEB_PHONE": "713-202-4965",
+      "WEB_EMAIL_ADDRESS": "Matthew.Wright@galaxyehs.com",
+      "WEB_VENDOR_NO": "553789"
+    }
+  ]
+}

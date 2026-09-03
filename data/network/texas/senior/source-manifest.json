@@ -1,0 +1,189 @@
+{
+  "ticket": "ATH-TX-001",
+  "hub": "senior",
+  "state": "TX",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "tx-hhsc-tulip-ltc-provider-search",
+    "tx-hhsc-ccl-daycare",
+    "tx-cms-nursing-home-overlay"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-hhsc-tulip-ltc-provider-search",
+      "hub_home": "SENIOR",
+      "source_family": "facility_roster",
+      "source_name": "HHSC TULIP Long-Term Care Provider Search",
+      "regulator": "Texas Health and Human Services Commission",
+      "source_url": "https://tulip.hhs.texas.gov/TULIP/s/ltc-provider-information",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "HHSC facility/provider ID when displayed",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official search for nursing homes, ALFs, ICFs, DAHS, HCSSA (home health/hospice/PAS). No bulk LTC roster found on data.texas.gov. DNS to tulip.hhs.texas.gov failed from this research host; URL is still the official search. Do not scrape. Missing != zero Texas facilities.",
+      "identifier_fields": [
+        "HHSC ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk TULIP extract. Search only."
+    },
+    {
+      "source_id": "tx-hhsc-ccl-daycare",
+      "hub_home": "SENIOR",
+      "source_family": "facility_roster",
+      "source_name": "HHSC CCL daycare and residential operations",
+      "regulator": "Texas Health and Human Services Commission \u2014 Child Care Regulation",
+      "source_url": "https://data.texas.gov/dataset/HHSC-CCL-Daycare-and-Residential-Operations-Data/bc5r-88dy",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "OPERATION_ID / OPERATION_NUMBER",
+      "last_checked": "2026-09-03",
+      "grain": "facility",
+      "record_count": 14973,
+      "count_notes": "14,973 child-care / residential child-care operations. THIS IS NOT SENIOR CARE. Phone, website, email columns exist. Administrator/director names are people \u2014 omit from fixtures. Do not present as nursing-home quality.",
+      "identifier_fields": [
+        "operation_id",
+        "operation_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_A_SENIOR_ROSTER"
+    },
+    {
+      "source_id": "tx-cms-nursing-home-overlay",
+      "hub_home": "SENIOR",
+      "source_family": "facility_quality",
+      "source_name": "CMS Provider Data Catalog \u2014 nursing homes (Texas filter)",
+      "regulator": "Centers for Medicare & Medicaid Services",
+      "source_url": "https://data.cms.gov/provider-data/topics/nursing-homes",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CMS CCN",
+      "last_checked": "2026-09-03",
+      "grain": "facility",
+      "record_count": "UNKNOWN",
+      "count_notes": "National architecture. Texas principal-office/state filter is not HHSC licensure. CMS CCN \u2260 HHSC ID without a crosswalk. Live count query returned HTTP 400 this ticket. Missing != zero. Plan a CMS overlay in a Senior specialist ticket; do not scrape TULIP.",
+      "identifier_fields": [
+        "CMS CCN"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "PLANNED_NATIONAL_OVERLAY_COUNT_UNKNOWN"
+    }
+  ]
+}

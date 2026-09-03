@@ -1,0 +1,9 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-hhsc-tulip-ltc-provider-search",
+  "source_url": "https://tulip.hhs.texas.gov/TULIP/s/ltc-provider-information",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "row_count": "UNKNOWN",
+  "note": "No bulk Texas LTC roster. HHSC CCL 14,973 is daycare, not senior care. Plan CMS nursing-home overlay. TX facility ID \u2260 CMS CCN without a crosswalk.",
+  "rows": []
+}

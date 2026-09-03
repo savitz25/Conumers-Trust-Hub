@@ -1,0 +1,30 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-tdlr-tow-companies",
+  "source_url": "https://www.tdlr.texas.gov/dbproduction2/TowCompanies.csv",
+  "source_as_of": "2026-09-03",
+  "note": "Tow companies are not household-goods movers. POLICY_TYPE 10 is Form E per official format. TDI_NBR is insurance-filing evidence.",
+  "row_count_file": 3797,
+  "rows": [
+    {
+      "CERTIFICATE_NUMBER": "006599388C",
+      "CERTIFICATE_TYPE": "Tow Company",
+      "CUSTOMER_NAME": "AMERICAN TOWING AND AUTO REPAIR OF DALL",
+      "PHONE": "972-322-1596",
+      "SITE_CITY": "LEWISVILLE",
+      "TDI_NBR": "67940",
+      "INSURANCE_COMPANY_NAME": "PROGRESSIVE COUNTY MUTUAL INSURANCE COMPANY",
+      "POLICY_TYPE": "10"
+    },
+    {
+      "CERTIFICATE_NUMBER": "006632622C",
+      "CERTIFICATE_TYPE": "Tow Company",
+      "CUSTOMER_NAME": "APEX TOWING LLC",
+      "PHONE": "210-758-0310",
+      "SITE_CITY": "SAN ANTONIO",
+      "TDI_NBR": "93805",
+      "INSURANCE_COMPANY_NAME": "NATIONAL LIABILITY & FIRE INSURANCE COMPANY",
+      "POLICY_TYPE": "10"
+    }
+  ]
+}

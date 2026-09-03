@@ -1,0 +1,134 @@
+{
+  "ticket": "ATH-TX-001",
+  "hub": "move",
+  "state": "TX",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "tx-txdmv-household-goods",
+    "tx-tdlr-tow-companies"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-txdmv-household-goods",
+      "hub_home": "MOVE",
+      "source_family": "operating_authority",
+      "source_name": "TxDMV TxMCCS / household-goods motor carrier search",
+      "regulator": "Texas Department of Motor Vehicles",
+      "source_url": "https://txmccs.txdmv.gov",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TxDMV certificate / USDOT when the record prints both",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "TxMCCS replaced MCCS/eLINC. Household-goods movers require Form E (liability) and Form H&I (cargo) insurance filings. Truck Stop search publishes filings. HTTP 200 but tiny body (likely JS app). TX authority \u2260 USDOT. USDOT \u2260 interstate operating authority by itself. License existence \u2260 current insurance unless the filing record proves it. Do not scrape.",
+      "identifier_fields": [
+        "TxDMV certificate",
+        "USDOT"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk household-goods roster. Insurance filing status is in the search UI, not a file."
+    },
+    {
+      "source_id": "tx-tdlr-tow-companies",
+      "hub_home": "MOVE",
+      "source_family": "license_roster",
+      "source_name": "TDLR Tow Truck Companies certificate file",
+      "regulator": "Texas Department of Licensing and Regulation",
+      "source_url": "https://www.tdlr.texas.gov/dbproduction2/TowCompanies.csv",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDLR CERTIFICATE_NUMBER",
+      "source_as_of": "2026-09-03",
+      "source_clock": "9/3/2026 6:15:09 AM; 1,074,594 bytes",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 3797,
+      "count_notes": "3,797 tow companies. NOT household-goods movers. Certificate format includes TDI_NBR, INSURANCE_COMPANY_NAME, POLICY_TYPE, coverage, effective/cancel dates. Occupancy: phone 3,689; TDI_NBR 3,797; insurance company 3,796; policy type 3,797. Policy type 10 = Form E per ttvsfformat.txt. This is current insurance-filing evidence for tow companies.",
+      "identifier_fields": [
+        "CERTIFICATE_NUMBER",
+        "TDI_NBR"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 3689
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 3797
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "MEDIUM",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 3797
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-tsbpe-responsible-master-plumber",
+  "source_url": "https://tsbpe.texas.gov/wp-content/uploads/2015/03/RMP.csv",
+  "source_as_of": "2026-09-03",
+  "note": "Person names omitted. Exact ID is LICENSE_NBR. INS_EXPIRY_DTE is insurance filing evidence, not a TDI appointment.",
+  "row_count_file": 9360,
+  "rows": [
+    {
+      "LICENSE_NBR": "16345",
+      "LIC_STATUS": "Current",
+      "PLUMB_COMPANY": "SAWYER PLUMBING SERVICE",
+      "INSURANCE_COMPANY": "MID CENTURY INS CO",
+      "INS_EXPIRY_DTE": "10/03/2026",
+      "CITY": "DENTON",
+      "STATE": "TX"
+    },
+    {
+      "LICENSE_NBR": "20115",
+      "LIC_STATUS": "Current",
+      "PLUMB_COMPANY": "FAIN SEWER-N-DRAIN",
+      "INSURANCE_COMPANY": "HOOPER & HINES INSURANCE",
+      "INS_EXPIRY_DTE": "08/23/2027",
+      "CITY": "GEORGETOWN",
+      "STATE": "TX"
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "ticket": "ATH-TX-001",
+  "hub": "lender",
+  "state": "TX",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "tx-sml-enforcement-orders",
+    "tx-nmls-consumer-access",
+    "tx-tdhca-approved-lenders"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-sml-enforcement-orders",
+      "hub_home": "LENDER",
+      "source_family": "enforcement",
+      "source_name": "Texas SML enforcement orders CSV",
+      "regulator": "Texas Department of Savings and Mortgage Lending",
+      "source_url": "https://www.sml.texas.gov/wp-content/uploads/2025/10/sml_enforcement_orders_data_10_16_2025.csv",
+      "index_url": "https://www.sml.texas.gov/consumers/enforcement/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID when populated",
+      "source_as_of": "2025-10-16",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement_order",
+      "record_count": 3981,
+      "count_notes": "3,981 orders. NMLS ID nonempty 2,493. 1,488 rows have empty NMLS ID (name-only). Name-only adverse attach is UNSAFE. This is not a license roster. Clock is 2025-10-16 \u2014 may be stale vs current NMLS status.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 3981
+    },
+    {
+      "source_id": "tx-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "source_family": "license_roster",
+      "source_name": "NMLS Consumer Access (Texas SML / OCCC / DOB)",
+      "regulator": "NMLS / Texas SML / Texas OCCC / Texas DOB",
+      "source_url": "https://www.nmlsconsumeraccess.org",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "No Texas bulk mortgage-company roster found. Texas has two RMLO agencies (SML and OCCC). Do not scrape NMLS. No Florida-OFR-style state bulk file.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-tdhca-approved-lenders",
+      "hub_home": "LENDER",
+      "source_family": "program_directory",
+      "source_name": "TDHCA / TSAHC approved lender directories",
+      "regulator": "Texas Department of Housing and Community Affairs / Texas State Affordable Housing Corporation",
+      "source_url": "https://www.tdhca.texas.gov/",
+      "access_class": "OPEN_HTML_TABLE",
+      "contact_rank": "OFFICIAL_GOVERNMENT_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "program lender name; NMLS when the page prints it",
+      "last_checked": "2026-09-03",
+      "grain": "program_participant",
+      "record_count": "UNKNOWN",
+      "count_notes": "Guessed /homebuyers/approved-lenders URL 404'd. Program lists are not a statewide mortgage-license roster. Count UNKNOWN.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "acquisition_status": "URL_NOT_PINNED"
+    }
+  ]
+}

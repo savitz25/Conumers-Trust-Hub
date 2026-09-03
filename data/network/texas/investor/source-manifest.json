@@ -1,0 +1,182 @@
+{
+  "ticket": "ATH-TX-001",
+  "hub": "investor",
+  "state": "TX",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "tx-ssb-certificate-search",
+    "tx-ssb-enforcement",
+    "tx-state-ria-bulk"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-ssb-certificate-search",
+      "hub_home": "INVESTOR",
+      "source_family": "license_roster",
+      "source_name": "Texas State Securities Board certificate of registration search",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/securities-professionals/certificate-search",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Firm CRD/IARD number or TX file number",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search by CRD/IARD or TX file number. Certificates include firm name, address, expiration, designated officer. No bulk state-RIA roster found. State-RIA count UNKNOWN. TX principal office \u2260 Texas state registration. Do not name-only attach orders.",
+      "identifier_fields": [
+        "CRD",
+        "TX file number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-ssb-enforcement",
+      "hub_home": "INVESTOR",
+      "source_family": "enforcement",
+      "source_name": "Texas State Securities Board enforcement / administrative orders / alerts",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "order/docket ID + CRD when present",
+      "last_checked": "2026-09-03",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk enforcement file found this ticket. Attach only on CRD, TX file number, or order/docket ID. Name-only adverse attach is UNSAFE.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "tx-state-ria-bulk",
+      "hub_home": "INVESTOR",
+      "source_family": "license_roster",
+      "source_name": "Texas state-registered investment adviser bulk roster",
+      "regulator": "Texas State Securities Board",
+      "source_url": "https://www.ssb.texas.gov/",
+      "access_class": "UNKNOWN",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD / IARD",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "No bulk Texas state-RIA file found. Count UNKNOWN, not zero. Plan a separate SEC/IARD State Investment Adviser XML overlay. TX principal office \u2260 state registration. IARD is national.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW"
+      },
+      "acquisition_status": "NOT_FOUND_COUNT_UNKNOWN"
+    }
+  ]
+}

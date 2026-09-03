@@ -1,0 +1,179 @@
+{
+  "ticket": "ATH-TX-001",
+  "checked": "2026-09-03",
+  "acquired_this_ticket": [
+    {
+      "source_id": "tx-tdlr-ac-contractor",
+      "method": "official CSV",
+      "rows": 20427,
+      "phone_nonempty": 0,
+      "committed": false
+    },
+    {
+      "source_id": "tx-tdlr-electrical-contractor",
+      "method": "official CSV",
+      "rows": 14036,
+      "phone_nonempty": 14031,
+      "committed": false
+    },
+    {
+      "source_id": "tx-tdlr-tow-companies",
+      "method": "official CSV",
+      "rows": 3797,
+      "phone_nonempty": 3689,
+      "committed": false
+    },
+    {
+      "source_id": "tx-tsbpe-responsible-master-plumber",
+      "method": "official CSV",
+      "rows": 9360,
+      "phone_nonempty": 4778,
+      "insurance_company_nonempty": 9347,
+      "committed": false
+    },
+    {
+      "source_id": "tx-tsbpe-master-plumber",
+      "method": "official CSV",
+      "rows": 4325,
+      "committed": false
+    },
+    {
+      "source_id": "tx-cmbl-active-vendors",
+      "method": "official CSV",
+      "rows": 12000,
+      "phone_nonempty": 12000,
+      "email_nonempty": 11998,
+      "committed": false
+    },
+    {
+      "source_id": "tx-cmbl-class-codes",
+      "method": "official CSV",
+      "rows": 49245,
+      "committed": false
+    },
+    {
+      "source_id": "tx-sml-enforcement-orders",
+      "method": "official CSV",
+      "rows": 3981,
+      "nmls_nonempty": 2493,
+      "committed": false
+    }
+  ],
+  "counted_not_dumped": [
+    {
+      "source_id": "tx-tdlr-soda-all-licenses",
+      "rows": 983494,
+      "note": "lagging vs official 187.40 Mb CSV"
+    },
+    {
+      "source_id": "tx-tdi-agencies",
+      "rows": 56625,
+      "unique_npn": 43597
+    },
+    {
+      "source_id": "tx-tdi-agency-appointments",
+      "rows": 622019,
+      "unique_npn": 35168,
+      "unique_naic": 1414
+    },
+    {
+      "source_id": "tx-tdi-agent-appointments",
+      "rows": 4400210,
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-person-licenses",
+      "rows": 962001,
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-surplus-lines",
+      "rows": 18816
+    },
+    {
+      "source_id": "tx-tdi-title-appointments",
+      "rows": 23115
+    },
+    {
+      "source_id": "tx-tdi-business-relationships",
+      "rows": 132253
+    },
+    {
+      "source_id": "tx-tdi-complaints-all",
+      "rows": 305156
+    },
+    {
+      "source_id": "tx-tdi-complaint-index",
+      "rows": 5966
+    },
+    {
+      "source_id": "tx-tdi-rate-filings",
+      "rows": 18001
+    },
+    {
+      "source_id": "tx-txdot-bid-tabulations",
+      "rows": 1057488
+    },
+    {
+      "source_id": "tx-txdot-project-information",
+      "rows": 8605
+    },
+    {
+      "source_id": "tx-dir-cooperative-contracts",
+      "rows": 5174
+    },
+    {
+      "source_id": "tx-comptroller-sales-tax-permits",
+      "rows": 885278
+    },
+    {
+      "source_id": "tx-hhsc-ccl-daycare",
+      "rows": 14973,
+      "note": "not senior care"
+    }
+  ],
+  "giant_files_not_ingested": [
+    {
+      "source_id": "tx-tdlr-official-all-licenses-csv",
+      "bytes": 187404606,
+      "reason": "do not commit giant raw"
+    },
+    {
+      "source_id": "tx-cmbl-all-active-inactive",
+      "bytes": 16995588,
+      "reason": "inactive universe not needed this ticket"
+    }
+  ],
+  "attempted_incomplete": [
+    {
+      "source_id": "tx-tdi-agent-appointments-old-id",
+      "id": "ft7p-v8a7",
+      "result": "HTTP 403; replaced by bupb-23s9"
+    },
+    {
+      "source_id": "tx-tsbpe-soda",
+      "id": "qced-zkby",
+      "result": "HTTP 404; official CSVs used instead"
+    },
+    {
+      "source_id": "tx-cms-nursing-home-overlay",
+      "result": "datastore count query HTTP 400; count UNKNOWN"
+    },
+    {
+      "source_id": "tx-hhsc-tulip-ltc-provider-search",
+      "result": "getaddrinfo failed from research host; still official search URL"
+    }
+  ],
+  "not_acquired": [
+    "TDLR All Licenses 187.40 Mb CSV",
+    "TDI authorized-companies report export",
+    "TULIP LTC bulk (does not exist as a file)",
+    "TxDMV household-goods bulk",
+    "SSB state-RIA bulk",
+    "NMLS Consumer Access bulk",
+    "SOSDirect Master Unload (paid)",
+    "TWC employer wage records (confidential)",
+    "TBPELS firm ZIP (URL not pinned)",
+    "TCEQ irrigator bulk"
+  ]
+}

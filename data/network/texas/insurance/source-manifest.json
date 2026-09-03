@@ -1,0 +1,673 @@
+{
+  "ticket": "ATH-TX-001",
+  "hub": "insurance",
+  "state": "TX",
+  "source_as_of": "2026-09-03",
+  "source_ids": [
+    "tx-tdi-agencies",
+    "tx-tdi-agency-appointments",
+    "tx-tdi-agent-appointments",
+    "tx-tdi-person-licenses",
+    "tx-tdi-surplus-lines",
+    "tx-tdi-title-appointments",
+    "tx-tdi-business-relationships",
+    "tx-tdi-complaints-all",
+    "tx-tdi-complaint-index",
+    "tx-tdi-rate-filings",
+    "tx-tdi-authorized-companies"
+  ],
+  "sources": [
+    {
+      "source_id": "tx-tdi-agencies",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI insurance agencies and businesses",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-agencies-and-businesses-approved-to-mana/3yqc-fcdt",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN + TDI agency_license_number",
+      "source_as_of": "2026-09-03",
+      "source_clock": "SODA live 2026-09-03; portal last updated 2026-08-17 on dataset page",
+      "last_checked": "2026-09-03",
+      "grain": "business_credential",
+      "record_count": 56625,
+      "unique_npn": 43597,
+      "tx_state_rows": 23004,
+      "count_notes": "56,625 license rows; 43,597 unique NPN; 23,004 rows with state=TX. One agency may hold multiple licenses. Top type General Lines Agency 45,267. No phone, email, or street address in the published 12 columns \u2014 city/state/zip only.",
+      "identifier_fields": [
+        "npn",
+        "agency_license_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "org_name",
+        "agency_type",
+        "license_type",
+        "qualification",
+        "expiration_date",
+        "city",
+        "state",
+        "pstl_cd"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "LOW",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-agency-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI active insurance company appointments for agencies and businesses",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Active-insurance-company-appointments-for-agencies/avjc-7u2m",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Agency NPN + NAIC ID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "agency_company_appointment",
+      "record_count": 622019,
+      "unique_agency_npn": 35168,
+      "unique_naic": 1414,
+      "count_notes": "622,019 active agency-to-company appointments. 35,168 unique agency NPN. 1,414 unique NAIC IDs. This is the publishable appointment graph (business-to-company). Person appointments are a separate 4.40M file \u2014 do not publish people.",
+      "identifier_fields": [
+        "npn",
+        "naic_id",
+        "ein"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "company",
+        "agency_name",
+        "appointment_type",
+        "active_date",
+        "city",
+        "state",
+        "zip"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-agent-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI active insurance company appointments for agents and adjusters",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Active-insurance-company-appointments-for-agents-a/bupb-23s9",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "Agent NPN + NAIC ID",
+      "source_as_of": "2026-09-03",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential",
+      "record_count": 4400210,
+      "count_notes": "4,400,210 person-to-company appointments. Do not publish people this ticket. Old dataset id ft7p-v8a7 returned HTTP 403; current id is bupb-23s9. Portal still advertised ~4.32M on the old id page.",
+      "identifier_fields": [
+        "agent_npn",
+        "naic_id"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_DO_NOT_PUBLISH_PEOPLE",
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-person-licenses",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI insurance agents, adjusters, and people",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-agents-adjusters-and-people-approved-to-/kxv3-diwf",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN + TDI license_number",
+      "last_checked": "2026-09-03",
+      "grain": "person_credential",
+      "record_count": 962001,
+      "count_notes": "962,001 person license rows. Do not publish people. General Lines Agent 546,310; Adjuster 167,956; Life Agent 132,472. No phone/email.",
+      "identifier_fields": [
+        "npn",
+        "license_number"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_DO_NOT_PUBLISH_PEOPLE",
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "tx-tdi-surplus-lines",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "TDI surplus lines agent and agency status detail",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Surplus-lines-agent-and-agency-status-detail/7isd-ex6t",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDI license_number",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": 18816,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-title-appointments",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI title agency appointments by county and underwriter",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Title-agency-title-direct-operations-appointments-/y9ze-ft94",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "TDI agy_lic_nbr",
+      "last_checked": "2026-09-03",
+      "grain": "title_agency_county_appointment",
+      "record_count": 23115,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "LOW",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-business-relationships",
+      "hub_home": "INSURANCE",
+      "source_family": "appointment_graph",
+      "source_name": "TDI business relationships between agents, agencies, adjusters, and companies",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Business-relationships-between-agents-agencies-adj/kvqi-vsrr",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / EIN / NAIC on each side of the relationship",
+      "last_checked": "2026-09-03",
+      "grain": "mixed_person_and_business_relationship",
+      "record_count": 132253,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-complaints-all",
+      "hub_home": "INSURANCE",
+      "source_family": "complaints",
+      "source_name": "TDI insurance complaints: all data",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Insurance-complaints-All-data/ubdr-4uff",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "company identifiers when present; complaint is not a violation",
+      "last_checked": "2026-09-03",
+      "grain": "complaint_row",
+      "record_count": 305156,
+      "count_notes": "Complaint \u2260 violation. One-record/complaint companion jjc8-mxkg has 289,359 rows. Complaint index pa9u-9s9w has 5,966 company-level index rows.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-complaint-index",
+      "hub_home": "INSURANCE",
+      "source_family": "complaints",
+      "source_name": "TDI complaint indexes and policy counts for insurance companies",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Complaint-indexes-and-policy-counts-for-insurance-/pa9u-9s9w",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NAIC / company name as published",
+      "last_checked": "2026-09-03",
+      "grain": "company_complaint_index",
+      "record_count": 5966,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-rate-filings",
+      "hub_home": "INSURANCE",
+      "source_family": "rate_filings",
+      "source_name": "TDI home and auto rate filings",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://data.texas.gov/dataset/Home-and-auto-rate-filings/iubg-btfs",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "company_name + SERFF ID",
+      "last_checked": "2026-09-03",
+      "grain": "rate_filing",
+      "record_count": 18001,
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "tx-tdi-authorized-companies",
+      "hub_home": "INSURANCE",
+      "source_family": "company_roster",
+      "source_name": "TDI authorized insurance companies report",
+      "regulator": "Texas Department of Insurance",
+      "source_url": "https://appscenter.tdi.texas.gov/tdireports/p/externalReports",
+      "index_url": "https://www.tdi.texas.gov/webinfo/colists.html",
+      "access_class": "OPEN_REPORT_TOOL",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NAIC number + TDI license/EID number",
+      "last_checked": "2026-09-03",
+      "grain": "regulated_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official company lists (authorized companies, TPAs, premium finance, RRGs) are generated from the TDI reports tool under Company licensing. Fields described by TDI include license number, EIN, NAIC, mailing address, phone, licensed lines. This is not a SODA dataset. HTTP 200 on the reports app. Row count UNKNOWN until the report is run and exported. Do not scrape company-profile search.",
+      "identifier_fields": [
+        "NAIC",
+        "TDI license number",
+        "EIN"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM"
+      },
+      "acquisition_status": "PORTAL_LIVE_COUNT_UNKNOWN"
+    }
+  ]
+}

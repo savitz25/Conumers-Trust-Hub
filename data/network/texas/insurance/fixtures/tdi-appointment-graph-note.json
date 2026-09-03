@@ -1,0 +1,20 @@
+{
+  "ticket": "ATH-TX-001",
+  "source_id": "tx-tdi-agency-appointments",
+  "source_url": "https://data.texas.gov/dataset/Active-insurance-company-appointments-for-agencies/avjc-7u2m",
+  "source_as_of": "2026-09-03",
+  "graph": {
+    "nodes": [
+      "agency NPN",
+      "NAIC company",
+      "TDI agency license"
+    ],
+    "edges": "active appointments",
+    "agency_appointment_rows": 622019,
+    "unique_agency_npn": 35168,
+    "unique_naic": 1414,
+    "person_appointment_rows": 4400210,
+    "person_publication": false
+  },
+  "note": "Publish agency-to-company graph only. Person appointments (bupb-23s9) stay unpublished."
+}
