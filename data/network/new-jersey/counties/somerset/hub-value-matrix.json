@@ -1,0 +1,104 @@
+{
+  "county": "Somerset",
+  "county_fips": "34035",
+  "ticket": "ATH-NJ-COUNTY-001B",
+  "scoring": "HIGH / MEDIUM / LOW / NONE — differentiated county value only",
+  "rows": [
+    {
+      "source_id": "somerset-housing-options",
+      "ASK": "HIGH",
+      "MOVE": "NONE",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "NONE",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "Official planning inventory with source categories and public contacts. Unique vs NJDOH/CMS."
+    },
+    {
+      "source_id": "somerset-nursing-homes-geocode",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "NONE",
+      "INSURANCE": "LOW",
+      "SENIOR": "MEDIUM",
+      "CONTRACTOR": "NONE",
+      "INVESTOR": "NONE",
+      "spine": false,
+      "why": "Small geocode, not a license roster. Keep secondary to Housing Options and statewide Senior."
+    },
+    {
+      "source_id": "somerset-gis-hub-catalog",
+      "ASK": "HIGH",
+      "MOVE": "LOW",
+      "LENDER": "MEDIUM",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "Reusable discovery pattern for county GIS."
+    },
+    {
+      "source_id": "somerset-sewer-service-areas",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "County utility geography not in statewide construction rows."
+    },
+    {
+      "source_id": "somerset-tax-parcel-viewer",
+      "ASK": "MEDIUM",
+      "MOVE": "LOW",
+      "LENDER": "MEDIUM",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "LOW",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "NONE",
+      "spine": false,
+      "why": "Hand consumers the official viewer; do not rebuild 200-ft notices."
+    },
+    {
+      "source_id": "somerset-acclaim-land-records",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "LOW",
+      "spine": false,
+      "why": "High Lender value but FREE_ACCOUNT_REQUIRED; skip until bulk exists."
+    },
+    {
+      "source_id": "somerset-sheriff-sales",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "MEDIUM",
+      "spine": false,
+      "why": "Useful status grain if a no-PII CSV appears."
+    },
+    {
+      "source_id": "somerset-aging-adrc",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "NONE",
+      "INSURANCE": "LOW",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "NONE",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "AAA/ADRC contact distinct from housing inventory."
+    }
+  ]
+}

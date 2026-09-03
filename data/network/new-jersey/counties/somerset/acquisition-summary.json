@@ -1,0 +1,46 @@
+{
+  "county": "Somerset",
+  "county_fips": "34035",
+  "ticket": "ATH-NJ-COUNTY-001B",
+  "retrieved_at": "2026-09-03T18:00:00.000Z",
+  "easy_wins_acquired": [
+    "GIS Hub DCAT catalog (75 datasets) inventoried",
+    "Housing Options FeatureServer: 200 points; 58 senior-related records saved as fixture",
+    "Nursing Homes FeatureServer: 14 geocoded points saved as fixture",
+    "Layer schema/counts for parcels, SFHA, sewer, roads, parklands, ROSI, municipalities, streams"
+  ],
+  "senior_housing": {
+    "result": "OPEN_GIS_SERVICE FeatureServer exists and is the official Planning Board inventory behind Housing Navigator.",
+    "url": "https://services2.arcgis.com/2g2XvfUywwLJoF2c/arcgis/rest/services/Somerset_County_Housing_Options/FeatureServer/0",
+    "total_housing_options": 200,
+    "senior_related": 58,
+    "source_categories": {
+      "Senior Residence": 21,
+      "Assisted Living Facility": 20,
+      "Continuing Care Retirement Community": 4,
+      "Active Adult Community": 13
+    },
+    "source_as_of": "May 2023 point-in-time per service description",
+    "semantic": "Not NJDOH licensure. Not CMS Care Compare."
+  },
+  "gis": {
+    "result": "High-value county Hub with documented FeatureServers and Hub downloads (CSV/GeoJSON/shapefile/filegdb).",
+    "org_id": "2g2XvfUywwLJoF2c",
+    "differentiated_layers": ["housing options", "sewer service areas", "county-maintained roads", "parklands/ROSI", "nursing-home geocode"],
+    "skipped_as_statewide": ["parcels/MOD-IV (132,911; NJGIN overlap)", "SFHA (FEMA extract)", "LULC (NJDEP)", "hydrography (NJDEP)"]
+  },
+  "land_records": {
+    "decision": "FREE_ACCOUNT_REQUIRED. No bulk path. Skip automation."
+  },
+  "sheriff_sales": {
+    "decision": "OPEN_SEARCH_ONLY HTML list. Do not scrape buyer names. Scheduled != completed."
+  },
+  "skipped": [
+    "Acclaim session login",
+    "Bulk parcel polygons",
+    "Bulk FEMA/NJDEP extracts",
+    "Building footprints",
+    "Landscape Project habitats",
+    "Election layers (low network value for this ticket)"
+  ]
+}
