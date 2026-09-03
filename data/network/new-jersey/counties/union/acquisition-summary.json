@@ -1,0 +1,39 @@
+{
+  "county": "Union",
+  "county_fips": "34039",
+  "ticket": "ATH-NJ-COUNTY-001B",
+  "retrieved_at": "2026-09-03T18:00:00.000Z",
+  "easy_wins_acquired": [
+    "Home Improvement Program and Senior Home Improvement Grant semantics, municipalities, benefit types, administrator",
+    "Consumer Affairs office capability + drafted non-PII request",
+    "ADRC/AAA contacts and current PDF directory citations",
+    "Clerk land-record search window, pre-1986 imaging note, paid full-image path",
+    "Sheriff sale schedule and terms"
+  ],
+  "consumer_affairs": {
+    "result": "Live office will check complaints on file by phone. No public bulk history. Request drafted.",
+    "url": "https://ucnj.org/public-safety/office-of-consumer-affairs/"
+  },
+  "home_improvement_program": {
+    "entity_class": "UNION_COUNTY_HOME_IMPROVEMENT_PROGRAM_PARTICIPANT",
+    "not_a_county_license": true,
+    "participant_list_public": false,
+    "request_drafted": true
+  },
+  "gis": {
+    "result": "Thin. HTML5 viewer + disclaimer. No Hub catalog. Stop.",
+    "viewer": "https://oms.ucnj.org/Html5Viewer/index.html?viewer=UnionCountygis"
+  },
+  "land_records": {
+    "decision": "OPEN_SEARCH_ONLY name index 1977-06-01 to 2026-01-21. Pre-1986 images incomplete. Paid registration for full online images. No scrape."
+  },
+  "sheriff_sales": {
+    "decision": "Schedule public; current foreclosure list not a clean structured download. Skip scrape."
+  },
+  "skipped": [
+    "Viewer reverse-engineering",
+    "Third-party foreclosure aggregators",
+    "Dumping ADRC PDFs into git",
+    "Waiting on OPRA responses"
+  ]
+}

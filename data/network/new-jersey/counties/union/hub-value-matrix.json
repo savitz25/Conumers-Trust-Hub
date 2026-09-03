@@ -1,0 +1,92 @@
+{
+  "county": "Union",
+  "county_fips": "34039",
+  "ticket": "ATH-NJ-COUNTY-001B",
+  "scoring": "HIGH / MEDIUM / LOW / NONE — differentiated county value only",
+  "rows": [
+    {
+      "source_id": "union-consumer-affairs",
+      "ASK": "HIGH",
+      "MOVE": "HIGH",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "LOW",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "County complaint-history lookup does not exist on specialist spines. Request drafted."
+    },
+    {
+      "source_id": "union-home-improvement-program",
+      "ASK": "HIGH",
+      "MOVE": "NONE",
+      "LENDER": "MEDIUM",
+      "INSURANCE": "NONE",
+      "SENIOR": "MEDIUM",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "Program semantics acquired. Participant list is the missing high-value table — not a license."
+    },
+    {
+      "source_id": "union-senior-home-improvement-grant",
+      "ASK": "HIGH",
+      "MOVE": "NONE",
+      "LENDER": "LOW",
+      "INSURANCE": "NONE",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "Age 62+ grant with dated dollar cap."
+    },
+    {
+      "source_id": "union-adrc",
+      "ASK": "HIGH",
+      "MOVE": "NONE",
+      "LENDER": "NONE",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "NONE",
+      "INVESTOR": "NONE",
+      "spine": true,
+      "why": "Current AAA/ADRC directory (May 2026 PDF cited, not copied)."
+    },
+    {
+      "source_id": "union-clerk-land-records",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "LOW",
+      "spine": false,
+      "why": "Search-only. High Lender value but no bulk."
+    },
+    {
+      "source_id": "union-sheriff-sales",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "MEDIUM",
+      "spine": false,
+      "why": "Schedule only until a structured list exists."
+    },
+    {
+      "source_id": "union-gis-viewer",
+      "ASK": "LOW",
+      "MOVE": "LOW",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "NONE",
+      "spine": false,
+      "why": "Thin viewer. Statewide GIS later."
+    }
+  ]
+}
