@@ -4,6 +4,7 @@ import test from 'node:test';
 import { validateCustomerProfile } from './adapter.ts';
 import { mintHandoffToken, mutateHandoffToken, parseAndAuthenticateHandoff, HandoffError } from './handoff.ts';
 import type { CustomerProfileRecord, HandoffPayload } from './types.ts';
+import { contractorMintIdentity } from './contractor-handoff.ts';
 
 const secret = 'ask-contractor-v2-repair-secret-is-long-enough';
 const profile: CustomerProfileRecord = {
@@ -66,7 +67,40 @@ test('Ask internal Contractor mint and footer accessibility use repaired contrac
   const route = readFileSync('app/api/internal/handoff/mint/route.ts', 'utf8');
   const footer = readFileSync('components/footer.tsx', 'utf8');
   assert.match(route, /v:2/);
+  assert.match(route, /contractorMintIdentity\(body\)/);
+  assert.match(route, /canonical_profile_url:canonicalProfileUrl/);
+  assert.match(route, /status:400/);
   assert.doesNotMatch(route, /hubId==='contractor'\?1:2/);
   assert.match(footer, /text-xs text-slate-400/);
   assert.doesNotMatch(footer, /text-xs text-slate-500/);
+});
+
+test('normal internal Contractor input derives the exact canonical v2 destination', () => {
+  const result = contractorMintIdentity({
+    nativeProfileId: profile.id,
+    slug: profile.slug,
+    externalKey: profile.externalKey,
+  });
+  assert.deepEqual(result, { ok: true, canonicalProfileUrl: profile.canonicalUrl });
+  if (!result.ok) return;
+  const minted = mintHandoffToken(secret, {
+    hubId: 'contractor', nativeProfileId: profile.id, slug: profile.slug, externalKey: profile.externalKey,
+    sourceSystem: 'fl_dbpr', homeState: 'FL', identifierNamespace: 'credential', entityClass: 'contractor',
+    canonicalProfileUrl: result.canonicalProfileUrl, displayName: profile.displayName,
+  });
+  assert.equal(minted.payload.v, 2);
+  assert.equal(minted.payload.canonical_profile_url, profile.canonicalUrl);
+  assert.equal(minted.payload.identifier_namespace, 'credential');
+  assert.equal(minted.payload.entity_class, 'contractor');
+});
+
+test('internal Contractor identity input fails with deterministic 400-class reasons', () => {
+  for (const input of [
+    { nativeProfileId: profile.id, externalKey: profile.externalKey },
+    { nativeProfileId: profile.id, slug: 'Not A Canonical Slug', externalKey: profile.externalKey },
+    { nativeProfileId: profile.id, slug: profile.slug },
+  ]) assert.deepEqual(contractorMintIdentity(input), { ok: false, error: 'missing_required_identity' });
+  assert.deepEqual(contractorMintIdentity({ nativeProfileId: profile.id, slug: profile.slug,
+    externalKey: profile.externalKey, canonicalProfileUrl: 'https://evil.example/contractors/wrong' }),
+    { ok: false, error: 'canonical_destination_mismatch' });
 });
