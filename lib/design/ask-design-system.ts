@@ -298,6 +298,7 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/journeys', label: 'Life journeys' },
       { href: '/guides', label: 'Guides' },
       { href: '/network', label: 'The Network' },
+      { href: '/new-jersey', label: 'New Jersey research' },
       { href: '/trust', label: 'Trust Center' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },

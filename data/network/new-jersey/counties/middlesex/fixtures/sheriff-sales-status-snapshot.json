@@ -1,0 +1,60 @@
+{
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "source_family": "sheriff_sales",
+  "source_name": "CivilView SalesWeb foreclosure listing (Middlesex County Sheriff)",
+  "source_url": "https://salesweb.civilview.com/Sales/SalesSearch?countyId=73",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "acquisition_status": "STATUS_INVENTORY_ACQUIRED",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "last_updated_on_page": "2026-09-03 10:02:00 AM",
+  "grain": "sheriff-sale listing row",
+  "result_count_on_page": 175,
+  "parsed_row_count": 175,
+  "supported_listing_fields": [
+    "sheriff_number",
+    "status",
+    "sales_date",
+    "plaintiff",
+    "defendant",
+    "address"
+  ],
+  "fields_captured_in_this_fixture": ["status", "status_class"],
+  "fields_deliberately_omitted": [
+    "defendant",
+    "property_address",
+    "plaintiff"
+  ],
+  "omit_reason": "This ticket does not create a foreclosure marketing list or homeowner/borrower dossier. Status inventory is the high-ROI extract.",
+  "status_counts": {
+    "Scheduled - Foreclosure": 72,
+    "Purchased - 3rd Party": 43,
+    "Adjourned - Defendant": 28,
+    "Adjourned - Plaintiff": 17,
+    "Adjourned - Court": 8,
+    "Redeemed": 5,
+    "Bankruptcy": 1,
+    "Bankruptcy Dismissed": 1
+  },
+  "status_class_counts": {
+    "SCHEDULED_NOT_COMPLETED": 72,
+    "ADJOURNED_NOT_COMPLETED": 53,
+    "COMPLETED_SALE": 43,
+    "REDEEMED_NOT_COMPLETED": 5,
+    "BANKRUPTCY_NOT_COMPLETED": 2
+  },
+  "completed_sale_count": 43,
+  "semantics": [
+    "Scheduled is not a completed sale.",
+    "Adjourned is not a completed sale.",
+    "Bankruptcy is not a completed sale.",
+    "Redeemed is not a completed sheriff sale.",
+    "Purchased - 3rd Party is the completed-sale status on this listing.",
+    "CivilView is a public summary listing, not an official record of title."
+  ],
+  "terms_notes": "CivilView listing is provided as a public service. The sheriff's office does not warrant accuracy, completeness, or timeliness.",
+  "refresh_method": "Re-open the current listing page. Do not scrape SaleDetails, historical archives, or defendant indexes.",
+  "blocker": null,
+  "recommended_next_action": "Treat as a live status feed for Lender/Investor context. Do not productize as a buyer list."
+}

@@ -1,0 +1,90 @@
+{
+  "ticket": "ATH-NJ-COUNTY-001A",
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "retrieved_at": "2026-09-03",
+  "policy": "HIGH-ROI / LOW-FRICTION only. Easy structured data was acquired. Difficult portals were classified and skipped.",
+  "statewide_reused_not_reacquired": [
+    "NJGIN parcels / MOD-IV (243019 Middlesex features counted, not ingested)",
+    "NJDEP building footprints",
+    "FEMA flood layers",
+    "NJDEP environmental layers",
+    "ACS / Census geography",
+    "six-hub NJ state intelligence already published"
+  ],
+  "acquired": [
+    {
+      "source_id": "middlesex-zoning-agol",
+      "what": "2794 zoning polygons across 25 municipalities; attribute schema and municipality counts; no geometries in git",
+      "fixture": "fixtures/zoning-municipality-counts.json"
+    },
+    {
+      "source_id": "middlesex-site-incentives",
+      "what": "8 incentive layers with feature counts (including 426 redevelopment-area polygons)",
+      "fixture": "fixtures/site-incentives-layers.json"
+    },
+    {
+      "source_id": "middlesex-sheriff-civilview",
+      "what": "Current listing status inventory: 175 rows, 43 purchased-3rd-party, 72 scheduled, 53 adjourned, 5 redeemed, 2 bankruptcy-related",
+      "fixture": "fixtures/sheriff-sales-status-snapshot.json"
+    },
+    {
+      "source_id": "middlesex-adrc-senior",
+      "what": "8 congregate meal sites + 12 municipal senior centers + ADRC contacts; remaining municipal rows noted",
+      "fixture": "fixtures/senior-centers-and-nutrition.json"
+    },
+    {
+      "source_id": "njgin-parcels-middlesex",
+      "what": "Service metadata, field list, county feature count",
+      "fixture": "fixtures/njgin-parcel-reference.json"
+    }
+  ],
+  "documented_not_acquired": [
+    {
+      "source_id": "middlesex-searchng",
+      "reason": "OPEN_SEARCH_ONLY SearchNG portal. No documented API. No scraper."
+    },
+    {
+      "source_id": "middlesex-consumer-affairs",
+      "reason": "Staff-mediated 3-year complaint lookup. Request drafted; not waiting."
+    },
+    {
+      "source_id": "middlesex-county-arcgis-server",
+      "reason": "FREE_ACCOUNT_REQUIRED / login. Do not reverse-engineer."
+    }
+  ],
+  "skipped": [
+    {
+      "source": "NJTPA ZoningBase_Middlesex",
+      "reason": "HTTP 403. County AGOL zoning service is the open substitute."
+    },
+    {
+      "source": "full ADRC resource-directory PDF extraction",
+      "reason": "Deep PDF-by-PDF work is out of ticket scope."
+    },
+    {
+      "source": "Services Locator zip search scrape",
+      "reason": "Supported free search portal, not a bulk API."
+    },
+    {
+      "source": "commercial real-estate database build from site-selection GIS",
+      "reason": "Out of ticket scope."
+    },
+    {
+      "source": "municipal-by-municipal crawl",
+      "reason": "Out of ticket scope."
+    }
+  ],
+  "requests_drafted": [
+    "docs/nj-counties/middlesex-land-record-index-request.md",
+    "docs/nj-counties/middlesex-consumer-affairs-request.md"
+  ],
+  "incremental_value_over_statewide": [
+    "County-standardized zoning for all 25 municipalities (not in statewide NJGIN parcels)",
+    "Site-selection / incentive overlays (portfields, UEZ, redevelopment, transit villages, brownfields)",
+    "SearchNG land-record coverage (deeds 1929+, mortgages 1950+, other 1958+)",
+    "Sheriff-sale status inventory including completed 3rd-party purchases",
+    "County consumer-affairs 3-year complaint lookup (Move/Contractor/Ask)",
+    "ADRC, senior centers, and 8 congregate meal sites (SeniorTrustHub)"
+  ]
+}

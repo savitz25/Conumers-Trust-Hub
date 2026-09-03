@@ -1,0 +1,66 @@
+{
+  "county": "Monmouth",
+  "county_fips": "34025",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "notes": [
+    "County GeoHub advertises shapefile downloads and self-service mapping. The Hub search/data.json APIs returned HTTP 400/500 during this ticket, so exact hosted item IDs for every county layer were not harvested from the catalog API.",
+    "Statewide NJGIN parcels/MOD-IV, NJDEP building footprints, FEMA NFHL, and ACS geography are referenced, not reacquired.",
+    "NJTPA Zoning_Monmouth FeatureServer returned HTTP 403 and carries a custom license prohibiting redistribution. Classified SOURCE_USE_RESTRICTED. Not acquired."
+  ],
+  "endpoints": [
+    {
+      "name": "Monmouth County GeoHub",
+      "url": "https://gis-monmouthnj.opendata.arcgis.com/",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "status": "PORTAL_LIVE_CATALOG_API_UNSTABLE",
+      "advertised_layers": [
+        "parcels (no owner information)",
+        "building footprints",
+        "park boundaries (county and municipal open-space grant)",
+        "road centerlines",
+        "campus renderings",
+        "statewide NHD in the self-service app"
+      ]
+    },
+    {
+      "name": "Monmouth County Property Viewer",
+      "url": "https://experience.arcgis.com/experience/c6d4c6eba758410dbedef25a6bce8591",
+      "item_id": "c6d4c6eba758410dbedef25a6bce8591",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "mod_iv_note": "Property Viewer describes MOD-IV updated through January 2023."
+    },
+    {
+      "name": "Public GIS brochure / self-service open data",
+      "url": "https://experience.arcgis.com/experience/06ccd828b1d44d0db998494edfe23a98/page/Public-GIS",
+      "item_id": "06ccd828b1d44d0db998494edfe23a98",
+      "access_class": "OPEN_GIS_SERVICE"
+    },
+    {
+      "name": "NJGIN Parcels Composite (Monmouth filter)",
+      "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+      "access_class": "OPEN_GIS_SERVICE",
+      "feature_count": 249796,
+      "status": "REFERENCED_NOT_REACQUIRED"
+    },
+    {
+      "name": "NJDEP Building Footprints (statewide)",
+      "url": "https://mapsdep.nj.gov/arcgis/rest/services/Features/Structures/MapServer/8",
+      "access_class": "OPEN_GIS_SERVICE",
+      "status": "REFERENCED_NOT_REACQUIRED",
+      "note": "County filter on COUNTY field failed (no COUNTY attribute). Do not duplicate statewide footprints into git."
+    },
+    {
+      "name": "NJTPA Zoning_Monmouth",
+      "url": "https://gis.njtpa.org/server/rest/services/LandUse/NJTPA_Zoning/FeatureServer/3",
+      "agol_item": "9033d7967c544711992930577f04c322",
+      "access_class": "SOURCE_USE_RESTRICTED",
+      "status": "SKIPPED",
+      "blocker": "HTTP 403 plus custom license: redistribution or any other use is prohibited."
+    }
+  ],
+  "contact": {
+    "email": "monmouthnjgis@co.monmouth.nj.us",
+    "phone": "732-303-2855 ext. 2195"
+  }
+}

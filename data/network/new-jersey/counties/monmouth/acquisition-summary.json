@@ -1,0 +1,85 @@
+{
+  "ticket": "ATH-NJ-COUNTY-001A",
+  "county": "Monmouth",
+  "county_fips": "34025",
+  "retrieved_at": "2026-09-03",
+  "policy": "HIGH-ROI / LOW-FRICTION only. Easy structured data was acquired. Difficult portals were classified and skipped.",
+  "statewide_reused_not_reacquired": [
+    "NJGIN parcels / MOD-IV (249796 Monmouth features counted, not ingested)",
+    "NJDEP building footprints (statewide service referenced)",
+    "FEMA NFHL (linked from county GIS brochure)",
+    "NJDEP environmental layers",
+    "ACS / Census geography",
+    "six-hub NJ state intelligence already published"
+  ],
+  "acquired": [
+    {
+      "source_id": "monmouth-adrc-senior-centers",
+      "what": "12 senior centers + 3 other service centers + ADRC contacts + two home-delivered meal providers",
+      "fixture": "fixtures/senior-centers.json"
+    },
+    {
+      "source_id": "monmouth-sheriff-civilview",
+      "what": "Current listing status inventory: 99 rows, 0 completed sales, 34 scheduled, 62 adjourned, 3 bankrupt",
+      "fixture": "fixtures/sheriff-sales-status-snapshot.json"
+    },
+    {
+      "source_id": "njgin-parcels-monmouth",
+      "what": "Service metadata, field list, county feature count",
+      "fixture": "fixtures/njgin-parcel-reference.json"
+    },
+    {
+      "source_id": "monmouth-geohub",
+      "what": "GIS endpoint inventory and advertised layer families",
+      "fixture": "fixtures/gis-service-inventory.json"
+    }
+  ],
+  "documented_not_acquired": [
+    {
+      "source_id": "monmouth-oprs",
+      "reason": "OPEN_SEARCH_ONLY. Clerk images and Tax Board computerized data are interactive. Tax Board search results are exportable per query, not a bulk API. No scraper."
+    },
+    {
+      "source_id": "monmouth-property-viewer",
+      "reason": "OPEN_SEARCH_ONLY Experience app. Do not scrape."
+    },
+    {
+      "source_id": "monmouth-consumer-affairs",
+      "reason": "Staff-mediated complaint-history lookup. Request drafted; not waiting."
+    }
+  ],
+  "skipped": [
+    {
+      "source_id": "njtpa-zoning-monmouth",
+      "access_class": "SOURCE_USE_RESTRICTED",
+      "reason": "HTTP 403 and custom license prohibiting redistribution."
+    },
+    {
+      "source": "municipal-by-municipal crawl",
+      "reason": "Out of ticket scope."
+    },
+    {
+      "source": "restaurant inspections",
+      "reason": "No easy supported download/API found."
+    },
+    {
+      "source": "deed images / owner-name restoration",
+      "reason": "Privacy / Daniel's Law / not a recommendation product."
+    },
+    {
+      "source": "OPRA wait",
+      "reason": "Ticket forbids waiting on OPRA."
+    }
+  ],
+  "requests_drafted": [
+    "docs/nj-counties/monmouth-land-record-index-request.md",
+    "docs/nj-counties/monmouth-consumer-affairs-request.md"
+  ],
+  "incremental_value_over_statewide": [
+    "County GeoHub / Property Viewer as the local GIS front door on top of NJGIN parcels",
+    "OPRS Clerk + Tax Board search coverage (deeds, mortgages, trade names, exportable MOD-IV/sales queries)",
+    "Sheriff-sale status inventory with adjournment/bankruptcy semantics",
+    "County consumer-affairs complaint-history capability (Move/Contractor/Ask)",
+    "ADRC and senior-center directory (SeniorTrustHub)"
+  ]
+}

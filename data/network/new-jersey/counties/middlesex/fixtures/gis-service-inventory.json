@@ -1,0 +1,78 @@
+{
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "source_as_of": "2026-09-03",
+  "last_checked": "2026-09-03",
+  "notes": [
+    "County ArcGIS Server at mcgisweb.co.middlesex.nj.us is behind a Web Adaptor / login page. Open-data portal returned HTTP 500 during this ticket. Lower Raritan Watershed Partnership notes free registration may be required.",
+    "Easy public path is ArcGIS Online hosted services under org BnY3izA2Kwu6jVHq (middlesexgis) plus statewide NJGIN.",
+    "Do not claim the county ArcGIS Server is an open bulk API."
+  ],
+  "endpoints": [
+    {
+      "name": "Middlesex County GIS division page",
+      "url": "https://www.middlesexcountynj.gov/government/departments/county-administration/office-of-information-technology/geographic-information-systems",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "advertised_apps": [
+        "Open Data Portal",
+        "Accessing Healthy Foods",
+        "Find My Elected Officials",
+        "Aging & Disabled Resource Connection Directory",
+        "Site Selection Map"
+      ]
+    },
+    {
+      "name": "Middlesex County ArcGIS REST root",
+      "url": "https://mcgisweb.co.middlesex.nj.us/arcgis/rest/services",
+      "access_class": "FREE_ACCOUNT_REQUIRED",
+      "status": "WEB_ADAPTOR_LOGIN",
+      "blocker": "REST catalog is not anonymously enumerable. Do not reverse-engineer the Web Adaptor."
+    },
+    {
+      "name": "Middlesex Open Data Portal",
+      "url": "https://mcgisweb.co.middlesex.nj.us/open-data-portal",
+      "access_class": "FREE_ACCOUNT_REQUIRED",
+      "status": "HTTP_500_DURING_TICKET"
+    },
+    {
+      "name": "Middlesex County Zoning FeatureServer",
+      "url": "https://services6.arcgis.com/u1cLUtFdrWfOeWwq/ArcGIS/rest/services/Middlesex_County_Zoning/FeatureServer/0",
+      "service_item_id": "be5d52d532cb4da281cd6849b9bdd223",
+      "access_class": "OPEN_GIS_SERVICE",
+      "feature_count": 2794,
+      "supports_pagination": true,
+      "status": "METADATA_AND_COUNTS_ACQUIRED"
+    },
+    {
+      "name": "Site Specific Incentives Map",
+      "url": "https://services.arcgis.com/BnY3izA2Kwu6jVHq/arcgis/rest/services/Site_Specific_Incentives_Map/FeatureServer",
+      "service_item_id": "4e96db8e3621407c83cc3674364ddded",
+      "access_class": "OPEN_GIS_SERVICE",
+      "status": "METADATA_AND_COUNTS_ACQUIRED"
+    },
+    {
+      "name": "NJGIN Parcels Composite (Middlesex filter)",
+      "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+      "access_class": "OPEN_GIS_SERVICE",
+      "feature_count": 243019,
+      "status": "REFERENCED_NOT_REACQUIRED"
+    },
+    {
+      "name": "NJTPA ZoningBase_Middlesex",
+      "url": "https://gis.njtpa.org/server/rest/services/LandUse/NJTPA_Zoning/FeatureServer/2",
+      "access_class": "SOURCE_USE_RESTRICTED",
+      "status": "SKIPPED",
+      "blocker": "HTTP 403. Use the county AGOL zoning service instead."
+    }
+  ],
+  "reusable_pagination": {
+    "method": "ArcGIS REST query with resultOffset / resultRecordCount",
+    "example": "GET {layer}/query?where=1=1&outFields=*&returnGeometry=false&resultRecordCount=2000&resultOffset={n}&f=json",
+    "do_not": "Commit feature geometries or full layer dumps to git."
+  },
+  "contact": {
+    "division": "Division of GIS, Office of Information Technology",
+    "address": "75 Bayard Street, 3rd Floor, New Brunswick, NJ 08901",
+    "phone": "732-745-3349"
+  }
+}

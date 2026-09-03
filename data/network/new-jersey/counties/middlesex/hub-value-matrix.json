@@ -1,0 +1,98 @@
+{
+  "ticket": "ATH-NJ-COUNTY-001A",
+  "county": "Middlesex",
+  "county_fips": "34023",
+  "as_of": "2026-09-03",
+  "scoring": "HIGH | MEDIUM | LOW | NONE",
+  "hubs": ["ASK", "MOVE", "LENDER", "INSURANCE", "SENIOR", "CONTRACTOR", "INVESTOR"],
+  "by_source": [
+    {
+      "source_id": "middlesex-zoning-agol",
+      "ASK": "MEDIUM",
+      "MOVE": "LOW",
+      "LENDER": "MEDIUM",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "middlesex-site-incentives",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "LOW",
+      "INSURANCE": "NONE",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "njgin-parcels-middlesex",
+      "ASK": "MEDIUM",
+      "MOVE": "LOW",
+      "LENDER": "HIGH",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "MEDIUM",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "middlesex-searchng",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "LOW",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "middlesex-sheriff-civilview",
+      "ASK": "LOW",
+      "MOVE": "NONE",
+      "LENDER": "HIGH",
+      "INSURANCE": "MEDIUM",
+      "SENIOR": "NONE",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "HIGH"
+    },
+    {
+      "source_id": "middlesex-consumer-affairs",
+      "ASK": "HIGH",
+      "MOVE": "HIGH",
+      "LENDER": "LOW",
+      "INSURANCE": "LOW",
+      "SENIOR": "MEDIUM",
+      "CONTRACTOR": "HIGH",
+      "INVESTOR": "LOW"
+    },
+    {
+      "source_id": "middlesex-adrc-senior",
+      "ASK": "MEDIUM",
+      "MOVE": "NONE",
+      "LENDER": "NONE",
+      "INSURANCE": "LOW",
+      "SENIOR": "HIGH",
+      "CONTRACTOR": "LOW",
+      "INVESTOR": "NONE"
+    }
+  ],
+  "county_roll_up": {
+    "ASK": "HIGH",
+    "MOVE": "HIGH",
+    "LENDER": "HIGH",
+    "INSURANCE": "MEDIUM",
+    "SENIOR": "HIGH",
+    "CONTRACTOR": "HIGH",
+    "INVESTOR": "HIGH"
+  },
+  "roll_up_notes": {
+    "ASK": "Zoning + incentives + consumer-affairs + senior sites.",
+    "MOVE": "County complaint-history lookup is the incremental Move signal.",
+    "LENDER": "Parcels/MOD-IV + SearchNG + sheriff status, including completed 3rd-party purchases on the current listing.",
+    "INSURANCE": "Property/flood geography only.",
+    "SENIOR": "ADRC, senior centers, congregate meals.",
+    "CONTRACTOR": "Zoning, redevelopment overlays, land-record liens if a metadata index arrives, consumer-affairs complaints.",
+    "INVESTOR": "Zoning + site incentives + parcels + sheriff status. Not a CRE listing product or foreclosure marketing list."
+  }
+}

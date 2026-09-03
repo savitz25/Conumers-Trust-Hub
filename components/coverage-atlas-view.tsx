@@ -240,6 +240,10 @@ export function CoverageAtlasView({
           <Link href="/places/florida" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
             Open Florida Place Lens
           </Link>
+          <span aria-hidden="true"> · </span>
+          <Link href="/new-jersey" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+            Open New Jersey network research
+          </Link>
         </p>
       </section>
     </div>
