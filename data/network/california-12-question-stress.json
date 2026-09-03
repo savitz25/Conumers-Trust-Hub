@@ -1,0 +1,86 @@
+[
+  {
+    "question": "How do I verify a California contractor?",
+    "classified_hub": "contractor",
+    "state": "CA",
+    "destination": "https://www.contractortrusthub.com/california",
+    "source_caveat": "Acquired CSLB rows are not the complete California contractor universe. CLEAR is not TrustHub verified. A vendor is not a CSLB license. PWCR is not a CSLB license."
+  },
+  {
+    "question": "What does CLEAR mean on CSLB?",
+    "classified_hub": "contractor",
+    "state": "CA",
+    "destination": "https://www.contractortrusthub.com/california",
+    "source_caveat": "Acquired CSLB rows are not the complete California contractor universe. CLEAR is not TrustHub verified. A vendor is not a CSLB license. PWCR is not a CSLB license."
+  },
+  {
+    "question": "What mortgage activity do you have for California?",
+    "classified_hub": "lender",
+    "state": "CA",
+    "destination": "https://www.lendertrusthub.com/california",
+    "source_caveat": "HMDA mortgage-market evidence is not a California mortgage-license roster. Denial rate is not quality. CalHFA participation is not an endorsement."
+  },
+  {
+    "question": "What CalHFA help might apply?",
+    "classified_hub": "lender",
+    "state": "CA",
+    "destination": "https://www.lendertrusthub.com/california",
+    "source_caveat": "HMDA mortgage-market evidence is not a California mortgage-license roster. Denial rate is not quality. CalHFA participation is not an endorsement."
+  },
+  {
+    "question": "What does California insurance enforcement show?",
+    "classified_hub": "insurance",
+    "state": "CA",
+    "destination": "https://www.insurancetrusthub.com/california",
+    "source_caveat": "An IMR is not a finding that an insurer violated the law. DMHC is not CDI. The dated 28-company CDI health-insurer list is not all California insurers."
+  },
+  {
+    "question": "Does an IMR mean my insurer violated the law?",
+    "classified_hub": "insurance",
+    "state": "CA",
+    "destination": "https://www.insurancetrusthub.com/california",
+    "source_caveat": "An IMR is not a finding that an insurer violated the law. DMHC is not CDI. The dated 28-company CDI health-insurer list is not all California insurers."
+  },
+  {
+    "question": "Find senior-care research in California.",
+    "classified_hub": "senior",
+    "state": "CA",
+    "destination": "https://www.seniortrusthub.com/california",
+    "source_caveat": "An RCFE is not a nursing home. Do not add ELMS, RCFE, HCAI, HCO, and CMS overlays into one California senior-provider count. Facility address is not a service area."
+  },
+  {
+    "question": "Is an RCFE the same thing as a nursing home?",
+    "classified_hub": "senior",
+    "state": "CA",
+    "destination": "https://www.seniortrusthub.com/california",
+    "source_caveat": "An RCFE is not a nursing home. Do not add ELMS, RCFE, HCAI, HCO, and CMS overlays into one California senior-provider count. Facility address is not a service area."
+  },
+  {
+    "question": "Find a California investment adviser.",
+    "classified_hub": "investor",
+    "state": "CA",
+    "destination": "https://www.investortrusthub.com/california",
+    "source_caveat": "A California principal office is not DFPI / California state registration. SEC RIA is not state RIA. CRD is not current California authority."
+  },
+  {
+    "question": "Does a California principal office mean DFPI registration?",
+    "classified_hub": "investor",
+    "state": "CA",
+    "destination": "https://www.investortrusthub.com/california",
+    "source_caveat": "A California principal office is not DFPI / California state registration. SEC RIA is not state RIA. CRD is not current California authority."
+  },
+  {
+    "question": "How do I verify a mover inside California?",
+    "classified_hub": "move",
+    "state": "CA",
+    "destination": "https://www.movetrusthub.com/california",
+    "source_caveat": "CAL-T is not USDOT. California intrastate authority is not FMCSA interstate authority. FMCSA ACTIVE is not a California license."
+  },
+  {
+    "question": "Can the same mover take me from California to Nevada?",
+    "classified_hub": "move",
+    "state": "CA",
+    "destination": "https://www.movetrusthub.com/california",
+    "source_caveat": "CAL-T is not USDOT. California intrastate authority is not FMCSA interstate authority. FMCSA ACTIVE is not a California license."
+  }
+]

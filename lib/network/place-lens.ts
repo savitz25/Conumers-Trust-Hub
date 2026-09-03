@@ -2,6 +2,7 @@ import type { CoverageLevel } from './coverage-atlas.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { hubById } from './source-registry.ts';
+import { caReleaseGatePassed } from './ca-network.ts';
 
 export type PlaceMetric = {
   label: string;
@@ -454,3 +455,14 @@ export const PLACE_LENS_INDEX = [
   { href: '/places/florida/palm-beach', label: 'Palm Beach County', detail: 'County lens — same contractor grain, different page, no copied Broward counts.' },
   { href: '/new-jersey', label: 'New Jersey', detail: 'Network gateway to specialist New Jersey research pages. Not a county page.' },
 ] as const;
+
+const CALIFORNIA_PLACE = {
+  href: '/california',
+  label: 'California',
+  detail: 'Network gateway to specialist California research pages. State-level only — not a county page.',
+} as const;
+
+export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
+  if (!caReleaseGatePassed()) return [...PLACE_LENS_INDEX];
+  return [...PLACE_LENS_INDEX, CALIFORNIA_PLACE];
+}

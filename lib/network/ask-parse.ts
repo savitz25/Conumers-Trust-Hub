@@ -27,6 +27,7 @@ import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { classifyUniversalQuery, type UniversalQueryClassification } from './query-classification.ts';
 import { detectNjCounty } from './nj-network.ts';
 import { detectNjPilotCountySlug } from './nj-counties.ts';
+import { detectCaCity, queryLooksLikeCalifornia } from './ca-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -85,6 +86,17 @@ function geography(q: string): ParsedGeography | undefined {
   const bocaRaton = /\bboca\s+raton\b/i.test(q);
   const florida = FL.test(q) || broward || palm || tampa || miami || bocaRaton;
   const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
+  const caNamedEarly = queryLooksLikeCalifornia(q);
+  const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
+  if (caNamedEarly && otherDest && !njNamedEarly) {
+    return {
+      stateCode: 'CA',
+      stateName: 'California',
+      city: detectCaCity(q),
+      meaning:
+        'California origin with another state mentioned as destination. California intrastate authority is not FMCSA interstate authority. CAL-T is not USDOT.',
+    };
+  }
   if (njNamedEarly && florida) {
     return {
       stateCode: 'NJ',
@@ -153,6 +165,18 @@ function geography(q: string): ParsedGeography | undefined {
         : newark
           ? 'Newark, New Jersey. City is not automatically a license territory.'
           : 'New Jersey. State licensing is not physical location; specialist geography meaning differs by hub.',
+    };
+  }
+
+  if (caNamedEarly) {
+    const caCity = detectCaCity(q);
+    return {
+      stateCode: 'CA',
+      stateName: 'California',
+      city: caCity,
+      meaning: caCity
+        ? `${caCity}, California. California research is state-level; a city or county name is not a California county Ask route.`
+        : 'California. State licensing is not physical location; specialist geography meaning differs by hub. California county Ask pages are not published.',
     };
   }
 

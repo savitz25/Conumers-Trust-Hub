@@ -59,6 +59,7 @@ import {
 import { contractorAskUrlFromParsed } from './ask-plan-urls.ts';
 import { njCaveatForHub, njSpecialistUrl, routeNjAsk } from './nj-network.ts';
 import { isNjPilotCountySlug, njCountyAskPath } from './nj-counties.ts';
+import { caCaveatForHub, caSpecialistUrl, routeCaAsk } from './ca-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -179,6 +180,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
     if (slug && isNjPilotCountySlug(slug)) return njCountyAskPath(slug);
     return '/new-jersey';
   }
+  if (parsed.geography?.stateCode === 'CA') return '/california';
   return undefined;
 }
 
@@ -729,6 +731,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: njSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${njCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'CA') {
+    const caRoute = routeCaAsk(parsed.query);
+    if (caRoute) {
+      const already = hubs.some((h) => h.hubId === caRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: caRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[caRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: caRoute.destination,
+            reason: caRoute.caveat,
+            whatItCanAnswer: `California research on ${NETWORK_PUBLIC_NAMES[caRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'California',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === caRoute.hubId
+            ? {
+                ...h,
+                destination: caRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${caRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === caRoute.hubId), ...hubs.filter((h) => h.hubId !== caRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: caSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${caCaveatForHub(primary)}`,
             }
           : h,
       );

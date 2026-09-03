@@ -8,6 +8,7 @@ import { coverageAtlasCells, ENHANCED_COUNTIES } from '@/lib/network/coverage-at
 import { coverageNotifyIntent } from '@/lib/network/coverage-notify';
 import { NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS, type SpecialistHubId } from '@/lib/network/registry';
 import { US_JURISDICTIONS } from '@/lib/network/us-jurisdictions';
+import { caReleaseGatePassed } from '@/lib/network/ca-network';
 
 const LEVEL_TONE: Record<CoverageLevel, string> = {
   enhanced_county_intelligence: '#312E81',
@@ -244,6 +245,14 @@ export function CoverageAtlasView({
           <Link href="/new-jersey" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
             Open New Jersey network research
           </Link>
+          {caReleaseGatePassed() ? (
+            <>
+              <span aria-hidden="true"> · </span>
+              <Link href="/california" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                Open California network research
+              </Link>
+            </>
+          ) : null}
         </p>
       </section>
     </div>

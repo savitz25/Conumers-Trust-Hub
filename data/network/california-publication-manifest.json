@@ -1,0 +1,257 @@
+{
+  "state_code": "CA",
+  "state_name": "California",
+  "ask_path": "/california",
+  "ask_canonical": "https://www.asktrusthub.com/california",
+  "version": "ath-ca-network-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "release_gate": {
+    "passed": true,
+    "required_hubs": ["move", "lender", "insurance", "senior", "contractor", "investor"],
+    "blocker": null,
+    "rule": "All six specialist /california pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /california is indexable and before six-hub complete is declared. Any one specialist failure fails the gate. Do not weaken the gate.",
+    "verified_at": "2026-09-03",
+    "move_merge_sha": "9cf432c4fd66b183d6b4f554eccd2d4b1ffd274d"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "canonical_state_url": "https://www.movetrusthub.com/california",
+      "topic": "Movers and household-goods transportation",
+      "research_topics": [
+        "BHGS/DCA household-goods regulation",
+        "CAL-T intrastate authority",
+        "FMCSA interstate authority",
+        "verification, tariff/rate, consumer protections, enforcement, insurance/financial responsibility"
+      ],
+      "primary_identifiers": ["CAL-T", "USDOT"],
+      "identifier_types": ["CAL-T", "USDOT"],
+      "source_summary": "California intrastate household-goods movers are regulated by the Bureau of Household Goods and Services (Department of Consumer Affairs). Interstate authority is a separate FMCSA universe. MoveTrustHub /california is live.",
+      "coverage_summary": "CAL-T is not USDOT. California intrastate authority is not FMCSA interstate authority. FMCSA ACTIVE is not a California license. A California license is not interstate authorization. A license is not confirmed current insurance. A citation is not a revocation. A tariff is not an actual price. A complaint is not a violation. Complete CAL-T roster is SOURCE_NOT_ACQUIRED. Licensed-mover denominator is UNKNOWN, not zero. Complaint bulk history was not acquired. No profile attachments. No California county routes.",
+      "semantic_guardrails": [
+        "CAL-T ≠ USDOT",
+        "CA intrastate ≠ FMCSA interstate",
+        "FMCSA ACTIVE ≠ California licensed",
+        "California licensed ≠ interstate authorized",
+        "license ≠ confirmed current insurance",
+        "citation ≠ revocation",
+        "tariff ≠ actual price",
+        "complaint ≠ violation",
+        "missing ≠ zero"
+      ],
+      "verified_facts": [
+        "Current regulator is the California Department of Consumer Affairs, Bureau of Household Goods and Services. CAL-T is not a USDOT number. CPUC is not the current household-goods regulator.",
+        "Complete CAL-T roster is SOURCE_NOT_ACQUIRED; licensed-mover denominator is UNKNOWN, not zero. Live FMCSA interstate records with a California business/HQ location: 397 — not California licenses.",
+        "Official BHGS citations under BPC 19237: 132 rows (120 labeled UNLICENSED by the source, 12 exact CAL-T/T identifiers). A citation is not a revocation. Maximum Rate Tariff 4 is effective 2026-01-01; a tariff is not an actual price. State insurance requirements are filing requirements, not proof of current coverage. Complaint bulk history was not acquired. No profile attachments."
+      ],
+      "routing_intents": [
+        "How do I verify a mover inside California?",
+        "Can the same mover take me from California to Nevada?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "Complete CAL-T bulk roster",
+        "Licensed-mover denominator",
+        "Current insurance certificate universe",
+        "Bulk complaints",
+        "State CAL-T ↔ USDOT exact crosswalk"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "canonical_state_url": "https://www.lendertrusthub.com/california",
+      "topic": "Mortgage lending and housing finance",
+      "research_topics": [
+        "2025 HMDA California mortgage activity",
+        "CalHFA approved-lender directory",
+        "CRMLA annual-report context",
+        "NMLS identity versus California authority"
+      ],
+      "primary_identifiers": ["NMLS"],
+      "identifier_types": ["NMLS"],
+      "source_summary": "LenderTrustHub publishes HMDA 2025 California market activity, a CalHFA participation directory, and CRMLA 2024 annual-report context. A current CRMLA bulk roster is not acquired.",
+      "coverage_summary": "HMDA is not a California mortgage-license roster. Denial rate is not quality. CalHFA participation is not an endorsement. The CRMLA annual report is not a current live roster. An NMLS ID is not current California authority by itself. CURRENT_CRMLA_BULK_ROSTER = SOURCE_NOT_ACQUIRED.",
+      "semantic_guardrails": [
+        "HMDA ≠ license roster",
+        "denial rate ≠ quality",
+        "CalHFA participation ≠ endorsement",
+        "CRMLA annual report ≠ current live roster",
+        "NMLS ID ≠ current CA authority by itself"
+      ],
+      "verified_facts": [
+        "HMDA 2025 California: 1,014,489 applications, 569,218 originations, 175,802 denials (17.33% denial rate). Denial rate is not quality.",
+        "CalHFA approved-lender directory: 1,414 rows, 193 distinct company names, 1,341 phones, 0 emails, 0 NMLS IDs. Participation is not an endorsement.",
+        "CRMLA 2024 annual report (Oct 2025): 389 licensees and 5,104 branches as of 2024-12-31. That report is not a current live roster."
+      ],
+      "routing_intents": [
+        "What mortgage activity do you have for California?",
+        "What CalHFA help might apply?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "CURRENT_CRMLA_BULK_ROSTER",
+        "NMLS IDs on the CalHFA directory"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "canonical_state_url": "https://www.insurancetrusthub.com/california",
+      "topic": "Insurance companies and regulatory evidence",
+      "research_topics": [
+        "DMHC enforcement",
+        "DMHC Independent Medical Review (IMR)",
+        "CDI dated health-insurer list",
+        "FAIR Plan residual-market context"
+      ],
+      "primary_identifiers": ["NAIC"],
+      "identifier_types": ["NAIC", "NPN"],
+      "source_summary": "InsuranceTrustHub publishes DMHC enforcement and IMR evidence, a dated CDI health-insurer list, and FAIR Plan residual-market context. DMHC and CDI are separate regulator universes.",
+      "coverage_summary": "DMHC is not CDI. An IMR is not a complaint or an enforcement finding, and it does not mean an insurer violated the law. An accusation is not a final finding. FAIR Plan is not the entire market. The 28-company CDI health-insurer list is not all California insurers. NAIC identity is not California authorization.",
+      "semantic_guardrails": [
+        "DMHC ≠ CDI",
+        "IMR ≠ complaint/enforcement",
+        "IMR ≠ insurer violated the law",
+        "accusation ≠ final finding",
+        "FAIR Plan ≠ entire market",
+        "NAIC identity ≠ California authorization",
+        "28-company CDI list ≠ all California insurers"
+      ],
+      "verified_facts": [
+        "DMHC enforcement trend: 5,435 rows. DMHC Independent Medical Review: 42,749 determinations. An IMR is not a finding that an insurer violated the law.",
+        "CDI dated health-insurer list: 28 companies (phones 28/28, websites 27/28). That list is not all California insurers.",
+        "DMHC is not CDI. FAIR Plan is residual-market context, not the entire market."
+      ],
+      "routing_intents": [
+        "What does California insurance enforcement show?",
+        "Does an IMR mean my insurer violated the law?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "Complete CDI authorized-insurer bulk roster",
+        "Combined DMHC+CDI universe"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "canonical_state_url": "https://www.seniortrusthub.com/california",
+      "topic": "Senior care facilities and home-care research",
+      "research_topics": [
+        "ELMS locations",
+        "RCFE licensed residential care",
+        "HCAI facility listing",
+        "HCO home-care organizations",
+        "CMS SNF/HHA/hospice overlay"
+      ],
+      "primary_identifiers": ["CMS CCN", "facility ID"],
+      "identifier_types": ["CMS CCN"],
+      "source_summary": "SeniorTrustHub publishes separate California universes: ELMS, RCFE, HCAI, HCO, and a CMS overlay. These are not one combined provider count.",
+      "coverage_summary": "Do not present a combined “California senior providers” number. RCFE is not a nursing home / SNF. HCO is not HHA. CDPH is not CMS. An HCAI record is not a unique new provider. A facility address is not a service area. ARF is researched and not published.",
+      "semantic_guardrails": [
+        "RCFE ≠ SNF / nursing home",
+        "HCO ≠ HHA",
+        "CDPH ≠ CMS",
+        "HCAI record ≠ unique new provider",
+        "facility address ≠ service area",
+        "do not add universes into one California senior-provider count"
+      ],
+      "verified_facts": [
+        "ELMS lists 15,097 California locations as of 2026-08-17 (13,401 ACTIVE), with 13,560 facility phones and 12,435 emails in that snapshot.",
+        "RCFE is 12,522 rows as of 2025-05-25 (7,939 LICENSED). An RCFE is not a nursing home.",
+        "These universes are not additive. Do not treat them as one California senior-providers count."
+      ],
+      "routing_intents": [
+        "Find senior-care research in California.",
+        "Is an RCFE the same thing as a nursing home?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "ARF publication",
+        "CDPH enforcement bulk"
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "canonical_state_url": "https://www.contractortrusthub.com/california",
+      "topic": "Contractors and construction licensing",
+      "research_topics": [
+        "CSLB public-data license stream",
+        "CLEAR status",
+        "classifications",
+        "DIR PWCR versus CSLB license"
+      ],
+      "primary_identifiers": ["CSLB license number"],
+      "identifier_types": ["CSLB"],
+      "source_summary": "ContractorTrustHub acquired 75,572 official CSLB public-data rows from the September 2, 2026 portal stream. The stream ended before the complete renewable-license file, so the full denominator remains unknown.",
+      "coverage_summary": "Acquired rows are not the complete California contractor universe. CLEAR is not TrustHub verified and is not an endorsement. A vendor is not a CSLB license. PWCR is not a CSLB license. ACQUIRED_PARTIAL_STREAM_TRUNCATED.",
+      "semantic_guardrails": [
+        "acquired rows ≠ complete CA contractor universe",
+        "CLEAR ≠ TRUSTHUB VERIFIED / endorsement",
+        "VENDOR ≠ CSLB LICENSE",
+        "PWCR ≠ CSLB LICENSE"
+      ],
+      "verified_facts": [
+        "ContractorTrustHub has acquired 75,572 official CSLB public-data rows from the September 2, 2026 portal stream; the stream ended before the complete renewable license file, so the full denominator remains unknown.",
+        "67,239 of those acquired rows are CLEAR; 75,483 include a public business phone; 81 classification tokens appear in the acquired stream.",
+        "CLEAR is a CSLB status, not a TrustHub verification or endorsement."
+      ],
+      "routing_intents": [
+        "How do I verify a California contractor?",
+        "What does CLEAR mean on CSLB?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "Complete renewable-license denominator",
+        "Cancelled/revoked rows omitted from the free stream"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "canonical_state_url": "https://www.investortrusthub.com/california",
+      "topic": "Investment advisers and securities",
+      "research_topics": [
+        "SEC/IARD California principal-office overlay",
+        "DFPI investment-adviser search",
+        "state-RIA roster gap",
+        "CRD identity versus California authority"
+      ],
+      "primary_identifiers": ["CRD"],
+      "identifier_types": ["CRD"],
+      "source_summary": "InvestorTrustHub publishes an SEC/IARD principal-office overlay for California. DFPI state-RIA bulk is not acquired. Principal-office geography is not split into California counties.",
+      "coverage_summary": "A California principal office is not DFPI / California state registration. SEC RIA is not state RIA. ERA is not a registered RIA. CRD is not current California authority. Complete state-RIA count is UNKNOWN. STATE_RIA_BULK_ROSTER = SOURCE_NOT_ACQUIRED. DFPI enforcement bulk is NO_BULK_ACQUIRED.",
+      "semantic_guardrails": [
+        "CA principal office ≠ CA state registration",
+        "SEC RIA ≠ state RIA",
+        "ERA ≠ registered RIA",
+        "CRD ≠ current CA authority"
+      ],
+      "verified_facts": [
+        "SEC/IARD overlay shows 2,699 firms with a California principal office. A California principal office is not DFPI / California state registration.",
+        "Complete California state-RIA count is UNKNOWN (STATE_RIA_BULK_ROSTER = SOURCE_NOT_ACQUIRED). SEC RIA is not state RIA.",
+        "DFPI enforcement bulk is NO_BULK_ACQUIRED. CRD is not current California authority by itself."
+      ],
+      "routing_intents": [
+        "Find a California investment adviser.",
+        "Does a California principal office mean DFPI registration?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-03",
+      "gap_examples": [
+        "STATE_RIA_BULK_ROSTER",
+        "DFPI enforcement bulk",
+        "Form D overlay"
+      ]
+    }
+  ]
+}

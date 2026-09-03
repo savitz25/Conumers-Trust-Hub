@@ -16,13 +16,12 @@ const elmsFix = JSON.parse(
   readFileSync('data/network/california/senior/fixtures/elms-locations-sample.json', 'utf8'),
 );
 
-test('ATH-CA-001 is research-only: no public California routes or sitemap entries', () => {
-  assert.equal(existsSync('app/california'), false);
+test('ATH-CA-001 research artifacts remain; public gateway is ATH-CA-002 state-level only', () => {
+  assert.equal(existsSync('app/california/page.tsx'), true);
   assert.equal(existsSync('app/places/california'), false);
-  assert.doesNotMatch(sitemap, /\/california/);
-  assert.equal(manifest.publication.public_california_routes, false);
-  assert.equal(manifest.publication.sitemap_changes, false);
+  assert.match(sitemap, /caReleaseGatePassed/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
+  assert.equal(existsSync('app/california/los-angeles-county'), false);
 });
 
 test('no Trust Score, paid ranking, or best/worst providers', () => {
@@ -88,5 +87,9 @@ test('NJ and Florida public surfaces are unchanged by this ticket', () => {
   assert.equal(existsSync('app/new-jersey/monmouth-county/page.tsx'), true);
   assert.equal(existsSync('app/places/florida/page.tsx'), true);
   const extraCa = readdirSync('app').filter((name) => /california/i.test(name));
-  assert.deepEqual(extraCa, []);
+  assert.deepEqual(extraCa, ['california']);
+  assert.deepEqual(
+    readdirSync('app/california').filter((name) => name !== 'page.tsx'),
+    [],
+  );
 });

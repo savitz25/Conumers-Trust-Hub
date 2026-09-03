@@ -7,6 +7,7 @@ import {
   ASK_NETWORK_LINKS,
 } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
+import { caReleaseGatePassed } from '@/lib/network/ca-network';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -77,7 +78,9 @@ export function Footer() {
                 {col.title}
               </h4>
               <ul className="space-y-2.5 text-sm text-slate-300">
-                {col.links.map((item) => (
+                {col.links
+                  .filter((item) => item.href !== '/california' || caReleaseGatePassed())
+                  .map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}

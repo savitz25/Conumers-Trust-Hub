@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ASK_CONCIERGE_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
+import { caConciergeContext } from '@/lib/network/ca-network';
 import {
   createXaiChatCompletion,
   getXaiApiKey,
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     const apiMessages: ChatMessage[] = [
-      { role: 'system', content: ASK_CONCIERGE_SYSTEM_PROMPT },
+      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}` },
       ...messages,
     ];
 
