@@ -101,7 +101,7 @@ export function Footer() {
             tools live on the specialist hubs — not on this parent site.
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               © {year} {BRAND.name}. {BRAND.tagline}
             </p>
             <p className="text-xs font-medium text-slate-400">
