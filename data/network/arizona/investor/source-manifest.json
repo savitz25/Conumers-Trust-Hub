@@ -4,102 +4,285 @@
   "state": "AZ",
   "source_as_of": "2026-09-04",
   "source_ids": [
-    "az-acc-securities-division",
-    "az-acc-broker-adviser-search",
-    "az-acc-list-request",
-    "az-acc-enforcement-actions",
+    "az-acc-securities-research",
+    "az-acc-securities-list-request",
+    "az-acc-securities-enforcement",
     "az-sec-iard-principal-office-overlay"
   ],
-  "classification": "MIXED_ENTITY_AND_INTELLIGENCE",
   "sources": [
     {
-      "source_id": "az-acc-securities-division",
-      "hub_home": "INVESTOR",
-      "source_family": "regulator",
-      "source_name": "Arizona Corporation Commission Securities Division",
-      "regulator": "Arizona Corporation Commission Securities Division",
-      "source_url": "https://www.azcc.gov/securities",
-      "access_class": "OFFICIAL_REGULATOR_HOME",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "grain": "regulator",
-      "record_count": "UNKNOWN",
-      "count_notes": "Verified: Arizona securities regulator is the ACC Securities Division, not DIFI. Oversight covers securities, securities dealers and salespersons, and investment advisers and their representatives (Securities Act of Arizona; Investment Management Act). Keep ACC Securities and DIFI separate.",
-      "acquisition_status": "DOCUMENTED",
       "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-acc-broker-adviser-search",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-acc-securities-research",
       "hub_home": "INVESTOR",
       "source_family": "license_verify",
-      "source_name": "ACC Securities Broker & Adviser Search (BrokerCheck / IAPD)",
-      "regulator": "Arizona Corporation Commission Securities Division",
+      "source_name": "ACC Securities Broker / Adviser Search (FINRA BrokerCheck / SEC IAPD)",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
       "source_url": "https://www.azcc.gov/securities/research",
       "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
-      "identity_field": "CRD",
-      "grain": "mixed_person_and_firm",
+      "identity_field": "CRD when BrokerCheck / IAPD returns one",
+      "grain": "federal_search_not_az_roster",
       "record_count": "UNKNOWN",
-      "count_notes": "Official public tools are FINRA BrokerCheck and SEC IAPD. Investigator on duty (602) 542-0662. Do not scrape BrokerCheck or IAPD.",
+      "count_notes": "ACC research page points consumers to FINRA BrokerCheck and SEC IAPD. That is federal search, not an Arizona state-RIA roster. Probe HTTP 200 on 2026-09-04. Do not scrape BrokerCheck or IAPD. CRD \u2260 current Arizona authority by itself.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CRD"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
       "acquisition_status": "BLOCKED_SEARCH_ONLY",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
     },
     {
-      "source_id": "az-acc-list-request",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-acc-securities-list-request",
       "hub_home": "INVESTOR",
       "source_family": "license_roster",
-      "source_name": "ACC Securities list request (CSV on public-records form)",
-      "regulator": "Arizona Corporation Commission Securities Division",
-      "source_url": "https://www.azcc.gov/docs/default-source/securities-files/pubreq2.pdf",
+      "source_name": "ACC Securities dealer / IA / notice-filed firm lists (public-records request)",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
+      "source_url": "https://www.azcc.gov/securities/forms",
+      "request_form_url": "https://www.azcc.gov/docs/default-source/securities-files/pubreq2.pdf",
       "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
-      "identity_field": "CRD",
-      "grain": "business_credential",
+      "identity_field": "CRD / ACC file number when the list includes one",
+      "grain": "state_securities_firm_list",
       "record_count": "UNKNOWN",
-      "count_notes": "Official form offers CSV for: AZ-registered dealer firms (name, CRD, address, contact name/phone); IA firms licensed in AZ (name, CRD, address); IA firms notice-filed in AZ (name, CRD, address). Individual S7/S6/IAR lists are people — suppress. A.R.S. § 39-121.03. Commercial purpose requires notary. Request not filed this ticket. Counts UNKNOWN, not zero. This is the only remaining-hub path to a real Arizona state-registration business list.",
-      "acquisition_status": "NOT_REQUESTED_THIS_TICKET",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "unique_companies": "UNKNOWN",
+      "count_notes": "ACC list-request PDF (pubreq2.pdf; A.R.S. \u00a7 39-121.03) offers CSV for: Securities Dealer Firms registered in AZ (name, CRD, address, contact name/phone); Investment Adviser Firms licensed in AZ (name, CRD, address); Investment Adviser Firms notice filed in AZ (name, CRD, address). Individual S7/S6/IAR lists are people \u2014 suppress. Commercial-purpose request requires a notary. This is the only remaining Arizona path that could add actual state-registered IA / BD firms not already in SEC IARD. This ticket does not file a PRA. STOP on PRA. UNKNOWN \u2260 0.",
+      "commercial_purpose_requires_notary": true,
+      "firm_lists_available": [
+        "Securities Dealer Firms registered in AZ",
+        "Investment Adviser Firms licensed in AZ",
+        "Investment Adviser Firms notice filed in AZ"
+      ],
+      "identifier_fields": [
+        "CRD",
+        "ACC file number"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "LOW"
+      },
+      "acquisition_status": "NOT_ACQUIRED_PRA",
+      "entity_growth": "UNKNOWN_BLOCKED_PRA",
+      "intelligence_growth": "HIGH_IF_REQUESTED_DO_NOT",
+      "recommended_next_action": "Do not PRA this ticket. Later program decision only.",
+      "blocker": "Public-records list request. Ticket forbids PRA."
     },
     {
-      "source_id": "az-acc-enforcement-actions",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-acc-securities-enforcement",
       "hub_home": "INVESTOR",
       "source_family": "enforcement",
-      "source_name": "ACC Securities Division Actions",
-      "regulator": "Arizona Corporation Commission Securities Division",
+      "source_name": "ACC Securities Division enforcement actions",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
       "source_url": "https://www.azcc.gov/securities/enforcements/actions",
-      "access_class": "OPEN_HTML_TABLE",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "identity_field": "CRD when printed; ACC docket/order number always",
+      "access_class": "OPEN_HTML_TABLE_BOUNDED",
+      "identity_bar": "REVIEW_REQUIRED",
       "grain": "securities_order",
       "record_count": "UNKNOWN",
-      "count_notes": "Year-grouped HTML tables with PDF orders and eDocket links. Many 2026 rows print CRD. Some rows are name-only — those are UNSAFE for adverse attach. Attach only on CRD, ACC file/docket, or order number. Not a roster.",
-      "acquisition_status": "DOCUMENTED_BOUNDED_HTML",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "count_notes": "HTML enforcement actions. Probe HTTP 200, 116,808 bytes on 2026-09-04. Bounded documentation only. Do not scrape. Name-only UNSAFE. CRD when present is EXACT.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CRD"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INV-001 may attach only on exact CRD. Do not scrape."
     },
     {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
       "source_id": "az-sec-iard-principal-office-overlay",
       "hub_home": "INVESTOR",
-      "source_family": "federal_overlay",
-      "source_name": "Existing SEC/IARD Arizona principal-office overlay",
-      "regulator": "SEC IARD (existing Investor census)",
-      "source_url": "https://www.sec.gov/data",
-      "access_class": "FEDERAL_OVERLAY_PLAN",
-      "contact_rank": "FEDERAL_OVERLAY",
+      "source_family": "existing_national_graph",
+      "source_name": "SEC IARD principal-office overlay (Arizona not yet partitioned)",
+      "regulator": "SEC IARD (already in InvestorTrustHub)",
+      "source_url": "https://adviserinfo.sec.gov/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
       "identity_bar": "EXACT",
       "identity_field": "CRD",
-      "grain": "principal_office_firm",
-      "record_count": 213,
-      "count_notes": "Existing Investor census AZ principal-office n=213 (inv-home-001-census.json, READ-ONLY). AZ principal office != Arizona state IA registration. Notice-filed vs state-licensed vs principal-office are three different grains. Do not treat 213 as the Arizona-licensed RIA roster.",
-      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "grain": "sec_registered_or_era_firm",
+      "record_count": 25777,
+      "ria_facts": 17018,
+      "era_facts": 6604,
+      "az_principal_office": 213,
+      "count_notes": "Ask investor-v1-fallback: canonicalFirms=25777, riaFacts=17018, eraFacts=6604, IA_FIRM_SEC_Feed_08_27_2026. Published Ask partitions: CA=2699, NJ=438. Existing Investor census overlay: 213 Arizona principal-office firms (investor-wa-inv-001/docs/inv-home-001-census.json, read-only). Overlay is intelligence on existing national firms, not Arizona state IA registration. CRD \u2260 current Arizona authority. Zero net-new canonical organizations from this overlay.",
+      "identifier_fields": [
+        "CRD",
+        "SEC file number"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PRE_EXISTING_NATIONAL_GRAPH_AZ_HQ_UNKNOWN",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-INV-001 publish Arizona principal-office overlay from existing IARD. Do not scrape IAPD."
     }
   ]
 }

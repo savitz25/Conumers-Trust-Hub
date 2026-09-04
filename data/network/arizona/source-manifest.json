@@ -4,6 +4,8 @@
   "scope": "STATE_LEVEL_ONLY",
   "source_as_of": "2026-09-04",
   "last_checked": "2026-09-04",
+  "arizona_local_phase": "NO",
+  "ask_arizona_publish": false,
   "publication": {
     "public_arizona_routes": false,
     "sitemap_changes": false,
@@ -14,258 +16,1786 @@
     "city_work": false,
     "specialist_repo_edits": false,
     "specialist_page_edits": false,
-    "ask_arizona_release": "ATH-AZ-002_AFTER_SPECIALISTS"
+    "sbs_purchase": false,
+    "pra_request": false,
+    "nmls_scrape": false,
+    "search_portal_scrape": false
   },
   "principles": [
     "STATE_LEVEL_ONLY",
     "missing_source_is_not_zero",
     "SEARCH_ONLY_is_not_zero",
-    "paid_is_not_acquired",
-    "request_available_is_not_zero",
+    "UNKNOWN_is_not_zero",
+    "license_row_is_not_unique_company",
+    "data_row_is_not_entity_growth",
     "HMDA_is_not_license_roster",
-    "AZ_PRINCIPAL_OFFICE_is_not_state_IA_registration",
-    "CRD_is_not_current_AZ_authority_by_itself",
-    "NMLS_is_not_live_roster_download",
-    "NPN_is_not_NAIC",
-    "producer_is_not_agency",
-    "producer_is_not_company",
-    "Marketplace_is_not_state_authority",
-    "annual_aggregate_is_not_roster",
-    "surplus_lines_white_list_is_not_agency_roster",
+    "HMDA_applications_are_not_lender_companies",
+    "ACC_business_registration_is_not_professional_license",
+    "ROC_R22_is_not_household_goods",
+    "ARIZONA_HAS_NO_STATEWIDE_MOVER_LICENSE",
+    "hostage_load_statute_is_not_a_roster",
+    "STATE_AUTHORITY_does_not_exist_for_AZ_HHG",
     "USDOT_is_not_interstate_authority_by_itself",
-    "ACC_entity_ID_is_not_professional_license",
-    "ROC_R22_is_not_HHG_mover",
-    "complaint_is_not_violation",
-    "name_only_adverse_is_UNSAFE",
-    "DIFI_is_not_ACC_Securities",
+    "FMCSA_census_AZ_physical_is_not_movers",
+    "HQ_is_not_service_territory",
+    "producer_is_not_agency",
+    "agency_is_not_insurer",
+    "NPN_person_is_not_business_profile",
+    "SBS_Lookup_is_free_Report_Generator_is_paid",
+    "do_not_buy_SBS_reports",
+    "NMLS_is_search_only",
+    "Loan_Originator_is_a_person_credential",
+    "AZ_principal_office_is_not_ACC_state_IA_registration",
+    "CRD_is_not_current_AZ_authority_by_itself",
+    "IARD_overlay_is_not_new_companies",
+    "CMS_is_not_Arizona_state_facility_identity",
+    "do_not_scrape_search_portals",
+    "do_not_PRA",
+    "do_not_start_local_Arizona",
+    "do_not_duplicate_ROC",
+    "do_not_redo_Senior",
+    "do_not_publish_Ask_arizona_this_ticket",
     "no_trust_score",
     "no_paid_ranking",
+    "no_unsafe_adverse_attach",
     "person_credential_is_not_business_profile",
-    "no_nmls_scrape",
-    "no_acc_entity_search_crawl",
-    "no_sbs_purchase_this_ticket",
-    "no_local_arizona"
+    "complaint_is_not_violation"
   ],
-  "current_network": {
-    "senior": {
-      "status": "LIVE",
-      "url": "https://www.seniortrusthub.com/arizona",
-      "expansion_ledger": {
+  "where_actual_companies_can_be_added": {
+    "contractor": "IN_FLIGHT AZ-CON-001 (Ask az_roc license rows=58408; rows \u2260 companies). Do not duplicate.",
+    "senior": "ALREADY_DONE AZ-SEN-001 (net-new canonical=0; state identities=2776).",
+    "move": "NONE from a state roster (NO_STATE_ROSTER). FMCSA overlay enriches existing 5022; AZ HQ UNKNOWN.",
+    "insurance": "ONLY via paid SBS Report Generator ($0.03/row, $30 min). Not this ticket. Lookup cannot bulk.",
+    "lender": "NONE from free bulk. NMLS search-only. HMDA is applications not companies.",
+    "investor": "IARD overlay = ZERO net-new canonical (existing 25777; 213 AZ principal-office already counted). ACC securities CSV by PRA could add state-RIA/BD identities including some not in SEC IARD \u2014 UNKNOWN, not this ticket.",
+    "acc_ecorp": "PRA bulk of all AZ entities is the wrong universe for specialist hubs. Not this ticket."
+  },
+  "sources": [
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-ag-mover-no-license",
+      "hub_home": "MOVE",
+      "source_family": "regulatory_gap",
+      "source_name": "Arizona AG: no mover registration or professional licensing requirement",
+      "regulator": "Arizona Attorney General",
+      "source_url": "https://www.azag.gov/press-release/attorney-general-mayes-and-bbb-warn-moving-scams-arizona-0",
+      "access_class": "NO_STATE_ROSTER",
+      "identity_bar": "NONE",
+      "identity_field": null,
+      "grain": "absence_of_state_mover_license",
+      "record_count": 0,
+      "unique_companies": 0,
+      "count_notes": "Official AG Mayes / BBB PSA 2025-07-07: 'Arizona does not have a registration law or a professional licensing requirement for movers.' A.R.S. \u00a7\u00a7 44-1611\u201344-1616 is hostage-load consumer protection, not a license roster. 0 here is proven absence of a statewide HHG roster, not a missing scrape. ACC eCorp \u2260 mover license. ROC R-22 House Moving \u2260 household goods. STATE AUTHORITY does not exist in Arizona. USDOT \u2260 interstate by itself. Entity growth from an Arizona mover roster is not available.",
+      "identifier_fields": [],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "DOCUMENTED_NO_ROSTER",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-MOVE-001 publishes the consumer path (AG/DPS/FMCSA). Do not invent a roster."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-ars-hostage-load",
+      "hub_home": "MOVE",
+      "source_family": "consumer_protection_statute",
+      "source_name": "A.R.S. \u00a7\u00a7 44-1611 to 44-1616 hostage-load law",
+      "regulator": "Arizona Legislature / DPS peace officers",
+      "source_url": "https://www.azleg.gov/arsDetail/?title=44",
+      "access_class": "STATUTE_NOT_ROSTER",
+      "identity_bar": "NONE",
+      "grain": "statute",
+      "record_count": 0,
+      "count_notes": "Intrastate hostage-load prohibition. Peace officers may direct delivery after the total estimated price is paid (A.R.S. \u00a7 44-1614). Not a company list. Not a license.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "DOCUMENTED_STATUTE",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-dps-hostage-load-hotline",
+      "hub_home": "MOVE",
+      "source_family": "consumer_complaint_path",
+      "source_name": "Arizona DPS hostage-load consumer hotline",
+      "regulator": "Arizona Department of Public Safety",
+      "source_url": "https://www.azdps.gov/content/basic-page/94/hhg",
+      "access_class": "CONSUMER_PATH",
+      "identity_bar": "NONE",
+      "grain": "hotline",
+      "record_count": "UNKNOWN",
+      "count_notes": "AG PSA: DPS 602-223-2212 / 602-223-5000 for hostage-load help. DPS HHG consumer page: interstate = FMCSA; in-state verify = ACC Entity Search (business registration, not a mover license). Legacy URL https://www.azdps.gov/services/public/moving returned HTTP 404 on 2026-09-04. Not a roster. Do not scrape DPS.",
+      "probe_http_status": 404,
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_HOTLINE",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-roc-r22-house-moving",
+      "hub_home": "MOVE",
+      "source_family": "contractor_classification_not_hhg",
+      "source_name": "ROC R-22 House Moving (building relocation, not household goods)",
+      "regulator": "Arizona Registrar of Contractors",
+      "source_url": "https://roc.az.gov/license-classifications",
+      "access_class": "WRONG_UNIVERSE",
+      "identity_bar": "EXACT",
+      "identity_field": "ROC license number (R-22 class)",
+      "grain": "contractor_classification",
+      "record_count": "UNKNOWN",
+      "count_notes": "R-22 allows disconnecting utilities to relocate a house. Connection of utilities and foundations are not permitted. This is building moving, not household-goods carriage. ROC R-22 \u2260 HHG mover. Builder 3 owns ROC in AZ-CON-001. Do not harvest R-22 as movers.",
+      "identifier_fields": [
+        "ROC license number"
+      ],
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "OWNED_BY_AZ_CON_001_WRONG_UNIVERSE_FOR_MOVE",
+      "entity_growth": "NONE_FOR_MOVE",
+      "intelligence_growth": "NONE_FOR_MOVE",
+      "recommended_next_action": "Leave to AZ-CON-001. Do not treat R-22 as a mover roster."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-fmcsa-mcmis-census-az-physical",
+      "hub_home": "MOVE",
+      "source_family": "federal_motor_carrier_census",
+      "source_name": "FMCSA MCMIS Company Census (AZ physical state)",
+      "regulator": "FMCSA / U.S. DOT",
+      "source_url": "https://data.transportation.gov/d/az4n-8mr2",
+      "download_url": "https://data.transportation.gov/resource/az4n-8mr2.json",
+      "dataset_id": "az4n-8mr2",
+      "access_class": "OPEN_SODA_API",
+      "identity_bar": "EXACT",
+      "identity_field": "USDOT",
+      "grain": "all_motor_carriers_not_household_goods",
+      "record_count": 60519,
+      "active_count": 31875,
+      "count_notes": "Live Socrata 2026-09-04: phy_state=AZ count(*)=60519; status_code=A count(*)=31875. mail_state filter HTTP 400. carship is present; this extract has no H/HHG cargo flag. 60519 is ALL Arizona-physical motor carriers, not movers. Do not publish 60,519 as Arizona moving companies. USDOT \u2260 interstate authority by itself. STATE AUTHORITY \u2260 FMCSA.",
+      "identifier_fields": [
+        "dot_number"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "LOW",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_INGESTED",
+      "entity_growth": "UNSAFE_IF_TREATED_AS_MOVERS",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Do not ingest the full census as movers. HHG subset is not in this extract."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-move-national-directory-overlay",
+      "hub_home": "MOVE",
+      "source_family": "existing_national_graph",
+      "source_name": "MoveTrustHub national publishable directory \u2014 Arizona HQ overlay (not yet partitioned)",
+      "regulator": "FMCSA (directory already in MoveTrustHub)",
+      "source_url": "https://safer.fmcsa.dot.gov/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "identity_bar": "EXACT",
+      "identity_field": "USDOT",
+      "grain": "publishable_federal_mover_profile",
+      "record_count": 5022,
+      "az_hq_publishable": "UNKNOWN",
+      "count_notes": "Ask move-v1-fallback: national publishableProfiles=5022. HQ partitions exist for FL=483, NJ=269, CA=403. Arizona HQ partition is not published in Ask (UNKNOWN). Overlaying AZ HQ onto the existing 5022 is intelligence on existing companies, not net-new canonical organizations and not an Arizona state identity. HQ \u2260 service territory.",
+      "identifier_fields": [
+        "USDOT"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PRE_EXISTING_NATIONAL_GRAPH_AZ_HQ_UNKNOWN",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-MOVE-001 may publish an AZ HQ overlay of the existing 5022. Do not scrape SAFER."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-difi-license-search",
+      "hub_home": "INSURANCE",
+      "source_family": "license_verify",
+      "source_name": "DIFI license search (points to NAIC SBS)",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
+      "source_url": "https://difi.az.gov/license-search",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / NAIC / DIFI license number when returned",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Official DIFI license-search page. Probe HTTP 403 Cloudflare on 2026-09-04. Lookup is free via SBS. Generate a Report is paid. Do not scrape search. Producer \u2260 agency \u2260 insurer. Missing \u2260 zero.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INS-001 keep search path. Do not scrape. Do not buy reports."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-sbs-lookup",
+      "hub_home": "INSURANCE",
+      "source_family": "license_verify",
+      "source_name": "NAIC State Based Systems Lookup (free)",
+      "regulator": "NAIC SBS (used by DIFI)",
+      "source_url": "https://www.statebasedsystems.com/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / license number / NAIC when returned",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Free Lookup for a named producer, agency, or company. Probe HTTP 403 this session. Not a bulk roster. SEARCH_ONLY \u2260 zero. Do not scrape Lookup.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "license number",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Consumer verify path only."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-sbs-report-generator",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "NAIC SBS Report Generator (paid CSV)",
+      "regulator": "NAIC SBS (used by DIFI)",
+      "source_url": "https://www.statebasedsystems.com/solar/support.html",
+      "sample_report_url": "https://www.statebasedsystems.com/solar/docs/GenerateReportOfLicensees.pdf",
+      "access_class": "OPEN_REPORT_GENERATOR_PAID",
+      "identity_bar": "EXACT",
+      "identity_field": "license number / NPN when present",
+      "grain": "mixed_person_and_business_license_row",
+      "record_count": "UNKNOWN",
+      "unique_companies": "UNKNOWN",
+      "report_price_per_row_usd": 0.03,
+      "report_minimum_usd": 30.0,
+      "report_format": "CSV",
+      "count_notes": "Official SBS Support Center (checked 2026-09-04): purchase price is $0.03 per row with a $30.00 minimum per report; CSV; preview of row count and cost before payment. Fields include license number, license type, license status, CE compliance, full business address, email, line of authority. Grain is license rows \u2014 producers (people) and business entities mixed. One company may hold multiple licenses. License row \u2260 unique company. This ticket does not purchase. STOP on paid data.",
+      "identifier_fields": [
+        "license number",
+        "NPN"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "NOT_ACQUIRED_PAID",
+      "entity_growth": "UNKNOWN_BLOCKED_PAID",
+      "intelligence_growth": "HIGH_IF_PURCHASED_DO_NOT",
+      "recommended_next_action": "Do not buy. AZ-INS-001 stays search + enforcement identity rules.",
+      "blocker": "Paid report generator. Ticket forbids paid acquisition."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-difi-enforcement-actions",
+      "hub_home": "INSURANCE",
+      "source_family": "enforcement",
+      "source_name": "DIFI enforcement actions table",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
+      "source_url": "https://difi.az.gov/enforcement-actions",
+      "access_class": "OPEN_HTML_TABLE_PAGINATED",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / NAIC when present on the row",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML enforcement table. NPN/NAIC may appear. Paginated. Probe HTTP 403 this session. Do not scrape pagination. Name-only attach is UNSAFE. Complaint \u2260 violation. Person NPN is not a business profile.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INS-001 may attach only on exact NPN/NAIC. Do not scrape."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-difi-market-conduct",
+      "hub_home": "INSURANCE",
+      "source_family": "enforcement",
+      "source_name": "DIFI market-conduct exam reports (PDF search)",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
+      "source_url": "https://difi.az.gov/",
+      "access_class": "PDF_SEARCH_DO_NOT_CRAWL",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "exam_report_pdf",
+      "record_count": "UNKNOWN",
+      "count_notes": "PDF search, not a bulk machine file. Large PDF crawl is a stop rule. Do not crawl.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "SKIPPED_PDF_CRAWL",
+      "entity_growth": "NONE",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-insurance-national-graph",
+      "hub_home": "INSURANCE",
+      "source_family": "existing_national_graph",
+      "source_name": "InsuranceTrustHub national graph \u2014 no Arizona credentialsByJurisdiction partition",
+      "regulator": "multi-state (already in Ask metrics)",
+      "source_url": "https://www.insurancetrusthub.com/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / NAIC when already in graph",
+      "grain": "national_agency_and_insurer",
+      "record_count": "UNKNOWN",
+      "national_agencies": 82071,
+      "national_legal_insurers": 6185,
+      "az_credentials_by_jurisdiction": null,
+      "count_notes": "Ask insurance-v1-fallback credentialsByJurisdiction lists FL=750316, TX=718894, VT, MA, OH, NJ=0, CA=0. Arizona is not a listed partition. Missing \u2260 zero Arizona agencies. Do not invent an Arizona agency count from the national graph.",
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "PRE_EXISTING_NO_AZ_PARTITION",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-difi-mortgage-lending",
+      "hub_home": "LENDER",
+      "source_family": "license_verify",
+      "source_name": "DIFI mortgage lending (NMLS)",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
+      "source_url": "https://difi.az.gov/licensing/mortgage-lending",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "grain": "mixed_company_and_person_nmls",
+      "record_count": "UNKNOWN",
+      "count_notes": "DIFI mortgage classes via NMLS: Mortgage Banker, Mortgage Broker, Commercial Mortgage Banker, Commercial Mortgage Broker, Registered Exempt Person, Loan Originator (person). Probe HTTP 403 this session. No bulk company roster. Loan Originator is a person credential \u2014 not a business profile. Do not scrape NMLS.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "AZ-LEND-001 keep NMLS as verify-only. Do not invent a denominator."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "source_family": "license_verify",
+      "source_name": "NMLS Consumer Access",
+      "regulator": "NMLS / CSBS (used by DIFI)",
+      "source_url": "https://www.nmlsconsumeraccess.org/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "grain": "mixed_company_and_person",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search-only. Do not scrape. SEARCH_ONLY \u2260 zero companies.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "LOW"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "blocker": "No NMLS bulk. Ticket forbids search-portal scrape."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-difi-financial-enterprises",
+      "hub_home": "LENDER",
+      "source_family": "license_verify",
+      "source_name": "DIFI financial enterprises (money transmitter / debt management / escrow)",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
+      "source_url": "https://difi.az.gov/licensing/financial-enterprises",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "DIFI / NMLS identifier when returned",
+      "grain": "financial_enterprise_license",
+      "record_count": "UNKNOWN",
+      "count_notes": "Money transmitter, debt management, escrow and related classes. Probe HTTP 403. Not a mortgage-lender roster. No bulk file found. Do not scrape.",
+      "probe_http_status": 403,
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-hmda-cfpb-overlay",
+      "hub_home": "LENDER",
+      "source_family": "market_observation",
+      "source_name": "HMDA Arizona applications / originations / denials (already in Ask)",
+      "regulator": "CFPB HMDA",
+      "source_url": "https://ffiec.cfpb.gov/",
+      "access_class": "ALREADY_ACQUIRED_MARKET_OBSERVATION",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "HMDA LEI / respondent when present \u2014 not a license",
+      "grain": "mortgage_application",
+      "record_count": 307379,
+      "originations": 183374,
+      "denials": 49376,
+      "lender_hub_slice": {
+        "counties": 15,
+        "applications": 308338,
+        "originations": 183374,
+        "denials": 49721,
+        "lei_state_rows": 953,
+        "high_confidence_lei_maps": 123
+      },
+      "count_notes": "Ask lender-v1-fallback Arizona: applications=307379, originations=183374, denials=49376. Lender-Trust-Hub existing slice: 15 of 15 counties, applications=308338, originations=183374, denials=49721, 953 LEI state rows, 123 high-confidence LEI maps. Originations match; application/denial clocks are not reconciled this ticket. These are application rows, not lender companies. HMDA \u2260 license roster. Already acquired. Do not dump a new LAR. Do not convert LEIs into net-new organizations.",
+      "identifier_fields": [
+        "LEI"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "ALREADY_ACQUIRED",
+      "entity_growth": "ZERO",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-LEND-001 publish HMDA Arizona market intelligence. Do not call applications companies."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-acc-securities-research",
+      "hub_home": "INVESTOR",
+      "source_family": "license_verify",
+      "source_name": "ACC Securities Broker / Adviser Search (FINRA BrokerCheck / SEC IAPD)",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
+      "source_url": "https://www.azcc.gov/securities/research",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD when BrokerCheck / IAPD returns one",
+      "grain": "federal_search_not_az_roster",
+      "record_count": "UNKNOWN",
+      "count_notes": "ACC research page points consumers to FINRA BrokerCheck and SEC IAPD. That is federal search, not an Arizona state-RIA roster. Probe HTTP 200 on 2026-09-04. Do not scrape BrokerCheck or IAPD. CRD \u2260 current Arizona authority by itself.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CRD"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-acc-securities-list-request",
+      "hub_home": "INVESTOR",
+      "source_family": "license_roster",
+      "source_name": "ACC Securities dealer / IA / notice-filed firm lists (public-records request)",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
+      "source_url": "https://www.azcc.gov/securities/forms",
+      "request_form_url": "https://www.azcc.gov/docs/default-source/securities-files/pubreq2.pdf",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD / ACC file number when the list includes one",
+      "grain": "state_securities_firm_list",
+      "record_count": "UNKNOWN",
+      "unique_companies": "UNKNOWN",
+      "count_notes": "ACC list-request PDF (pubreq2.pdf; A.R.S. \u00a7 39-121.03) offers CSV for: Securities Dealer Firms registered in AZ (name, CRD, address, contact name/phone); Investment Adviser Firms licensed in AZ (name, CRD, address); Investment Adviser Firms notice filed in AZ (name, CRD, address). Individual S7/S6/IAR lists are people \u2014 suppress. Commercial-purpose request requires a notary. This is the only remaining Arizona path that could add actual state-registered IA / BD firms not already in SEC IARD. This ticket does not file a PRA. STOP on PRA. UNKNOWN \u2260 0.",
+      "commercial_purpose_requires_notary": true,
+      "firm_lists_available": [
+        "Securities Dealer Firms registered in AZ",
+        "Investment Adviser Firms licensed in AZ",
+        "Investment Adviser Firms notice filed in AZ"
+      ],
+      "identifier_fields": [
+        "CRD",
+        "ACC file number"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "LOW"
+      },
+      "acquisition_status": "NOT_ACQUIRED_PRA",
+      "entity_growth": "UNKNOWN_BLOCKED_PRA",
+      "intelligence_growth": "HIGH_IF_REQUESTED_DO_NOT",
+      "recommended_next_action": "Do not PRA this ticket. Later program decision only.",
+      "blocker": "Public-records list request. Ticket forbids PRA."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-acc-securities-enforcement",
+      "hub_home": "INVESTOR",
+      "source_family": "enforcement",
+      "source_name": "ACC Securities Division enforcement actions",
+      "regulator": "Arizona Corporation Commission \u2014 Securities Division",
+      "source_url": "https://www.azcc.gov/securities/enforcements/actions",
+      "access_class": "OPEN_HTML_TABLE_BOUNDED",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "securities_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML enforcement actions. Probe HTTP 200, 116,808 bytes on 2026-09-04. Bounded documentation only. Do not scrape. Name-only UNSAFE. CRD when present is EXACT.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CRD"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INV-001 may attach only on exact CRD. Do not scrape."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-sec-iard-principal-office-overlay",
+      "hub_home": "INVESTOR",
+      "source_family": "existing_national_graph",
+      "source_name": "SEC IARD principal-office overlay (Arizona not yet partitioned)",
+      "regulator": "SEC IARD (already in InvestorTrustHub)",
+      "source_url": "https://adviserinfo.sec.gov/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD",
+      "grain": "sec_registered_or_era_firm",
+      "record_count": 25777,
+      "ria_facts": 17018,
+      "era_facts": 6604,
+      "az_principal_office": 213,
+      "count_notes": "Ask investor-v1-fallback: canonicalFirms=25777, riaFacts=17018, eraFacts=6604, IA_FIRM_SEC_Feed_08_27_2026. Published Ask partitions: CA=2699, NJ=438. Existing Investor census overlay: 213 Arizona principal-office firms (investor-wa-inv-001/docs/inv-home-001-census.json, read-only). Overlay is intelligence on existing national firms, not Arizona state IA registration. CRD \u2260 current Arizona authority. Zero net-new canonical organizations from this overlay.",
+      "identifier_fields": [
+        "CRD",
+        "SEC file number"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PRE_EXISTING_NATIONAL_GRAPH_AZ_HQ_UNKNOWN",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-INV-001 publish Arizona principal-office overlay from existing IARD. Do not scrape IAPD."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-acc-ecorp-entity-search",
+      "hub_home": "ASK",
+      "source_family": "business_registration",
+      "source_name": "ACC eCorp entity search",
+      "regulator": "Arizona Corporation Commission",
+      "source_url": "https://ecorp.azcc.gov/EntitySearch/Index",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "ACC entity ID / file number",
+      "grain": "all_arizona_business_entities",
+      "record_count": "UNKNOWN",
+      "count_notes": "eCorp is the statewide corporations / LLC search. Probe HTTP 200 on 2026-09-04. ACC business registration \u2260 professional license (ROC / DIFI / NMLS / CRD / USDOT). Do not scrape search. Not a mover, insurer, lender, or adviser roster.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "ACC entity ID"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Do not scrape eCorp. Bulk is by request only."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-acc-ecorp-bulk-request",
+      "hub_home": "ASK",
+      "source_family": "business_registration",
+      "source_name": "ACC eCorp bulk business-entity extract (public records request)",
+      "regulator": "Arizona Corporation Commission",
+      "source_url": "https://ecorp.azcc.gov/EntitySearch/Index",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "identity_bar": "EXACT",
+      "identity_field": "ACC entity ID",
+      "grain": "all_arizona_business_entities",
+      "record_count": "UNKNOWN",
+      "unique_companies": "UNKNOWN",
+      "count_notes": "No free bulk eCorp dump found. Public-records request path exists. Checked against the 2026-07-25 Arizona bulk note: no free bulk. Filing a PRA is a stop rule. Even if obtained, this is every Arizona corporation/LLC, not hub-licensed companies. Not Austin/LA/SF-class permit identity. Do not acquire this ticket.",
+      "identifier_fields": [
+        "ACC entity ID"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "LOW"
+      },
+      "acquisition_status": "NOT_ACQUIRED_PRA",
+      "entity_growth": "UNKNOWN_BLOCKED_PRA_WRONG_UNIVERSE_FOR_HUBS",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Do not PRA. Do not start an all-entity Arizona dump.",
+      "blocker": "PRA / public-records request. Ticket forbids PRA."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-roc-contractor-pointer",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "Arizona ROC contractor licenses (owned by AZ-CON-001)",
+      "regulator": "Arizona Registrar of Contractors",
+      "source_url": "https://roc.az.gov/",
+      "access_class": "OWNED_BY_SISTER_TICKET",
+      "identity_bar": "EXACT",
+      "identity_field": "ROC license number",
+      "grain": "contractor_license",
+      "record_count": 58408,
+      "az_con_001_distinct_license_no": 58131,
+      "count_notes": "Ask contractor-v1-fallback licensesBySource.az_roc=58408. AZ-CON-001 worktree ROC All Current Contractors profile (file created 2026-08-12) has 58,131 distinct License No. Two clocks, not reconciled here. License rows \u2260 unique companies. This ticket does not re-acquire ROC. Cloudflare 403 on roc.az.gov/posting-list this session. Builder 3 owns AZ-CON-001.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "ROC license number"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "OWNED_BY_AZ_CON_001",
+      "entity_growth": "IN_FLIGHT_SISTER_TICKET",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "Do not duplicate ROC files. Leave AZ-CON-001 to Builder 3."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-senior-cms-and-state-pointer",
+      "hub_home": "SENIOR",
+      "source_family": "existing_specialist_page",
+      "source_name": "SeniorTrustHub /arizona (AZ-SEN-001 accepted)",
+      "regulator": "CMS + Arizona state overlay already published",
+      "source_url": "https://www.seniortrusthub.com/arizona",
+      "access_class": "ALREADY_PUBLISHED",
+      "identity_bar": "EXACT",
+      "identity_field": "CMS CCN / Arizona state facility identity",
+      "grain": "senior_facility",
+      "record_count": "UNKNOWN",
+      "cms_nursing_homes": 140,
+      "cms_home_health": 177,
+      "cms_hospice": 237,
+      "accepted_ledger": {
         "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
         "NET_NEW_STATE_IDENTITIES": 2776,
         "EXISTING_ORGANIZATIONS_ENRICHED": 544,
         "NEW_EVIDENCE_ROWS": 2779
       },
-      "cms_ask_fallback": {
-        "nursingHomes": 140,
-        "homeHealth": 177,
-        "hospice": 237
-      }
+      "count_notes": "AZ-SEN-001 is closed. Ask senior-v1-fallback Arizona CMS: nursingHomes=140, homeHealth=177, hospice=237. Accepted ledger: net-new canonical=0, net-new state identities=2776, existing enriched=544, new evidence rows=2779. Do not redo Senior. CMS CCN \u2260 Arizona state facility identity. Live page HTTP 200 on 2026-09-04.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CMS CCN",
+        "Arizona state facility identity"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "ALREADY_PUBLISHED_AZ_SEN_001",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL_STATE_IDENTITIES_ALREADY_ADDED",
+      "intelligence_growth": "ALREADY_SHIPPED",
+      "recommended_next_action": "Do not redo Senior. Specialist page is live."
     },
-    "contractor": {
-      "status": "AZ-CON-001_IN_PROGRESS_BUILDER_3",
-      "ownership": "savitz25/contractor-trust-hub — READ-ONLY CONTEXT",
-      "roc_posting_list": "OPEN_BULK_DOWNLOAD on https://roc.az.gov/posting-list",
-      "profile_all_current_context": {
-        "file_created": "Aug 12, 2026",
-        "data_rows": 58131,
-        "distinct_license_numbers": 58131,
-        "note": "Not acquired by ATH-AZ-001. Do not duplicate ROC."
-      }
-    },
-    "ask_public_arizona": false,
-    "washington": "CLOSED_SIX_HUB",
-    "local_arizona": "OUT_OF_SCOPE"
-  },
-  "hub_classifications": {
-    "CONTRACTOR": "ENTITY_GROWTH_HEAVY",
-    "SENIOR": "MIXED_ENTITY_AND_INTELLIGENCE",
-    "MOVE": "SEARCH_PATH_ONLY",
-    "INSURANCE": "SEARCH_PATH_ONLY",
-    "LENDER": "INTELLIGENCE_GROWTH_HEAVY",
-    "INVESTOR": "MIXED_ENTITY_AND_INTELLIGENCE"
-  },
-  "sources": [
     {
-      "source_id": "az-ag-mover-licensing-gap",
-      "hub_home": "MOVE",
-      "access_class": "OFFICIAL_STATUTE_AND_CONSUMER_PAGE",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-data-az-gov",
+      "hub_home": "ASK",
+      "source_family": "open_data_catalog",
+      "source_name": "data.az.gov CKAN catalog",
+      "regulator": "State of Arizona",
+      "source_url": "https://data.az.gov/",
+      "access_class": "UNREACHABLE_THIS_SESSION",
+      "identity_bar": "NONE",
+      "grain": "catalog",
+      "record_count": "UNKNOWN",
+      "count_notes": "CKAN package_search HTTP 0 / 48 bytes this session (getaddrinfo failed). No free bulk insurance, mortgage, mover, or securities roster was obtained. Unreachable \u2260 proof the catalog is empty forever. No second deep crawl: stop rule keeps Arizona fast.",
+      "probe_http_status": 0,
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "UNREACHABLE_THIS_SESSION",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "NONE"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-local-exception",
+      "hub_home": "ASK",
+      "source_family": "local_backlog",
+      "source_name": "Arizona city/county permits and local licenses",
+      "regulator": "cities / counties (out of scope)",
+      "source_url": null,
+      "access_class": "OUT_OF_SCOPE",
+      "identity_bar": "NONE",
+      "grain": "local",
       "record_count": 0,
-      "count_notes": "Official AG: no mover registration/licensing law. Zero is the legal gap.",
-      "acquisition_status": "DOCUMENTED"
-    },
-    {
-      "source_id": "az-dps-hhg-enforcement",
-      "hub_home": "MOVE",
-      "access_class": "OFFICIAL_CONSUMER_PAGE",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "DOCUMENTED_NOT_A_ROSTER"
-    },
-    {
-      "source_id": "az-acc-entity-search-movers",
-      "hub_home": "MOVE",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-fmcsa-interstate-overlay",
-      "hub_home": "MOVE",
-      "access_class": "FEDERAL_OVERLAY_PLAN",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "PLAN_EXISTING_NATIONAL_SPINE"
-    },
-    {
-      "source_id": "az-roc-r22-house-moving",
-      "hub_home": "CONTRACTOR",
-      "access_class": "CONTEXT_OWNED_BY_AZ_CON_001",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "CONTEXT_NOT_THIS_TICKET"
-    },
-    {
-      "source_id": "az-difi-sbs-lookup",
-      "hub_home": "INSURANCE",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-difi-sbs-report-generator",
-      "hub_home": "INSURANCE",
-      "access_class": "OPEN_REPORT_GENERATOR_PAID",
-      "record_count": "UNKNOWN",
-      "price_per_row_usd": 0.03,
-      "minimum_charge_usd": 30.0,
-      "acquisition_status": "NOT_PURCHASED"
-    },
-    {
-      "source_id": "az-difi-enforcement-actions",
-      "hub_home": "INSURANCE",
-      "also_hub": "LENDER",
-      "access_class": "OPEN_HTML_TABLE",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "DOCUMENTED_BOUNDED_HTML"
-    },
-    {
-      "source_id": "az-difi-surplus-lines-white-list",
-      "hub_home": "INSURANCE",
-      "access_class": "OPEN_PDF",
-      "record_count": "UNKNOWN",
-      "source_clock": "2025-09-17",
-      "acquisition_status": "DOCUMENTED_NOT_DUMPED"
-    },
-    {
-      "source_id": "az-difi-domestic-surplus-lines",
-      "hub_home": "INSURANCE",
-      "access_class": "OPEN_PDF",
-      "record_count": "UNKNOWN",
-      "source_clock": "2025-06-16",
-      "acquisition_status": "DOCUMENTED_NOT_DUMPED"
-    },
-    {
-      "source_id": "az-difi-annual-report-aggregates",
-      "hub_home": "INSURANCE",
-      "access_class": "OFFICIAL_AGGREGATE_NOT_ROSTER",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "DOCUMENTED_AGGREGATE_ONLY"
-    },
-    {
-      "source_id": "az-difi-mortgage-nmls",
-      "hub_home": "LENDER",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-difi-thentia-portal",
-      "hub_home": "LENDER",
-      "access_class": "FREE_ACCOUNT_REQUIRED",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_LICENSEE_LOGIN"
-    },
-    {
-      "source_id": "az-nmls-consumer-access",
-      "hub_home": "LENDER",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-hmda-cfpb-overlay",
-      "hub_home": "LENDER",
-      "access_class": "EXISTING_CANONICAL_PARTITION",
-      "record_count": 308338,
-      "originations": 183374,
-      "denials": 49721,
-      "counties": 15,
-      "lei_state_rows": 953,
-      "high_confidence_lei_maps": 123,
-      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED"
-    },
-    {
-      "source_id": "az-difi-financial-enterprises",
-      "hub_home": "LENDER",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-acc-securities-division",
-      "hub_home": "INVESTOR",
-      "access_class": "OFFICIAL_REGULATOR_HOME",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "DOCUMENTED"
-    },
-    {
-      "source_id": "az-acc-broker-adviser-search",
-      "hub_home": "INVESTOR",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-acc-list-request",
-      "hub_home": "INVESTOR",
-      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "NOT_REQUESTED_THIS_TICKET"
-    },
-    {
-      "source_id": "az-acc-enforcement-actions",
-      "hub_home": "INVESTOR",
-      "access_class": "OPEN_HTML_TABLE",
-      "record_count": "UNKNOWN",
-      "acquisition_status": "DOCUMENTED_BOUNDED_HTML"
-    },
-    {
-      "source_id": "az-sec-iard-principal-office-overlay",
-      "hub_home": "INVESTOR",
-      "access_class": "FEDERAL_OVERLAY_PLAN",
-      "record_count": 213,
-      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED"
-    },
-    {
-      "source_id": "az-acc-ecorp-entity-search",
-      "hub_home": "CROSS_HUB",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "record_count": "UNKNOWN",
-      "count_notes": "eCorp / Business Connect entity search. Potential cross-hub Arizona entity ID. No free bulk/API found. Do not crawl Entity Search.",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY"
-    },
-    {
-      "source_id": "az-open-data-portal",
-      "hub_home": "CROSS_HUB",
-      "access_class": "SOURCE_NOT_ACQUIRED",
-      "record_count": "UNKNOWN",
-      "count_notes": "data.az.gov did not resolve from this environment (DNS). Not proven as a licensee roster host.",
-      "acquisition_status": "SOURCE_NOT_ACQUIRED"
-    },
-    {
-      "source_id": "az-local-and-city-skipped",
-      "hub_home": "NONE",
-      "access_class": "NOT_IN_SCOPE",
-      "record_count": 0,
-      "count_notes": "No Phoenix, Maricopa, Tucson, Pima, Mesa, Scottsdale, Tempe, Chandler, Glendale, or county/city permit work."
+      "count_notes": "No Austin-class (~2.37M permits with contractor identity/contact), Los Angeles-class exact-license permit bulk, or San Francisco-class giant license/permit graph was found for Phoenix, Tucson, Mesa, Scottsdale, or Maricopa/Pima counties in this bounded state-level pass. 0 is 'no extraordinary local candidate recorded,' not 'zero local records exist.' ARIZONA_LOCAL_PHASE=NO. Do not start local Arizona.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "SKIPPED_LOCAL_PHASE_NO",
+      "entity_growth": "NOT_STARTED",
+      "intelligence_growth": "NONE",
+      "recommended_next_action": "Do not start Phoenix / Maricopa / Tucson / Pima."
     }
   ]
 }

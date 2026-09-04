@@ -47,6 +47,7 @@ next-env.d.ts
 /data/raw/
 /data/network/texas/probe-*.json
 /data/network/washington/probe-*.json
+/data/network/arizona/probe-*.json
 
 __pycache__/
 **/__pycache__/

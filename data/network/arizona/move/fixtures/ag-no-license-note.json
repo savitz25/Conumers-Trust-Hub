@@ -1,0 +1,24 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-ag-mover-no-license",
+  "last_checked": "2026-09-04",
+  "regulator": "Arizona Attorney General",
+  "quote": "Arizona does not have a registration law or a professional licensing requirement for movers.",
+  "quote_url": "https://www.azag.gov/press-release/attorney-general-mayes-and-bbb-warn-moving-scams-arizona-0",
+  "quote_date": "2025-07-07",
+  "statute": "A.R.S. \u00a7\u00a7 44-1611 to 44-1616",
+  "statute_is": "hostage-load consumer protection, not a license roster",
+  "dps_hotline": [
+    "602-223-2212",
+    "602-223-5000"
+  ],
+  "statewide_hhg_roster": false,
+  "record_count": 0,
+  "do_not_confuse": [
+    "ACC eCorp != mover license",
+    "ROC R-22 house moving != household goods",
+    "USDOT != interstate authority by itself",
+    "FMCSA AZ physical census != movers",
+    "HQ != service territory"
+  ]
+}

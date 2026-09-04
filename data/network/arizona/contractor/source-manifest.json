@@ -1,0 +1,144 @@
+{
+  "ticket": "ATH-AZ-001",
+  "hub": "contractor",
+  "state": "AZ",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "az-roc-contractor-pointer",
+    "az-roc-r22-house-moving"
+  ],
+  "sources": [
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-roc-r22-house-moving",
+      "hub_home": "MOVE",
+      "source_family": "contractor_classification_not_hhg",
+      "source_name": "ROC R-22 House Moving (building relocation, not household goods)",
+      "regulator": "Arizona Registrar of Contractors",
+      "source_url": "https://roc.az.gov/license-classifications",
+      "access_class": "WRONG_UNIVERSE",
+      "identity_bar": "EXACT",
+      "identity_field": "ROC license number (R-22 class)",
+      "grain": "contractor_classification",
+      "record_count": "UNKNOWN",
+      "count_notes": "R-22 allows disconnecting utilities to relocate a house. Connection of utilities and foundations are not permitted. This is building moving, not household-goods carriage. ROC R-22 \u2260 HHG mover. Builder 3 owns ROC in AZ-CON-001. Do not harvest R-22 as movers.",
+      "identifier_fields": [
+        "ROC license number"
+      ],
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "OWNED_BY_AZ_CON_001_WRONG_UNIVERSE_FOR_MOVE",
+      "entity_growth": "NONE_FOR_MOVE",
+      "intelligence_growth": "NONE_FOR_MOVE",
+      "recommended_next_action": "Leave to AZ-CON-001. Do not treat R-22 as a mover roster."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-roc-contractor-pointer",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "Arizona ROC contractor licenses (owned by AZ-CON-001)",
+      "regulator": "Arizona Registrar of Contractors",
+      "source_url": "https://roc.az.gov/",
+      "access_class": "OWNED_BY_SISTER_TICKET",
+      "identity_bar": "EXACT",
+      "identity_field": "ROC license number",
+      "grain": "contractor_license",
+      "record_count": 58408,
+      "az_con_001_distinct_license_no": 58131,
+      "count_notes": "Ask contractor-v1-fallback licensesBySource.az_roc=58408. AZ-CON-001 worktree ROC All Current Contractors profile (file created 2026-08-12) has 58,131 distinct License No. Two clocks, not reconciled here. License rows \u2260 unique companies. This ticket does not re-acquire ROC. Cloudflare 403 on roc.az.gov/posting-list this session. Builder 3 owns AZ-CON-001.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "ROC license number"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "OWNED_BY_AZ_CON_001",
+      "entity_growth": "IN_FLIGHT_SISTER_TICKET",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "Do not duplicate ROC files. Leave AZ-CON-001 to Builder 3."
+    }
+  ]
+}

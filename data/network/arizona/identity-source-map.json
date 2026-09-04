@@ -1,102 +1,134 @@
 {
   "ticket": "ATH-AZ-001",
   "bars": {
-    "EXACT": "official identifier match (AZ-ROC License No, NPN, NAIC, SBS number, NMLS, CRD, ACC docket/order, Arizona entity ID, LEI, USDOT, CMS CCN, DIFI matter number)",
+    "EXACT": "official identifier match (ROC license, NPN, NAIC, NMLS, CRD, USDOT, ACC entity ID, CMS CCN, Arizona state facility identity)",
     "HIGH_CONFIDENCE": "exact legal name + exact official government business address, or an approved deterministic crosswalk",
-    "REVIEW_REQUIRED": "name + city; DBA; person/company ambiguity",
+    "REVIEW_REQUIRED": "name + city; DBA; person/company ambiguity; HMDA respondent to NMLS",
     "UNSAFE": "name alone; phone alone; search-engine matching"
   },
   "rules": [
     "Do not collapse unrelated IDs.",
-    "Arizona entity ID != professional license.",
-    "AZ-ROC != USDOT != NMLS != CRD != NPN != NAIC != CMS CCN.",
+    "ACC entity ID != ROC != NPN != NAIC != NMLS != CRD != USDOT != CMS CCN.",
     "Never auto-attach adverse evidence from unsafe identity.",
     "Preserve unmatched official evidence.",
-    "Person NPN/CRD/NMLS is not a business profile.",
-    "AZ principal office != state IA registration.",
+    "Person NPN / CRD / NMLS Loan Originator is not a business profile.",
+    "Arizona principal office != ACC state IA registration.",
     "CRD != current Arizona authority by itself.",
-    "NMLS != live Arizona DIFI roster by itself.",
-    "HMDA LEI != mortgage license.",
-    "NPN != NAIC.",
-    "Producer != agency != company.",
-    "ROC R-22 != household-goods mover."
+    "USDOT != interstate authority by itself.",
+    "ROC R-22 != household goods.",
+    "HMDA LEI != DIFI / NMLS license.",
+    "FMCSA census row != mover."
   ],
   "exact_ids": [
     {
-      "id": "AZ-ROC License No",
-      "source_ids": ["az-roc-r22-house-moving"],
-      "owner": "AZ-CON-001"
-    },
-    {
-      "id": "USDOT",
-      "source_ids": ["az-fmcsa-interstate-overlay"]
-    },
-    {
-      "id": "Arizona entity ID",
-      "source_ids": ["az-acc-ecorp-entity-search", "az-acc-entity-search-movers"]
+      "id": "ROC license number",
+      "source_ids": [
+        "az-roc-contractor-pointer",
+        "az-roc-r22-house-moving"
+      ]
     },
     {
       "id": "NPN",
-      "source_ids": ["az-difi-sbs-lookup", "az-difi-sbs-report-generator", "az-difi-enforcement-actions"]
+      "source_ids": [
+        "az-difi-license-search",
+        "az-sbs-lookup",
+        "az-sbs-report-generator",
+        "az-difi-enforcement-actions"
+      ]
     },
     {
       "id": "NAIC",
       "source_ids": [
-        "az-difi-sbs-lookup",
-        "az-difi-enforcement-actions",
-        "az-difi-surplus-lines-white-list",
-        "az-difi-domestic-surplus-lines"
+        "az-difi-license-search",
+        "az-sbs-lookup",
+        "az-difi-enforcement-actions"
       ]
     },
     {
-      "id": "SBS number",
-      "source_ids": ["az-difi-enforcement-actions", "az-difi-sbs-lookup"]
-    },
-    {
-      "id": "NMLS",
-      "source_ids": ["az-difi-mortgage-nmls", "az-nmls-consumer-access", "az-hmda-cfpb-overlay"]
-    },
-    {
-      "id": "LEI",
-      "source_ids": ["az-hmda-cfpb-overlay"]
+      "id": "NMLS ID",
+      "source_ids": [
+        "az-difi-mortgage-lending",
+        "az-nmls-consumer-access"
+      ]
     },
     {
       "id": "CRD",
       "source_ids": [
-        "az-acc-broker-adviser-search",
-        "az-acc-list-request",
-        "az-acc-enforcement-actions",
-        "az-sec-iard-principal-office-overlay"
+        "az-acc-securities-research",
+        "az-acc-securities-list-request",
+        "az-sec-iard-principal-office-overlay",
+        "az-acc-securities-enforcement"
       ]
     },
     {
-      "id": "ACC docket/order",
-      "source_ids": ["az-acc-enforcement-actions"]
+      "id": "USDOT",
+      "source_ids": [
+        "az-fmcsa-mcmis-census-az-physical",
+        "az-move-national-directory-overlay"
+      ]
     },
     {
-      "id": "DIFI matter number",
-      "source_ids": ["az-difi-enforcement-actions"]
+      "id": "ACC entity ID",
+      "source_ids": [
+        "az-acc-ecorp-entity-search",
+        "az-acc-ecorp-bulk-request"
+      ]
     },
     {
       "id": "CMS CCN",
-      "source_ids": [],
-      "owner": "AZ-SEN-001",
-      "note": "Senior already live. Context only."
+      "source_ids": [
+        "az-senior-cms-and-state-pointer"
+      ]
     }
   ],
   "do_not_collapse": [
-    ["AZ-ROC", "Arizona entity ID"],
-    ["USDOT", "Arizona mover license"],
-    ["NPN", "NAIC"],
-    ["producer", "agency"],
-    ["agency", "company"],
-    ["NMLS", "Arizona DIFI authority"],
-    ["LEI", "NMLS"],
-    ["CRD", "Arizona IA registration"],
-    ["AZ principal office", "Arizona state IA registration"],
-    ["HMDA activity", "license roster"],
-    ["Marketplace agent", "Arizona producer license"],
-    ["ROC R-22", "HHG mover"],
-    ["DIFI", "ACC Securities"]
+    [
+      "ROC",
+      "ACC entity ID"
+    ],
+    [
+      "ROC R-22",
+      "household goods mover"
+    ],
+    [
+      "USDOT",
+      "Arizona state mover license"
+    ],
+    [
+      "NPN",
+      "NAIC"
+    ],
+    [
+      "producer",
+      "agency"
+    ],
+    [
+      "agency",
+      "insurer"
+    ],
+    [
+      "NMLS company",
+      "NMLS Loan Originator"
+    ],
+    [
+      "NMLS",
+      "HMDA LEI"
+    ],
+    [
+      "CRD",
+      "Arizona IA registration"
+    ],
+    [
+      "SEC IARD principal office",
+      "ACC state registration"
+    ],
+    [
+      "CMS CCN",
+      "Arizona state facility identity"
+    ],
+    [
+      "FMCSA census AZ physical",
+      "household goods mover"
+    ]
   ]
 }
