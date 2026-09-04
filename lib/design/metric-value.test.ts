@@ -6,6 +6,7 @@ import {
   formatMetricValue,
   metricDigitBucket,
   metricDigitCount,
+  metricFontSize,
   metricValueClassName,
 } from './metric-value.ts';
 
@@ -33,6 +34,9 @@ test('shared class names stay size-based, not value-specific', () => {
   assert.equal(metricValueClassName('lg'), 'metric-value metric-value--lg');
   assert.equal(metricValueClassName('md'), 'metric-value metric-value--md');
   assert.equal(metricValueClassName('inline'), 'metric-value metric-value--inline');
+  assert.match(metricFontSize(2678341, 'lg') ?? '', /clamp\(/);
+  assert.match(metricFontSize(11529787, 'lg') ?? '', /cqi/);
+  assert.equal(metricFontSize(644421, 'inline'), undefined);
 });
 
 test('cards use the shared metric value treatment and do not wrap or abbreviate', () => {
@@ -40,6 +44,7 @@ test('cards use the shared metric value treatment and do not wrap or abbreviate'
   const card = readFileSync(join(process.cwd(), 'components/specialist-network-card.tsx'), 'utf8');
   const css = readFileSync(join(process.cwd(), 'app/globals.css'), 'utf8');
   const component = readFileSync(join(process.cwd(), 'components/metric-value.tsx'), 'utf8');
+  const moduleCss = readFileSync(join(process.cwd(), 'components/metric-value.module.css'), 'utf8');
   for (const source of [home, card]) {
     assert.match(source, /MetricValue/);
     assert.doesNotMatch(source, /text-3xl font-semibold tabular-nums sm:text-4xl/);
@@ -47,10 +52,9 @@ test('cards use the shared metric value treatment and do not wrap or abbreviate'
   }
   assert.match(card, /grid gap-5 sm:gap-6/);
   assert.match(css, /container-type:\s*inline-size/);
-  assert.match(css, /white-space:\s*nowrap/);
-  assert.match(css, /font-variant-numeric:\s*tabular-nums/);
-  assert.match(css, /\[data-digits="6"\]/);
-  assert.match(css, /\[data-digits="7"\]/);
-  assert.match(css, /\[data-digits="8"\]/);
+  assert.match(moduleCss, /container-type:\s*inline-size/);
+  assert.match(moduleCss, /white-space:\s*nowrap/);
+  assert.match(component, /fontSize: metricFontSize/);
+  assert.match(component, /whitespace-nowrap/);
   assert.match(component, /data-digits=\{bucket\}/);
 });

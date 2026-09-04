@@ -2,9 +2,11 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import {
   formatMetricValue,
   metricDigitBucket,
+  metricFontSize,
   metricValueClassName,
   type MetricValueSize,
 } from '@/lib/design/metric-value.ts';
+import styles from './metric-value.module.css';
 
 export function MetricValue({
   value,
@@ -17,22 +19,18 @@ export function MetricValue({
   const bucket = metricDigitBucket(value);
   if (size === 'inline') {
     return (
-      <span
-        className={metricValueClassName('inline')}
-        data-digits={bucket}
-        data-size="inline"
-      >
+      <span className="font-semibold tabular-nums whitespace-nowrap" data-digits={bucket} data-size="inline">
         {formatted}
       </span>
     );
   }
   return (
-    <div className="metric-value-slot">
+    <div className={`min-w-0 max-w-full ${styles.slot}`} style={{ containerType: 'inline-size' }}>
       <p
-        className={metricValueClassName(size)}
+        className={`${styles.value} ${metricValueClassName(size)} max-w-full overflow-hidden font-semibold tabular-nums whitespace-nowrap`}
         data-digits={bucket}
         data-size={size}
-        style={{ color: ASK_BRAND.navy }}
+        style={{ color: ASK_BRAND.navy, fontSize: metricFontSize(value, size) }}
       >
         {formatted}
       </p>
