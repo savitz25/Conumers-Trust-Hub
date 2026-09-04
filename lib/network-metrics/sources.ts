@@ -1,6 +1,6 @@
 export const SPECIALIST_METRIC_REVALIDATE_SECONDS = 3600;
 
-export type SpecialistHubId = 'move' | 'lender' | 'insurance' | 'contractor' | 'senior';
+export type SpecialistHubId = 'move' | 'lender' | 'insurance' | 'contractor' | 'senior' | 'investor';
 
 export type SpecialistSourceConfig = {
   hub: SpecialistHubId;
@@ -56,6 +56,14 @@ export const SPECIALIST_SOURCES: Record<SpecialistHubId, SpecialistSourceConfig>
     fallbackRelPath: 'data/network-metrics/senior-v1-fallback.json',
     timeoutMs: 4000,
   },
+  investor: {
+    hub: 'investor',
+    schemaVersion: 'investor-network-metrics-v1',
+    publicationUrl:
+      'https://raw.githubusercontent.com/savitz25/investor-trust-hub/main/data/home/investor-network-metrics-v1.json',
+    fallbackRelPath: 'data/network-metrics/investor-v1-fallback.json',
+    timeoutMs: 4000,
+  },
 };
 
 export const ACCEPTED_SPECIALIST_FINGERPRINTS = {
@@ -64,6 +72,14 @@ export const ACCEPTED_SPECIALIST_FINGERPRINTS = {
   insurance: 'c9120eaf14f96cc8226c5ac8f7e5dc940c328b339bcb75ebc1596bc306d6f301',
   contractor: '0a99e8a1cf53590d01506d57072f4a320aa6c0060476a779193d8af1dd8034b3',
   senior: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',
+  investor: 'd44c7eea69e844176fc82c6cb2554456a8ae648f2e6584485549b736f536e6e8',
 } as const;
 
-export const SPECIALIST_OWNED_HUBS: SpecialistHubId[] = ['move', 'lender', 'insurance', 'contractor', 'senior'];
+export const SPECIALIST_OWNED_HUBS: SpecialistHubId[] = [
+  'move',
+  'lender',
+  'insurance',
+  'contractor',
+  'senior',
+  'investor',
+];

@@ -1,0 +1,461 @@
+{
+  "schemaVersion": "investor-network-metrics-v1",
+  "generatedAt": "2026-09-04T02:48:35.846Z",
+  "newestDocumentedSourceAsOf": "2026-09-03",
+  "newestDocumentedSourceAsOfNote": "Newest documented official source-effective date among metrics that carry a calendar sourceAsOf. Not the as-of date of every filing, not Git time, and not deploy time.",
+  "sourceFingerprint": "d44c7eea69e844176fc82c6cb2554456a8ae648f2e6584485549b736f536e6e8",
+  "source": {
+    "dataset": "iapd_sec_compilation",
+    "releaseLabel": "IA_FIRM_SEC_Feed_08_27_2026",
+    "publishedAt": "2026-08-27",
+    "retrievedAt": "2026-08-28"
+  },
+  "identity": {
+    "rosterFirms": 23622,
+    "riaFacts": 17018,
+    "eraFacts": 6604,
+    "riaRegistered": 16783,
+    "riaPending": 235,
+    "eraReporting": 6604,
+    "canonicalFirms": 25777,
+    "extraFirmsWithoutAdvFacts": 2155,
+    "crdIdentifiers": 25777,
+    "crdDistinctFirms": 25777,
+    "secFileIdentifiers": 23621,
+    "secFileDistinctFirms": 23621,
+    "partitionRule": "form_adv_firm_facts.dataset_kind is mutually exclusive: ria XOR era. COUNT(ria)+COUNT(era)=COUNT(roster). This is a filing-class partition of the monthly SEC IARD roster, not a second identity spine.",
+    "riaPlusEraEqualsRoster": true
+  },
+  "formAdv": {
+    "filings": 635269,
+    "attributeObservations": 5149596,
+    "withdrawals": 22592,
+    "successorLinks": 16
+  },
+  "raum": {
+    "riaWithObservation": 17018,
+    "riaZero": 613,
+    "riaPositive": 16405,
+    "riaNull": 0,
+    "eraNotFiled": 6604,
+    "nationalDollarTotalPublished": false
+  },
+  "evidence": {
+    "disclosureEvents": 0,
+    "item11YesRia": 876,
+    "item11YesEra": 80,
+    "ownerEntities": 158560,
+    "evidenceRecords": 165354
+  },
+  "publication": {
+    "indexableTrustReports": 1000,
+    "searchableRosterFirms": 23622
+  },
+  "florida": {
+    "stateIntelligencePage": false
+  },
+  "newJersey": {
+    "principalOfficeRosterFirms": 438,
+    "stateRiaRosterCoverage": "SOURCE_AVAILABLE_BY_REQUEST",
+    "statewideStateRiaUniverse": null,
+    "enforcementDocumentsAcquired": 48
+  },
+  "california": {
+    "principalOfficeRosterFirms": 2699,
+    "stateRiaRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "statewideStateRiaUniverse": null
+  },
+  "network": {
+    "publishedStateIntelligencePages": 2,
+    "publishedStateIntelligencePaths": [
+      "/new-jersey",
+      "/california"
+    ]
+  },
+  "rejectedTotals": [
+    {
+      "total": "17018 + 6604 + 635269 Form ADV rows as total advisers",
+      "reason": "Incompatible grains. RIA and ERA are classes of the roster; filings are not extra firms."
+    },
+    {
+      "total": "5149596 attribute observations as advisers",
+      "reason": "Item observations are not firms, filings, accounts, or clients."
+    },
+    {
+      "total": "25777 canonical firms as the public roster",
+      "reason": "2155 extra identities lack ADV facts and are excluded from the SEC/IARD roster headline."
+    },
+    {
+      "total": "National summed RAUM / AUM dollar total",
+      "reason": "Duplicated filing vintages and ERA non-filing make an aggregate dollar headline unsafe."
+    },
+    {
+      "total": "NJ or CA state-RIA universe = 0",
+      "reason": "Missing bulk state rosters are UNKNOWN, not zero."
+    },
+    {
+      "total": "0 disclosure events as no-wrongdoing",
+      "reason": "Empty table is not a clean history. Item 11 is a checkbox, not a finding."
+    }
+  ],
+  "metrics": [
+    {
+      "unit": "count",
+      "key": "investment_advisory_firms",
+      "label": "Investment advisory firms",
+      "value": 23622,
+      "valueState": "KNOWN",
+      "grain": "sec_iard_roster_firm",
+      "denominator": "Current monthly SEC IARD RIA + ERA firm facts (form_adv_firm_facts)",
+      "description": "SEC/IARD monthly roster firms. RIA and ERA stay separate classes. Not all canonical firm identities.",
+      "coverage": "National SEC IARD monthly compilation",
+      "contributingSourceSystems": [
+        "iapd",
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One current form_adv_firm_facts row per CRD in the monthly RIA+ERA pair.",
+        "doesNotCount": "Not 2155 extra canonical firms without ADV facts. Not Form ADV filings. Not attribute rows. Not CRD identifiers as additional firms.",
+        "contributingSourceSystems": [
+          "iapd_sec_compilation",
+          "form_adv_firm_facts"
+        ],
+        "geographicCoverage": "National SEC IARD roster; principal office is not service territory",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 published 2026-08-27; retrieved 2026-08-28",
+        "generationDate": "2026-09-04",
+        "currentActiveRule": "dataset_kind is ria XOR era; 17,018 + 6,604 = 23,622"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ria_records",
+      "label": "Registered investment adviser records",
+      "value": 17018,
+      "valueState": "KNOWN",
+      "grain": "ria_firm_fact",
+      "denominator": "form_adv_firm_facts.dataset_kind = 'ria'",
+      "description": "RIA firm facts on the current roster. Includes pending. ERA is not an RIA.",
+      "coverage": "National SEC IARD RIA file",
+      "contributingSourceSystems": [
+        "iapd",
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "RIA facts (registered + pending).",
+        "doesNotCount": "Not ERA. Pending is not SEC approval. Not a quality ranking.",
+        "contributingSourceSystems": [
+          "form_adv_firm_facts"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "era_records",
+      "label": "Exempt reporting adviser records",
+      "value": 6604,
+      "valueState": "KNOWN",
+      "grain": "era_firm_fact",
+      "denominator": "form_adv_firm_facts.dataset_kind = 'era'",
+      "description": "ERA firm facts. ERA is not an RIA. Exemption from full registration is not a safety finding.",
+      "coverage": "National SEC IARD ERA file",
+      "contributingSourceSystems": [
+        "iapd",
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "ERA facts with reporting status.",
+        "doesNotCount": "Not RIAs. Not a combined “advisers” total without stating both classes.",
+        "contributingSourceSystems": [
+          "form_adv_firm_facts"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "indexable_firm_profiles",
+      "label": "Indexable firm research profiles",
+      "value": 1000,
+      "valueState": "KNOWN",
+      "grain": "indexable_firm_profile",
+      "denominator": "search_documents where entity_kind=firm and indexable=true",
+      "description": "Wave-1 publication gate. Not the full regulatory universe and not a ranking.",
+      "coverage": "National publication cohort",
+      "contributingSourceSystems": [
+        "search_documents"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Indexable firm search documents on official firms.",
+        "doesNotCount": "Not 23,622 roster firms. Non-indexable is not lower quality.",
+        "contributingSourceSystems": [
+          "search_documents"
+        ],
+        "geographicCoverage": "National Wave-1 gate",
+        "sourceDates": "Publication gate on IA_FIRM_SEC_Feed_08_27_2026",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "form_adv_filings",
+      "label": "Form ADV filings",
+      "value": 635269,
+      "valueState": "KNOWN",
+      "grain": "form_adv_filing",
+      "denominator": "form_adv_filings rows (historical filing records)",
+      "description": "Stored Form ADV filing records. A filing is not an additional advisory firm.",
+      "coverage": "IARD filing history as stored",
+      "contributingSourceSystems": [
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One form_adv_filings row.",
+        "doesNotCount": "Not firms. Not attribute observations. Amendments are not new advisers.",
+        "contributingSourceSystems": [
+          "form_adv_filings"
+        ],
+        "geographicCoverage": "National filing history as stored",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "form_adv_attribute_observations",
+      "label": "Form ADV attribute observations",
+      "value": 5149596,
+      "valueState": "KNOWN",
+      "grain": "form_adv_attribute_observation",
+      "denominator": "form_adv_reported_attributes rows",
+      "description": "Normalized Item-level observations. Evidence depth — not 5 million advisers.",
+      "coverage": "Current extract Item observations",
+      "contributingSourceSystems": [
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One normalized Item observation row.",
+        "doesNotCount": "Not firms, not filings, not accounts, not clients, not violations.",
+        "contributingSourceSystems": [
+          "form_adv_reported_attributes"
+        ],
+        "geographicCoverage": "National extract",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ria_raum_observations",
+      "label": "RIA firms with a reported RAUM observation",
+      "value": 17018,
+      "valueState": "KNOWN",
+      "grain": "raum_observation",
+      "denominator": "RIA facts with Item 5F(2)(c) RAUM present (zero kept distinct from missing)",
+      "description": "Coverage of reported regulatory assets under management for RIAs. ERA does not file this item. No national dollar total is published.",
+      "coverage": "RIA facts only",
+      "contributingSourceSystems": [
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "RIA facts with a non-null RAUM amount. Zero is a reported value.",
+        "doesNotCount": "Not performance. Not client assets as a marketing total. Not ERA. Not a summed national AUM headline.",
+        "contributingSourceSystems": [
+          "form_adv_firm_facts"
+        ],
+        "geographicCoverage": "National RIA file",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "form_adv_item11_yes_indicators",
+      "label": "Form ADV Item 11 yes responses",
+      "value": 956,
+      "valueState": "PARTIAL",
+      "grain": "form_adv_item11_yes_indicator",
+      "denominator": "form_adv_firm_facts.disclosure_indicator = Y",
+      "description": "Filer checkbox that disclosure information was reported. Not a finding of wrongdoing.",
+      "coverage": "Current roster facts",
+      "contributingSourceSystems": [
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC_PARTIAL",
+      "trace": {
+        "counts": "Facts with disclosure_indicator Y (RIA and ERA kept visible in Trace).",
+        "doesNotCount": "Not disclosure_events. Not a finding of wrongdoing. N is not a clean history. Missing is not zero events.",
+        "contributingSourceSystems": [
+          "form_adv_firm_facts"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "disclosure_events",
+      "label": "Stored disclosure event rows",
+      "value": 0,
+      "valueState": "KNOWN",
+      "grain": "disclosure_event",
+      "denominator": "disclosure_events table",
+      "description": "Structured disclosure-event rows currently stored. Zero here is an empty table, not proof of no disciplinary history.",
+      "coverage": "Not a national enforcement census",
+      "contributingSourceSystems": [
+        "disclosure_events"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "INTERNAL",
+      "trace": {
+        "counts": "disclosure_events rows.",
+        "doesNotCount": "Not Item 11 checkboxes. Not wrongdoing. Do not headline this zero as a clean industry.",
+        "contributingSourceSystems": [
+          "disclosure_events"
+        ],
+        "geographicCoverage": "National table as stored",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ownership_control_observations",
+      "label": "Ownership and control observations",
+      "value": 158560,
+      "valueState": "KNOWN",
+      "grain": "ownership_control_observation",
+      "denominator": "form_adv_owner_entities rows",
+      "description": "Schedule A/B owner/control observations. An owner row is not an advisory firm.",
+      "coverage": "Current extract owner entities",
+      "contributingSourceSystems": [
+        "form_adv"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One owner/control entity observation.",
+        "doesNotCount": "Not firms. Not a beneficial-owner census of the United States.",
+        "contributingSourceSystems": [
+          "form_adv_owner_entities"
+        ],
+        "geographicCoverage": "National extract",
+        "sourceDates": "IA_FIRM_SEC_Feed_08_27_2026 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_state_ria_roster",
+      "label": "New Jersey state-registered adviser universe",
+      "value": null,
+      "valueState": "REQUEST_ONLY",
+      "grain": "nj_state_ria_roster",
+      "denominator": "NJ Bureau of Securities state-RIA bulk roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "description": "Complete NJ state-registered adviser count is UNKNOWN, not zero, and not the 438 SEC principal-office overlay.",
+      "coverage": "New Jersey",
+      "contributingSourceSystems": [
+        "nj_bos"
+      ],
+      "sourceAsOf": "2026-09-02",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the complete NJ state-RIA universe.",
+        "doesNotCount": "Not SEC NJ principal-office firms. Not Bureau enforcement documents.",
+        "contributingSourceSystems": [
+          "nj_bos"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "NJ-INV snapshot as_of 2026-09-02",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "A complete current New Jersey state-registered investment adviser roster remains an official records request. UNKNOWN must never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_state_ria_roster",
+      "label": "California state-registered adviser universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "ca_state_ria_roster",
+      "denominator": "California DFPI state-RIA bulk roster — SOURCE_NOT_ACQUIRED",
+      "description": "No bulk California state-RIA roster was acquired. Complete licensed-adviser count is UNKNOWN, not zero.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "ca_dfpi"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the complete CA state-RIA universe.",
+        "doesNotCount": "Not SEC CA principal-office firms. Not DFPI enforcement search hits.",
+        "contributingSourceSystems": [
+          "ca_dfpi"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CA-INV snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "Public DFPI verification is search-only. Do not estimate the missing state roster from SEC principal-office geography."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "published_state_intelligence_pages",
+      "label": "Published state investment-intelligence pages",
+      "value": 2,
+      "valueState": "KNOWN",
+      "grain": "published_state_intelligence_page",
+      "denominator": "Indexable specialist state intelligence routes currently published",
+      "description": "New Jersey and California state intelligence pages. Not a count of advisers.",
+      "coverage": "/new-jersey, /california",
+      "contributingSourceSystems": [
+        "investor-state-intel"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T02:48:35.846Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Published /new-jersey and /california intelligence routes.",
+        "doesNotCount": "Not county pages. Not national roster rows. Florida is not published on this hub.",
+        "contributingSourceSystems": [
+          "investor-state-intel"
+        ],
+        "geographicCoverage": "/new-jersey, /california",
+        "sourceDates": "Publication gates in specialist catalogs",
+        "generationDate": "2026-09-04"
+      }
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import seniorFallback from '../../data/network-metrics/senior-v1-fallback.json' 
 import moveFallback from '../../data/network-metrics/move-v1-fallback.json' with { type: 'json' };
 import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' with { type: 'json' };
 import insuranceFallback from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
+import investorFallback from '../../data/network-metrics/investor-v1-fallback.json' with { type: 'json' };
 import {
   SPECIALIST_METRIC_REVALIDATE_SECONDS,
   SPECIALIST_OWNED_HUBS,
@@ -14,6 +15,7 @@ import {
   adaptContractorCard,
   adaptInsuranceCard,
   adaptLenderCard,
+  adaptInvestorCard,
   adaptMoveCard,
   adaptSeniorCard,
 } from './adapt.ts';
@@ -21,6 +23,7 @@ import {
   validateContractorManifest,
   validateInsuranceManifest,
   validateLenderManifest,
+  validateInvestorManifest,
   validateMoveManifest,
   validateSeniorManifest,
 } from './validate.ts';
@@ -39,7 +42,8 @@ function readFallback(hub: SpecialistHubId): unknown {
   if (hub === 'senior') return seniorFallback;
   if (hub === 'move') return moveFallback;
   if (hub === 'lender') return lenderFallback;
-  return insuranceFallback;
+  if (hub === 'insurance') return insuranceFallback;
+  return investorFallback;
 }
 
 async function fetchUpstream(
@@ -67,7 +71,8 @@ function present(hub: SpecialistHubId, raw: unknown, origin: 'UPSTREAM' | 'FALLB
   if (hub === 'senior') return adaptSeniorCard(validateSeniorManifest(raw), origin);
   if (hub === 'move') return adaptMoveCard(validateMoveManifest(raw), origin);
   if (hub === 'lender') return adaptLenderCard(validateLenderManifest(raw), origin);
-  return adaptInsuranceCard(validateInsuranceManifest(raw), origin);
+  if (hub === 'insurance') return adaptInsuranceCard(validateInsuranceManifest(raw), origin);
+  return adaptInvestorCard(validateInvestorManifest(raw), origin);
 }
 
 export async function loadSpecialistCard(

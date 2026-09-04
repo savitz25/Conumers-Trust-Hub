@@ -28,16 +28,19 @@ export const CONSUMER_METRIC_LABELS: Record<string, string> = {
   investor_iard_roster: 'Investment advisory firms',
   investor_ria_firms: 'Registered investment adviser records',
   investor_era_firms: 'Exempt reporting adviser records',
+  investment_advisory_firms: 'Investment advisory firms',
+  ria_records: 'Registered investment adviser records',
+  era_records: 'Exempt reporting adviser records',
+  form_adv_attribute_observations: 'Form ADV attribute observations',
+  form_adv_filings: 'Form ADV filings',
+  ownership_control_observations: 'Ownership/control observations',
+  indexable_firm_profiles: 'Indexable firm research profiles',
   current_nursing_homes: 'Current nursing homes',
   current_home_health_agencies: 'Current home health agencies',
   current_hospice_providers: 'Current hospice providers',
 };
 
-export const HOMEPAGE_PUBLIC_METRIC_IDS = [
-  'investor_iard_roster',
-  'investor_ria_firms',
-  'investor_era_firms',
-] as const;
+export const HOMEPAGE_PUBLIC_METRIC_IDS = [] as const;
 
 export function consumerMetricLabel(id: string, fallback: string): string {
   return CONSUMER_METRIC_LABELS[id] ?? fallback;

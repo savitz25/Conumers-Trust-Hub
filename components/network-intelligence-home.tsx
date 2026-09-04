@@ -24,7 +24,7 @@ const CARD_CONFIG: Record<string, { eyebrow: string; metricIds: string[]; href: 
   insurance: { eyebrow: 'Insurance', metricIds: [], href: 'https://www.insurancetrusthub.com', action: 'Research insurance' },
   senior: { eyebrow: 'Senior care', metricIds: [], href: 'https://www.seniortrusthub.com', action: 'Research senior care' },
   contractor: { eyebrow: 'Contractors', metricIds: [], href: 'https://www.contractortrusthub.com', action: 'Research credentials' },
-  investor: { eyebrow: 'Investment', metricIds: ['investor_iard_roster', 'investor_ria_firms', 'investor_era_firms'], href: 'https://www.investortrusthub.com', action: 'Research advisers' },
+  investor: { eyebrow: 'Investment', metricIds: [], href: 'https://www.investortrusthub.com', action: 'Research advisers' },
 };
 
 const EVIDENCE_GROUPS = [
@@ -124,7 +124,7 @@ export async function NetworkIntelligenceHome() {
         </div>
       </section>
 
-      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together. Move, Lender, Insurance, Contractor, and Senior counts are owned by the specialist hubs and consumed here. Investor remains on the accepted local manifest." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => SPECIALIST_CARD_HUBS.has(hub.hub_id) ? <SpecialistNetworkCard key={hub.hub_id} card={specialistCards[hub.hub_id as SpecialistHubId]} /> : <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
+      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card is now sourced from its specialist hub's published metric contract. Each market preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => SPECIALIST_CARD_HUBS.has(hub.hub_id) ? <SpecialistNetworkCard key={hub.hub_id} card={specialistCards[hub.hub_id as SpecialistHubId]} /> : <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
 
       <section className="section-block border-b bg-white" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="findings-heading"><div className="container-page"><SectionHeading eyebrow="What the data says" title="The structure of the record matters." copy="These findings describe how public evidence works across regulated markets. They do not compare provider quality." /><div className="mt-8 grid gap-5 lg:grid-cols-3">{[
         ['Identity systems differ by market', 'USDOT, NMLS, NPN, CMS CCN, state credentials, and CRD identify different regulated entities.', 'A similar name is not proof of a shared legal identity.'],
