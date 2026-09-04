@@ -1,0 +1,137 @@
+{
+  "ticket": "ATH-WA-001",
+  "checked": "2026-09-04",
+  "acquired_this_ticket": [
+    {
+      "source_id": "wa-lni-contractor-general",
+      "method": "official Socrata CSV",
+      "rows": 160923,
+      "unique_license": 160923,
+      "active": 75823,
+      "phone_nonempty": 160850,
+      "unique_ubi": 149153,
+      "bytes": 35382044,
+      "sha256": "818c7f8df6ecb857aea6375c2b6ec884ae278cc6a89999c0bf8ad49f87285b20",
+      "committed": false
+    },
+    {
+      "source_id": "wa-lni-contractor-bond",
+      "method": "official Socrata CSV",
+      "rows": 176920,
+      "unique_license": 82635,
+      "bytes": 28382948,
+      "sha256": "127d8788bc09df8774b54a2d770e38fde70633f3a7c6577a2b20f0b8f5e6d6a7",
+      "committed": false
+    },
+    {
+      "source_id": "wa-lni-contractor-insurance",
+      "method": "official Socrata CSV",
+      "rows": 77005,
+      "unique_license": 70953,
+      "bytes": 15955496,
+      "sha256": "69108d87fbb6ac2eef9a3f33b36fa25296c59c2f0bcff9dd81da674971f99c35",
+      "committed": false
+    }
+  ],
+  "counted_not_dumped": [
+    {
+      "source_id": "wa-lni-principal",
+      "rows": 250349,
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "wa-lni-authorized-signer",
+      "rows": 10444,
+      "publication": "people_suppressed"
+    },
+    {
+      "source_id": "wa-lni-public-works-project-details",
+      "rows": 347082
+    },
+    {
+      "source_id": "wa-lni-affidavit-project-details",
+      "rows": 1192380
+    },
+    {
+      "source_id": "wa-dshs-gis-residential-care",
+      "current_rows": 6968,
+      "afh": 6179,
+      "alf": 557,
+      "esf": 16
+    },
+    {
+      "source_id": "wa-utc-household-goods-directory",
+      "active_hhg_page_total": 285,
+      "note": "not scraped"
+    }
+  ],
+  "join": {
+    "general_rows": 160923,
+    "general_unique": 160923,
+    "general_active": 75823,
+    "phone_nonempty": 160850,
+    "address_nonempty": 160923,
+    "ubi_nonempty": 160923,
+    "unique_ubi": 149153,
+    "active_unique_ubi": 72822,
+    "principal_name_nonempty": 160555,
+    "bond_rows": 176920,
+    "bond_unique": 82635,
+    "bond_current_evidence": 77261,
+    "bond_impaired_y": 294,
+    "insurance_rows": 77005,
+    "insurance_unique": 70953,
+    "insurance_current_evidence": 70919,
+    "general_with_any_bond_row": 82635,
+    "general_with_any_insurance_row": 70953,
+    "general_with_bond_and_insurance_row": 70622,
+    "general_without_bond_row": 78288,
+    "general_without_insurance_row": 89970,
+    "bond_orphan_not_in_general": 0,
+    "insurance_orphan_not_in_general": 0,
+    "active_with_current_bond_evidence": 75044,
+    "active_with_current_insurance_evidence": 70425,
+    "active_with_current_bond_and_insurance": 69966,
+    "active_without_current_bond_evidence": 779,
+    "active_without_current_insurance_evidence": 5398,
+    "principal_rows": 250349,
+    "authorized_signer_rows": 10444,
+    "pw_project_rows": 347082,
+    "affidavit_rows": 1192380,
+    "intent_rows": 1314773,
+    "pw_apprentice_rows": 347478,
+    "afh_current": 6179,
+    "alf_current": 557,
+    "esf_current": 16,
+    "sl_current": 187,
+    "gt_current": 29,
+    "residential_current": 6968,
+    "residential_all_including_archive": 134442
+  },
+  "giant_files_not_ingested": [
+    {
+      "source_id": "wa-lni-affidavit-project-details",
+      "rows": 1192380,
+      "reason": "giant public-works file"
+    },
+    {
+      "source_id": "wa-lni-intent-project",
+      "rows": 1314773,
+      "reason": "giant public-works file"
+    }
+  ],
+  "not_acquired": [
+    "OIC individual producer lists (SOURCE_USE_RESTRICTED)",
+    "OIC company bulk roster (search only; 2,924 is an annual-report aggregate)",
+    "NMLS Consumer Access bulk",
+    "DFI licensee database bulk",
+    "UTC household-goods CSV (does not exist)",
+    "SOS CCFS full extract (retired)",
+    "DOR business bulk",
+    "DSHS locator scrape",
+    "CMS raw federal files",
+    "HMDA LAR dump",
+    "SEC/IARD bulk this ticket",
+    "Seattle / King / Tacoma / Pierce / Spokane / Snohomish / Bellevue / municipal permits"
+  ]
+}

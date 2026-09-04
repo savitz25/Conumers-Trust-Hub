@@ -1,0 +1,17 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-lni-contractor-bond",
+  "note": "Bond evidence row. Bond != endorsement. Impaired flag is evidence, not a ranking.",
+  "row_count_file": 176920,
+  "unique_license_numbers": 82635,
+  "bond_impaired_y": 294,
+  "rows": [
+    {
+      "ContractorLicenseNumber": "ECOSTSC758NN",
+      "BondFirmName": "Merchants Bonding Co (Mutual)",
+      "BondAccountID": "101977514",
+      "BondAmt": "30000",
+      "BondImpaired": ""
+    }
+  ]
+}

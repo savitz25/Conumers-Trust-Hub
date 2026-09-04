@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-dfi-securities-licensee-database",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "state_ria_bulk_count": "UNKNOWN",
+  "note": "WA principal office != state registration. CRD != current WA authority. Plan SEC/IARD overlay. Do not scrape IAPD/BrokerCheck.",
+  "aggregates_2024_year_in_review": {
+    "broker_dealers": 1697,
+    "investment_advisers": 645,
+    "iar_people": 14753,
+    "salespersons_people": 227450
+  },
+  "rows": []
+}

@@ -1,0 +1,129 @@
+{
+  "ticket": "ATH-WA-001",
+  "bars": {
+    "EXACT": "official identifier match (WA-LNI ContractorLicenseNumber, UBI, UTC ID, USDOT, UTC permit, NPN, NAIC, WAOIC, NMLS, CRD, DSHS LicenseNumber/FacInstanceId, CMS CCN)",
+    "HIGH_CONFIDENCE": "exact legal name + exact official government business address, or an approved deterministic crosswalk",
+    "REVIEW_REQUIRED": "name + city; DBA; person/company ambiguity; public-works prime name to L&I",
+    "UNSAFE": "name alone; phone alone; search-engine matching"
+  },
+  "rules": [
+    "Do not collapse unrelated IDs.",
+    "UBI != professional license.",
+    "WA-LNI != UTC ID != USDOT != NMLS != CRD != DSHS != CMS CCN.",
+    "Never auto-attach adverse evidence from unsafe identity.",
+    "Preserve unmatched official evidence.",
+    "Person NPN/CRD/NMLS/PrincipalName is not a business profile.",
+    "WA principal office != state IA registration.",
+    "CRD != current Washington authority by itself."
+  ],
+  "exact_ids": [
+    {
+      "id": "WA-LNI ContractorLicenseNumber",
+      "source_ids": [
+        "wa-lni-contractor-general",
+        "wa-lni-contractor-bond",
+        "wa-lni-contractor-insurance"
+      ]
+    },
+    {
+      "id": "UBI",
+      "source_ids": [
+        "wa-lni-contractor-general",
+        "wa-sos-ccfs",
+        "wa-dor-business-lookup",
+        "wa-utc-household-goods-directory"
+      ]
+    },
+    {
+      "id": "UTC ID",
+      "source_ids": [
+        "wa-utc-household-goods-directory"
+      ]
+    },
+    {
+      "id": "USDOT",
+      "source_ids": [
+        "wa-utc-household-goods-directory"
+      ]
+    },
+    {
+      "id": "NMLS",
+      "source_ids": [
+        "wa-nmls-consumer-access",
+        "wa-dfi-consumer-services-enforcement"
+      ]
+    },
+    {
+      "id": "NPN",
+      "source_ids": [
+        "wa-oic-agent-company-lookup"
+      ]
+    },
+    {
+      "id": "NAIC",
+      "source_ids": [
+        "wa-oic-agent-company-lookup",
+        "wa-oic-serff-rate-form"
+      ]
+    },
+    {
+      "id": "WAOIC",
+      "source_ids": [
+        "wa-oic-agent-company-lookup"
+      ]
+    },
+    {
+      "id": "CRD",
+      "source_ids": [
+        "wa-dfi-securities-licensee-database",
+        "wa-sec-iard-principal-office-overlay"
+      ]
+    },
+    {
+      "id": "DSHS LicenseNumber",
+      "source_ids": [
+        "wa-dshs-gis-residential-care"
+      ]
+    },
+    {
+      "id": "CMS CCN",
+      "source_ids": [
+        "wa-cms-federal-overlay"
+      ]
+    }
+  ],
+  "do_not_collapse": [
+    [
+      "WA-LNI",
+      "UBI"
+    ],
+    [
+      "UTC ID",
+      "USDOT"
+    ],
+    [
+      "UTC state authority",
+      "FMCSA interstate authority"
+    ],
+    [
+      "DSHS LicenseNumber",
+      "CMS CCN"
+    ],
+    [
+      "WAOIC",
+      "NPN"
+    ],
+    [
+      "OIC producer",
+      "OIC agency"
+    ],
+    [
+      "CRD",
+      "Washington IA registration"
+    ],
+    [
+      "NMLS",
+      "Washington DFI authority"
+    ]
+  ]
+}

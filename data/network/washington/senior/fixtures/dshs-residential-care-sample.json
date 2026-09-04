@@ -1,0 +1,37 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-dshs-gis-residential-care",
+  "source_url": "https://services2.arcgis.com/WW3T8U6q5EkZ9U3n/arcgis/rest/services/Long_Term_Care_Residential_Care_view/FeatureServer/1",
+  "source_as_of": "2026-09-04",
+  "note": "Official GIS current rows. FacilityPOC omitted. DSHS LicenseNumber != CMS CCN.",
+  "current_counts": {
+    "AF": 6179,
+    "BH": 557,
+    "EF": 16,
+    "SL": 187,
+    "GT": 29,
+    "current_total": 6968
+  },
+  "rows": [
+    {
+      "LicenseNumber": "754112",
+      "FacInstanceId": 45570,
+      "FacilityType": "AF",
+      "FacilityName": "Rich of Joy AFH LLC",
+      "FacilityStatus": "OP",
+      "LocationCity": "KENT",
+      "LocationState": "WA",
+      "LicensedBedCount": 5
+    },
+    {
+      "LicenseNumber": "1916",
+      "FacInstanceId": 30972,
+      "FacilityType": "BH",
+      "FacilityName": "GLEED ORCHARD MANOR",
+      "FacilityStatus": "OP",
+      "LocationCity": "GLEED",
+      "LocationState": "WA",
+      "LicensedBedCount": 29
+    }
+  ]
+}

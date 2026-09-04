@@ -1,0 +1,313 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "insurance",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-oic-agent-company-lookup",
+    "wa-oic-lists-of-individuals",
+    "wa-oic-orders-search",
+    "wa-oic-serff-rate-form",
+    "wa-oic-annual-report-company-aggregates"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-oic-agent-company-lookup",
+      "hub_home": "INSURANCE",
+      "source_family": "license_verify",
+      "source_name": "OIC Agent and Company Lookup Tool",
+      "regulator": "Washington Office of the Insurance Commissioner",
+      "source_url": "https://www.insurance.wa.gov/agent-and-company-lookup-tool",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "WAOIC / NPN / NAIC when returned by the lookup",
+      "grain": "mixed_person_and_company",
+      "record_count": "UNKNOWN",
+      "count_notes": "Consumer lookup for agents, agencies, and companies. Do not scrape. OIC PRODUCER != AGENCY. No bulk producer ingest from this tool.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "use_class": "SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-oic-lists-of-individuals",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "OIC request for list of individuals (RCW 42.56 commercial-use bar)",
+      "regulator": "Washington Office of the Insurance Commissioner",
+      "source_url": "https://www.insurance.wa.gov/about-us/request-public-records/request-list-individuals",
+      "access_class": "SOURCE_USE_RESTRICTED",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "grain": "list_of_individuals",
+      "record_count": "UNKNOWN",
+      "count_notes": "RCW 42.56 prohibits providing lists of individuals requested for commercial purposes. OIC requires a commercial-use declaration. Do not bulk-ingest individual producers from lookup or PRA lists. Classify PUBLIC_BULK_OK / SEARCH_ONLY / SOURCE_USE_RESTRICTED. This source is SOURCE_USE_RESTRICTED for producer lists.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "BLOCKED_COMMERCIAL_USE_RESTRICTION",
+      "use_class": "SOURCE_USE_RESTRICTED",
+      "blocker": "Lists of individuals for commercial purposes are prohibited. Do not acquire a producer mailing list.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-oic-orders-search",
+      "hub_home": "INSURANCE",
+      "source_family": "enforcement",
+      "source_name": "OIC Orders search (disciplinary / general orders since 2010)",
+      "regulator": "Washington Office of the Insurance Commissioner",
+      "source_url": "https://fortress.wa.gov/oic/consumertoolkit/HomePage.aspx",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "Orders search is a lookup. Do not scrape. Attach only on exact WAOIC/NPN/NAIC. Name-only UNSAFE. Complaint != violation.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "use_class": "SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-oic-serff-rate-form",
+      "hub_home": "INSURANCE",
+      "source_family": "rate_filing",
+      "source_name": "SERFF Filing Access (OIC rate/rule/form)",
+      "regulator": "Washington Office of the Insurance Commissioner / NAIC SERFF",
+      "source_url": "https://www.insurance.wa.gov/insurers-regulated-entities/rate-and-form-filing/search-company-filings-serff-filing-access",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NAIC company code on a filing",
+      "grain": "rate_rule_form_filing",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search tool. Not a company roster. Do not scrape SERFF.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "use_class": "SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-oic-annual-report-company-aggregates",
+      "hub_home": "INSURANCE",
+      "source_family": "market_aggregate",
+      "source_name": "OIC 2025 annual report \u2014 regulated entity counts",
+      "regulator": "Washington Office of the Insurance Commissioner",
+      "source_url": "https://www.insurance.wa.gov/sites/default/files/2026-07/oic-annual-report-2025.pdf",
+      "access_class": "OFFICIAL_AGGREGATE_NOT_ROSTER",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "UNSAFE",
+      "grain": "agency_aggregate",
+      "record_count": 2924,
+      "count_notes": "2025 annual report: 2,924 insurance and risk/non-risk bearing entities (263 domestic / 2,590 foreign / 71 alien). This is an aggregate, not a downloadable company roster. Do not treat 2,924 as a live company denominator.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "LOW"
+      },
+      "acquisition_status": "AGGREGATE_ONLY",
+      "use_class": "PUBLIC_BULK_OK",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}

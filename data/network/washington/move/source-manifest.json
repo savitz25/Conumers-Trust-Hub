@@ -1,0 +1,137 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "move",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-utc-household-goods-directory",
+    "wa-utc-dockets-orders"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-utc-household-goods-directory",
+      "hub_home": "MOVE",
+      "source_family": "permit_roster",
+      "source_name": "UTC Companies directory \u2014 Household Goods Carriers",
+      "regulator": "Washington Utilities and Transportation Commission",
+      "source_url": "https://www.utc.wa.gov/companies",
+      "index_url": "https://www.utc.wa.gov/MovingCompanies",
+      "access_class": "OPEN_HTML_TABLE_BOUNDED",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "WA-UTC:{UTC_ID}",
+      "grain": "household_goods_carrier",
+      "record_count": 285,
+      "count_notes": "Official companies directory, Household Goods Carriers + Active, displayed '1 - 50 of 285' on 2026-09-04. No CSV/JSON bulk export found (companies/csv  and _format=json did not yield a roster file). This ticket did not scrape the paginated table. 285 is the public directory total, not a harvested file. UTC ID != UBI != USDOT != permit number. STATE AUTHORITY != FMCSA interstate authority. USDOT != interstate authority by itself.",
+      "identifier_fields": [
+        "UTC ID",
+        "UBI",
+        "USDOT"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "blocker": "No bulk CSV/API. Bounded HTML table exists; do not brute-force IDs or scrape unrelated industries.",
+      "recommended_next_action": "WA-MOVE-001 may harvest the official 285-row Active HHG table only if a deterministic bounded export is confirmed. Do not scrape search.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-utc-dockets-orders",
+      "hub_home": "MOVE",
+      "source_family": "enforcement",
+      "source_name": "UTC Recent Orders / dockets",
+      "regulator": "Washington Utilities and Transportation Commission",
+      "source_url": "https://www.utc.wa.gov/documents-and-proceedings/dockets-recent-orders",
+      "access_class": "OPEN_HTML_TABLE",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "docket_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML docket list with PDF orders. Household-goods permit letters appear in the feed. No bulk machine roster. Do not scrape unbounded dockets this ticket. Complaint != violation. Accusation != finding.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}

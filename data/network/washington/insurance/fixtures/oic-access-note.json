@@ -1,0 +1,10 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-oic-lists-of-individuals",
+  "use_class": "SOURCE_USE_RESTRICTED",
+  "producer_bulk": false,
+  "lookup": "SEARCH_ONLY",
+  "company_roster_count": "UNKNOWN",
+  "annual_report_entity_aggregate_2025": 2924,
+  "note": "Do not bulk-ingest individual producers. RCW 42.56 lists of individuals for commercial purposes. OIC PRODUCER != AGENCY. CreatedBy_WAOIC_ID on L&I insurance is not a producer list."
+}

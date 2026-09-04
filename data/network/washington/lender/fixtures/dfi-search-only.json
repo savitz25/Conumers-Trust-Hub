@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-dfi-verify-license",
+  "access_class": "OPEN_SEARCH_ONLY",
+  "company_roster_count": "UNKNOWN",
+  "do_not_invent_denominator": true,
+  "aggregates_dec_31_2025": {
+    "mortgage_brokers": 354,
+    "consumer_loan_companies": 1104,
+    "mlos_active": 20126,
+    "note": "Aggregates from DFI stats, not a bulk roster. MLO count is people \u2014 suppress."
+  },
+  "rows": []
+}

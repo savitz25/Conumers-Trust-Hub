@@ -1,0 +1,738 @@
+{
+  "ticket": "ATH-WA-001",
+  "note": "Internal prioritization, not a consumer ranking. No Trust Score. No paid ranking. HIGH/MEDIUM/LOW/NONE only.",
+  "hub_early_candidates_evaluated": {
+    "CONTRACTOR": "HIGH \u2014 statewide L&I registration bulk acquired; three-layer join exact; phones nearly complete",
+    "MOVE": "MEDIUM \u2014 official 285-row Active HHG directory exists but is HTML-table/search, not a CSV",
+    "SENIOR": "HIGH \u2014 GIS current AFH 6,179 + ALF 557 is real bulk",
+    "INSURANCE": "LOW as an early specialist \u2014 OIC producer lists SOURCE_USE_RESTRICTED; company lookup SEARCH_ONLY"
+  },
+  "sources": [
+    {
+      "source_id": "wa-lni-contractor-general",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "LOW",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-contractor-bond",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-contractor-insurance",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-three-layer-join",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "DERIVED_FROM_OFFICIAL_BULK"
+    },
+    {
+      "source_id": "wa-lni-principal",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-authorized-signer",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-verify-search",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-lni-debarment",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "wa-lni-strikes",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_BULK_DOWNLOAD"
+    },
+    {
+      "source_id": "wa-lni-public-works-project-details",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-lni-affidavit-project-details",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API"
+    },
+    {
+      "source_id": "wa-utc-household-goods-directory",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE_BOUNDED"
+    },
+    {
+      "source_id": "wa-utc-dockets-orders",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE"
+    },
+    {
+      "source_id": "wa-oic-agent-company-lookup",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-oic-lists-of-individuals",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "SOURCE_USE_RESTRICTED"
+    },
+    {
+      "source_id": "wa-oic-orders-search",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-oic-serff-rate-form",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-oic-annual-report-company-aggregates",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "LOW"
+      },
+      "access_class": "OFFICIAL_AGGREGATE_NOT_ROSTER"
+    },
+    {
+      "source_id": "wa-dshs-gis-residential-care",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_GIS_FEATURE_SERVICE"
+    },
+    {
+      "source_id": "wa-dshs-afh-locator",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-dshs-alf-locator",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-dshs-nh-locator",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-cms-federal-overlay",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "FEDERAL_OVERLAY_PLAN"
+    },
+    {
+      "source_id": "wa-dfi-verify-license",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "MEDIUM"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-nmls-consumer-access",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-dfi-consumer-services-enforcement",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE"
+    },
+    {
+      "source_id": "wa-hmda-cfpb-overlay",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "FEDERAL_OVERLAY_PLAN"
+    },
+    {
+      "source_id": "wa-dfi-securities-enforcement",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE"
+    },
+    {
+      "source_id": "wa-dfi-securities-licensee-database",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-sec-iard-principal-office-overlay",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "FEDERAL_OVERLAY_PLAN"
+    },
+    {
+      "source_id": "wa-sos-ccfs",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "MEDIUM"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-dor-business-lookup",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "LOW"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-local-and-county-skipped",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "NOT_IN_SCOPE"
+    }
+  ]
+}
