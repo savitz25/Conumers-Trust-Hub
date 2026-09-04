@@ -302,6 +302,7 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/california', label: 'California research' },
       { href: '/texas', label: 'Texas research' },
       { href: '/washington', label: 'Washington research' },
+      { href: '/arizona', label: 'Arizona research' },
       { href: '/trust', label: 'Trust Center' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },

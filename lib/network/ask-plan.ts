@@ -62,6 +62,7 @@ import { isNjPilotCountySlug, njCountyAskPath } from './nj-counties.ts';
 import { caCaveatForHub, caSpecialistUrl, routeCaAsk } from './ca-network.ts';
 import { txCaveatForHub, txSpecialistUrl, routeTxAsk } from './tx-network.ts';
 import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
+import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -825,6 +826,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: txSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${txCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'AZ') {
+    const azRoute = routeAzAsk(parsed.query);
+    if (azRoute) {
+      const already = hubs.some((h) => h.hubId === azRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: azRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[azRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: azRoute.destination,
+            reason: azRoute.caveat,
+            whatItCanAnswer: `Arizona research on ${NETWORK_PUBLIC_NAMES[azRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Arizona',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === azRoute.hubId
+            ? {
+                ...h,
+                destination: azRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${azRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === azRoute.hubId), ...hubs.filter((h) => h.hubId !== azRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: azSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${azCaveatForHub(primary)}`,
             }
           : h,
       );

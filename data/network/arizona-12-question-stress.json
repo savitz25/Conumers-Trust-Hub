@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Is this Arizona contractor licensed?",
+    "expected_hub": "contractor",
+    "classified_hub": "contractor",
+    "state": "AZ",
+    "destination": "https://www.contractortrusthub.com/arizona",
+    "source_caveat": "ROC current posting 57,886 is not 57,886 unique companies",
+    "coverage_gap": "none",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "Can I see disciplinary or unlicensed-contractor records in Arizona?",
+    "expected_hub": "contractor",
+    "classified_hub": "contractor",
+    "state": "AZ",
+    "destination": "https://www.contractortrusthub.com/arizona",
+    "source_caveat": "A license is not quality. Missing discipline is not a clean record.",
+    "coverage_gap": "current disciplinary CSV not downloaded this cycle",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How do I find an assisted living home in Arizona?",
+    "expected_hub": "senior",
+    "classified_hub": "senior",
+    "state": "AZ",
+    "destination": "https://www.seniortrusthub.com/arizona",
+    "source_caveat": "Assisted Living Home is not Assisted Living Center.",
+    "coverage_gap": "none",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "Is an Arizona assisted living home the same as a nursing home?",
+    "expected_hub": "senior",
+    "classified_hub": "senior",
+    "state": "AZ",
+    "destination": "https://www.seniortrusthub.com/arizona",
+    "source_caveat": "AL Home is not a CMS nursing home. ADHS is not CMS.",
+    "coverage_gap": "none",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How much mortgage activity was reported in Arizona?",
+    "expected_hub": "lender",
+    "classified_hub": "lender",
+    "state": "AZ",
+    "destination": "https://www.lendertrusthub.com/arizona",
+    "source_caveat": "308,338 HMDA applications are not Arizona-licensed mortgage companies.",
+    "coverage_gap": "live company roster search-only",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How do I verify an Arizona mortgage broker?",
+    "expected_hub": "lender",
+    "classified_hub": "lender",
+    "state": "AZ",
+    "destination": "https://www.lendertrusthub.com/arizona",
+    "source_caveat": "NMLS search-only is unknown, not zero.",
+    "coverage_gap": "no bulk DIFI/NMLS company roster",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "Is this Arizona investment adviser registered?",
+    "expected_hub": "investor",
+    "classified_hub": "investor",
+    "state": "AZ",
+    "destination": "https://www.investortrusthub.com/arizona",
+    "source_caveat": "CRD is not current Arizona authority. Principal office is not state registration.",
+    "coverage_gap": "ACC lists request-gated",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How many SEC adviser firms are based in Arizona?",
+    "expected_hub": "investor",
+    "classified_hub": "investor",
+    "state": "AZ",
+    "destination": "https://www.investortrusthub.com/arizona",
+    "source_caveat": "213 SEC/IARD Arizona principal-office firms are not Arizona state-licensed advisers.",
+    "coverage_gap": "state IA roster not acquired",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How do I verify an Arizona insurance agency?",
+    "expected_hub": "insurance",
+    "classified_hub": "insurance",
+    "state": "AZ",
+    "destination": "https://www.insurancetrusthub.com",
+    "source_caveat": "Complete agency count is UNKNOWN. Producer is not an agency.",
+    "coverage_gap": "no dedicated Arizona Insurance specialist page; SBS paid",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How many insurance agencies are licensed in Arizona?",
+    "expected_hub": "insurance",
+    "classified_hub": "insurance",
+    "state": "AZ",
+    "destination": "https://www.insurancetrusthub.com",
+    "source_caveat": "Complete agency count is UNKNOWN. Paid SBS report was not purchased.",
+    "coverage_gap": "must not invent a denominator",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "Does Arizona license moving companies?",
+    "expected_hub": "move",
+    "classified_hub": "move",
+    "state": "AZ",
+    "destination": "https://www.movetrusthub.com",
+    "source_caveat": "Arizona does not have a household-goods mover licensing or registration requirement.",
+    "coverage_gap": "NO_STATE_LICENSING_UNIVERSE",
+    "wrong_hub_risk": "low"
+  },
+  {
+    "question": "How do I verify a mover taking me from Arizona to another state?",
+    "expected_hub": "move",
+    "classified_hub": "move",
+    "state": "AZ",
+    "destination": "https://www.movetrusthub.com",
+    "source_caveat": "A USDOT number is not interstate operating authority by itself.",
+    "coverage_gap": "no Arizona HHG roster; interstate is FMCSA",
+    "wrong_hub_risk": "low"
+  }
+]

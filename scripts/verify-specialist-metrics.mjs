@@ -15,7 +15,7 @@ const SOURCES = [
     schemaVersion: 'lender-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Lender-Trust-Hub/main/data/home/lender-network-metrics-v1.json',
     fallback: 'data/network-metrics/lender-v1-fallback.json',
-    fingerprint: '6bd624717bb1bd1ddd4880d40adccbafeba58d6624e069971f728875d750587a',
+    fingerprint: 'b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6',
     required: ['lenders_lending_institutions', 'hmda_2025_county_applications'],
   },
   {

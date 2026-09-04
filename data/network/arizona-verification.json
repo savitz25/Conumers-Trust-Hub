@@ -1,0 +1,52 @@
+{
+  "ticket": "ATH-AZ-FINAL",
+  "verified_at": "2026-09-04T22:02:43.872Z",
+  "passed": true,
+  "missing": [],
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "url": "https://www.contractortrusthub.com/arizona",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/arizona",
+      "robots": "index, follow",
+      "title": "Arizona Contractor License &amp; Regulatory Intelligence | ContractorTrustHub · Contractor Trust Hub",
+      "headline": "Arizona Contractor License &amp; Regulatory Intelligence",
+      "selfCanonical": true
+    },
+    {
+      "hub_id": "senior",
+      "url": "https://www.seniortrusthub.com/arizona",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/arizona",
+      "robots": "index, follow",
+      "title": "Arizona Senior Care Research — ADHS Assisted Living &amp; CMS | SeniorTrustHub",
+      "headline": "Arizona Senior Care Research",
+      "selfCanonical": true
+    },
+    {
+      "hub_id": "lender",
+      "url": "https://www.lendertrusthub.com/arizona",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/arizona",
+      "robots": "index, follow",
+      "title": "Arizona Mortgage &amp; Lending Intelligence | LenderTrustHub | Lender Trust Hub",
+      "headline": "Arizona Mortgage &amp; Lending Intelligence",
+      "selfCanonical": true
+    },
+    {
+      "hub_id": "investor",
+      "url": "https://www.investortrusthub.com/arizona",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/arizona",
+      "robots": "index, follow",
+      "title": "Arizona Investment Adviser &amp; Securities Intelligence · InvestorTrustHub",
+      "headline": "Arizona Investment Adviser &amp; Securities Intelligence",
+      "selfCanonical": true
+    }
+  ]
+}

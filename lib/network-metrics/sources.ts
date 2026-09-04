@@ -68,7 +68,7 @@ export const SPECIALIST_SOURCES: Record<SpecialistHubId, SpecialistSourceConfig>
 
 export const ACCEPTED_SPECIALIST_FINGERPRINTS = {
   move: '0b88bf6a0e0a906505c9148fe6d9e2c88ae568e024b852929a2660ed8b867a11',
-  lender: '6bd624717bb1bd1ddd4880d40adccbafeba58d6624e069971f728875d750587a',
+  lender: 'b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6',
   insurance: 'c9120eaf14f96cc8226c5ac8f7e5dc940c328b339bcb75ebc1596bc306d6f301',
   contractor: '0a99e8a1cf53590d01506d57072f4a320aa6c0060476a779193d8af1dd8034b3',
   senior: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',

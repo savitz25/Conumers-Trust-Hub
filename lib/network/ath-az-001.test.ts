@@ -43,16 +43,12 @@ function source(id: string) {
   return manifest.sources.find((s: { source_id: string }) => s.source_id === id);
 }
 
-test('ATH-AZ-001 is state-level research only: no Ask /arizona, no sitemap, no counties', () => {
-  assert.equal(existsSync('app/arizona'), false);
-  assert.equal(existsSync('app/arizona/page.tsx'), false);
+test('ATH-AZ-001 is state-level research only: ATH-AZ-FINAL publishes Ask /arizona, still no counties', () => {
+  assert.equal(existsSync('app/arizona/page.tsx'), true);
   assert.equal(existsSync('app/places/arizona'), false);
-  assert.doesNotMatch(sitemap, /\/arizona/);
+  assert.match(sitemap, /\/arizona/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
-  assert.equal(manifest.ask_arizona_publish, false);
   assert.equal(manifest.arizona_local_phase, 'NO');
-  assert.equal(manifest.publication.public_arizona_routes, false);
-  assert.equal(manifest.publication.sitemap_changes, false);
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.city_work, false);
   assert.equal(manifest.publication.specialist_repo_edits, false);
@@ -61,7 +57,7 @@ test('ATH-AZ-001 is state-level research only: no Ask /arizona, no sitemap, no c
   assert.equal(manifest.publication.nmls_scrape, false);
   assert.equal(manifest.publication.search_portal_scrape, false);
   assert.deepEqual(
-    readdirSync('app').filter((name) => /arizona/i.test(name)),
+    readdirSync('app/arizona').filter((name) => name !== 'page.tsx'),
     [],
   );
 });
