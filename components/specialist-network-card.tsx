@@ -1,10 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
+import { MetricValue } from '@/components/metric-value';
 import type { NetworkMetric, SpecialistHubPresentation } from '@/lib/network-metrics/types.ts';
-
-function formatValue(value: number): string {
-  return value.toLocaleString('en-US');
-}
 
 function dateLabel(value: string | null): string {
   return value ? value.slice(0, 10) : 'Not supplied by specialist';
@@ -71,12 +68,7 @@ function Trace({ metric }: { metric: NetworkMetric }) {
 function MetricBlock({ metric, size }: { metric: NetworkMetric; size: 'lg' | 'md' }) {
   return (
     <div className="min-w-0">
-      <p
-        className={size === 'lg' ? 'text-3xl font-semibold tabular-nums sm:text-4xl' : 'text-2xl font-semibold tabular-nums'}
-        style={{ color: ASK_BRAND.navy }}
-      >
-        {formatValue(metric.value)}
-      </p>
+      <MetricValue value={metric.value} size={size} />
       <p className="mt-1 text-sm leading-snug" style={{ color: ASK_BRAND.ink }}>
         {metric.label}
       </p>
@@ -107,12 +99,10 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
       ) : null}
 
       {card.universes.length > 0 ? (
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
           {card.universes.map((metric) => (
             <div key={metric.key} className="min-w-0 rounded-xl bg-slate-50 px-3 py-3">
-              <p className="text-2xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>
-                {formatValue(metric.value)}
-              </p>
+              <MetricValue value={metric.value} size="md" />
               <p className="mt-1 text-xs font-semibold leading-snug">{metric.label}</p>
               <Trace metric={metric} />
             </div>
@@ -120,7 +110,7 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
         </div>
       ) : null}
 
-      <div className={`grid gap-4 ${card.universes.length ? 'mt-5' : 'mt-4'} sm:grid-cols-2`}>
+      <div className={`grid gap-5 sm:gap-6 ${card.universes.length ? 'mt-5' : 'mt-4'} sm:grid-cols-2`}>
         {card.primary.map((metric) => (
           <MetricBlock key={metric.key} metric={metric} size={card.universes.length ? 'md' : 'lg'} />
         ))}
@@ -130,7 +120,7 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
         <ul className="mt-5 space-y-1 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
           {card.secondary.map((metric) => (
             <li key={metric.key} className="min-w-0">
-              <span className="font-semibold tabular-nums">{formatValue(metric.value)}</span> {metric.label}
+              <MetricValue value={metric.value} size="inline" /> {metric.label}
               <Trace metric={metric} />
             </li>
           ))}
