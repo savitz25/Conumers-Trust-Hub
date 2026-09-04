@@ -1,0 +1,17 @@
+.slot {
+  container-type: inline-size;
+  container-name: metric;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.value {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
