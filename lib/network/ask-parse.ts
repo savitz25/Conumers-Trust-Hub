@@ -28,6 +28,7 @@ import { classifyUniversalQuery, type UniversalQueryClassification } from './que
 import { detectNjCounty } from './nj-network.ts';
 import { detectNjPilotCountySlug } from './nj-counties.ts';
 import { detectCaCity, queryLooksLikeCalifornia } from './ca-network.ts';
+import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -87,8 +88,16 @@ function geography(q: string): ParsedGeography | undefined {
   const florida = FL.test(q) || broward || palm || tampa || miami || bocaRaton;
   const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
   const caNamedEarly = queryLooksLikeCalifornia(q);
+  const txNamedEarly = queryLooksLikeTexas(q);
+  const californiaNamedFirst = (() => {
+    const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
+    const tx = q.search(/\btexas\b|\btexan\b/i);
+    if (ca < 0) return false;
+    if (tx < 0) return true;
+    return ca < tx;
+  })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
-  if (caNamedEarly && otherDest && !njNamedEarly) {
+  if (caNamedEarly && otherDest && !njNamedEarly && (!txNamedEarly || californiaNamedFirst)) {
     return {
       stateCode: 'CA',
       stateName: 'California',
@@ -168,7 +177,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (caNamedEarly) {
+  if (caNamedEarly && (!txNamedEarly || californiaNamedFirst)) {
     const caCity = detectCaCity(q);
     return {
       stateCode: 'CA',
@@ -177,6 +186,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: caCity
         ? `${caCity}, California. California research is state-level; a city or county name is not a California county Ask route.`
         : 'California. State licensing is not physical location; specialist geography meaning differs by hub. California county Ask pages are not published.',
+    };
+  }
+
+  if (txNamedEarly) {
+    const txCity = detectTxCity(q);
+    return {
+      stateCode: 'TX',
+      stateName: 'Texas',
+      city: txCity,
+      meaning: txCity
+        ? `${txCity}, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route.`
+        : 'Texas. State licensing is not physical location; specialist geography meaning differs by hub. Texas city and county Ask pages are not published.',
     };
   }
 

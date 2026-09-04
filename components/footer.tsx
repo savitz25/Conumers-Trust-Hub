@@ -8,6 +8,7 @@ import {
 } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
+import { txReleaseGatePassed } from '@/lib/network/tx-network';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -79,7 +80,11 @@ export function Footer() {
               </h4>
               <ul className="space-y-2.5 text-sm text-slate-300">
                 {col.links
-                  .filter((item) => item.href !== '/california' || caReleaseGatePassed())
+                  .filter(
+                    (item) =>
+                      (item.href !== '/california' || caReleaseGatePassed()) &&
+                      (item.href !== '/texas' || txReleaseGatePassed()),
+                  )
                   .map((item) => (
                   <li key={item.href}>
                     <Link

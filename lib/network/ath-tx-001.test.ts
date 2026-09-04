@@ -24,14 +24,17 @@ const smlFix = JSON.parse(
   readFileSync('data/network/texas/lender/fixtures/sml-enforcement-sample.json', 'utf8'),
 );
 
-test('ATH-TX-001 is state-level research only: no public /texas, no counties', () => {
-  assert.equal(existsSync('app/texas'), false);
+test('ATH-TX-001 is state-level research only: ATH-TX-002 publishes Ask /texas, still no counties', () => {
+  assert.equal(existsSync('app/texas/page.tsx'), true);
   assert.equal(existsSync('app/places/texas'), false);
-  assert.doesNotMatch(sitemap, /\/texas/);
+  assert.match(sitemap, /\/texas/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
-  assert.equal(manifest.publication.public_texas_routes, false);
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.specialist_repo_edits, false);
+  assert.deepEqual(
+    readdirSync('app/texas').filter((name) => name !== 'page.tsx'),
+    [],
+  );
 });
 
 test('no Trust Score, paid ranking, or people publication', () => {
@@ -136,5 +139,5 @@ test('NJ, Florida, and California public surfaces are unchanged by this ticket',
     [],
   );
   const extraTx = readdirSync('app').filter((name) => /texas/i.test(name));
-  assert.deepEqual(extraTx, []);
+  assert.deepEqual(extraTx, ['texas']);
 });

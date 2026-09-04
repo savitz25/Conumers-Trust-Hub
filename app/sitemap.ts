@@ -4,6 +4,7 @@ import { getAllGuideSlugs } from '@/lib/growth/guides';
 import { getAllJourneySlugs } from '@/lib/growth/journeys';
 import { njReleaseGatePassed } from '@/lib/network/nj-network';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
+import { txReleaseGatePassed } from '@/lib/network/tx-network';
 import { listNjPilotCounties } from '@/lib/network/nj-counties';
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
@@ -40,6 +41,9 @@ const CORE: {
     : []),
   ...(caReleaseGatePassed()
     ? [{ path: '/california', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-03' }]
+    : []),
+  ...(txReleaseGatePassed()
+    ? [{ path: '/texas', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-04' }]
     : []),
   { path: '/trust', priority: 0.85, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/promise', priority: 0.8, changeFrequency: 'monthly', lastmod: '2026-08-07' },

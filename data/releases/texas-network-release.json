@@ -1,0 +1,97 @@
+{
+  "ticket": "ATH-TX-002",
+  "version": "ath-tx-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/texas",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "trust_score": false,
+  "paid_ranking": false,
+  "release_gate_passed": true,
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/texas",
+      "publication_status": "live"
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/texas",
+      "publication_status": "live"
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/texas",
+      "publication_status": "live"
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/texas",
+      "publication_status": "live"
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/texas",
+      "publication_status": "live"
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/texas",
+      "publication_status": "live"
+    }
+  ],
+  "verification_hubs": [
+    {
+      "hub_id": "contractor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Contractor &amp; Trade Intelligence"
+    },
+    {
+      "hub_id": "insurance",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Insurance Market &amp; Regulatory Intelligence"
+    },
+    {
+      "hub_id": "lender",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Mortgage &amp; Lending Intelligence"
+    },
+    {
+      "hub_id": "move",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Moving &amp; Household-Goods Intelligence"
+    },
+    {
+      "hub_id": "investor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Investment Adviser &amp; Securities Intelligence"
+    },
+    {
+      "hub_id": "senior",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/texas",
+      "robots": "index, follow",
+      "headline": "Texas Senior Care Research"
+    }
+  ],
+  "stress_pass": true,
+  "stress_count": 12,
+  "fingerprint": "67d340ce20afad637705978b9c07bf34306b670ac4e0a34b074efd669be048d1",
+  "generated_at": "2026-09-04T14:40:53.894Z",
+  "snapshot": "ath-tx-network-release-v1"
+}

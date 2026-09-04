@@ -3,6 +3,7 @@ import type { SpecialistHubId } from './registry.ts';
 import { NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { hubById } from './source-registry.ts';
 import { caReleaseGatePassed } from './ca-network.ts';
+import { txReleaseGatePassed } from './tx-network.ts';
 
 export type PlaceMetric = {
   label: string;
@@ -462,7 +463,16 @@ const CALIFORNIA_PLACE = {
   detail: 'Network gateway to specialist California research pages. State-level only — not a county page.',
 } as const;
 
+const TEXAS_PLACE = {
+  href: '/texas',
+  label: 'Texas',
+  detail: 'Network gateway to specialist Texas research pages. State-level only — not a city or county page.',
+} as const;
+
 export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
-  if (!caReleaseGatePassed()) return [...PLACE_LENS_INDEX];
-  return [...PLACE_LENS_INDEX, CALIFORNIA_PLACE];
+  const extra = [
+    ...(caReleaseGatePassed() ? [CALIFORNIA_PLACE] : []),
+    ...(txReleaseGatePassed() ? [TEXAS_PLACE] : []),
+  ];
+  return [...PLACE_LENS_INDEX, ...extra];
 }

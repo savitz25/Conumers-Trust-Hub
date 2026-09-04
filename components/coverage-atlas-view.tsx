@@ -9,6 +9,7 @@ import { coverageNotifyIntent } from '@/lib/network/coverage-notify';
 import { NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS, type SpecialistHubId } from '@/lib/network/registry';
 import { US_JURISDICTIONS } from '@/lib/network/us-jurisdictions';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
+import { txReleaseGatePassed } from '@/lib/network/tx-network';
 
 const LEVEL_TONE: Record<CoverageLevel, string> = {
   enhanced_county_intelligence: '#312E81',
@@ -250,6 +251,14 @@ export function CoverageAtlasView({
               <span aria-hidden="true"> · </span>
               <Link href="/california" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
                 Open California network research
+              </Link>
+            </>
+          ) : null}
+          {txReleaseGatePassed() ? (
+            <>
+              <span aria-hidden="true"> · </span>
+              <Link href="/texas" className="font-semibold underline-offset-2 hover:underline" style={{ color: ASK_BRAND.indigo }}>
+                Open Texas network research
               </Link>
             </>
           ) : null}

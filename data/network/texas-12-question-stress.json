@@ -1,0 +1,110 @@
+[
+  {
+    "question": "Is this Texas electrician licensed?",
+    "classified_hub": "contractor",
+    "state": "TX",
+    "destination": "https://www.contractortrusthub.com/texas",
+    "source_caveat": "Texas has no statewide general-contractor license. TDLR specialty-trade identities, TSBPE plumbing, and CMBL vendors are different universes. Vendor is not a license.",
+    "wrong_hub_risk": "low — electrician/TDLR intent is contractor",
+    "coverage_gap_handling": "routes to Contractor /texas; does not invent a statewide GC license"
+  },
+  {
+    "question": "How do I check a general contractor in Texas?",
+    "classified_hub": "contractor",
+    "state": "TX",
+    "destination": "https://www.contractortrusthub.com/texas",
+    "source_caveat": "Texas has no statewide general-contractor license. TDLR specialty-trade identities, TSBPE plumbing, and CMBL vendors are different universes. Vendor is not a license.",
+    "wrong_hub_risk": "low — explicit general-contractor question stays on contractor with the no-GC caveat",
+    "coverage_gap_handling": "accepted coverage-gap behavior: hand off to Contractor and disclose that Texas has no statewide GC license"
+  },
+  {
+    "question": "How many mortgage applications were filed in Texas?",
+    "classified_hub": "lender",
+    "state": "TX",
+    "destination": "https://www.lendertrusthub.com/texas",
+    "source_caveat": "HMDA is not a Texas mortgage-license roster. An NMLS ID is not current Texas authority by itself. Name-only SML orders are unsafe for adverse attach. Denial rate is not quality.",
+    "wrong_hub_risk": "low — mortgage/HMDA intent is lender",
+    "coverage_gap_handling": "HMDA activity is not treated as a license roster"
+  },
+  {
+    "question": "Does this Texas lender have an SML order?",
+    "classified_hub": "lender",
+    "state": "TX",
+    "destination": "https://www.lendertrusthub.com/texas",
+    "source_caveat": "HMDA is not a Texas mortgage-license roster. An NMLS ID is not current Texas authority by itself. Name-only SML orders are unsafe for adverse attach. Denial rate is not quality.",
+    "wrong_hub_risk": "low — SML/lender intent is lender",
+    "coverage_gap_handling": "name-only SML rows remain unsafe; exact NMLS required for adverse attach"
+  },
+  {
+    "question": "Which insurers is this Texas agency appointed with?",
+    "classified_hub": "insurance",
+    "state": "TX",
+    "destination": "https://www.insurancetrusthub.com/texas",
+    "source_caveat": "Appointment count is not quality. A TDI complaint is not a violation. The TDI complaint index is not a TrustHub score. Person licenses are not a public directory.",
+    "wrong_hub_risk": "low — insurers/appointed intent is insurance",
+    "coverage_gap_handling": "person directories stay unpublished; appointment graph is the published path"
+  },
+  {
+    "question": "What does a TDI complaint index mean?",
+    "classified_hub": "insurance",
+    "state": "TX",
+    "destination": "https://www.insurancetrusthub.com/texas",
+    "source_caveat": "Appointment count is not quality. A TDI complaint is not a violation. The TDI complaint index is not a TrustHub score. Person licenses are not a public directory.",
+    "wrong_hub_risk": "low — TDI complaint index is insurance; not a Trust Score",
+    "coverage_gap_handling": "complaint index is explained as not a TrustHub score and not a violation finding"
+  },
+  {
+    "question": "How do I find a Texas assisted living facility?",
+    "classified_hub": "senior",
+    "state": "TX",
+    "destination": "https://www.seniortrusthub.com/texas",
+    "source_caveat": "HHSC is not CMS. Assisted living is not a nursing home. HCSSA is not CMS Home Health. Personal Assistance is not Home Health. Hospice is not Home Health. Do not sum overlapping HCSSA labels.",
+    "wrong_hub_risk": "low — assisted living is senior",
+    "coverage_gap_handling": "ALF is kept separate from SNF/CMS; complete LTC remains UNKNOWN"
+  },
+  {
+    "question": "Is Texas HHSC the same as CMS?",
+    "classified_hub": "senior",
+    "state": "TX",
+    "destination": "https://www.seniortrusthub.com/texas",
+    "source_caveat": "HHSC is not CMS. Assisted living is not a nursing home. HCSSA is not CMS Home Health. Personal Assistance is not Home Health. Hospice is not Home Health. Do not sum overlapping HCSSA labels.",
+    "wrong_hub_risk": "low — HHSC/CMS senior-care distinction",
+    "coverage_gap_handling": "explicit semantic split; classes are not summed"
+  },
+  {
+    "question": "Is this Texas investment adviser registered?",
+    "classified_hub": "investor",
+    "state": "TX",
+    "destination": "https://www.investortrusthub.com/texas",
+    "source_caveat": "A Texas principal office is not Texas state-RIA registration. ERA is not an RIA. Broker-dealer is not an investment adviser. CRD is not current Texas authority.",
+    "wrong_hub_risk": "low — investment adviser intent is investor",
+    "coverage_gap_handling": "federal SEC/IARD overlay is not treated as the Texas state-RIA roster; SSB remains search-only"
+  },
+  {
+    "question": "How many SEC advisers are based in Texas?",
+    "classified_hub": "investor",
+    "state": "TX",
+    "destination": "https://www.investortrusthub.com/texas",
+    "source_caveat": "A Texas principal office is not Texas state-RIA registration. ERA is not an RIA. Broker-dealer is not an investment adviser. CRD is not current Texas authority.",
+    "wrong_hub_risk": "low — SEC advisers is investor geography, not state registration",
+    "coverage_gap_handling": "1,302 is principal-office geography, not Texas state-RIA registration"
+  },
+  {
+    "question": "How do I check a Texas mover?",
+    "classified_hub": "move",
+    "state": "TX",
+    "destination": "https://www.movetrusthub.com/texas",
+    "source_caveat": "Texas intrastate household-goods authority is not FMCSA interstate authority. A USDOT number alone is not interstate operating authority. A tow company is not a household-goods mover. Complete mover denominator is UNKNOWN, not zero.",
+    "wrong_hub_risk": "low — mover intent is move",
+    "coverage_gap_handling": "does not manufacture a Texas mover count; TxDMV bulk roster remains SOURCE_NOT_ACQUIRED"
+  },
+  {
+    "question": "Does a USDOT number mean this Texas mover can move me between states?",
+    "classified_hub": "move",
+    "state": "TX",
+    "destination": "https://www.movetrusthub.com/texas",
+    "source_caveat": "Texas intrastate household-goods authority is not FMCSA interstate authority. A USDOT number alone is not interstate operating authority. A tow company is not a household-goods mover. Complete mover denominator is UNKNOWN, not zero.",
+    "wrong_hub_risk": "low — USDOT/mover interstate question stays on move",
+    "coverage_gap_handling": "USDOT ≠ interstate operating authority; TxDMV ≠ FMCSA"
+  }
+]

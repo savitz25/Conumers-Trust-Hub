@@ -1,0 +1,375 @@
+{
+  "state_code": "TX",
+  "state_name": "Texas",
+  "ask_path": "/texas",
+  "ask_canonical": "https://www.asktrusthub.com/texas",
+  "version": "ath-tx-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "conceptual_statement": "Texas does not use one uniform regulatory system across the Trust Hub Network. Contractor licensing is split by specialty and local jurisdiction; insurance has a strong state agency/company graph; mortgage research combines HMDA with state enforcement; movers require separate state and federal authority checks; investment-adviser research separates federal SEC/IARD geography from Texas state registration; and senior care spans both CMS certification and Texas HHSC licensing.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": ["contractor", "insurance", "lender", "move", "investor", "senior"],
+    "blocker": null,
+    "rule": "All six specialist /texas pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /texas is indexable. Any one specialist failure fails the gate. Do not weaken the gate. No Texas county routes.",
+    "verified_at": "2026-09-04"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "38,915 TDLR business identities",
+      "grain": "distinct TDLR business identities. Not a general-contractor count. Vendor is not a license."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "43,597 distinct agency NPN identities",
+      "grain": "agency NPN identities from TDI. Not person licenses. Appointment count is not quality."
+    },
+    {
+      "hub_id": "lender",
+      "display": "954,534 HMDA applications",
+      "grain": "HMDA 2025 applications for Texas property location. Not a license roster."
+    },
+    {
+      "hub_id": "move",
+      "display": "UNKNOWN / search-only",
+      "grain": "complete Texas household-goods mover denominator. TxDMV bulk roster SOURCE_NOT_ACQUIRED. Missing is not zero."
+    },
+    {
+      "hub_id": "investor",
+      "display": "1,302 SEC/IARD Texas principal-office firms",
+      "grain": "federal roster firms with a Texas principal office. Not Texas state-RIA registration."
+    },
+    {
+      "hub_id": "senior",
+      "display": "CMS and HHSC kept separate",
+      "grain": "Nursing Homes, Home Health, Hospice, Assisted Living, and HCSSA are different classes. Do not sum them."
+    }
+  ],
+  "what_makes_texas_different": [
+    "Texas has no statewide general-contractor license. Specialty trades, plumbing, vendor/procurement, and later local evidence stay separate.",
+    "TDI exposes an unusually complete agency-to-company appointment graph. Appointment count is not quality. A complaint is not a violation.",
+    "Texas mortgage activity is visible through 2025 HMDA even though a live statewide mortgage-company bulk roster is not acquired.",
+    "Household-goods movers require separate Texas intrastate and federal interstate authority checks. A USDOT number is not interstate operating authority by itself.",
+    "Federal SEC/IARD geography is not Texas state-RIA registration. ERA is not an RIA. Broker-dealer is not an investment adviser.",
+    "Senior care requires both CMS certification and Texas HHSC licensing, plus TULIP search for some classes. HHSC is not CMS."
+  ],
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "canonical_state_url": "https://www.contractortrusthub.com/texas",
+      "topic": "Research Texas contractor and trade credentials",
+      "plain_question": "Research Texas contractor and trade credentials",
+      "research_topics": [
+        "TDLR specialty-trade business credentials",
+        "TSBPE Responsible Master Plumber",
+        "CMBL vendor/procurement evidence",
+        "no statewide general-contractor license"
+      ],
+      "primary_identifiers": ["TDLR", "TSBPE"],
+      "identifier_types": ["TDLR", "TSBPE"],
+      "source_summary": "Texas does not have one statewide general-contractor license. ContractorTrustHub organizes TDLR specialty-trade identities, TSBPE plumbing, and CMBL vendor evidence as separate universes.",
+      "coverage_summary": "Vendor is not a license. TxDOT project is not contractor identity. Do not add TDLR, TSBPE, and CMBL into one “Texas contractors” number. Acquired identities are not the complete contractor universe.",
+      "semantic_guardrails": [
+        "no statewide GC license",
+        "vendor ≠ license",
+        "TxDOT project ≠ contractor identity",
+        "missing ≠ zero"
+      ],
+      "verified_facts": [
+        "TDLR business credentials: 38,915 distinct business identities. That is not a general-contractor count.",
+        "TSBPE Responsible Master Plumber: 9,360. Plumbing is a different credential path from TDLR trades.",
+        "CMBL active vendors: 12,000; construction-related CMBL vendors: 3,337; net-new construction-business candidates: 2,982. A vendor listing is not a license."
+      ],
+      "routing_intents": [
+        "Is this Texas electrician licensed?",
+        "How do I check a general contractor in Texas?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete Texas general-contractor universe",
+        "Local contractor licensing later"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "canonical_state_url": "https://www.insurancetrusthub.com/texas",
+      "topic": "Research Texas insurance agencies, appointments and companies",
+      "plain_question": "Research Texas insurance agencies, appointments and companies",
+      "research_topics": [
+        "TDI agency/business licenses",
+        "agency appointments to NAIC companies",
+        "TDI complaints and complaint index",
+        "rate filings"
+      ],
+      "primary_identifiers": ["NPN", "NAIC"],
+      "identifier_types": ["NPN", "NAIC"],
+      "source_summary": "InsuranceTrustHub publishes a TDI agency → appointment → NAIC company graph. Person licenses and person appointments are not public directories.",
+      "coverage_summary": "Appointment count is not quality. A complaint is not a violation. The TDI complaint index is not a TrustHub score. Person directories stay unpublished.",
+      "semantic_guardrails": [
+        "appointment count ≠ quality",
+        "complaint ≠ violation",
+        "TDI complaint index ≠ TrustHub score",
+        "person licenses unpublished"
+      ],
+      "verified_facts": [
+        "TDI agency-license rows: 56,625; distinct agency NPN: 43,597.",
+        "Agency appointment rows: 622,019; exact NPN→NAIC edges: 619,830; distinct appointment companies: 1,414 NAIC.",
+        "TDI complaint source: 305,156 named-party rows; complaint-index source: 5,966 rows; rate filings: 18,001. A complaint is not a violation."
+      ],
+      "routing_intents": [
+        "Which insurers is this Texas agency appointed with?",
+        "What does a TDI complaint index mean?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Person license/appointment directories remain unpublished",
+        "Authorized-company bulk classes as later backlog"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "canonical_state_url": "https://www.lendertrusthub.com/texas",
+      "topic": "Research Texas mortgage activity and regulatory orders",
+      "plain_question": "Research Texas mortgage activity and regulatory orders",
+      "research_topics": [
+        "HMDA 2025 Texas mortgage activity",
+        "SML enforcement orders with exact NMLS",
+        "TDHCA/TSAHC homebuyer programs",
+        "CFPB Texas mortgage complaints"
+      ],
+      "primary_identifiers": ["NMLS"],
+      "identifier_types": ["NMLS"],
+      "source_summary": "LenderTrustHub publishes 2025 HMDA for Texas property location, SML enforcement orders, and official homebuyer-program families. A complete live mortgage-company bulk roster is not acquired.",
+      "coverage_summary": "HMDA is not a license roster. An NMLS ID is not current Texas authority by itself. Name-only SML orders are unsafe for adverse profile attach. Denial rate is not quality.",
+      "semantic_guardrails": [
+        "HMDA ≠ license roster",
+        "NMLS ≠ current Texas authority by itself",
+        "name-only order unsafe",
+        "denial rate ≠ quality"
+      ],
+      "verified_facts": [
+        "HMDA 2025: 954,534 applications, 524,257 originations, 183,420 denials (19.22%). Purchase 575,355; refinance 259,652. 253 of 254 counties; Loving County absent in the committed extract is not zero activity.",
+        "SML enforcement: 3,981 orders; 2,493 exact-NMLS rows; 1,488 name-only rows unsafe for adverse profile attach.",
+        "Seven official Texas homebuyer program families. CFPB Texas mortgage complaints: 29,013. A complaint is not a violation."
+      ],
+      "routing_intents": [
+        "How many mortgage applications were filed in Texas?",
+        "Does this Texas lender have an SML order?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete live Texas mortgage-company bulk denominator",
+        "Statewide structured foreclosure source"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "canonical_state_url": "https://www.movetrusthub.com/texas",
+      "topic": "Verify Texas moving authority",
+      "plain_question": "Verify Texas moving authority",
+      "research_topics": [
+        "TxDMV household-goods authority",
+        "Form E liability and Form H&I cargo filings",
+        "FMCSA interstate operating authority",
+        "tow company versus household-goods mover"
+      ],
+      "primary_identifiers": ["TxDMV", "USDOT"],
+      "identifier_types": ["TxDMV", "USDOT"],
+      "source_summary": "Texas intrastate household-goods authority is not federal interstate authority. MoveTrustHub documents official verification paths. The TxDMV HHG bulk roster is SOURCE_NOT_ACQUIRED.",
+      "coverage_summary": "A USDOT number alone is not interstate operating authority. TxDMV authority is not FMCSA authority. A tow company is not a household-goods mover. Complete Texas mover denominator is UNKNOWN, not zero.",
+      "semantic_guardrails": [
+        "TxDMV ≠ FMCSA",
+        "USDOT number ≠ interstate operating authority",
+        "tow company ≠ household-goods mover",
+        "missing ≠ zero"
+      ],
+      "verified_facts": [
+        "TxDMV household-goods bulk roster: SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY. Complete Texas mover denominator is UNKNOWN, not zero.",
+        "Official verification concepts include a TxDMV certificate, Form E liability filing, Form H&I cargo filing, and FMCSA interstate operating authority.",
+        "Do not manufacture a Texas mover count from federal overlays."
+      ],
+      "routing_intents": [
+        "How do I check a Texas mover?",
+        "Does a USDOT number mean this Texas mover can move me between states?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete Texas HHG mover denominator",
+        "TxDMV bulk roster"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investor Trust Hub",
+      "canonical_state_url": "https://www.investortrusthub.com/texas",
+      "topic": "Research Texas investment-adviser and securities records",
+      "plain_question": "Research Texas investment-adviser and securities records",
+      "research_topics": [
+        "SEC/IARD Texas principal-office overlay",
+        "Texas State Securities Board verification",
+        "RIA versus ERA versus broker-dealer",
+        "SSB enforcement index"
+      ],
+      "primary_identifiers": ["CRD"],
+      "identifier_types": ["CRD"],
+      "source_summary": "InvestorTrustHub publishes the federal SEC/IARD overlay for firms with a Texas principal office and official SSB verification paths. The Texas state-RIA bulk roster is search-only.",
+      "coverage_summary": "A Texas principal office is not Texas state-RIA registration. ERA is not an RIA. Broker-dealer is not an investment adviser. CRD is not current Texas authority. No SSB/CRD/BrokerCheck scrape.",
+      "semantic_guardrails": [
+        "TX principal office ≠ TX state registration",
+        "ERA ≠ RIA",
+        "broker-dealer ≠ investment adviser",
+        "CRD ≠ current Texas authority"
+      ],
+      "verified_facts": [
+        "SEC/IARD firms with a Texas principal office: 1,302 of 23,622 national roster firms (7.23% of 17,997 resolved principal-office regions).",
+        "Texas state-RIA bulk roster: SOURCE_NOT_ACQUIRED / SEARCH_ONLY. Complete state-RIA denominator is UNKNOWN.",
+        "Verify Texas registration on the official SSB certificate search. Do not treat the federal overlay as the state roster."
+      ],
+      "routing_intents": [
+        "Is this Texas investment adviser registered?",
+        "How many SEC advisers are based in Texas?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete Texas state-RIA roster",
+        "SSB enforcement bulk extract"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "canonical_state_url": "https://www.seniortrusthub.com/texas",
+      "topic": "Research Texas senior-care providers",
+      "plain_question": "Research Texas senior-care providers",
+      "research_topics": [
+        "CMS Nursing Homes, Home Health, and Hospice",
+        "HHSC Nursing Facility, Assisted Living, and HCSSA",
+        "ALF Type A/B/C",
+        "TULIP verification"
+      ],
+      "primary_identifiers": ["CMS CCN", "HHSC"],
+      "identifier_types": ["CMS CCN", "HHSC"],
+      "source_summary": "SeniorTrustHub keeps CMS certification and Texas HHSC licensing as separate universes. TULIP remains verification/search only. Child-care datasets stay excluded.",
+      "coverage_summary": "HHSC is not CMS. ALF is not SNF. HCSSA is not CMS Home Health. Personal Assistance is not Home Health. Hospice is not Home Health. HCSSA service labels overlap and must not be summed. Complete Texas LTC universe is UNKNOWN.",
+      "semantic_guardrails": [
+        "HHSC ≠ CMS",
+        "ALF ≠ SNF",
+        "HCSSA ≠ CMS Home Health",
+        "do not sum overlapping HCSSA labels"
+      ],
+      "verified_facts": [
+        "CMS Texas: Nursing Homes 1,177; Home Health 1,854; Hospice 1,053. These classes are not one provider count.",
+        "HHSC: Nursing Facility Excel 1,175; Assisted Living 2,000 (Type A 337, Type B 1,655, Type C 8); HCSSA 8,799. HCSSA service labels overlap and must not be summed.",
+        "TULIP is verification/search only. Complete Texas long-term-care universe is UNKNOWN, not zero."
+      ],
+      "routing_intents": [
+        "How do I find a Texas assisted living facility?",
+        "Is Texas HHSC the same as CMS?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete Texas LTC universe",
+        "TULIP bulk roster"
+      ]
+    }
+  ],
+  "evidence_catalog": [
+    {
+      "row": "Contractor TDLR/TSBPE",
+      "hub": "contractor",
+      "source": "TDLR specialty-trade files, TSBPE RMP, CMBL",
+      "agency": "TDLR / TSBPE / Comptroller",
+      "as_of": "specialist Texas snapshot",
+      "grain": "business identity / plumbing credential / vendor row",
+      "identity": "TDLR / TSBPE",
+      "access": "official bulk + search",
+      "coverage": "acquired identities, not a GC universe",
+      "important_limitation": "No statewide general-contractor license. Vendor ≠ license.",
+      "specialist_url": "https://www.contractortrusthub.com/texas"
+    },
+    {
+      "row": "Insurance TDI",
+      "hub": "insurance",
+      "source": "TDI agency, appointments, complaints, rate filings",
+      "agency": "Texas Department of Insurance",
+      "as_of": "specialist Texas snapshot",
+      "grain": "agency license / appointment / complaint observation",
+      "identity": "NPN / NAIC",
+      "access": "official bulk",
+      "coverage": "agency graph published; person directories unpublished",
+      "important_limitation": "Appointment count ≠ quality. Complaint ≠ violation.",
+      "specialist_url": "https://www.insurancetrusthub.com/texas"
+    },
+    {
+      "row": "Lender HMDA/SML",
+      "hub": "lender",
+      "source": "HMDA 2025, SML orders, TDHCA/TSAHC, CFPB",
+      "agency": "CFPB/FFIEC / Texas SML / TDHCA / TSAHC",
+      "as_of": "HMDA 2025; SML orders 2025-10-16",
+      "grain": "application / enforcement order / program",
+      "identity": "NMLS when source-native; HMDA LEI",
+      "access": "committed HMDA + official SML CSV",
+      "coverage": "market activity acquired; live company roster not acquired",
+      "important_limitation": "HMDA ≠ license roster. Name-only orders unsafe.",
+      "specialist_url": "https://www.lendertrusthub.com/texas"
+    },
+    {
+      "row": "Move TxDMV/FMCSA",
+      "hub": "move",
+      "source": "TxDMV verification paths; FMCSA interstate overlay",
+      "agency": "TxDMV / FMCSA",
+      "as_of": "specialist Texas snapshot",
+      "grain": "authority / filing requirement",
+      "identity": "TxDMV / USDOT",
+      "access": "OPEN_SEARCH_ONLY for TxDMV HHG bulk",
+      "coverage": "SOURCE_NOT_ACQUIRED bulk roster",
+      "important_limitation": "USDOT number ≠ interstate operating authority. TxDMV ≠ FMCSA.",
+      "specialist_url": "https://www.movetrusthub.com/texas"
+    },
+    {
+      "row": "Investor SEC/IARD/SSB",
+      "hub": "investor",
+      "source": "SEC/IARD principal-office overlay; SSB certificate search",
+      "agency": "SEC / IARD / Texas State Securities Board",
+      "as_of": "IA_FIRM_SEC_Feed_08_27_2026",
+      "grain": "federal roster firm / state search",
+      "identity": "CRD / Texas file number",
+      "access": "committed federal overlay; SSB OPEN_SEARCH_ONLY",
+      "coverage": "1,302 TX principal-office firms; state-RIA UNKNOWN",
+      "important_limitation": "TX principal office ≠ Texas state registration.",
+      "specialist_url": "https://www.investortrusthub.com/texas"
+    },
+    {
+      "row": "Senior CMS/HHSC",
+      "hub": "senior",
+      "source": "CMS provider files; HHSC facility/HCSSA lists; TULIP search",
+      "agency": "CMS / Texas HHSC",
+      "as_of": "specialist Texas snapshot",
+      "grain": "provider class / license class",
+      "identity": "CMS CCN / HHSC IDs",
+      "access": "official files + TULIP search",
+      "coverage": "separate CMS and HHSC classes; complete LTC UNKNOWN",
+      "important_limitation": "HHSC ≠ CMS. Do not sum overlapping HCSSA labels.",
+      "specialist_url": "https://www.seniortrusthub.com/texas"
+    }
+  ],
+  "coverage_gaps": [
+    "complete Texas general-contractor universe",
+    "complete state household-goods mover denominator",
+    "complete live mortgage-company roster",
+    "complete Texas state-RIA roster",
+    "complete Texas long-term-care universe",
+    "certain enforcement bulk extracts (SSB, some state classes)"
+  ]
+}
