@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-utc-household-goods-directory",
+  "access_class": "OPEN_HTML_TABLE_BOUNDED",
+  "active_page_total": 285,
+  "scraped": false,
+  "identity": [
+    "UTC ID",
+    "UBI",
+    "USDOT"
+  ],
+  "note": "UTC ID != UBI != USDOT. STATE AUTHORITY != FMCSA. No bulk CSV. Table not scraped this ticket.",
+  "rows": []
+}

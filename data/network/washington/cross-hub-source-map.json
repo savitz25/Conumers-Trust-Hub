@@ -1,0 +1,87 @@
+{
+  "ticket": "ATH-WA-001",
+  "note": "Statewide sources live once. Do not duplicate per hub. Washington counties and cities are out of scope.",
+  "ubi_cross_hub": {
+    "key": "UBI",
+    "appears_in": [
+      "L&I contractor",
+      "UTC companies directory",
+      "SOS CCFS",
+      "DOR lookup",
+      "public-works prime"
+    ],
+    "rule": "UBI is a potentially major cross-hub key. UBI != professional license. Do not assume an active UBI means an active L&I/UTC/OIC/DFI/DSHS credential."
+  },
+  "sources": [
+    {
+      "source_id": "wa-lni-contractor-general",
+      "priority": [
+        "business identity",
+        "contacts",
+        "regulatory"
+      ]
+    },
+    {
+      "source_id": "wa-lni-contractor-bond",
+      "priority": [
+        "regulatory",
+        "enforcement-adjacent"
+      ]
+    },
+    {
+      "source_id": "wa-lni-contractor-insurance",
+      "priority": [
+        "regulatory"
+      ]
+    },
+    {
+      "source_id": "wa-dshs-gis-residential-care",
+      "priority": [
+        "business identity",
+        "contacts",
+        "geography"
+      ]
+    },
+    {
+      "source_id": "wa-utc-household-goods-directory",
+      "priority": [
+        "business identity"
+      ]
+    },
+    {
+      "source_id": "wa-sos-ccfs",
+      "priority": [
+        "business identity"
+      ],
+      "access": "SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-dor-business-lookup",
+      "priority": [
+        "business identity"
+      ],
+      "access": "SEARCH_ONLY"
+    },
+    {
+      "source_id": "wa-cms-federal-overlay",
+      "priority": [
+        "federal overlay"
+      ],
+      "access": "PLAN"
+    },
+    {
+      "source_id": "wa-hmda-cfpb-overlay",
+      "priority": [
+        "market"
+      ],
+      "access": "PLAN"
+    },
+    {
+      "source_id": "wa-sec-iard-principal-office-overlay",
+      "priority": [
+        "federal overlay"
+      ],
+      "access": "PLAN"
+    }
+  ]
+}

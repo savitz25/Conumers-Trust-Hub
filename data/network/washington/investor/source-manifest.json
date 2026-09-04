@@ -1,0 +1,190 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "investor",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-dfi-securities-enforcement",
+    "wa-dfi-securities-licensee-database",
+    "wa-sec-iard-principal-office-overlay"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-dfi-securities-enforcement",
+      "hub_home": "INVESTOR",
+      "source_family": "enforcement",
+      "source_name": "DFI Division of Securities Enforcement Actions",
+      "regulator": "Washington Department of Financial Institutions \u2014 Division of Securities",
+      "source_url": "https://dfi.wa.gov/securities-enforcement-actions",
+      "access_class": "OPEN_HTML_TABLE",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "securities_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML table of orders (final/consent/charges). 2024 year-in-review: 92 enforcement actions \u2014 aggregate. Bounded HTML, not a bulk machine file. Name-only UNSAFE. CRD != current WA authority.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_BOUNDED_HTML",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dfi-securities-licensee-database",
+      "hub_home": "INVESTOR",
+      "source_family": "license_verify",
+      "source_name": "DFI Licensee Database (securities / IA / BD / issuers / franchises)",
+      "regulator": "Washington Department of Financial Institutions",
+      "source_url": "https://dfi.wa.gov/consumers/verify-license",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD / DFI file number when returned",
+      "grain": "mixed_person_and_firm",
+      "record_count": "UNKNOWN",
+      "count_notes": "Search only. Do not scrape. 2024 year-in-review aggregates (not a roster): Broker-dealers 1,697; Investment advisers 645; IARs 14,753 (people); securities salespersons 227,450 (people). WA principal office != Washington state registration. CRD != current Washington authority by itself. State verification may use DFI Licensee Database / IAPD / BrokerCheck \u2014 do not scrape those search tools.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk state-RIA/BD roster. Do not scrape DFI/IAPD/BrokerCheck search.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-sec-iard-principal-office-overlay",
+      "hub_home": "INVESTOR",
+      "source_family": "federal_overlay",
+      "source_name": "SEC/IARD Washington principal-office overlay \u2014 plan",
+      "regulator": "U.S. Securities and Exchange Commission / FINRA IARD",
+      "source_url": "https://www.adviserinfo.sec.gov/",
+      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "identity_bar": "EXACT",
+      "identity_field": "CRD",
+      "grain": "investment_adviser_firm",
+      "record_count": "UNKNOWN",
+      "count_notes": "Plan: SEC/IARD WA principal-office overlay + state verification + bounded DFI enforcement/orders + issuer/securities filing framework. WA principal office != state IA registration. Do not scrape IAPD/BrokerCheck.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PLANNED_NOT_ACQUIRED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}

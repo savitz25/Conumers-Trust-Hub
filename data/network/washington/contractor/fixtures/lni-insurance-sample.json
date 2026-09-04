@@ -1,0 +1,15 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-lni-contractor-insurance",
+  "note": "Insurance evidence row. Insurance record != safety. CreatedBy_WAOIC_ID omitted (not a producer roster).",
+  "row_count_file": 77005,
+  "unique_license_numbers": 70953,
+  "rows": [
+    {
+      "ContractorLicenseNumber": "ECOSTSC758NN",
+      "InsuranceCompany": "State National Ins Co Inc",
+      "InsuranceAmt": "1000000",
+      "InsuranceAgencyName": "Next Insurance Inc"
+    }
+  ]
+}

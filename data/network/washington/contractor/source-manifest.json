@@ -1,0 +1,974 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "contractor",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-lni-contractor-general",
+    "wa-lni-contractor-bond",
+    "wa-lni-contractor-insurance",
+    "wa-lni-three-layer-join",
+    "wa-lni-principal",
+    "wa-lni-authorized-signer",
+    "wa-lni-verify-search",
+    "wa-lni-debarment",
+    "wa-lni-strikes",
+    "wa-lni-public-works-project-details",
+    "wa-lni-affidavit-project-details",
+    "wa-sos-ccfs",
+    "wa-dor-business-lookup",
+    "wa-local-and-county-skipped"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-lni-contractor-general",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_roster",
+      "source_name": "L&I Contractor License Data - General",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Data-General/m8qx-ubtq",
+      "download_url": "https://data.wa.gov/api/views/m8qx-ubtq/rows.csv?accessType=DOWNLOAD",
+      "verify_url": "https://secure.lni.wa.gov/verify/",
+      "dataset_id": "m8qx-ubtq",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "WA-LNI:{ContractorLicenseNumber}",
+      "source_clock": "Last-Modified Fri, 04 Sep 2026 15:10:51 GMT; Socrata rowsUpdatedAt 1788534678",
+      "grain": "contractor_registration",
+      "record_count": 160923,
+      "active_count": 75823,
+      "unique_ubi": 149153,
+      "count_notes": "Live CSV 160,923 rows / 160,923 unique ContractorLicenseNumber on 2026-09-04. ACTIVE 75,823; EXPIRED 61,083; SUSPENDED 9,731; RE-LICENSED 9,349; OUT OF BUSINESS 4,696. Types: CONSTRUCTION CONTRACTOR 148,557; ELECTRICAL CONTRACTOR 9,186; PLUMBING CONTRACTOR 3,059; ELEVATOR CONTRACTOR 121. SpecialtyCode1 01 (GENERAL) 117,378. UBI nonempty 160,923 on 149,153 unique UBI values. UBI may have multiple license records. UBI != professional license. Washington has a statewide contractor registration (RCW 18.27) \u2014 not a Texas-style gap. Registration != quality.",
+      "identifier_fields": [
+        "ContractorLicenseNumber",
+        "UBI"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 160850
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 160923
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 160923
+        }
+      },
+      "contact_notes": "No email or website columns. PhoneNumber is official business phone. Address1 is mailing address as indicated by the contractor. PrimaryPrincipalName is a person field (160,555 nonempty) \u2014 REVIEW_ONLY, not a business profile.",
+      "other_fields": [
+        "BusinessName",
+        "ContractorLicenseStatus",
+        "LicenseEffectiveDate",
+        "LicenseExpirationDate",
+        "SpecialtyCode1",
+        "BusinessTypeCodeDesc"
+      ],
+      "terms_notes": "Open Data Commons PDDL. Updated three times daily (7:30 a.m., 12:15 p.m., 5:15 p.m.). Verify current status at secure.lni.wa.gov/verify/.",
+      "redistribution_notes": "Do not commit the 35.4 Mb CSV. Person principal names are not published this ticket.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "LOW",
+        "SENIOR": "NONE",
+        "MOVE": "LOW",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 160923,
+      "sha256": "818c7f8df6ecb857aea6375c2b6ec884ae278cc6a89999c0bf8ad49f87285b20",
+      "bytes": 35382044,
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-contractor-bond",
+      "hub_home": "CONTRACTOR",
+      "source_family": "bond_evidence",
+      "source_name": "L&I Contractor License Data - Bond",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Data-Bond/bzff-4fmt",
+      "download_url": "https://data.wa.gov/api/views/bzff-4fmt/rows.csv?accessType=DOWNLOAD",
+      "dataset_id": "bzff-4fmt",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "ContractorLicenseNumber",
+      "source_clock": "Last-Modified Fri, 04 Sep 2026 14:33:15 GMT; Socrata rowsUpdatedAt 1788532403",
+      "grain": "bond_evidence_row",
+      "record_count": 176920,
+      "unique_license_numbers": 82635,
+      "count_notes": "176,920 evidence rows on 82,635 unique license numbers. Multiple rows per license expected (56,777 licenses have >1 row; max 9). Typical BondAmt 12,000 / 30,000 / 6,000 / 15,000. BondImpaired=Y on 294 rows. Bond != endorsement. Current registration != current bond unless this file proves an uncancelled current-evidence row. Orphans vs general: 0.",
+      "identifier_fields": [
+        "ContractorLicenseNumber",
+        "BondAccountID",
+        "UBI"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "BondFirmName",
+        "BondAmt",
+        "BondEffectiveDate",
+        "BondExpirationDate",
+        "BondCancelDate",
+        "BondImpaired"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 176920,
+      "sha256": "127d8788bc09df8774b54a2d770e38fde70633f3a7c6577a2b20f0b8f5e6d6a7",
+      "bytes": 28382948,
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-contractor-insurance",
+      "hub_home": "CONTRACTOR",
+      "source_family": "insurance_evidence",
+      "source_name": "L&I Contractor License Data - Insurance",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Data-Insurance/ciwg-agsx",
+      "download_url": "https://data.wa.gov/api/views/ciwg-agsx/rows.csv?accessType=DOWNLOAD",
+      "dataset_id": "ciwg-agsx",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "ContractorLicenseNumber",
+      "source_clock": "Last-Modified Fri, 04 Sep 2026 14:39:09 GMT; Socrata rowsUpdatedAt 1788532772",
+      "grain": "liability_insurance_evidence_row",
+      "record_count": 77005,
+      "unique_license_numbers": 70953,
+      "count_notes": "77,005 evidence rows on 70,953 unique license numbers. Typical InsuranceAmt 1,000,000 (68,255 rows). File is smaller than general because it is currently reported policy evidence, not a 1:1 roster. Insurance record != safety. Expired policy != discipline. Missing insurance row != zero and != discipline. CreatedBy_WAOIC_ID / UpdatedBy_WAOIC_ID are L&I submitter/staff IDs \u2014 not an OIC producer roster. Orphans vs general: 0.",
+      "identifier_fields": [
+        "ContractorLicenseNumber",
+        "InsurancePolicyNo",
+        "UBI"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "other_fields": [
+        "InsuranceCompany",
+        "InsuranceAmt",
+        "EffectiveDate",
+        "ExpirationDate",
+        "CancelDate",
+        "InsuranceAgencyName"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "ACQUIRED_LOCAL_GITIGNORED",
+      "acquired_rows": 77005,
+      "sha256": "69108d87fbb6ac2eef9a3f33b36fa25296c59c2f0bcff9dd81da674971f99c35",
+      "bytes": 15955496,
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-three-layer-join",
+      "hub_home": "CONTRACTOR",
+      "source_family": "derived_join",
+      "source_name": "Exact GENERAL\u2192BOND\u2192INSURANCE join on ContractorLicenseNumber",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Data-General/m8qx-ubtq",
+      "access_class": "DERIVED_FROM_OFFICIAL_BULK",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "ContractorLicenseNumber",
+      "grain": "contractor_registration",
+      "record_count": 160923,
+      "count_notes": "general\u2229bond 82635; general\u2229insurance 70953; all three 70622. ACTIVE with current bond evidence 75044; ACTIVE with current insurance evidence 70425; ACTIVE with both current-evidence flags 69966. ACTIVE without current bond evidence 779; ACTIVE without current insurance evidence 5398. Do not hide orphans (none vs general). Do not mint insured-forever or recommended-contractor labels. Current-evidence flags are date/cancel heuristics, not a quality or safety claim.",
+      "identifier_fields": [
+        "ContractorLicenseNumber"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": 160850
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 160923
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": 160923
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "DERIVED_THIS_TICKET",
+      "join": {
+        "general_rows": 160923,
+        "general_unique": 160923,
+        "general_active": 75823,
+        "phone_nonempty": 160850,
+        "address_nonempty": 160923,
+        "ubi_nonempty": 160923,
+        "unique_ubi": 149153,
+        "active_unique_ubi": 72822,
+        "principal_name_nonempty": 160555,
+        "bond_rows": 176920,
+        "bond_unique": 82635,
+        "bond_current_evidence": 77261,
+        "bond_impaired_y": 294,
+        "insurance_rows": 77005,
+        "insurance_unique": 70953,
+        "insurance_current_evidence": 70919,
+        "general_with_any_bond_row": 82635,
+        "general_with_any_insurance_row": 70953,
+        "general_with_bond_and_insurance_row": 70622,
+        "general_without_bond_row": 78288,
+        "general_without_insurance_row": 89970,
+        "bond_orphan_not_in_general": 0,
+        "insurance_orphan_not_in_general": 0,
+        "active_with_current_bond_evidence": 75044,
+        "active_with_current_insurance_evidence": 70425,
+        "active_with_current_bond_and_insurance": 69966,
+        "active_without_current_bond_evidence": 779,
+        "active_without_current_insurance_evidence": 5398,
+        "principal_rows": 250349,
+        "authorized_signer_rows": 10444,
+        "pw_project_rows": 347082,
+        "affidavit_rows": 1192380,
+        "intent_rows": 1314773,
+        "pw_apprentice_rows": 347478,
+        "afh_current": 6179,
+        "alf_current": 557,
+        "esf_current": 16,
+        "sl_current": 187,
+        "gt_current": 29,
+        "residential_current": 6968,
+        "residential_all_including_archive": 134442
+      },
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-principal",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_personnel",
+      "source_name": "L&I Contractor License - Principal Data",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Principal-Data/4xk5-x9j6",
+      "dataset_id": "4xk5-x9j6",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "ContractorLicenseNumber + PrincipalName",
+      "grain": "person_associated_with_a_license",
+      "record_count": 250349,
+      "publication": "people_suppressed",
+      "count_notes": "250,349 principal rows counted via SODA. Person grain. Do not publish people this ticket. Not a business profile.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-authorized-signer",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_personnel",
+      "source_name": "L&I Contractor Authorized Signer Data",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Contractor-Authorized-Signer-Data/s7ge-wicw",
+      "dataset_id": "s7ge-wicw",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "person_authorized_signer",
+      "record_count": 10444,
+      "publication": "people_suppressed",
+      "count_notes": "10,444 rows. Person grain for permits/affidavits. Do not publish people.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-verify-search",
+      "hub_home": "CONTRACTOR",
+      "source_family": "license_verify",
+      "source_name": "L&I Verify a Contractor",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://secure.lni.wa.gov/verify/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "contractor_registration",
+      "record_count": "UNKNOWN",
+      "count_notes": "Current-status verify tool. Do not scrape. Prefer the open-data CSVs for bulk.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "Search form. Do not scrape.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-debarment",
+      "hub_home": "CONTRACTOR",
+      "source_family": "enforcement",
+      "source_name": "L&I Debarred Contractors List",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://secure.lni.wa.gov/debarandstrike/ContractorDebarList.aspx",
+      "index_url": "https://lni.wa.gov/licensing-permits/public-works-projects/strike-and-debar/contractors-not-allowed-to-bid",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "L&I license number and/or UBI when present on the debar row",
+      "grain": "public_works_debarment_row",
+      "record_count": 745,
+      "count_notes": "Official page 2026-09-04: Showing 1 to 25 of 745 records, with a 'Download all debarment data' control. This ticket did not download the export. Debarment is public-works bid ineligibility, not a consumer quality score. VENDOR/public-works debar != contractor registration status by itself. Name-only attach is UNSAFE. Principals on the list are people.",
+      "identifier_fields": [
+        "License",
+        "UBI"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_NOT_DOWNLOADED_THIS_TICKET",
+      "recommended_next_action": "Download the official debar CSV on WA-CON-001. Join only on exact license number. Suppress principal names in public fixtures.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-strikes",
+      "hub_home": "CONTRACTOR",
+      "source_family": "enforcement",
+      "source_name": "L&I Contractor Strike List",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://secure.lni.wa.gov/debarandstrike/ContractorStrikeList.aspx",
+      "access_class": "OPEN_BULK_DOWNLOAD",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "public_works_strike_row",
+      "record_count": 18969,
+      "count_notes": "Official page: Showing 1 to 25 of 18,969 records, with 'Download all strike data'. Strike != debarment. Not downloaded this ticket. Person principals on the list.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PORTAL_LIVE_NOT_DOWNLOADED_THIS_TICKET",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-public-works-project-details",
+      "hub_home": "CONTRACTOR",
+      "source_family": "project_letting",
+      "source_name": "L&I Public Works Project Details",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Public-Works-Project-Details/qp8s-a5uf",
+      "dataset_id": "qp8s-a5uf",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_PROGRAM",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "Prime Contractor UBI \u2014 not by itself a contractor license",
+      "grain": "public_works_project",
+      "record_count": 347082,
+      "count_notes": "347,082 project rows. Prime Contractor UBI is present. VENDOR/public-works prime != contractor license. Join to L&I license is EXACT on UBI only as a candidate, then confirm license number. Giant file not dumped this ticket.",
+      "identifier_fields": [
+        "Project ID",
+        "Prime Contractor UBI"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-lni-affidavit-project-details",
+      "hub_home": "CONTRACTOR",
+      "source_family": "project_letting",
+      "source_name": "L&I Affidavit Project Details",
+      "regulator": "Washington State Department of Labor & Industries",
+      "source_url": "https://data.wa.gov/Labor/L-I-Affidavit-Project-Details/9ncw-tqjn",
+      "dataset_id": "9ncw-tqjn",
+      "access_class": "OPEN_SODA_API",
+      "contact_rank": "OFFICIAL_PROGRAM",
+      "identity_bar": "EXACT",
+      "identity_field": "primelicense (L&I contractor license) when present",
+      "grain": "affidavit_of_wages_paid",
+      "record_count": 1192380,
+      "count_notes": "1,192,380 rows. Schema includes Contractor License and UBI. Giant file \u2014 not ingested this ticket. Public-works activity != quality.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_DUMPED_GIANT_FILE",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-sos-ccfs",
+      "hub_home": "CONTRACTOR",
+      "source_family": "business_identity",
+      "source_name": "Secretary of State Corporations & Charities Filing System (CCFS)",
+      "regulator": "Washington Secretary of State",
+      "source_url": "https://ccfs.sos.wa.gov/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_STATE_BUSINESS",
+      "identity_bar": "EXACT",
+      "identity_field": "UBI",
+      "grain": "business_entity",
+      "record_count": "UNKNOWN",
+      "count_notes": "Corporations Data Extract on data.wa.gov (f9jk-mm39) is retired (page updated 2024-08-30). Advanced CCFS search can export a parameter-limited Excel list. That is not a full-registry bulk dump. RCW 42.56.070(9) bars lists of individuals for commercial purposes. UBI != professional license. Do not scrape CCFS.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "MEDIUM"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "Full corporations extract no longer published. Lookup/advanced-search only.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dor-business-lookup",
+      "hub_home": "CONTRACTOR",
+      "source_family": "business_identity",
+      "source_name": "Department of Revenue business lookup",
+      "regulator": "Washington Department of Revenue",
+      "source_url": "https://secure.dor.wa.gov/gteunauth/_/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_STATE_BUSINESS",
+      "identity_bar": "EXACT",
+      "identity_field": "UBI",
+      "grain": "tax_registration",
+      "record_count": "UNKNOWN",
+      "count_notes": "Lookup by name/UBI/address. No free bulk DOR roster found this ticket. UBI != professional license.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "LOW",
+        "LENDER": "LOW",
+        "INSURANCE": "LOW",
+        "SENIOR": "LOW",
+        "MOVE": "LOW",
+        "INVESTOR": "LOW"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-local-and-county-skipped",
+      "hub_home": "CONTRACTOR",
+      "source_family": "coverage_gap",
+      "source_name": "Washington local/municipal/county sources \u2014 skipped",
+      "regulator": "none \u2014 scope statement",
+      "source_url": "https://data.wa.gov/",
+      "access_class": "NOT_IN_SCOPE",
+      "contact_rank": "OFFICIAL_PROGRAM",
+      "identity_bar": "UNSAFE",
+      "grain": "coverage_statement",
+      "record_count": 0,
+      "count_notes": "STATE FIRST. No Seattle, King County, Tacoma, Pierce County, Spokane, Snohomish, Bellevue, or municipal permits. Catalog hits for City of Asotin / City of Clarkston building permits were not acquired. Local backlog may be documented only after this state source analysis.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "DELIBERATELY_SKIPPED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}

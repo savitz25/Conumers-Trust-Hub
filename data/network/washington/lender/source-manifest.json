@@ -1,0 +1,250 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "lender",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-dfi-verify-license",
+    "wa-nmls-consumer-access",
+    "wa-dfi-consumer-services-enforcement",
+    "wa-hmda-cfpb-overlay"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-dfi-verify-license",
+      "hub_home": "LENDER",
+      "source_family": "license_verify",
+      "source_name": "DFI Verify a Financial License",
+      "regulator": "Washington Department of Financial Institutions",
+      "source_url": "https://dfi.wa.gov/consumers/verify-license",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID or DFI licensee identifier when the verify path returns one",
+      "grain": "mixed_person_and_company",
+      "record_count": "UNKNOWN",
+      "count_notes": "Mortgage lenders/brokers/MLOs/consumer-loan companies verify through NMLS Consumer Access. Escrow, securities filings, franchises through DFI Licensee Database. Do not scrape either search. No bulk company roster acquired. Do NOT invent a live company denominator. Dec 31 2025 DFI stats (aggregates, not a roster): Mortgage Brokers 354; Consumer Loan Companies 1,104; MLOs active 20,126 (people \u2014 suppress).",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "MEDIUM"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "No bulk DFI lender roster. NMLS Consumer Access must not be scraped.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "source_family": "license_verify",
+      "source_name": "NMLS Consumer Access",
+      "regulator": "NMLS / CSBS (used by DFI)",
+      "source_url": "https://www.nmlsconsumeraccess.org/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID",
+      "grain": "mixed_person_and_company",
+      "record_count": "UNKNOWN",
+      "count_notes": "SEARCH_ONLY. Do not scrape. NMLS != current Washington authority by itself without the WA license record.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dfi-consumer-services-enforcement",
+      "hub_home": "LENDER",
+      "source_family": "enforcement",
+      "source_name": "DFI Division of Consumer Services Enforcement Actions",
+      "regulator": "Washington Department of Financial Institutions",
+      "source_url": "https://dfi.wa.gov/enforcement-actions",
+      "access_class": "OPEN_HTML_TABLE",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "NMLS ID when present on the order row",
+      "grain": "enforcement_order",
+      "record_count": "UNKNOWN",
+      "count_notes": "HTML table of recent orders, often with NMLS IDs. Bounded page, not a full historical bulk file. Name-only UNSAFE. 2025 year aggregate: 91 enforcement actions issued \u2014 not a roster.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_BOUNDED_HTML",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-hmda-cfpb-overlay",
+      "hub_home": "LENDER",
+      "source_family": "market_intelligence",
+      "source_name": "HMDA (CFPB) Washington state/county market overlay \u2014 plan",
+      "regulator": "CFPB / FFIEC",
+      "source_url": "https://ffiec.cfpb.gov/",
+      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "lar_loan_application",
+      "record_count": "UNKNOWN",
+      "count_notes": "HMDA != license roster. Canonical state/county market intelligence for a later lender page. Do not use HMDA as a DFI licensee denominator. County work is out of scope this ticket.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "LOW",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PLANNED_NOT_ACQUIRED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "ticket": "ATH-WA-001",
+  "source_id": "wa-lni-contractor-general",
+  "source_url": "https://data.wa.gov/Labor/L-I-Contractor-License-Data-General/m8qx-ubtq",
+  "source_as_of": "2026-09-04",
+  "note": "Three official ACTIVE construction-contractor rows. Exact ID is ContractorLicenseNumber. PrimaryPrincipalName omitted (person). Phone is official business phone.",
+  "row_count_file": 160923,
+  "active_count": 75823,
+  "rows": [
+    {
+      "BusinessName": "!ECO STAR C G CONSTRUCTION LLC",
+      "ContractorLicenseNumber": "ECOSTSC758NN",
+      "ContractorLicenseTypeCodeDesc": "CONSTRUCTION CONTRACTOR",
+      "City": "VANCOUVER",
+      "State": "WA",
+      "Zip": "98661",
+      "PhoneNumber": "5039573452",
+      "UBI": "605854613",
+      "SpecialtyCode1": "01",
+      "ContractorLicenseStatus": "ACTIVE"
+    },
+    {
+      "BusinessName": "# JUAN HANDYMAN LLC",
+      "ContractorLicenseNumber": "JUANHJH803PM",
+      "ContractorLicenseTypeCodeDesc": "CONSTRUCTION CONTRACTOR",
+      "City": "Medical Lake",
+      "State": "WA",
+      "Zip": "99022",
+      "PhoneNumber": "5098479082",
+      "UBI": "604540145",
+      "SpecialtyCode1": "01",
+      "ContractorLicenseStatus": "ACTIVE"
+    },
+    {
+      "BusinessName": "(H)ANDYMAN LLC",
+      "ContractorLicenseNumber": "HANDYL*845B8",
+      "ContractorLicenseTypeCodeDesc": "CONSTRUCTION CONTRACTOR",
+      "City": "SEATTLE",
+      "State": "WA",
+      "Zip": "98146",
+      "PhoneNumber": "2069637622",
+      "UBI": "603450912",
+      "SpecialtyCode1": "01",
+      "ContractorLicenseStatus": "ACTIVE"
+    }
+  ]
+}

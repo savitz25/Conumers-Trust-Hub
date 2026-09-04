@@ -1,0 +1,323 @@
+{
+  "ticket": "ATH-WA-001",
+  "hub": "senior",
+  "state": "WA",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "wa-dshs-gis-residential-care",
+    "wa-dshs-afh-locator",
+    "wa-dshs-alf-locator",
+    "wa-dshs-nh-locator",
+    "wa-cms-federal-overlay"
+  ],
+  "sources": [
+    {
+      "source_id": "wa-dshs-gis-residential-care",
+      "hub_home": "SENIOR",
+      "source_family": "facility_roster",
+      "source_name": "DSHS Long Term Care \u2014 Residential Care (ArcGIS / Geospatial Data Library)",
+      "regulator": "Washington State Department of Social and Health Services \u2014 Residential Care Services",
+      "source_url": "https://www.arcgis.com/home/item.html?id=12cacca85238434b9bf54f8e47ece35f",
+      "rest_url": "https://services2.arcgis.com/WW3T8U6q5EkZ9U3n/arcgis/rest/services/Long_Term_Care_Residential_Care_view/FeatureServer/1",
+      "access_class": "OPEN_GIS_FEATURE_SERVICE",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "DSHS LicenseNumber / FacInstanceId",
+      "source_clock": "ArcGIS dataLastEditDate unix 1788498054883 (~2026-09-04); nightly HCLA extract",
+      "grain": "licensed_residential_care_location",
+      "record_count": 6968,
+      "count_notes": "Current (GDLArchiveDate IS NULL) 6,968: AF Adult Family Home 6,179; BH Assisted Living Facility 557; EF Enhanced Services Facility 16; SL Certified Residential Service and Supports 187; GT Group Training 29. All records including archive 134,442. Same data as RCS locators plus coordinates. DSHS != CMS. LicenseNumber is a state facility ID, not a CMS CCN. AFH/ALF bulk result is this GIS layer \u2014 locator CSV-after-search was not scraped.",
+      "identifier_fields": [
+        "LicenseNumber",
+        "FacInstanceId",
+        "FacilityType"
+      ],
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "other_fields": [
+        "FacilityName",
+        "FacilityStatus",
+        "LicensedBedCount",
+        "LocationCounty"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_VIA_OFFICIAL_GIS_QUERY",
+      "recommended_next_action": "WA-SEN-001 stream current AF/BH/EF rows. Do not scrape fortress locators.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dshs-afh-locator",
+      "hub_home": "SENIOR",
+      "source_family": "facility_verify",
+      "source_name": "DSHS Adult Family Home Locator (professionals & providers)",
+      "regulator": "Washington State Department of Social and Health Services",
+      "source_url": "https://fortress.wa.gov/dshs/adsaapps/lookup/AFHAdvLookup.aspx",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "identity_field": "DSHS AFH license number",
+      "grain": "adult_family_home",
+      "record_count": "UNKNOWN",
+      "count_notes": "Locator can download search results as Excel/CSV after a search. That is still a search tool. Do not scrape. Prefer the GIS current layer (6,179 AF).",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "blocker": "Do not scrape the locator. GIS bulk exists.",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dshs-alf-locator",
+      "hub_home": "SENIOR",
+      "source_family": "facility_verify",
+      "source_name": "DSHS Assisted Living Facility Locator",
+      "regulator": "Washington State Department of Social and Health Services",
+      "source_url": "https://fortress.wa.gov/dshs/adsaapps/lookup/BHPubLookup.aspx",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "assisted_living_facility",
+      "record_count": "UNKNOWN",
+      "count_notes": "Locator. GIS current BH count is 557. Do not scrape.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-dshs-nh-locator",
+      "hub_home": "SENIOR",
+      "source_family": "facility_verify",
+      "source_name": "DSHS Nursing Home Locator",
+      "regulator": "Washington State Department of Social and Health Services",
+      "source_url": "https://fortress.wa.gov/dshs/adsaapps/lookup/NHPubLookup.aspx",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "identity_bar": "EXACT",
+      "grain": "nursing_home",
+      "record_count": "UNKNOWN",
+      "count_notes": "Locator live. Separate GIS nursing-home layer exists; live current count UNKNOWN this ticket. DSHS != CMS.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    },
+    {
+      "source_id": "wa-cms-federal-overlay",
+      "hub_home": "SENIOR",
+      "source_family": "federal_overlay",
+      "source_name": "CMS nursing home / home health / hospice overlay (plan)",
+      "regulator": "Centers for Medicare & Medicaid Services",
+      "source_url": "https://data.cms.gov/",
+      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "identity_bar": "EXACT",
+      "identity_field": "CMS CCN \u2014 only with an official CCN\u2194DSHS crosswalk",
+      "grain": "medicare_enrolled_provider",
+      "record_count": "UNKNOWN",
+      "count_notes": "Do not duplicate federal raw in Ask this ticket. Ownership overlay only. CCN\u2194state ID only if official crosswalk. DSHS != CMS. Missing overlay != zero facilities.",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PLANNED_NOT_ACQUIRED",
+      "ticket": "ATH-WA-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04"
+    }
+  ]
+}
