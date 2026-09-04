@@ -42,6 +42,14 @@ const SOURCES = [
     fingerprint: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',
     required: ['current_nursing_homes', 'mds_observations'],
   },
+  {
+    hub: 'investor',
+    schemaVersion: 'investor-network-metrics-v1',
+    url: 'https://raw.githubusercontent.com/savitz25/investor-trust-hub/main/data/home/investor-network-metrics-v1.json',
+    fallback: 'data/network-metrics/investor-v1-fallback.json',
+    fingerprint: 'd44c7eea69e844176fc82c6cb2554456a8ae648f2e6584485549b736f536e6e8',
+    required: ['investment_advisory_firms', 'form_adv_attribute_observations'],
+  },
 ];
 
 function metricKeys(raw) {

@@ -49,6 +49,16 @@ const INSURANCE_REQUIRED_PUBLIC = [
   'market_conduct_examinations',
 ] as const;
 
+const INVESTOR_REQUIRED_PUBLIC = [
+  'investment_advisory_firms',
+  'ria_records',
+  'era_records',
+  'form_adv_attribute_observations',
+  'form_adv_filings',
+  'ownership_control_observations',
+  'indexable_firm_profiles',
+] as const;
+
 export type RawMetric = {
   key?: unknown;
   label?: unknown;
@@ -271,10 +281,51 @@ export function validateInsuranceManifest(raw: unknown): Record<string, unknown>
   return raw;
 }
 
+export function validateInvestorManifest(raw: unknown): Record<string, unknown> {
+  if (!isRecord(raw)) throw new Error('investor manifest must be an object');
+  if (raw.schemaVersion !== 'investor-network-metrics-v1') {
+    throw new Error(`unknown schema version: ${String(raw.schemaVersion)}`);
+  }
+  requireString(raw.sourceFingerprint, 'investor fingerprint required');
+  requireString(raw.generatedAt, 'investor generatedAt required');
+  const map = metricMap(raw.metrics);
+  requirePublicCount(map, 'investment_advisory_firms', 'sec_iard_roster_firm');
+  requirePublicCount(map, 'ria_records', 'ria_firm_fact');
+  requirePublicCount(map, 'era_records', 'era_firm_fact');
+  requirePublicCount(map, 'form_adv_attribute_observations', 'form_adv_attribute_observation');
+  requirePublicCount(map, 'form_adv_filings', 'form_adv_filing');
+  requirePublicCount(map, 'ownership_control_observations', 'ownership_control_observation');
+  for (const key of INVESTOR_REQUIRED_PUBLIC) requirePublicCount(map, key);
+  forbidNumericMissing(map, 'nj_state_ria_roster');
+  forbidNumericMissing(map, 'ca_state_ria_roster');
+  const roster = map.get('investment_advisory_firms')!.value as number;
+  const ria = map.get('ria_records')!.value as number;
+  const era = map.get('era_records')!.value as number;
+  const attributes = map.get('form_adv_attribute_observations')!.value as number;
+  const filings = map.get('form_adv_filings')!.value as number;
+  if (ria + era !== roster) throw new Error('RIA XOR ERA partition must equal the current SEC/IARD roster');
+  if (ria === era) throw new Error('RIA records must not equal ERA records');
+  if (attributes === roster || attributes === filings) {
+    throw new Error('Form ADV attribute observations must not equal firms or filings');
+  }
+  if (filings === roster) throw new Error('Form ADV filings must not equal advisory firms');
+  if (roster === 25777) throw new Error('canonical extra identities must not replace the public roster');
+  const disclosures = map.get('disclosure_events');
+  if (disclosures && disclosures.publicationStatus === 'PUBLIC' && disclosures.value === 0) {
+    throw new Error('empty disclosure table must not be a public clean-record headline');
+  }
+  const summedRaum = map.get('national_summed_raum_aum');
+  if (summedRaum && summedRaum.publicationStatus === 'PUBLIC' && summedRaum.value != null) {
+    throw new Error('national summed RAUM must not be public');
+  }
+  return raw;
+}
+
 export {
   CONTRACTOR_REQUIRED_PUBLIC,
   SENIOR_REQUIRED_PUBLIC,
   MOVE_REQUIRED_PUBLIC,
   LENDER_REQUIRED_PUBLIC,
   INSURANCE_REQUIRED_PUBLIC,
+  INVESTOR_REQUIRED_PUBLIC,
 };

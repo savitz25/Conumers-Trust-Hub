@@ -44,7 +44,7 @@ test('move, lender, and insurance schemas validate against accepted fingerprints
   assert.equal(SPECIALIST_SOURCES.move.schemaVersion, 'move-network-metrics-v1');
   assert.equal(SPECIALIST_SOURCES.lender.schemaVersion, 'lender-network-metrics-v1');
   assert.equal(SPECIALIST_SOURCES.insurance.schemaVersion, 'insurance-network-metrics-v1');
-  assert.deepEqual(SPECIALIST_OWNED_HUBS, ['move', 'lender', 'insurance', 'contractor', 'senior']);
+  assert.deepEqual(SPECIALIST_OWNED_HUBS, ['move', 'lender', 'insurance', 'contractor', 'senior', 'investor']);
 });
 
 test('move adapter keeps federal directory distinct from Florida FDACS and does not zero missing universes', () => {

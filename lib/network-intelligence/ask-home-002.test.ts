@@ -38,6 +38,7 @@ test('six cards use traceable metric IDs and preserve entity grains', () => {
   assert.deepEqual(home.displayed_metric_ids.lender, []);
   assert.deepEqual(home.displayed_metric_ids.insurance, []);
   assert.deepEqual(home.displayed_metric_ids.contractor, []);
+  assert.deepEqual(home.displayed_metric_ids.investor, []);
   assert.deepEqual(manifests.find((manifest) => manifest.hub_id === 'senior')?.entity_classes.map((entity) => entity.label), ['Nursing home','Home health agency','Hospice provider']);
   assert.match(manifests.find((manifest) => manifest.hub_id === 'contractor')?.entity_counts[0].grain ?? '', /credential record/);
   assert.doesNotMatch(source, /644,421 contractors/);

@@ -7,6 +7,7 @@ export {
   validateMoveManifest,
   validateLenderManifest,
   validateInsuranceManifest,
+  validateInvestorManifest,
 } from './validate.ts';
 export {
   adaptContractorCard,
@@ -14,6 +15,7 @@ export {
   adaptMoveCard,
   adaptLenderCard,
   adaptInsuranceCard,
+  adaptInvestorCard,
 } from './adapt.ts';
 export { loadSpecialistCard, loadSpecialistNetworkCards } from './load.ts';
 export { consumerMetricLabel, CONSUMER_METRIC_LABELS } from './consumer-labels.ts';

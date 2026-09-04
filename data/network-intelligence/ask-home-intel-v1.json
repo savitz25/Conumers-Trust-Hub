@@ -9,7 +9,7 @@
     "insurance":[],
     "senior":[],
     "contractor":[],
-    "investor":["investor_iard_roster","investor_ria_firms","investor_era_firms"]
+    "investor":[]
   },
   "derived_display_metrics":[
     {"metric_id":"network_hub_count","value":6,"calculation":"count of accepted hub manifests"},
@@ -24,7 +24,7 @@
   "limitations_version":"network-limitations-v1",
   "what_changed_mode":"initial_baseline",
   "runtime_data_strategy":"specialist_upstream_revalidate_3600_with_fallback",
-  "specialist_owned_hubs":["move","lender","insurance","contractor","senior"],
+  "specialist_owned_hubs":["move","lender","insurance","contractor","senior","investor"],
   "client_components":["accepted_federated_search_input","accepted_concierge_entry"],
   "forbidden_features":["cross_hub_entity_total","universal_trust_score","paid_ordering","aggregate_rating","live_six_hub_fanout"]
 }

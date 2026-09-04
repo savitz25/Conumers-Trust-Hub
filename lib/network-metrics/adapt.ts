@@ -355,3 +355,51 @@ export function adaptInsuranceCard(
     ],
   };
 }
+
+export function adaptInvestorCard(
+  raw: Record<string, unknown>,
+  origin: MetricOrigin,
+): SpecialistHubPresentation {
+  const map = byKey(raw);
+  const fingerprint = String(raw.sourceFingerprint);
+  const schema = String(raw.schemaVersion);
+  const metric = (key: string, label?: string) => toNetworkMetric('investor', schema, fingerprint, pick(map, key), label);
+  return {
+    hub: 'investor',
+    name: 'InvestorTrustHub',
+    eyebrow: 'Investment',
+    href: 'https://www.investortrusthub.com',
+    action: 'Research advisers',
+    origin,
+    schemaVersion: schema,
+    fingerprint,
+    generatedAt: String(raw.generatedAt),
+    newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
+    newestSourceAsOfNote:
+      typeof raw.newestDocumentedSourceAsOfNote === 'string'
+        ? raw.newestDocumentedSourceAsOfNote
+        : 'Newest documented official source-effective date among metrics that carry a calendar sourceAsOf. Not the SEC roster date.',
+    universes: [],
+    primary: [
+      metric('investment_advisory_firms', CONSUMER_METRIC_LABELS.investment_advisory_firms),
+      metric('ria_records', CONSUMER_METRIC_LABELS.ria_records),
+      metric('era_records', CONSUMER_METRIC_LABELS.era_records),
+    ],
+    secondary: [
+      metric('form_adv_attribute_observations', CONSUMER_METRIC_LABELS.form_adv_attribute_observations),
+      metric('form_adv_filings', CONSUMER_METRIC_LABELS.form_adv_filings),
+      metric('ownership_control_observations', CONSUMER_METRIC_LABELS.ownership_control_observations),
+      metric('indexable_firm_profiles', CONSUMER_METRIC_LABELS.indexable_firm_profiles),
+    ],
+    caveats: [
+      'RIA and ERA are filing classes of the same current SEC/IARD roster. ERA is not an RIA.',
+      'The 17,018 RIA records include pending rows; pending is not SEC approval.',
+      'Form ADV attribute observations are not advisers, firms, filings, clients, or accounts.',
+      'A Form ADV filing is not another investment advisory firm. An amendment is not an additional adviser.',
+      'Ownership/control observations are not firms and not 158,560 separate companies.',
+      'RAUM is not investment performance. A national summed RAUM/AUM dollar total is not published.',
+      'New Jersey and California state-RIA universes are not acquired and are not shown as zero. Principal office is not state registration.',
+      'An empty disclosure table is not a clean-record claim. Item 11 is a filer-reported checkbox, not a finding.',
+    ],
+  };
+}
