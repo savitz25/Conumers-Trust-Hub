@@ -32,18 +32,18 @@ const oicFix = JSON.parse(
   readFileSync('data/network/washington/insurance/fixtures/oic-access-note.json', 'utf8'),
 );
 
-test('ATH-WA-001 is state-level research only: no Ask /washington, no counties, no cities', () => {
-  assert.equal(existsSync('app/washington'), false);
-  assert.equal(existsSync('app/washington/page.tsx'), false);
+test('ATH-WA-001 is state-level research only: ATH-WA-002 publishes Ask /washington, still no counties', () => {
+  assert.equal(existsSync('app/washington/page.tsx'), true);
   assert.equal(existsSync('app/places/washington'), false);
-  assert.doesNotMatch(sitemap, /\/washington/);
+  assert.match(sitemap, /\/washington/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
-  assert.equal(manifest.publication.public_washington_routes, false);
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.city_work, false);
   assert.equal(manifest.publication.specialist_repo_edits, false);
-  const extraWa = readdirSync('app').filter((name) => /washington/i.test(name));
-  assert.deepEqual(extraWa, []);
+  assert.deepEqual(
+    readdirSync('app/washington').filter((name) => name !== 'page.tsx'),
+    [],
+  );
 });
 
 test('no Trust Score, paid ranking, or people publication', () => {

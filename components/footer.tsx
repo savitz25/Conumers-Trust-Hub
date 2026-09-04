@@ -9,6 +9,7 @@ import {
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
 import { txReleaseGatePassed } from '@/lib/network/tx-network';
+import { waReleaseGatePassed } from '@/lib/network/wa-network';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -83,7 +84,8 @@ export function Footer() {
                   .filter(
                     (item) =>
                       (item.href !== '/california' || caReleaseGatePassed()) &&
-                      (item.href !== '/texas' || txReleaseGatePassed()),
+                      (item.href !== '/texas' || txReleaseGatePassed()) &&
+                      (item.href !== '/washington' || waReleaseGatePassed()),
                   )
                   .map((item) => (
                   <li key={item.href}>

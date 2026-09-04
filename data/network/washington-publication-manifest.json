@@ -1,0 +1,468 @@
+{
+  "state_code": "WA",
+  "state_name": "Washington",
+  "ask_path": "/washington",
+  "ask_canonical": "https://www.asktrusthub.com/washington",
+  "version": "ath-wa-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "trust_score": false,
+  "paid_ranking": false,
+  "conceptual_statement": "Washington’s strongest Trust Hub evidence is its statewide contractor registration, bond, and liability-insurance graph on exact L&I contractor IDs, plus a DSHS residential-care inventory that includes Adult Family Homes as a state-only class. Moving, lending, investor, and insurance research add Washington regulatory context to existing federal and national spines. Several live state rosters remain search-only or commercially restricted. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": ["contractor", "insurance", "lender", "move", "investor", "senior"],
+    "blocker": null,
+    "rule": "All six specialist /washington pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /washington is indexable. Any one specialist failure fails the gate. Do not weaken the gate. No Washington county or city routes.",
+    "verified_at": "2026-09-04"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "160,923 L&I contractor registrations",
+      "grain": "source-native contractor-license/registration rows. Not net-new companies. Registration is not quality."
+    },
+    {
+      "hub_id": "senior",
+      "display": "6,968 DSHS residential GIS current",
+      "grain": "AFH 6,179 + ALF 557 + ESF 16 + other GIS classes. AFH is not ALF. ALF is not SNF. Do not sum with CMS."
+    },
+    {
+      "hub_id": "lender",
+      "display": "286,871 HMDA 2025 applications",
+      "grain": "HMDA applications for Washington property location. Not a live lender roster."
+    },
+    {
+      "hub_id": "move",
+      "display": "UTC search-only / 284 directory results",
+      "grain": "UTC active household-goods directory results. Bulk roster SOURCE_NOT_ACQUIRED. Not a newly ingested mover-company count."
+    },
+    {
+      "hub_id": "investor",
+      "display": "306 SEC/IARD Washington principal-office firms",
+      "grain": "federal roster geography. Not the Washington state-RIA count. 306 is not 645."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "2,924 OIC 2025 annual-report entities",
+      "grain": "dated insurance and risk/non-risk-bearing entity aggregate. Not a live licensed-insurer roster."
+    }
+  ],
+  "what_makes_washington_different": [
+    "L&I publishes contractor registration, bond, and liability-insurance filings on exact contractor IDs. Registration is not quality. A missing bond row is not proof the contractor is unbonded.",
+    "Washington has more than six thousand Adult Family Homes — a state-specific residential-care class outside CMS nursing-home identity. AFH is not ALF. ALF is not a skilled nursing facility.",
+    "Household-goods mover authority is a UTC state permit and remains distinct from FMCSA interstate authority. A USDOT number is not interstate operating authority by itself.",
+    "HMDA shows complete statewide 2025 mortgage-market activity while DFI’s live company roster remains search-only. HMDA is not a license roster. Denial rate is not quality.",
+    "SEC/IARD Washington principal-office geography is not state adviser registration. 306 is not the 645 DFI year-end IA aggregate, and 645 is not a live roster.",
+    "OIC person-list restrictions (RCW 42.56) affect what can ethically and legally be bulk acquired. Producer lists stay restricted. 2,924 is not a live Washington insurer count."
+  ],
+  "expansion_ledger": {
+    "NET_NEW_CANONICAL_ORGANIZATIONS": {
+      "status": "UNKNOWN / NOT YET AUDITED",
+      "value": null,
+      "explanation": "Move specialist ledger is 0 net-new mover organizations. Insurance specialist ledger is 0. Contractor 160,923 rows are evidence on an already-known Washington contractor spine, not 160,923 net-new companies. Investor 306 is federal principal-office geography, not new firms minted here. Lender HMDA 286,871 is applications, not companies. Senior published AFH+ALF+ESF = 6,752 state-only facility identities, but WA-SEN-001 did not commit a before/after canonical-organization ledger. Ask does not mint organizations and does not guess."
+    },
+    "NET_NEW_STATE_IDENTITIES": {
+      "status": "UNKNOWN / NOT YET AUDITED",
+      "value": null,
+      "explanation": "Specialist tickets published source-native identities (L&I contractor IDs, DSHS facility IDs, UTC search hits, HMDA LEIs, SEC/IARD CRDs, OIC aggregates). No committed network-level before/after identity audit is available. Do not treat evidence-row counts as new identities."
+    },
+    "EXISTING_ORGANIZATIONS_ENRICHED": {
+      "status": "UNKNOWN / NOT YET AUDITED",
+      "value": null,
+      "explanation": "Contractor WA-CON-001 described bond and insurance evidence enrichment over an already-known spine (exact IDs with both bond and insurance: 70,622). That is intelligence growth, not a committed enrichment-entity count."
+    },
+    "NEW_EVIDENCE_ROWS": {
+      "status": "DOCUMENTED_AS_INTELLIGENCE_NOT_ENTITY_GROWTH",
+      "value": null,
+      "do_not_sum": true,
+      "families": [
+        "L&I general registrations 160,923; ACTIVE 75,823; bond rows 176,920; insurance rows 77,005",
+        "DSHS GIS current 6,968; CMS WA NH 193 / HHA 74 / Hospice 50",
+        "UTC directory results 284 (not ingested bulk); FMCSA WA-HQ overlay 148 existing federal records",
+        "HMDA 2025 applications 286,871; DFI enforcement 777 rows; CFPB WA mortgage 10,340",
+        "SEC/IARD WA principal-office firms 306; DFI 2024 IA aggregate 645 (not live)",
+        "OIC 2025 annual-report aggregate 2,924 (not a live roster)"
+      ],
+      "explanation": "These are specialist-owned evidence grains. They are not one Washington-records total and are not net-new organizations."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /washington pages plus Ask /washington. Not an organization count."
+    }
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "canonical_state_url": "https://www.contractortrusthub.com/washington",
+      "snapshot_version": "contractor-wa-state-intel-v1",
+      "fingerprint": "031f999a27459dee36ba4dd2ee8b766c3f1166629146f8e798edb04cbb910803",
+      "source_clock": "L&I Socrata 2026-09-04",
+      "topic": "Is this Washington contractor registered?",
+      "plain_question": "Is this Washington contractor registered — and can I see bond and insurance filings?",
+      "research_topics": [
+        "L&I contractor registration on exact contractor IDs",
+        "Bond filings joined on the same ID",
+        "Liability-insurance filings joined on the same ID",
+        "Official L&I verify path"
+      ],
+      "primary_identifiers": ["ContractorLicenseNumber", "UBI"],
+      "identifier_types": ["WA-LNI", "UBI"],
+      "source_summary": "Washington L&I publishes contractor registration plus bond and liability-insurance filings on exact contractor IDs.",
+      "coverage_summary": "Registration is not quality. Bond is not endorsement. Insurance is not safety. A missing bond row is not unbonded. A missing insurance row is not uninsured. UBI is not contractor registration. 160,923 rows are not 160,923 net-new companies.",
+      "semantic_guardrails": [
+        "registration ≠ quality",
+        "bond ≠ endorsement",
+        "insurance ≠ safety",
+        "missing row ≠ unbonded/uninsured",
+        "UBI ≠ contractor registration"
+      ],
+      "verified_facts": [
+        "L&I general contractor-license/registration rows: 160,923. Source-native ACTIVE: 75,823.",
+        "Bond rows: 176,920; distinct contractor IDs with bond evidence: 82,635.",
+        "Insurance rows: 77,005; distinct contractor IDs with insurance evidence: 70,953; exact IDs with both bond and insurance: 70,622.",
+        "Unique UBI: 149,153. Public business phones: 160,850. This was primarily evidence enrichment over an already-known Washington contractor spine."
+      ],
+      "routing_intents": [
+        "Is this Washington contractor registered?",
+        "Can I see this Washington contractor's bond and insurance records?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Certain contractor complaint/infraction histories",
+        "Local Washington contractor pages (not approved)"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "canonical_state_url": "https://www.seniortrusthub.com/washington",
+      "snapshot_version": "senior-wa-state-intel-v1",
+      "fingerprint": "2ad2b2ec7cdf0c1c32aae8980ea4b1f921e264cf49705881ce31671faaf220a4",
+      "source_clock": "DSHS GIS / CMS 2026-09-04",
+      "topic": "How do I find an Adult Family Home in Washington?",
+      "plain_question": "How do I find an Adult Family Home — and is assisted living the same as a nursing home?",
+      "research_topics": [
+        "DSHS Adult Family Homes",
+        "DSHS Assisted Living Facilities",
+        "DSHS nursing homes versus CMS nursing homes",
+        "CMS Home Health and Hospice kept separate"
+      ],
+      "primary_identifiers": ["DSHS facility ID", "CMS CCN"],
+      "identifier_types": ["DSHS", "CCN"],
+      "source_summary": "SeniorTrustHub publishes DSHS residential-care inventory and CMS Washington provider classes as separate grains.",
+      "coverage_summary": "AFH is not ALF. ALF is not SNF. DSHS is not CMS. Residential care is not home health. Hospice is not home health. Do not publish a combined Washington senior-providers denominator.",
+      "semantic_guardrails": [
+        "AFH ≠ ALF",
+        "ALF ≠ SNF",
+        "DSHS ≠ CMS",
+        "residential care ≠ home health",
+        "hospice ≠ home health"
+      ],
+      "verified_facts": [
+        "DSHS Adult Family Homes: 6,179. Assisted Living: 557. Enhanced Services Facilities: 16. Residential GIS current total: 6,968.",
+        "DSHS nursing-home current: 198. CMS Washington Nursing Homes: 193; Home Health: 74; Hospice: 50.",
+        "Exact DSHS NH → CMS CCN matches: 193. AFH+ALF+ESF = 6,752 core state-only facility identities as published specialist facts — not a committed net-new canonical-organization ledger."
+      ],
+      "routing_intents": [
+        "How do I find an Adult Family Home in Washington?",
+        "Is a Washington assisted living facility the same as a nursing home?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "State senior inspection/enforcement bulk",
+        "Before/after canonical organization audit for AFH/ALF/ESF"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "canonical_state_url": "https://www.movetrusthub.com/washington",
+      "snapshot_version": "move-wa-state-intel-v1",
+      "fingerprint": "fc6ed2a2e589790d929fa38fdb5421906c4241dbc395cd09d35e8cdc901be330",
+      "source_clock": "UTC directory / FMCSA overlay 2026-09-04",
+      "topic": "How do I verify a Washington mover?",
+      "plain_question": "How do I verify a Washington mover — and does a USDOT number mean they can move me interstate?",
+      "research_topics": [
+        "UTC household-goods permit search",
+        "UTC versus FMCSA interstate authority",
+        "USDOT number versus operating authority",
+        "Existing FMCSA Washington-HQ overlay"
+      ],
+      "primary_identifiers": ["UTC", "USDOT"],
+      "identifier_types": ["UTC", "USDOT"],
+      "source_summary": "UTC household-goods authority is a Washington state permit. MoveTrustHub documents official verification paths. The UTC bulk roster is SOURCE_NOT_ACQUIRED.",
+      "coverage_summary": "UTC state permit is not FMCSA interstate authority. A USDOT number is not interstate operating authority by itself. 284 directory results are not a newly ingested mover-company count. Do not combine 284 + 148. WA-MOVE-001 net-new mover organizations: 0.",
+      "semantic_guardrails": [
+        "UTC ≠ FMCSA",
+        "USDOT ≠ interstate authority by itself",
+        "directory count ≠ ingested company count",
+        "missing ≠ zero"
+      ],
+      "verified_facts": [
+        "UTC active Household Goods directory results: 284. Bulk roster: SOURCE_NOT_ACQUIRED.",
+        "FMCSA Washington-HQ overlay: 148 existing federal records at publication.",
+        "WA-MOVE-001 net-new mover organizations: 0. Do not combine 284 + 148."
+      ],
+      "routing_intents": [
+        "How do I verify a Washington mover?",
+        "Does a USDOT number mean they can move me interstate?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Complete UTC mover bulk roster",
+        "Do not invent a mover-company census from directory results"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "canonical_state_url": "https://www.lendertrusthub.com/washington",
+      "snapshot_version": "lender-wa-state-intel-v1",
+      "fingerprint": "f882a6ec7be37fd53c0c13e269578952f942ce2fc0acd0a5a731397ab1eec69d",
+      "source_clock": "HMDA 2025; DFI year-end 2025-12-31; enforcement 2026-09-04",
+      "topic": "How much mortgage activity was reported in Washington?",
+      "plain_question": "How much mortgage activity was reported — and how do I verify a Washington mortgage broker?",
+      "research_topics": [
+        "HMDA 2025 Washington mortgage activity",
+        "DFI search-only company verification",
+        "DFI enforcement with exact NMLS",
+        "CFPB mortgage complaints and WSHFC programs"
+      ],
+      "primary_identifiers": ["NMLS", "LEI"],
+      "identifier_types": ["NMLS", "LEI"],
+      "source_summary": "LenderTrustHub publishes 2025 HMDA for Washington property location, DFI enforcement, CFPB complaints, and WSHFC program families. A live Washington lender/company roster is SOURCE_NOT_ACQUIRED / SEARCH_ONLY.",
+      "coverage_summary": "HMDA is not a license roster. DFI year-end aggregate is not a live roster. An MLO person is not a lender company. A complaint is not a violation. Denial rate is not quality.",
+      "semantic_guardrails": [
+        "HMDA ≠ license roster",
+        "DFI year-end ≠ live roster",
+        "MLO person ≠ lender company",
+        "complaint ≠ violation",
+        "denial rate ≠ quality"
+      ],
+      "verified_facts": [
+        "HMDA 2025: 286,871 applications, 174,653 originations, 44,562 denials (15.53%). All 39 counties. Distinct LEI reporters: 714.",
+        "DFI enforcement: 777 rows; exact-NMLS enforcement: 102 rows. CFPB Washington mortgage complaints: 10,340. WSHFC program families: 7.",
+        "Current live Washington lender/company roster: SOURCE_NOT_ACQUIRED / SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "How much mortgage activity was reported in Washington?",
+        "How do I verify a Washington mortgage broker?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Live mortgage-company roster",
+        "Do not treat HMDA reporters as the licensed-company census"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investor Trust Hub",
+      "canonical_state_url": "https://www.investortrusthub.com/washington",
+      "snapshot_version": "investor-wa-state-intel-v1",
+      "fingerprint": "bb93ff70a10d559222c7e9a1520b925bb955fe9ab6c3357aff44595fce2eb415",
+      "source_clock": "IA_FIRM_SEC_Feed_08_27_2026; DFI 2024 year-end",
+      "topic": "Is this Washington investment adviser registered?",
+      "plain_question": "Is this Washington investment adviser registered — and how many SEC adviser firms are based in Washington?",
+      "research_topics": [
+        "SEC/IARD Washington principal-office overlay",
+        "DFI search-only state-RIA verification",
+        "DFI 2024 year-end IA aggregate as dated context",
+        "RIA versus ERA versus IAR versus broker-dealer"
+      ],
+      "primary_identifiers": ["CRD", "IARD"],
+      "identifier_types": ["CRD", "IARD"],
+      "source_summary": "InvestorTrustHub publishes the national SEC/IARD roster overlay for firms with a Washington principal office. The Washington state-RIA bulk roster is SOURCE_NOT_ACQUIRED / SEARCH_ONLY. No DFI/IAPD/BrokerCheck scrape.",
+      "coverage_summary": "306 is not the Washington state-RIA count. 645 is not a live roster. SEC RIA is not state RIA. ERA is not an RIA. IAR is not a firm. Broker-dealer is not an investment adviser.",
+      "semantic_guardrails": [
+        "306 ≠ state-RIA count",
+        "645 ≠ live roster",
+        "SEC RIA ≠ state RIA",
+        "ERA ≠ RIA",
+        "IAR ≠ firm",
+        "BD ≠ IA"
+      ],
+      "verified_facts": [
+        "SEC/IARD Washington principal-office firms: 306 of 23,622 national roster firms (1.70% of 17,997 resolved regions).",
+        "State-RIA bulk roster: SOURCE_NOT_ACQUIRED / SEARCH_ONLY.",
+        "2024 DFI year-end IA aggregate: 645. That is not a live roster and is not the 306 overlay."
+      ],
+      "routing_intents": [
+        "Is this Washington investment adviser registered?",
+        "How many SEC adviser firms are based in Washington?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Live state-RIA roster",
+        "Do not scrape DFI, IAPD, or BrokerCheck"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "canonical_state_url": "https://www.insurancetrusthub.com/washington",
+      "snapshot_version": "insurance-wa-state-intel-v1",
+      "fingerprint": "17128d3a8dac4ea1457b5a02269fe25de2b1312e6dfa9bb553a8af9c06ea66ac",
+      "source_clock": "OIC 2025 annual report; official pages 2026-09-04",
+      "topic": "How do I verify a Washington insurance company?",
+      "plain_question": "How do I verify a Washington insurance company — without treating 2,924 as a live licensed-company count?",
+      "research_topics": [
+        "OIC Agent and Company Lookup",
+        "OIC 2025 annual-report entity aggregates",
+        "SERFF rate/form search",
+        "OIC orders search"
+      ],
+      "primary_identifiers": ["NAIC", "NPN", "WAOIC"],
+      "identifier_types": ["NAIC", "NPN", "WAOIC"],
+      "source_summary": "InsuranceTrustHub publishes OIC verification paths and dated 2025 annual-report aggregates. Producer lists are SOURCE_USE_RESTRICTED. Agency and authorized-company bulk remain SOURCE_NOT_ACQUIRED / SEARCH_ONLY.",
+      "coverage_summary": "2,924 is not a live Washington insurer count. Producer is not an agency. Agency is not an insurer. Plan is not an insurer. Annual aggregate is not a live roster. Restricted is not zero. Search-only is not zero.",
+      "semantic_guardrails": [
+        "2,924 ≠ live insurer count",
+        "producer ≠ agency",
+        "agency ≠ insurer",
+        "plan ≠ insurer",
+        "annual aggregate ≠ live roster"
+      ],
+      "verified_facts": [
+        "OIC 2025 annual-report aggregate: 2,924 insurance and risk/non-risk-bearing entities (263 domestic / 2,590 foreign / 71 alien). Not a live licensed-company roster.",
+        "Producer roster: SOURCE_USE_RESTRICTED / SEARCH_ONLY. Agency roster: SOURCE_NOT_ACQUIRED / SEARCH_ONLY. Authorized-company roster: SOURCE_NOT_ACQUIRED / SEARCH_ONLY.",
+        "Rate filings and orders remain SEARCH_ONLY. Name-only order attach is unsafe. Insurance specialist expansion ledger: 0 organizations minted."
+      ],
+      "routing_intents": [
+        "How do I verify a Washington insurance company?",
+        "How many insurance companies are licensed in Washington?"
+      ],
+      "publication_status": "live",
+      "verified_at": "2026-09-04",
+      "gap_examples": [
+        "Unrestricted OIC producer/agency roster",
+        "Authorized OIC company bulk roster"
+      ]
+    }
+  ],
+  "evidence_catalog": [
+    {
+      "row": "Contractor L&I general / bond / insurance",
+      "hub": "contractor",
+      "agency": "Washington State Department of Labor & Industries",
+      "source": "L&I Contractor License Data — General, Bond, Insurance",
+      "as_of": "2026-09-04",
+      "grain": "contractor registration / bond filing / insurance filing",
+      "count": "160,923 registrations; 176,920 bond rows; 77,005 insurance rows",
+      "identity": "exact ContractorLicenseNumber; UBI is not the registration",
+      "access": "OPEN_SODA_API",
+      "publication": "specialist /washington",
+      "limitation": "Registration ≠ quality. Missing bond row ≠ unbonded. 160,923 ≠ net-new companies.",
+      "specialist_url": "https://www.contractortrusthub.com/washington"
+    },
+    {
+      "row": "Senior DSHS GIS / DSHS NH / CMS",
+      "hub": "senior",
+      "agency": "Washington DSHS / CMS",
+      "source": "DSHS residential GIS; DSHS NH lookup; CMS provider files",
+      "as_of": "2026-09-04",
+      "grain": "facility class / CMS provider class",
+      "count": "GIS current 6,968; AFH 6,179; ALF 557; ESF 16; CMS NH 193 / HHA 74 / Hospice 50",
+      "identity": "DSHS IDs; CMS CCN where matched",
+      "access": "official GIS/files; locator scrape forbidden",
+      "publication": "specialist /washington",
+      "limitation": "AFH ≠ ALF ≠ SNF. DSHS ≠ CMS. Do not sum senior classes.",
+      "specialist_url": "https://www.seniortrusthub.com/washington"
+    },
+    {
+      "row": "Move UTC / FMCSA",
+      "hub": "move",
+      "agency": "Washington UTC / FMCSA",
+      "source": "UTC Household Goods directory; FMCSA Washington-HQ overlay",
+      "as_of": "2026-09-04",
+      "grain": "state permit search / federal HQ overlay",
+      "count": "284 UTC directory results; 148 existing FMCSA WA-HQ records",
+      "identity": "UTC permit; USDOT when source-native",
+      "access": "UTC OPEN_SEARCH_ONLY; FMCSA existing overlay",
+      "publication": "specialist /washington",
+      "limitation": "UTC ≠ FMCSA. USDOT ≠ interstate authority. 284 is not ingested companies. Net-new movers: 0.",
+      "specialist_url": "https://www.movetrusthub.com/washington"
+    },
+    {
+      "row": "Lender HMDA / DFI / CFPB / WSHFC",
+      "hub": "lender",
+      "agency": "CFPB/FFIEC / Washington DFI / WSHFC",
+      "source": "HMDA 2025; DFI enforcement; CFPB complaints; WSHFC programs",
+      "as_of": "HMDA 2025; DFI year-end 2025-12-31",
+      "grain": "application / enforcement row / complaint / program family",
+      "count": "286,871 apps; 777 DFI enforcement rows; 10,340 CFPB; 7 WSHFC families",
+      "identity": "LEI on HMDA; NMLS when exact",
+      "access": "committed HMDA; DFI company roster SEARCH_ONLY",
+      "publication": "specialist /washington",
+      "limitation": "HMDA ≠ license roster. Denial rate ≠ quality. Complaint ≠ violation.",
+      "specialist_url": "https://www.lendertrusthub.com/washington"
+    },
+    {
+      "row": "Investor SEC/IARD / DFI",
+      "hub": "investor",
+      "agency": "SEC / IARD / Washington DFI",
+      "source": "IA_FIRM_SEC_Feed_08_27_2026; DFI 2024 Year In Review; DFI search",
+      "as_of": "2026-08-27 federal feed; DFI 2024-12",
+      "grain": "federal principal-office firm / year-end aggregate / search",
+      "count": "306 WA principal-office firms; 645 DFI 2024 IA aggregate",
+      "identity": "CRD/IARD",
+      "access": "committed federal overlay; state-RIA SEARCH_ONLY",
+      "publication": "specialist /washington",
+      "limitation": "306 ≠ state-RIA count. 645 ≠ live roster. No DFI/IAPD/BrokerCheck scrape.",
+      "specialist_url": "https://www.investortrusthub.com/washington"
+    },
+    {
+      "row": "Insurance OIC annual / lookup / SERFF / orders",
+      "hub": "insurance",
+      "agency": "Washington Office of the Insurance Commissioner",
+      "source": "OIC 2025 annual report; Agent and Company Lookup; SERFF; orders search",
+      "as_of": "2025 annual report; pages 2026-09-04",
+      "grain": "dated annual-report aggregate / live search record",
+      "count": "2,924 regulated entities (263/2,590/71). Live rosters not acquired.",
+      "identity": "NAIC / NPN / WAOIC when a live lookup returns them",
+      "access": "PUBLIC_BULK_OK as aggregate; lookup/SERFF/orders SEARCH_ONLY; producer lists SOURCE_USE_RESTRICTED",
+      "publication": "specialist /washington",
+      "limitation": "2,924 ≠ live insurer count. Producer ≠ agency. Restricted ≠ zero.",
+      "specialist_url": "https://www.insurancetrusthub.com/washington"
+    }
+  ],
+  "data_moat": {
+    "organizations_facilities": [
+      "DSHS AFH 6,179 / ALF 557 / ESF 16 as published facility classes — not a combined senior-provider total",
+      "SEC/IARD 306 Washington principal-office firms — geography overlay, not state-RIA firms minted here",
+      "UTC 284 directory results and FMCSA 148 HQ records are not new mover organizations"
+    ],
+    "licenses_registrations": [
+      "L&I 160,923 contractor registrations (75,823 ACTIVE) on exact contractor IDs",
+      "OIC producer/agency/authorized-company bulk remain restricted or search-only"
+    ],
+    "regulatory_market_evidence": [
+      "L&I bond 176,920 rows and insurance 77,005 rows on exact IDs",
+      "HMDA 2025: 286,871 applications / 174,653 originations / 15.53% denial rate / 39 counties",
+      "DFI enforcement 777 rows; CFPB WA mortgage 10,340; OIC 2025 aggregate 2,924"
+    ],
+    "search_only_restricted": [
+      "UTC mover bulk roster SOURCE_NOT_ACQUIRED",
+      "DFI live lender/company roster SEARCH_ONLY",
+      "DFI state-RIA bulk SEARCH_ONLY",
+      "OIC producer lists SOURCE_USE_RESTRICTED; agency and authorized-company SEARCH_ONLY"
+    ]
+  },
+  "coverage_gaps": [
+    "complete UTC mover bulk roster",
+    "live mortgage-company roster",
+    "live state-RIA roster",
+    "unrestricted OIC producer/agency roster",
+    "authorized OIC company bulk roster",
+    "state senior inspection/enforcement bulk",
+    "certain contractor complaint/infraction histories",
+    "committed before/after canonical-organization audit for DSHS AFH/ALF/ESF"
+  ]
+}

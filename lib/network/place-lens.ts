@@ -4,6 +4,7 @@ import { NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { hubById } from './source-registry.ts';
 import { caReleaseGatePassed } from './ca-network.ts';
 import { txReleaseGatePassed } from './tx-network.ts';
+import { waReleaseGatePassed } from './wa-network.ts';
 
 export type PlaceMetric = {
   label: string;
@@ -469,10 +470,17 @@ const TEXAS_PLACE = {
   detail: 'Network gateway to specialist Texas research pages. State-level only — not a city or county page.',
 } as const;
 
+const WASHINGTON_PLACE = {
+  href: '/washington',
+  label: 'Washington',
+  detail: 'Network gateway to specialist Washington research pages. State-level only — not a city or county page.',
+} as const;
+
 export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
   const extra = [
     ...(caReleaseGatePassed() ? [CALIFORNIA_PLACE] : []),
     ...(txReleaseGatePassed() ? [TEXAS_PLACE] : []),
+    ...(waReleaseGatePassed() ? [WASHINGTON_PLACE] : []),
   ];
   return [...PLACE_LENS_INDEX, ...extra];
 }

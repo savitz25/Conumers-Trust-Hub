@@ -29,6 +29,7 @@ import { detectNjCounty } from './nj-network.ts';
 import { detectNjPilotCountySlug } from './nj-counties.ts';
 import { detectCaCity, queryLooksLikeCalifornia } from './ca-network.ts';
 import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
+import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -89,6 +90,7 @@ function geography(q: string): ParsedGeography | undefined {
   const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
   const caNamedEarly = queryLooksLikeCalifornia(q);
   const txNamedEarly = queryLooksLikeTexas(q);
+  const waNamedEarly = queryLooksLikeWashington(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -96,8 +98,21 @@ function geography(q: string): ParsedGeography | undefined {
     if (tx < 0) return true;
     return ca < tx;
   })();
+  const californiaNamedBeforeWashington = (() => {
+    const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
+    const wa = q.search(/\bwashington\b/i);
+    if (ca < 0) return false;
+    if (wa < 0) return true;
+    return ca < wa;
+  })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
-  if (caNamedEarly && otherDest && !njNamedEarly && (!txNamedEarly || californiaNamedFirst)) {
+  if (
+    caNamedEarly &&
+    otherDest &&
+    !njNamedEarly &&
+    (!txNamedEarly || californiaNamedFirst) &&
+    (!waNamedEarly || californiaNamedBeforeWashington)
+  ) {
     return {
       stateCode: 'CA',
       stateName: 'California',
@@ -201,7 +216,20 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (waNamedEarly) {
+    const waCity = detectWaCity(q);
+    return {
+      stateCode: 'WA',
+      stateName: 'Washington',
+      city: waCity,
+      meaning: waCity
+        ? `${waCity}, Washington. Washington research is state-level; a city or county name is not a Washington county Ask route.`
+        : 'Washington. State licensing is not physical location; specialist geography meaning differs by hub. Washington city and county Ask pages are not published.',
+    };
+  }
+
   const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
+    if (j.code === 'WA' && /\bwashington\s*,?\s*d\.?c\.?\b|\bwashington\s+dc\b/i.test(q)) return false;
     const nameRe = new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i');
     return nameRe.test(q);
   });

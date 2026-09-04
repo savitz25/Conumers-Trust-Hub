@@ -1,0 +1,110 @@
+[
+  {
+    "question": "Is this Washington contractor registered?",
+    "classified_hub": "contractor",
+    "state": "WA",
+    "destination": "https://www.contractortrusthub.com/washington",
+    "source_caveat": "Registration is not quality. Bond is not endorsement. Insurance is not safety. A missing bond row is not unbonded. A missing insurance row is not uninsured. UBI is not contractor registration. 160,923 rows are not 160,923 net-new companies.",
+    "wrong_hub_risk": "low — contractor registration intent is contractor",
+    "coverage_gap_handling": "routes to Contractor /washington; does not treat registration as quality"
+  },
+  {
+    "question": "Can I see this Washington contractor's bond and insurance records?",
+    "classified_hub": "contractor",
+    "state": "WA",
+    "destination": "https://www.contractortrusthub.com/washington",
+    "source_caveat": "Registration is not quality. Bond is not endorsement. Insurance is not safety. A missing bond row is not unbonded. A missing insurance row is not uninsured. UBI is not contractor registration. 160,923 rows are not 160,923 net-new companies.",
+    "wrong_hub_risk": "medium if insurance keyword steals the route — contractor must stay primary",
+    "coverage_gap_handling": "bond/insurance filings stay on the L&I contractor ID; missing row is not unbonded/uninsured"
+  },
+  {
+    "question": "How do I find an Adult Family Home in Washington?",
+    "classified_hub": "senior",
+    "state": "WA",
+    "destination": "https://www.seniortrusthub.com/washington",
+    "source_caveat": "AFH is not ALF. ALF is not a skilled nursing facility. DSHS is not CMS. Residential care is not home health. Hospice is not home health. Do not publish a combined Washington senior-providers denominator.",
+    "wrong_hub_risk": "low — Adult Family Home is senior",
+    "coverage_gap_handling": "AFH kept as a state-only class; not folded into CMS nursing homes"
+  },
+  {
+    "question": "Is a Washington assisted living facility the same as a nursing home?",
+    "classified_hub": "senior",
+    "state": "WA",
+    "destination": "https://www.seniortrusthub.com/washington",
+    "source_caveat": "AFH is not ALF. ALF is not a skilled nursing facility. DSHS is not CMS. Residential care is not home health. Hospice is not home health. Do not publish a combined Washington senior-providers denominator.",
+    "wrong_hub_risk": "low — assisted living versus nursing home is senior",
+    "coverage_gap_handling": "explicit ALF ≠ SNF; classes are not summed"
+  },
+  {
+    "question": "How do I verify a Washington mover?",
+    "classified_hub": "move",
+    "state": "WA",
+    "destination": "https://www.movetrusthub.com/washington",
+    "source_caveat": "UTC state permit is not FMCSA interstate authority. A USDOT number is not interstate operating authority by itself. 284 directory results are not a newly ingested mover-company count. Do not combine 284 + 148. Net-new mover organizations: 0.",
+    "wrong_hub_risk": "low — mover intent is move",
+    "coverage_gap_handling": "does not treat 284 UTC results as an ingested company census"
+  },
+  {
+    "question": "Does a USDOT number mean they can move me interstate from Washington?",
+    "classified_hub": "move",
+    "state": "WA",
+    "destination": "https://www.movetrusthub.com/washington",
+    "source_caveat": "UTC state permit is not FMCSA interstate authority. A USDOT number is not interstate operating authority by itself. 284 directory results are not a newly ingested mover-company count. Do not combine 284 + 148. Net-new mover organizations: 0.",
+    "wrong_hub_risk": "low when paired with Washington geography — USDOT/interstate stays on move",
+    "coverage_gap_handling": "USDOT ≠ interstate operating authority; UTC ≠ FMCSA"
+  },
+  {
+    "question": "How much mortgage activity was reported in Washington?",
+    "classified_hub": "lender",
+    "state": "WA",
+    "destination": "https://www.lendertrusthub.com/washington",
+    "source_caveat": "HMDA is not a Washington mortgage-license roster. DFI year-end aggregate is not a live roster. An MLO person is not a lender company. A complaint is not a violation. Denial rate is not quality.",
+    "wrong_hub_risk": "low — mortgage activity is lender",
+    "coverage_gap_handling": "HMDA activity is not treated as a license roster"
+  },
+  {
+    "question": "How do I verify a Washington mortgage broker?",
+    "classified_hub": "lender",
+    "state": "WA",
+    "destination": "https://www.lendertrusthub.com/washington",
+    "source_caveat": "HMDA is not a Washington mortgage-license roster. DFI year-end aggregate is not a live roster. An MLO person is not a lender company. A complaint is not a violation. Denial rate is not quality.",
+    "wrong_hub_risk": "medium versus investor — mortgage broker stays lender",
+    "coverage_gap_handling": "live company roster remains search-only; HMDA is not the verifier"
+  },
+  {
+    "question": "Is this Washington investment adviser registered?",
+    "classified_hub": "investor",
+    "state": "WA",
+    "destination": "https://www.investortrusthub.com/washington",
+    "source_caveat": "306 SEC/IARD Washington principal-office firms are not the Washington state-RIA count. 645 is not a live roster. SEC RIA is not state RIA. ERA is not an RIA. IAR is not a firm. Broker-dealer is not an investment adviser.",
+    "wrong_hub_risk": "low — investment adviser intent is investor",
+    "coverage_gap_handling": "federal overlay is not treated as the state-RIA roster; DFI remains search-only"
+  },
+  {
+    "question": "How many SEC adviser firms are based in Washington?",
+    "classified_hub": "investor",
+    "state": "WA",
+    "destination": "https://www.investortrusthub.com/washington",
+    "source_caveat": "306 SEC/IARD Washington principal-office firms are not the Washington state-RIA count. 645 is not a live roster. SEC RIA is not state RIA. ERA is not an RIA. IAR is not a firm. Broker-dealer is not an investment adviser.",
+    "wrong_hub_risk": "low — SEC adviser geography is investor, not state registration",
+    "coverage_gap_handling": "306 is principal-office geography, not Washington state-RIA registration"
+  },
+  {
+    "question": "How do I verify a Washington insurance company?",
+    "classified_hub": "insurance",
+    "state": "WA",
+    "destination": "https://www.insurancetrusthub.com/washington",
+    "source_caveat": "2,924 is not a live Washington insurer count. Producer is not an agency. Agency is not an insurer. Plan is not an insurer. Annual aggregate is not a live roster. Verify on OIC lookup. Restricted is not zero.",
+    "wrong_hub_risk": "low — insurance company verification is insurance",
+    "coverage_gap_handling": "routes to OIC lookup; does not invent a live authorized-company roster"
+  },
+  {
+    "question": "How many insurance companies are licensed in Washington?",
+    "classified_hub": "insurance",
+    "state": "WA",
+    "destination": "https://www.insurancetrusthub.com/washington",
+    "source_caveat": "2,924 is not a live Washington insurer count. Producer is not an agency. Agency is not an insurer. Plan is not an insurer. Annual aggregate is not a live roster. Verify on OIC lookup. Restricted is not zero.",
+    "wrong_hub_risk": "high if 2,924 is answered as a live licensed-company denominator — must refuse that grain",
+    "coverage_gap_handling": "2,924 remains a dated annual-report aggregate; live authorized-company roster stays SOURCE_NOT_ACQUIRED"
+  }
+]
