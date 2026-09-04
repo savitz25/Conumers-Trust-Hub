@@ -21,6 +21,34 @@ const SENIOR_REQUIRED_PUBLIC = [
   'enforcement_records',
 ] as const;
 
+const MOVE_REQUIRED_PUBLIC = [
+  'federal_publishable_directory_profiles',
+  'federal_directory_authority_active',
+  'florida_fdacs_im_active_registrations',
+  'nj_operation_safe_move_novs_acquired',
+  'ca_bhgs_19237_citation_rows',
+] as const;
+
+const LENDER_REQUIRED_PUBLIC = [
+  'lenders_lending_institutions',
+  'hmda_2025_county_applications',
+  'hmda_2025_county_originations',
+  'cfpb_mortgage_complaint_observations',
+  'federal_enforcement_events',
+  'nmls_institution_identifiers',
+] as const;
+
+const INSURANCE_REQUIRED_PUBLIC = [
+  'insurance_agencies',
+  'licensed_insurance_companies',
+  'insurance_producer_records',
+  'cms_marketplace_evidence_observations',
+  'appointments',
+  'consumer_complaint_observations',
+  'rate_filing_observations',
+  'market_conduct_examinations',
+] as const;
+
 export type RawMetric = {
   key?: unknown;
   label?: unknown;
@@ -33,6 +61,7 @@ export type RawMetric = {
   denominator?: unknown;
   contributingSourceSystems?: unknown;
   publicationStatus?: unknown;
+  valueState?: unknown;
   trace?: unknown;
 };
 
@@ -141,4 +170,111 @@ export function validateSeniorManifest(raw: unknown): Record<string, unknown> {
   return raw;
 }
 
-export { CONTRACTOR_REQUIRED_PUBLIC, SENIOR_REQUIRED_PUBLIC };
+function forbidNumericMissing(map: Map<string, RawMetric>, key: string): void {
+  const metric = map.get(key);
+  if (!metric) return;
+  const state = String(metric.valueState ?? '');
+  if (['NOT_ACQUIRED', 'REQUEST_ONLY', 'UNKNOWN'].includes(state) && typeof metric.value === 'number') {
+    throw new Error(`${key}: missing universe must not be a number`);
+  }
+}
+
+export function validateMoveManifest(raw: unknown): Record<string, unknown> {
+  if (!isRecord(raw)) throw new Error('move manifest must be an object');
+  if (raw.schemaVersion !== 'move-network-metrics-v1') {
+    throw new Error(`unknown schema version: ${String(raw.schemaVersion)}`);
+  }
+  requireString(raw.sourceFingerprint, 'move fingerprint required');
+  requireString(raw.generatedAt, 'move generatedAt required');
+  const map = metricMap(raw.metrics);
+  requirePublicCount(map, 'federal_publishable_directory_profiles', 'directory_profile');
+  requirePublicCount(map, 'federal_directory_authority_active', 'directory_profile_authority_active');
+  requirePublicCount(map, 'florida_fdacs_im_active_registrations', 'fdacs_intrastate_mover_registration_active');
+  for (const key of MOVE_REQUIRED_PUBLIC) requirePublicCount(map, key);
+  forbidNumericMissing(map, 'nj_pmw_authority_roster');
+  forbidNumericMissing(map, 'ca_cal_t_household_mover_universe');
+  const federal = map.get('federal_publishable_directory_profiles')!.value as number;
+  const florida = map.get('florida_fdacs_im_active_registrations')!.value as number;
+  if (federal === florida) throw new Error('FDACS registrations must not equal federal directory profiles');
+  const combined = map.get('combined_national_state_movers');
+  if (combined && combined.publicationStatus === 'PUBLIC' && combined.value != null) {
+    throw new Error('combined national/state mover total must not be public');
+  }
+  return raw;
+}
+
+export function validateLenderManifest(raw: unknown): Record<string, unknown> {
+  if (!isRecord(raw)) throw new Error('lender manifest must be an object');
+  if (raw.schemaVersion !== 'lender-network-metrics-v1') {
+    throw new Error(`unknown schema version: ${String(raw.schemaVersion)}`);
+  }
+  requireString(raw.sourceFingerprint, 'lender fingerprint required');
+  requireString(raw.generatedAt, 'lender generatedAt required');
+  const map = metricMap(raw.metrics);
+  requirePublicCount(map, 'lenders_lending_institutions', 'canonical_institution_entity');
+  requirePublicCount(map, 'hmda_2025_county_applications', 'hmda_2025_county_observation');
+  requirePublicCount(map, 'hmda_2025_county_originations', 'hmda_2025_county_observation');
+  requirePublicCount(map, 'cfpb_mortgage_complaint_observations', 'cfpb_mortgage_complaint_observation');
+  for (const key of LENDER_REQUIRED_PUBLIC) requirePublicCount(map, key);
+  forbidNumericMissing(map, 'nj_rmla_license_roster');
+  forbidNumericMissing(map, 'ca_crmla_live_roster');
+  const institutions = map.get('lenders_lending_institutions')!.value as number;
+  const nmls = map.get('nmls_institution_identifiers')!.value as number;
+  const applications = map.get('hmda_2025_county_applications')!.value as number;
+  const originations = map.get('hmda_2025_county_originations')!.value as number;
+  if (institutions === nmls) throw new Error('NMLS identifiers must not equal institution denominator');
+  if (applications === originations) throw new Error('HMDA applications must not equal originations');
+  const mlos = map.get('person_mlo_entities');
+  if (mlos && mlos.publicationStatus === 'PUBLIC') throw new Error('MLO identities must not be a public lender count');
+  const branches = map.get('branch_entities');
+  if (branches && branches.publicationStatus === 'PUBLIC') throw new Error('branch entities must not be public lenders');
+  return raw;
+}
+
+export function validateInsuranceManifest(raw: unknown): Record<string, unknown> {
+  if (!isRecord(raw)) throw new Error('insurance manifest must be an object');
+  if (raw.schemaVersion !== 'insurance-network-metrics-v1') {
+    throw new Error(`unknown schema version: ${String(raw.schemaVersion)}`);
+  }
+  requireString(raw.sourceFingerprint, 'insurance fingerprint required');
+  requireString(raw.generatedAt, 'insurance generatedAt required');
+  const rejected = isRecord(raw.rejectedTotals) ? raw.rejectedTotals : {};
+  const combined = isRecord(rejected.combinedInsuranceCompanies) ? rejected.combinedInsuranceCompanies : {};
+  if (combined.status !== 'REJECTED' || combined.publishAsHeadline !== false) {
+    throw new Error('combined insurance companies must remain unpublished');
+  }
+  const map = metricMap(raw.metrics);
+  requirePublicCount(map, 'insurance_agencies', 'canonical_agency_entity');
+  requirePublicCount(map, 'licensed_insurance_companies', 'canonical_legal_insurer_entity');
+  requirePublicCount(map, 'insurance_producer_records', 'canonical_person_entity');
+  requirePublicCount(map, 'cms_marketplace_evidence_observations', 'cms_marketplace_observation');
+  requirePublicCount(map, 'appointments', 'agency_appointment');
+  for (const key of INSURANCE_REQUIRED_PUBLIC) requirePublicCount(map, key);
+  forbidNumericMissing(map, 'texas_authorized_companies');
+  forbidNumericMissing(map, 'ca_admitted_insurer_universe');
+  forbidNumericMissing(map, 'nj_surplus_lines_eligible_companies');
+  const agencies = map.get('insurance_agencies')!.value as number;
+  const insurers = map.get('licensed_insurance_companies')!.value as number;
+  const producers = map.get('insurance_producer_records')!.value as number;
+  const appointments = map.get('appointments')!.value as number;
+  const cms = map.get('cms_marketplace_evidence_observations')!.value as number;
+  const tdi = map.get('texas_tdi_agency_license_rows');
+  if (agencies === insurers) throw new Error('agencies must not equal licensed insurance companies');
+  if (agencies === producers) throw new Error('agencies must not equal producer records');
+  if (appointments === agencies) throw new Error('appointments must not equal agencies');
+  if (cms === agencies || cms === insurers) throw new Error('CMS observations must not equal identity counts');
+  if (tdi && tdi.value === agencies) throw new Error('Texas TDI agency rows must not equal national graph agencies');
+  const combinedMetric = map.get('combined_insurance_companies');
+  if (combinedMetric && combinedMetric.publicationStatus === 'PUBLIC' && combinedMetric.value != null) {
+    throw new Error('combined insurance companies must not be public');
+  }
+  return raw;
+}
+
+export {
+  CONTRACTOR_REQUIRED_PUBLIC,
+  SENIOR_REQUIRED_PUBLIC,
+  MOVE_REQUIRED_PUBLIC,
+  LENDER_REQUIRED_PUBLIC,
+  INSURANCE_REQUIRED_PUBLIC,
+};

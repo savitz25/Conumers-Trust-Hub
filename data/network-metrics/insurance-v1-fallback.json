@@ -1,0 +1,832 @@
+{
+  "schemaVersion": "insurance-network-metrics-v1",
+  "generatedAt": "2026-09-04T01:06:06.363Z",
+  "newestDocumentedSourceAsOf": "2026-09-03",
+  "newestDocumentedSourceAsOfNote": "Newest documented official source-effective date among metrics that carry a sourceAsOf. Not Git/deploy time and not a single network clock.",
+  "sourceFingerprint": "c9120eaf14f96cc8226c5ac8f7e5dc940c328b339bcb75ebc1596bc306d6f301",
+  "liveProductionHost": "gojyhmbojbwbpiamoktq.supabase.co",
+  "nationalGraph": {
+    "agencies": 82071,
+    "persons": 1029860,
+    "legalInsurers": 6185,
+    "appointingCarriers": 13547,
+    "insuranceGroups": 720,
+    "consumerBrands": 14,
+    "credentials": 1531158,
+    "agencyCredentials": 117354,
+    "personCredentials": 1413804,
+    "credentialsByJurisdiction": {
+      "FL": 750316,
+      "TX": 718894,
+      "VT": 50514,
+      "MA": 7187,
+      "OH": 4247,
+      "NJ": 0,
+      "CA": 0
+    },
+    "cmsMarketplaceObservations": 1300108,
+    "loaObservations": 1791158,
+    "contactObservations": 144864,
+    "publicDirectoryListings": 170499,
+    "appointedBy": 2680,
+    "appointedTo": 7334179,
+    "associatedWith": 52827,
+    "appointerResolvesTo": 1510,
+    "regulatoryEvidence": 6004,
+    "censusTask": "INS-NAT-FINAL-006",
+    "censusAsOf": "2026-08-28T14:43:51.753Z",
+    "cohortRule": "national_entities.entity_kind grains stay separate; appointments, credentials, complaints, exams, rate filings, CMS, surplus-lines, and title never join the agency or legal-insurer denominators"
+  },
+  "texas": {
+    "snapshotFingerprint": "3be93a9cd2b1ab7edada6c783ccfbfd7a5723589920fee1524601e9218c76319",
+    "asOf": "2026-09-03",
+    "agencyLicenseRows": 56625,
+    "distinctAgencyNpn": 43597,
+    "agencyAppointments": 622019,
+    "complaintObservations": 305156,
+    "complaintIndexRows": 5966,
+    "rateFilings": 18001,
+    "surplusLinesRows": 18816,
+    "titleAppointmentRows": 23115,
+    "personLicenseRowsUnpublished": 962001,
+    "personAppointmentsUnpublished": 4400210,
+    "authorizedCompanies": null,
+    "authorizedCompaniesCoverage": "SOURCE_NOT_ACQUIRED"
+  },
+  "florida": {
+    "snapshotFingerprint": "8021301d48bd509b30fa4639e74c777bfbbd82a6f0cd12a2f80a11e05b415d93",
+    "agenciesWithFlCredential": 56939,
+    "agencyCredentialRows": 59189,
+    "personCredentialRows": 691127,
+    "oirCompanyCodes": 1897,
+    "agencyAppointedBy": 2680,
+    "marketConductExamListings": 1007,
+    "financialExamListings": 1060,
+    "nfipRegistryListings": 1474,
+    "cmsObservationsNational": 1300108
+  },
+  "newJersey": {
+    "snapshotFingerprint": "bcab35631a0494038667647244863a9510f5c76a36495fd14217bb0afd2a59e5",
+    "asOf": "2026-09-02",
+    "admittedLegalInsurers": 1370,
+    "surplusLinesEligible": null,
+    "surplusLinesCoverage": "SOURCE_NOT_ACQUIRED",
+    "marketConductExamReports": 93,
+    "financialExamReports": 129,
+    "enforcementEvents": 3821,
+    "serffFilingsDisplayed": null
+  },
+  "california": {
+    "snapshotFingerprint": "dc1eb54c514def4663c33551ee6835a41f38349f8fcfae2647e514cd7711f468",
+    "asOf": "2026-06-01",
+    "admittedUniverse": null,
+    "admittedCoverage": "SOURCE_NOT_ACQUIRED",
+    "cdiHealthInsurerListRows": 28,
+    "dmhcEnforcementRows": 5435,
+    "imrRows": 42749
+  },
+  "publication": {
+    "publicPeople": 0,
+    "publicGraphAgencies": 0,
+    "publicLegalInsurerWave1": 26,
+    "mayPublishPerson": false,
+    "mayPublishLegalInsurerKind": false,
+    "publishedStateIntelligencePaths": [
+      "/florida",
+      "/texas",
+      "/new-jersey",
+      "/california"
+    ]
+  },
+  "rejectedTotals": {
+    "combinedInsuranceCompanies": {
+      "status": "REJECTED",
+      "publishAsHeadline": false,
+      "candidateSum": 1131663,
+      "reason": "Agencies, producers, legal insurers, and appointing-carrier rows are different grains and must not be summed as insurance companies."
+    },
+    "combinedIncompatibleEvidence": {
+      "status": "REJECTED",
+      "publishAsHeadline": false,
+      "reason": "Appointments, complaints, exams, rate filings, CMS observations, surplus-lines rows, and title rows are different grains and are not a combined evidence headline."
+    }
+  },
+  "metrics": [
+    {
+      "unit": "count",
+      "key": "insurance_agencies",
+      "label": "Insurance agencies",
+      "value": 82071,
+      "valueState": "KNOWN",
+      "grain": "canonical_agency_entity",
+      "denominator": "national_entities.entity_kind = 'agency'",
+      "description": "NPN-keyed agency identities in the national insurance research graph. Not a U.S. agency census and not the public directory listing count.",
+      "coverage": "National research graph",
+      "contributingSourceSystems": [
+        "national_entities",
+        "florida_dfs",
+        "texas_tdi",
+        "vermont_dfr",
+        "massachusetts_doi_regulatory",
+        "ohio_odi"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One national_entities row with entity_kind=agency.",
+        "doesNotCount": "Not producers, not legal insurers, not appointing carriers, not appointments, not TDI agency license rows, not public directory listings.",
+        "contributingSourceSystems": [
+          "national_entities"
+        ],
+        "geographicCoverage": "Research-graph identities; public graph-agency profiles = 0",
+        "sourceDates": "Graph census 2026-08-28; not Git/deploy time.",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "licensed_insurance_companies",
+      "label": "Licensed insurance companies",
+      "value": 6185,
+      "valueState": "KNOWN",
+      "grain": "canonical_legal_insurer_entity",
+      "denominator": "national_entities.entity_kind = 'legal_insurer' (NAIC CoCode spine)",
+      "description": "NAIC legal-insurer identities. Not appointing-carrier rows, not consumer brands, and not 6,185 public profile pages.",
+      "coverage": "National NAIC listing spine",
+      "contributingSourceSystems": [
+        "national_entities",
+        "naic_listing_of_companies"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One legal_insurer entity per NAIC company code.",
+        "doesNotCount": "Not entity_kind=carrier appointing rows, not Florida OIR company codes, not NJ admitted rows, not Texas authorized companies (not acquired), not CMS Marketplace observations.",
+        "contributingSourceSystems": [
+          "national_entities"
+        ],
+        "geographicCoverage": "National identity spine. Public legal-insurer kind remains unpublished; a 26-firm evidence cohort is a different grain.",
+        "sourceDates": "Graph census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "insurance_producer_records",
+      "label": "Insurance producer records",
+      "value": 1029860,
+      "valueState": "KNOWN",
+      "grain": "canonical_person_entity",
+      "denominator": "national_entities.entity_kind = 'person'",
+      "description": "Person identities in the research graph. Public producer profile pages remain 0.",
+      "coverage": "National research graph",
+      "contributingSourceSystems": [
+        "national_entities"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC_RESEARCH_GRAPH",
+      "trace": {
+        "counts": "One person entity in the national graph.",
+        "doesNotCount": "Not agencies, not legal insurers, not a public people directory, not Texas unpublished person license rows.",
+        "contributingSourceSystems": [
+          "national_entities"
+        ],
+        "geographicCoverage": "Research graph only. Public people = 0.",
+        "sourceDates": "Graph census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "appointments",
+      "label": "Appointments",
+      "value": 622019,
+      "valueState": "KNOWN",
+      "grain": "agency_appointment",
+      "denominator": "TDI active agency-to-company appointment rows (avjc-7u2m)",
+      "description": "Active Texas agency↔company appointments. Appointment count is not quality and is not an agency count.",
+      "coverage": "Texas TDI",
+      "contributingSourceSystems": [
+        "texas_tdi_agency_appointments"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One active TDI appointment between an agency NPN and a company NAIC.",
+        "doesNotCount": "Not agencies, not producers, not legal insurers, not title-county appointments, not Florida appointed_by rows, not person APPOINTED_TO relationships.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas. County appointment is not statewide authority.",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04",
+        "currentActiveRule": "Source file is active appointments only."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "consumer_complaint_observations",
+      "label": "Consumer complaint observations",
+      "value": 305156,
+      "valueState": "KNOWN",
+      "grain": "consumer_complaint_observation",
+      "denominator": "TDI complaint-name rows (ubdr-4uff)",
+      "description": "Texas complaint-name observations. A complaint is not a violation and is not a company count.",
+      "coverage": "Texas TDI",
+      "contributingSourceSystems": [
+        "texas_tdi_complaints"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One TDI complaint-name row (person or organization named in a complaint).",
+        "doesNotCount": "Not legal insurers, not agencies, not the TDI complaint index, not a TrustHub score, not proof of wrongdoing.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas complaints 2011-04-28 through 2026-08-31",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "market_conduct_examinations",
+      "label": "Market conduct examinations",
+      "value": 1007,
+      "valueState": "KNOWN",
+      "grain": "market_conduct_examination_listing",
+      "denominator": "Florida OIR market-regulation listing inventory (FL-INS-004)",
+      "description": "Florida market-conduct examination listings. Not financial exams and not a count of bad insurers.",
+      "coverage": "Florida OIR listings",
+      "contributingSourceSystems": [
+        "florida_oir_market_conduct_exams"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One OIR market-conduct listing/PDF inventory row.",
+        "doesNotCount": "Not financial examinations, not legal insurers, not NJ market-conduct reports, not ingested PUBLIC_READY exam attachments.",
+        "contributingSourceSystems": [
+          "florida_oir"
+        ],
+        "geographicCoverage": "Florida listing catalog. Name-only attach forbidden; listings are unattached.",
+        "sourceDates": "FL-INS-004 listing census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "rate_filing_observations",
+      "label": "Rate filing observations",
+      "value": 18001,
+      "valueState": "KNOWN",
+      "grain": "rate_filing_observation",
+      "denominator": "TDI home/auto rate filings (iubg-btfs)",
+      "description": "Texas rate-filing rows. A rate filing is not a consumer premium and is not a company count.",
+      "coverage": "Texas TDI",
+      "contributingSourceSystems": [
+        "texas_tdi_rate_filings"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One TDI home/auto rate-filing row (SERFF-identified when present).",
+        "doesNotCount": "Not licensed insurance companies, not quoted consumer premiums, not NJ SERFF (not acquired).",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "cms_marketplace_evidence_observations",
+      "label": "CMS Marketplace evidence observations",
+      "value": 1300108,
+      "valueState": "KNOWN",
+      "grain": "cms_marketplace_observation",
+      "denominator": "cms_marketplace_observations table",
+      "description": "CMS FFM Marketplace registration observations. Not plans, not companies, not agencies, and not people.",
+      "coverage": "Federal Marketplace overlay, plan year 2026 sources",
+      "contributingSourceSystems": [
+        "cms_marketplace_observations",
+        "cms_ffm"
+      ],
+      "sourceAsOf": "2026-08-21",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One CMS Marketplace observation row in the research graph.",
+        "doesNotCount": "Not a state license, not certification, not a plan count, not an agency count, not a producer count, not a legal-insurer count.",
+        "contributingSourceSystems": [
+          "cms_ffm"
+        ],
+        "geographicCoverage": "Federal overlay, not a DOI license",
+        "sourceDates": "CMS source-modified 2026-08-21",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "appointing_carrier_entities",
+      "label": "Appointing-entity (carrier-kind) records",
+      "value": 13547,
+      "valueState": "KNOWN",
+      "grain": "appointing_carrier_entity",
+      "denominator": "national_entities.entity_kind = 'carrier'",
+      "description": "Appointing-entity grain (FL DFS + TX TDI keys). Not the NAIC legal-insurer spine.",
+      "coverage": "National research graph",
+      "contributingSourceSystems": [
+        "national_entities",
+        "florida_dfs",
+        "texas_tdi"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One entity_kind=carrier appointing-entity row.",
+        "doesNotCount": "Not licensed insurance companies (legal_insurer), not agencies, not appointments.",
+        "contributingSourceSystems": [
+          "national_entities"
+        ],
+        "geographicCoverage": "FL DFS and TX TDI appointing keys",
+        "sourceDates": "Graph census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "credential_observations",
+      "label": "Credential observations",
+      "value": 1531158,
+      "valueState": "KNOWN",
+      "grain": "license_credential_row",
+      "denominator": "license_credentials table",
+      "description": "Person + agency credential rows. A credential is not an appointment and is not an entity.",
+      "coverage": "FL, TX, VT, MA, OH credential families currently stored",
+      "contributingSourceSystems": [
+        "license_credentials"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One license_credentials row.",
+        "doesNotCount": "Not agencies, not producers, not legal insurers, not appointments, not NJ/CA graph credentials (0 rows; missing is not a market of zero).",
+        "contributingSourceSystems": [
+          "license_credentials"
+        ],
+        "geographicCoverage": "Source-state dependent",
+        "sourceDates": "Graph census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "public_directory_listings",
+      "label": "Public directory listings",
+      "value": 170499,
+      "valueState": "KNOWN",
+      "grain": "public_directory_listing",
+      "denominator": "providers table",
+      "description": "Live public directory listing rows. Not graph agencies and not a producer directory.",
+      "coverage": "Public /directory surface",
+      "contributingSourceSystems": [
+        "providers"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One providers listing row currently stored.",
+        "doesNotCount": "Not canonical graph agencies, not producers, not legal insurers.",
+        "contributingSourceSystems": [
+          "providers"
+        ],
+        "geographicCoverage": "Public ZIP directory, not the research graph",
+        "sourceDates": "Production providers count 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "texas_tdi_agency_license_rows",
+      "label": "Texas TDI agency license rows",
+      "value": 56625,
+      "valueState": "KNOWN",
+      "grain": "tdi_agency_license_row",
+      "denominator": "TDI agencies-and-businesses file (3yqc-fcdt)",
+      "description": "One row per TDI license held by an agency or business. Not the national graph agency count and not a person directory.",
+      "coverage": "Texas",
+      "contributingSourceSystems": [
+        "texas_tdi"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One TDI agency/business license row.",
+        "doesNotCount": "Not national graph agencies, not distinct NPN, not appointments, not person licenses. state=TX is listed/home-office state, not the licensed universe.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas TDI",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_agencies_with_fl_credential",
+      "label": "Florida-credentialed agencies",
+      "value": 56939,
+      "valueState": "KNOWN",
+      "grain": "florida_credentialed_agency",
+      "denominator": "Distinct graph agencies with at least one Florida credential",
+      "description": "Agencies that hold a Florida credential row. Not the national agency denominator.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "florida_dfs",
+        "license_credentials"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Distinct agencies with a Florida credential.",
+        "doesNotCount": "Not national graph agencies, not appointments, not legal insurers.",
+        "contributingSourceSystems": [
+          "florida_dfs"
+        ],
+        "geographicCoverage": "Florida credential jurisdiction, not service territory",
+        "sourceDates": "FL-INS-006 snapshot 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_agency_appointed_by",
+      "label": "Florida agency appointed_by rows",
+      "value": 2680,
+      "valueState": "KNOWN",
+      "grain": "agency_appointment",
+      "denominator": "national_relationships.relationship_type = 'appointed_by'",
+      "description": "Florida DFS agency appointment evidence at the appointing-entity identifier. Not NAIC legal-insurer identity.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "florida_dfs_appointments",
+        "national_relationships"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One appointed_by relationship row.",
+        "doesNotCount": "Not Texas appointments, not agencies, not legal insurers, not employment, not county-wide authority.",
+        "contributingSourceSystems": [
+          "florida_dfs"
+        ],
+        "geographicCoverage": "Florida DFS appointing-entity identifier, not NAIC CoCode",
+        "sourceDates": "FL-INS-006 appointment census",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_financial_examinations",
+      "label": "Florida financial examination listings",
+      "value": 1060,
+      "valueState": "KNOWN",
+      "grain": "financial_examination_listing",
+      "denominator": "Florida OIR financial-oversight listing inventory (FL-INS-004)",
+      "description": "Florida financial-exam listings. Not market-conduct exams.",
+      "coverage": "Florida OIR listings",
+      "contributingSourceSystems": [
+        "florida_oir_financial_exams"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One OIR financial-exam listing/PDF inventory row.",
+        "doesNotCount": "Not market-conduct examinations, not legal insurers, not misconduct findings.",
+        "contributingSourceSystems": [
+          "florida_oir"
+        ],
+        "geographicCoverage": "Florida listing catalog",
+        "sourceDates": "FL-INS-004 listing census 2026-08-28",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_admitted_legal_insurers",
+      "label": "New Jersey admitted legal insurers",
+      "value": 1370,
+      "valueState": "KNOWN",
+      "grain": "admitted_legal_insurer_row",
+      "denominator": "NJDOBI licensed-carrier census with exact NAIC",
+      "description": "NJ admitted legal entities. Not the national 6,185-insurer spine and not surplus-lines eligibility.",
+      "coverage": "New Jersey",
+      "contributingSourceSystems": [
+        "nj_dobi"
+      ],
+      "sourceAsOf": "2026-09-02",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One NJDOBI admitted-insurer row with exact NAIC.",
+        "doesNotCount": "Not national legal insurers, not surplus-lines eligible companies (not acquired), not producers.",
+        "contributingSourceSystems": [
+          "nj_dobi"
+        ],
+        "geographicCoverage": "New Jersey admitted census",
+        "sourceDates": "NJ snapshot as of 2026-09-02",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_surplus_lines_eligible_companies",
+      "label": "New Jersey surplus-lines eligible companies",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "surplus_lines_observation",
+      "denominator": "NJDOBI surplus-lines eligible list — not acquired as a bulk census",
+      "description": "Not acquired. Missing is not zero eligible companies.",
+      "coverage": "New Jersey",
+      "contributingSourceSystems": [
+        "nj_dobi"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "No bulk surplus-lines eligible census is stored.",
+        "doesNotCount": "Not admitted insurers, not agencies, not a numeric zero.",
+        "contributingSourceSystems": [
+          "nj_dobi"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "Official surplus-lines whitelist was not acquired as a deterministic bulk file. Never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "texas_authorized_companies",
+      "label": "Texas authorized companies",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "authorized_company_row",
+      "denominator": "TDI company-licensing report — SOURCE_NOT_ACQUIRED",
+      "description": "Interactive TDI company report. No deterministic bulk export. Missing is not zero companies.",
+      "coverage": "Texas",
+      "contributingSourceSystems": [
+        "texas_tdi"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "No bulk authorized-company universe is stored.",
+        "doesNotCount": "Not appointment NAIC distinct counts, not national legal insurers, not a numeric zero.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas",
+        "sourceDates": "SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "TDI authorized-company report is interactive-only. Appointment NAIC is a relationship, not the complete authorized universe. Never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_admitted_insurer_universe",
+      "label": "California admitted-insurer universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "admitted_legal_insurer_row",
+      "denominator": "CDI company lookup — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "description": "Complete CDI admitted universe is not acquired. Missing is not zero companies.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "california_cdi"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "No complete CDI admitted census is stored.",
+        "doesNotCount": "Not the 28-row dated health-insurer list, not national legal insurers, not a numeric zero.",
+        "contributingSourceSystems": [
+          "california_cdi"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "CDI admitted/company lookup is open-search only. Never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "texas_surplus_lines_observations",
+      "label": "Texas surplus-lines observations",
+      "value": 18816,
+      "valueState": "KNOWN",
+      "grain": "surplus_lines_observation",
+      "denominator": "TDI surplus-lines status detail (7isd-ex6t)",
+      "description": "Surplus-lines person or firm license status rows. Not insurer authorization and not the standard agency universe.",
+      "coverage": "Texas",
+      "contributingSourceSystems": [
+        "texas_tdi"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One TDI surplus-lines status row (firm or individual).",
+        "doesNotCount": "Not agencies, not legal insurers, not standard P&C appointments. Individual rows are not a public person directory.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "texas_title_appointment_rows",
+      "label": "Texas title underwriter appointment rows",
+      "value": 23115,
+      "valueState": "KNOWN",
+      "grain": "title_appointment_row",
+      "denominator": "TDI title underwriter appointments by county (y9ze-ft94)",
+      "description": "County-level title underwriter appointments. Not a general P&C appointment and not a county page.",
+      "coverage": "Texas",
+      "contributingSourceSystems": [
+        "texas_tdi"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One active title underwriter appointment by county.",
+        "doesNotCount": "Not agency-company appointments, not agencies, not statewide authority, not a Texas county route.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas counties in the title file; no county pages are published",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "tdi_complaint_index_rows",
+      "label": "TDI complaint index rows",
+      "value": 5966,
+      "valueState": "KNOWN",
+      "grain": "complaint_index_row",
+      "denominator": "TDI complaint index (pa9u-9s9w)",
+      "description": "Native TDI complaint-index rows. Not a TrustHub score and not the complaint-name file.",
+      "coverage": "Texas",
+      "contributingSourceSystems": [
+        "texas_tdi"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One TDI complaint-index row (NAIC × year × line).",
+        "doesNotCount": "Not complaint-name observations, not companies, not a TrustHub score, not wrongdoing.",
+        "contributingSourceSystems": [
+          "texas_tdi"
+        ],
+        "geographicCoverage": "Texas",
+        "sourceDates": "TDI open data as of 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nfip_registry_listings",
+      "label": "NFIP agency registry listings",
+      "value": 1474,
+      "valueState": "KNOWN",
+      "grain": "nfip_registry_listing",
+      "denominator": "FEMA/NFIP Agency Registry cards in the Florida snapshot",
+      "description": "NFIP registry listing is not certification.",
+      "coverage": "Florida snapshot overlay",
+      "contributingSourceSystems": [
+        "nfip_agency_registry"
+      ],
+      "sourceAsOf": "2026-08-28",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One NFIP Agency Registry card in the Florida inventory.",
+        "doesNotCount": "Not agencies, not certification, not a flood-policy count.",
+        "contributingSourceSystems": [
+          "nfip"
+        ],
+        "geographicCoverage": "Florida snapshot; NPN absent on cards",
+        "sourceDates": "FL-INS-006 NFIP census",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "published_state_intelligence_pages",
+      "label": "Published state intelligence pages",
+      "value": 4,
+      "valueState": "KNOWN",
+      "grain": "published_state_intelligence_page",
+      "denominator": "Indexable /florida /texas /new-jersey /california publication gates",
+      "description": "State intelligence routes currently published. Not an agency or company count.",
+      "coverage": "FL, TX, NJ, CA",
+      "contributingSourceSystems": [
+        "state-intelligence-publication"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Published state intelligence routes.",
+        "doesNotCount": "Not live researched-agency totals, not counties, not a 50-state census.",
+        "contributingSourceSystems": [
+          "florida-intel",
+          "texas-intel",
+          "nj-intel",
+          "ca-intel"
+        ],
+        "geographicCoverage": "/florida, /texas, /new-jersey, /california",
+        "sourceDates": "Publication gates; Texas source clock is the newest documented official date among these pages",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "public_legal_insurer_wave1_profiles",
+      "label": "Published legal-insurer research profiles (wave 1)",
+      "value": 26,
+      "valueState": "KNOWN",
+      "grain": "public_legal_insurer_profile",
+      "denominator": "INS-INSURER-006 PUBLIC_READY cohort",
+      "description": "Evidence-gated public legal-insurer profiles. Not the 6,185-insurer identity spine.",
+      "coverage": "Wave-1 cohort",
+      "contributingSourceSystems": [
+        "legal-insurer-pilot"
+      ],
+      "sourceAsOf": "2026-08-29",
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One published /insurers profile in the locked 26-firm wave.",
+        "doesNotCount": "Not all legal insurers, not mayPublishEntityKind(legal_insurer) which remains false.",
+        "contributingSourceSystems": [
+          "ins-insurer-006"
+        ],
+        "geographicCoverage": "Selected PUBLIC_READY legal insurers",
+        "sourceDates": "INS-INSURER-006 cohort lock",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "combined_insurance_companies",
+      "label": "Combined insurance companies",
+      "value": null,
+      "valueState": "UNKNOWN",
+      "grain": "combined_incompatible_grains",
+      "denominator": "Not a published denominator",
+      "description": "Rejected. Agencies, producers, legal insurers, and appointing carriers are different grains.",
+      "coverage": "Unsupported",
+      "contributingSourceSystems": [],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:06:06.363Z",
+      "publicationStatus": "REJECTED",
+      "trace": {
+        "counts": "Not computed.",
+        "doesNotCount": "Do not publish agencies + producers + legal insurers + carriers as one company total.",
+        "contributingSourceSystems": [],
+        "geographicCoverage": "None",
+        "sourceDates": "Rejected by grain contract",
+        "generationDate": "2026-09-04"
+      }
+    }
+  ]
+}

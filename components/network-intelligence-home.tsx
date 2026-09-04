@@ -6,9 +6,12 @@ import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { loadHubManifests, readArtifact, type CountRecord, type HubManifest } from '@/lib/network-intelligence/contract';
 import { loadSpecialistNetworkCards } from '@/lib/network-metrics/load.ts';
 import { consumerMetricLabel } from '@/lib/network-metrics/consumer-labels.ts';
+import { SPECIALIST_OWNED_HUBS, type SpecialistHubId } from '@/lib/network-metrics/sources.ts';
 import { SpecialistNetworkCard } from '@/components/specialist-network-card';
 import { MetricValue } from '@/components/metric-value';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
+
+const SPECIALIST_CARD_HUBS = new Set<string>(SPECIALIST_OWNED_HUBS);
 
 type CoverageCell = { level: string; entities: string[]; evidenceFamilies: string[]; routes: string[]; asOf: string; limitations: string[] };
 type CoverageArtifact = { jurisdictions: Record<string, Record<string, CoverageCell>> };
@@ -16,9 +19,9 @@ type LedgerSource = { source_id: string; publisher: string; dataset: string; est
 type LedgerArtifact = { sources: LedgerSource[] };
 
 const CARD_CONFIG: Record<string, { eyebrow: string; metricIds: string[]; href: string; action: string }> = {
-  move: { eyebrow: 'Moving', metricIds: ['move_public_profiles', 'move_authority_recorded'], href: 'https://www.movetrusthub.com', action: 'Research movers' },
-  lender: { eyebrow: 'Lending', metricIds: ['lender_institutions', 'hmda_applications_2025'], href: 'https://www.lendertrusthub.com', action: 'Research lenders' },
-  insurance: { eyebrow: 'Insurance', metricIds: ['insurance_agencies', 'insurance_legal_insurers'], href: 'https://www.insurancetrusthub.com', action: 'Research insurance' },
+  move: { eyebrow: 'Moving', metricIds: [], href: 'https://www.movetrusthub.com', action: 'Research movers' },
+  lender: { eyebrow: 'Lending', metricIds: [], href: 'https://www.lendertrusthub.com', action: 'Research lenders' },
+  insurance: { eyebrow: 'Insurance', metricIds: [], href: 'https://www.insurancetrusthub.com', action: 'Research insurance' },
   senior: { eyebrow: 'Senior care', metricIds: [], href: 'https://www.seniortrusthub.com', action: 'Research senior care' },
   contractor: { eyebrow: 'Contractors', metricIds: [], href: 'https://www.contractortrusthub.com', action: 'Research credentials' },
   investor: { eyebrow: 'Investment', metricIds: ['investor_iard_roster', 'investor_ria_firms', 'investor_era_firms'], href: 'https://www.investortrusthub.com', action: 'Research advisers' },
@@ -121,7 +124,7 @@ export async function NetworkIntelligenceHome() {
         </div>
       </section>
 
-      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together. Contractor and Senior counts are owned by the specialist hubs and consumed here." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => hub.hub_id === 'contractor' || hub.hub_id === 'senior' ? <SpecialistNetworkCard key={hub.hub_id} card={specialistCards[hub.hub_id]} /> : <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
+      <section className="section-block border-b bg-slate-50" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="state-heading"><div className="container-page"><SectionHeading eyebrow="State of the Trust Hub Network" title="Six markets. Six evidence models. No fake total." copy="Every card preserves its own entity, observation, publication, and geography grain. Unlike populations are never added together. Move, Lender, Insurance, Contractor, and Senior counts are owned by the specialist hubs and consumed here. Investor remains on the accepted local manifest." /><div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{hubs.map((hub) => SPECIALIST_CARD_HUBS.has(hub.hub_id) ? <SpecialistNetworkCard key={hub.hub_id} card={specialistCards[hub.hub_id as SpecialistHubId]} /> : <HubCard key={hub.hub_id} hub={hub} />)}</div></div></section>
 
       <section className="section-block border-b bg-white" style={{ borderColor: ASK_BRAND.border }} aria-labelledby="findings-heading"><div className="container-page"><SectionHeading eyebrow="What the data says" title="The structure of the record matters." copy="These findings describe how public evidence works across regulated markets. They do not compare provider quality." /><div className="mt-8 grid gap-5 lg:grid-cols-3">{[
         ['Identity systems differ by market', 'USDOT, NMLS, NPN, CMS CCN, state credentials, and CRD identify different regulated entities.', 'A similar name is not proof of a shared legal identity.'],

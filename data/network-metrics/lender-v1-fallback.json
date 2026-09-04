@@ -1,0 +1,972 @@
+{
+  "schemaVersion": "lender-network-metrics-v1",
+  "generatedAt": "2026-09-04T01:04:13.167Z",
+  "newestDocumentedSourceAsOf": "2026-09-03",
+  "newestDocumentedSourceAsOfNote": "Newest documented official source-effective date among metrics that carry a calendar sourceAsOf. Not the as-of date of every identity row, not Git time, and not deploy time.",
+  "sourceFingerprint": "6bd624717bb1bd1ddd4880d40adccbafeba58d6624e069971f728875d750587a",
+  "identity": {
+    "institutions": 14623,
+    "branches": 6682,
+    "personMlo": 136763,
+    "personPublicCandidate": 0,
+    "nmlsInstitution": 6641,
+    "nmlsBranch": 6683,
+    "nmlsPerson": 136763,
+    "lei": 4715,
+    "fdicCert": 5377,
+    "ncuaCharter": 1096,
+    "rssd": 8100,
+    "lpiSnapshots": 8447
+  },
+  "hmda": {
+    "year": 2025,
+    "grain": "county",
+    "rows": 418078,
+    "applications": 11529787,
+    "originations": 6793253,
+    "denials": 2008514,
+    "stateGrainApplicationsExcluded": 11648144
+  },
+  "cfpb": {
+    "complaints": 458146,
+    "attached": 195368,
+    "unattached": 262778,
+    "labels": 2499,
+    "confirmedBridges": 74,
+    "observed": "2026-08-26"
+  },
+  "enforcement": {
+    "federalEvents": 17655
+  },
+  "florida": {
+    "approvedCredentials": 6392,
+    "confirmedNmls": 6265,
+    "heldNmls": 22,
+    "unresolvedSourceCompanyNmls": 3907,
+    "stateRegulatoryEvents": 2515,
+    "publicProfiles": 130,
+    "ofrSourceAsOf": "2026-08-27"
+  },
+  "newJersey": {
+    "hmdaApplications": 318529,
+    "hmdaOriginations": 177325,
+    "dobiUniqueOrders": 453,
+    "rmlaRosterCoverage": "SOURCE_AVAILABLE_BY_REQUEST",
+    "statewideRmlaUniverse": null,
+    "countyIntelligencePages": 4
+  },
+  "california": {
+    "hmdaApplications": 1014489,
+    "hmdaOriginations": 569218,
+    "calhfaDirectoryRows": 1414,
+    "crmlaRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "liveCrmlaUniverse": null
+  },
+  "publication": {
+    "nationalRender": 181,
+    "nationalIndex": 180,
+    "floridaPublic": 130,
+    "searchUnion": 311,
+    "searchUnionIsNotNationalHeadline": true
+  },
+  "network": {
+    "publishedStateIntelligencePages": 3,
+    "publishedStateIntelligencePaths": [
+      "/florida",
+      "/new-jersey",
+      "/california"
+    ],
+    "njCountyIntelligencePages": 4
+  },
+  "rejectedTotals": [
+    {
+      "total": "311 combined public search",
+      "reason": "181 national-searchable plus 130 Florida-public. Not a national lender census."
+    },
+    {
+      "total": "136763 person_mlo identities",
+      "reason": "Internal graph. Not a public MLO directory."
+    },
+    {
+      "total": "3907 unresolved OFR source-company NMLS",
+      "reason": "Different grain from held_nmls=22 and from confirmed institution joins."
+    },
+    {
+      "total": "6682 branch entities",
+      "reason": "Not additional lenders."
+    },
+    {
+      "total": "11648144 state-grain HMDA applications",
+      "reason": "Must not be added to county-grain 11,529,787."
+    },
+    {
+      "total": "CA CRMLA live roster = 0",
+      "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero."
+    },
+    {
+      "total": "NJ RMLA roster = 0",
+      "reason": "SOURCE_AVAILABLE_BY_REQUEST. Missing is not zero."
+    },
+    {
+      "total": "complaints per HMDA applications",
+      "reason": "Incompatible universes. Not published."
+    }
+  ],
+  "homeProjection": {
+    "snapshotVersion": "lender-home-intel-snapshot-v2",
+    "homepagePublicationVersion": "intel-004-v1",
+    "generated_at": "2026-09-04T01:04:13.167Z",
+    "retrievedAt": "2026-09-04",
+    "hmdaOfficialAsOf": "2025",
+    "hmdaSourceVintage": "HMDA 2025 reporting vintage",
+    "hmdaGrain": "county",
+    "institutions": 14623,
+    "lpiSnapshots": 8447,
+    "nmlsInstitution": 6641,
+    "publicRender": 181,
+    "publicIndex": 180,
+    "floridaPublic": 130,
+    "floridaInternal": 6265,
+    "applications": 11529787,
+    "originations": 6793253,
+    "denials": 2008514,
+    "complaints": 458146,
+    "complaintsAttached": 195368,
+    "complaintsUnattached": 262778,
+    "cfpbLabels": 2499,
+    "cfpbConfirmedBridges": 74,
+    "depository": {
+      "FDIC": 5371,
+      "NCUA": 1096,
+      "NONBANK": 341,
+      "UNKNOWN": 1639
+    },
+    "geography": [
+      {
+        "state": "AK",
+        "applications": 19195,
+        "originations": 11904,
+        "denials": 2588
+      },
+      {
+        "state": "AL",
+        "applications": 203437,
+        "originations": 114635,
+        "denials": 39242
+      },
+      {
+        "state": "AR",
+        "applications": 114072,
+        "originations": 66394,
+        "denials": 20091
+      },
+      {
+        "state": "AZ",
+        "applications": 307379,
+        "originations": 183374,
+        "denials": 49376
+      },
+      {
+        "state": "CA",
+        "applications": 1010547,
+        "originations": 569218,
+        "denials": 174475
+      },
+      {
+        "state": "CO",
+        "applications": 257140,
+        "originations": 156145,
+        "denials": 39356
+      },
+      {
+        "state": "CT",
+        "applications": 122527,
+        "originations": 74032,
+        "denials": 20884
+      },
+      {
+        "state": "DC",
+        "applications": 16547,
+        "originations": 9223,
+        "denials": 2915
+      },
+      {
+        "state": "DE",
+        "applications": 45359,
+        "originations": 26905,
+        "denials": 8159
+      },
+      {
+        "state": "FL",
+        "applications": 922758,
+        "originations": 489025,
+        "denials": 192366
+      },
+      {
+        "state": "GA",
+        "applications": 439097,
+        "originations": 241754,
+        "denials": 82246
+      },
+      {
+        "state": "GU",
+        "applications": 211,
+        "originations": 157,
+        "denials": 12
+      },
+      {
+        "state": "HI",
+        "applications": 35607,
+        "originations": 19814,
+        "denials": 7720
+      },
+      {
+        "state": "IA",
+        "applications": 107487,
+        "originations": 75693,
+        "denials": 12808
+      },
+      {
+        "state": "ID",
+        "applications": 88182,
+        "originations": 56565,
+        "denials": 12384
+      },
+      {
+        "state": "IL",
+        "applications": 390786,
+        "originations": 231788,
+        "denials": 65185
+      },
+      {
+        "state": "IN",
+        "applications": 281773,
+        "originations": 177798,
+        "denials": 45279
+      },
+      {
+        "state": "KS",
+        "applications": 91833,
+        "originations": 60230,
+        "denials": 12966
+      },
+      {
+        "state": "KY",
+        "applications": 168118,
+        "originations": 100355,
+        "denials": 30407
+      },
+      {
+        "state": "LA",
+        "applications": 129810,
+        "originations": 69035,
+        "denials": 27962
+      },
+      {
+        "state": "MA",
+        "applications": 215563,
+        "originations": 135275,
+        "denials": 34534
+      },
+      {
+        "state": "MD",
+        "applications": 224070,
+        "originations": 125573,
+        "denials": 41408
+      },
+      {
+        "state": "ME",
+        "applications": 56024,
+        "originations": 35441,
+        "denials": 8827
+      },
+      {
+        "state": "MI",
+        "applications": 377740,
+        "originations": 228503,
+        "denials": 68488
+      },
+      {
+        "state": "MN",
+        "applications": 181686,
+        "originations": 122478,
+        "denials": 23744
+      },
+      {
+        "state": "MO",
+        "applications": 229201,
+        "originations": 145882,
+        "denials": 32912
+      },
+      {
+        "state": "MS",
+        "applications": 99730,
+        "originations": 54386,
+        "denials": 22004
+      },
+      {
+        "state": "MT",
+        "applications": 36022,
+        "originations": 22968,
+        "denials": 5024
+      },
+      {
+        "state": "NC",
+        "applications": 478702,
+        "originations": 279735,
+        "denials": 84978
+      },
+      {
+        "state": "ND",
+        "applications": 19787,
+        "originations": 14322,
+        "denials": 2038
+      },
+      {
+        "state": "NE",
+        "applications": 63508,
+        "originations": 43732,
+        "denials": 7486
+      },
+      {
+        "state": "NH",
+        "applications": 57137,
+        "originations": 35576,
+        "denials": 9315
+      },
+      {
+        "state": "NJ",
+        "applications": 316994,
+        "originations": 177325,
+        "denials": 55453
+      },
+      {
+        "state": "NM",
+        "applications": 71931,
+        "originations": 39201,
+        "denials": 13015
+      },
+      {
+        "state": "NV",
+        "applications": 119179,
+        "originations": 69135,
+        "denials": 20423
+      },
+      {
+        "state": "NY",
+        "applications": 385646,
+        "originations": 231331,
+        "denials": 74973
+      },
+      {
+        "state": "OH",
+        "applications": 456221,
+        "originations": 276279,
+        "denials": 79024
+      },
+      {
+        "state": "OK",
+        "applications": 136810,
+        "originations": 78683,
+        "denials": 23493
+      },
+      {
+        "state": "OR",
+        "applications": 145271,
+        "originations": 89073,
+        "denials": 21731
+      },
+      {
+        "state": "PA",
+        "applications": 441180,
+        "originations": 271254,
+        "denials": 79217
+      },
+      {
+        "state": "PR",
+        "applications": 20871,
+        "originations": 14243,
+        "denials": 3213
+      },
+      {
+        "state": "RI",
+        "applications": 43277,
+        "originations": 25984,
+        "denials": 8017
+      },
+      {
+        "state": "SC",
+        "applications": 248965,
+        "originations": 142410,
+        "denials": 44842
+      },
+      {
+        "state": "SD",
+        "applications": 25017,
+        "originations": 17103,
+        "denials": 2941
+      },
+      {
+        "state": "TN",
+        "applications": 297360,
+        "originations": 175419,
+        "denials": 49744
+      },
+      {
+        "state": "TX",
+        "applications": 943136,
+        "originations": 524257,
+        "denials": 178854
+      },
+      {
+        "state": "UT",
+        "applications": 150251,
+        "originations": 95932,
+        "denials": 23659
+      },
+      {
+        "state": "VA",
+        "applications": 334442,
+        "originations": 202417,
+        "denials": 51797
+      },
+      {
+        "state": "VI",
+        "applications": 336,
+        "originations": 217,
+        "denials": 19
+      },
+      {
+        "state": "VT",
+        "applications": 20266,
+        "originations": 13414,
+        "denials": 2892
+      },
+      {
+        "state": "WA",
+        "applications": 284887,
+        "originations": 174653,
+        "denials": 43937
+      },
+      {
+        "state": "WI",
+        "applications": 223596,
+        "originations": 154296,
+        "denials": 30385
+      },
+      {
+        "state": "WV",
+        "applications": 52061,
+        "originations": 29401,
+        "denials": 10639
+      },
+      {
+        "state": "WY",
+        "applications": 21055,
+        "originations": 13311,
+        "denials": 3067
+      }
+    ],
+    "graph": {
+      "branch_entities": 6682,
+      "person_mlo_entities": 136763,
+      "nmls_branch": 6683,
+      "nmls_person": 136763,
+      "person_public_candidate": 0
+    },
+    "grains": {
+      "institutions": "canonical institution entity (lender_national_entities.entity_kind=institution)",
+      "lpiSnapshots": "lender_profile_intelligence row; not the identity universe",
+      "nmlsInstitution": "NMLS_INSTITUTION identifier slot; not an institution count",
+      "publicRender": "file-backed lend-nat-014 national render cohort",
+      "publicIndex": "file-backed lend-nat-014 national index cohort",
+      "floridaPublic": "file-backed Florida Phase 1+2 public company cohort",
+      "floridaInternal": "distinct Approved FL MBR/MLD NMLS with confirmed institution_id",
+      "applications": "HMDA 2025 county-grain LEI observation, summed nationally; exclude state grain",
+      "originations": "same county-grain 2025 rows as applications",
+      "denials": "same county-grain 2025 rows as applications",
+      "complaints": "lender_cfpb_complaints mortgage observation row",
+      "depository": "exclusive profile.roles.depository on LPI snapshots",
+      "branch_entities": "canonical branch entity; not a branch license row",
+      "person_mlo_entities": "canonical person_mlo entity; not an LO license row"
+    },
+    "source_as_of": {
+      "identity": "production graph observation",
+      "hmda": "2025",
+      "cfpb_observed": "2026-08-26",
+      "florida_ofr": "2026-08-27",
+      "publication": "file-backed INTEL-004 / FL-LEND-006+008"
+    },
+    "fingerprint": "6bd624717bb1bd1ddd4880d40adccbafeba58d6624e069971f728875d750587a"
+  },
+  "metrics": [
+    {
+      "unit": "count",
+      "key": "lenders_lending_institutions",
+      "label": "Lenders & lending institutions",
+      "value": 14623,
+      "valueState": "KNOWN",
+      "grain": "canonical_institution_entity",
+      "denominator": "lender_national_entities.entity_kind = 'institution'",
+      "description": "Company identities on the dedicated Lender graph. Not NMLS credentials, branches, MLOs, or public profiles.",
+      "coverage": "National identity graph",
+      "contributingSourceSystems": [
+        "lender_national_entities"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One lender_national_entities row with entity_kind institution.",
+        "doesNotCount": "Not NMLS IDs, not branches, not MLOs, not the 181/180 public cohort, not the 311 search union.",
+        "contributingSourceSystems": [
+          "lender_national_entities"
+        ],
+        "geographicCoverage": "National identity graph; headquarters is not service territory",
+        "sourceDates": "Production graph observation. Not an official NMLS census date, not Git time, not deploy time.",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nmls_institution_identifiers",
+      "label": "NMLS institution identifiers",
+      "value": 6641,
+      "valueState": "KNOWN",
+      "grain": "nmls_institution_identifier",
+      "denominator": "lender_identifiers.identifier_type = 'NMLS_INSTITUTION'",
+      "description": "Credential slots on company identities. Not an institution count and not an MLO count.",
+      "coverage": "National identity graph",
+      "contributingSourceSystems": [
+        "lender_identifiers",
+        "nmls"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "NMLS_INSTITUTION identifier rows.",
+        "doesNotCount": "Not institution entities. Not NMLS person or branch identifiers.",
+        "contributingSourceSystems": [
+          "lender_identifiers"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "Production graph observation",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "branch_entities",
+      "label": "Branch identities (internal graph)",
+      "value": 6682,
+      "valueState": "KNOWN",
+      "grain": "branch_entity",
+      "denominator": "lender_national_entities.entity_kind = 'branch'",
+      "description": "Branch identities on the graph. Not public branch pages and not additional lenders.",
+      "coverage": "National identity graph",
+      "contributingSourceSystems": [
+        "lender_national_entities"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "INTERNAL",
+      "trace": {
+        "counts": "Branch entity rows.",
+        "doesNotCount": "Not lenders. Not Florida OFR branch licenses. Branch address is not service territory.",
+        "contributingSourceSystems": [
+          "lender_national_entities"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "Production graph observation",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "person_mlo_entities",
+      "label": "Mortgage loan originator identities (internal graph)",
+      "value": 136763,
+      "valueState": "KNOWN",
+      "grain": "person_mlo_entity",
+      "denominator": "lender_national_entities.entity_kind = 'person_mlo'",
+      "description": "Internal person_mlo identities. Not a public MLO directory.",
+      "coverage": "National identity graph — unpublished as people pages",
+      "contributingSourceSystems": [
+        "lender_national_entities"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "INTERNAL",
+      "trace": {
+        "counts": "person_mlo entity rows.",
+        "doesNotCount": "Not public profiles. Not institution counts. person_public_candidate remains 0.",
+        "contributingSourceSystems": [
+          "lender_national_entities"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "Production graph observation",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "person_public_candidate",
+      "label": "Public person-page candidates",
+      "value": 0,
+      "valueState": "KNOWN",
+      "grain": "person_public_candidate_entity",
+      "denominator": "lender_national_entities.entity_kind = 'person_public_candidate'",
+      "description": "Policy invariant: no public MLO or person pages. Zero here is a publication rule, not a missing roster.",
+      "coverage": "National",
+      "contributingSourceSystems": [
+        "lender_national_entities"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Must remain zero public person-page candidates.",
+        "doesNotCount": "Not the internal person_mlo graph.",
+        "contributingSourceSystems": [
+          "lender_national_entities"
+        ],
+        "geographicCoverage": "National",
+        "sourceDates": "Publication policy",
+        "generationDate": "2026-09-04",
+        "currentActiveRule": "person_public_candidate = 0"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "public_national_render_profiles",
+      "label": "Publicly researchable national profiles",
+      "value": 181,
+      "valueState": "KNOWN",
+      "grain": "national_render_profile",
+      "denominator": "File-backed lend-nat-014 national render cohort",
+      "description": "Controlled national publication cohort. Not the 14,623 identity universe.",
+      "coverage": "National publication policy",
+      "contributingSourceSystems": [
+        "lend-nat-014"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Rows in the frozen national render cohort.",
+        "doesNotCount": "Not the identity graph. Not the 311 search union. Not Florida-only public companies.",
+        "contributingSourceSystems": [
+          "lend-nat-014"
+        ],
+        "geographicCoverage": "National publication cohort",
+        "sourceDates": "lend-nat-014 added_at 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "hmda_2025_county_applications",
+      "label": "HMDA 2025 county-grain applications",
+      "value": 11529787,
+      "valueState": "KNOWN",
+      "grain": "hmda_2025_county_observation",
+      "denominator": "lender_hmda_observations data_year=2025 geo_grain='county' SUM(applications)",
+      "description": "Reported HMDA 2025 applications at county grain, summed nationally. State-grain rows are excluded.",
+      "coverage": "United States county-grain 2025 vintage",
+      "contributingSourceSystems": [
+        "hmda",
+        "lender_hmda_observations"
+      ],
+      "sourceAsOf": "2025",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "SUM(applications) on 2025 county-grain LEI observations.",
+        "doesNotCount": "Not state-grain rows. Not a live market feed. Not an approval prediction.",
+        "contributingSourceSystems": [
+          "hmda"
+        ],
+        "geographicCoverage": "National county grain; do not add state-grain rows",
+        "sourceDates": "HMDA 2025 reporting vintage",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "hmda_2025_county_originations",
+      "label": "HMDA 2025 county-grain originations",
+      "value": 6793253,
+      "valueState": "KNOWN",
+      "grain": "hmda_2025_county_observation",
+      "denominator": "Same 2025 county-grain rows as applications, SUM(originations)",
+      "description": "Reported originations on the same county-grain 2025 rows. Not an approval rate.",
+      "coverage": "United States county-grain 2025 vintage",
+      "contributingSourceSystems": [
+        "hmda",
+        "lender_hmda_observations"
+      ],
+      "sourceAsOf": "2025",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "SUM(originations) on 2025 county-grain rows.",
+        "doesNotCount": "Not approval odds. Originations plus denials do not equal applications.",
+        "contributingSourceSystems": [
+          "hmda"
+        ],
+        "geographicCoverage": "National county grain",
+        "sourceDates": "HMDA 2025 reporting vintage",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "cfpb_mortgage_complaint_observations",
+      "label": "CFPB mortgage complaint observations",
+      "value": 458146,
+      "valueState": "KNOWN",
+      "grain": "cfpb_mortgage_complaint_observation",
+      "denominator": "lender_cfpb_complaints mortgage product rows stored on this hub",
+      "description": "Consumer-submitted mortgage complaint observations. A complaint is not a violation.",
+      "coverage": "CFPB Consumer Complaint Database, mortgage product, as stored",
+      "contributingSourceSystems": [
+        "cfpb",
+        "lender_cfpb_complaints"
+      ],
+      "sourceAsOf": "2026-08-26",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One stored mortgage complaint observation row.",
+        "doesNotCount": "Not a violation. Not HMDA applications. Unattached is not invalid.",
+        "contributingSourceSystems": [
+          "cfpb"
+        ],
+        "geographicCoverage": "National complaint file as stored on this hub",
+        "sourceDates": "max(source_observed_at) 2026-08-26",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "federal_enforcement_events",
+      "label": "Federal enforcement observations",
+      "value": 17655,
+      "valueState": "KNOWN",
+      "grain": "federal_enforcement_event",
+      "denominator": "lender_federal_enforcement_events rows",
+      "description": "Stored federal enforcement observations. An observation is not a flattened violation count.",
+      "coverage": "FDIC, OCC, Federal Reserve, CFPB actions as stored",
+      "contributingSourceSystems": [
+        "lender_federal_enforcement_events"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One federal enforcement event row.",
+        "doesNotCount": "Not CFPB complaints. None observed is not a clean history. Not a score.",
+        "contributingSourceSystems": [
+          "lender_federal_enforcement_events"
+        ],
+        "geographicCoverage": "Federal agencies as stored",
+        "sourceDates": "Production graph observation; issued_on varies by event",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_ofr_approved_company_credentials",
+      "label": "Florida OFR approved company credentials",
+      "value": 6392,
+      "valueState": "KNOWN",
+      "grain": "florida_ofr_approved_credential",
+      "denominator": "lender_state_licenses jurisdiction=FL license_class in (MBR, MLD) ofr_status=Approved",
+      "description": "Approved Chapter 494 company credentials. Not the national institution universe.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "florida_ofr",
+        "lender_state_licenses"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Approved FL MBR/MLD credential rows.",
+        "doesNotCount": "Not confirmed NMLS identities. Not the 130 Florida public profiles. Not MLOs.",
+        "contributingSourceSystems": [
+          "florida_ofr"
+        ],
+        "geographicCoverage": "Florida OFR Chapter 494 company credentials",
+        "sourceDates": "FL_OFR_CH494 source_as_of 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_confirmed_nmls_identities",
+      "label": "Florida OFR credentials joined to an institution identity",
+      "value": 6265,
+      "valueState": "KNOWN",
+      "grain": "florida_confirmed_nmls",
+      "denominator": "Distinct Approved FL MBR/MLD NMLS with institution_id present",
+      "description": "Confirmed identity joins. Held NMLS stay out of this count.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "florida_ofr",
+        "lender_state_licenses"
+      ],
+      "sourceAsOf": "2026-08-27",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "INTERNAL",
+      "trace": {
+        "counts": "Distinct approved FL company NMLS with a confirmed institution_id.",
+        "doesNotCount": "Not held NMLS. Not unresolved source-company NMLS. Not public Florida profiles.",
+        "contributingSourceSystems": [
+          "florida_ofr"
+        ],
+        "geographicCoverage": "Florida",
+        "sourceDates": "FL_OFR_CH494 source_as_of 2026-08-27",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_rmla_license_roster",
+      "label": "New Jersey RMLA statewide licensee universe",
+      "value": null,
+      "valueState": "REQUEST_ONLY",
+      "grain": "nj_rmla_license_roster",
+      "denominator": "NJ RMLA bulk licensee roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "description": "No bulk RMLA roster was acquired. Statewide NJ licensee count is UNKNOWN, not zero.",
+      "coverage": "New Jersey",
+      "contributingSourceSystems": [
+        "nj_dobi_rmla"
+      ],
+      "sourceAsOf": "2026-09-02",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the complete NJ RMLA universe.",
+        "doesNotCount": "Not DOBI unique orders. Not NJ HMDA applications. Not federal NJ-HQ institutions.",
+        "contributingSourceSystems": [
+          "nj_dobi_rmla"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "NJ-LEND snapshot as_of 2026-09-02",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "Public RMLA pages are application guidance, not a bulk roster. UNKNOWN must never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_dobi_unique_orders",
+      "label": "New Jersey DOBI unique orders (acquired)",
+      "value": 453,
+      "valueState": "PARTIAL",
+      "grain": "nj_dobi_unique_order",
+      "denominator": "Acquired NJDOBI enforcement order identifiers in the published NJ snapshot",
+      "description": "Acquired unique orders. Later OCF years remain SOURCE_NOT_ACQUIRED and are not zero.",
+      "coverage": "New Jersey — acquired DOBI years only",
+      "contributingSourceSystems": [
+        "nj_dobi"
+      ],
+      "sourceAsOf": "2026-09-02",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC_PARTIAL",
+      "trace": {
+        "counts": "Unique acquired DOBI order identifiers.",
+        "doesNotCount": "Not the RMLA roster. Not 2023–2026 OCF years. Not a statewide lender count.",
+        "contributingSourceSystems": [
+          "nj_dobi"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "NJ DOBI FI list 2026-09-02; later OCF years not acquired",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_crmla_live_roster",
+      "label": "California CRMLA live licensee universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "ca_crmla_live_roster",
+      "denominator": "Live CRMLA roster — SOURCE_NOT_ACQUIRED",
+      "description": "No bulk live CRMLA roster was acquired. Complete licensed-lender count is UNKNOWN, not zero.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "ca_dfpi_crmla"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the live CRMLA universe.",
+        "doesNotCount": "Not CalHFA directory rows. Not CA HMDA applications. Not the 2024 CRMLA annual report.",
+        "contributingSourceSystems": [
+          "ca_dfpi_crmla"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "live_crmla_roster SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-04",
+        "whyUnknown": "Live CRMLA roster was not bulk-acquired. CalHFA directory rows are program-participation observations, not the licensed universe."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_calhfa_directory_rows",
+      "label": "CalHFA approved-lender directory rows",
+      "value": 1414,
+      "valueState": "KNOWN",
+      "grain": "ca_calhfa_directory_row",
+      "denominator": "Official CalHFA approved-lender HTML directory rows",
+      "description": "Program directory observations. Not California-licensed mortgage companies and not HMDA.",
+      "coverage": "California CalHFA directory",
+      "contributingSourceSystems": [
+        "calhfa"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "HTML directory rows on the official CalHFA approved-lender listing.",
+        "doesNotCount": "Not CRMLA licenses. Not NMLS. Identity bar is REVIEW_REQUIRED.",
+        "contributingSourceSystems": [
+          "calhfa"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CalHFA directory retrieved 2026-09-03",
+        "generationDate": "2026-09-04"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "published_state_intelligence_pages",
+      "label": "Published state mortgage-intelligence pages",
+      "value": 3,
+      "valueState": "KNOWN",
+      "grain": "published_state_intelligence_page",
+      "denominator": "Indexable specialist state intelligence routes currently published",
+      "description": "Florida, New Jersey, and California state intelligence pages. Not a count of lenders.",
+      "coverage": "/florida, /new-jersey, /california",
+      "contributingSourceSystems": [
+        "lender-state-intel"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-04T01:04:13.167Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Published /florida, /new-jersey, and /california intelligence routes.",
+        "doesNotCount": "Not NJ county pages and not national directory rows.",
+        "contributingSourceSystems": [
+          "lender-state-intel"
+        ],
+        "geographicCoverage": "/florida, /new-jersey, /california",
+        "sourceDates": "Publication gates in specialist catalogs",
+        "generationDate": "2026-09-04"
+      }
+    }
+  ]
+}

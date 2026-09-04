@@ -1,13 +1,29 @@
 import contractorFallback from '../../data/network-metrics/contractor-v1-fallback.json' with { type: 'json' };
 import seniorFallback from '../../data/network-metrics/senior-v1-fallback.json' with { type: 'json' };
+import moveFallback from '../../data/network-metrics/move-v1-fallback.json' with { type: 'json' };
+import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' with { type: 'json' };
+import insuranceFallback from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
 import {
   SPECIALIST_METRIC_REVALIDATE_SECONDS,
+  SPECIALIST_OWNED_HUBS,
   SPECIALIST_SOURCES,
   type SpecialistHubId,
   type SpecialistSourceConfig,
 } from './sources.ts';
-import { adaptContractorCard, adaptSeniorCard } from './adapt.ts';
-import { validateContractorManifest, validateSeniorManifest } from './validate.ts';
+import {
+  adaptContractorCard,
+  adaptInsuranceCard,
+  adaptLenderCard,
+  adaptMoveCard,
+  adaptSeniorCard,
+} from './adapt.ts';
+import {
+  validateContractorManifest,
+  validateInsuranceManifest,
+  validateLenderManifest,
+  validateMoveManifest,
+  validateSeniorManifest,
+} from './validate.ts';
 import type { SpecialistHubPresentation } from './types.ts';
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -19,7 +35,11 @@ export type LoadSpecialistOptions = {
 };
 
 function readFallback(hub: SpecialistHubId): unknown {
-  return hub === 'contractor' ? contractorFallback : seniorFallback;
+  if (hub === 'contractor') return contractorFallback;
+  if (hub === 'senior') return seniorFallback;
+  if (hub === 'move') return moveFallback;
+  if (hub === 'lender') return lenderFallback;
+  return insuranceFallback;
 }
 
 async function fetchUpstream(
@@ -43,10 +63,11 @@ async function fetchUpstream(
 }
 
 function present(hub: SpecialistHubId, raw: unknown, origin: 'UPSTREAM' | 'FALLBACK'): SpecialistHubPresentation {
-  if (hub === 'contractor') {
-    return adaptContractorCard(validateContractorManifest(raw), origin);
-  }
-  return adaptSeniorCard(validateSeniorManifest(raw), origin);
+  if (hub === 'contractor') return adaptContractorCard(validateContractorManifest(raw), origin);
+  if (hub === 'senior') return adaptSeniorCard(validateSeniorManifest(raw), origin);
+  if (hub === 'move') return adaptMoveCard(validateMoveManifest(raw), origin);
+  if (hub === 'lender') return adaptLenderCard(validateLenderManifest(raw), origin);
+  return adaptInsuranceCard(validateInsuranceManifest(raw), origin);
 }
 
 export async function loadSpecialistCard(
@@ -68,9 +89,9 @@ export async function loadSpecialistCard(
 export async function loadSpecialistNetworkCards(
   options: LoadSpecialistOptions = {},
 ): Promise<Record<SpecialistHubId, SpecialistHubPresentation>> {
-  const [contractor, senior] = await Promise.all([
-    loadSpecialistCard('contractor', options),
-    loadSpecialistCard('senior', options),
-  ]);
-  return { contractor, senior };
+  const cards = await Promise.all(SPECIALIST_OWNED_HUBS.map((hub) => loadSpecialistCard(hub, options)));
+  return Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub, index) => [hub, cards[index]])) as Record<
+    SpecialistHubId,
+    SpecialistHubPresentation
+  >;
 }
