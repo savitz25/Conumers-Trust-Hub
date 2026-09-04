@@ -7,6 +7,7 @@ import { loadHubManifests, readArtifact, type CountRecord, type HubManifest } fr
 import { loadSpecialistNetworkCards } from '@/lib/network-metrics/load.ts';
 import { consumerMetricLabel } from '@/lib/network-metrics/consumer-labels.ts';
 import { SpecialistNetworkCard } from '@/components/specialist-network-card';
+import { MetricValue } from '@/components/metric-value';
 import { caReleaseGatePassed } from '@/lib/network/ca-network';
 
 type CoverageCell = { level: string; entities: string[]; evidenceFamilies: string[]; routes: string[]; asOf: string; limitations: string[] };
@@ -84,7 +85,7 @@ function HubCard({ hub }: { hub: HubManifest }) {
           {hub.entity_classes.map((entity) => <div key={entity.id} className="rounded-xl bg-slate-50 px-2 py-3">{entity.label}</div>)}
         </div>
       ) : (
-        <div className="mt-4 space-y-4">{metrics.map((metric) => <div key={metric.metric_id}><p className="text-2xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>{formatValue(metric.value)}</p><p className="text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{consumerMetricLabel(metric.metric_id, metric.label)}</p><Trace hub={hub} metric={metric} /></div>)}</div>
+        <div className="mt-4 space-y-5">{metrics.map((metric) => <div key={metric.metric_id} className="min-w-0"><MetricValue value={metric.value} size="lg" /><p className="mt-1 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{consumerMetricLabel(metric.metric_id, metric.label)}</p><Trace hub={hub} metric={metric} /></div>)}</div>
       )}
       <p className="mt-5 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{hub.evidence_families.slice(0, 4).map((item) => item.subtype).join(' · ')}</p>
       <p className="mt-3 text-xs leading-relaxed text-slate-600">{hub.limitations[0]}</p>
