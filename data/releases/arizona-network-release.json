@@ -1,0 +1,62 @@
+{
+  "ticket": "ATH-AZ-FINAL",
+  "version": "ath-az-network-release-v1",
+  "generatedAt": "2026-09-04T21:30:00.000Z",
+  "ask_canonical": "https://www.asktrusthub.com/arizona",
+  "scope": "STATE_LEVEL_ONLY",
+  "arizona_local_phase": "NO",
+  "geographic_expansion": "PAUSED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "release_gate_passed": true,
+  "six_hub_states": {
+    "contractor": "STATE_DIRECTORY_LIVE",
+    "senior": "FEDERAL_PLUS_STATE_VERIFICATION",
+    "lender": "STATE_INTELLIGENCE_LIVE",
+    "investor": "FEDERAL_PLUS_STATE_VERIFICATION",
+    "insurance": "STATE_RESEARCH_PATH",
+    "move": "NO_STATE_LICENSING_UNIVERSE"
+  },
+  "specialist_urls": {
+    "contractor": "https://www.contractortrusthub.com/arizona",
+    "senior": "https://www.seniortrusthub.com/arizona",
+    "lender": "https://www.lendertrusthub.com/arizona",
+    "investor": "https://www.investortrusthub.com/arizona",
+    "insurance": "https://www.insurancetrusthub.com",
+    "move": "https://www.movetrusthub.com"
+  },
+  "snapshot_versions": {
+    "contractor": "contractor-az-state-intel-v1",
+    "senior": "senior-az-state-intel-v1",
+    "lender": "lender-az-state-intel-v1",
+    "investor": "investor-az-state-intel-v1",
+    "insurance": null,
+    "move": null
+  },
+  "fingerprints": {
+    "contractor": "ac2bfa07ef7e65f7cfa1527cd4564161f989d27371166636e0cc012091db2cd1",
+    "senior": "9f5d149051c58c88a4284c27594cf81de0912192d9b2c96397ed8af61dfc94a7",
+    "lender": "70ea63ce8cfc2d5dfcdc04f992c3a852d2de5aa89795cc26adf6438351720f8e",
+    "investor": "683c862012698a9f0e5ed0453bf5da5e15561d7c4f5a9ee40788fd7a1b61b03b"
+  },
+  "source_clocks": {
+    "contractor": "ROC posting-list header 2026-09-02",
+    "senior": "AZ-SEN-001 2026-09-04",
+    "lender": "HMDA 2025; CFPB 2026-09-04",
+    "investor": "IA_FIRM_SEC_Feed_08_27_2026",
+    "insurance": "ATH-AZ-001 2026-09-04",
+    "move": "AG Mayes 2025-07-07"
+  },
+  "hmda_clock": {
+    "applications": 308338,
+    "originations": 183374,
+    "denials": 49721,
+    "denial_rate_pct": 16.13
+  },
+  "routing_stress_test": {
+    "questions": 12,
+    "target": "12 / 12 materially correct"
+  },
+  "publication_gate": true,
+  "fingerprint": "658700996287235d777dd82fecdff9a633df0a4e0cd89c3c180db6217ca0986f"
+}

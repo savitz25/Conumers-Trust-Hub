@@ -30,6 +30,7 @@ import { detectNjPilotCountySlug } from './nj-counties.ts';
 import { detectCaCity, queryLooksLikeCalifornia } from './ca-network.ts';
 import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
 import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
+import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -91,6 +92,7 @@ function geography(q: string): ParsedGeography | undefined {
   const caNamedEarly = queryLooksLikeCalifornia(q);
   const txNamedEarly = queryLooksLikeTexas(q);
   const waNamedEarly = queryLooksLikeWashington(q);
+  const azNamedEarly = queryLooksLikeArizona(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -105,13 +107,35 @@ function geography(q: string): ParsedGeography | undefined {
     if (wa < 0) return true;
     return ca < wa;
   })();
+  const californiaNamedBeforeArizona = (() => {
+    const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
+    const az = q.search(/\barizona\b/i);
+    if (ca < 0) return false;
+    if (az < 0) return true;
+    return ca < az;
+  })();
+  const texasNamedBeforeArizona = (() => {
+    const tx = q.search(/\btexas\b|\btexan\b/i);
+    const az = q.search(/\barizona\b/i);
+    if (tx < 0) return false;
+    if (az < 0) return true;
+    return tx < az;
+  })();
+  const washingtonNamedBeforeArizona = (() => {
+    const wa = q.search(/\bwashington\b/i);
+    const az = q.search(/\barizona\b/i);
+    if (wa < 0) return false;
+    if (az < 0) return true;
+    return wa < az;
+  })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
   if (
     caNamedEarly &&
     otherDest &&
     !njNamedEarly &&
     (!txNamedEarly || californiaNamedFirst) &&
-    (!waNamedEarly || californiaNamedBeforeWashington)
+    (!waNamedEarly || californiaNamedBeforeWashington) &&
+    (!azNamedEarly || californiaNamedBeforeArizona)
   ) {
     return {
       stateCode: 'CA',
@@ -204,7 +228,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (txNamedEarly) {
+  if (txNamedEarly && (!azNamedEarly || texasNamedBeforeArizona)) {
     const txCity = detectTxCity(q);
     return {
       stateCode: 'TX',
@@ -216,7 +240,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (waNamedEarly) {
+  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona)) {
     const waCity = detectWaCity(q);
     return {
       stateCode: 'WA',
@@ -225,6 +249,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: waCity
         ? `${waCity}, Washington. Washington research is state-level; a city or county name is not a Washington county Ask route.`
         : 'Washington. State licensing is not physical location; specialist geography meaning differs by hub. Washington city and county Ask pages are not published.',
+    };
+  }
+
+  if (azNamedEarly) {
+    const azCity = detectAzCity(q);
+    return {
+      stateCode: 'AZ',
+      stateName: 'Arizona',
+      city: azCity,
+      meaning: azCity
+        ? `${azCity}, Arizona. Arizona research is state-level; a city or county name is not an Arizona county Ask route.`
+        : 'Arizona. State licensing is not physical location; specialist geography meaning differs by hub. Arizona city and county Ask pages are not published.',
     };
   }
 

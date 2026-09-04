@@ -1,0 +1,283 @@
+{
+  "state_code": "AZ",
+  "state_name": "Arizona",
+  "ask_path": "/arizona",
+  "ask_canonical": "https://www.asktrusthub.com/arizona",
+  "version": "ath-az-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "arizona_local_phase": "NO",
+  "trust_score": false,
+  "paid_ranking": false,
+  "conceptual_statement": "Arizona’s strongest Trust Hub evidence is ROC contractor licensing plus ADHS senior-care identities and CMS overlays. Lending and investor research add market and federal-office geography, not live company rosters. Insurance business-entity bulk is paid. Arizona does not license household-goods movers. Organizations and evidence stay separate. Missing, search-only, request-gated, and paid sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_arizona_pages": ["contractor", "senior", "lender", "investor"],
+    "research_path_hubs": ["insurance", "move"],
+    "blocker": null,
+    "rule": "Contractor, Senior, Lender, and Investor /arizona pages must be live HTTP 200, indexable, and self-canonical. Insurance and Move may be honest research paths without dedicated Arizona specialist pages. Do not link a 404. No Arizona city or county routes.",
+    "verified_at": "2026-09-04"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "57,886 ROC current contractor licenses",
+      "grain": "Official All Current Contractors posting-list header as of 2026-09-02. Not unique companies. Commercial/Residential/Dual files overlap. License row is not a unique company."
+    },
+    {
+      "hub_id": "senior",
+      "display": "2,776 Arizona state facility identities",
+      "grain": "Accepted AZ-SEN-001 ledger. AL Home 1,719 · AL Center 328 · Adult Foster Care 25 · Adult Day Health 15, plus other state classes. Do not add CMS NH 140 / HHA 177 / Hospice 237 into one provider count."
+    },
+    {
+      "hub_id": "lender",
+      "display": "308,338 HMDA 2025 applications",
+      "grain": "Specialist-owned Arizona property-location HMDA. Originations 183,374. Denials 49,721 (16.13%). 15 of 15 counties. Not a live lender roster."
+    },
+    {
+      "hub_id": "investor",
+      "display": "213 SEC/IARD Arizona principal-office firms",
+      "grain": "Federal roster geography on IA_FIRM_SEC_Feed_08_27_2026. Not Arizona state-licensed advisers. National same-source roster 23,622."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "DIFI / SBS verification — no free agency roster",
+      "grain": "STATE_RESEARCH_PATH. SBS Generate a Report is paid ($0.03/row, $30 minimum). Not purchased. Complete Arizona agency count is UNKNOWN."
+    },
+    {
+      "hub_id": "move",
+      "display": "No Arizona HHG mover license",
+      "grain": "NO_STATE_LICENSING_UNIVERSE. Official AG: Arizona has no mover registration or professional licensing requirement. Interstate: FMCSA. ACC eCorp is not a mover license."
+    }
+  ],
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "coverage_type": "STATE_DIRECTORY_LIVE",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.contractortrusthub.com/arizona",
+      "snapshot_version": "contractor-az-state-intel-v1",
+      "fingerprint": "ac2bfa07ef7e65f7cfa1527cd4564161f989d27371166636e0cc012091db2cd1",
+      "source_clock": "ROC posting-list header 2026-09-02",
+      "primary_regulator": "Arizona Registrar of Contractors",
+      "primary_identity": "AZ-ROC:{License No}",
+      "strongest_datasets": "ROC current posting 57,886; last full extract 58,131 distinct License No; 459 discipline rows already in graph",
+      "coverage_limitation": "License row ≠ unique company. Commercial 46,913 / Residential 47,258 / Dual 36,285 overlap. Do not add those files. Current CSV GET 403.",
+      "what_research": "Whether an Arizona contractor license is on ROC’s current posting, class type, and existing discipline rows.",
+      "next_step": "Open Contractor Trust Hub /arizona, then ROC contractor search.",
+      "coverage_summary": "Statewide ROC contractor licensing intelligence. Not a recommendation."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "coverage_type": "FEDERAL_PLUS_STATE_VERIFICATION",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.seniortrusthub.com/arizona",
+      "snapshot_version": "senior-az-state-intel-v1",
+      "fingerprint": "9f5d149051c58c88a4284c27594cf81de0912192d9b2c96397ed8af61dfc94a7",
+      "source_clock": "AZ-SEN-001 2026-09-04; CMS overlay in Ask senior metrics",
+      "primary_regulator": "Arizona Department of Health Services + CMS",
+      "primary_identity": "ADHS facility identity / CMS CCN",
+      "strongest_datasets": "AL Home 1,719; AL Center 328; AFC 25; ADHC 15; CMS NH 140 / HHA 177 / Hospice 237",
+      "coverage_limitation": "AL Home ≠ AL Center ≠ NH ≠ HHA ≠ Hospice. Do not publish one Arizona senior-providers sum.",
+      "what_research": "State-licensed residential classes and CMS nursing-home / home-health / hospice overlays.",
+      "next_step": "Open SeniorTrustHub /arizona, then AZ Care Check.",
+      "coverage_summary": "ADHS classes plus CMS overlay. Classes stay separate."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "coverage_type": "STATE_INTELLIGENCE_LIVE",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.lendertrusthub.com/arizona",
+      "snapshot_version": "lender-az-state-intel-v1",
+      "fingerprint": "70ea63ce8cfc2d5dfcdc04f992c3a852d2de5aa89795cc26adf6438351720f8e",
+      "source_clock": "HMDA 2025; CFPB overlay retrieved 2026-09-04",
+      "primary_regulator": "DIFI (via NMLS) + CFPB HMDA",
+      "primary_identity": "NMLS ID when present; HMDA is not a license",
+      "strongest_datasets": "308,338 applications; 183,374 originations; 49,721 denials; 16.13%; 15/15 counties; 10,365 CFPB mortgage complaints; 2 IDA program families",
+      "coverage_limitation": "HMDA ≠ license roster. Live company roster SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY. Denial rate is not quality.",
+      "what_research": "Arizona mortgage-market activity and how to verify a named mortgage company on NMLS.",
+      "next_step": "Open Lender Trust Hub /arizona, then NMLS Consumer Access.",
+      "coverage_summary": "Statewide HMDA + CFPB overlay. Not a DIFI company census."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "coverage_type": "FEDERAL_PLUS_STATE_VERIFICATION",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.investortrusthub.com/arizona",
+      "snapshot_version": "investor-az-state-intel-v1",
+      "fingerprint": "683c862012698a9f0e5ed0453bf5da5e15561d7c4f5a9ee40788fd7a1b61b03b",
+      "source_clock": "IA_FIRM_SEC_Feed_08_27_2026; ACC enforcement index 2026-09-04",
+      "primary_regulator": "ACC Securities Division + SEC/IARD",
+      "primary_identity": "CRD",
+      "strongest_datasets": "213 AZ principal-office firms; national roster 23,622; ACC HTML index 205 rows (87 CRD / 118 name-only)",
+      "coverage_limitation": "Arizona principal office ≠ Arizona state registration. State IA/dealer/notice lists SOURCE_AVAILABLE_BY_REQUEST, not filed.",
+      "what_research": "Federal-office geography and ACC/IAPD/BrokerCheck verification paths.",
+      "next_step": "Open InvestorTrustHub /arizona, then IAPD or BrokerCheck.",
+      "coverage_summary": "SEC/IARD Arizona principal-office overlay. Not a state-RIA roster."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "coverage_type": "STATE_RESEARCH_PATH",
+      "publication_status": "research_path",
+      "canonical_state_url": "https://www.insurancetrusthub.com",
+      "official_verify_url": "https://difi.az.gov/license-search",
+      "sbs_url": "https://www.statebasedsystems.com/",
+      "snapshot_version": null,
+      "fingerprint": null,
+      "source_clock": "ATH-AZ-001 2026-09-04",
+      "primary_regulator": "Arizona Department of Insurance and Financial Institutions",
+      "primary_identity": "NPN / NAIC when returned by lookup",
+      "strongest_datasets": "Official Lookup is free. Generate a Report is paid CSV at $0.03/row, $30 minimum — not purchased.",
+      "coverage_limitation": "No free Arizona agency denominator. Paid ≠ unavailable. Search-only ≠ zero. Producer ≠ agency ≠ insurer.",
+      "what_research": "How to verify a named Arizona producer, agency, or insurer on DIFI/SBS. No bulk agency count.",
+      "next_step": "Verify on DIFI/SBS Lookup. Open Insurance Trust Hub for national graph research.",
+      "coverage_summary": "Official verification path only. No fake Arizona agency count."
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "coverage_type": "NO_STATE_LICENSING_UNIVERSE",
+      "publication_status": "research_path",
+      "canonical_state_url": "https://www.movetrusthub.com",
+      "official_verify_url": "https://www.fmcsa.dot.gov/",
+      "ag_url": "https://www.azag.gov/press-release/attorney-general-mayes-and-bbb-warn-moving-scams-arizona-0",
+      "snapshot_version": null,
+      "fingerprint": null,
+      "source_clock": "AG Mayes / BBB 2025-07-07; ATH-AZ-001 2026-09-04",
+      "primary_regulator": "No Arizona HHG mover license. Interstate: FMCSA. Hostage-load: A.R.S. §§ 44-1611–44-1616 / DPS.",
+      "primary_identity": "USDOT for interstate; none for an Arizona mover license",
+      "strongest_datasets": "Official no-license statement. National MoveTrustHub federal directory. FMCSA census is all motor carriers, not movers.",
+      "coverage_limitation": "ACC eCorp ≠ mover license. ROC R-22 ≠ household goods. USDOT ≠ interstate authority by itself.",
+      "what_research": "That Arizona does not license HHG movers, plus interstate FMCSA verification and hostage-load consumer protection.",
+      "next_step": "For interstate moves, Verify DOT on Move Trust Hub / FMCSA. For in-state, there is no state mover license to check.",
+      "coverage_summary": "No statewide HHG mover roster exists. That is the official rule, not a failed scrape."
+    }
+  ],
+  "findings": [
+    {
+      "id": "contractor-entity-growth",
+      "title": "ROC is Arizona’s primary state-level company identity universe",
+      "text": "The official All Current Contractors posting-list header on 2026-09-02 reports 57,886 licenses. That is the current-posting universe, not 57,886 unique companies and not a recommendation."
+    },
+    {
+      "id": "senior-state-identities",
+      "title": "Senior added 2,776 state-native facility identities without minting thousands of new organizations",
+      "text": "Accepted AZ-SEN-001 ledger: 0 net-new canonical organizations, 2,776 state identities, 544 existing organizations enriched, 2,779 new evidence rows. Assisted Living Home is not Assisted Living Center is not a nursing home."
+    },
+    {
+      "id": "lender-hmda",
+      "title": "HMDA covers all 15 Arizona counties with 308,338 2025 applications",
+      "text": "Specialist-owned: 183,374 originations and 49,721 denials (16.13%). HMDA is not a lender license census. Live DIFI/NMLS company roster remains search-only."
+    },
+    {
+      "id": "investor-office",
+      "title": "213 SEC/IARD firms report an Arizona principal office",
+      "text": "That is 1.18% of 17,997 roster firms with resolved geography. It is not the Arizona state-licensed adviser universe. ACC lists remain request-gated and were not filed."
+    },
+    {
+      "id": "insurance-paid",
+      "title": "Arizona insurance business-entity bulk is paid through SBS",
+      "text": "Lookup is free. Generate a Report is $0.03 per row with a $30 minimum. This network does not publish a fake free Arizona agency denominator. Complete count is UNKNOWN."
+    },
+    {
+      "id": "move-no-license",
+      "title": "Arizona does not license household-goods movers",
+      "text": "Attorney General Mayes (2025-07-07): Arizona has no registration law or professional licensing requirement for movers. There is no state mover roster to acquire."
+    }
+  ],
+  "expansion_ledger": {
+    "status": "PARTIALLY_AUDITED",
+    "do_not_sum_incompatible_grains": true,
+    "per_hub": {
+      "contractor": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 0,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+        "NEW_EVIDENCE_ROWS": 0,
+        "note": "ROC already in live graph (az_roc 58,408 in committed contractor metrics). 57,886 current-posting header is not net-new companies."
+      },
+      "senior": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 2776,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+        "NEW_EVIDENCE_ROWS": 2779
+      },
+      "lender": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 0,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+        "NEW_EVIDENCE_ROWS": 10367,
+        "note": "HMDA was already in-repo. CFPB overlay and program families are evidence, not organizations."
+      },
+      "investor": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 0,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+        "NEW_EVIDENCE_ROWS": 205,
+        "note": "213 overlay firms already existed federally. 205 ACC index rows profiled, not attached."
+      },
+      "insurance": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 0,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+        "NEW_EVIDENCE_ROWS": 0
+      },
+      "move": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 0,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+        "NEW_EVIDENCE_ROWS": 0
+      }
+    },
+    "NET_NEW_CANONICAL_ORGANIZATIONS": {
+      "status": "AUDITED",
+      "value": 0,
+      "explanation": "Compatible grain across accepted specialist ledgers. Zero net-new canonical organizations."
+    },
+    "NET_NEW_STATE_IDENTITIES": {
+      "status": "AUDITED",
+      "value": 2776,
+      "explanation": "Senior AZ-SEN-001 is the only accepted net-new state-identity ledger. Contractor ROC identities were already in graph. Lender/Investor/Insurance/Move added none."
+    },
+    "EXISTING_ORGANIZATIONS_ENRICHED": {
+      "status": "AUDITED",
+      "value": 544,
+      "explanation": "Senior AZ-SEN-001 only. Other hubs reported 0."
+    },
+    "NEW_EVIDENCE_ROWS": {
+      "status": "PARTIALLY_AUDITED",
+      "value": null,
+      "do_not_sum": true,
+      "families": [
+        "Senior 2,779 state/CMS evidence rows",
+        "Lender CFPB/program overlay 10,367 (not organizations; HMDA was already present)",
+        "Investor ACC HTML index 205 (not attached to firms)"
+      ]
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "AUDITED",
+      "value": 5,
+      "explanation": "Ask /arizona plus live specialist /arizona on Contractor, Senior, Lender, and Investor. Insurance and Move have no dedicated Arizona specialist page."
+    }
+  },
+  "hmda_clock": {
+    "canonical_owner": "LenderTrustHub AZ-LEND-001",
+    "applications": 308338,
+    "originations": 183374,
+    "denials": 49721,
+    "denial_rate_pct": 16.13,
+    "counties": 15,
+    "supersedes_ask_fallback": {
+      "applications": 307379,
+      "originations": 183374,
+      "denials": 49376
+    }
+  },
+  "arizona_local_phase": "NO",
+  "geographic_expansion": "PAUSED"
+}

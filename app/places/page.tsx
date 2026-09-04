@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata = createPageMetadata({
   title: 'Place Lens — Explore a place across the TrustHub Network',
   description:
-    'Florida Place Lens plus New Jersey, California, Texas, and Washington network gateways to specialist research. Capability is not a county grade.',
+    'Florida Place Lens plus New Jersey, California, Texas, Washington, and Arizona network gateways to specialist research. Capability is not a county grade.',
   path: '/places',
 });
 
@@ -19,7 +19,7 @@ export default function PlacesIndexPage() {
       <PageHeader
         label="Place Lens"
         title="Explore a place across the TrustHub Network"
-        description="Start with Florida Place Lens, enhanced counties where published, or the New Jersey, California, Texas, and Washington network gateways. Capability is not a market score."
+        description="Start with Florida Place Lens, enhanced counties where published, or the New Jersey, California, Texas, Washington, and Arizona network gateways. Capability is not a market score."
       />
       <div className="container-page py-10 sm:py-14">
         <ul className="grid gap-4 sm:grid-cols-3">
@@ -40,6 +40,8 @@ export default function PlacesIndexPage() {
                       ? 'Open Texas network research'
                       : item.href === '/washington'
                         ? 'Open Washington network research'
+                        : item.href === '/arizona'
+                          ? 'Open Arizona network research'
                         : 'Open Place Lens'}
               </Link>
             </li>
