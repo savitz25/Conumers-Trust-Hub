@@ -1,0 +1,28 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-acc-list-request",
+  "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+  "request_filed": false,
+  "statute": "A.R.S. § 39-121.03",
+  "form_url": "https://www.azcc.gov/docs/default-source/securities-files/pubreq2.pdf",
+  "format": "CSV",
+  "firm_lists_available": [
+    "Securities Dealer Firms registered in AZ (name, CRD#, address, contact name and phone number)",
+    "Investment Adviser Firms licensed in AZ (name, CRD#, address)",
+    "Investment Adviser Firms notice filed in AZ (name, CRD#, address)"
+  ],
+  "individual_lists_available_people_suppressed": [
+    "General Securities Representatives (S7) registered and working in AZ",
+    "Investment Company/Variable Contracts Reps (S6) registered and working in AZ",
+    "Investment Adviser Representatives licensed in AZ"
+  ],
+  "commercial_purpose_requires_notary": true,
+  "az_principal_office_is_not_state_registration": true,
+  "existing_iard_az_principal_office_n": 213,
+  "existing_iard_source": "investor-wa-inv-001/docs/inv-home-001-census.json (READ-ONLY)",
+  "state_ria_bulk_count": "UNKNOWN",
+  "dealer_bulk_count": "UNKNOWN",
+  "notice_filed_ia_count": "UNKNOWN",
+  "note": "Do not scrape BrokerCheck or IAPD. Do not file the list request this ticket. 213 is Arizona principal-office overlay, not Arizona state IA registration.",
+  "rows": []
+}

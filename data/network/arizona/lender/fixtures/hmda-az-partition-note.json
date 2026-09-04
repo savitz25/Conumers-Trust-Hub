@@ -1,0 +1,42 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-hmda-cfpb-overlay",
+  "access_class": "EXISTING_CANONICAL_PARTITION",
+  "new_federal_ingest": false,
+  "hmda_is_not_license_roster": true,
+  "year": 2025,
+  "ask_fallback": {
+    "file": "data/network-metrics/lender-v1-fallback.json",
+    "applications": 307379,
+    "originations": 183374,
+    "denials": 49376
+  },
+  "lender_hub_slice": {
+    "files": [
+      "Lender-Trust-Hub data/hmda/arizona/",
+      "Lender-Trust-Hub data/hmda/by-state/AZ/"
+    ],
+    "counties": 15,
+    "applications": 308338,
+    "originations": 183374,
+    "denials": 49721,
+    "lei_state_rows": 953,
+    "lei_candidates": 953,
+    "high_confidence_lei_maps": 123,
+    "lender_county_rows": 4179,
+    "purchase_applications": 133513,
+    "refinance_applications": 105498,
+    "purpose_other_applications": 69327,
+    "apps_conventional": 224912,
+    "apps_fha": 52160,
+    "apps_va": 30364,
+    "apps_usda_other": 902,
+    "orig_conventional": 132955,
+    "orig_fha": 31760,
+    "orig_va": 18040,
+    "orig_usda_other": 619
+  },
+  "county_coverage": "15 of 15 Arizona counties in the existing slice",
+  "note": "Do not run a new federal ingest. Do not convert HMDA rows, LEIs, or applications into net-new organizations. Ask fallback and Lender slice originations match (183,374); application/denial clocks differ and are not reconciled this ticket.",
+  "rows": []
+}
