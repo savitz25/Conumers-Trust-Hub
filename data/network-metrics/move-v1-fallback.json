@@ -1,0 +1,545 @@
+{
+  "schemaVersion": "move-network-metrics-v1",
+  "generatedAt": "2026-09-03T23:05:20.037Z",
+  "newestDocumentedSourceAsOf": "2026-09-03",
+  "newestDocumentedSourceAsOfNote": "Newest documented official source-effective date among metrics that carry a sourceAsOf. Not the as-of date of every federal profile, not Git time, and not deploy time.",
+  "sourceFingerprint": "0b88bf6a0e0a906505c9148fe6d9e2c88ae568e024b852929a2660ed8b867a11",
+  "federalDirectory": {
+    "publishableProfiles": 5022,
+    "indexableProfiles": 4905,
+    "authorityActive": 4715,
+    "authorityNotCurrent": 13,
+    "authorityUnknown": 294,
+    "carriers": 4227,
+    "brokers": 278,
+    "dual": 94,
+    "unknownEntityClass": 423,
+    "withMcNumber": 4383,
+    "cohortRule": "companies.publication_state = PUBLISHABLE (consumer-visible research directory, not the FMCSA census)",
+    "indexableRule": "PUBLISHABLE and companies.indexable = true"
+  },
+  "florida": {
+    "imRegistrations": 1314,
+    "imActive": 1099,
+    "mbActive": 26,
+    "imVerifiedLinks": 941,
+    "hqPublishable": 483,
+    "contactObservations": 3875
+  },
+  "newJersey": {
+    "rosterCoverage": "SOURCE_AVAILABLE_BY_REQUEST",
+    "statewideMoverUniverse": null,
+    "osmNovsAcquired": 34,
+    "hqPublishable": 269
+  },
+  "california": {
+    "calTRosterCoverage": "OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+    "licensedMoverUniverse": null,
+    "citationRows19237": 132,
+    "unlicensedCitationRows": 120,
+    "exactCalTCitationRows": 12,
+    "hqPublishable": 403,
+    "tariffEffective": "2026-01-01"
+  },
+  "network": {
+    "publishedStateIntelligencePages": 3,
+    "publishedStateIntelligencePaths": [
+      "/florida",
+      "/new-jersey",
+      "/california"
+    ],
+    "floridaResearchCountyLandings": 4,
+    "localMoverStateLandings": 51
+  },
+  "homeProjection": {
+    "publishableProfiles": 5022,
+    "entityClasses": [
+      {
+        "class": "Carrier",
+        "count": 4227
+      },
+      {
+        "class": "Broker",
+        "count": 278
+      },
+      {
+        "class": "Carrier/Broker",
+        "count": 94
+      },
+      {
+        "class": "Unknown",
+        "count": 423
+      }
+    ],
+    "authority": {
+      "active": 4715,
+      "notCurrent": 13,
+      "unknown": 294,
+      "total": 5022
+    },
+    "fmcsaClock": {
+      "latestObservedRefresh": "2026-08-23T05:02:52.712+00:00",
+      "oldestObservedRefresh": "2026-08-20T13:52:59.596+00:00",
+      "withRefreshDate": 4640,
+      "withoutRefreshDate": 382,
+      "total": 5022,
+      "buckets": [
+        {
+          "id": "0-30",
+          "label": "0–30 days since last recorded refresh",
+          "count": 4640
+        },
+        {
+          "id": "31-60",
+          "label": "31–60 days",
+          "count": 0
+        },
+        {
+          "id": "61-90",
+          "label": "61–90 days",
+          "count": 0
+        },
+        {
+          "id": "91-365",
+          "label": "91–365 days",
+          "count": 0
+        },
+        {
+          "id": ">365",
+          "label": "More than 365 days",
+          "count": 0
+        },
+        {
+          "id": "unknown",
+          "label": "No refresh date recorded",
+          "count": 382
+        }
+      ]
+    }
+  },
+  "metrics": [
+    {
+      "unit": "count",
+      "key": "federal_publishable_directory_profiles",
+      "label": "Publishable interstate research directory profiles",
+      "value": 5022,
+      "valueState": "KNOWN",
+      "grain": "directory_profile",
+      "denominator": "companies.publication_state = PUBLISHABLE",
+      "description": "Consumer-visible MoveTrustHub directory profiles keyed from FMCSA-derived identities. Not a U.S. mover census.",
+      "coverage": "National research directory",
+      "contributingSourceSystems": [
+        "companies",
+        "fmcsa"
+      ],
+      "sourceAsOf": "2026-08-23",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "One publishable companies row in the current directory cohort.",
+        "doesNotCount": "Not FDACS IM registrations, not NJ PM/PW/PC licenses, not CAL-T permits, not citations, not headquarters service territory.",
+        "contributingSourceSystems": [
+          "companies",
+          "fmcsa"
+        ],
+        "geographicCoverage": "National directory; HQ location is not service territory",
+        "sourceDates": "Latest observed fmcsa_last_checked 2026-08-23; not the as-of date for every profile.",
+        "generationDate": "2026-09-03",
+        "currentActiveRule": "This metric is all PUBLISHABLE rows, not only authority_active=true."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "federal_indexable_directory_profiles",
+      "label": "Indexable directory profiles",
+      "value": 4905,
+      "valueState": "KNOWN",
+      "grain": "indexable_directory_profile",
+      "denominator": "PUBLISHABLE companies with indexable=true (SEO/publication cohort)",
+      "description": "The actual indexable publication cohort. Not the regulatory universe and not every publishable profile.",
+      "coverage": "National research directory",
+      "contributingSourceSystems": [
+        "companies"
+      ],
+      "sourceAsOf": "2026-08-23",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Publishable directory rows currently marked indexable.",
+        "doesNotCount": "Not FMCSA census. Not state authority. A non-indexable publishable row is still a research profile.",
+        "contributingSourceSystems": [
+          "companies"
+        ],
+        "geographicCoverage": "National directory",
+        "sourceDates": "Latest observed fmcsa_last_checked 2026-08-23",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "federal_directory_authority_active",
+      "label": "Directory profiles with current/active authority flag",
+      "value": 4715,
+      "valueState": "KNOWN",
+      "grain": "directory_profile_authority_active",
+      "denominator": "PUBLISHABLE companies with authority_active=true",
+      "description": "Subset of the publishable directory whose stored FMCSA-derived authority_active flag is true.",
+      "coverage": "National research directory",
+      "contributingSourceSystems": [
+        "companies",
+        "fmcsa"
+      ],
+      "sourceAsOf": "2026-08-23",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Publishable rows with authority_active true.",
+        "doesNotCount": "Not state intrastate authority. Null authority is unknown, not inactive. Active is not an endorsement.",
+        "contributingSourceSystems": [
+          "companies",
+          "fmcsa"
+        ],
+        "geographicCoverage": "National directory",
+        "sourceDates": "Latest observed fmcsa_last_checked 2026-08-23",
+        "generationDate": "2026-09-03",
+        "currentActiveRule": "authority_active = true on the directory row"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "federal_mc_identities_in_directory",
+      "label": "Publishable profiles with an MC number",
+      "value": 4383,
+      "valueState": "KNOWN",
+      "grain": "federal_mc_identity",
+      "denominator": "PUBLISHABLE companies with mc_number present",
+      "description": "MC docket presence in the directory. Not USDOT count and not state authority.",
+      "coverage": "National research directory",
+      "contributingSourceSystems": [
+        "companies",
+        "fmcsa"
+      ],
+      "sourceAsOf": "2026-08-23",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Publishable rows that store an MC number.",
+        "doesNotCount": "Not CAL-T. Not a complete FMCSA MC census.",
+        "contributingSourceSystems": [
+          "companies"
+        ],
+        "geographicCoverage": "National directory",
+        "sourceDates": "Latest observed fmcsa_last_checked 2026-08-23",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_fdacs_im_registrations",
+      "label": "Florida FDACS intrastate mover registrations",
+      "value": 1314,
+      "valueState": "KNOWN",
+      "grain": "fdacs_intrastate_mover_registration",
+      "denominator": "provider_state_authority state_code=FL authority_type=intrastate_mover_registration",
+      "description": "All stored FDACS Intrastate Mover registration rows. Not FMCSA interstate records.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "provider_state_authority",
+        "fdacs"
+      ],
+      "sourceAsOf": "2026-08-21",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "FDACS IM registration rows currently stored.",
+        "doesNotCount": "Not Florida-HQ federal profiles. Not moving-broker registrations. Not a U.S. mover total.",
+        "contributingSourceSystems": [
+          "fdacs",
+          "provider_state_authority"
+        ],
+        "geographicCoverage": "Florida state registration. Headquarters is not service territory.",
+        "sourceDates": "retrieved_at 2026-08-21",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_fdacs_im_active_registrations",
+      "label": "Active Florida FDACS IM registrations",
+      "value": 1099,
+      "valueState": "KNOWN",
+      "grain": "fdacs_intrastate_mover_registration_active",
+      "denominator": "FDACS IM rows with status=active",
+      "description": "Active Florida intrastate mover registrations. A federal carrier with Florida HQ is not automatically this population.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "provider_state_authority",
+        "fdacs"
+      ],
+      "sourceAsOf": "2026-08-21",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "FDACS IM rows with status=active.",
+        "doesNotCount": "Not FMCSA. Not brokers. Not publishable directory profiles.",
+        "contributingSourceSystems": [
+          "fdacs",
+          "provider_state_authority"
+        ],
+        "geographicCoverage": "Florida",
+        "sourceDates": "retrieved_at 2026-08-21",
+        "generationDate": "2026-09-03",
+        "currentActiveRule": "status = 'active'"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_fdacs_mb_active_registrations",
+      "label": "Active Florida moving-broker registrations",
+      "value": 26,
+      "valueState": "KNOWN",
+      "grain": "fdacs_moving_broker_registration_active",
+      "denominator": "provider_state_authority FL authority_type=intrastate_hhg_broker status=active",
+      "description": "FDACS Moving Broker registrations currently stored as active.",
+      "coverage": "Florida",
+      "contributingSourceSystems": [
+        "provider_state_authority",
+        "fdacs"
+      ],
+      "sourceAsOf": "2026-08-21",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Active FDACS MB registration rows.",
+        "doesNotCount": "Not IM movers. Not FMCSA brokers.",
+        "contributingSourceSystems": [
+          "fdacs",
+          "provider_state_authority"
+        ],
+        "geographicCoverage": "Florida",
+        "sourceDates": "retrieved_at 2026-08-21",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "florida_hq_publishable_profiles",
+      "label": "Publishable federal profiles with Florida headquarters",
+      "value": 483,
+      "valueState": "KNOWN",
+      "grain": "florida_hq_publishable_profile",
+      "denominator": "PUBLISHABLE companies whose headquarters string matches Florida",
+      "description": "Federal directory profiles with a Florida HQ/business address. Not FDACS authority and not service territory.",
+      "coverage": "Florida headquarters in the federal directory",
+      "contributingSourceSystems": [
+        "companies",
+        "fmcsa"
+      ],
+      "sourceAsOf": "2026-08-23",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Publishable companies with a Florida headquarters string.",
+        "doesNotCount": "Not FDACS IM. Headquarters is not proof of Florida operating authority.",
+        "contributingSourceSystems": [
+          "companies",
+          "fmcsa"
+        ],
+        "geographicCoverage": "Florida HQ / business address as stored",
+        "sourceDates": "Latest observed fmcsa_last_checked 2026-08-23",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_pmw_authority_roster",
+      "label": "New Jersey PM/PW/PC statewide mover universe",
+      "value": null,
+      "valueState": "REQUEST_ONLY",
+      "grain": "nj_pmw_authority_roster",
+      "denominator": "NJ DCA Public Movers and Warehousemen roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "description": "The complete NJ PM/PW/PC roster was not bulk-acquired. Statewide mover count is UNKNOWN, not zero.",
+      "coverage": "New Jersey",
+      "contributingSourceSystems": [
+        "nj_dca_pmw"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the statewide NJ mover universe.",
+        "doesNotCount": "Not Safe Move NOVs. Not federal NJ-HQ profiles. PW-only is not mover authority.",
+        "contributingSourceSystems": [
+          "nj_dca_pmw"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "NJ-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03",
+        "whyUnknown": "The authoritative PM/PW/PC roster remains request-only / open-search. UNKNOWN must never render as zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "nj_operation_safe_move_novs_acquired",
+      "label": "New Jersey Operation Safe Move notices of violation (acquired tables)",
+      "value": 34,
+      "valueState": "PARTIAL",
+      "grain": "nj_operation_safe_move_nov",
+      "denominator": "Acquired official OSM respondent tables (2025=11 + 2024=23). Highlight-only years are excluded.",
+      "description": "Acquired NOV rows. A Notice of Violation is not a final order. Not a statewide mover count.",
+      "coverage": "New Jersey — acquired OSM years only",
+      "contributingSourceSystems": [
+        "nj_oag_operation_safe_move"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC_PARTIAL",
+      "trace": {
+        "counts": "Structured NOV respondent rows from acquired 2025 and 2024 official releases.",
+        "doesNotCount": "Not final orders. Not 2023 highlight-only counts. Not licensed mover population.",
+        "contributingSourceSystems": [
+          "nj_oag_operation_safe_move"
+        ],
+        "geographicCoverage": "New Jersey",
+        "sourceDates": "NJ-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_cal_t_household_mover_universe",
+      "label": "California CAL-T household-mover universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "ca_cal_t_household_mover_permit",
+      "denominator": "BHGS Household Mover (CAL-T) roster — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "description": "No bulk CAL-T roster was acquired. Complete licensed-mover count is UNKNOWN, not zero.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "bhgs"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the complete CAL-T universe.",
+        "doesNotCount": "Not BHGS citation rows. Not federal CA-HQ profiles. CAL-T is not USDOT.",
+        "contributingSourceSystems": [
+          "bhgs"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CA-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03",
+        "whyUnknown": "Public verification is search-only at search.dca.ca.gov/hhm_search. Citation rows are enforcement observations, not the licensed universe."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_bhgs_19237_citation_rows",
+      "label": "California BHGS household-mover citation rows (BPC 19237)",
+      "value": 132,
+      "valueState": "KNOWN",
+      "grain": "bhgs_bpc_19237_citation_row",
+      "denominator": "Official BHGS citations table rows whose violation section contains 19237",
+      "description": "Enforcement observations. Not California movers. A citation is not a revocation. A listed fine is not confirmed paid.",
+      "coverage": "California BHGS citations table, filtered to 19237",
+      "contributingSourceSystems": [
+        "bhgs_citations"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Official HTML citation rows matching violation section 19237.",
+        "doesNotCount": "Not the CAL-T roster. Not unlicensed=mover. Name-only rows are not profile identities.",
+        "contributingSourceSystems": [
+          "bhgs_citations"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CA-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_bhgs_19237_unlicensed_rows",
+      "label": "California BHGS 19237 rows marked UNLICENSED",
+      "value": 120,
+      "valueState": "KNOWN",
+      "grain": "bhgs_bpc_19237_unlicensed_row",
+      "denominator": "19237 citation rows marked UNLICENSED",
+      "description": "Unlicensed citation observations. Not attached to MoveTrustHub profiles. Not a mover count.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "bhgs_citations"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "19237 citation rows marked UNLICENSED.",
+        "doesNotCount": "Not CAL-T permits. Name-only is UNSAFE for profile attachment.",
+        "contributingSourceSystems": [
+          "bhgs_citations"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CA-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ca_bhgs_19237_exact_cal_t_rows",
+      "label": "California BHGS 19237 rows with an exact CAL-T/T identifier",
+      "value": 12,
+      "valueState": "KNOWN",
+      "grain": "bhgs_bpc_19237_exact_cal_t_row",
+      "denominator": "19237 citation rows carrying a CAL-T/T number",
+      "description": "Citation rows with an exact CAL-T identifier. CAL-T is not USDOT. Citation is not revocation.",
+      "coverage": "California",
+      "contributingSourceSystems": [
+        "bhgs_citations"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "19237 citation rows with an exact CAL-T/T identifier.",
+        "doesNotCount": "Not the licensed-mover universe. Fine amount is not confirmed paid.",
+        "contributingSourceSystems": [
+          "bhgs_citations"
+        ],
+        "geographicCoverage": "California",
+        "sourceDates": "CA-MOVE snapshot as_of 2026-09-03",
+        "generationDate": "2026-09-03"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "published_state_intelligence_pages",
+      "label": "Published state moving-intelligence pages",
+      "value": 3,
+      "valueState": "KNOWN",
+      "grain": "published_state_intelligence_page",
+      "denominator": "Indexable specialist state intelligence routes currently published",
+      "description": "Florida, New Jersey, and California state intelligence pages. Not a count of movers.",
+      "coverage": "/florida, /new-jersey, /california",
+      "contributingSourceSystems": [
+        "move-state-intel"
+      ],
+      "sourceAsOf": "2026-09-03",
+      "generatedAt": "2026-09-03T23:05:20.037Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Published /florida, /new-jersey, and /california intelligence routes.",
+        "doesNotCount": "Not local-mover landings and not federal directory rows.",
+        "contributingSourceSystems": [
+          "move-state-intel"
+        ],
+        "geographicCoverage": "/florida, /new-jersey, /california",
+        "sourceDates": "Publication gates in specialist catalogs",
+        "generationDate": "2026-09-03"
+      }
+    }
+  ]
+}

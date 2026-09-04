@@ -4,9 +4,9 @@
   "network_contract_fingerprint":"834dadcfa800e84914cb0e328f21234f42d7a7314c29d497f801dab2e8d202e1",
   "presentation_version":"network-intelligence-homepage-v1",
   "displayed_metric_ids":{
-    "move":["move_public_profiles","move_authority_recorded"],
-    "lender":["lender_institutions","hmda_applications_2025"],
-    "insurance":["insurance_agencies","insurance_legal_insurers"],
+    "move":[],
+    "lender":[],
+    "insurance":[],
     "senior":[],
     "contractor":[],
     "investor":["investor_iard_roster","investor_ria_firms","investor_era_firms"]
@@ -24,7 +24,7 @@
   "limitations_version":"network-limitations-v1",
   "what_changed_mode":"initial_baseline",
   "runtime_data_strategy":"specialist_upstream_revalidate_3600_with_fallback",
-  "specialist_owned_hubs":["contractor","senior"],
+  "specialist_owned_hubs":["move","lender","insurance","contractor","senior"],
   "client_components":["accepted_federated_search_input","accepted_concierge_entry"],
   "forbidden_features":["cross_hub_entity_total","universal_trust_score","paid_ordering","aggregate_rating","live_six_hub_fanout"]
 }

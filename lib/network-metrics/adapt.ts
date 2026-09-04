@@ -92,7 +92,7 @@ function toNetworkMetric(
     value: metric.value,
     valueState: 'ok',
     grain: metric.grain,
-    sourceAsOf: typeof metric.sourceAsOf === 'string' ? metric.sourceAsOf : null,
+    sourceAsOf: typeof metric.sourceAsOf === 'string' && metric.sourceAsOf.trim() ? metric.sourceAsOf : null,
     generatedAt: metric.generatedAt,
     description: metric.description,
     coverage: metric.coverage ?? null,
@@ -212,6 +212,146 @@ export function adaptSeniorCard(
       'Nursing Home, Home Health, and Hospice remain separate CMS directories and are not one senior-provider total.',
       'Evidence families keep source-native grains. They are not added into one evidence headline.',
       'Known CCNs and evidence-only hospice identities are not current providers.',
+    ],
+  };
+}
+
+export function adaptMoveCard(
+  raw: Record<string, unknown>,
+  origin: MetricOrigin,
+): SpecialistHubPresentation {
+  const map = byKey(raw);
+  const fingerprint = String(raw.sourceFingerprint);
+  const schema = String(raw.schemaVersion);
+  const metric = (key: string, label?: string) => toNetworkMetric('move', schema, fingerprint, pick(map, key), label);
+  return {
+    hub: 'move',
+    name: 'MoveTrustHub',
+    eyebrow: 'Moving',
+    href: 'https://www.movetrusthub.com',
+    action: 'Research movers',
+    origin,
+    schemaVersion: schema,
+    fingerprint,
+    generatedAt: String(raw.generatedAt),
+    newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
+    newestSourceAsOfNote:
+      typeof raw.newestDocumentedSourceAsOfNote === 'string'
+        ? raw.newestDocumentedSourceAsOfNote
+        : 'Newest documented official source-effective date among metrics that carry a sourceAsOf. Not the as-of date of every federal profile.',
+    universes: [],
+    primary: [
+      metric('federal_publishable_directory_profiles', CONSUMER_METRIC_LABELS.federal_publishable_directory_profiles),
+      metric('federal_directory_authority_active', CONSUMER_METRIC_LABELS.federal_directory_authority_active),
+      metric(
+        'florida_fdacs_im_active_registrations',
+        CONSUMER_METRIC_LABELS.florida_fdacs_im_active_registrations,
+      ),
+    ],
+    secondary: [
+      metric('nj_operation_safe_move_novs_acquired', 'NJ Safe Move NOV rows'),
+      metric('ca_bhgs_19237_citation_rows', 'California household-mover citation rows'),
+    ],
+    caveats: [
+      'Federal directory profiles and Florida FDACS registrations are different universes and are not one mover total.',
+      'Headquarters is not service territory. Current authority is not a recommendation.',
+      'New Jersey PM/PW/PC statewide mover universe is REQUEST_ONLY and is not shown as zero.',
+      'California CAL-T household-mover universe is NOT_ACQUIRED and is not shown as zero.',
+      'NOV is not a final order. A citation row is not a mover identity.',
+    ],
+  };
+}
+
+export function adaptLenderCard(
+  raw: Record<string, unknown>,
+  origin: MetricOrigin,
+): SpecialistHubPresentation {
+  const map = byKey(raw);
+  const fingerprint = String(raw.sourceFingerprint);
+  const schema = String(raw.schemaVersion);
+  const metric = (key: string, label?: string) => toNetworkMetric('lender', schema, fingerprint, pick(map, key), label);
+  return {
+    hub: 'lender',
+    name: 'LenderTrustHub',
+    eyebrow: 'Lending',
+    href: 'https://www.lendertrusthub.com',
+    action: 'Research lenders',
+    origin,
+    schemaVersion: schema,
+    fingerprint,
+    generatedAt: String(raw.generatedAt),
+    newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
+    newestSourceAsOfNote:
+      typeof raw.newestDocumentedSourceAsOfNote === 'string'
+        ? raw.newestDocumentedSourceAsOfNote
+        : 'Newest documented official source-effective date among metrics that carry a calendar sourceAsOf. Not every identity row.',
+    universes: [],
+    primary: [
+      metric('lenders_lending_institutions', CONSUMER_METRIC_LABELS.lenders_lending_institutions),
+      metric('hmda_2025_county_applications', CONSUMER_METRIC_LABELS.hmda_2025_county_applications),
+      metric('hmda_2025_county_originations', CONSUMER_METRIC_LABELS.hmda_2025_county_originations),
+      metric('cfpb_mortgage_complaint_observations', CONSUMER_METRIC_LABELS.cfpb_mortgage_complaint_observations),
+    ],
+    secondary: [
+      metric('federal_enforcement_events', CONSUMER_METRIC_LABELS.federal_enforcement_events),
+      metric('nmls_institution_identifiers', CONSUMER_METRIC_LABELS.nmls_institution_identifiers),
+      metric('public_national_render_profiles', 'Public national profiles'),
+    ],
+    caveats: [
+      'Applications are not originations. A complaint observation is not a finding of wrongdoing.',
+      'MLO identities and branch entities are not lenders and are not shown as public lender counts.',
+      'NMLS institution identifiers are not additional institutions.',
+      'County-grain HMDA is not added to state-grain HMDA.',
+      'New Jersey RMLA and California CRMLA live rosters are not acquired and are not shown as zero.',
+    ],
+  };
+}
+
+export function adaptInsuranceCard(
+  raw: Record<string, unknown>,
+  origin: MetricOrigin,
+): SpecialistHubPresentation {
+  const map = byKey(raw);
+  const fingerprint = String(raw.sourceFingerprint);
+  const schema = String(raw.schemaVersion);
+  const metric = (key: string, label?: string) => toNetworkMetric('insurance', schema, fingerprint, pick(map, key), label);
+  return {
+    hub: 'insurance',
+    name: 'InsuranceTrustHub',
+    eyebrow: 'Insurance',
+    href: 'https://www.insurancetrusthub.com',
+    action: 'Research insurance',
+    origin,
+    schemaVersion: schema,
+    fingerprint,
+    generatedAt: String(raw.generatedAt),
+    newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
+    newestSourceAsOfNote:
+      typeof raw.newestDocumentedSourceAsOfNote === 'string'
+        ? raw.newestDocumentedSourceAsOfNote
+        : 'Newest documented official source-effective date among metrics that carry a sourceAsOf. Not a single network clock.',
+    universes: [],
+    primary: [
+      metric('insurance_agencies', CONSUMER_METRIC_LABELS.insurance_agencies),
+      metric('licensed_insurance_companies', CONSUMER_METRIC_LABELS.licensed_insurance_companies),
+      metric('insurance_producer_records', CONSUMER_METRIC_LABELS.insurance_producer_records),
+      metric(
+        'cms_marketplace_evidence_observations',
+        CONSUMER_METRIC_LABELS.cms_marketplace_evidence_observations,
+      ),
+    ],
+    secondary: [
+      metric('appointments', CONSUMER_METRIC_LABELS.appointments),
+      metric('consumer_complaint_observations', CONSUMER_METRIC_LABELS.consumer_complaint_observations),
+      metric('rate_filing_observations', CONSUMER_METRIC_LABELS.rate_filing_observations),
+      metric('market_conduct_examinations', CONSUMER_METRIC_LABELS.market_conduct_examinations),
+    ],
+    caveats: [
+      'Agency, producer, and licensed insurance company remain separate identities and are not one insurance-company total.',
+      'Appointments are not agencies or insurers. A complaint observation is not wrongdoing.',
+      'CMS Marketplace evidence observations are not plans, companies, or agencies.',
+      'Texas TDI agency license rows are not the national graph agency count.',
+      'Texas authorized companies and California admitted-insurer universe are NOT_ACQUIRED and are not shown as zero.',
     ],
   };
 }
