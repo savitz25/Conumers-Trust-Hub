@@ -1,0 +1,271 @@
+{
+  "ticket": "ATH-AZ-001",
+  "state": "AZ",
+  "scope": "STATE_LEVEL_ONLY",
+  "source_as_of": "2026-09-04",
+  "last_checked": "2026-09-04",
+  "publication": {
+    "public_arizona_routes": false,
+    "sitemap_changes": false,
+    "trust_score": false,
+    "paid_ranking": false,
+    "people_publication": false,
+    "county_work": false,
+    "city_work": false,
+    "specialist_repo_edits": false,
+    "specialist_page_edits": false,
+    "ask_arizona_release": "ATH-AZ-002_AFTER_SPECIALISTS"
+  },
+  "principles": [
+    "STATE_LEVEL_ONLY",
+    "missing_source_is_not_zero",
+    "SEARCH_ONLY_is_not_zero",
+    "paid_is_not_acquired",
+    "request_available_is_not_zero",
+    "HMDA_is_not_license_roster",
+    "AZ_PRINCIPAL_OFFICE_is_not_state_IA_registration",
+    "CRD_is_not_current_AZ_authority_by_itself",
+    "NMLS_is_not_live_roster_download",
+    "NPN_is_not_NAIC",
+    "producer_is_not_agency",
+    "producer_is_not_company",
+    "Marketplace_is_not_state_authority",
+    "annual_aggregate_is_not_roster",
+    "surplus_lines_white_list_is_not_agency_roster",
+    "USDOT_is_not_interstate_authority_by_itself",
+    "ACC_entity_ID_is_not_professional_license",
+    "ROC_R22_is_not_HHG_mover",
+    "complaint_is_not_violation",
+    "name_only_adverse_is_UNSAFE",
+    "DIFI_is_not_ACC_Securities",
+    "no_trust_score",
+    "no_paid_ranking",
+    "person_credential_is_not_business_profile",
+    "no_nmls_scrape",
+    "no_acc_entity_search_crawl",
+    "no_sbs_purchase_this_ticket",
+    "no_local_arizona"
+  ],
+  "current_network": {
+    "senior": {
+      "status": "LIVE",
+      "url": "https://www.seniortrusthub.com/arizona",
+      "expansion_ledger": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 2776,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+        "NEW_EVIDENCE_ROWS": 2779
+      },
+      "cms_ask_fallback": {
+        "nursingHomes": 140,
+        "homeHealth": 177,
+        "hospice": 237
+      }
+    },
+    "contractor": {
+      "status": "AZ-CON-001_IN_PROGRESS_BUILDER_3",
+      "ownership": "savitz25/contractor-trust-hub — READ-ONLY CONTEXT",
+      "roc_posting_list": "OPEN_BULK_DOWNLOAD on https://roc.az.gov/posting-list",
+      "profile_all_current_context": {
+        "file_created": "Aug 12, 2026",
+        "data_rows": 58131,
+        "distinct_license_numbers": 58131,
+        "note": "Not acquired by ATH-AZ-001. Do not duplicate ROC."
+      }
+    },
+    "ask_public_arizona": false,
+    "washington": "CLOSED_SIX_HUB",
+    "local_arizona": "OUT_OF_SCOPE"
+  },
+  "hub_classifications": {
+    "CONTRACTOR": "ENTITY_GROWTH_HEAVY",
+    "SENIOR": "MIXED_ENTITY_AND_INTELLIGENCE",
+    "MOVE": "SEARCH_PATH_ONLY",
+    "INSURANCE": "SEARCH_PATH_ONLY",
+    "LENDER": "INTELLIGENCE_GROWTH_HEAVY",
+    "INVESTOR": "MIXED_ENTITY_AND_INTELLIGENCE"
+  },
+  "sources": [
+    {
+      "source_id": "az-ag-mover-licensing-gap",
+      "hub_home": "MOVE",
+      "access_class": "OFFICIAL_STATUTE_AND_CONSUMER_PAGE",
+      "record_count": 0,
+      "count_notes": "Official AG: no mover registration/licensing law. Zero is the legal gap.",
+      "acquisition_status": "DOCUMENTED"
+    },
+    {
+      "source_id": "az-dps-hhg-enforcement",
+      "hub_home": "MOVE",
+      "access_class": "OFFICIAL_CONSUMER_PAGE",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "DOCUMENTED_NOT_A_ROSTER"
+    },
+    {
+      "source_id": "az-acc-entity-search-movers",
+      "hub_home": "MOVE",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-fmcsa-interstate-overlay",
+      "hub_home": "MOVE",
+      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "PLAN_EXISTING_NATIONAL_SPINE"
+    },
+    {
+      "source_id": "az-roc-r22-house-moving",
+      "hub_home": "CONTRACTOR",
+      "access_class": "CONTEXT_OWNED_BY_AZ_CON_001",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "CONTEXT_NOT_THIS_TICKET"
+    },
+    {
+      "source_id": "az-difi-sbs-lookup",
+      "hub_home": "INSURANCE",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-difi-sbs-report-generator",
+      "hub_home": "INSURANCE",
+      "access_class": "OPEN_REPORT_GENERATOR_PAID",
+      "record_count": "UNKNOWN",
+      "price_per_row_usd": 0.03,
+      "minimum_charge_usd": 30.0,
+      "acquisition_status": "NOT_PURCHASED"
+    },
+    {
+      "source_id": "az-difi-enforcement-actions",
+      "hub_home": "INSURANCE",
+      "also_hub": "LENDER",
+      "access_class": "OPEN_HTML_TABLE",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "DOCUMENTED_BOUNDED_HTML"
+    },
+    {
+      "source_id": "az-difi-surplus-lines-white-list",
+      "hub_home": "INSURANCE",
+      "access_class": "OPEN_PDF",
+      "record_count": "UNKNOWN",
+      "source_clock": "2025-09-17",
+      "acquisition_status": "DOCUMENTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "az-difi-domestic-surplus-lines",
+      "hub_home": "INSURANCE",
+      "access_class": "OPEN_PDF",
+      "record_count": "UNKNOWN",
+      "source_clock": "2025-06-16",
+      "acquisition_status": "DOCUMENTED_NOT_DUMPED"
+    },
+    {
+      "source_id": "az-difi-annual-report-aggregates",
+      "hub_home": "INSURANCE",
+      "access_class": "OFFICIAL_AGGREGATE_NOT_ROSTER",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "DOCUMENTED_AGGREGATE_ONLY"
+    },
+    {
+      "source_id": "az-difi-mortgage-nmls",
+      "hub_home": "LENDER",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-difi-thentia-portal",
+      "hub_home": "LENDER",
+      "access_class": "FREE_ACCOUNT_REQUIRED",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_LICENSEE_LOGIN"
+    },
+    {
+      "source_id": "az-nmls-consumer-access",
+      "hub_home": "LENDER",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-hmda-cfpb-overlay",
+      "hub_home": "LENDER",
+      "access_class": "EXISTING_CANONICAL_PARTITION",
+      "record_count": 308338,
+      "originations": 183374,
+      "denials": 49721,
+      "counties": 15,
+      "lei_state_rows": 953,
+      "high_confidence_lei_maps": 123,
+      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED"
+    },
+    {
+      "source_id": "az-difi-financial-enterprises",
+      "hub_home": "LENDER",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-acc-securities-division",
+      "hub_home": "INVESTOR",
+      "access_class": "OFFICIAL_REGULATOR_HOME",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "DOCUMENTED"
+    },
+    {
+      "source_id": "az-acc-broker-adviser-search",
+      "hub_home": "INVESTOR",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-acc-list-request",
+      "hub_home": "INVESTOR",
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "NOT_REQUESTED_THIS_TICKET"
+    },
+    {
+      "source_id": "az-acc-enforcement-actions",
+      "hub_home": "INVESTOR",
+      "access_class": "OPEN_HTML_TABLE",
+      "record_count": "UNKNOWN",
+      "acquisition_status": "DOCUMENTED_BOUNDED_HTML"
+    },
+    {
+      "source_id": "az-sec-iard-principal-office-overlay",
+      "hub_home": "INVESTOR",
+      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "record_count": 213,
+      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED"
+    },
+    {
+      "source_id": "az-acc-ecorp-entity-search",
+      "hub_home": "CROSS_HUB",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "record_count": "UNKNOWN",
+      "count_notes": "eCorp / Business Connect entity search. Potential cross-hub Arizona entity ID. No free bulk/API found. Do not crawl Entity Search.",
+      "acquisition_status": "BLOCKED_SEARCH_ONLY"
+    },
+    {
+      "source_id": "az-open-data-portal",
+      "hub_home": "CROSS_HUB",
+      "access_class": "SOURCE_NOT_ACQUIRED",
+      "record_count": "UNKNOWN",
+      "count_notes": "data.az.gov did not resolve from this environment (DNS). Not proven as a licensee roster host.",
+      "acquisition_status": "SOURCE_NOT_ACQUIRED"
+    },
+    {
+      "source_id": "az-local-and-city-skipped",
+      "hub_home": "NONE",
+      "access_class": "NOT_IN_SCOPE",
+      "record_count": 0,
+      "count_notes": "No Phoenix, Maricopa, Tucson, Pima, Mesa, Scottsdale, Tempe, Chandler, Glendale, or county/city permit work."
+    }
+  ]
+}

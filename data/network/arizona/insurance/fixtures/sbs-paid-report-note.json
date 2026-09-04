@@ -1,0 +1,22 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-difi-sbs-report-generator",
+  "access_class": "OPEN_REPORT_GENERATOR_PAID",
+  "producer_bulk": false,
+  "agency_bulk": false,
+  "purchased": false,
+  "price_per_row_usd": 0.03,
+  "minimum_charge_usd": 30.0,
+  "format": "CSV",
+  "price_source_url": "https://www.statebasedsystems.com/solar/support.html",
+  "difi_instructions_url": "https://difi.az.gov/license-search",
+  "lookup": "SEARCH_ONLY",
+  "npn_on_individual_rows": true,
+  "naic_on_company_rows": true,
+  "producer_is_not_agency": true,
+  "npn_is_not_naic": true,
+  "marketplace_is_not_state_authority": true,
+  "annual_aggregate_is_not_roster": true,
+  "note": "DIFI instructs the public to buy NAIC SBS Generate a Report for licensee lists. Do not purchase this ticket. Do not scrape Lookup. Entity Type Individual vs Entity must stay separate.",
+  "rows": []
+}

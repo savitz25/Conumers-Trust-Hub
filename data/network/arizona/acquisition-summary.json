@@ -1,0 +1,91 @@
+{
+  "ticket": "ATH-AZ-001",
+  "checked": "2026-09-04",
+  "acquired_this_ticket": [],
+  "profiled_existing_canonical": [
+    {
+      "source_id": "az-hmda-cfpb-overlay",
+      "method": "existing Lender-Trust-Hub Arizona slice + Ask lender-v1-fallback",
+      "applications_slice": 308338,
+      "originations": 183374,
+      "denials_slice": 49721,
+      "counties": 15,
+      "lei_state_rows": 953,
+      "high_confidence_lei_maps": 123,
+      "ask_fallback_applications": 307379,
+      "ask_fallback_denials": 49376,
+      "committed_raw": false,
+      "new_ingest": false
+    },
+    {
+      "source_id": "az-sec-iard-principal-office-overlay",
+      "method": "existing Investor census READ-ONLY",
+      "az_principal_office_n": 213,
+      "note": "Not Arizona state registration"
+    },
+    {
+      "source_id": "az-sen-001-ledger",
+      "method": "accepted Senior expansion ledger",
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 2776,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+      "NEW_EVIDENCE_ROWS": 2779
+    }
+  ],
+  "counted_not_dumped": [],
+  "documented_not_scraped": [
+    "DPS HHG enforcement page",
+    "AG no-mover-license line",
+    "DIFI SBS lookup",
+    "DIFI enforcement HTML",
+    "ACC Securities enforcement HTML",
+    "ACC Broker & Adviser Search",
+    "ACC eCorp Entity Search",
+    "NMLS Consumer Access",
+    "Thentia licensee portal"
+  ],
+  "not_acquired": [
+    "NAIC SBS Report Generator CSV (OPEN_REPORT_GENERATOR_PAID $0.03/row, $30 minimum — not purchased)",
+    "NMLS Consumer Access bulk (do not scrape)",
+    "DIFI Thentia export",
+    "DIFI mortgage company CSV (not found)",
+    "ACC Securities dealer/IA CSV (SOURCE_AVAILABLE_BY_REQUEST — not filed)",
+    "ACC eCorp bulk business file (not found; search-only)",
+    "data.az.gov licensee roster (portal did not resolve)",
+    "FMCSA HHG scrape",
+    "ACC Entity Search crawl",
+    "Phoenix / Maricopa / Tucson / Pima / Mesa / Scottsdale / Tempe / Chandler / Glendale permits"
+  ],
+  "stop_rule_applied": [
+    {
+      "source": "SBS Report Generator",
+      "decision": "STOP",
+      "reason": "paid"
+    },
+    {
+      "source": "NMLS Consumer Access",
+      "decision": "STOP",
+      "reason": "search-only; do not scrape NMLS"
+    },
+    {
+      "source": "Thentia portal",
+      "decision": "STOP",
+      "reason": "licensee login / session"
+    },
+    {
+      "source": "ACC Entity Search",
+      "decision": "STOP",
+      "reason": "search-only; do not crawl"
+    },
+    {
+      "source": "BrokerCheck / IAPD",
+      "decision": "STOP",
+      "reason": "search-only"
+    },
+    {
+      "source": "ACC list request",
+      "decision": "DOCUMENT_DO_NOT_FILE",
+      "reason": "public-records request with commercial-purpose notary; owner must authorize"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-ag-mover-licensing-gap",
+  "access_class": "OFFICIAL_STATUTE_AND_CONSUMER_PAGE",
+  "state_hhg_license_roster": false,
+  "state_hhg_registration_law": false,
+  "official_line": "Arizona has no registration law or professional licensing requirement for movers.",
+  "official_urls": [
+    "https://www.azag.gov/press-release/attorney-general-mayes-warns-consumers-possible-moving-scams-peak-moving-season",
+    "https://www.azdps.gov/content/basic-page/94/hhg"
+  ],
+  "in_state_verify_pointer": "Arizona Corporation Commission Entity Search — business registration, not a mover license",
+  "interstate_verify_pointer": "FMCSA Protect Your Move / USDOT",
+  "hostage_load_statute": "A.R.S. §§ 44-1611 to 44-1616",
+  "dps_hotlines": ["(602) 223-5000", "(602) 223-2212"],
+  "roc_r22": "ROC R-22 House Moving is a contractor classification for moving structures, not household-goods movers",
+  "scraped": false,
+  "rows": []
+}

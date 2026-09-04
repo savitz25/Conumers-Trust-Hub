@@ -1,0 +1,59 @@
+{
+  "ticket": "ATH-AZ-001",
+  "note": "Internal prioritization, not a consumer ranking. No Trust Score. No paid ranking. HIGH/MEDIUM/LOW only. Remaining hubs after Contractor/Senior.",
+  "checked": "2026-09-04",
+  "hubs": {
+    "LENDER": {
+      "classification": "INTELLIGENCE_GROWTH_HEAVY",
+      "NET_NEW_ENTITY_POTENTIAL": "LOW",
+      "EXACT_IDENTITY": "MEDIUM",
+      "CONTACT_VALUE": "LOW",
+      "REGULATORY_VALUE": "MEDIUM",
+      "ENFORCEMENT_VALUE": "MEDIUM",
+      "MARKET_VALUE": "HIGH",
+      "ACQUISITION_EASE": "HIGH",
+      "REFRESHABILITY": "HIGH",
+      "ENGINEERING_COST": "MEDIUM",
+      "why": "Canonical HMDA Arizona partition already exists (15 counties, 183,374 originations, 953 LEIs). WA-LEND analog is proven. Live company roster is NMLS/Thentia search-only. Market value is high; entity growth is not."
+    },
+    "INVESTOR": {
+      "classification": "MIXED_ENTITY_AND_INTELLIGENCE",
+      "NET_NEW_ENTITY_POTENTIAL": "MEDIUM",
+      "EXACT_IDENTITY": "HIGH",
+      "CONTACT_VALUE": "MEDIUM",
+      "REGULATORY_VALUE": "HIGH",
+      "ENFORCEMENT_VALUE": "HIGH",
+      "MARKET_VALUE": "MEDIUM",
+      "ACQUISITION_EASE": "LOW",
+      "REFRESHABILITY": "LOW",
+      "ENGINEERING_COST": "MEDIUM",
+      "why": "Only remaining hub with a real state-registration business CSV (dealers / IA licensed / IA notice-filed) via A.R.S. § 39-121.03. CRD on lists and many enforcement rows. Request-gated, commercial-purpose notary. 213 principal-office overlay is not the licensed roster."
+    },
+    "INSURANCE": {
+      "classification": "SEARCH_PATH_ONLY",
+      "NET_NEW_ENTITY_POTENTIAL": "MEDIUM",
+      "EXACT_IDENTITY": "HIGH",
+      "CONTACT_VALUE": "MEDIUM",
+      "REGULATORY_VALUE": "HIGH",
+      "ENFORCEMENT_VALUE": "MEDIUM",
+      "MARKET_VALUE": "MEDIUM",
+      "ACQUISITION_EASE": "LOW",
+      "REFRESHABILITY": "LOW",
+      "ENGINEERING_COST": "HIGH",
+      "why": "SBS Generate a Report can emit entity and individual CSVs with NPN/address/email, but it is paid ($0.03/row, $30 minimum) and was not purchased. Lookup is search-only. Enforcement HTML has NPN/NAIC. Surplus-lines PDFs are company eligibility, not agencies."
+    },
+    "MOVE": {
+      "classification": "SEARCH_PATH_ONLY",
+      "NET_NEW_ENTITY_POTENTIAL": "LOW",
+      "EXACT_IDENTITY": "LOW",
+      "CONTACT_VALUE": "LOW",
+      "REGULATORY_VALUE": "MEDIUM",
+      "ENFORCEMENT_VALUE": "LOW",
+      "MARKET_VALUE": "LOW",
+      "ACQUISITION_EASE": "HIGH",
+      "REFRESHABILITY": "LOW",
+      "ENGINEERING_COST": "LOW",
+      "why": "Official AG: no registration or professional licensing for movers. DPS enforces hostage-load law and points in-state verify to ACC Entity Search. No state identity grain to grow. FMCSA interstate overlay is the national spine, not net-new Arizona companies."
+    }
+  }
+}
