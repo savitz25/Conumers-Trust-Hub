@@ -1,0 +1,19 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-sec-iard-principal-office-overlay",
+  "last_checked": "2026-09-04",
+  "dataset": "IA_FIRM_SEC_Feed_08_27_2026",
+  "canonical_firms": 25777,
+  "ria_facts": 17018,
+  "era_facts": 6604,
+  "arizona_principal_office": 213,
+  "published_partitions": {
+    "CA": 2699,
+    "NJ": 438
+  },
+  "net_new_canonical_from_overlay": 0,
+  "az_principal_office_is_not_state_registration": true,
+  "acc_list_access": "SOURCE_AVAILABLE_BY_REQUEST",
+  "pra_filed": false,
+  "crd_is_not_current_az_authority": true
+}

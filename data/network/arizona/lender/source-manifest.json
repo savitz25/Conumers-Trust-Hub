@@ -4,105 +4,279 @@
   "state": "AZ",
   "source_as_of": "2026-09-04",
   "source_ids": [
-    "az-difi-mortgage-nmls",
-    "az-difi-thentia-portal",
+    "az-difi-mortgage-lending",
     "az-nmls-consumer-access",
-    "az-difi-enforcement-actions",
-    "az-hmda-cfpb-overlay",
-    "az-difi-financial-enterprises"
+    "az-difi-financial-enterprises",
+    "az-hmda-cfpb-overlay"
   ],
-  "classification": "INTELLIGENCE_GROWTH_HEAVY",
   "sources": [
     {
-      "source_id": "az-difi-mortgage-nmls",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-difi-mortgage-lending",
       "hub_home": "LENDER",
       "source_family": "license_verify",
-      "source_name": "DIFI mortgage lending — NMLS application path",
+      "source_name": "DIFI mortgage lending (NMLS)",
       "regulator": "Arizona Department of Insurance and Financial Institutions",
       "source_url": "https://difi.az.gov/licensing/mortgage-lending",
       "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
       "identity_field": "NMLS ID",
-      "grain": "mixed_person_and_business_credential",
+      "grain": "mixed_company_and_person_nmls",
       "record_count": "UNKNOWN",
-      "count_notes": "Mortgage Banker, Mortgage Broker, Commercial Mortgage Banker, Commercial Mortgage Broker, Registered Exempt Person, and Loan Originator apply through NMLS. No DIFI bulk mortgage-company CSV found. Do not invent a live company denominator. Loan Originator is a person grain — suppress. NMLS != live roster download.",
+      "count_notes": "DIFI mortgage classes via NMLS: Mortgage Banker, Mortgage Broker, Commercial Mortgage Banker, Commercial Mortgage Broker, Registered Exempt Person, Loan Originator (person). Probe HTTP 403 this session. No bulk company roster. Loan Originator is a person credential \u2014 not a business profile. Do not scrape NMLS.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
       "acquisition_status": "BLOCKED_SEARCH_ONLY",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "AZ-LEND-001 keep NMLS as verify-only. Do not invent a denominator."
     },
     {
-      "source_id": "az-difi-thentia-portal",
-      "hub_home": "LENDER",
-      "source_family": "licensee_portal",
-      "source_name": "DIFI Thentia licensee portal",
-      "regulator": "Arizona Department of Insurance and Financial Institutions",
-      "source_url": "https://azdifi.portalus.thentiacloud.net",
-      "index_url": "https://difi.az.gov/licensing/mortgage-lending",
-      "access_class": "FREE_ACCOUNT_REQUIRED",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
       "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "grain": "licensee_account",
-      "record_count": "UNKNOWN",
-      "count_notes": "DIFI tells licensees to log into Thentia to obtain a license certificate. This is not a public bulk roster. Do not create accounts or scrape the portal.",
-      "acquisition_status": "BLOCKED_LICENSEE_LOGIN",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
       "source_id": "az-nmls-consumer-access",
       "hub_home": "LENDER",
       "source_family": "license_verify",
-      "source_name": "NMLS Consumer Access (Arizona DIFI)",
+      "source_name": "NMLS Consumer Access",
       "regulator": "NMLS / CSBS (used by DIFI)",
       "source_url": "https://www.nmlsconsumeraccess.org/",
       "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
       "identity_field": "NMLS ID",
-      "grain": "mixed_person_and_business_credential",
+      "grain": "mixed_company_and_person",
       "record_count": "UNKNOWN",
-      "count_notes": "Do not scrape NMLS. Arizona participates. Search-only. Not a downloadable company roster.",
+      "count_notes": "Search-only. Do not scrape. SEARCH_ONLY \u2260 zero companies.",
+      "identifier_fields": [
+        "NMLS ID"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "LOW"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
       "acquisition_status": "BLOCKED_SEARCH_ONLY",
-      "blocker": "Do not scrape NMLS.",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "blocker": "No NMLS bulk. Ticket forbids search-portal scrape."
     },
     {
-      "source_id": "az-hmda-cfpb-overlay",
-      "hub_home": "LENDER",
-      "source_family": "market_intelligence",
-      "source_name": "Existing canonical HMDA Arizona partition (2025)",
-      "regulator": "CFPB HMDA (existing Lender-Trust-Hub / Ask fallback)",
-      "source_url": "https://ffiec.cfpb.gov/",
-      "access_class": "EXISTING_CANONICAL_PARTITION",
-      "contact_rank": "FEDERAL_OVERLAY",
-      "identity_bar": "EXACT",
-      "identity_field": "LEI; NMLS when a high-confidence map exists",
-      "grain": "lar_activity_row_aggregates",
-      "record_count": 308338,
-      "count_notes": "Existing Lender slice county-sum: 308,338 applications / 183,374 originations / 49,721 denials / 15 of 15 counties / 953 LEI state rows / 123 high-confidence LEI maps / 4,179 lender-county rows. Purpose (application grain): purchase 133,513; refinance 105,498; other 69,327. Loan type apps: conventional 224,912; FHA 52,160; VA 30,364; USDA/other 902. Ask fallback snapshot is 307,379 / 183,374 / 49,376 — different clock, not reconciled. HMDA != license roster. Do not convert these rows into organizations. No new federal ingest.",
-      "acquisition_status": "PRE_EXISTING_NOT_REINGESTED",
       "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
       "source_id": "az-difi-financial-enterprises",
       "hub_home": "LENDER",
       "source_family": "license_verify",
-      "source_name": "DIFI financial institutions and financial enterprises",
+      "source_name": "DIFI financial enterprises (money transmitter / debt management / escrow)",
       "regulator": "Arizona Department of Insurance and Financial Institutions",
       "source_url": "https://difi.az.gov/licensing/financial-enterprises",
-      "index_url": "https://difi.az.gov/license-search",
       "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
-      "grain": "financial_enterprise",
+      "identity_field": "DIFI / NMLS identifier when returned",
+      "grain": "financial_enterprise_license",
       "record_count": "UNKNOWN",
-      "count_notes": "Collection agencies, sales finance, and other financial enterprises are DIFI-licensed and distinct from mortgage NMLS classes. No free bulk CSV found. Automated fetch hit WAF. Do not scrape. Collection-agency roster is not a mortgage-company roster.",
+      "count_notes": "Money transmitter, debt management, escrow and related classes. Probe HTTP 403. Not a mortgage-lender roster. No bulk file found. Do not scrape.",
+      "probe_http_status": 403,
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
       "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
       "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-hmda-cfpb-overlay",
+      "hub_home": "LENDER",
+      "source_family": "market_observation",
+      "source_name": "HMDA Arizona applications / originations / denials (already in Ask)",
+      "regulator": "CFPB HMDA",
+      "source_url": "https://ffiec.cfpb.gov/",
+      "access_class": "ALREADY_ACQUIRED_MARKET_OBSERVATION",
+      "identity_bar": "REVIEW_REQUIRED",
+      "identity_field": "HMDA LEI / respondent when present \u2014 not a license",
+      "grain": "mortgage_application",
+      "record_count": 307379,
+      "originations": 183374,
+      "denials": 49376,
+      "lender_hub_slice": {
+        "counties": 15,
+        "applications": 308338,
+        "originations": 183374,
+        "denials": 49721,
+        "lei_state_rows": 953,
+        "high_confidence_lei_maps": 123
+      },
+      "count_notes": "Ask lender-v1-fallback Arizona: applications=307379, originations=183374, denials=49376. Lender-Trust-Hub existing slice: 15 of 15 counties, applications=308338, originations=183374, denials=49721, 953 LEI state rows, 123 high-confidence LEI maps. Originations match; application/denial clocks are not reconciled this ticket. These are application rows, not lender companies. HMDA \u2260 license roster. Already acquired. Do not dump a new LAR. Do not convert LEIs into net-new organizations.",
+      "identifier_fields": [
+        "LEI"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "ALREADY_ACQUIRED",
+      "entity_growth": "ZERO",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-LEND-001 publish HMDA Arizona market intelligence. Do not call applications companies."
     }
   ]
 }

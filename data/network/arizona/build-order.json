@@ -1,76 +1,66 @@
 {
   "ticket": "ATH-AZ-001",
-  "checked": "2026-09-04",
-  "note": "Evidence-based remaining-hub sequence. Not a consumer ranking. Contractor and Senior are already assigned/live and are not remaining hubs.",
-  "already_in_motion": [
-    {
-      "ticket": "AZ-CON-001",
-      "hub": "CONTRACTOR",
-      "owner": "Builder 3",
-      "status": "IN_PROGRESS",
-      "why": "ROC posting-list CSV is the only remaining-state easy bulk company roster. ATH-AZ-001 does not duplicate it."
-    },
+  "arizona_local_phase": "NO",
+  "ask_arizona": "ATH-AZ-002 after specialist pages are sufficiently complete. Not this ticket.",
+  "already_closed_or_in_flight": [
     {
       "ticket": "AZ-SEN-001",
-      "hub": "SENIOR",
-      "status": "LIVE",
-      "url": "https://www.seniortrusthub.com/arizona"
+      "repo": "care-trust-hub",
+      "status": "CLOSED",
+      "note": "Live https://www.seniortrusthub.com/arizona"
+    },
+    {
+      "ticket": "AZ-CON-001",
+      "repo": "contractor-trust-hub",
+      "status": "IN_FLIGHT_BUILDER_3",
+      "note": "Do not duplicate ROC."
     }
   ],
-  "remaining_sequence": [
+  "remaining_specialist_order": [
     {
-      "rank": 1,
+      "order": 1,
       "ticket": "AZ-LEND-001",
-      "hub": "LENDER",
+      "repo": "lender-trust-hub",
       "recommended_owner": "Builder 4",
       "when": "NOW_PARALLEL_WITH_AZ_CON_001",
-      "classification": "INTELLIGENCE_GROWTH_HEAVY",
-      "why": "Highest remaining value-per-hour. Canonical HMDA Arizona partition already exists (15 counties, 183,374 originations, 953 LEIs). DIFI/NMLS live roster is search-only. Copy the WA-LEND pattern: HMDA overlay + bounded DIFI enforcement on NMLS/DIFI IDs. Do not scrape NMLS. Do not convert HMDA into organizations."
+      "why": "Highest remaining value-per-hour. Canonical HMDA Arizona partition already exists (15 counties, 183,374 originations, 953 LEIs). Live company roster is NMLS search-only. Intelligence, not entities."
     },
     {
-      "rank": 2,
+      "order": 2,
       "ticket": "AZ-INV-001",
-      "hub": "INVESTOR",
+      "repo": "investor-trust-hub",
       "recommended_owner": "Builder 3 after AZ-CON-001",
       "when": "AFTER_AZ_CON_001",
-      "classification": "MIXED_ENTITY_AND_INTELLIGENCE",
-      "why": "Only remaining hub with a real Arizona state-registration business list (ACC CSV by request: dealers, IA licensed in AZ, IA notice-filed). Pair with existing 213 principal-office overlay and CRD enforcement. AZ principal office != state registration. Do not scrape BrokerCheck. File the list request only if owner authorizes the commercial-purpose path."
+      "why": "Only remaining hub with a real Arizona state-registration business CSV (ACC by request). Pair with existing 213 principal-office overlay. Do not file PRA unless owner authorizes. Overlay itself is ZERO net-new canonical."
     },
     {
-      "rank": 3,
+      "order": 3,
       "ticket": "AZ-INS-001",
-      "hub": "INSURANCE",
-      "recommended_owner": "later specialist",
-      "when": "AFTER_LENDER_AND_INVESTOR_OR_IF_OWNER_APPROVES_SBS_PURCHASE",
-      "classification": "SEARCH_PATH_ONLY",
-      "why": "No free bulk producer/agency roster. SBS is paid. Do not purchase unless owner approves. Bounded DIFI enforcement (NPN/NAIC) and surplus-lines PDFs are intelligence only."
+      "repo": "insurance-trust-hub",
+      "why": "Thin DIFI/SBS search path + enforcement identity rules. Do not buy SBS."
     },
     {
-      "rank": 4,
+      "order": 4,
       "ticket": "AZ-MOVE-001",
-      "hub": "MOVE",
-      "recommended_owner": "later specialist",
-      "when": "THIN_INTELLIGENCE_PAGE_ONLY",
-      "classification": "SEARCH_PATH_ONLY",
-      "why": "Arizona has no mover license. Official AG line. DPS consumer-protection + FMCSA interstate overlay + ACC entity search as business identity, not authority. Last remaining hub. Do not invent an in-state HHG denominator."
+      "repo": "move-trust-hub",
+      "why": "Thin AG/DPS consumer path + optional AZ HQ overlay of existing 5022. No state roster."
     },
     {
-      "rank": 5,
+      "order": 5,
       "ticket": "ATH-AZ-002",
-      "hub": "ASK",
-      "name": "Ask Arizona release gate",
-      "when": "AFTER_SPECIALIST_STATE_WORK_IS_CLEAN_ENOUGH",
-      "classification": "NETWORK_RELEASE",
-      "why": "Do not create public Ask /arizona in ATH-AZ-001. Release after specialist pages exist, same pattern as ATH-WA-002."
+      "repo": "Conumers-Trust-Hub",
+      "why": "Ask /arizona only after the four specialist pages exist. Not this ticket."
     }
   ],
-  "builder_3_next_after_az_con_001": "AZ-INV-001",
-  "builder_4_next_assignment": "AZ-LEND-001",
-  "do_not_assume": [
-    "Move first",
-    "Insurance first",
-    "Lender first",
-    "Investor first"
-  ],
+  "builder_3_next_after_az_con_001": {
+    "ticket": "AZ-INV-001",
+    "repo": "investor-trust-hub",
+    "why": "Only remaining plausible state-registration entity path (ACC CSV by request) plus a ready 213-firm IARD overlay. Do not PRA unless owner authorizes."
+  },
+  "builder_4_next": {
+    "ticket": "AZ-LEND-001",
+    "repo": "lender-trust-hub",
+    "why": "Ready now, parallel with AZ-CON-001. HMDA already in hand. Highest remaining intelligence per hour."
+  },
   "what_the_files_actually_support": "Lender first among remaining hubs because HMDA is already in hand (intelligence, not entity growth). Investor second because it is the only remaining entity-growth path, and it is request-gated. Insurance third because the roster is paid. Move last because there is no state company identity to add."
 }

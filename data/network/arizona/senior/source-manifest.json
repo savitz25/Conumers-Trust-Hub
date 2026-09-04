@@ -1,0 +1,87 @@
+{
+  "ticket": "ATH-AZ-001",
+  "hub": "senior",
+  "state": "AZ",
+  "source_as_of": "2026-09-04",
+  "source_ids": [
+    "az-senior-cms-and-state-pointer"
+  ],
+  "sources": [
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-senior-cms-and-state-pointer",
+      "hub_home": "SENIOR",
+      "source_family": "existing_specialist_page",
+      "source_name": "SeniorTrustHub /arizona (AZ-SEN-001 accepted)",
+      "regulator": "CMS + Arizona state overlay already published",
+      "source_url": "https://www.seniortrusthub.com/arizona",
+      "access_class": "ALREADY_PUBLISHED",
+      "identity_bar": "EXACT",
+      "identity_field": "CMS CCN / Arizona state facility identity",
+      "grain": "senior_facility",
+      "record_count": "UNKNOWN",
+      "cms_nursing_homes": 140,
+      "cms_home_health": 177,
+      "cms_hospice": 237,
+      "accepted_ledger": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 2776,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+        "NEW_EVIDENCE_ROWS": 2779
+      },
+      "count_notes": "AZ-SEN-001 is closed. Ask senior-v1-fallback Arizona CMS: nursingHomes=140, homeHealth=177, hospice=237. Accepted ledger: net-new canonical=0, net-new state identities=2776, existing enriched=544, new evidence rows=2779. Do not redo Senior. CMS CCN \u2260 Arizona state facility identity. Live page HTTP 200 on 2026-09-04.",
+      "probe_http_status": 200,
+      "identifier_fields": [
+        "CMS CCN",
+        "Arizona state facility identity"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "ALREADY_PUBLISHED_AZ_SEN_001",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL_STATE_IDENTITIES_ALREADY_ADDED",
+      "intelligence_growth": "ALREADY_SHIPPED",
+      "recommended_next_action": "Do not redo Senior. Specialist page is live."
+    }
+  ]
+}

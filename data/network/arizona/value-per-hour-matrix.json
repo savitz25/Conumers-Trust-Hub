@@ -1,0 +1,639 @@
+{
+  "ticket": "ATH-AZ-001",
+  "note": "Internal prioritization, not a consumer ranking. No Trust Score. No paid ranking. HIGH/MEDIUM/LOW/NONE only.",
+  "arizona_finish_fast": "Remaining Arizona specialist work is intelligence pages on existing graphs plus thin consumer-truth pages. There is no remaining free bulk that adds actual companies.",
+  "hub_early_candidates_evaluated": {
+    "CONTRACTOR": "ALREADY_ASSIGNED AZ-CON-001 \u2014 only in-flight free bulk identity path",
+    "SENIOR": "ALREADY_SHIPPED AZ-SEN-001",
+    "INVESTOR": "MEDIUM entity potential (ACC CSV by PRA only); HIGH intelligence from existing 213 AZ principal-office overlay",
+    "LENDER": "HIGH intelligence/hour \u2014 HMDA already in hand (15 counties, 183374 originations, 953 LEIs); ZERO new companies",
+    "INSURANCE": "LOW as an entity play (paid SBS); MEDIUM as a thin search/enforcement page",
+    "MOVE": "LOW as an entity play (NO_STATE_ROSTER); MEDIUM as a consumer-truth page"
+  },
+  "sources": [
+    {
+      "source_id": "az-ag-mover-no-license",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "NO_STATE_ROSTER",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-ars-hostage-load",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "STATUTE_NOT_ROSTER",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-dps-hostage-load-hotline",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "CONSUMER_PATH",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM"
+    },
+    {
+      "source_id": "az-roc-r22-house-moving",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "WRONG_UNIVERSE",
+      "entity_growth": "NONE_FOR_MOVE",
+      "intelligence_growth": "NONE_FOR_MOVE"
+    },
+    {
+      "source_id": "az-fmcsa-mcmis-census-az-physical",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "LOW",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SODA_API",
+      "entity_growth": "UNSAFE_IF_TREATED_AS_MOVERS",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-move-national-directory-overlay",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-difi-license-search",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "MEDIUM"
+    },
+    {
+      "source_id": "az-sbs-lookup",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-sbs-report-generator",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_REPORT_GENERATOR_PAID",
+      "entity_growth": "UNKNOWN_BLOCKED_PAID",
+      "intelligence_growth": "HIGH_IF_PURCHASED_DO_NOT"
+    },
+    {
+      "source_id": "az-difi-enforcement-actions",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE_PAGINATED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM"
+    },
+    {
+      "source_id": "az-difi-market-conduct",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "PDF_SEARCH_DO_NOT_CRAWL",
+      "entity_growth": "NONE",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-insurance-national-graph",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-difi-mortgage-lending",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-nmls-consumer-access",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "LOW"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-difi-financial-enterprises",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "MEDIUM",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-hmda-cfpb-overlay",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "HIGH",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "LOW",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "ALREADY_ACQUIRED_MARKET_OBSERVATION",
+      "entity_growth": "ZERO",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-acc-securities-research",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-acc-securities-list-request",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "LOW"
+      },
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "entity_growth": "UNKNOWN_BLOCKED_PRA",
+      "intelligence_growth": "HIGH_IF_REQUESTED_DO_NOT"
+    },
+    {
+      "source_id": "az-acc-securities-enforcement",
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "access_class": "OPEN_HTML_TABLE_BOUNDED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM"
+    },
+    {
+      "source_id": "az-sec-iard-principal-office-overlay",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "HIGH"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-acc-ecorp-entity-search",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "LOW",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "LOW",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "OPEN_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-acc-ecorp-bulk-request",
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "LOW"
+      },
+      "access_class": "SOURCE_AVAILABLE_BY_REQUEST",
+      "entity_growth": "UNKNOWN_BLOCKED_PRA_WRONG_UNIVERSE_FOR_HUBS",
+      "intelligence_growth": "LOW"
+    },
+    {
+      "source_id": "az-roc-contractor-pointer",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "HIGH",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "UNKNOWN",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "MEDIUM",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "OWNED_BY_SISTER_TICKET",
+      "entity_growth": "IN_FLIGHT_SISTER_TICKET",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "source_id": "az-senior-cms-and-state-pointer",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "HIGH",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "access_class": "ALREADY_PUBLISHED",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL_STATE_IDENTITIES_ALREADY_ADDED",
+      "intelligence_growth": "ALREADY_SHIPPED"
+    },
+    {
+      "source_id": "az-data-az-gov",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "UNREACHABLE_THIS_SESSION",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "NONE"
+    },
+    {
+      "source_id": "az-local-exception",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "NONE",
+        "REFRESHABILITY": "NONE"
+      },
+      "access_class": "OUT_OF_SCOPE",
+      "entity_growth": "NOT_STARTED",
+      "intelligence_growth": "NONE"
+    }
+  ]
+}

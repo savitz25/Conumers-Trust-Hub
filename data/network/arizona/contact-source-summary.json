@@ -1,0 +1,23 @@
+{
+  "ticket": "ATH-AZ-001",
+  "rank_order": [
+    "OFFICIAL_REGULATOR",
+    "OFFICIAL_STATE_BUSINESS",
+    "FEDERAL_OVERLAY"
+  ],
+  "rules": [
+    "Do not overwrite stronger contact provenance with a weaker source.",
+    "No person-scale publishing decisions in Ask this ticket.",
+    "SBS paid report would include business address and email \u2014 not purchased.",
+    "No free official contact bulk was acquired for Move, Insurance, Lender, or Investor.",
+    "ACC eCorp addresses do not replace ROC / DIFI / NMLS / CRD regulator contacts."
+  ],
+  "strongest_contact_files": [],
+  "note": "No official contact bulk acquired this ticket. Paid SBS email/address is the strongest blocked contact file.",
+  "blocked_strongest": {
+    "source_id": "az-sbs-report-generator",
+    "email": "present in paid CSV",
+    "address": "full business address in paid CSV",
+    "purchased": false
+  }
+}

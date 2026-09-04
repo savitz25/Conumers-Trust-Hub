@@ -1,0 +1,10 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-roc-contractor-pointer",
+  "owned_by": "AZ-CON-001",
+  "repo": "contractor-trust-hub",
+  "az_roc_license_rows_in_ask_metrics": 58408,
+  "license_row_is_not_unique_company": true,
+  "acquired_this_ticket": false,
+  "r22_is_not_household_goods": true
+}

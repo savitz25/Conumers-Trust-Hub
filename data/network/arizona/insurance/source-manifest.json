@@ -4,126 +4,415 @@
   "state": "AZ",
   "source_as_of": "2026-09-04",
   "source_ids": [
-    "az-difi-sbs-lookup",
-    "az-difi-sbs-report-generator",
+    "az-difi-license-search",
+    "az-sbs-lookup",
+    "az-sbs-report-generator",
     "az-difi-enforcement-actions",
-    "az-difi-surplus-lines-white-list",
-    "az-difi-domestic-surplus-lines",
-    "az-difi-annual-report-aggregates"
+    "az-difi-market-conduct",
+    "az-insurance-national-graph"
   ],
-  "classification": "SEARCH_PATH_ONLY",
   "sources": [
     {
-      "source_id": "az-difi-sbs-lookup",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-difi-license-search",
       "hub_home": "INSURANCE",
       "source_family": "license_verify",
-      "source_name": "DIFI / NAIC SBS Licensee and Company Lookup",
-      "regulator": "Arizona Department of Insurance and Financial Institutions / NAIC State Based Systems",
+      "source_name": "DIFI license search (points to NAIC SBS)",
+      "regulator": "Arizona Department of Insurance and Financial Institutions",
       "source_url": "https://difi.az.gov/license-search",
       "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_REGULATOR",
       "identity_bar": "EXACT",
-      "identity_field": "NPN / NAIC / SBS number when returned",
-      "grain": "mixed_person_and_company",
-      "record_count": "UNKNOWN",
-      "count_notes": "Licensee = producer/agent/business entity. Company = insurer/administrator/service company. NPN != NAIC. Producer != agency != company. Marketplace participation != Arizona producer authority. Do not scrape.",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-difi-sbs-report-generator",
-      "hub_home": "INSURANCE",
-      "source_family": "license_roster",
-      "source_name": "NAIC SBS Report Generator (Arizona jurisdiction)",
-      "regulator": "Arizona Department of Insurance and Financial Institutions / NAIC",
-      "source_url": "https://www.statebasedsystems.com/solar/support.html",
-      "index_url": "https://difi.az.gov/license-search",
-      "access_class": "OPEN_REPORT_GENERATOR_PAID",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "identity_field": "NPN on individual rows; business-entity name / license number on entity rows; NAIC on company reports",
+      "identity_field": "NPN / NAIC / DIFI license number when returned",
       "grain": "mixed_person_and_business_credential",
       "record_count": "UNKNOWN",
-      "count_notes": "Official DIFI path to purchase a list: Generate a Report, Search Type Licensee, Entity Type Individual or Entity. Price on statebasedsystems.com support: $0.03 per row, $30 minimum, CSV. Not purchased. SEARCH_ONLY != zero. Paid != acquired.",
-      "acquisition_status": "NOT_PURCHASED",
-      "blocker": "Paid report generator. Do not purchase this ticket.",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "count_notes": "Official DIFI license-search page. Probe HTTP 403 Cloudflare on 2026-09-04. Lookup is free via SBS. Generate a Report is paid. Do not scrape search. Producer \u2260 agency \u2260 insurer. Missing \u2260 zero.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INS-001 keep search path. Do not scrape. Do not buy reports."
     },
     {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-sbs-lookup",
+      "hub_home": "INSURANCE",
+      "source_family": "license_verify",
+      "source_name": "NAIC State Based Systems Lookup (free)",
+      "regulator": "NAIC SBS (used by DIFI)",
+      "source_url": "https://www.statebasedsystems.com/",
+      "access_class": "OPEN_SEARCH_ONLY",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / license number / NAIC when returned",
+      "grain": "mixed_person_and_business_credential",
+      "record_count": "UNKNOWN",
+      "count_notes": "Free Lookup for a named producer, agency, or company. Probe HTTP 403 this session. Not a bulk roster. SEARCH_ONLY \u2260 zero. Do not scrape Lookup.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "license number",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "BLOCKED_SEARCH_ONLY",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Consumer verify path only."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        },
+        "BUSINESS_EMAIL": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": "UNKNOWN",
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-sbs-report-generator",
+      "hub_home": "INSURANCE",
+      "source_family": "license_roster",
+      "source_name": "NAIC SBS Report Generator (paid CSV)",
+      "regulator": "NAIC SBS (used by DIFI)",
+      "source_url": "https://www.statebasedsystems.com/solar/support.html",
+      "sample_report_url": "https://www.statebasedsystems.com/solar/docs/GenerateReportOfLicensees.pdf",
+      "access_class": "OPEN_REPORT_GENERATOR_PAID",
+      "identity_bar": "EXACT",
+      "identity_field": "license number / NPN when present",
+      "grain": "mixed_person_and_business_license_row",
+      "record_count": "UNKNOWN",
+      "unique_companies": "UNKNOWN",
+      "report_price_per_row_usd": 0.03,
+      "report_minimum_usd": 30.0,
+      "report_format": "CSV",
+      "count_notes": "Official SBS Support Center (checked 2026-09-04): purchase price is $0.03 per row with a $30.00 minimum per report; CSV; preview of row count and cost before payment. Fields include license number, license type, license status, CE compliance, full business address, email, line of authority. Grain is license rows \u2014 producers (people) and business entities mixed. One company may hold multiple licenses. License row \u2260 unique company. This ticket does not purchase. STOP on paid data.",
+      "identifier_fields": [
+        "license number",
+        "NPN"
+      ],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "HIGH",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "NOT_ACQUIRED_PAID",
+      "entity_growth": "UNKNOWN_BLOCKED_PAID",
+      "intelligence_growth": "HIGH_IF_PURCHASED_DO_NOT",
+      "recommended_next_action": "Do not buy. AZ-INS-001 stays search + enforcement identity rules.",
+      "blocker": "Paid report generator. Ticket forbids paid acquisition."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
       "source_id": "az-difi-enforcement-actions",
       "hub_home": "INSURANCE",
       "source_family": "enforcement",
-      "source_name": "DIFI Enforcement Actions",
+      "source_name": "DIFI enforcement actions table",
       "regulator": "Arizona Department of Insurance and Financial Institutions",
       "source_url": "https://difi.az.gov/enforcement-actions",
-      "access_class": "OPEN_HTML_TABLE",
-      "contact_rank": "OFFICIAL_REGULATOR",
+      "access_class": "OPEN_HTML_TABLE_PAGINATED",
       "identity_bar": "EXACT",
-      "identity_field": "NPN / NAIC / SBS number / DIFI matter number when printed",
+      "identity_field": "NPN / NAIC when present on the row",
       "grain": "enforcement_order",
       "record_count": "UNKNOWN",
-      "count_notes": "HTML table of consent orders, withdrawals, penalties, mergers, acquisitions. Recent rows print National Producer No., NAIC NO., SBS No. Mix of person producers and companies. Name-only adverse attach is UNSAFE. Complaint != violation. Not a license roster. Table is paginated; total UNKNOWN.",
-      "acquisition_status": "DOCUMENTED_BOUNDED_HTML",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "count_notes": "HTML enforcement table. NPN/NAIC may appear. Paginated. Probe HTTP 403 this session. Do not scrape pagination. Name-only attach is UNSAFE. Complaint \u2260 violation. Person NPN is not a business profile.",
+      "probe_http_status": 403,
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "HIGH",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "MEDIUM",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_NOT_SCRAPED",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM",
+      "recommended_next_action": "AZ-INS-001 may attach only on exact NPN/NAIC. Do not scrape."
     },
     {
-      "source_id": "az-difi-surplus-lines-white-list",
-      "hub_home": "INSURANCE",
-      "source_family": "company_eligibility_list",
-      "source_name": "List of Qualified Unauthorized Surplus Line Insurers",
-      "regulator": "Arizona Department of Insurance and Financial Institutions",
-      "source_url": "https://difi.az.gov/node/33216",
-      "download_url": "https://difi.az.gov/sites/default/files/Approved%20List%20-%20Website%20-%2009-17-2025.pdf",
-      "access_class": "OPEN_PDF",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
       "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "identity_field": "NAIC",
-      "grain": "surplus_lines_eligibility",
-      "record_count": "UNKNOWN",
-      "source_clock": "Revised 9/17/2025",
-      "count_notes": "White list of unauthorized insurers that may write surplus lines in Arizona. NAIC present. This is not an Arizona producer or agency roster and is not net-new Arizona insurance companies. Eligibility list != license roster.",
-      "acquisition_status": "DOCUMENTED_NOT_DUMPED",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-difi-domestic-surplus-lines",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-difi-market-conduct",
       "hub_home": "INSURANCE",
-      "source_family": "company_eligibility_list",
-      "source_name": "Arizona Domestic Surplus Lines Insurers (Form SL-113)",
-      "regulator": "Arizona Department of Insurance and Financial Institutions",
-      "source_url": "https://difi.az.gov/sites/default/files/Domestic%20Surplus%20Lines%20Insurer%20Listing%20Form%20SL-113%2020250616.pdf",
-      "access_class": "OPEN_PDF",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "identity_field": "NAIC",
-      "grain": "domestic_surplus_lines_insurer",
-      "record_count": "UNKNOWN",
-      "source_clock": "Form SL-113 v 20250616",
-      "count_notes": "Small official NAIC list of Arizona-domiciled surplus lines insurers. Not a producer/agency roster. Do not convert into Arizona insurance-company growth.",
-      "acquisition_status": "DOCUMENTED_NOT_DUMPED",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-difi-annual-report-aggregates",
-      "hub_home": "INSURANCE",
-      "source_family": "annual_aggregate",
-      "source_name": "DIFI insurance annual report professional/company aggregates",
+      "source_family": "enforcement",
+      "source_name": "DIFI market-conduct exam reports (PDF search)",
       "regulator": "Arizona Department of Insurance and Financial Institutions",
       "source_url": "https://difi.az.gov/",
-      "access_class": "OFFICIAL_AGGREGATE_NOT_ROSTER",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "NONE",
-      "grain": "annual_aggregate",
+      "access_class": "PDF_SEARCH_DO_NOT_CRAWL",
+      "identity_bar": "REVIEW_REQUIRED",
+      "grain": "exam_report_pdf",
       "record_count": "UNKNOWN",
-      "count_notes": "FY reports publish producer-by-line and authorized-insurer aggregates. Aggregates are not a live roster. Do not say N licensed Arizona insurance companies from an annual table. Captive program stats are also aggregates.",
-      "acquisition_status": "DOCUMENTED_AGGREGATE_ONLY",
+      "count_notes": "PDF search, not a bulk machine file. Large PDF crawl is a stop rule. Do not crawl.",
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "SKIPPED_PDF_CRAWL",
+      "entity_growth": "NONE",
+      "intelligence_growth": "LOW"
+    },
+    {
       "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-insurance-national-graph",
+      "hub_home": "INSURANCE",
+      "source_family": "existing_national_graph",
+      "source_name": "InsuranceTrustHub national graph \u2014 no Arizona credentialsByJurisdiction partition",
+      "regulator": "multi-state (already in Ask metrics)",
+      "source_url": "https://www.insurancetrusthub.com/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "identity_bar": "EXACT",
+      "identity_field": "NPN / NAIC when already in graph",
+      "grain": "national_agency_and_insurer",
+      "record_count": "UNKNOWN",
+      "national_agencies": 82071,
+      "national_legal_insurers": 6185,
+      "az_credentials_by_jurisdiction": null,
+      "count_notes": "Ask insurance-v1-fallback credentialsByJurisdiction lists FL=750316, TX=718894, VT, MA, OH, NJ=0, CA=0. Arizona is not a listed partition. Missing \u2260 zero Arizona agencies. Do not invent an Arizona agency count from the national graph.",
+      "identifier_fields": [
+        "NPN",
+        "NAIC"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "MEDIUM",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "NONE",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "PRE_EXISTING_NO_AZ_PARTITION",
+      "entity_growth": "UNKNOWN_NOT_ZERO",
+      "intelligence_growth": "LOW"
     }
   ]
 }

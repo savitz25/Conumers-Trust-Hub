@@ -1,0 +1,23 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-hmda-cfpb-overlay",
+  "last_checked": "2026-09-04",
+  "state": "AZ",
+  "applications": 307379,
+  "originations": 183374,
+  "denials": 49376,
+  "lender_hub_slice": {
+    "counties": 15,
+    "applications": 308338,
+    "originations": 183374,
+    "denials": 49721,
+    "lei_state_rows": 953,
+    "high_confidence_lei_maps": 123
+  },
+  "grain": "mortgage_application",
+  "is_lender_company_roster": false,
+  "already_in_ask": true,
+  "ask_file": "data/network-metrics/lender-v1-fallback.json",
+  "nmls_bulk": false,
+  "nmls_access": "OPEN_SEARCH_ONLY"
+}

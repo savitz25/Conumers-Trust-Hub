@@ -1,0 +1,144 @@
+{
+  "ticket": "ATH-AZ-001",
+  "note": "Statewide sources live once. Do not duplicate per hub. Arizona counties and cities are out of scope.",
+  "acc_entity_id_cross_hub": {
+    "key": "ACC entity ID",
+    "appears_in": [
+      "eCorp",
+      "possibly ROC / DIFI when a company also registered"
+    ],
+    "rule": "ACC entity ID != professional license. An active corporation is not an active ROC/DIFI/NMLS/CRD credential."
+  },
+  "sources": [
+    {
+      "source_id": "az-ag-mover-no-license",
+      "access": "NO_STATE_ROSTER",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-ars-hostage-load",
+      "access": "STATUTE_NOT_ROSTER",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-dps-hostage-load-hotline",
+      "access": "CONSUMER_PATH",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-roc-r22-house-moving",
+      "access": "WRONG_UNIVERSE",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-fmcsa-mcmis-census-az-physical",
+      "access": "OPEN_SODA_API",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-move-national-directory-overlay",
+      "access": "EXISTING_NATIONAL_GRAPH",
+      "hub_home": "MOVE"
+    },
+    {
+      "source_id": "az-difi-license-search",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-sbs-lookup",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-sbs-report-generator",
+      "access": "OPEN_REPORT_GENERATOR_PAID",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-difi-enforcement-actions",
+      "access": "OPEN_HTML_TABLE_PAGINATED",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-difi-market-conduct",
+      "access": "PDF_SEARCH_DO_NOT_CRAWL",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-insurance-national-graph",
+      "access": "EXISTING_NATIONAL_GRAPH",
+      "hub_home": "INSURANCE"
+    },
+    {
+      "source_id": "az-difi-mortgage-lending",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "LENDER"
+    },
+    {
+      "source_id": "az-nmls-consumer-access",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "LENDER"
+    },
+    {
+      "source_id": "az-difi-financial-enterprises",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "LENDER"
+    },
+    {
+      "source_id": "az-hmda-cfpb-overlay",
+      "access": "ALREADY_ACQUIRED_MARKET_OBSERVATION",
+      "hub_home": "LENDER"
+    },
+    {
+      "source_id": "az-acc-securities-research",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "INVESTOR"
+    },
+    {
+      "source_id": "az-acc-securities-list-request",
+      "access": "SOURCE_AVAILABLE_BY_REQUEST",
+      "hub_home": "INVESTOR"
+    },
+    {
+      "source_id": "az-acc-securities-enforcement",
+      "access": "OPEN_HTML_TABLE_BOUNDED",
+      "hub_home": "INVESTOR"
+    },
+    {
+      "source_id": "az-sec-iard-principal-office-overlay",
+      "access": "EXISTING_NATIONAL_GRAPH",
+      "hub_home": "INVESTOR"
+    },
+    {
+      "source_id": "az-acc-ecorp-entity-search",
+      "access": "OPEN_SEARCH_ONLY",
+      "hub_home": "ASK"
+    },
+    {
+      "source_id": "az-acc-ecorp-bulk-request",
+      "access": "SOURCE_AVAILABLE_BY_REQUEST",
+      "hub_home": "ASK"
+    },
+    {
+      "source_id": "az-roc-contractor-pointer",
+      "access": "OWNED_BY_SISTER_TICKET",
+      "hub_home": "CONTRACTOR"
+    },
+    {
+      "source_id": "az-senior-cms-and-state-pointer",
+      "access": "ALREADY_PUBLISHED",
+      "hub_home": "SENIOR"
+    },
+    {
+      "source_id": "az-data-az-gov",
+      "access": "UNREACHABLE_THIS_SESSION",
+      "hub_home": "ASK"
+    },
+    {
+      "source_id": "az-local-exception",
+      "access": "OUT_OF_SCOPE",
+      "hub_home": "ASK"
+    }
+  ]
+}

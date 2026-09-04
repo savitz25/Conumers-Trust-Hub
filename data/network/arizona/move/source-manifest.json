@@ -4,103 +4,397 @@
   "state": "AZ",
   "source_as_of": "2026-09-04",
   "source_ids": [
-    "az-dps-hhg-enforcement",
-    "az-ag-mover-licensing-gap",
-    "az-acc-entity-search-movers",
-    "az-fmcsa-interstate-overlay",
-    "az-roc-r22-house-moving"
+    "az-ag-mover-no-license",
+    "az-ars-hostage-load",
+    "az-dps-hostage-load-hotline",
+    "az-roc-r22-house-moving",
+    "az-fmcsa-mcmis-census-az-physical",
+    "az-move-national-directory-overlay"
   ],
-  "classification": "SEARCH_PATH_ONLY",
   "sources": [
     {
-      "source_id": "az-dps-hhg-enforcement",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-ag-mover-no-license",
       "hub_home": "MOVE",
-      "source_family": "consumer_protection",
-      "source_name": "DPS Household Goods Enforcement",
+      "source_family": "regulatory_gap",
+      "source_name": "Arizona AG: no mover registration or professional licensing requirement",
+      "regulator": "Arizona Attorney General",
+      "source_url": "https://www.azag.gov/press-release/attorney-general-mayes-and-bbb-warn-moving-scams-arizona-0",
+      "access_class": "NO_STATE_ROSTER",
+      "identity_bar": "NONE",
+      "identity_field": null,
+      "grain": "absence_of_state_mover_license",
+      "record_count": 0,
+      "unique_companies": 0,
+      "count_notes": "Official AG Mayes / BBB PSA 2025-07-07: 'Arizona does not have a registration law or a professional licensing requirement for movers.' A.R.S. \u00a7\u00a7 44-1611\u201344-1616 is hostage-load consumer protection, not a license roster. 0 here is proven absence of a statewide HHG roster, not a missing scrape. ACC eCorp \u2260 mover license. ROC R-22 House Moving \u2260 household goods. STATE AUTHORITY does not exist in Arizona. USDOT \u2260 interstate by itself. Entity growth from an Arizona mover roster is not available.",
+      "identifier_fields": [],
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "MEDIUM",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "DOCUMENTED_NO_ROSTER",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-MOVE-001 publishes the consumer path (AG/DPS/FMCSA). Do not invent a roster."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-ars-hostage-load",
+      "hub_home": "MOVE",
+      "source_family": "consumer_protection_statute",
+      "source_name": "A.R.S. \u00a7\u00a7 44-1611 to 44-1616 hostage-load law",
+      "regulator": "Arizona Legislature / DPS peace officers",
+      "source_url": "https://www.azleg.gov/arsDetail/?title=44",
+      "access_class": "STATUTE_NOT_ROSTER",
+      "identity_bar": "NONE",
+      "grain": "statute",
+      "record_count": 0,
+      "count_notes": "Intrastate hostage-load prohibition. Peace officers may direct delivery after the total estimated price is paid (A.R.S. \u00a7 44-1614). Not a company list. Not a license.",
+      "hub_value": {
+        "ASK": "HIGH",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "MEDIUM",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "DOCUMENTED_STATUTE",
+      "entity_growth": "NONE",
+      "intelligence_growth": "HIGH"
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-dps-hostage-load-hotline",
+      "hub_home": "MOVE",
+      "source_family": "consumer_complaint_path",
+      "source_name": "Arizona DPS hostage-load consumer hotline",
       "regulator": "Arizona Department of Public Safety",
       "source_url": "https://www.azdps.gov/content/basic-page/94/hhg",
-      "access_class": "OFFICIAL_CONSUMER_PAGE",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "UNSAFE",
-      "grain": "consumer_complaint_path",
-      "record_count": "UNKNOWN",
-      "count_notes": "DPS enforces A.R.S. 44-1612–1615 hostage-load / delivery rules for in-state moves. Hotlines (602) 223-5000 and (602) 223-2212. Online complaint form exists. This is not a mover roster. Complaint != violation.",
-      "identifier_fields": [],
-      "acquisition_status": "DOCUMENTED_NOT_A_ROSTER",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-ag-mover-licensing-gap",
-      "hub_home": "MOVE",
-      "source_family": "licensing_gap",
-      "source_name": "Arizona Attorney General — no mover registration/licensing law",
-      "regulator": "Arizona Attorney General",
-      "source_url": "https://www.azag.gov/press-release/attorney-general-mayes-warns-consumers-possible-moving-scams-peak-moving-season",
-      "access_class": "OFFICIAL_STATUTE_AND_CONSUMER_PAGE",
-      "contact_rank": "OFFICIAL_REGULATOR",
+      "access_class": "CONSUMER_PATH",
       "identity_bar": "NONE",
-      "grain": "legal_status",
-      "record_count": 0,
-      "count_notes": "Official AG consumer guidance: Arizona has no registration law or professional licensing requirement for movers. Zero here is the legal gap, not a missing scrape. Do not invent an in-state HHG denominator.",
-      "acquisition_status": "DOCUMENTED",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
-    },
-    {
-      "source_id": "az-acc-entity-search-movers",
-      "hub_home": "MOVE",
-      "source_family": "business_identity",
-      "source_name": "ACC Entity Search (DPS in-state verify pointer)",
-      "regulator": "Arizona Corporation Commission",
-      "source_url": "https://ecorp.azcc.gov/EntitySearch/Index",
-      "access_class": "OPEN_SEARCH_ONLY",
-      "contact_rank": "OFFICIAL_STATE_BUSINESS",
-      "identity_bar": "EXACT",
-      "identity_field": "Arizona entity ID when the record returns one",
-      "grain": "business_entity",
+      "grain": "hotline",
       "record_count": "UNKNOWN",
-      "count_notes": "DPS tells consumers to verify in-state movers at ACC Entity Search. That is corporation/LLC registration, not a household-goods operating authority. ACC entity ID != mover license. Do not crawl Entity Search.",
-      "acquisition_status": "BLOCKED_SEARCH_ONLY",
-      "blocker": "Search form. Do not crawl.",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "count_notes": "AG PSA: DPS 602-223-2212 / 602-223-5000 for hostage-load help. DPS HHG consumer page: interstate = FMCSA; in-state verify = ACC Entity Search (business registration, not a mover license). Legacy URL https://www.azdps.gov/services/public/moving returned HTTP 404 on 2026-09-04. Not a roster. Do not scrape DPS.",
+      "probe_http_status": 404,
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "NONE",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "HIGH",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "MEDIUM"
+      },
+      "acquisition_status": "DOCUMENTED_HOTLINE",
+      "entity_growth": "NONE",
+      "intelligence_growth": "MEDIUM"
     },
     {
-      "source_id": "az-fmcsa-interstate-overlay",
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "OFFICIAL_REGULATOR",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-roc-r22-house-moving",
       "hub_home": "MOVE",
-      "source_family": "federal_overlay",
-      "source_name": "FMCSA interstate household-goods overlay",
-      "regulator": "Federal Motor Carrier Safety Administration",
-      "source_url": "https://www.fmcsa.dot.gov/protect-your-move/search-mover",
-      "access_class": "FEDERAL_OVERLAY_PLAN",
+      "source_family": "contractor_classification_not_hhg",
+      "source_name": "ROC R-22 House Moving (building relocation, not household goods)",
+      "regulator": "Arizona Registrar of Contractors",
+      "source_url": "https://roc.az.gov/license-classifications",
+      "access_class": "WRONG_UNIVERSE",
+      "identity_bar": "EXACT",
+      "identity_field": "ROC license number (R-22 class)",
+      "grain": "contractor_classification",
+      "record_count": "UNKNOWN",
+      "count_notes": "R-22 allows disconnecting utilities to relocate a house. Connection of utilities and foundations are not permitted. This is building moving, not household-goods carriage. ROC R-22 \u2260 HHG mover. Builder 3 owns ROC in AZ-CON-001. Do not harvest R-22 as movers.",
+      "identifier_fields": [
+        "ROC license number"
+      ],
+      "hub_value": {
+        "ASK": "NONE",
+        "CONTRACTOR": "MEDIUM",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "NONE",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "NONE",
+        "REGULATORY_VALUE": "HIGH",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "NONE",
+        "ACQUISITION_EASE": "LOW",
+        "REFRESHABILITY": "NONE"
+      },
+      "acquisition_status": "OWNED_BY_AZ_CON_001_WRONG_UNIVERSE_FOR_MOVE",
+      "entity_growth": "NONE_FOR_MOVE",
+      "intelligence_growth": "NONE_FOR_MOVE",
+      "recommended_next_action": "Leave to AZ-CON-001. Do not treat R-22 as a mover roster."
+    },
+    {
+      "ticket": "ATH-AZ-001",
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
       "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": true,
+          "count": "UNKNOWN"
+        }
+      },
+      "source_id": "az-fmcsa-mcmis-census-az-physical",
+      "hub_home": "MOVE",
+      "source_family": "federal_motor_carrier_census",
+      "source_name": "FMCSA MCMIS Company Census (AZ physical state)",
+      "regulator": "FMCSA / U.S. DOT",
+      "source_url": "https://data.transportation.gov/d/az4n-8mr2",
+      "download_url": "https://data.transportation.gov/resource/az4n-8mr2.json",
+      "dataset_id": "az4n-8mr2",
+      "access_class": "OPEN_SODA_API",
       "identity_bar": "EXACT",
       "identity_field": "USDOT",
-      "grain": "interstate_household_goods_carrier",
-      "record_count": "UNKNOWN",
-      "count_notes": "Interstate verify path. Not an Arizona in-state roster. USDOT != interstate authority by itself. Companies already on the national FMCSA spine are not net-new organizations. Do not scrape FMCSA this ticket. Ask move-v1-fallback has no Arizona HQ partition.",
-      "acquisition_status": "PLAN_EXISTING_NATIONAL_SPINE",
-      "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "grain": "all_motor_carriers_not_household_goods",
+      "record_count": 60519,
+      "active_count": 31875,
+      "count_notes": "Live Socrata 2026-09-04: phy_state=AZ count(*)=60519; status_code=A count(*)=31875. mail_state filter HTTP 400. carship is present; this extract has no H/HHG cargo flag. 60519 is ALL Arizona-physical motor carriers, not movers. Do not publish 60,519 as Arizona moving companies. USDOT \u2260 interstate authority by itself. STATE AUTHORITY \u2260 FMCSA.",
+      "identifier_fields": [
+        "dot_number"
+      ],
+      "hub_value": {
+        "ASK": "LOW",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "LOW",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "LOW",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "LOW",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "COUNTED_NOT_INGESTED",
+      "entity_growth": "UNSAFE_IF_TREATED_AS_MOVERS",
+      "intelligence_growth": "LOW",
+      "recommended_next_action": "Do not ingest the full census as movers. HHG subset is not in this extract."
     },
     {
-      "source_id": "az-roc-r22-house-moving",
-      "hub_home": "CONTRACTOR",
-      "source_family": "contractor_classification",
-      "source_name": "ROC R-22 House Moving (not HHG)",
-      "regulator": "Arizona Registrar of Contractors",
-      "source_url": "https://roc.az.gov/posting-list",
-      "access_class": "CONTEXT_OWNED_BY_AZ_CON_001",
-      "contact_rank": "OFFICIAL_REGULATOR",
-      "identity_bar": "EXACT",
-      "identity_field": "AZ-ROC:{License No}",
-      "grain": "contractor_license",
-      "record_count": "UNKNOWN",
-      "count_notes": "R-22 is moving buildings/structures. It is not a household-goods mover roster. Owned by AZ-CON-001 / Builder 3. Do not duplicate ROC acquisition.",
-      "acquisition_status": "CONTEXT_NOT_THIS_TICKET",
       "ticket": "ATH-AZ-001",
-      "last_checked": "2026-09-04"
+      "last_checked": "2026-09-04",
+      "source_as_of": "2026-09-04",
+      "contact_rank": "FEDERAL_OVERLAY",
+      "contact_fields": {
+        "BUSINESS_PHONE": {
+          "present": false,
+          "count": 0
+        },
+        "BUSINESS_EMAIL": {
+          "present": false,
+          "count": 0
+        },
+        "WEBSITE": {
+          "present": false,
+          "count": 0
+        },
+        "PHYSICAL_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        },
+        "MAILING_BUSINESS_ADDRESS": {
+          "present": false,
+          "count": 0
+        }
+      },
+      "source_id": "az-move-national-directory-overlay",
+      "hub_home": "MOVE",
+      "source_family": "existing_national_graph",
+      "source_name": "MoveTrustHub national publishable directory \u2014 Arizona HQ overlay (not yet partitioned)",
+      "regulator": "FMCSA (directory already in MoveTrustHub)",
+      "source_url": "https://safer.fmcsa.dot.gov/",
+      "access_class": "EXISTING_NATIONAL_GRAPH",
+      "identity_bar": "EXACT",
+      "identity_field": "USDOT",
+      "grain": "publishable_federal_mover_profile",
+      "record_count": 5022,
+      "az_hq_publishable": "UNKNOWN",
+      "count_notes": "Ask move-v1-fallback: national publishableProfiles=5022. HQ partitions exist for FL=483, NJ=269, CA=403. Arizona HQ partition is not published in Ask (UNKNOWN). Overlaying AZ HQ onto the existing 5022 is intelligence on existing companies, not net-new canonical organizations and not an Arizona state identity. HQ \u2260 service territory.",
+      "identifier_fields": [
+        "USDOT"
+      ],
+      "hub_value": {
+        "ASK": "MEDIUM",
+        "CONTRACTOR": "NONE",
+        "LENDER": "NONE",
+        "INSURANCE": "NONE",
+        "SENIOR": "NONE",
+        "MOVE": "HIGH",
+        "INVESTOR": "NONE"
+      },
+      "value_scores": {
+        "IDENTITY_VALUE": "HIGH",
+        "CONTACT_VALUE": "MEDIUM",
+        "REGULATORY_VALUE": "MEDIUM",
+        "ENFORCEMENT_VALUE": "NONE",
+        "MARKET_INTELLIGENCE_VALUE": "HIGH",
+        "ACQUISITION_EASE": "HIGH",
+        "REFRESHABILITY": "HIGH"
+      },
+      "acquisition_status": "PRE_EXISTING_NATIONAL_GRAPH_AZ_HQ_UNKNOWN",
+      "entity_growth": "ZERO_NET_NEW_CANONICAL",
+      "intelligence_growth": "HIGH",
+      "recommended_next_action": "AZ-MOVE-001 may publish an AZ HQ overlay of the existing 5022. Do not scrape SAFER."
     }
   ]
 }

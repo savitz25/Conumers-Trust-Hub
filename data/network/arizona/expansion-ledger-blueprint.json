@@ -1,81 +1,135 @@
 {
   "ticket": "ATH-AZ-001",
-  "note": "Exact numbers only where source + baseline support them. Otherwise UNKNOWN. Do not convert HMDA rows, complaints, enforcement, annual aggregates, or filtered federal companies into entity growth.",
   "checked": "2026-09-04",
+  "note": "POTENTIAL_* is a planning bound, not an ingest. UNKNOWN means the number was not obtained. UNKNOWN \u2260 0. License rows \u2260 companies. Data rows \u2260 entity growth. NEW_SOURCE_IDENTITIES_ACQUIRED is 0 for every remaining hub this ticket \u2014 nothing bulk-ingested.",
+  "semantics": {
+    "CANONICAL_ORGANIZATION": "deduped company in a specialist graph",
+    "STATE_IDENTITY": "Arizona-issued license / registration identifier",
+    "LICENSE_ROW": "one credential row; a company may have many",
+    "EVIDENCE_ROW": "enforcement, exam, overlay, or market observation attached to an identity",
+    "MARKET_OBSERVATION": "HMDA applications etc. \u2014 not companies",
+    "SEARCH_RESULT": "not a roster",
+    "AGGREGATE": "published total that is not a harvestable list"
+  },
   "hubs": {
-    "CONTRACTOR": {
-      "status": "CONTEXT_AZ_CON_001",
-      "classification": "ENTITY_GROWTH_HEAVY",
-      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "PRE_EXISTING_STATE_IDENTITIES": "UNKNOWN",
-      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "POTENTIAL_NET_NEW_STATE_IDENTITIES": "UNKNOWN",
-      "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": "UNKNOWN",
-      "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
-      "context_roc_current_licenses": 58131,
-      "context_note": "ROC All Current Contractors profile in AZ-CON-001 worktree, file created Aug 12, 2026, 58,131 distinct License No. Not an ATH-AZ-001 acquisition. Builder 3 owns the ledger."
-    },
-    "SENIOR": {
-      "status": "LIVE_AZ_SEN_001",
-      "classification": "MIXED_ENTITY_AND_INTELLIGENCE",
-      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "PRE_EXISTING_STATE_IDENTITIES": "UNKNOWN",
-      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "POTENTIAL_NET_NEW_STATE_IDENTITIES": 2776,
-      "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": 544,
-      "POTENTIAL_NEW_EVIDENCE_ROWS": 2779,
-      "note": "Accepted AZ-SEN-001 expansion ledger. Do not reopen."
-    },
     "MOVE": {
-      "classification": "SEARCH_PATH_ONLY",
-      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
+      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": {
+        "national_publishable": 5022,
+        "arizona_hq": "UNKNOWN",
+        "note": "FL HQ 483 / NJ HQ 269 / CA HQ 403 are partitioned; AZ HQ is not."
+      },
       "PRE_EXISTING_STATE_IDENTITIES": 0,
-      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "UNKNOWN",
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
+      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": 0,
       "POTENTIAL_NET_NEW_STATE_IDENTITIES": 0,
       "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": "UNKNOWN",
       "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
-      "note": "No Arizona HHG license grain exists (official AG). PRE_EXISTING_STATE_IDENTITIES=0 and POTENTIAL_NET_NEW_STATE_IDENTITIES=0 are the legal gap, not a failed scrape. FMCSA AZ-HQ companies already on the national spine are not net-new. Ask move-v1-fallback has no Arizona HQ count. ROC R-22 is contractor, not mover."
+      "proven_zeros": {
+        "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "NO_STATE_ROSTER \u2014 AG 2025-07-07",
+        "POTENTIAL_NET_NEW_STATE_IDENTITIES": "Arizona does not issue a mover license",
+        "PRE_EXISTING_STATE_IDENTITIES": "no AZ HHG identity exists to have been ingested"
+      },
+      "do_not_call_companies": {
+        "fmcsa_az_phy_all": 60519,
+        "fmcsa_az_phy_active": 31875,
+        "reason": "all motor carriers, not household-goods movers"
+      },
+      "classification": "NO_ENTITY_GROWTH_INTELLIGENCE_ONLY"
     },
     "INSURANCE": {
-      "classification": "SEARCH_PATH_ONLY",
-      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "PRE_EXISTING_STATE_IDENTITIES": "UNKNOWN",
+      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": {
+        "national_agencies": 82071,
+        "national_legal_insurers": 6185,
+        "arizona_partition": "UNKNOWN",
+        "note": "credentialsByJurisdiction has no AZ key."
+      },
+      "PRE_EXISTING_STATE_IDENTITIES": 0,
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
       "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "UNKNOWN",
       "POTENTIAL_NET_NEW_STATE_IDENTITIES": "UNKNOWN",
       "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": "UNKNOWN",
       "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
-      "note": "SBS entity/individual reports exist but are paid and not purchased. SEARCH_ONLY != zero. Paid != acquired. Surplus-lines white list and domestic SL PDF are company eligibility lists, not Arizona agency growth. Annual aggregates are not a roster. Ask insurance-v1-fallback has no Arizona credential partition (credentialsByJurisdiction AZ absent)."
+      "blocker": "SBS Report Generator $0.03/row, $30 minimum, CSV. Paid. Not purchased.",
+      "classification": "ENTITY_GROWTH_BLOCKED_PAID__INTELLIGENCE_THIN_SEARCH"
     },
     "LENDER": {
-      "classification": "INTELLIGENCE_GROWTH_HEAVY",
       "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "PRE_EXISTING_STATE_IDENTITIES": "UNKNOWN",
+      "PRE_EXISTING_STATE_IDENTITIES": 0,
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
       "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "UNKNOWN",
       "POTENTIAL_NET_NEW_STATE_IDENTITIES": "UNKNOWN",
       "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": "UNKNOWN",
-      "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
-      "intelligence_not_entity": {
-        "hmda_applications": 308338,
+      "POTENTIAL_NEW_EVIDENCE_ROWS": {
+        "hmda_applications_ask_fallback": 307379,
+        "hmda_applications_lender_slice": 308338,
         "hmda_originations": 183374,
-        "hmda_denials": 49721,
+        "hmda_denials_ask_fallback": 49376,
+        "hmda_denials_lender_slice": 49721,
         "hmda_counties": 15,
         "hmda_lei_state_rows": 953,
-        "hmda_high_confidence_lei_maps": 123
+        "hmda_high_confidence_lei_maps": 123,
+        "note": "Already acquired market observations. Not lender companies. Not new evidence this ticket. Do not convert 953 LEIs into organizations."
       },
-      "note": "No live DIFI/NMLS company roster acquired. Do not convert 308,338 HMDA applications, 953 LEIs, 123 LEI maps, or enforcement HTML rows into organizations. Live roster SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY."
+      "blocker": "NMLS Consumer Access is search-only. Do not scrape.",
+      "classification": "INTELLIGENCE_GROWTH_HEAVY"
     },
     "INVESTOR": {
-      "classification": "MIXED_ENTITY_AND_INTELLIGENCE",
+      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": {
+        "national_canonical_firms": 25777,
+        "ria_facts": 17018,
+        "arizona_principal_office": 213,
+        "note": "213 is Arizona principal-office overlay, not Arizona state registration. CA 2699 / NJ 438 are Ask-published partitions."
+      },
+      "PRE_EXISTING_STATE_IDENTITIES": 0,
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
+      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": {
+        "from_iard_overlay": 0,
+        "from_acc_pra_list": "UNKNOWN"
+      },
+      "POTENTIAL_NET_NEW_STATE_IDENTITIES": {
+        "from_iard_overlay": 0,
+        "from_acc_pra_list": "UNKNOWN",
+        "note": "IARD CRD is federal identity, not Arizona state registration. ACC CSV would be the state identity."
+      },
+      "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": 213,
+      "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
+      "blocker": "ACC firm lists are SOURCE_AVAILABLE_BY_REQUEST. PRA not filed.",
+      "classification": "MIXED_ENTITY_AND_INTELLIGENCE"
+    },
+    "CONTRACTOR": {
       "PRE_EXISTING_CANONICAL_ORGANIZATIONS": "UNKNOWN",
-      "PRE_EXISTING_STATE_IDENTITIES": "UNKNOWN",
+      "PRE_EXISTING_STATE_IDENTITIES": {
+        "az_roc_license_rows_in_ask_metrics": 58408,
+        "az_con_001_distinct_license_no": 58131,
+        "note": "Two clocks, not reconciled. License rows \u2260 unique companies. Owned by AZ-CON-001."
+      },
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
       "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": "UNKNOWN",
       "POTENTIAL_NET_NEW_STATE_IDENTITIES": "UNKNOWN",
       "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": "UNKNOWN",
       "POTENTIAL_NEW_EVIDENCE_ROWS": "UNKNOWN",
-      "intelligence_not_entity": {
-        "iard_az_principal_office_n": 213
+      "classification": "OWNED_BY_AZ_CON_001_DO_NOT_DUPLICATE"
+    },
+    "SENIOR": {
+      "PRE_EXISTING_CANONICAL_ORGANIZATIONS": {
+        "cms_nursing_homes": 140,
+        "cms_home_health": 177,
+        "cms_hospice": 237,
+        "note": "CMS overlay already in Ask; canonical net-new from AZ-SEN-001 = 0."
       },
-      "note": "213 is Arizona principal-office overlay, not Arizona state registration. ACC CSV lists (dealers, IA licensed in AZ, IA notice-filed in AZ) exist by request and are the only remaining-hub real state-registration business path. Request not filed; counts UNKNOWN not zero. Individual S7/S6/IAR lists are people."
+      "PRE_EXISTING_STATE_IDENTITIES": 2776,
+      "NEW_SOURCE_IDENTITIES_ACQUIRED": 0,
+      "POTENTIAL_NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "POTENTIAL_NET_NEW_STATE_IDENTITIES": 0,
+      "POTENTIAL_EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "POTENTIAL_NEW_EVIDENCE_ROWS": 0,
+      "accepted_az_sen_001": {
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "NET_NEW_STATE_IDENTITIES": 2776,
+        "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+        "NEW_EVIDENCE_ROWS": 2779
+      },
+      "classification": "ALREADY_SHIPPED_DO_NOT_REDO"
     }
   }
 }

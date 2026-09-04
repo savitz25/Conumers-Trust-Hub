@@ -51,7 +51,7 @@ Counted, not dumped:
 | **INSURANCE** | Lookup free; report paid | NPN / NAIC on lookup | email+address in **paid** CSV | **$0.03/row, $30 min** — do not buy |
 | **SENIOR** | Already live | CMS CCN + AZ state identity | already published | Do not redo |
 | **LENDER** | No company roster | NMLS on verify | UNKNOWN | Do not scrape NMLS; do not invent a denominator |
-| **INVESTOR** | No state-RIA bulk | CRD on IARD overlay | UNKNOWN | ACC lists SOURCE_AVAILABLE_BY_REQUEST; AZ principal office ≠ state registration |
+| **INVESTOR** | No free state-RIA bulk; 213 AZ principal-office already counted | CRD on IARD overlay | UNKNOWN | ACC lists SOURCE_AVAILABLE_BY_REQUEST; AZ principal office ≠ state registration |
 
 ## Semantic guardrails (do not collapse)
 

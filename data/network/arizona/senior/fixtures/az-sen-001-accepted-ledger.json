@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-AZ-001",
+  "source_id": "az-senior-cms-and-state-pointer",
+  "owned_by": "AZ-SEN-001",
+  "live_url": "https://www.seniortrusthub.com/arizona",
+  "cms_nursing_homes": 140,
+  "cms_home_health": 177,
+  "cms_hospice": 237,
+  "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+  "NET_NEW_STATE_IDENTITIES": 2776,
+  "EXISTING_ORGANIZATIONS_ENRICHED": 544,
+  "NEW_EVIDENCE_ROWS": 2779,
+  "redo": false
+}

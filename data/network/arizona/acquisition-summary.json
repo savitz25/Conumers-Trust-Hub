@@ -2,90 +2,75 @@
   "ticket": "ATH-AZ-001",
   "checked": "2026-09-04",
   "acquired_this_ticket": [],
-  "profiled_existing_canonical": [
+  "counted_not_dumped": [
+    {
+      "source_id": "az-fmcsa-mcmis-census-az-physical",
+      "rows": 60519,
+      "active": 31875,
+      "note": "all motor carriers, not HHG; not ingested"
+    },
     {
       "source_id": "az-hmda-cfpb-overlay",
-      "method": "existing Lender-Trust-Hub Arizona slice + Ask lender-v1-fallback",
-      "applications_slice": 308338,
+      "applications_ask_fallback": 307379,
+      "applications_lender_slice": 308338,
       "originations": 183374,
-      "denials_slice": 49721,
+      "denials_ask_fallback": 49376,
+      "denials_lender_slice": 49721,
       "counties": 15,
       "lei_state_rows": 953,
-      "high_confidence_lei_maps": 123,
-      "ask_fallback_applications": 307379,
-      "ask_fallback_denials": 49376,
-      "committed_raw": false,
-      "new_ingest": false
+      "note": "already in Ask + Lender-Trust-Hub slice; market observation"
+    },
+    {
+      "source_id": "az-roc-contractor-pointer",
+      "license_rows_ask_metrics": 58408,
+      "distinct_license_no_az_con_001": 58131,
+      "note": "Ask metrics vs AZ-CON-001 current-contractor profile; owned by AZ-CON-001"
     },
     {
       "source_id": "az-sec-iard-principal-office-overlay",
-      "method": "existing Investor census READ-ONLY",
-      "az_principal_office_n": 213,
-      "note": "Not Arizona state registration"
+      "arizona_principal_office": 213,
+      "national_canonical_firms": 25777,
+      "note": "existing Investor census; not AZ state registration"
     },
     {
-      "source_id": "az-sen-001-ledger",
-      "method": "accepted Senior expansion ledger",
-      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 2776,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 544,
-      "NEW_EVIDENCE_ROWS": 2779
+      "source_id": "az-senior-cms-and-state-pointer",
+      "cms_nursing_homes": 140,
+      "cms_home_health": 177,
+      "cms_hospice": 237,
+      "net_new_state_identities_az_sen_001": 2776
     }
   ],
-  "counted_not_dumped": [],
-  "documented_not_scraped": [
-    "DPS HHG enforcement page",
-    "AG no-mover-license line",
-    "DIFI SBS lookup",
-    "DIFI enforcement HTML",
-    "ACC Securities enforcement HTML",
-    "ACC Broker & Adviser Search",
-    "ACC eCorp Entity Search",
-    "NMLS Consumer Access",
-    "Thentia licensee portal"
-  ],
+  "probes": {
+    "acc_pages": "HTTP 200",
+    "difi_and_sbs": "HTTP 403 Cloudflare",
+    "data_az_gov": "HTTP 0 / getaddrinfo failed",
+    "dps_moving": "HTTP 404",
+    "roc_posting_list": "HTTP 403",
+    "senior_arizona": "HTTP 200"
+  },
   "not_acquired": [
-    "NAIC SBS Report Generator CSV (OPEN_REPORT_GENERATOR_PAID $0.03/row, $30 minimum — not purchased)",
-    "NMLS Consumer Access bulk (do not scrape)",
-    "DIFI Thentia export",
-    "DIFI mortgage company CSV (not found)",
-    "ACC Securities dealer/IA CSV (SOURCE_AVAILABLE_BY_REQUEST — not filed)",
-    "ACC eCorp bulk business file (not found; search-only)",
-    "data.az.gov licensee roster (portal did not resolve)",
-    "FMCSA HHG scrape",
-    "ACC Entity Search crawl",
-    "Phoenix / Maricopa / Tucson / Pima / Mesa / Scottsdale / Tempe / Chandler / Glendale permits"
+    "SBS Report Generator (paid $0.03/row, $30 minimum)",
+    "SBS Lookup scrape",
+    "NMLS Consumer Access scrape",
+    "ACC eCorp bulk (PRA)",
+    "ACC Securities dealer/IA lists (PRA)",
+    "DIFI enforcement HTML scrape",
+    "ACC Securities enforcement HTML scrape",
+    "DIFI market-conduct PDF crawl",
+    "FMCSA MCMIS full AZ census ingest",
+    "SAFER / FMCSA HHG search scrape",
+    "data.az.gov catalog (unreachable this session)",
+    "ROC contractor files (owned by AZ-CON-001)",
+    "Senior state/CMS redo (owned by AZ-SEN-001)",
+    "Phoenix / Tucson / Mesa / Scottsdale / Maricopa / Pima local permits",
+    "Ask /arizona publication"
   ],
-  "stop_rule_applied": [
-    {
-      "source": "SBS Report Generator",
-      "decision": "STOP",
-      "reason": "paid"
-    },
-    {
-      "source": "NMLS Consumer Access",
-      "decision": "STOP",
-      "reason": "search-only; do not scrape NMLS"
-    },
-    {
-      "source": "Thentia portal",
-      "decision": "STOP",
-      "reason": "licensee login / session"
-    },
-    {
-      "source": "ACC Entity Search",
-      "decision": "STOP",
-      "reason": "search-only; do not crawl"
-    },
-    {
-      "source": "BrokerCheck / IAPD",
-      "decision": "STOP",
-      "reason": "search-only"
-    },
-    {
-      "source": "ACC list request",
-      "decision": "DOCUMENT_DO_NOT_FILE",
-      "reason": "public-records request with commercial-purpose notary; owner must authorize"
-    }
-  ]
+  "paid_report": {
+    "source_id": "az-sbs-report-generator",
+    "price_per_row_usd": 0.03,
+    "minimum_usd": 30.0,
+    "format": "CSV",
+    "purchased": false
+  },
+  "arizona_local_phase": "NO"
 }
