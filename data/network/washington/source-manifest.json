@@ -5,8 +5,8 @@
   "source_as_of": "2026-09-04",
   "last_checked": "2026-09-04",
   "publication": {
-    "public_washington_routes": false,
-    "sitemap_changes": false,
+    "public_washington_routes": true,
+    "sitemap_changes": true,
     "trust_score": false,
     "paid_ranking": false,
     "people_publication": false,

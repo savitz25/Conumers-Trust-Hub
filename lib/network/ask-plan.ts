@@ -61,6 +61,7 @@ import { njCaveatForHub, njSpecialistUrl, routeNjAsk } from './nj-network.ts';
 import { isNjPilotCountySlug, njCountyAskPath } from './nj-counties.ts';
 import { caCaveatForHub, caSpecialistUrl, routeCaAsk } from './ca-network.ts';
 import { txCaveatForHub, txSpecialistUrl, routeTxAsk } from './tx-network.ts';
+import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -183,6 +184,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   }
   if (parsed.geography?.stateCode === 'CA') return '/california';
   if (parsed.geography?.stateCode === 'TX') return '/texas';
+  if (parsed.geography?.stateCode === 'WA') return '/washington';
   return undefined;
 }
 
@@ -823,6 +825,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: txSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${txCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'WA') {
+    const waRoute = routeWaAsk(parsed.query);
+    if (waRoute) {
+      const already = hubs.some((h) => h.hubId === waRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: waRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[waRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: waRoute.destination,
+            reason: waRoute.caveat,
+            whatItCanAnswer: `Washington research on ${NETWORK_PUBLIC_NAMES[waRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Washington',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === waRoute.hubId
+            ? {
+                ...h,
+                destination: waRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${waRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === waRoute.hubId), ...hubs.filter((h) => h.hubId !== waRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: waSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${waCaveatForHub(primary)}`,
             }
           : h,
       );

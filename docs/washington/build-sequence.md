@@ -26,6 +26,6 @@ Contractor is **first**. Evidence confirms it; it does not merely assume it.
 5. Lender stays thin (DFI/NMLS search + bounded enforcement HTML + later HMDA overlay). HMDA ≠ license roster.
 6. Investor stays search-only until SEC/IARD WA principal-office overlay. WA principal office ≠ state registration. CRD ≠ current WA authority.
 
-Public Ask `/washington` is a later network-convergence ticket (**ATH-WA-002**), after at least one specialist Washington page exists. This ticket does **not** create `/washington`.
+Public Ask `/washington` is published by **ATH-WA-002** as the six-hub network gateway. ATH-WA-001 did not create `/washington`. No Washington city or county routes.
 
 Do not start Arizona until this Washington foundation is merged.

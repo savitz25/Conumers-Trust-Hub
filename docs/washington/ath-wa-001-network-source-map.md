@@ -1,6 +1,6 @@
 # Washington six-hub source map (ATH-WA-001)
 
-Ask research foundation only. **No public `/washington` page.** No specialist-repo edits. State level only.
+Ask research foundation (ATH-WA-001). Public `/washington` is published by ATH-WA-002. No specialist-repo edits in ATH-WA-001. State level only. No city or county routes.
 
 Checked: **2026-09-04**.
 
