@@ -15,6 +15,9 @@ type UiMessage = {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  allowedUrls?:string[];
+  actions?:Array<{id:string;label:string;href:string;owner?:string}>;
+  pending?:boolean;
 };
 
 function newId() {
@@ -36,12 +39,16 @@ export function AskChatPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sendingRef = useRef(false);
+  const abortRef=useRef<AbortController|null>(null);
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
 
   const sendMessage = useCallback(async (raw: string) => {
     const text = raw.trim();
-    if (!text || sendingRef.current) return;
+    if (!text) return;
+    abortRef.current?.abort();
+    const controller=new AbortController();abortRef.current=controller;
+    const started=performance.now();
     sendingRef.current = true;
     setError(null);
     setInput('');
@@ -50,10 +57,14 @@ export function AskChatPanel() {
     });
 
     const userMsg: UiMessage = { id: newId(), role: 'user', content: text };
-    const prior = messagesRef.current;
+    const prior = messagesRef.current.filter(message=>!message.pending);
     const nextHistory = [...prior, userMsg];
     setMessages(nextHistory);
     setLoading(true);
+    const researchHref=`/ask?q=${encodeURIComponent(text)}`;
+    const pendingId=newId();
+    setMessages(prev=>[...prev.filter(message=>!message.pending),{id:pendingId,role:'assistant',content:'I understood your question. The source-backed research route is ready while I prepare an explanation.',allowedUrls:[researchHref],actions:[{id:'open-research',label:'Open source-backed research',href:researchHref}],pending:true}]);
+    trackEvent(ANALYTICS_EVENTS.CONCIERGE_FIRST_CONTENT,{duration_ms:Math.round(performance.now()-started),length:Math.min(text.length,2000)});
 
     try {
       const apiMessages = nextHistory
@@ -64,11 +75,13 @@ export function AskChatPanel() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages }),
+        signal:controller.signal,
       });
 
       const data = (await res.json().catch(() => ({}))) as {
         message?: { content?: string };
         error?: string;
+        route?:{destinations?:Array<{id:string;label:string;href:string;owner?:string}>;researchHref?:string};
       };
 
       if (!res.ok) {
@@ -78,11 +91,10 @@ export function AskChatPanel() {
       const reply = data.message?.content?.trim();
       if (!reply) throw new Error('Empty reply');
 
-      setMessages((prev) => [
-        ...prev,
-        { id: newId(), role: 'assistant', content: reply },
-      ]);
+      setMessages((prev) => prev.map(message=>message.id===pendingId?{...message,content:reply,pending:false,allowedUrls:[...(data.route?.destinations??[]).map(d=>d.href),...(data.route?.researchHref?[data.route.researchHref]:[])],actions:[...(data.route?.destinations??[]),...(data.route?.researchHref?[{id:'open-research',label:'Open source-backed research',href:data.route.researchHref}]:[])]}:message));
+      trackEvent(ANALYTICS_EVENTS.CONCIERGE_COMPLETE,{duration_ms:Math.round(performance.now()-started),length:Math.min(text.length,2000)});
     } catch (e) {
+      if(e instanceof DOMException&&e.name==='AbortError')return;
       const msg =
         e instanceof Error ? e.message : 'Something went wrong. Please try again.';
       setError(msg);
@@ -92,14 +104,16 @@ export function AskChatPanel() {
           id: newId(),
           role: 'assistant',
           content:
-            'I could not complete that reply just now. Please try again, or browse Move (movetrusthub.com), Lender (lendertrusthub.com), Insurance (insurancetrusthub.com), or Contractor (contractortrusthub.com).',
+            'I could not complete that explanation just now. The source-backed research action above remains available.',
         },
       ]);
     } finally {
       setLoading(false);
-      sendingRef.current = false;
+      if(abortRef.current===controller){sendingRef.current = false;abortRef.current=null;}
     }
   }, []);
+
+  useEffect(()=>()=>abortRef.current?.abort(),[]);
 
   useEffect(() => {
     if (!open) return;
@@ -108,7 +122,7 @@ export function AskChatPanel() {
     if (pending) {
       void sendMessage(pending);
     }
-    return () => window.clearTimeout(focusTimer);
+    return () => {window.clearTimeout(focusTimer);abortRef.current?.abort();};
   }, [open, takeInitialPrompt, sendMessage]);
 
   useEffect(() => {
@@ -214,7 +228,7 @@ export function AskChatPanel() {
                       }
                 }
               >
-                {m.role === 'assistant' ? <SafeConciergeMarkdown content={m.content} /> : m.content}
+                {m.role === 'assistant' ? <><SafeConciergeMarkdown content={m.content} allowedUrls={m.allowedUrls}/>{m.actions?.length?<div className="mt-2 flex flex-wrap gap-2">{m.actions.slice(0,3).map(a=><a key={a.id} href={a.href} className="inline-flex min-h-10 items-center rounded-lg border px-3 font-semibold text-[#4F46E5]">{a.owner==='OFFICIAL'?'Official source — ':''}{a.label}</a>)}</div>:null}</> : m.content}
               </div>
             </div>
           ))}

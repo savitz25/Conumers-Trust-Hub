@@ -15,7 +15,7 @@ const RESULT_LABELS = {
   UNSUPPORTED_QUERY: "Ask can't answer this as requested",
 } as const;
 
-export async function NetworkAskResult({ query }: { query: string }) {
+export async function NetworkAskResult({ query, hideInterpretation=false }: { query: string; hideInterpretation?:boolean }) {
   const answer = await assembleNetworkAnswerWithSpecialist(query);
   const { plan } = answer;
   const primary = plan.hubs.length === 1 ? plan.hubs[0] : undefined;
@@ -229,7 +229,7 @@ export async function NetworkAskResult({ query }: { query: string }) {
         </p>
       ) : null}
 
-      <details
+      {!hideInterpretation?<details
         id="interpretation"
         className="rounded-2xl border p-5"
         style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.canvas }}
@@ -268,7 +268,7 @@ export async function NetworkAskResult({ query }: { query: string }) {
             Ask again
           </button>
         </form>
-      </details>
+      </details>:null}
 
       <details
         className="rounded-2xl border p-5"

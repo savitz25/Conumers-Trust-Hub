@@ -6,6 +6,7 @@
 export const ANALYTICS_EVENTS = {
   CONCIERGE_OPEN: 'concierge_open',
   CONCIERGE_SUBMIT: 'concierge_submit',
+  ASK_ROUTE_RENDERED:'ask_route_rendered',ASK_SPECIALIST_EXECUTION_STARTED:'ask_specialist_execution_started',ASK_SPECIALIST_RESULT_RECEIVED:'ask_specialist_result_received',ASK_JOURNEY_RENDERED:'ask_journey_rendered',ASK_JOURNEY_STEP_OPENED:'ask_journey_step_opened',CONCIERGE_FIRST_CONTENT:'concierge_first_content',CONCIERGE_COMPLETE:'concierge_complete',CONCIERGE_TO_RESEARCH:'concierge_to_research',RESEARCH_TO_CONCIERGE:'research_to_concierge',
   OUTBOUND_HUB: 'outbound_hub_click',
   INTERNAL_NAV: 'internal_nav_click',
   JOURNEY_HANDOFF: 'journey_handoff_click',
