@@ -1,6 +1,7 @@
 import type { GuidedAction, GuidedApiResponse, GuidedResearchSession } from './contract.ts';
 import { createGuidedSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
 import { executeGuidedSpecialist } from './specialists.ts';
+import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -150,7 +151,13 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   }
   let result;
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
-  if (session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults) {
+  const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;
+  if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {
+    session=touch({...session,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:session.identifier?'IDENTIFIER':session.identityName?'IDENTITY':'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_CLARIFICATION_COMPLETED']}});
+  }
+  if (executionRequested && !session.researchPlan.executionAllowed) {
+    session=touch({...session,phase:'CLARIFY',nextAction:session.researchPlan.clarificationReason??'Clarify the research request before specialist execution.'});
+  } else if (executionRequested) {
     validateSelectedFilters(session);
     specialistCalls=1;
     result=await executeGuidedSpecialist(session);

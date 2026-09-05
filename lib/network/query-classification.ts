@@ -72,6 +72,16 @@ function removeOnce(value: string, phrase: string): string {
   return value.replace(new RegExp(`\\b${escaped}\\b`, 'i'), ' ');
 }
 
+function hasExplicitIdentityEvidence(query: string, residual: string, hasEntityClass: boolean, hasGeography: boolean): boolean {
+  if (/\b(?:named|called)\s+[^?.!,]+/i.test(query) || /["“][^"”]+["”]/.test(query)) return true;
+  if (/\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|LLP|L\.P\.)\b/i.test(query)) return true;
+  if (hasEntityClass && /(?:^|\b(?:is|about|check|research|find)\s+)(?:[a-z0-9&.'-]+\s+){2,5}(?:movers?|moving\s+compan(?:y|ies)|contractors?|lenders?|agenc(?:y|ies)|advis(?:er|or)s?)\b/i.test(query)) return true;
+  if (!hasEntityClass && /^[A-Z][A-Z0-9&.-]{2,40}$/.test(query.trim())) return true;
+  if (!hasEntityClass && !hasGeography && !/\b(?:how|what|which|where|when|why|show|list|need|licensed|active|registered|best|top|safest|recommended)\b/i.test(query) && query.trim().split(/\s+/).length >= 2) return true;
+  if (hasGeography || /\b(?:in|near|around|within)\b/i.test(query)) return false;
+  return hasEntityClass && residual.split(/\s+/).filter(Boolean).length >= 2;
+}
+
 export function classifyUniversalQuery(input: {
   query: string;
   exactIdentifier: boolean;
@@ -121,8 +131,12 @@ export function classifyUniversalQuery(input: {
     return { type: 'COHORT', entityClass, consumed };
   }
   if (entityClass && !residual) return { type: 'MISSING_SLOTS', entityClass, consumed };
-  if (residual && input.suggestedHubs.length === 1) return { type: 'IDENTITY_NAME', entityClass, residualName: residual, consumed };
+  if (residual && input.suggestedHubs.length === 1 && hasExplicitIdentityEvidence(query, residual, Boolean(entityClass), Boolean(input.geography))) {
+    return { type: 'IDENTITY_NAME', entityClass, residualName: residual, consumed };
+  }
   if (entityClass) return { type: 'COHORT', entityClass, residualName: residual || undefined, consumed };
-  if (input.suggestedHubs.length === 1) return { type: 'IDENTITY_NAME', residualName: query, consumed };
+  if (input.suggestedHubs.length === 1 && hasExplicitIdentityEvidence(query, query, false, Boolean(input.geography))) {
+    return { type: 'IDENTITY_NAME', residualName: query, consumed };
+  }
   return { type: 'UNSUPPORTED', consumed };
 }

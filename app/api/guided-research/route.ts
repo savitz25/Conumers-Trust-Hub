@@ -14,6 +14,6 @@ export async function POST(request: Request) {
   } catch (error) {
     const code=error instanceof Error?error.message:'invalid_request';
     const status=code==='not_guided_query'?422:400;
-    return NextResponse.json({error:code,message:code==='not_guided_query'?'This query remains in Federated Ask. Guided Research currently pilots Senior, Contractor, and Move only.':'The Guided Research action or session was invalid.'},{status,headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({error:code,message:code==='not_guided_query'?'This query remains in Federated Ask. Guided Research supports Senior, Contractor, Move, Investor, Insurance, and Lender research when the plan is safe to execute.':'The Guided Research action or session was invalid.'},{status,headers:{'Cache-Control':'no-store'}});
   }
 }
