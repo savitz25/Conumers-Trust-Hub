@@ -3,15 +3,13 @@ import { PageHeader } from '@/components/page-header';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import type { Metadata } from 'next';
 import { GuidedResearch } from '@/components/guided-research';
-import { isGuidedResearchCandidate } from '@/lib/guided-research/session';
+import { createGuidedSession } from '@/lib/guided-research/session';
+import { buildAskResearchRoute } from '@/lib/network/ask-research-route';
+import { ResearchRouteCard } from '@/components/ask-research-route-card';
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: 'Ask the TrustHub Network',
-  description: 'Federated routing across six specialist TrustHub research systems.',
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata({searchParams}:{searchParams:Promise<{q?:string}>}):Promise<Metadata>{const {q}=await searchParams;const clean=(q??'').replace(/[<>\u0000-\u001f]/g,' ').trim().slice(0,90);return {title:{absolute:clean?`Research: ${clean} | Ask Trust Hub`:'Ask the TrustHub Network'},description:clean?`Source-backed specialist research route for: ${clean}`:'Research the TrustHub specialist network.',robots:{index:false,follow:true}}}
 
 export default async function AskPage({
   searchParams,
@@ -20,10 +18,12 @@ export default async function AskPage({
 }) {
   const { q } = await searchParams;
   const query = (q ?? '').trim();
+  const route=query?buildAskResearchRoute(query):null;
+  const guided=query&&!route?.journey?createGuidedSession(query):null;
   return (
     <>
       <PageHeader
-        label="Federated Ask"
+        label="Ask"
         title="Ask the TrustHub Network"
         description="One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts."
       />
@@ -50,7 +50,8 @@ export default async function AskPage({
             </button>
           </div>
         </form>
-        {query ? (isGuidedResearchCandidate(query) ? <GuidedResearch query={query} /> : <NetworkAskResult query={query} />) : (
+        {route?<ResearchRouteCard route={route}/>:null}
+        {query ? (route?.journey ? null : guided ? <GuidedResearch query={query} initialSession={guided} routeDestinationHrefs={route?.destinations.map(row=>row.href)??[]} /> : <NetworkAskResult query={query} hideInterpretation />) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',

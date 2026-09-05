@@ -1,0 +1,17 @@
+import { performance } from 'node:perf_hooks';
+import { planAskResearch, type AskResearchPlan } from './research-planner.ts';
+import { resolveResearchScope, type AskExecutionScope } from './research-scope.ts';
+import { resolveResearchDestinations, type ResearchDestination } from './research-destinations.ts';
+import { planAskMultiHubJourney, type AskMultiHubJourney } from './ask-multi-hub-journey.ts';
+
+export type AskResearchRouteCard={version:'ask-research-route-v1';question:string;intentLabel:string;hubLabel?:string;requestedScope?:string;executionScope?:string;scopeMeaning?:string;status:string;explanation:string;limitation:string;canExecute:boolean;destinations:ResearchDestination[];plan:AskResearchPlan;scope:AskExecutionScope;journey?:AskMultiHubJourney;timings:{plannerMs:number;scopeMs:number;destinationsMs:number;totalMs:number}};
+const HUB={move:'MoveTrustHub',lender:'LenderTrustHub',insurance:'InsuranceTrustHub',senior:'SeniorTrustHub',contractor:'ContractorTrustHub',investor:'InvestorTrustHub'} as const;
+const INTENT:Record<AskResearchPlan['intent'],string>={IDENTIFIER_LOOKUP:'Exact identifier research',ENTITY_LOOKUP:'Specific organization research',ENTITY_LOOKUP_MISSING_IDENTITY:'One organization — identity needed',COHORT_BROWSE:'Browse source-backed records',HOW_TO:'Research guidance',EXPLAINER:'Evidence explainer',COMPARE:'Evidence comparison',RECOMMENDATION_REQUEST:'Evidence for a value-based question',MULTI_HUB_JOURNEY:'Ordered multi-specialist research path'};
+export function buildAskResearchRoute(question:string):AskResearchRouteCard{
+  const start=performance.now(),p0=performance.now();const plan=planAskResearch(question);const p1=performance.now();const scope=resolveResearchScope(plan);const p2=performance.now();const journey=planAskMultiHubJourney(plan)??undefined;const destinations=journey?[]:resolveResearchDestinations({researchPlan:plan,executionScope:scope,limit:3});const p3=performance.now();
+  const requested=scope.requestedGeography?.display;const executed=scope.executionGeography?.display;
+  const status=journey?'Choose one research step to begin.':scope.executionAllowed?'Route confirmed — specialist research can begin.':'I need one detail before I search.';
+  const explanation=journey?'Ask has ordered the relevant specialist research. No specialist search runs until you choose a step.':scope.disclosure??plan.clarificationReason??'Ask matched this question to the specialist that owns the evidence.';
+  const limitation=scope.requestedGeographyMeaning==='SERVICE_TERRITORY'||plan.primaryHub==='move'?'Recorded location and regulatory authority do not prove service availability.':scope.executionGeographyMeaning==='PROPERTY_GEOGRAPHY'?'HMDA property geography is not lender headquarters, licensing, or current service territory.':plan.primaryHub==='contractor'?'Credential status does not mean good standing, endorsement, or service territory.':'Source records are evidence, not a TrustHub ranking or endorsement.';
+  return {version:'ask-research-route-v1',question:plan.originalQuestion,intentLabel:INTENT[plan.intent],hubLabel:plan.primaryHub?HUB[plan.primaryHub]:undefined,requestedScope:requested,executionScope:executed,scopeMeaning:scope.executionGeographyMeaning?.toLowerCase().replaceAll('_',' '),status,explanation,limitation,canExecute:scope.executionAllowed&&plan.executionAllowed,destinations,plan,scope,journey,timings:{plannerMs:+(p1-p0).toFixed(2),scopeMs:+(p2-p1).toFixed(2),destinationsMs:+(p3-p2).toFixed(2),totalMs:+(p3-start).toFixed(2)}};
+}

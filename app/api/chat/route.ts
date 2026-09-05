@@ -5,7 +5,7 @@ import { txConciergeContext } from '@/lib/network/tx-network';
 import { waConciergeContext } from '@/lib/network/wa-network';
 import { planAskResearch } from '@/lib/network/research-planner';
 import { resolveResearchScope } from '@/lib/network/research-scope';
-import { conciergeDestinationContext } from '@/lib/network/research-destinations';
+import { conciergeDestinationContext, resolveResearchDestinations } from '@/lib/network/research-destinations';
 import {
   createXaiChatCompletion,
   getXaiApiKey,
@@ -42,6 +42,7 @@ function sanitizeMessages(input: unknown): ClientMessage[] {
 }
 
 export async function POST(request: Request) {
+  const started=performance.now();
   try {
     if (!getXaiApiKey()) {
       return NextResponse.json(
@@ -69,8 +70,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'A user message is required' }, { status: 400 });
     }
 
+    const plan=planAskResearch(lastUser.content);const scope=resolveResearchScope(plan);const destinations=resolveResearchDestinations({researchPlan:plan,executionScope:scope,limit:3});
     const apiMessages: ChatMessage[] = [
-      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}\n\n${(() => { const plan=planAskResearch(lastUser.content); return conciergeDestinationContext(plan,resolveResearchScope(plan)); })()}` },
+      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}\n\n${conciergeDestinationContext(plan,scope)}` },
       ...messages,
     ];
 
@@ -79,6 +81,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       message: { role: 'assistant' as const, content },
       model,
+      route:{hub:plan.primaryHub,intent:plan.intent,requestedScope:scope.requestedGeography?.display,executionScope:scope.executionGeography?.display,destinations:destinations.map(({id,label,href,owner})=>({id,label,href,owner})),researchHref:`/ask?q=${encodeURIComponent(lastUser.content)}`},
+      diagnostics:{totalMs:+(performance.now()-started).toFixed(1),queryLength:lastUser.content.length},
     });
   } catch (err) {
     console.error('[api/chat]', err);
