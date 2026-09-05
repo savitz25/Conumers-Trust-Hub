@@ -3,6 +3,9 @@ import { ASK_CONCIERGE_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
 import { caConciergeContext } from '@/lib/network/ca-network';
 import { txConciergeContext } from '@/lib/network/tx-network';
 import { waConciergeContext } from '@/lib/network/wa-network';
+import { planAskResearch } from '@/lib/network/research-planner';
+import { resolveResearchScope } from '@/lib/network/research-scope';
+import { conciergeDestinationContext } from '@/lib/network/research-destinations';
 import {
   createXaiChatCompletion,
   getXaiApiKey,
@@ -67,7 +70,7 @@ export async function POST(request: Request) {
     }
 
     const apiMessages: ChatMessage[] = [
-      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}` },
+      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}\n\n${(() => { const plan=planAskResearch(lastUser.content); return conciergeDestinationContext(plan,resolveResearchScope(plan)); })()}` },
       ...messages,
     ];
 
