@@ -6,6 +6,8 @@ import { GuidedResearch } from '@/components/guided-research';
 import { createGuidedSession } from '@/lib/guided-research/session';
 import { buildAskResearchRoute } from '@/lib/network/ask-research-route';
 import { ResearchRouteCard } from '@/components/ask-research-route-card';
+import {AskRouteAnalytics} from '@/components/ask-route-analytics';
+import {observeAskRoute} from '@/lib/network/ask-intel-observability';
 
 export const revalidate = 3600;
 
@@ -50,7 +52,7 @@ export default async function AskPage({
             </button>
           </div>
         </form>
-        {route?<ResearchRouteCard route={route}/>:null}
+        {route?<><AskRouteAnalytics observation={observeAskRoute(route)}/><ResearchRouteCard route={route}/></>:null}
         {query ? (route?.journey ? null : guided ? <GuidedResearch query={query} initialSession={guided} routeDestinationHrefs={route?.destinations.map(row=>row.href)??[]} /> : <NetworkAskResult query={query} hideInterpretation />) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[

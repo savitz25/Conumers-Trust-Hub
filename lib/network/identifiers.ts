@@ -47,6 +47,16 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     note: 'NMLS is a labeled handoff to NMLS Consumer Access. lender-ask-v1 has no identifier mode. Not a live federated graph query. Bare digits fail closed.',
   },
   {
+    id: 'lei',
+    hubId: 'lender',
+    label: 'Legal Entity Identifier (LEI)',
+    examples: ['LEI 5493001KJTIIGC8Y1R12'],
+    pattern: /^(?:lei)\s*#?\s*[A-Z0-9]{20}$/i,
+    live: false,
+    destinationHint: 'https://www.lendertrusthub.com/ask',
+    note: 'A labeled 20-character LEI routes to LenderTrustHub research. An LEI identifies a legal entity; it is not a license, endorsement, or service-area claim.',
+  },
+  {
     id: 'npn',
     hubId: 'insurance',
     label: 'NPN',

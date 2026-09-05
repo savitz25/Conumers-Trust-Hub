@@ -6,6 +6,7 @@ import { GUIDED_SESSION_VERSION } from '@/lib/guided-research/contract';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
+import {bucketLatency,bucketResultCount} from '@/lib/network/ask-intel-observability';
 
 const STORAGE_PREFIX='ath-guided-research-v1:';
 function storageKey(query:string){let hash=0;for(const char of query)hash=((hash<<5)-hash+char.charCodeAt(0))|0;return `${STORAGE_PREFIX}${Math.abs(hash)}`;}
@@ -28,7 +29,7 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
       if(!response.ok)throw new Error(body.message??'Guided Research could not continue.');
       const missingRestoredResult=action.type==='RESUME'&&Boolean(body.session.lastExecution)&&!body.result;
       setSession(body.session);setResult(body.result??null);
-      if(body.result)trackEvent(ANALYTICS_EVENTS.ASK_SPECIALIST_RESULT_RECEIVED,{hub:body.session.hub??'unknown',state:body.result.resultState,duration_ms:Math.round(performance.now()-started)});
+      if(body.result)trackEvent(ANALYTICS_EVENTS.ASK_SPECIALIST_RESULT_RECEIVED,{hub:body.session.hub??'unknown',result_state:body.result.resultState,latency_bucket:bucketLatency(performance.now()-started),result_count_bucket:bucketResultCount(body.result.total),success:!['BACKEND_UNAVAILABLE','TIMEOUT'].includes(body.result.resultState)});
       if(missingRestoredResult){setError('The specialist explanation could not be restored. Retry the public-source research.');setResumeRecovery(true);}
       try{sessionStorage.setItem(storageKey(query),JSON.stringify(body.session));}catch{/* Current in-memory research remains usable when tab storage is unavailable. */}
       requestAnimationFrame(()=>headingRef.current?.focus());

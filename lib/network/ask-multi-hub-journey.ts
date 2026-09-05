@@ -14,8 +14,8 @@ function make(step:number,hub:SpecialistHubId,goal:string,why:string,required:bo
 
 export function planAskMultiHubJourney(plan:AskResearchPlan):AskMultiHubJourney|null{
   const q=plan.originalQuestion.toLowerCase();const geo=plan.requestedGeography;
-  const moving=/\bmov(?:e|ing|er|relocat)/.test(q),buying=/\b(buy|buying|purchase)\b/.test(q),renting=/\b(rent|renting)\b/.test(q),roof=/\broof/.test(q),senior=/\b(mother|father|parent|senior|nursing home|care)\b/.test(q);
-  const explicit=[['lender','lender|mortgage'],['insurance','insurance|coverage'],['contractor','contractor|roofer'],['move','move|moving|mover'],['senior','senior|nursing|home health|hospice']] as const;
+  const moving=/\b(?:mov(?:e|ing|er)|relocat)/.test(q),buying=/\b(buy|buying|purchase|purchasing)\b/.test(q),renting=/\b(rent|renting)\b/.test(q),roof=/\broof/.test(q),senior=/\b(mother|father|parent|senior|nursing home|hospice|care)\b/.test(q);
+  const explicit=[['lender','lender|mortgage'],['insurance','insurance|insurer|coverage'],['contractor','contractor|roofer'],['move','move|moving|mover|relocation'],['senior','senior|nursing|home health|hospice|parent|mother|father']] as const;
   const hubs=explicit.filter(([,p])=>new RegExp(`\\b(?:${p})\\b`).test(q)).map(([h])=>h as SpecialistHubId);
   let type:AskMultiHubJourney['journeyType'];let core:SpecialistHubId[]=[];let optional:SpecialistHubId[]=[];let clarificationNeeded:string|undefined;
   if(moving&&buying&&renting&&/not sure|unsure/.test(q)){type='UNRESOLVED_HOUSING';core=['move'];clarificationNeeded='Are you planning to buy or rent at the destination?';}

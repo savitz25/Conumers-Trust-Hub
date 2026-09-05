@@ -46,25 +46,28 @@ export type AskResearchPlan = {
 
 type PlannerOverrides = { proposedIntent?: AskResearchIntent; proposedEntityName?: string };
 
-const HOW_TO = /\b(?:how\s+(?:do|can|should|would)\s+i|how\s+to|what\s+should\s+i\s+(?:look|read|check)|ways?\s+to)\b/i;
-const EXPLAINER = /\b(?:what\s+(?:is|are|does)|define|definition|explain|difference\s+between|what\s+do\s+.+\s+mean)\b/i;
+const HOW_TO = /\b(?:how\s+(?:do|can|should|would)\s+i|how\s+to|what\s+(?:should|do)\s+i\s+(?:look|read|check)|loan\s+estimate\s+what\s+matters|ways?\s+to)\b/i;
+const EXPLAINER = /\b(?:what\s+(?:is|are|does)|define|definition|explain|difference\s+between|what\s+do\s+.+\s+mean|does\s+.+\s+mean|(?:current|active|registered|licensed|published)\b.{0,35}\bmeans?)\b/i;
+const STATUS_EXPLAINER=/\b(?:current|active|registered|licensed|published|vendor\s+registration|HMDA|CMS\s+stars?|no\s+(?:match|enforcement|complaints?))\b[^?.!]{0,70}\b(?:mean|equal|prove|endorse|recommend|trustworthy|approved|clean|good|license)\b/i;
 const RECOMMENDATION = /\b(?:best|safest|most\s+trustworthy|legitimate|recommended|top|good)\b/i;
-const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|agency|contractor|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b/i;
+const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|contractor|roofer|roof\s+guy|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b|\b(?:hire|research|check)\b[^?.!]{0,80}\b(?:them|him|her)\b/i;
 
 function dedupe<T>(values: T[]): T[] { return [...new Set(values)]; }
 
 function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): SpecialistHubId[] {
   const hubs = [...parsed.suggestedHubs];
+  const explicit: SpecialistHubId[] = [];
   const patterns: Array<[SpecialistHubId, RegExp]> = [
-    ['move', /\b(?:move(?:r|rs)?|moving\s+compan(?:y|ies)|USDOT|\bMC\b|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
-    ['lender', /\b(?:lender|mortgage|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
+    ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
+    ['lender', /\b(?:lender|mortgage|refinance|refinancing|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
-    ['senior', /\b(?:nursing\s+home|home\s+health|hospice|CMS|Medicare|star\s+ratings?)\b/i],
-    ['contractor', /\b(?:contractor|roofer|roof(?:ing)?(?:\s+guy)?|HVAC|electrician|plumber|locksmith|hearth|telecom|mechanical)\b/i],
-    ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|Form\s+ADV|IARD)\b/i],
+    ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare|star\s+ratings?)\b/i],
+    ['contractor', /\b(?:contractor|roofer|roof(?:ing)?(?:\s+guy)?|HVAC|electrician|plumber|locksmith|hearth|telecom|mechanical|CBC|CGC|CCC)\b/i],
+    ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|(?:Form\s+)?ADV|IARD|principal\s+office)\b/i],
   ];
-  for (const [hub, pattern] of patterns) if (pattern.test(query)) hubs.push(hub);
-  return dedupe(hubs);
+  for (const [hub, pattern] of patterns) if (pattern.test(query)) explicit.push(hub);
+  if(parsed.intent==='place'&&explicit.length)return dedupe(explicit);
+  return dedupe([...hubs,...explicit]);
 }
 
 function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>): AskResearchPlan['entityClass'] {
@@ -72,11 +75,13 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   if (classified) return { id: classified.id, label: classified.label };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
+  if (/\b(?:who\s+can\s+move|moving\s+from|move\s+me\s+from)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   if (/\b(?:roofers?|roof(?:ing)?\s+(?:contractors?|guy))\b/i.test(query)) return { id: 'roofing_contractor', label: 'Roofing contractor' };
   if (/\bcontractors?\b/i.test(query)) return { id: 'contractor', label: 'Contractor' };
   if (/\b(?:locksmiths?|hearth\s+specialists?|telecom(?:munications?)?|mechanical)\b/i.test(query)) return { id: 'contractor', label: 'Contractor' };
   if (/\b(?:auto\s+transport|ship\s+(?:my|a)\s+(?:car|vehicle)|transport\s+my\s+(?:car|vehicle))\b/i.test(query)) return { id: 'auto_transport', label: 'Auto transport company' };
   if (/\b(?:mortgage\s+)?lenders?\b/i.test(query)) return { id: 'mortgage_lender', label: 'Mortgage lender' };
+  if (/\brefinanc(?:e|ing)\b/i.test(query)) return { id: 'mortgage_lender', label: 'Mortgage lender' };
   if (/\b(?:HMDA|originations?|applications?|denials?|\bFHA\b|\bVA\b|\bUSDA\b)\b/i.test(query) && parsed.suggestedHubs.includes('lender')) return { id: 'hmda_reporting_institution', label: 'HMDA reporting institution' };
   if (/\b(?:financial|investment)\s+advis(?:er|or)s?\b/i.test(query)) return { id: 'investment_adviser', label: 'Investment adviser' };
   if (/\binsurance\s+agents?\b/i.test(query)) return { id: 'insurance_producer', label: 'Insurance producer' };
@@ -138,7 +143,7 @@ function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'
   if (evidenceSubject && !/^(?:a|an|the|this|that|my)\b/i.test(evidenceSubject)) return evidenceSubject;
   if (/\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|LLP|L\.P\.)\b/i.test(query)) return query.replace(/[?.!]+$/g, '').trim();
   if (!entity && /^[A-Z][A-Z0-9&.-]{2,40}$/.test(query.trim())) return query.trim();
-  if (entity && !geography && !/\b(?:in|near|around|within|how|which|what|is\s+this|is\s+my|show|find|need)\b/i.test(query)) {
+  if (entity && !geography && !/\b(?:in|near|nearby|around|within|how|which|what|is\s+this|is\s+my|show|find|need|serving|headquartered)\b/i.test(query)) {
     const residue = query.replace(new RegExp(entity.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), ' ').replace(/\b(?:moving\s+company|movers?|contractors?|lenders?|nursing\s+homes?)\b/gi, ' ').replace(/[^a-z0-9&]+/gi, ' ').trim();
     if (residue.split(/\s+/).length >= 2) return query.replace(/[?.!]+$/g, '').trim();
   }
@@ -184,8 +189,9 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   let intent: AskResearchIntent;
 
   if (identifier) { intent = 'IDENTIFIER_LOOKUP'; reasons.push('EXACT_IDENTIFIER_RECOGNIZED'); }
-  else if (parsed.intent === 'journey' || candidateHubs.length > 1 && /\b(?:and|,).*(?:lender|insurance|contractor|mover|care|advis)/i.test(originalQuestion)) { intent = 'MULTI_HUB_JOURNEY'; reasons.push('MULTIPLE_SPECIALIST_HUBS'); }
+  else if ((candidateHubs.length > 1 && /\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?|mov(?:e|ing)|relocat(?:e|ing|ion)|roof\s+(?:is\s+)?damaged|damaged\s+roof|helping\s+(?:my\s+)?(?:mother|father|parent)|research\b.+\b(?:and|plus)\b)\b/i.test(originalQuestion)) || /\bmov(?:e|ing)\b[^?.!]{0,80}\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?)\b/i.test(originalQuestion) || (/\bmov(?:e|ing)\b/i.test(originalQuestion)&&/\b(?:not sure|unsure)\b/i.test(originalQuestion)&&/\bbuy\b/i.test(originalQuestion)&&/\brent\b/i.test(originalQuestion))) { intent = 'MULTI_HUB_JOURNEY'; reasons.push('MULTIPLE_SPECIALIST_HUBS'); }
   else if (HOW_TO.test(originalQuestion)) { intent = 'HOW_TO'; reasons.push('HOW_TO_LANGUAGE'); }
+  else if (STATUS_EXPLAINER.test(originalQuestion)) { intent = 'EXPLAINER'; reasons.push('STATUS_MEANING_QUESTION'); }
   else if (RECOMMENDATION.test(originalQuestion)) { intent = 'RECOMMENDATION_REQUEST'; reasons.push('VALUE_JUDGMENT_REQUESTED'); }
   else if (EXPLAINER.test(originalQuestion)) { intent = 'EXPLAINER'; reasons.push('EXPLAINER_LANGUAGE'); }
   else if (/\b(?:compare|versus|vs\.?|difference\s+between)\b/i.test(originalQuestion)) { intent = 'COMPARE'; reasons.push('COMPARISON_LANGUAGE'); }
@@ -208,8 +214,9 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   }
 
   const unresolvedGeography = Boolean(geography && geography.resolution === 'UNRESOLVED');
-  const executable = intent === 'IDENTIFIER_LOOKUP' || intent === 'ENTITY_LOOKUP' || intent === 'COHORT_BROWSE' && !unresolvedGeography || intent === 'RECOMMENDATION_REQUEST' && Boolean(primaryHub);
-  const missingSlots = intent === 'ENTITY_LOOKUP_MISSING_IDENTITY' ? [identifier ? 'entityName' : /\b(?:NMLS|USDOT|CRD|NPN|NAIC|CCN|number)\b/i.test(originalQuestion) ? 'identifierOrEntityName' : 'entityName'] : unresolvedGeography ? ['geography'] : [];
+  const specificWithoutIdentity=DEICTIC_ENTITY.test(originalQuestion)&&!identifier&&!name;
+  const executable = intent === 'IDENTIFIER_LOOKUP' || intent === 'ENTITY_LOOKUP' || intent === 'COHORT_BROWSE' && !unresolvedGeography || intent === 'RECOMMENDATION_REQUEST' && Boolean(primaryHub)&&!specificWithoutIdentity;
+  const missingSlots = intent === 'ENTITY_LOOKUP_MISSING_IDENTITY'||specificWithoutIdentity ? [identifier ? 'entityName' : /\b(?:NMLS|USDOT|CRD|NPN|NAIC|CCN|number)\b/i.test(originalQuestion) ? 'identifierOrEntityName' : 'entityName'] : unresolvedGeography ? ['geography'] : [];
   if (unresolvedGeography) reasons.push('GEOGRAPHY_SCOPE_UNRESOLVED');
   if (!executable) reasons.push('SPECIALIST_EXECUTION_BLOCKED');
   const executionMode = executable ? intent === 'IDENTIFIER_LOOKUP' ? 'IDENTIFIER' : intent === 'ENTITY_LOOKUP' ? 'IDENTITY' : 'COHORT' : 'CLARIFY';
