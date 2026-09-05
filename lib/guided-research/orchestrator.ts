@@ -2,6 +2,7 @@ import type { GuidedAction, GuidedApiResponse, GuidedResearchSession } from './c
 import { createGuidedSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
 import { executeGuidedSpecialist } from './specialists.ts';
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
+import { resolveResearchScope } from '../network/research-scope.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -39,6 +40,21 @@ function validateSelectedFilters(session: GuidedResearchSession): void {
 
 function afterChoice(session: GuidedResearchSession, value: string): GuidedResearchSession {
   const next = pushHistory(session);
+  if(value.startsWith('scope_state:')){
+    const stateCode=value.slice('scope_state:'.length);const requested=session.executionScope.normalizedRequestedGeography;
+    if(!requested?.stateCode||requested.stateCode!==stateCode)throw new Error('invalid_scope_consent');
+    const executionScope=resolveResearchScope(session.researchPlan,{approvedBroaderGeography:{kind:'state',display:requested.stateName??stateCode,stateCode,stateName:requested.stateName}});
+    if(!executionScope.executionAllowed)throw new Error('invalid_scope_consent');
+    return touch({...next,executionScope,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'EXPLICIT_SCOPE_CONSENT']},geography:{type:'state',value:stateCode,stateCode,stateName:requested.stateName,meaning:executionScope.executionGeographyMeaning},availableChoices:[],missingFields:[],phase:'EXECUTE',nextAction:'execute'});
+  }
+  if(value.startsWith('scope_place:')){
+    if(session.executionScope.normalizedRequestedGeography?.kind!=='region')throw new Error('invalid_scope_selection');
+    const selected=parseGuidedGeography(value.slice('scope_place:'.length));if(!selected?.stateCode)throw new Error('invalid_scope_selection');
+    const executionGeography={kind:selected.type,display:selected.type==='city'?`${selected.city}, ${selected.stateName}`:selected.value,stateCode:selected.stateCode,stateName:selected.stateName,county:selected.county,city:selected.city};
+    const executionScope={...session.executionScope,executionGeography,resolutionState:'DETERMINISTIC_EQUIVALENT' as const,transformation:'REGION_TO_COMPONENT' as const,executionAllowed:true,disclosureRequired:true,disclosure:`You asked for ${session.executionScope.requestedGeography?.display}. You selected ${executionGeography.display} for recorded-location research. Recorded location is not service territory.`,reasonCodes:[...session.executionScope.reasonCodes,'USER_SELECTED_REGION_COMPONENT']};
+    return touch({...next,executionScope,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_SELECTED_REGION_COMPONENT']},geography:selected,availableChoices:[],missingFields:[],phase:'EXECUTE',nextAction:'execute'});
+  }
+  if(value==='scope_other')return touch({...next,availableChoices:[],missingFields:['geography'],phase:'COLLECT',nextAction:'Enter another city or county in the requested area.'});
   if (session.hub === 'senior') {
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
@@ -155,7 +171,11 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {
     session=touch({...session,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:session.identifier?'IDENTIFIER':session.identityName?'IDENTITY':'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_CLARIFICATION_COMPLETED']}});
   }
-  if (executionRequested && !session.researchPlan.executionAllowed) {
+  const specialistCapabilityCheck=session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY';
+  if (executionRequested && !session.executionScope.executionAllowed&&!specialistCapabilityCheck) {
+    session=touch({...session,phase:'CLARIFY',nextAction:session.executionScope.disclosure??'The requested scope cannot be executed safely.'});
+    if(['move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(session.executionScope.requestedGeographyMeaning??''))result={specialist:session.hub!,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'Requested scope is not executable',consumerMessage:session.executionScope.disclosure??'The accepted source cannot establish service territory or route availability from recorded location.',interpretation:[{label:'Requested geography',value:session.executionScope.requestedGeography?.display??'Requested route'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['Service territory and route availability are not source-backed by recorded location or regulatory authority.'],destinations:session.hub==='move'?[{type:'VERIFY' as const,href:'https://www.movetrusthub.com/verify-dot',label:'Verify a USDOT or MC'},{type:'DIRECTORY' as const,href:'https://www.movetrusthub.com/companies',label:'Research recorded headquarters'}]:[],error:{code:'requested_scope_not_executable',retryable:false},latencyMs:0,firstUsefulResult:true};
+  } else if (executionRequested && !session.researchPlan.executionAllowed) {
     session=touch({...session,phase:'CLARIFY',nextAction:session.researchPlan.clarificationReason??'Clarify the research request before specialist execution.'});
   } else if (executionRequested) {
     validateSelectedFilters(session);

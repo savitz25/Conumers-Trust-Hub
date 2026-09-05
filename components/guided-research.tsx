@@ -53,6 +53,11 @@ export function GuidedResearch({query}:{query:string}) {
       <h2 ref={headingRef} tabIndex={-1} className="mt-5 text-xl font-semibold outline-none sm:text-2xl" style={{color:ASK_BRAND.navy}}>{question}</h2>
       {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {specialistName}</p>:null}
       {currentResearch||session?.geography?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?` · ${session.geography.value}`:''}</p>:null}
+      {session?.executionScope.requestedGeography?<div className="mt-4 rounded-xl border p-3 text-sm" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.ink}}>
+        <p><span className="font-semibold" style={{color:ASK_BRAND.navy}}>You asked:</span> {session.executionScope.requestedGeography.display}</p>
+        {session.executionScope.executionGeography?<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Research executed:</span> {session.executionScope.executionGeography.display}</p>:<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Available research:</span> This local scope has not been executed.</p>}
+        {session.executionScope.disclosure?<p className="mt-1">{session.executionScope.disclosure}</p>:null}
+      </div>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Preparing the next research step…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
       {resumeRecovery?<button type="button" disabled={busy} onClick={()=>void send({type:'RESUME'})} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry specialist explanation</button>:null}

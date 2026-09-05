@@ -78,6 +78,8 @@ function interpretation(session: GuidedResearchSession): Array<{ label: string; 
   if (session.moveMode) rows.push({ label: 'Research class', value: session.moveMode.replaceAll('_', ' ') });
   if (session.regulatoryRole) rows.push({ label: 'Regulatory role', value: session.regulatoryRole });
   if (session.geography) rows.push({ label: 'Recorded geography', value: session.geography.value });
+  if(session.executionScope.requestedGeography)rows.push({label:'You asked',value:session.executionScope.requestedGeography.display});
+  if(session.executionScope.executionGeography)rows.push({label:'Research executed',value:session.executionScope.executionGeography.display});
   if(session.investorFirmClass)rows.push({label:'Firm class',value:session.investorFirmClass.toUpperCase()});
   if(session.insuranceEntityClass)rows.push({label:'Insurance class',value:session.insuranceEntityClass.replaceAll('_',' ')});
   if(session.lenderResearchMode)rows.push({label:'Lender research',value:session.lenderResearchMode.replaceAll('_',' ')});
