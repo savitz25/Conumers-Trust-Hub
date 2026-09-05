@@ -5,6 +5,7 @@ import {resolveResearchScope} from './research-scope.ts';
 import {RESEARCH_DESTINATIONS,resolveResearchDestinations,validateResearchDestinationRegistry,conciergeDestinationContext} from './research-destinations.ts';
 import {resolveGuidedNextActions} from './guided-next-actions.ts';
 import {orchestrateGuidedResearch} from '../guided-research/orchestrator.ts';
+import {ASK_CONCIERGE_SYSTEM_PROMPT} from '../ai/system-prompt.ts';
 
 const resolved=(q:string)=>{const plan=planAskResearch(q);const scope=resolveResearchScope(plan);return {plan,scope,destinations:resolveResearchDestinations({researchPlan:plan,executionScope:scope}),actions:resolveGuidedNextActions({plan,scope})}};
 test('registry is deterministic, canonical, unique, public, and never owns entity profile patterns',()=>{assert.deepEqual(validateResearchDestinationRegistry(),[]);assert.equal(new Set(RESEARCH_DESTINATIONS.map(x=>x.id)).size,RESEARCH_DESTINATIONS.length);assert.ok(RESEARCH_DESTINATIONS.every(x=>!/[?&](?:url|href)=/i.test(x.href)));});
@@ -15,6 +16,7 @@ test('Broward execution gets exact county destination and 001B scope',()=>{const
 test('scope failures retain useful safe actions without pretending zero results',async()=>{for(const q of ['mover in Tampa Bay Florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','insurance agencies in Fort Lauderdale Florida','roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:q}});assert.equal(response.diagnostics.specialistCalls,0,q);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',q);assert.ok(response.session.nextActions.length>0,q);if(/Tampa Bay/i.test(q))assert.ok(response.session.nextActions.every(a=>a.id!=='move.florida'));}});
 test('true zero policy differs from unsupported scope',()=>{const x=resolved('roofing contractors in Broward County Florida');const actions=resolveGuidedNextActions({plan:x.plan,scope:x.scope,resultState:'ZERO_MATCHING_ROWS'});assert.equal(actions[0]?.type,'CLEAR_FILTERS');assert.ok(actions.some(a=>a.id==='contractor.broward'));});
 test('concierge context is an allowlisted concise route ticket',()=>{const x=resolved('What should I read on Form ADV?');const text=conciergeDestinationContext(x.plan,x.scope);assert.match(text,/investortrusthub\.com\/firms/);assert.match(text,/adviserinfo\.sec\.gov/);assert.doesNotMatch(text,/investortrusthub\.com\/florida/);});
+test('static Concierge prompt contains policy, never drifting URL inventory',()=>{assert.doesNotMatch(ASK_CONCIERGE_SYSTEM_PROMPT,/https?:\/\//);assert.match(ASK_CONCIERGE_SYSTEM_PROMPT,/600 and 1,200 characters/);assert.match(ASK_CONCIERGE_SYSTEM_PROMPT,/exhaustive URL allowlist/i)});
 test('status semantics remain non-endorsement',()=>{for(const d of RESEARCH_DESTINATIONS)assert.doesNotMatch(`${d.description} ${d.caveat??''}`,/current (?:means|=) good standing|registered (?:means|=) recommended/i)});
 test('24-query destination and failure-mode corpus remains structured and fail closed',async()=>{
  const corpus:Array<[string,string,string?]>=[
