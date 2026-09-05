@@ -59,7 +59,7 @@ export function validateGuidedSession(value: unknown): GuidedResearchSession | n
   if (row.version !== GUIDED_SESSION_VERSION || !row.sessionId || !row.originalQuestion || !row.researchPlan || !row.executionScope) return null;
   if (!GUIDED_PHASES.includes(row.phase) || (row.hub && !GUIDED_PILOT_HUBS.includes(row.hub))) return null;
   if (row.lastExecution && (row.lastExecution.source !== 'specialist' || !GUIDED_RESULT_STATES.includes(row.lastExecution.resultState) || row.lastExecution.resultBearing !== true || typeof row.lastExecution.choicesBearing !== 'boolean' || !Number.isFinite(Date.parse(row.lastExecution.executedAt)) || (row.lastExecution.errorCode !== undefined && typeof row.lastExecution.errorCode !== 'string'))) return null;
-  if (!Array.isArray(row.history) || !row.selectedFilters || typeof row.selectedFilters !== 'object') return null;
+  if (!Array.isArray(row.history) || !Array.isArray(row.nextActions) || !row.selectedFilters || typeof row.selectedFilters !== 'object') return null;
   const updated = Date.parse(row.updatedAt);
   if (!Number.isFinite(updated) || Date.now() - updated > GUIDED_SESSION_TTL_MS) return null;
   return row;
@@ -114,7 +114,7 @@ function base(question: string, plan: AskResearchPlan): GuidedResearchSession {
   return {
     version: GUIDED_SESSION_VERSION, sessionId: randomUUID(), originalQuestion: question.trim(),
     researchPlan: plan, executionScope:resolveResearchScope(plan), phase: 'UNDERSTAND', queryType: plan.legacyQueryType, selectedFilters: {},
-    requestedEvidence: [], missingFields: [], availableChoices: [], availableRefinements: [],
+    requestedEvidence: [], missingFields: [], availableChoices: [], availableRefinements: [], nextActions: [],
     createdAt: now, updatedAt: now, history: [],
   };
 }

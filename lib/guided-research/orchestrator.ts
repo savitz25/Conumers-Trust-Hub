@@ -3,6 +3,7 @@ import { createGuidedSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICE
 import { executeGuidedSpecialist } from './specialists.ts';
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
+import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -186,5 +187,9 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     const choicePrompt=result.error?.code==='new_jersey_credential_class_required'?'What kind of credential or work do you want to research?':result.error?.code==='summit_is_city_in_union_county'?'Choose the corrected New Jersey geography.':result.error?.code==='statewide_fallback_confirmation_required'?'Would you like to broaden this to statewide New Jersey credential records?':'Choose a source-backed research option.';
     session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,lastExecution:{source:'specialist',resultState:result.resultState,errorCode:result.error?.code,resultBearing:true,choicesBearing:hasChoices,executedAt:new Date().toISOString()},resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
   }
+  const nextActions=resolveGuidedNextActions({plan:session.researchPlan,scope:session.executionScope,resultState:result?.resultState});
+  session=touch({...session,nextActions});
+  if(session.hub==='insurance'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='insurance_producer')session=touch({...session,nextAction:'InsuranceTrustHub does not publish mass individual-producer profiles. Verify the producer through the applicable official state licensing source.'});
+  if(result)result={...result,nextActions};
   return {session,result,diagnostics:{requestId,hub:session.hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:result?.total??0,specialistCalls}};
 }

@@ -1,8 +1,9 @@
 import type { UniversalQueryType } from '../network/query-classification.ts';
 import type { AskResearchPlan } from '../network/research-planner.ts';
 import type { AskExecutionScope } from '../network/research-scope.ts';
+import type { GuidedNextAction } from '../network/guided-next-actions.ts';
 
-export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v3' as const;
+export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v4' as const;
 export const GUIDED_SESSION_TTL_MS = 30 * 60 * 1000;
 export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move', 'investor', 'insurance', 'lender'] as const;
 export type GuidedPilotHub = (typeof GUIDED_PILOT_HUBS)[number];
@@ -73,6 +74,7 @@ export type GuidedResearchSession = {
   };
   resultCount?: number;
   nextAction?: string;
+  nextActions: GuidedNextAction[];
   createdAt: string;
   updatedAt: string;
   history: GuidedSessionSnapshot[];
@@ -118,6 +120,7 @@ export type GuidedExecutionResult = {
   error?: { code: string; retryable: boolean };
   latencyMs: number;
   firstUsefulResult: boolean;
+  nextActions?: GuidedNextAction[];
 };
 
 export type GuidedAction =
