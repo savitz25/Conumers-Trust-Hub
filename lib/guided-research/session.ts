@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { parseNetworkAsk } from '../network/ask-parse.ts';
+import { planAskResearch, planRequiresImmediateClarification, validateAskResearchPlan, type AskResearchPlan } from '../network/research-planner.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
 
 const CARE_CHOICES: GuidedChoice[] = [
@@ -54,7 +55,7 @@ function snapshot(session: GuidedResearchSession): GuidedSessionSnapshot {
 export function validateGuidedSession(value: unknown): GuidedResearchSession | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const row = value as GuidedResearchSession;
-  if (row.version !== GUIDED_SESSION_VERSION || !row.sessionId || !row.originalQuestion) return null;
+  if (row.version !== GUIDED_SESSION_VERSION || !row.sessionId || !row.originalQuestion || !row.researchPlan) return null;
   if (!GUIDED_PHASES.includes(row.phase) || (row.hub && !GUIDED_PILOT_HUBS.includes(row.hub))) return null;
   if (row.lastExecution && (row.lastExecution.source !== 'specialist' || !GUIDED_RESULT_STATES.includes(row.lastExecution.resultState) || row.lastExecution.resultBearing !== true || typeof row.lastExecution.choicesBearing !== 'boolean' || !Number.isFinite(Date.parse(row.lastExecution.executedAt)) || (row.lastExecution.errorCode !== undefined && typeof row.lastExecution.errorCode !== 'string'))) return null;
   if (!Array.isArray(row.history) || !row.selectedFilters || typeof row.selectedFilters !== 'object') return null;
@@ -107,12 +108,11 @@ function newJerseyTrade(question:string,stateCode?:string):string|undefined {
   return choices.find(([pattern])=>pattern.test(question))?.[1];
 }
 
-function base(question: string): GuidedResearchSession {
-  const parsed = parseNetworkAsk(question);
+function base(question: string, plan: AskResearchPlan): GuidedResearchSession {
   const now = new Date().toISOString();
   return {
     version: GUIDED_SESSION_VERSION, sessionId: randomUUID(), originalQuestion: question.trim(),
-    phase: 'UNDERSTAND', queryType: parsed.queryClassification.type, selectedFilters: {},
+    researchPlan: plan, phase: 'UNDERSTAND', queryType: plan.legacyQueryType, selectedFilters: {},
     requestedEvidence: [], missingFields: [], availableChoices: [], availableRefinements: [],
     createdAt: now, updatedAt: now, history: [],
   };
@@ -122,10 +122,20 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   const q = question.trim();
   if (!q) return null;
   const parsed = parseNetworkAsk(q);
-  const session = base(q);
+  const plan = validateAskResearchPlan(planAskResearch(q));
+  const session = base(q, plan);
   const financialGeography=geographyFromParsed(parsed);
   const labeledIdentifier=q.match(/\b(CRD|NPN|NAIC|NMLS|LEI)\s*#?\s*([A-Z0-9-]+)\b/i);
   if(labeledIdentifier)session.identifier={type:labeledIdentifier[1].toUpperCase(),value:labeledIdentifier[2].toUpperCase()};
+
+  if (planRequiresImmediateClarification(plan)) {
+    session.hub = plan.primaryHub as GuidedResearchSession['hub'];
+    session.entityClass = plan.entityClass?.id;
+    session.requestedEvidence = plan.requestedEvidence;
+    session.missingFields = [...plan.missingSlots];
+    if (plan.normalizedGeography) session.geography = geographyFromParsed(parsed);
+    return { ...session, phase: 'CLARIFY', nextAction: plan.clarificationReason ?? 'Clarify the research request before specialist execution.' };
+  }
 
   const investorIntent=/\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
   if(investorIntent){
@@ -154,7 +164,7 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
     return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
   }
 
-  const lenderIntent=/\b(?:mortgage|lenders?|\bNMLS\b|\bLEI\b|HMDA|Rocket\s+Mortgage|Newrez)\b/i.test(q);
+  const lenderIntent=/\b(?:mortgage|lenders?|\bNMLS\b|\bLEI\b|HMDA|FHA|VA|USDA|originations?|applications?|denials?|Rocket\s+Mortgage|Newrez)\b/i.test(q);
   if(lenderIntent){
     session.hub='lender';session.geography=financialGeography;
     if(/^i\s+need\s+a\s+mortgage\s+lender\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What would you like to research?'};
@@ -203,7 +213,7 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
     session.identityName = undefined;
     if(session.identifier)return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
     const conflictingSummit = /\bsummit\s+county\b/i.test(q) && parsed.geography?.stateCode === 'NJ';
-    if (conflictingSummit) return { ...session, phase:'EXECUTE',missingFields:[],nextAction:'execute' };
+    if (conflictingSummit) return { ...session, geography:parseGuidedGeography('Summit County, New Jersey')??session.geography, phase:'EXECUTE',missingFields:[],nextAction:'execute' };
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
     if (!session.trade && session.geography?.stateCode==='NJ') return { ...session, phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute' };
     if (!session.trade) return { ...session, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'What kind of work do you need?' };

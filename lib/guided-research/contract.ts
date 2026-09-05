@@ -1,6 +1,7 @@
 import type { UniversalQueryType } from '../network/query-classification.ts';
+import type { AskResearchPlan } from '../network/research-planner.ts';
 
-export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v1' as const;
+export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v2' as const;
 export const GUIDED_SESSION_TTL_MS = 30 * 60 * 1000;
 export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move', 'investor', 'insurance', 'lender'] as const;
 export type GuidedPilotHub = (typeof GUIDED_PILOT_HUBS)[number];
@@ -52,6 +53,7 @@ export type GuidedResearchSession = {
   version: typeof GUIDED_SESSION_VERSION;
   sessionId: string;
   originalQuestion: string;
+  researchPlan: AskResearchPlan;
   queryType: UniversalQueryType;
   identifier?: { type: string; value: string };
   identityName?: string;

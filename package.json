@@ -40,6 +40,7 @@
     "check:ask-move-execute": "node --experimental-strip-types --test lib/network/move-execute.test.ts",
     "check:ask-lender-execute": "node --experimental-strip-types --test lib/network/lender-execute.test.ts lib/network/v1-complete.test.ts",
     "check:ask-consumer-ux": "node --experimental-strip-types --test lib/network/consumer-ux.test.ts",
+    "check:ask-intel-001a": "node --experimental-strip-types --test lib/network/ask-intel-001a.test.ts",
     "check:ask-entity-link": "node --experimental-strip-types --test lib/network/entity-destination.test.ts",
     "check:ath-search-001": "node --experimental-strip-types --test lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts",
     "check:ath-search-002": "node --experimental-strip-types --test lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts",
