@@ -5,7 +5,6 @@ import type { AskResearchPlan, AskRequestedGeography } from './research-planner.
 export type AskJourneyStep={step:number;hub:SpecialistHubId;goal:string;why:string;required:boolean;scope?:string;limitation:string;destinations:ResearchDestination[]};
 export type AskMultiHubJourney={version:'ask-multi-hub-journey-v1';originalQuestion:string;journeyType:'HOME_BUYING'|'MOVE_AND_BUY'|'MOVE_AND_RENT'|'ROOF_AND_INSURANCE'|'SENIOR_AND_MOVE'|'UNRESOLVED_HOUSING';requestedGeography?:AskRequestedGeography;steps:AskJourneyStep[];optionalSteps:AskJourneyStep[];clarificationNeeded?:string;orderedHubs:SpecialistHubId[]};
 
-const label:Record<SpecialistHubId,string>={move:'MoveTrustHub',lender:'LenderTrustHub',insurance:'InsuranceTrustHub',senior:'SeniorTrustHub',contractor:'ContractorTrustHub',investor:'InvestorTrustHub'};
 function destinations(hub:SpecialistHubId, geography?:AskRequestedGeography):ResearchDestination[]{
   const county=geography?.county;const stateCode=geography?.stateCode;
   const precise=RESEARCH_DESTINATIONS.filter(d=>d.hub===hub&&d.publication==='PUBLIC'&&d.owner==='TRUSTHUB').filter(d=>!d.geography||(d.geography.stateCode===stateCode&&(!d.geography.county||d.geography.county===county))).sort((a,b)=>a.priority-b.priority);

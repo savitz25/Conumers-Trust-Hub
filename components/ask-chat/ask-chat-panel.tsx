@@ -49,6 +49,7 @@ export function AskChatPanel() {
     abortRef.current?.abort();
     const controller=new AbortController();abortRef.current=controller;
     const started=performance.now();
+    let timedOut=false;const timeoutId=window.setTimeout(()=>{timedOut=true;controller.abort();},55_000);
     sendingRef.current = true;
     setError(null);
     setInput('');
@@ -94,7 +95,10 @@ export function AskChatPanel() {
       setMessages((prev) => prev.map(message=>message.id===pendingId?{...message,content:reply,pending:false,allowedUrls:[...(data.route?.destinations??[]).map(d=>d.href),...(data.route?.researchHref?[data.route.researchHref]:[])],actions:[...(data.route?.destinations??[]),...(data.route?.researchHref?[{id:'open-research',label:'Open source-backed research',href:data.route.researchHref}]:[])]}:message));
       trackEvent(ANALYTICS_EVENTS.CONCIERGE_COMPLETE,{duration_ms:Math.round(performance.now()-started),length:Math.min(text.length,2000)});
     } catch (e) {
-      if(e instanceof DOMException&&e.name==='AbortError')return;
+      if(e instanceof DOMException&&e.name==='AbortError'){
+        if(timedOut)setMessages(prev=>prev.map(message=>message.id===pendingId?{...message,pending:false,content:'The AI explanation timed out. The verified source-backed research action remains available; you can retry the explanation.'}:message));
+        return;
+      }
       const msg =
         e instanceof Error ? e.message : 'Something went wrong. Please try again.';
       setError(msg);
@@ -108,8 +112,8 @@ export function AskChatPanel() {
         },
       ]);
     } finally {
-      setLoading(false);
-      if(abortRef.current===controller){sendingRef.current = false;abortRef.current=null;}
+      window.clearTimeout(timeoutId);
+      if(abortRef.current===controller){setLoading(false);sendingRef.current = false;abortRef.current=null;}
     }
   }, []);
 
@@ -270,7 +274,6 @@ export function AskChatPanel() {
                 }
               }}
               placeholder="Ask about moving, lending, insurance…"
-              disabled={loading}
               className="min-h-11 flex-1 resize-none rounded-xl border bg-white px-3 py-2.5 text-base leading-snug focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-sm"
               style={{
                 borderColor: ASK_BRAND.border,
@@ -279,7 +282,7 @@ export function AskChatPanel() {
             />
             <button
               type="submit"
-              disabled={loading || !input.trim()}
+              disabled={!input.trim()}
               className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl text-white transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:opacity-50"
               style={{ backgroundColor: ASK_BRAND.indigo }}
               aria-label="Send message"
