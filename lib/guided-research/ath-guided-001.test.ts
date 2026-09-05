@@ -141,10 +141,12 @@ test('ERROR_RECOVERY Back restores and re-executes the last valid result state',
 });
 
 test('complete direct queries bypass clarification while incomplete identities retain their flow',async()=>{
-  for(const query of ['moving company in Dallas Texas','movers in New York','nursing homes in Florida','nursing homes in Palm Beach County','roofers in Broward','HVAC contractors in Florida','auto transport companies in New York','USDOT 3244649','CMS CCN 105411']){
+  for(const query of ['movers in New York','nursing homes in Florida','nursing homes in Palm Beach County','roofers in Broward','HVAC contractors in Florida','auto transport companies in New York','USDOT 3244649','CMS CCN 105411']){
     const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
     assert.ok(response.result,query);assert.equal(response.diagnostics.specialistCalls,1,query);assert.notEqual(response.session.phase,'CLARIFY',query);
   }
+  const localMove=await orchestrateGuidedResearch({action:{type:'START',question:'moving company in Dallas Texas'}});
+  assert.equal(localMove.session.phase,'CLARIFY');assert.equal(localMove.diagnostics.specialistCalls,0);assert.equal(localMove.session.executionScope.resolutionState,'BROADENING_REQUIRES_CONSENT');
   const identity=await orchestrateGuidedResearch({action:{type:'START',question:'SHIFL'}});assert.equal(identity.session.hub,'move');assert.ok(identity.result);
   const exact=await orchestrateGuidedResearch({action:{type:'START',question:'USDOT 3244649'}});assert.equal(exact.result?.resultState,'SUPPORTED_RESULTS');assert.equal(lastMoveBody?.entityClass,'mover');
   const restored=await orchestrateGuidedResearch({session:exact.session,action:{type:'RESUME'}});assert.equal(restored.result?.resultState,'SUPPORTED_RESULTS');assert.equal(restored.diagnostics.specialistCalls,1);

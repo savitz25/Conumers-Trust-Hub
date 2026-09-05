@@ -1,6 +1,7 @@
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import type { SpecialistHubId } from './registry.ts';
 import type { UniversalQueryType } from './query-classification.ts';
+import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 
 export const ASK_RESEARCH_INTENTS = [
   'IDENTIFIER_LOOKUP', 'ENTITY_LOOKUP', 'ENTITY_LOOKUP_MISSING_IDENTITY',
@@ -12,8 +13,15 @@ export type AskResearchIntent = (typeof ASK_RESEARCH_INTENTS)[number];
 export type AskRequestedGeography = {
   raw: string;
   display: string;
-  kind: 'state' | 'county' | 'city' | 'region' | 'place';
+  kind: 'state' | 'county' | 'city' | 'zip' | 'region' | 'route' | 'place';
   resolution: 'RESOLVED' | 'UNRESOLVED';
+  stateCode?: string;
+  stateName?: string;
+  county?: string;
+  city?: string;
+  zip?: string;
+  origin?: string;
+  destination?: string;
 };
 
 export type AskResearchPlan = {
@@ -52,7 +60,7 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
     ['lender', /\b(?:lender|mortgage|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
     ['senior', /\b(?:nursing\s+home|home\s+health|hospice|CMS|Medicare|star\s+ratings?)\b/i],
-    ['contractor', /\b(?:contractor|roofer|roofing|HVAC|electrician|plumber|locksmith|hearth|telecom|mechanical)\b/i],
+    ['contractor', /\b(?:contractor|roofer|roof(?:ing)?(?:\s+guy)?|HVAC|electrician|plumber|locksmith|hearth|telecom|mechanical)\b/i],
     ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|Form\s+ADV|IARD)\b/i],
   ];
   for (const [hub, pattern] of patterns) if (pattern.test(query)) hubs.push(hub);
@@ -64,7 +72,7 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   if (classified) return { id: classified.id, label: classified.label };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
-  if (/\b(?:roofers?|roofing\s+contractors?)\b/i.test(query)) return { id: 'roofing_contractor', label: 'Roofing contractor' };
+  if (/\b(?:roofers?|roof(?:ing)?\s+(?:contractors?|guy))\b/i.test(query)) return { id: 'roofing_contractor', label: 'Roofing contractor' };
   if (/\bcontractors?\b/i.test(query)) return { id: 'contractor', label: 'Contractor' };
   if (/\b(?:locksmiths?|hearth\s+specialists?|telecom(?:munications?)?|mechanical)\b/i.test(query)) return { id: 'contractor', label: 'Contractor' };
   if (/\b(?:auto\s+transport|ship\s+(?:my|a)\s+(?:car|vehicle)|transport\s+my\s+(?:car|vehicle))\b/i.test(query)) return { id: 'auto_transport', label: 'Auto transport company' };
@@ -82,6 +90,8 @@ function title(value: string): string {
 }
 
 function requestedGeography(query: string, parsed: ReturnType<typeof parseNetworkAsk>): AskRequestedGeography | undefined {
+  const route=query.match(/\bfrom\s+([a-z][a-z .'-]{1,40}?)\s+to\s+([a-z][a-z .'-]{1,40}?)(?=[?,.!]|\s+who\b|$)/i);
+  if(route){const origin=title(route[1].trim());const destination=title(route[2].trim());return {raw:route[0],display:`${origin} to ${destination}`,kind:'route',resolution:'RESOLVED',origin,destination};}
   const known: Array<[RegExp, string, AskRequestedGeography['kind'], AskRequestedGeography['resolution']]> = [
     [/\btampa\s+bay(?:\s*,?\s*florida|\s*,?\s*fl)?\b/i, 'Tampa Bay, Florida', 'region', 'UNRESOLVED'],
     [/\bfort\s+lauderdale(?:\s*,?\s*florida|\s*,?\s*fl)?\b/i, 'Fort Lauderdale, Florida', 'city', 'RESOLVED'],
@@ -97,14 +107,22 @@ function requestedGeography(query: string, parsed: ReturnType<typeof parseNetwor
   ];
   for (const [pattern, display, kind, resolution] of known) {
     const match = query.match(pattern);
-    if (match) return { raw: match[0].replace(/\s*,\s*/g, ' ').trim(), display, kind, resolution };
+    if (match){
+      const city=kind==='city'?display.replace(/,.*$/,''):undefined;
+      const mapped=city?resolveFloridaMunicipality(city):undefined;
+      const county=kind==='county'?(display.startsWith('Summit County')?'Summit County':display.replace(/ County,.*$/,'')):mapped?.county;
+      return { raw: match[0].replace(/\s*,\s*/g, ' ').trim(), display, kind, resolution,stateCode:/Florida/i.test(display)?'FL':/New Jersey/i.test(display)?'NJ':undefined,stateName:/Florida/i.test(display)?'Florida':/New Jersey/i.test(display)?'New Jersey':undefined,city:mapped?.city??city,county };
+    }
   }
+  const queryKey=query.toLowerCase().replace(/[?,!]/g,' ');
+  const flMatch=Object.keys(FLORIDA_MUNICIPALITY_CROSSWALK).sort((a,b)=>b.length-a.length).find(city=>new RegExp(`\\b${city.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(queryKey));
+  if(flMatch){const mapped=resolveFloridaMunicipality(flMatch)!;return {raw:flMatch,display:`${mapped.city}, Florida`,kind:'city',resolution:'RESOLVED',stateCode:'FL',stateName:'Florida',city:mapped.city,county:mapped.county};}
   if (parsed.geography) {
     const geo = parsed.geography;
     const match = query.match(/\b(?:in|near|around|within)\s+([a-z][a-z .'-]*?(?:county)?(?:\s*,?\s*(?:florida|texas|california|new\s+jersey|fl|tx|ca|nj))?)\b(?=\s+(?:for|and|with|that|which)\b|[?.!,]|$)/i);
     const raw = match?.[1]?.trim() ?? geo.countyName ?? geo.city ?? geo.stateName ?? geo.stateCode!;
     const display = geo.countyName ? `${geo.countyName}, ${geo.stateName}` : geo.city ? `${geo.city}, ${geo.stateName}` : geo.stateName!;
-    return { raw, display, kind: geo.countyName ? 'county' : geo.city ? 'city' : 'state', resolution: 'RESOLVED' };
+    return { raw, display, kind: geo.countyName ? 'county' : geo.city ? 'city' : 'state', resolution: 'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,county:geo.countyName?.replace(/ County$/i,''),city:geo.city };
   }
   const loose = query.match(/\b(?:in|near|around|within)\s+([a-z][a-z .'-]{1,45}?)(?=\s+(?:for|and|with|that|which)\b|[?.!,]|$)/i);
   if (loose?.[1] && !/^(?:me|here)$/i.test(loose[1].trim())) return { raw: loose[1].trim(), display: title(loose[1].trim()), kind: 'place', resolution: 'UNRESOLVED' };

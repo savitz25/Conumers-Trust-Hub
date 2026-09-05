@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { parseNetworkAsk } from '../network/ask-parse.ts';
 import { planAskResearch, planRequiresImmediateClarification, validateAskResearchPlan, type AskResearchPlan } from '../network/research-planner.ts';
+import { resolveResearchScope } from '../network/research-scope.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
 
 const CARE_CHOICES: GuidedChoice[] = [
@@ -55,7 +56,7 @@ function snapshot(session: GuidedResearchSession): GuidedSessionSnapshot {
 export function validateGuidedSession(value: unknown): GuidedResearchSession | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const row = value as GuidedResearchSession;
-  if (row.version !== GUIDED_SESSION_VERSION || !row.sessionId || !row.originalQuestion || !row.researchPlan) return null;
+  if (row.version !== GUIDED_SESSION_VERSION || !row.sessionId || !row.originalQuestion || !row.researchPlan || !row.executionScope) return null;
   if (!GUIDED_PHASES.includes(row.phase) || (row.hub && !GUIDED_PILOT_HUBS.includes(row.hub))) return null;
   if (row.lastExecution && (row.lastExecution.source !== 'specialist' || !GUIDED_RESULT_STATES.includes(row.lastExecution.resultState) || row.lastExecution.resultBearing !== true || typeof row.lastExecution.choicesBearing !== 'boolean' || !Number.isFinite(Date.parse(row.lastExecution.executedAt)) || (row.lastExecution.errorCode !== undefined && typeof row.lastExecution.errorCode !== 'string'))) return null;
   if (!Array.isArray(row.history) || !row.selectedFilters || typeof row.selectedFilters !== 'object') return null;
@@ -112,13 +113,13 @@ function base(question: string, plan: AskResearchPlan): GuidedResearchSession {
   const now = new Date().toISOString();
   return {
     version: GUIDED_SESSION_VERSION, sessionId: randomUUID(), originalQuestion: question.trim(),
-    researchPlan: plan, phase: 'UNDERSTAND', queryType: plan.legacyQueryType, selectedFilters: {},
+    researchPlan: plan, executionScope:resolveResearchScope(plan), phase: 'UNDERSTAND', queryType: plan.legacyQueryType, selectedFilters: {},
     requestedEvidence: [], missingFields: [], availableChoices: [], availableRefinements: [],
     createdAt: now, updatedAt: now, history: [],
   };
 }
 
-export function createGuidedSession(question: string): GuidedResearchSession | null {
+function createUnscopedGuidedSession(question: string): GuidedResearchSession | null {
   const q = question.trim();
   if (!q) return null;
   const parsed = parseNetworkAsk(q);
@@ -229,6 +230,38 @@ export function createGuidedSession(question: string): GuidedResearchSession | n
   if (/\bship (?:my|a) (?:car|vehicle)|transport my (?:car|vehicle)\b/i.test(q)) return { ...session, identityName: undefined, moveMode: 'auto_transport', entityClass: 'auto_transport', phase: 'EXECUTE', nextAction: 'execute' };
   if (session.identifier || session.identityName || session.moveMode && (session.geography || session.moveMode === 'auto_transport')) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
   return { ...session, phase: 'CLARIFY', missingFields: ['moveMode'], availableChoices: MOVE_CHOICES, nextAction: 'What are you moving?' };
+}
+
+function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScope']):GuidedGeography|undefined{
+  const geo=scope.executionGeography;if(!geo||geo.kind==='national'||geo.kind==='region'||geo.kind==='route')return undefined;
+  return {type:geo.kind,value:geo.kind==='state'?(geo.stateCode??geo.display):geo.kind==='county'?(geo.county??geo.display):geo.kind==='city'?(geo.city??geo.display):(geo.zip??geo.display),stateCode:geo.stateCode,stateName:geo.stateName,county:geo.county,city:geo.city,meaning:scope.executionGeographyMeaning};
+}
+
+export function createGuidedSession(question:string):GuidedResearchSession|null{
+  const session=createUnscopedGuidedSession(question);if(!session)return null;
+  if(!session.researchPlan.primaryHub&&session.hub)session.executionScope=resolveResearchScope({...session.researchPlan,primaryHub:session.hub,entityClass:session.entityClass?{id:session.entityClass,label:session.entityClass.replaceAll('_',' ')}:session.researchPlan.entityClass});
+  const scope=session.executionScope;
+  const executable=guidedGeographyFromExecution(scope);
+  const unscopedIsMorePrecise=session.geography?.type==='city'&&scope.normalizedRequestedGeography?.kind==='state';
+  const preserveUnsupportedTradeCity=session.hub==='contractor'&&session.trade==='electrical'&&session.geography?.type==='city';
+  if(executable&&!unscopedIsMorePrecise&&!preserveUnsupportedTradeCity)session.geography=executable;
+  if(!scope.requestedGeography||session.identifier||session.identityName)return session;
+  if(['contractor','move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(scope.requestedGeographyMeaning??''))return session;
+  if(scope.executionAllowed)return session;
+  const choices:GuidedChoice[]=[];
+  if(scope.resolutionState==='BROADENING_REQUIRES_CONSENT'&&scope.normalizedRequestedGeography?.stateCode){
+    const state=scope.normalizedRequestedGeography.stateName??scope.normalizedRequestedGeography.stateCode;
+    choices.push({id:'scope-statewide',label:`Research ${state} instead`,action:'SELECT_CHOICE',value:`scope_state:${scope.normalizedRequestedGeography.stateCode}`,description:'This is broader than the place you requested and will be recorded as your explicit choice.'});
+  }
+  if(scope.normalizedRequestedGeography?.display==='Tampa Bay, Florida'){
+    choices.push(
+      {id:'scope-tampa',label:'Tampa / Hillsborough County',action:'SELECT_CHOICE',value:'scope_place:Tampa, Florida'},
+      {id:'scope-st-pete',label:'St. Petersburg / Pinellas County',action:'SELECT_CHOICE',value:'scope_place:St. Petersburg, Florida'},
+      {id:'scope-clearwater',label:'Clearwater / Pinellas County',action:'SELECT_CHOICE',value:'scope_place:Clearwater, Florida'},
+      {id:'scope-other',label:'Another city or county',action:'SELECT_CHOICE',value:'scope_other',description:'Enter the specific place you want researched.'},
+    );
+  }
+  return {...session,geography:undefined,phase:'CLARIFY',missingFields:scope.resolutionState==='CLARIFICATION_REQUIRED'&&!choices.length?['geography']:[],availableChoices:choices,nextAction:scope.disclosure??'The requested local scope is not executable by this specialist.'};
 }
 
 export function isGuidedResearchCandidate(question: string): boolean {
