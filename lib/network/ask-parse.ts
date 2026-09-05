@@ -300,6 +300,16 @@ function geography(q: string): ParsedGeography | undefined {
 
 function matchIdentifier(q: string): ParsedIdentifier | undefined {
   const trimmed = q.trim();
+  const nmlsInSentence = trimmed.match(/\bnmls\s*#?\s*(\d{4,12})\b/i);
+  if (nmlsInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'nmls');
+    if (family) return { family, raw: `NMLS ${nmlsInSentence[1]}`, ambiguous: false, note: family.note };
+  }
+  const leiInSentence = trimmed.match(/\blei\s*#?\s*([A-Z0-9]{20})\b/i);
+  if (leiInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'lei');
+    if (family) return { family, raw: `LEI ${leiInSentence[1].toUpperCase()}`, ambiguous: false, note: family.note };
+  }
   const ccnInSentence = trimmed.match(/\b(?:cms\s+)?ccn\s*#?\s*(\d{6})\b/i);
   if (ccnInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'cms_ccn');

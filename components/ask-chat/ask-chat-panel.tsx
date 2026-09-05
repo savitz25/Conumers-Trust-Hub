@@ -10,6 +10,7 @@ import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { cn } from '@/lib/utils';
+import {bucketLatency,bucketQueryLength} from '@/lib/network/ask-intel-observability';
 
 type UiMessage = {
   id: string;
@@ -54,7 +55,7 @@ export function AskChatPanel() {
     setError(null);
     setInput('');
     trackEvent(ANALYTICS_EVENTS.CONCIERGE_SUBMIT, {
-      length: Math.min(text.length, 2000),
+      query_length_bucket: bucketQueryLength(text.length),
     });
 
     const userMsg: UiMessage = { id: newId(), role: 'user', content: text };
@@ -65,7 +66,7 @@ export function AskChatPanel() {
     const researchHref=`/ask?q=${encodeURIComponent(text)}`;
     const pendingId=newId();
     setMessages(prev=>[...prev.filter(message=>!message.pending),{id:pendingId,role:'assistant',content:'I understood your question. The source-backed research route is ready while I prepare an explanation.',allowedUrls:[researchHref],actions:[{id:'open-research',label:'Open source-backed research',href:researchHref}],pending:true}]);
-    trackEvent(ANALYTICS_EVENTS.CONCIERGE_FIRST_CONTENT,{duration_ms:Math.round(performance.now()-started),length:Math.min(text.length,2000)});
+    trackEvent(ANALYTICS_EVENTS.CONCIERGE_FIRST_CONTENT,{latency_bucket:bucketLatency(performance.now()-started),query_length_bucket:bucketQueryLength(text.length)});
 
     try {
       const apiMessages = nextHistory
@@ -93,7 +94,7 @@ export function AskChatPanel() {
       if (!reply) throw new Error('Empty reply');
 
       setMessages((prev) => prev.map(message=>message.id===pendingId?{...message,content:reply,pending:false,allowedUrls:[...(data.route?.destinations??[]).map(d=>d.href),...(data.route?.researchHref?[data.route.researchHref]:[])],actions:[...(data.route?.destinations??[]),...(data.route?.researchHref?[{id:'open-research',label:'Open source-backed research',href:data.route.researchHref}]:[])]}:message));
-      trackEvent(ANALYTICS_EVENTS.CONCIERGE_COMPLETE,{duration_ms:Math.round(performance.now()-started),length:Math.min(text.length,2000)});
+      trackEvent(ANALYTICS_EVENTS.CONCIERGE_COMPLETE,{latency_bucket:bucketLatency(performance.now()-started),query_length_bucket:bucketQueryLength(text.length),success:true});
     } catch (e) {
       if(e instanceof DOMException&&e.name==='AbortError'){
         if(timedOut)setMessages(prev=>prev.map(message=>message.id===pendingId?{...message,pending:false,content:'The AI explanation timed out. The verified source-backed research action remains available; you can retry the explanation.'}:message));

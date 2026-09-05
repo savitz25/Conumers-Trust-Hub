@@ -82,8 +82,8 @@ export async function POST(request: Request) {
       message: { role: 'assistant' as const, content },
       model,
       route:{hub:plan.primaryHub,intent:plan.intent,requestedScope:scope.requestedGeography?.display,executionScope:scope.executionGeography?.display,destinations:destinations.map(({id,label,href,owner})=>({id,label,href,owner})),researchHref:`/ask?q=${encodeURIComponent(lastUser.content)}`},
-      diagnostics:{totalMs:+(performance.now()-started).toFixed(1),queryLength:lastUser.content.length},
-    });
+      diagnostics:{totalMs:+(performance.now()-started).toFixed(1),queryLengthBucket:lastUser.content.length<25?'0-24':lastUser.content.length<50?'25-49':lastUser.content.length<100?'50-99':lastUser.content.length<250?'100-249':lastUser.content.length<500?'250-499':'500+'},
+    },{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','Server-Timing':`total;dur=${(performance.now()-started).toFixed(1)}`}});
   } catch (err) {
     console.error('[api/chat]', err);
     const code = err instanceof Error ? err.message : '';
