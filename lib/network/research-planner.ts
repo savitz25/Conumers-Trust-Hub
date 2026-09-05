@@ -90,7 +90,7 @@ function title(value: string): string {
 }
 
 function requestedGeography(query: string, parsed: ReturnType<typeof parseNetworkAsk>): AskRequestedGeography | undefined {
-  const route=query.match(/\bfrom\s+([a-z][a-z .'-]{1,40}?)\s+to\s+([a-z][a-z .'-]{1,40}?)(?=[?,.!]|\s+who\b|$)/i);
+  const route=query.match(/\bfrom\s+([a-z][a-z .'-]{1,40}?)\s+to\s+([a-z][a-z .'-]{1,40}?)(?=\s+and\s+(?:buying|renting|looking|researching)\b|[?,.!]|\s+who\b|$)/i);
   if(route){const origin=title(route[1].trim());const destination=title(route[2].trim());return {raw:route[0],display:`${origin} to ${destination}`,kind:'route',resolution:'RESOLVED',origin,destination};}
   const known: Array<[RegExp, string, AskRequestedGeography['kind'], AskRequestedGeography['resolution']]> = [
     [/\btampa\s+bay(?:\s*,?\s*florida|\s*,?\s*fl)?\b/i, 'Tampa Bay, Florida', 'region', 'UNRESOLVED'],
