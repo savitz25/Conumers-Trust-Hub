@@ -16,6 +16,7 @@ import { askFromEmail, type Mailer } from './mail.ts';
 import { one, type SqlClient } from './sql.ts';
 import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
 import { businessFreshness, oldestConfirmation } from './freshness.ts';
+import { isLifecycleQaOperator } from './lifecycle-qa-auth.ts';
 import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public-profile.ts';
 import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssueError, validateRecordIssue, type RecordIssueStatus } from './record-issues.ts';
 import { BUSINESS_REPLY_STATUSES, BusinessReplyError, STAFF_REPLY_TRANSITIONS, validateBusinessReply, type BusinessReplyStatus } from './business-replies.ts';
@@ -1518,11 +1519,17 @@ export class CustomerPlatform {
     return res.rows;
   }
 
-  async assertStaff(sessionToken:string):Promise<void>{await this.requireStaff(sessionToken)}
+  async assertLifecycleQaOperator(sessionToken:string):Promise<void>{await this.requireLifecycleQaOperator(sessionToken)}
+
+  private async requireLifecycleQaOperator(sessionToken:string) {
+    const user=await this.sessionUser(sessionToken);
+    if(!user)throw new AuthError('missing_session');
+    if(!isLifecycleQaOperator({isStaff:user.isStaff,sessionEmail:user.email,operatorEmail:process.env.ATH_LIFECYCLE_QA_OPERATOR_EMAIL,vercelEnv:process.env.VERCEL_ENV,enabled:process.env.ATH_LIFECYCLE_QA_ENABLED}))throw new AuthError('not_staff');
+    return user;
+  }
 
   async sendLifecycleQa(sessionToken:string):Promise<{attempted:number;sent:number;suppressed:number;failed:number;types:CustomerEmailType[]}> {
-    await this.requireStaff(sessionToken);
-    if(process.env.VERCEL_ENV!=='production'||process.env.ATH_LIFECYCLE_QA_ENABLED!=='1')throw new AuthError('not_staff');
+    await this.requireLifecycleQaOperator(sessionToken);
     const recipient=process.env.ATH_LIFECYCLE_QA_EMAIL;
     if(!recipient||!isEmailShape(normalizeEmail(recipient))||!process.env.RESEND_API_KEY||askFromEmail()!=='Ask Trust Hub <hello@asktrusthub.com>')throw new ClaimError('qa_configuration_missing');
     const definitions:Array<{type:CustomerEmailType;objectId:string;detail:string;actionPath:string;actionLabel:string}>=[
