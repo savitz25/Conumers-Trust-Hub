@@ -21,6 +21,12 @@ export function ClickTracker() {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
+      const instrumented = target.closest<HTMLElement>('[data-analytics-event]');
+      const namedEvent = instrumented?.dataset.analyticsEvent;
+      if (namedEvent) {
+        trackEvent(namedEvent, { surface: 'homepage' });
+      }
+
       const anchor = target.closest('a');
       if (!anchor || !(anchor instanceof HTMLAnchorElement)) return;
 

@@ -11,8 +11,8 @@ type HomeContract = {
   section_order: string[]; coverage_mode: string; runtime_data_strategy: string;
   what_changed_mode: string; forbidden_features: string[];
 };
-type CoverageCell = { level: string; evidenceFamilies: string[]; routes: string[] };
-type Coverage = { jurisdictions: Record<string, Record<string, CoverageCell>> };
+type CoverageCell = { askPath: string; specialistPublished: string[]; nationalOnly: string[]; noComparableStateUniverse?: string[] };
+type Coverage = { jurisdictions: Record<string, CoverageCell> };
 
 const source = readFileSync(join(process.cwd(), 'components', 'network-intelligence-home.tsx'), 'utf8');
 const page = readFileSync(join(process.cwd(), 'app', 'page.tsx'), 'utf8');
@@ -53,10 +53,13 @@ test('no unsafe aggregate, stale source claim, or ambiguous Lender profile claim
   assert.equal(home.derived_display_metrics.find((metric) => metric.metric_id === 'normalized_dataset_entry_count')?.value, 11);
 });
 
-test('Florida levels are exact and future empty states stay undisplayed', () => {
-  assert.deepEqual(Object.fromEntries(Object.entries(coverage.jurisdictions['US-FL']).map(([id, cell]) => [id, cell.level])), { move:'STATE_ENHANCED', lender:'STATE_ENHANCED', insurance:'STATE_VERIFY', senior:'NATIONAL_SPINE', contractor:'STATE_ENHANCED', investor:'STATE_VERIFY' });
-  for (const state of ['US-NJ','US-TX','US-NY','US-WA','US-CA','US-IL']) assert.deepEqual(coverage.jurisdictions[state], {});
-  assert.match(source, /Empty future-state contract keys/);
+test('six-state routing metadata preserves asymmetric specialist coverage', () => {
+  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ']);
+  assert.equal(coverage.jurisdictions['US-FL'].askPath, '/florida');
+  assert.deepEqual(coverage.jurisdictions['US-FL'].nationalOnly, ['investor']);
+  assert.deepEqual(coverage.jurisdictions['US-AZ'].nationalOnly, ['insurance']);
+  assert.deepEqual(coverage.jurisdictions['US-AZ'].noComparableStateUniverse, ['move']);
+  assert.match(source, /Six-state network explorer/);
 });
 
 test('consumer semantic firewalls and limitations are visible', () => {
@@ -66,18 +69,18 @@ test('consumer semantic firewalls and limitations are visible', () => {
   assert.match(source, /No paid ranking or network recommendation/);
 });
 
-test('accepted Federated Ask is the hero and Concierge stays distinct', () => {
+test('current Intelligent Search is the hero and Concierge stays distinct', () => {
   assert.match(source, /<NetworkAskInput \/>/);
-  assert.match(source, /Federated Ask queries structured public evidence/);
+  assert.match(source, /Intelligent Search routes identities, states, and evidence/);
   assert.match(source, /<HomeConciergeDemoted \/>/);
   assert.equal((input.match(/\['[^']+', '[^']+'\]/g) ?? []).length, 5);
 });
 
-test('Trace, clocks, source ledger, methodology, and initial baseline are real', () => {
+test('Trace, clocks, source ledger, methodology, and reconciled contracts are real', () => {
   assert.match(source, /Trace this number/);
   assert.match(source, /metric\.as_of_date/);
   assert.match(source, /metric\.retrieved_at/);
-  assert.match(source, /Initial network baseline established/);
+  assert.match(source, /Six current specialist contracts, one evidence-preserving view/);
   assert.equal(home.what_changed_mode, 'initial_baseline');
   assert.doesNotMatch(source, /Market improved|Risk increased|Consumers are safer/);
   assert.doesNotMatch(JSON.stringify(home), /SCORE/);

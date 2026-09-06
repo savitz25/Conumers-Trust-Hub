@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
       { source: '/privacy-policy', destination: '/privacy', permanent: true },
       { source: '/terms-of-service', destination: '/terms', permanent: true },
 
+      // Canonical six-state explorer alias for the established Florida Place Lens.
+      { source: '/florida', destination: '/places/florida', permanent: true },
+
       // Vertical roots / mistaken parent paths → specialist domains
       { source: '/moving', destination: 'https://www.movetrusthub.com', permanent: true },
       { source: '/moving/:path*', destination: 'https://www.movetrusthub.com', permanent: true },

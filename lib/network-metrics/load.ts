@@ -5,6 +5,7 @@ import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' 
 import insuranceFallback from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
 import investorFallback from '../../data/network-metrics/investor-v1-fallback.json' with { type: 'json' };
 import {
+  ACCEPTED_SPECIALIST_FINGERPRINTS,
   SPECIALIST_METRIC_REVALIDATE_SECONDS,
   SPECIALIST_OWNED_HUBS,
   SPECIALIST_SOURCES,
@@ -27,7 +28,7 @@ import {
   validateMoveManifest,
   validateSeniorManifest,
 } from './validate.ts';
-import type { SpecialistHubPresentation } from './types.ts';
+import type { LoadedSpecialistContract, SpecialistHubPresentation } from './types.ts';
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
@@ -75,28 +76,58 @@ function present(hub: SpecialistHubId, raw: unknown, origin: 'UPSTREAM' | 'FALLB
   return adaptInvestorCard(validateInvestorManifest(raw), origin);
 }
 
-export async function loadSpecialistCard(
+function validated(hub: SpecialistHubId, raw: unknown): Record<string, unknown> {
+  const value = hub === 'contractor' ? validateContractorManifest(raw)
+    : hub === 'senior' ? validateSeniorManifest(raw)
+      : hub === 'move' ? validateMoveManifest(raw)
+        : hub === 'lender' ? validateLenderManifest(raw)
+          : hub === 'insurance' ? validateInsuranceManifest(raw)
+            : validateInvestorManifest(raw);
+  if (value.sourceFingerprint !== ACCEPTED_SPECIALIST_FINGERPRINTS[hub]) {
+    throw new Error(`${hub}: specialist fingerprint is not accepted by AskTrustHub`);
+  }
+  return value;
+}
+
+export async function loadSpecialistContract(
   hub: SpecialistHubId,
   options: LoadSpecialistOptions = {},
-): Promise<SpecialistHubPresentation> {
+): Promise<LoadedSpecialistContract> {
   const config = SPECIALIST_SOURCES[hub];
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? config.timeoutMs;
   const fallbackRaw = options.fallbackRaw ?? readFallback(hub);
+  let origin: 'UPSTREAM' | 'FALLBACK' = 'UPSTREAM';
+  let raw: Record<string, unknown>;
   try {
-    const upstream = await fetchUpstream(config, fetchImpl, timeoutMs);
-    return present(hub, upstream, 'UPSTREAM');
+    raw = validated(hub, await fetchUpstream(config, fetchImpl, timeoutMs));
   } catch {
-    return present(hub, fallbackRaw, 'FALLBACK');
+    origin = 'FALLBACK';
+    raw = validated(hub, fallbackRaw);
   }
+  return { hub, origin, raw, presentation: present(hub, raw, origin) };
+}
+
+export async function loadSpecialistNetworkContracts(
+  options: LoadSpecialistOptions = {},
+): Promise<Record<SpecialistHubId, LoadedSpecialistContract>> {
+  const contracts = await Promise.all(SPECIALIST_OWNED_HUBS.map((hub) => loadSpecialistContract(hub, options)));
+  return Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub, index) => [hub, contracts[index]])) as Record<
+    SpecialistHubId,
+    LoadedSpecialistContract
+  >;
+}
+
+export async function loadSpecialistCard(
+  hub: SpecialistHubId,
+  options: LoadSpecialistOptions = {},
+): Promise<SpecialistHubPresentation> {
+  return (await loadSpecialistContract(hub, options)).presentation;
 }
 
 export async function loadSpecialistNetworkCards(
   options: LoadSpecialistOptions = {},
 ): Promise<Record<SpecialistHubId, SpecialistHubPresentation>> {
-  const cards = await Promise.all(SPECIALIST_OWNED_HUBS.map((hub) => loadSpecialistCard(hub, options)));
-  return Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub, index) => [hub, cards[index]])) as Record<
-    SpecialistHubId,
-    SpecialistHubPresentation
-  >;
+  const contracts = await loadSpecialistNetworkContracts(options);
+  return Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub) => [hub, contracts[hub].presentation])) as Record<SpecialistHubId, SpecialistHubPresentation>;
 }

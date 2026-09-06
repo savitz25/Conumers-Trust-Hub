@@ -251,12 +251,16 @@ export function adaptMoveCard(
     secondary: [
       metric('nj_operation_safe_move_novs_acquired', 'NJ Safe Move NOV rows'),
       metric('ca_bhgs_19237_citation_rows', 'California household-mover citation rows'),
+      metric('wa_utc_active_household_goods_directory_results', 'Washington UTC active directory results'),
+      metric('published_state_intelligence_pages', 'Published specialist state pages'),
     ],
     caveats: [
       'Federal directory profiles and Florida FDACS registrations are different universes and are not one mover total.',
       'Headquarters is not service territory. Current authority is not a recommendation.',
       'New Jersey PM/PW/PC statewide mover universe is REQUEST_ONLY and is not shown as zero.',
       'California CAL-T household-mover universe is NOT_ACQUIRED and is not shown as zero.',
+      'Texas TxDMV household-goods mover universe is NOT_ACQUIRED and is not shown as zero.',
+      'Washington 284 is an active UTC directory result count, not a bulk roster or FMCSA count.',
       'NOV is not a final order. A citation row is not a mover identity.',
     ],
   };
@@ -350,6 +354,7 @@ export function adaptInsuranceCard(
       'Agency, producer, and licensed insurance company remain separate identities and are not one insurance-company total.',
       'Appointments are not agencies or insurers. A complaint observation is not wrongdoing.',
       'CMS Marketplace evidence observations are not plans, companies, or agencies.',
+      'PUBLIC_RESEARCH_GRAPH describes aggregate research depth, not a public producer-profile directory.',
       'Texas TDI agency license rows are not the national graph agency count.',
       'Texas authorized companies and California admitted-insurer universe are NOT_ACQUIRED and are not shown as zero.',
     ],

@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "check:ask-home-002": "node --experimental-strip-types --test lib/network-intelligence/ask-home-002.test.ts",
+    "check:ath-home-005": "node --experimental-strip-types --test lib/network-metrics/ath-home-005.test.ts",
     "check:ask-home-001": "node --experimental-strip-types --test lib/network-intelligence/ask-home-001.test.ts",
     "dev": "next dev --turbopack",
     "build": "next build",

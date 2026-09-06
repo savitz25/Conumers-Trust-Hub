@@ -16,7 +16,7 @@ import {
   routeAzAsk,
 } from './az-network.ts';
 import { ASK_CONCIERGE_SYSTEM_PROMPT } from '../ai/system-prompt.ts';
-import { SPECIALIST_HUB_IDS } from './registry.ts';
+import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 import { NJ_PUBLICATION_MANIFEST } from './nj-network.ts';
 import { listNjPilotCounties } from './nj-counties.ts';
 import { listPlaceLensIndex } from './place-lens.ts';
@@ -164,8 +164,8 @@ test('no Trust Score, ratings schema, or local Arizona routes', () => {
 test('homepage, footer, places, concierge, and discovery are gated on the Arizona flag', () => {
   assert.match(footerDs, /\/arizona/);
   assert.match(footerSrc, /azReleaseGatePassed/);
-  assert.match(home, /azReleaseGatePassed/);
-  assert.match(home, /\/arizona/);
+  assert.match(home, /buildAskStateCoverage/);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'arizona'));
   assert.match(placesSrc, /listPlaceLensIndex/);
   assert.equal(
     listPlaceLensIndex().some((row) => row.href === '/arizona'),

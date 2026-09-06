@@ -88,7 +88,20 @@ export function buildWebSiteSchema() {
 export function buildHomepageGraph() {
   return {
     '@context': 'https://schema.org',
-    '@graph': [buildOrganizationSchema(), buildWebSiteSchema()],
+    '@graph': [
+      buildOrganizationSchema(),
+      buildWebSiteSchema(),
+      {
+        '@type': 'WebPage',
+        '@id': `${siteUrl}/#webpage`,
+        name: 'AskTrustHub — Public Regulatory Research Across the Trust Hub Network',
+        description: 'Research public and regulatory evidence across six specialist Trust Hub systems.',
+        url: siteUrl,
+        isPartOf: { '@id': websiteId },
+        publisher: { '@id': orgId },
+        inLanguage: 'en-US',
+      },
+    ],
   };
 }
 

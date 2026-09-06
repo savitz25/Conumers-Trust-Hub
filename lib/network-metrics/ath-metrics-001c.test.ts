@@ -140,9 +140,9 @@ test('presentation files do not hardcode production counts', () => {
   assert.doesNotMatch(loadSource, /readFileSync/);
 });
 
-test('homepage consumes specialist cards and keeps other hubs on local manifests', () => {
+test('homepage consumes all six specialist contracts and retains legacy manifests only for non-metric metadata', () => {
   assert.match(home, /SpecialistNetworkCard/);
-  assert.match(home, /loadSpecialistNetworkCards/);
+  assert.match(home, /loadSpecialistNetworkContracts/);
   assert.match(home, /HubCard/);
   assert.match(home, /consumerMetricLabel/);
   assert.doesNotMatch(home, /useEffect|fetch\(/);

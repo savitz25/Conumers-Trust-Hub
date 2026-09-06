@@ -104,6 +104,9 @@ function requirePublicCount(map: Map<string, RawMetric>, key: string, grain?: st
   if (typeof metric.publicationStatus !== 'string' || metric.publicationStatus.trim() === '') {
     throw new Error(`missing publication status for ${key}`);
   }
+  if (!['PUBLIC', 'PUBLIC_PARTIAL', 'PUBLIC_RESEARCH_GRAPH'].includes(metric.publicationStatus)) {
+    throw new Error(`${key}: specialist publication contract does not allow public rendering`);
+  }
   requireString(metric.label, `${key}: label required`);
   requireString(metric.grain, `${key}: grain required`);
   if (grain && metric.grain !== grain) throw new Error(`${key}: unexpected grain ${String(metric.grain)}`);
@@ -203,6 +206,18 @@ export function validateMoveManifest(raw: unknown): Record<string, unknown> {
   for (const key of MOVE_REQUIRED_PUBLIC) requirePublicCount(map, key);
   forbidNumericMissing(map, 'nj_pmw_authority_roster');
   forbidNumericMissing(map, 'ca_cal_t_household_mover_universe');
+  forbidNumericMissing(map, 'tx_txdmv_household_goods_mover_universe');
+  const network = isRecord(raw.network) ? raw.network : {};
+  const paths = Array.isArray(network.publishedStateIntelligencePaths)
+    ? network.publishedStateIntelligencePaths.map(String)
+    : [];
+  if (network.publishedStateIntelligencePages !== 5 || !['/florida', '/new-jersey', '/california', '/texas', '/washington'].every((path) => paths.includes(path))) {
+    throw new Error('Move specialist contract must expose exactly five accepted state-intelligence paths');
+  }
+  const wa = map.get('wa_utc_active_household_goods_directory_results');
+  if (!wa || wa.value !== 284 || wa.grain !== 'utc_active_household_goods_directory_result') {
+    throw new Error('Washington 284 must remain active UTC directory results');
+  }
   const federal = map.get('federal_publishable_directory_profiles')!.value as number;
   const florida = map.get('florida_fdacs_im_active_registrations')!.value as number;
   if (federal === florida) throw new Error('FDACS registrations must not equal federal directory profiles');

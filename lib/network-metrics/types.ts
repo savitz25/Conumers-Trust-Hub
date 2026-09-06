@@ -2,6 +2,13 @@ import type { SpecialistHubId } from './sources.ts';
 
 export type MetricOrigin = 'UPSTREAM' | 'FALLBACK';
 
+export type LoadedSpecialistContract = {
+  hub: SpecialistHubId;
+  origin: MetricOrigin;
+  raw: Record<string, unknown>;
+  presentation: SpecialistHubPresentation;
+};
+
 export type NetworkMetricTraceRow = { label: string; value: string };
 
 export type NetworkMetric = {
