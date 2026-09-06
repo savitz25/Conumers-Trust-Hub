@@ -110,13 +110,16 @@ export class CustomerPlatform {
   }
 
   private async sendLifecycle(input:{emailType:CustomerEmailType;recipient:string;recipientUserId?:string|null;objectType:string;objectId:string;stateVersion:string;message:CustomerLifecycleEmail;orgId?:string|null}):Promise<'sent'|'failed'|'suppressed'> {
-    const event=await one<{id:string}>(this.deps.sql,`INSERT INTO ath_customer_mail_events(event_type,recipient_user_id,object_type,object_id,state_version,status) VALUES($1,$2,$3,$4,$5,'PENDING') ON CONFLICT(event_type,object_type,object_id,state_version) DO NOTHING RETURNING id`,[input.emailType,input.recipientUserId||null,input.objectType,input.objectId,input.stateVersion]);
-    if(!event){customerLog('customer_email_suppressed',{emailType:input.emailType});return 'suppressed'}
+    const digest=createHash('sha256').update(['ath-customer-email-v1',input.emailType,input.objectType,input.objectId,input.stateVersion].join('|')).digest('hex');
+    const notificationId=`${digest.slice(0,8)}-${digest.slice(8,12)}-4${digest.slice(13,16)}-8${digest.slice(17,20)}-${digest.slice(20,32)}`;
+    await this.deps.sql.query(`INSERT INTO ath_notifications(id,org_id,user_id,event_key,title,body,payload) VALUES($1,$2,$3,'customer_lifecycle','Transactional customer update','A transactional lifecycle message was prepared.',$4::jsonb) ON CONFLICT(id) DO NOTHING`,[notificationId,input.orgId||null,input.recipientUserId||null,JSON.stringify({email_type:input.emailType,object_type:input.objectType,state_version:input.stateVersion})]);
+    const delivery=await one<{id:string}>(this.deps.sql,`INSERT INTO ath_notification_deliveries(notification_id,channel,status) VALUES($1,'email','PENDING') ON CONFLICT(notification_id,channel) DO NOTHING RETURNING id`,[notificationId]);
+    if(!delivery){customerLog('customer_email_suppressed',{emailType:input.emailType});return 'suppressed'}
     let sent=false;
     try{sent=(await this.deps.mailer({to:input.recipient,subject:input.message.subject,html:input.message.html,text:input.message.text})).sent}catch{sent=false}
     const status=sent?'SENT':'FAILED',now=this.now().toISOString();
-    await this.deps.sql.query(`UPDATE ath_customer_mail_events SET status=$2,attempts=attempts+1,last_error_code=CASE WHEN $2='FAILED' THEN 'provider_failed' ELSE NULL END,sent_at=CASE WHEN $2='SENT' THEN $3::timestamptz ELSE sent_at END,updated_at=$3 WHERE id=$1`,[event.id,status,now]);
-    await this.audit({actorKind:'system',orgId:input.orgId||null,objectType:'ath_customer_mail_events',objectId:event.id,action:sent?'customer_email_sent':'customer_email_failed',after:{email_type:input.emailType,delivery_status:status}});
+    await this.deps.sql.query(`UPDATE ath_notification_deliveries SET status=$2,attempts=attempts+1,last_error_code=CASE WHEN $2='FAILED' THEN 'provider_failed' ELSE NULL END,sent_at=CASE WHEN $2='SENT' THEN $3::timestamptz ELSE sent_at END,updated_at=$3 WHERE id=$1`,[delivery.id,status,now]);
+    await this.audit({actorKind:'system',orgId:input.orgId||null,objectType:'ath_notification_deliveries',objectId:delivery.id,action:sent?'customer_email_sent':'customer_email_failed',after:{email_type:input.emailType,delivery_status:status}});
     customerLog(sent?'customer_email_sent':'customer_email_failed',{emailType:input.emailType},sent?'info':'error');
     return sent?'sent':'failed';
   }
