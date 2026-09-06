@@ -5,6 +5,7 @@ import { ClaimContinueForm } from './claim-continue-form';
 import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
 import { ClaimRecoveryCard } from '@/components/customer/ClaimRecoveryCard';
 import { ClaimProgress } from '@/components/customer/ClaimProgress';
+import { ClaimFunnelAnalytics } from '@/components/customer/ClaimFunnelAnalytics';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,8 @@ export default async function ClaimContinuePage({
   const capability=CUSTOMER_HUB_REGISTRY[intent.payload.hub_id];
   return (
     <section className="space-y-6">
+      <ClaimFunnelAnalytics event="claim_handoff_received" hub={intent.payload.hub_id} profileClass={intent.payload.entity_class || intent.payload.provider_class} state={intent.payload.home_state || undefined} authenticated={Boolean(user)} />
+      <ClaimFunnelAnalytics event={user ? 'claim_auth_returned' : 'claim_auth_required'} hub={intent.payload.hub_id} authenticated={Boolean(user)} />
       <ClaimProgress current={user ? 2 : 1} />
       <header>
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo">AskTrustHub</p>

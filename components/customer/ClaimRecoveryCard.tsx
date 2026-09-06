@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { customerClaimRecovery, type CustomerClaimErrorCode } from '@/lib/customer/claim-recovery';
+import { ClaimFunnelAnalytics } from './ClaimFunnelAnalytics';
 
 export function ClaimRecoveryCard({ code, headingLevel = 'h1' }: { code: CustomerClaimErrorCode | string; headingLevel?: 'h1' | 'h2' }) {
   const recovery = customerClaimRecovery(code);
   const Heading = headingLevel;
   return (
     <section className="card-surface p-6" aria-labelledby="claim-recovery-title">
+      <ClaimFunnelAnalytics event="claim_recovery_viewed" resultState={String(code)} />
       <Heading id="claim-recovery-title" className="text-xl font-semibold text-navy">{recovery.headline}</Heading>
       <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
         <div><h2 className="font-semibold text-foreground">What happened</h2><p className="mt-1">{recovery.whatHappened}</p></div>
