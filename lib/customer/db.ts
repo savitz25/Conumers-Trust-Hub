@@ -3,6 +3,7 @@ import { Pool, type PoolClient } from 'pg';
 import { customerLog } from './log';
 import { applyCustomerMigrations as applyMigrations, enableAppRole } from './migrate';
 import type { SqlClient } from './sql';
+import { selectAskDatabaseUrl } from './database-selection';
 
 export type { SqlClient };
 export { applyMigrations as applyCustomerMigrations, enableAppRole };
@@ -10,12 +11,10 @@ export { applyMigrations as applyCustomerMigrations, enableAppRole };
 let pool: Pool | null = null;
 
 export function askDatabaseUrl(): string | undefined {
-  return (
-    process.env.neon_tech_database ||
-    process.env.ASK_DATABASE_URL ||
-    undefined
-  );
+  return selectAskDatabaseUrl(process.env);
 }
+
+export { selectAskDatabaseUrl };
 
 function getPool(): Pool {
   if (pool) return pool;
