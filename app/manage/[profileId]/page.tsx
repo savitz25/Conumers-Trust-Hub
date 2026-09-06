@@ -36,7 +36,7 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
   const canEdit = ['owner', 'manager', 'staff'].includes(model.access.role);
   const capability=CUSTOMER_HUB_REGISTRY[model.access.hub_id];
   return <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:py-12">
-    <ManageConsoleView profileId={profileId} />
+    <ManageConsoleView hub={model.access.hub_id} />
     <header><Link href="/manage" className="text-sm text-muted-foreground underline">All managed profiles</Link>
       <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-indigo">Manage profile</p>
       <h1 className="mt-1 text-2xl font-semibold text-navy">{model.access.display_name_snapshot || model.access.native_slug}</h1>

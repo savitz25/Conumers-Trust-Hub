@@ -6,6 +6,7 @@ import { AccountSignIn } from '@/components/customer/AccountSignIn';
 import { ClaimProgress } from '@/components/customer/ClaimProgress';
 import { CustomerActions } from '@/components/customer/CustomerActions';
 import { CLAIM_EXPERIENCE, hubLabel, identifierLabel } from '@/lib/customer/experience';
+import { ClaimFunnelAnalytics } from '@/components/customer/ClaimFunnelAnalytics';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,7 @@ export default async function ClaimStatusPage({ params }: { params: Promise<{ id
     const actions = copy.actions.map((action) => action.href === '/manage' && status === 'approved' ? { ...action, href: `/manage/${row.native_profile_id}` } : action);
     return (
       <div className="mx-auto max-w-xl space-y-5 px-4 py-12">
+        <ClaimFunnelAnalytics event={status === 'approved' ? 'claim_completed' : 'claim_started'} hub={hub} resultState={status} authenticated />
         <ClaimProgress current={copy.step} />
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo">{copy.eyebrow}</p>
         <h1 className="text-2xl font-semibold text-navy">{copy.title}</h1>

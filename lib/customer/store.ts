@@ -386,7 +386,7 @@ export class CustomerPlatform {
   } | null> {
     const row = await one<{ payload: HandoffPayload; consumed_at: string | null; expires_at: string }>(
       this.deps.sql,
-      `SELECT payload, consumed_at::text, expires_at::text FROM ath_claim_intents WHERE id = $1`,
+      `SELECT payload, consumed_at::text, expires_at::text FROM ath_claim_intents WHERE id = $1 FOR UPDATE`,
       [intentId]
     );
     if (!row) return null;
@@ -430,6 +430,9 @@ export class CustomerPlatform {
 
     const adapter = await loadAndValidateProfile(this.deps.cth, intent.payload);
     if (!adapter.ok) throw new ClaimError(adapter.code);
+    if (input.credentialAttestation.trim().toUpperCase() !== adapter.profile.externalKey.trim().toUpperCase()) {
+      throw new ClaimError('credential_mismatch');
+    }
 
     const hub = await one<{ id: string }>(
       this.deps.sql,
@@ -466,6 +469,24 @@ export class CustomerPlatform {
         WHERE hub_profile_id = $1 AND status = 'active'`,
       [hub!.id]
     );
+
+    const existingClaim = await one<{ id: string; org_id: string; status: ClaimStatus }>(
+      this.deps.sql,
+      `SELECT id,org_id,status FROM ath_claims
+       WHERE claimant_user_id=$1 AND hub_profile_id=$2
+         AND status IN ('submitted','needs_info','in_review','approved')
+       ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
+      [user.id,hub!.id]
+    );
+    if (existingClaim) {
+      await this.deps.sql.query(
+        `UPDATE ath_claim_intents SET consumed_at = COALESCE(consumed_at,$2) WHERE id = $1`,
+        [input.intentId,this.now().toISOString()]
+      );
+      await this.audit({ actorUserId:user.id,orgId:existingClaim.org_id,objectType:'ath_claims',objectId:existingClaim.id,
+        action:'repeat_claim_returned',after:{ status:existingClaim.status },ctx:input.ctx });
+      return { claimId:existingClaim.id,orgId:existingClaim.org_id,status:existingClaim.status,competing:Boolean(existingGrant&&existingGrant.org_id!==existingClaim.org_id) };
+    }
 
     let org: { id: string } | null = null;
     if (input.orgId) {
