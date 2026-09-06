@@ -16,6 +16,14 @@ export function askFromEmail(): string {
 }
 
 export const resendMailer: Mailer = async (message) => {
+  if (
+    process.env.VERCEL_ENV === 'preview' &&
+    process.env.ATH_FIXTURE_ENV === 'preview' &&
+    process.env.ATH_ALLOW_SYNTHETIC_FIXTURE === '1'
+  ) {
+    customerLog('mail_preview_fixture_sink', { subject: message.subject });
+    return { sent: false, preview: message.text };
+  }
   const key = process.env.RESEND_API_KEY;
   if (!key) {
     customerLog('mail_preview', { subject: message.subject });
