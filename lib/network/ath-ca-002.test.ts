@@ -20,6 +20,7 @@ import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { NJ_PUBLICATION_MANIFEST } from './nj-network.ts';
 import { listNjPilotCounties } from './nj-counties.ts';
 import { listPlaceLensIndex } from './place-lens.ts';
+import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 
 const page = 'app/california/page.tsx';
 const ui = 'components/california-network-gateway.tsx';
@@ -209,11 +210,11 @@ test('six URL definitions; Move or any specialist failure blocks complete', () =
   assert.equal(caReleaseGatePassed(), true);
 });
 
-test('homepage, footer, places, concierge, and discovery are gated on the six-hub flag', () => {
+test('homepage, footer, places, concierge, and discovery retain canonical California routing', () => {
   assert.match(footerDs, /\/california/);
   assert.match(footerSrc, /caReleaseGatePassed/);
-  assert.match(home, /caReleaseGatePassed/);
-  assert.match(home, /\/california/);
+  assert.match(home, /buildAskStateCoverage/);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'california'));
   assert.match(placesSrc, /listPlaceLensIndex/);
   assert.equal(
     listPlaceLensIndex().some((row) => row.href === '/california'),

@@ -4,6 +4,7 @@ import { useCallback, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
+import { trackEvent } from '@/lib/analytics/track';
 
 const EXAMPLES = [
   ['USDOT 3244649', 'Find USDOT 3244649.'],
@@ -18,7 +19,10 @@ export function NetworkAskInput() {
   const [query, setQuery] = useState('');
   const route = useCallback((text: string) => {
     const normalized = text.trim();
-    if (normalized) router.push(`/ask?q=${encodeURIComponent(normalized)}`);
+    if (normalized) {
+      trackEvent('network_ask_submit', { query_length_bucket: normalized.length < 25 ? 'short' : normalized.length < 80 ? 'medium' : 'long' });
+      router.push(`/ask?q=${encodeURIComponent(normalized)}`);
+    }
   }, [router]);
 
   function onSubmit(event: FormEvent) {

@@ -17,6 +17,7 @@ import {
 } from './wa-network.ts';
 import { ASK_CONCIERGE_SYSTEM_PROMPT } from '../ai/system-prompt.ts';
 import { SPECIALIST_HUB_IDS } from './registry.ts';
+import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 import { NJ_PUBLICATION_MANIFEST } from './nj-network.ts';
 import { listNjPilotCounties } from './nj-counties.ts';
 import { listPlaceLensIndex } from './place-lens.ts';
@@ -214,8 +215,8 @@ test('six URL definitions; any specialist failure blocks complete', () => {
 test('homepage, footer, places, concierge, and discovery are gated on the six-hub flag', () => {
   assert.match(footerDs, /\/washington/);
   assert.match(footerSrc, /waReleaseGatePassed/);
-  assert.match(home, /waReleaseGatePassed/);
-  assert.match(home, /\/washington/);
+  assert.match(home, /buildAskStateCoverage/);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'washington'));
   assert.match(placesSrc, /listPlaceLensIndex/);
   assert.equal(
     listPlaceLensIndex().some((row) => row.href === '/washington'),

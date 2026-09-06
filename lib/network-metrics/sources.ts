@@ -67,12 +67,12 @@ export const SPECIALIST_SOURCES: Record<SpecialistHubId, SpecialistSourceConfig>
 };
 
 export const ACCEPTED_SPECIALIST_FINGERPRINTS = {
-  move: '0b88bf6a0e0a906505c9148fe6d9e2c88ae568e024b852929a2660ed8b867a11',
+  move: '5876b0168efa67a09d7f367d2983db7e7769e0b5d5ebf4a071839376e1e2ea3c',
   lender: 'b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6',
-  insurance: 'c9120eaf14f96cc8226c5ac8f7e5dc940c328b339bcb75ebc1596bc306d6f301',
+  insurance: '21a2895e9e7f55170b9056fa3b8054faedcb160e8b0ed4d5dab2cbf16494a4f2',
   contractor: '0a99e8a1cf53590d01506d57072f4a320aa6c0060476a779193d8af1dd8034b3',
   senior: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',
-  investor: 'd44c7eea69e844176fc82c6cb2554456a8ae648f2e6584485549b736f536e6e8',
+  investor: '2f74128e140c692272e178c4039b94e32a0064e33e3bc723633635e89f3dfe3c',
 } as const;
 
 export const SPECIALIST_OWNED_HUBS: SpecialistHubId[] = [

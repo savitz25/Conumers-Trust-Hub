@@ -17,6 +17,7 @@ import {
 } from './nj-network.ts';
 import { ASK_CONCIERGE_SYSTEM_PROMPT } from '../ai/system-prompt.ts';
 import { SPECIALIST_HUB_IDS } from './registry.ts';
+import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 
 const page = 'app/new-jersey/page.tsx';
 const ui = 'components/new-jersey-network-gateway.tsx';
@@ -25,7 +26,6 @@ const footer = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync(page, 'utf8');
 const flPage = readFileSync('app/places/florida/page.tsx', 'utf8');
-const home = readFileSync('components/network-intelligence-home.tsx', 'utf8');
 const verifySrc = readFileSync('scripts/verify-new-jersey-network.mjs', 'utf8');
 const placesSrc = readFileSync('app/places/page.tsx', 'utf8');
 
@@ -179,7 +179,7 @@ test('32-40 Florida and network regression surfaces', () => {
   assert.match(flPage, /floridaPlaceLens/);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New Jersey network gateway/);
   assert.match(footer, /\/new-jersey/);
-  assert.match(home, /\/new-jersey/);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'new-jersey'));
   assert.match(placesSrc, /\/new-jersey/);
   assert.equal(existsSync('app/promise/page.tsx'), true);
   assert.equal(existsSync('app/methodology/page.tsx'), true);

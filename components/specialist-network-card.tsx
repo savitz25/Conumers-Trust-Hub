@@ -10,7 +10,7 @@ function dateLabel(value: string | null): string {
 function Trace({ metric }: { metric: NetworkMetric }) {
   return (
     <details className="mt-2 rounded-xl border px-3" style={{ borderColor: ASK_BRAND.border }}>
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold focus-visible:outline-none focus-visible:ring-2">
+      <summary data-analytics-event="network_metric_trace" className="flex min-h-11 cursor-pointer items-center text-sm font-semibold focus-visible:outline-none focus-visible:ring-2">
         Trace this number
       </summary>
       <div className="space-y-2 border-t py-3 text-sm" style={{ borderColor: ASK_BRAND.border }}>
@@ -146,6 +146,7 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
 
       <a
         href={card.href}
+        data-analytics-event="network_specialist_click"
         className="mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-sm font-semibold"
         style={{ color: ASK_BRAND.indigo }}
       >

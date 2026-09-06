@@ -7,7 +7,7 @@ const SOURCES = [
     schemaVersion: 'move-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Move-trust-Hub/main/data/home/move-network-metrics-v1.json',
     fallback: 'data/network-metrics/move-v1-fallback.json',
-    fingerprint: '0b88bf6a0e0a906505c9148fe6d9e2c88ae568e024b852929a2660ed8b867a11',
+    fingerprint: '5876b0168efa67a09d7f367d2983db7e7769e0b5d5ebf4a071839376e1e2ea3c',
     required: ['federal_publishable_directory_profiles', 'florida_fdacs_im_active_registrations'],
   },
   {
@@ -23,7 +23,7 @@ const SOURCES = [
     schemaVersion: 'insurance-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Insurance-trust-hub/main/data/home/insurance-network-metrics-v1.json',
     fallback: 'data/network-metrics/insurance-v1-fallback.json',
-    fingerprint: 'c9120eaf14f96cc8226c5ac8f7e5dc940c328b339bcb75ebc1596bc306d6f301',
+    fingerprint: '21a2895e9e7f55170b9056fa3b8054faedcb160e8b0ed4d5dab2cbf16494a4f2',
     required: ['insurance_agencies', 'cms_marketplace_evidence_observations'],
   },
   {
@@ -47,7 +47,7 @@ const SOURCES = [
     schemaVersion: 'investor-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/investor-trust-hub/main/data/home/investor-network-metrics-v1.json',
     fallback: 'data/network-metrics/investor-v1-fallback.json',
-    fingerprint: 'd44c7eea69e844176fc82c6cb2554456a8ae648f2e6584485549b736f536e6e8',
+    fingerprint: '2f74128e140c692272e178c4039b94e32a0064e33e3bc723633635e89f3dfe3c',
     required: ['investment_advisory_firms', 'form_adv_attribute_observations'],
   },
 ];
