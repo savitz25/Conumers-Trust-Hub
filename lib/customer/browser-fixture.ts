@@ -136,6 +136,12 @@ export async function cleanupR2Fixture(sql: SqlClient): Promise<void> {
   await sql.query(`DELETE FROM ath_auth_challenges WHERE email_normalized LIKE '%@ath-browser-fixture.test'`);
   await sql.query(`DELETE FROM ath_sessions WHERE user_id::text LIKE 'a2100000-%'`);
   await sql.query(`DELETE FROM ath_rate_events WHERE rate_key LIKE '%ath-browser-fixture.test%'`);
+  await sql.query(`ALTER TABLE ath_audit_events DISABLE TRIGGER ath_audit_events_no_delete`);
+  try {
+    await sql.query(`DELETE FROM ath_audit_events WHERE actor_user_id::text LIKE 'a2100000-%' OR object_id::text LIKE 'a2100000-%' OR org_id::text LIKE 'a2200000-%'`);
+  } finally {
+    await sql.query(`ALTER TABLE ath_audit_events ENABLE TRIGGER ath_audit_events_no_delete`);
+  }
   await sql.query(`DELETE FROM ath_users WHERE id::text LIKE 'a2100000-%'`);
   await sql.query(`DELETE FROM ath_organizations WHERE id::text LIKE 'a2200000-%'`);
 }

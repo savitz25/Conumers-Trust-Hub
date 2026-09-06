@@ -37,7 +37,9 @@ test('fixture creation is idempotent, covers launch states, and cleanup is exact
   const monitoring=(await sql.query<{enabled:boolean}>(`SELECT enabled FROM ath_monitoring_subscriptions WHERE id::text LIKE 'a2900000-%' ORDER BY enabled`)).rows;assert.deepEqual(monitoring.map(r=>r.enabled),[false,true]);
   assert.equal((await sql.query(`SELECT 1 FROM ath_notifications WHERE id='a2b00000-0000-4000-8000-000000000001' AND read_at IS NULL`)).rows.length,1);
   assert.equal((await sql.query(`SELECT 1 FROM ath_business_replies WHERE id='a2d00000-0000-4000-8000-000000000001' AND status='DRAFT'`)).rows.length,1);
+  await sql.query(`INSERT INTO ath_audit_events(actor_user_id,org_id,object_type,object_id,action) VALUES($1,$2,'ath_users',$1,'login_confirmed')`,[R2_FIXTURE.users.owner,R2_FIXTURE.organizations.harbor]);
   await cleanupR2Fixture(sql);await cleanupR2Fixture(sql);assert.deepEqual(await verifyR2Fixture(sql),{users:0,organizations:0,profiles:0,claims:0,grants:0,monitoring:0,issues:0,invitations:0});
+  assert.equal((await sql.query(`SELECT 1 FROM ath_audit_events WHERE object_id::text LIKE 'a2100000-%'`)).rows.length,0);
   await db.query('ROLLBACK');await db.close();
 });
 
