@@ -3,8 +3,8 @@
  * Keep in sync with lib/design/ask-design-system.ts and BRAND_LOGO_VERSION.
  */
 
-import { BRAND, BRAND_LOGO_VERSION } from '@/lib/brand';
-import { ASK_BRAND, ASK_INDEPENDENCE_LINE, ASK_NETWORK_LINKS } from '@/lib/design/ask-design-system';
+import { BRAND, BRAND_LOGO_VERSION } from '../brand.ts';
+import { ASK_BRAND, ASK_INDEPENDENCE_LINE, ASK_NETWORK_LINKS } from '../design/ask-design-system.ts';
 
 export const EMAIL_BRAND = {
   name: BRAND.name,

@@ -1,6 +1,6 @@
 /** Parent network brand — asktrusthub.com */
 
-import { ASK_BRAND, ASK_TAGLINE } from '@/lib/design/ask-design-system';
+import { ASK_BRAND, ASK_TAGLINE } from './design/ask-design-system.ts';
 
 /** Bump when replacing public brand logo assets (CDN/browser cache). */
 export const BRAND_LOGO_VERSION = '20260807ath-p1';
