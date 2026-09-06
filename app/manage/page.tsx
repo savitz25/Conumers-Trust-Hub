@@ -1,80 +1,34 @@
 import Link from 'next/link';
 import { createPageMetadata } from '@/lib/seo/metadata';
-import { PUBLIC_LANGUAGE } from '@/lib/customer/copy';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AccountSignIn } from '@/components/customer/AccountSignIn';
-import { CUSTOMER_HUB_REGISTRY, customerEntityClassLabel } from '@/lib/customer/hub-registry';
+import { MyTrustHubAnalytics, MyTrustHubLink } from '@/components/customer/MyTrustHubAnalytics';
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
+import { buildMyTrustHubHome, countBucket } from '@/lib/customer/my-trust-hub';
 
 export const dynamic = 'force-dynamic';
+export const metadata = createPageMetadata({title:'My Trust Hub',description:'Private business-owner workspace for claimed Trust Hub profiles.',path:'/manage',noIndex:true});
+const priorityStyle={HIGH:'border-amber-400 bg-amber-50',NORMAL:'border-indigo/30',INFORMATIONAL:'border-border'} as const;
+// Empty-state contract: You don&apos;t manage a profile yet.
 
-export const metadata = createPageMetadata({
-  title: 'Managed profile',
-  description: 'AskTrustHub managed-profile home for authorized representatives.',
-  path: '/manage',
-  noIndex: true,
-});
-
-export default async function ManagePage() {
-  const sessionToken = await readSessionToken();
-  if (!sessionToken) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-12">
-        <h1 className="text-xl font-semibold">Sign in required</h1>
-        <p className="mt-2 text-sm text-muted-foreground">This area is for authorized business representatives.</p>
-        <AccountSignIn />
-      </div>
-    );
-  }
-  const [rows, claims] = await Promise.all([withPlatform((p) => p.managedHome(sessionToken)), withPlatform((p) => p.customerClaims(sessionToken))]);
-  const openClaims = claims.filter((claim) => ['submitted','needs_info','in_review'].includes(String(claim.status)));
-  return (
-    <div className="mx-auto max-w-5xl space-y-8 px-4 py-12">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo">{PUBLIC_LANGUAGE.managedProfile}</p>
-        <h1 className="mt-2 text-3xl font-semibold text-navy">Your customer dashboard</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          You are authorized to manage business-supplied information. This is not a TrustHub endorsement.
-        </p>
-      </header>
-      <section aria-labelledby="overview-heading"><h2 id="overview-heading" className="text-xl font-semibold text-navy">Overview</h2><div className="mt-3 grid gap-3 sm:grid-cols-3"><div className="card-surface p-4"><p className="text-sm text-muted-foreground">Managed profiles</p><p className="mt-1 text-2xl font-semibold">{rows.length}</p></div><div className="card-surface p-4"><p className="text-sm text-muted-foreground">Claims in progress</p><p className="mt-1 text-2xl font-semibold">{openClaims.length}</p></div><div className="card-surface p-4"><p className="text-sm text-muted-foreground">Needs attention</p><p className="mt-1 text-2xl font-semibold">{claims.filter((claim) => claim.status === 'needs_info').length}</p></div></div></section>
-      {openClaims.length ? <section><h2 className="text-xl font-semibold text-navy">Claims in progress</h2><div className="mt-3 grid gap-3 sm:grid-cols-2">{openClaims.map((claim)=><article key={String(claim.id)} className="card-surface p-4"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">{String(claim.status).replaceAll('_',' ')}</p><h3 className="mt-1 font-semibold">{String(claim.display_name_snapshot)}</h3><Link className="link-inline mt-3 inline-block" href={`/claim/status/${claim.id}`}>View claim status</Link></article>)}</div></section>:null}
-      <section><h2 className="text-xl font-semibold text-navy">Managed profiles</h2><div className="mt-3 grid gap-4 md:grid-cols-2">
-      {rows.length === 0 ? (
-        <div className="card-surface p-5"><h3 className="font-semibold text-navy">You don&apos;t manage a profile yet.</h3><p className="mt-2 text-sm text-muted-foreground">Start from an exact published profile, or continue a claim already in progress.</p><div className="mt-4 flex flex-wrap gap-3"><Link className="btn-primary" href="/ask">Find your business</Link><Link className="btn-secondary" href="/claim/help?category=find_profile">Contact support</Link></div></div>
-      ) : (
-        rows.map((row) => (
-          <article key={String(row.grant_id)} className="card-surface space-y-2 p-5">
-            <h2 className="text-lg font-medium">{String(row.display_name || row.display_name_snapshot)}</h2>
-            <p className="text-sm text-muted-foreground">{CUSTOMER_HUB_REGISTRY[row.hub_id as keyof typeof CUSTOMER_HUB_REGISTRY].displayName} · Role: {String(row.role)}</p>
-            <p className="text-sm text-muted-foreground">Profile class: {customerEntityClassLabel(row.entity_class)}</p>
-            <p className="text-sm text-muted-foreground">Status: {String(row.grant_status)}</p>
-            <p className="text-sm text-muted-foreground">
-              {String(row.identifier_namespace||'Credential')} {String(row.native_credential_key)}
-            </p>
-            <Link className="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white" href={`/manage/${row.native_profile_id}`}>
-              Manage profile
-            </Link>
-            <Link className="ml-2 inline-flex min-h-11 items-center text-sm underline" href={`/manage/organization/${row.org_id}`}>Team &amp; organization</Link>
-            {row.canonical_url?<a
-              className="link-inline ml-4 text-sm"
-              href={String(row.canonical_url)}
-            >
-              Open public specialist profile
-            </a>:null}
-            <p className="pt-3 text-sm text-muted-foreground">{CUSTOMER_HUB_REGISTRY[row.hub_id as keyof typeof CUSTOMER_HUB_REGISTRY].monitoring==='SUPPORTED'?'Monitoring is available inside this managed profile and is always optional.':'Monitoring is not yet available for this specialist source.'}</p>
-          </article>
-        ))
-      )}
-      </div></section>
-      <section className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">Account</h2><p className="mt-2 text-sm text-muted-foreground">Use one AskTrustHub account to manage separate exact profiles across supported Trust Hubs. Similar names are never merged.</p><div className="mt-4 flex flex-wrap gap-3"><Link className="btn-secondary" href="/ask">Claim another profile</Link><Link className="btn-secondary" href="/claim/help?category=account_help">Contact support</Link></div></section>
-      <form action="/api/customer/auth/logout" method="post">
-        <button type="submit" className="text-sm text-muted-foreground underline">
-          Sign out
-        </button>
-      </form>
-      <p className="text-xs text-muted-foreground">
-        <Link href="/">Back to AskTrustHub</Link>
-      </p>
-    </div>
-  );
+export default async function ManagePage({searchParams}:{searchParams:Promise<{claimed?:string}>}) {
+  const sessionToken=await readSessionToken();
+  if(!sessionToken)return <main className="mx-auto max-w-xl px-4 py-12"><h1 className="text-2xl font-semibold text-navy">Sign in to My Trust Hub</h1><p className="mt-2 text-sm text-muted-foreground">This private workspace is for authorized business representatives.</p><AccountSignIn /></main>;
+  const [raw,params]=await Promise.all([withPlatform(p=>p.myTrustHubHome(sessionToken)),searchParams]);
+  const home=buildMyTrustHubHome({profiles:raw.profiles as never[],claims:raw.claims as never[],organizations:raw.organizations,activity:raw.activity as never[]});
+  return <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:py-12">
+    <MyTrustHubAnalytics managedProfileCountBucket={countBucket(home.summary.managedProfiles)} organizationCountBucket={countBucket(home.summary.organizations)}/>
+    <header><p className="text-xs font-semibold uppercase tracking-wider text-indigo">Private business-owner workspace</p><h1 className="mt-2 text-3xl font-semibold text-navy">My Trust Hub</h1><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Manage the business information you control, review independently sourced public evidence, and see what needs your attention across your claimed profiles.</p><p className="mt-3 text-sm font-medium text-navy">Claiming a profile does not change regulatory evidence, ranking, source status, or TrustHub research.</p></header>
+    {params.claimed==='1'?<section className="card-surface border-indigo/30 bg-indigo/5 p-5" role="status"><h2 className="text-xl font-semibold text-navy">Your profile is connected to My Trust Hub</h2><p className="mt-2 text-sm text-muted-foreground">You can manage business-supplied information and approved responses. Public-source evidence remains independent and cannot be changed here.</p>{home.profiles[0]?<Link className="btn-primary mt-4" href={`/manage/${home.profiles[0].profileId}#business-information`}>Complete business information</Link>:null}</section>:null}
+    <section aria-labelledby="summary-heading"><h2 id="summary-heading" className="sr-only">Account summary</h2><dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">{[['Managed profiles',home.summary.managedProfiles],['Needs attention',home.summary.needsAttention],['Claims in progress',home.summary.claimsInProgress],['Profiles monitored',home.summary.monitoringOn]].map(([label,value])=><div key={String(label)} className="card-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-1 text-2xl font-semibold" aria-label={`${label}: ${value}`}>{value}</dd></div>)}</dl></section>
+    {home.attentionItems.length?<section aria-labelledby="attention-heading"><h2 id="attention-heading" className="text-xl font-semibold text-navy">Needs attention</h2><ul className="mt-3 grid gap-3 md:grid-cols-2">{home.attentionItems.slice(0,6).map(item=><li key={item.id} className={`card-surface border p-4 ${priorityStyle[item.priority]}`}><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{item.priority==='HIGH'?'Action needed':item.priority==='NORMAL'?'Next step':'For your information'}</p><h3 className="mt-1 font-semibold text-navy">{item.label}</h3><p className="mt-1 text-sm">{item.context}</p><p className="mt-1 text-sm text-muted-foreground">{item.reason}</p><MyTrustHubLink event={ANALYTICS_EVENTS.MY_TRUST_HUB_ATTENTION_OPENED} dimensions={{attention_type:item.type}} className="mt-3 inline-flex min-h-11 items-center font-semibold underline" href={item.href}>Open next step<span className="sr-only"> for {item.context}</span></MyTrustHubLink></li>)}</ul></section>:null}
+    <section aria-labelledby="profiles-heading"><div className="flex flex-wrap items-end justify-between gap-3"><div><h2 id="profiles-heading" className="text-xl font-semibold text-navy">Your Trust Hub profiles</h2><p className="mt-1 text-sm text-muted-foreground">Each specialist profile remains a separate exact public identity, even when one organization manages several.</p></div><MyTrustHubLink event={ANALYTICS_EVENTS.MY_TRUST_HUB_CLAIM_ANOTHER_CLICKED} className="btn-secondary" href="/ask">Claim another profile</MyTrustHubLink></div>
+      {home.profiles.length===0?<div className="card-surface mt-3 p-5"><h3 className="font-semibold text-navy">You haven&apos;t claimed a business profile yet</h3><p className="mt-2 text-sm text-muted-foreground">Find your published business profile in the Trust Hub Network and start a claim from that exact record. My Trust Hub does not create profiles from typed names.</p><div className="mt-4 flex flex-wrap gap-3"><Link className="btn-primary" href="/ask">Find my business</Link>{home.claimsInProgress.length?<a className="btn-secondary" href="#claims">View claims in progress</a>:null}<Link className="btn-secondary" href="/claim/help?category=find_profile">Get help</Link></div></div>:<ul className="mt-3 grid gap-4 lg:grid-cols-2">{home.profiles.map(profile=><li key={profile.profileId} className="card-surface flex min-w-0 flex-col p-5"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">{profile.hubName}</p><h3 className="mt-1 break-words text-lg font-semibold text-navy">{profile.displayName}</h3><p className="mt-1 text-sm text-muted-foreground">{profile.organizationName} · {profile.entityClass} · {profile.role}</p><p className="mt-2 break-all text-sm"><span className="text-muted-foreground">Public identifier:</span> {profile.identifierLabel} {profile.identifierValue}</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-lg bg-slate-50 p-3"><p className="text-xs font-semibold text-muted-foreground">Business information completeness</p><p className="mt-1 font-semibold">{profile.completeness.label}</p><p className="mt-1 text-xs text-muted-foreground">Owner-controlled fields only</p></div><div className="rounded-lg bg-slate-50 p-3"><p className="text-xs font-semibold text-muted-foreground">Profile setup</p><p className="mt-1 font-semibold">{profile.setup.completed} of {profile.setup.total} steps complete</p><p className="mt-1 text-xs text-muted-foreground">Workflow progress, not a rating</p></div></div><p className="mt-3 text-sm text-muted-foreground">{profile.freshness.label}</p><p className="text-sm text-muted-foreground">Monitoring: {profile.monitoringStatus==='ON'?'On':profile.monitoringStatus==='OFF'?'Available — off':'Unavailable for this source'}</p><div className="mt-auto flex flex-wrap gap-3 pt-5"><MyTrustHubLink event={ANALYTICS_EVENTS.MY_TRUST_HUB_PROFILE_OPENED} dimensions={{hub:profile.hubId,profile_class:profile.entityClass,action_type:profile.primaryAction.type}} className="btn-primary" href={profile.primaryAction.href}>{profile.primaryAction.label}</MyTrustHubLink><Link className="btn-secondary" href={`/manage/${profile.profileId}`}>Manage profile<span className="sr-only"> {profile.displayName}</span></Link>{profile.publicUrl?<MyTrustHubLink event={ANALYTICS_EVENTS.MY_TRUST_HUB_PUBLIC_PROFILE_OPENED} dimensions={{hub:profile.hubId,profile_class:profile.entityClass}} className="inline-flex min-h-11 items-center text-sm underline" href={profile.publicUrl}>View public profile<span className="sr-only"> for {profile.displayName}</span></MyTrustHubLink>:null}</div></li>)}</ul>}
+    </section>
+    {home.claimsInProgress.length?<section id="claims"><h2 className="text-xl font-semibold text-navy">Claims in progress</h2><ul className="mt-3 grid gap-3 sm:grid-cols-2">{home.claimsInProgress.map(claim=><li key={claim.id} className="card-surface p-4"><p className="text-xs font-semibold uppercase tracking-wider text-indigo">{claim.hubName}</p><h3 className="mt-1 font-semibold">{claim.displayName}</h3><p className="mt-1 text-sm font-medium">{claim.statusLabel}</p><p className="mt-1 text-sm text-muted-foreground">{claim.needed}</p><Link className="mt-3 inline-flex min-h-11 items-center underline" href={claim.href}>View claim status</Link></li>)}</ul></section>:null}
+    {home.organizations.length?<section><h2 className="text-xl font-semibold text-navy">Organizations &amp; team</h2><ul className="mt-3 grid gap-3 md:grid-cols-2">{home.organizations.map(org=><li key={org.id} className="card-surface p-4"><h3 className="font-semibold text-navy">{org.name}</h3><p className="mt-1 text-sm text-muted-foreground">Your role: {org.role} · {org.profileCount} profile{org.profileCount===1?'':'s'} · {org.teamCount} team member{org.teamCount===1?'':'s'}</p><p className="mt-2 text-sm">{org.hubNames.join(' · ')}</p>{org.pendingInvitationCount?<p className="mt-2 text-sm text-muted-foreground">{org.pendingInvitationCount} pending invitation{org.pendingInvitationCount===1?'':'s'}</p>:null}<MyTrustHubLink event={ANALYTICS_EVENTS.MY_TRUST_HUB_TEAM_OPENED} className="mt-3 inline-flex min-h-11 items-center underline" href={`/manage/organization/${org.id}`}>Manage team &amp; access<span className="sr-only"> for {org.name}</span></MyTrustHubLink></li>)}</ul></section>:null}
+    {home.recentActivity.length?<section><h2 className="text-xl font-semibold text-navy">Recent activity</h2><ol className="card-surface mt-3 divide-y divide-border px-5">{home.recentActivity.map(item=><li key={item.id} className="py-3"><p className="font-medium">{item.label}</p><p className="text-sm text-muted-foreground">{item.context}{item.occurredAt?` · ${new Date(item.occurredAt).toLocaleDateString('en-US')}`:''}</p></li>)}</ol></section>:null}
+    <section className="card-surface p-5"><h2 className="text-xl font-semibold text-navy">What claiming means</h2><div className="mt-3 grid gap-4 text-sm md:grid-cols-2"><div><h3 className="font-semibold">You can</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground"><li>Manage business-supplied information</li><li>Request corrections and submit approved responses</li><li>Manage team access</li><li>Enable monitoring where available</li></ul></div><div><h3 className="font-semibold">You cannot</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground"><li>Change regulator records or remove accurate public evidence</li><li>Pay to change ranking or TrustHub research ordering</li><li>Turn a source status into an endorsement</li></ul></div></div></section>
+    <footer className="flex flex-wrap items-center gap-5 text-sm"><form action="/api/customer/auth/logout" method="post"><button type="submit" className="text-muted-foreground underline">Sign out</button></form><Link href="/">Back to AskTrustHub</Link></footer>
+  </main>;
 }

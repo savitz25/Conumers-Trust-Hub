@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { PGlite } from '@electric-sql/pglite';
+import { buildMyTrustHubHome, businessInformationCompleteness, MY_TRUST_HUB_ANALYTICS_ALLOWED_FIELDS } from './my-trust-hub.ts';
+import type { CustomerHubId } from './types.ts';
+import { applyCustomerMigrations, enableAppRole } from './migrate.ts';
+import { CustomerPlatform } from './store.ts';
+import type { SqlClient } from './sql.ts';
+
+const hubs:CustomerHubId[]=['move','lender','insurance','senior','contractor','investor'];
+function profile(hub_id:CustomerHubId,index=0,extra:Record<string,unknown>={}){return{hub_id,grant_id:`g${index}`,grant_status:'active',org_id:'org-a',organization_name:'Exact Holdings',native_profile_id:`profile-${hub_id}-${index}`,display_name_snapshot:`${hub_id} profile`,native_credential_key:`ID-${index}`,entity_class:hub_id==='move'?'mover':hub_id==='lender'?'institution':hub_id==='insurance'?'legal_insurer':hub_id==='senior'?'nursing_home':hub_id==='investor'?'firm':'contractor',role:'owner',canonical_url:`https://www.${hub_id==='senior'?'senior':hub_id}trusthub.com/profile`,business_field_count:7,business_item_category_count:3,business_hours_present:true,last_confirmed_at:'2026-08-01T00:00:00.000Z',open_issue_count:0,issue_needs_info_count:0,draft_reply_count:0,unread_notification_count:0,monitoring_enabled:hub_id==='contractor',...extra}}
+function build(profiles= hubs.map((h,i)=>profile(h,i)),claims:Record<string,unknown>[]=[],organizations:Record<string,unknown>[]=[{id:'org-a',display_name:'Exact Holdings',role:'owner',profile_count:6,team_count:2,pending_invitation_count:0,hub_ids:hubs.join(',')}]){return buildMyTrustHubHome({profiles,claims:claims as never[],organizations,activity:[],now:new Date('2026-09-05T00:00:00Z')})}
+
+test('all six exact Hub identities stay separate inside one organization',()=>{const home=build();assert.equal(home.profiles.length,6);assert.equal(home.organizations.length,1);assert.deepEqual(home.profiles.map(p=>p.hubId),hubs);assert.equal(new Set(home.profiles.map(p=>p.profileId)).size,6);assert.match(home.profiles.find(p=>p.hubId==='move')!.identifierLabel,/USDOT/);assert.match(home.profiles.find(p=>p.hubId==='contractor')!.hubName,/Contractor Trust Hub/)});
+test('business information completeness measures only eleven owner-controlled dimensions',()=>{assert.deepEqual(businessInformationCompleteness(profile('contractor',0,{business_field_count:4,business_item_category_count:2,business_hours_present:false})),{completed:6,total:11,percent:55,label:'6 of 11 fields completed'});assert.equal(businessInformationCompleteness(profile('contractor')).label,'Business information complete')});
+test('attention and next action use deterministic priority without a reputation score',()=>{const home=build([profile('contractor',0,{business_field_count:2,issue_needs_info_count:1,unread_notification_count:1,monitoring_enabled:false})]);assert.equal(home.attentionItems[0].priority,'HIGH');assert.equal(home.profiles[0].primaryAction.type,'REVIEW_ISSUE');assert.equal(home.summary.needsAttention>=1,true);assert.doesNotMatch(JSON.stringify(home),/trust score|health score|reputation score/i)});
+test('claim needs information precedes informational review state',()=>{const home=build([], [{id:'c1',hub_id:'lender',status:'in_review',display_name_snapshot:'Bank'},{id:'c2',hub_id:'move',status:'needs_info',display_name_snapshot:'Mover'}]);assert.equal(home.attentionItems[0].type,'CLAIM_NEEDS_INFO');assert.deepEqual(home.claimsInProgress.map(c=>c.statusLabel),['Under review','Information needed'])});
+test('freshness refers only to business information and supported monitoring remains optional',()=>{const stale=build([profile('contractor',0,{last_confirmed_at:'2025-01-01T00:00:00Z',monitoring_enabled:false})]);assert.equal(stale.profiles[0].freshness.state,'STALE');assert.equal(stale.profiles[0].primaryAction.type,'RECONFIRM_INFORMATION');const unavailable=build([profile('move')]);assert.equal(unavailable.profiles[0].monitoringStatus,'UNAVAILABLE');assert.notEqual(unavailable.profiles[0].primaryAction.type,'ENABLE_MONITORING')});
+test('empty, multi-organization, same-name, staff and revoked-input boundaries remain explicit',()=>{assert.equal(build([],[],[]).summary.managedProfiles,0);const rows=[profile('contractor',0,{display_name_snapshot:'Same Name',org_id:'a',organization_name:'One',role:'staff'}),profile('insurance',1,{display_name_snapshot:'Same Name',org_id:'b',organization_name:'Two',role:'manager'})];const home=build(rows,[],[{id:'a',display_name:'One',role:'staff',profile_count:1,team_count:1,pending_invitation_count:0,hub_ids:'contractor'},{id:'b',display_name:'Two',role:'manager',profile_count:1,team_count:2,pending_invitation_count:1,hub_ids:'insurance'}]);assert.equal(home.organizations.length,2);assert.notEqual(home.profiles[0].organizationId,home.profiles[1].organizationId);assert.equal(home.attentionItems.some(a=>a.type==='TEAM_INVITATION_PENDING'),true)});
+test('analytics contract is low-cardinality and excludes private identity fields',()=>{assert.deepEqual(MY_TRUST_HUB_ANALYTICS_ALLOWED_FIELDS,['hub','profile_class','attention_type','action_type','managed_profile_count_bucket','organization_count_bucket']);assert.doesNotMatch(MY_TRUST_HUB_ANALYTICS_ALLOWED_FIELDS.join(','),/name|identifier|profile_id|organization_id|email|claim_id/)});
+test('home page is branded My Trust Hub and remains private/noindex',()=>{const page=readFileSync('app/manage/page.tsx','utf8');assert.match(page,/My Trust Hub/);assert.match(page,/noIndex:\s*true/);assert.doesNotMatch(page,/Your customer dashboard/)});
+
+test('aggregate store query is authorization-scoped and excludes revoked access',async()=>{
+  const db=new PGlite(),sql:SqlClient={async query(text,params){const result=await db.query(text,params??[]);return{rows:(result.rows??[]) as Record<string,unknown>[]}},async exec(text){await db.exec(text)}};
+  await applyCustomerMigrations(sql);await db.query('BEGIN');await enableAppRole(sql);
+  const platform=new CustomerPlatform({sql,cth:{async getById(){return null}},mailer:async m=>({sent:false,preview:m.text}),handoffSecret:'test-secret-that-is-long-enough-123',staffEmails:[],siteUrl:'https://www.asktrusthub.com'});
+  async function signup(email:string){const sent=await platform.requestMagicLink({email}),token=decodeURIComponent(sent.preview!.match(/token=([^&\s]+)/)![1]);return platform.consumeMagicLink(token)}
+  const a=await signup('a@example.test'),b=await signup('b@example.test');
+  const org=(await sql.query<{id:string}>(`INSERT INTO ath_organizations(display_name,status)VALUES('Private Org','active')RETURNING id`)).rows[0];
+  await sql.query(`INSERT INTO ath_memberships(org_id,user_id,role,status)VALUES($1,$2,'owner','active'),($1,$3,'staff','revoked')`,[org.id,a.userId,b.userId]);
+  const hp=(await sql.query<{id:string}>(`INSERT INTO ath_hub_profiles(hub_id,native_profile_id,native_slug,native_credential_key,native_source_system,home_state,display_name_snapshot,entity_class)VALUES('contractor','11111111-1111-4111-8111-111111111111','private','CBC1','fl_dbpr','FL','Private Profile','contractor')RETURNING id`)).rows[0];
+  const claim=(await sql.query<{id:string}>(`INSERT INTO ath_claims(org_id,hub_profile_id,claimant_user_id,status,verification_method,relationship_type,free_email)VALUES($1,$2,$3,'approved','manual_review','owner',false)RETURNING id`,[org.id,hp.id,a.userId])).rows[0];
+  await sql.query(`INSERT INTO ath_management_grants(org_id,hub_profile_id,status,granted_from_claim_id)VALUES($1,$2,'active',$3)`,[org.id,hp.id,claim.id]);
+  assert.equal((await platform.myTrustHubHome(a.sessionToken)).profiles.length,1);
+  assert.deepEqual((await platform.myTrustHubHome(b.sessionToken)).profiles,[]);
+  await sql.query(`UPDATE ath_management_grants SET status='revoked' WHERE org_id=$1`,[org.id]);
+  assert.deepEqual((await platform.myTrustHubHome(a.sessionToken)).profiles,[]);
+  await db.close();
+});

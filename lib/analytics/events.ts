@@ -37,6 +37,14 @@ export const ANALYTICS_EVENTS = {
   MONITORING_ENABLED: 'monitoring_enabled',
   MONITORING_DISABLED: 'monitoring_disabled',
   REGULATORY_ALERT_OPENED: 'regulatory_alert_opened',
+  MY_TRUST_HUB_VIEWED: 'my_trust_hub_viewed',
+  MY_TRUST_HUB_PROFILE_OPENED: 'my_trust_hub_profile_opened',
+  MY_TRUST_HUB_ATTENTION_OPENED: 'my_trust_hub_attention_opened',
+  MY_TRUST_HUB_CLAIM_ANOTHER_CLICKED: 'my_trust_hub_claim_another_clicked',
+  MY_TRUST_HUB_PUBLIC_PROFILE_OPENED: 'my_trust_hub_public_profile_opened',
+  MY_TRUST_HUB_TEAM_OPENED: 'my_trust_hub_team_opened',
+  MY_TRUST_HUB_MONITORING_OPENED: 'my_trust_hub_monitoring_opened',
+  MY_TRUST_HUB_SETUP_ACTION_OPENED: 'my_trust_hub_setup_action_opened',
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
