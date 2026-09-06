@@ -29,20 +29,17 @@ export const resendMailer: Mailer = async (message) => {
     customerLog('mail_preview', { subject: message.subject });
     return { sent: false, preview: message.text };
   }
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${key}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: askFromEmail(),
-      to: [message.to],
-      subject: message.subject,
-      html: message.html,
-      text: message.text,
-    }),
-  });
+  let res:Response;
+  try {
+    res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({from:askFromEmail(),to:[message.to],subject:message.subject,html:message.html,text:message.text}),
+    });
+  } catch {
+    customerLog('mail_failed', { status: 'network_error' }, 'error');
+    return { sent: false };
+  }
   if (!res.ok) {
     await res.body?.cancel();
     customerLog('mail_failed', { status: res.status }, 'error');

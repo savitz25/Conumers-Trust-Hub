@@ -2,11 +2,7 @@ import { loadAndValidateProfile, type CthDirectory, type CustomerProfileDirector
 import { hashToken, isEmailShape, normalizeEmail, randomToken } from './crypto.ts';
 import { createHash } from 'node:crypto';
 import {
-  approvedEmail,
-  claimReceivedEmail,
   loginEmail,
-  needsInfoEmail,
-  rejectedEmail,
   recordIssueEmail,
   businessReplyEmail,
   regulatoryAlertEmail,
@@ -28,6 +24,7 @@ import { isValidContractorEvent, monitoringSummary, validateMonitoringSettings, 
 import { INVITATION_TTL_MS, OrganizationError, validateInvitationInput, validateMemberRole } from './organization.ts';
 import type {
   ClaimStatus,
+  CustomerHubId,
   GrantStatus,
   HandoffPayload,
   MembershipRole,
@@ -36,6 +33,7 @@ import type {
   VerificationMethod,
 } from './types.ts';
 import { customerHub } from './hub-registry.ts';
+import { customerLifecycleEmail, type CustomerLifecycleEmail, type CustomerEmailType } from './customer-emails.ts';
 
 const MAGIC_TTL_MS = 30 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -109,6 +107,18 @@ export class CustomerPlatform {
 
   private isStaffEmail(email: string): boolean {
     return staffSet(this.deps.staffEmails).has(normalizeEmail(email));
+  }
+
+  private async sendLifecycle(input:{emailType:CustomerEmailType;recipient:string;recipientUserId?:string|null;objectType:string;objectId:string;stateVersion:string;message:CustomerLifecycleEmail;orgId?:string|null}):Promise<'sent'|'failed'|'suppressed'> {
+    const event=await one<{id:string}>(this.deps.sql,`INSERT INTO ath_customer_mail_events(event_type,recipient_user_id,object_type,object_id,state_version,status) VALUES($1,$2,$3,$4,$5,'PENDING') ON CONFLICT(event_type,object_type,object_id,state_version) DO NOTHING RETURNING id`,[input.emailType,input.recipientUserId||null,input.objectType,input.objectId,input.stateVersion]);
+    if(!event){customerLog('customer_email_suppressed',{emailType:input.emailType});return 'suppressed'}
+    let sent=false;
+    try{sent=(await this.deps.mailer({to:input.recipient,subject:input.message.subject,html:input.message.html,text:input.message.text})).sent}catch{sent=false}
+    const status=sent?'SENT':'FAILED',now=this.now().toISOString();
+    await this.deps.sql.query(`UPDATE ath_customer_mail_events SET status=$2,attempts=attempts+1,last_error_code=CASE WHEN $2='FAILED' THEN 'provider_failed' ELSE NULL END,sent_at=CASE WHEN $2='SENT' THEN $3::timestamptz ELSE sent_at END,updated_at=$3 WHERE id=$1`,[event.id,status,now]);
+    await this.audit({actorKind:'system',orgId:input.orgId||null,objectType:'ath_customer_mail_events',objectId:event.id,action:sent?'customer_email_sent':'customer_email_failed',after:{email_type:input.emailType,delivery_status:status}});
+    customerLog(sent?'customer_email_sent':'customer_email_failed',{emailType:input.emailType},sent?'info':'error');
+    return sent?'sent':'failed';
   }
 
   async hitRateLimit(bucket: string, key: string, max: number, windowMs: number): Promise<void> {
@@ -563,14 +573,7 @@ export class CustomerPlatform {
     });
     customerLog('claim_submitted', { claimId: claim!.id, competing, freeEmail });
 
-    const mail = claimReceivedEmail({
-      displayName: adapter.profile.displayName,
-      credentialKey: adapter.profile.externalKey,
-      status,
-      hubName: customerHub(intent.payload.hub_id)!.displayName,
-      identifierLabel: customerHub(intent.payload.hub_id)!.identifierLabel,
-    });
-    await this.deps.mailer({ to: user.email, ...mail });
+    await this.sendLifecycle({emailType:'CLAIM_STARTED',recipient:user.email,recipientUserId:user.id,objectType:'ath_claims',objectId:claim!.id,stateVersion:status,orgId:org!.id,message:customerLifecycleEmail({type:'CLAIM_STARTED',profileName:adapter.profile.displayName,hub:intent.payload.hub_id,detail:'Your request is awaiting review. Approval has not yet been granted.',actionPath:`/claim/status/${claim!.id}`,actionLabel:'View claim status'},this.deps.siteUrl)});
 
     return { claimId: claim!.id, orgId: org!.id, status, competing };
   }
@@ -712,11 +715,7 @@ export class CustomerPlatform {
       });
       customerLog('staff_decision', { decision: 'needs_info', claimId: claim.id });
       if (claimant && profile) {
-        const mail = needsInfoEmail({
-          displayName: profile.display_name_snapshot || profile.native_slug,
-          nextAction: input.reason,
-        });
-        await this.deps.mailer({ to: claimant.email, ...mail });
+        await this.sendLifecycle({emailType:'CLAIM_NEEDS_INFORMATION',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'needs_info',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NEEDS_INFORMATION',profileName:profile.display_name_snapshot||profile.native_slug,detail:`Review note: ${input.reason} Do not send passwords, signed links, identity documents, or sensitive financial information by ordinary email.`,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review what is needed'},this.deps.siteUrl)});
       }
       return {};
     }
@@ -744,11 +743,7 @@ export class CustomerPlatform {
       });
       customerLog('staff_decision', { decision: 'reject', claimId: claim.id });
       if (claimant && profile) {
-        const mail = rejectedEmail({
-          displayName: profile.display_name_snapshot || profile.native_slug,
-          reason: input.reason,
-        });
-        await this.deps.mailer({ to: claimant.email, ...mail });
+        await this.sendLifecycle({emailType:'CLAIM_NOT_APPROVED',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'rejected',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NOT_APPROVED',profileName:profile.display_name_snapshot||profile.native_slug,detail:input.reason,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review claim outcome'},this.deps.siteUrl)});
       }
       return {};
     }
@@ -843,11 +838,10 @@ export class CustomerPlatform {
     customerLog('staff_decision', { decision: 'approve', claimId: claim.id });
 
     if (claimant && profile) {
-      const mail = approvedEmail({
-        displayName: profile.display_name_snapshot || profile.native_slug,
-        manageUrl: `${this.deps.siteUrl.replace(/\/$/, '')}/manage`,
-      });
-      await this.deps.mailer({ to: claimant.email, ...mail });
+      const hubRow=await one<{hub_id:CustomerHubId}>(this.deps.sql,`SELECT hub_id FROM ath_hub_profiles WHERE id=$1`,[claim.hub_profile_id]);
+      const prior=await one<{n:string}>(this.deps.sql,`SELECT count(*)::text n FROM ath_management_grants g JOIN ath_memberships m ON m.org_id=g.org_id AND m.user_id=$1 AND m.status='active' WHERE g.status='active' AND g.id<>$2`,[claim.claimant_user_id,grant!.id]);
+      await this.sendLifecycle({emailType:'CLAIM_APPROVED',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'approved',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_APPROVED',profileName:profile.display_name_snapshot||profile.native_slug,hub:hubRow?.hub_id,detail:'You may now manage business-supplied information and approved responses.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
+      if(Number(prior?.n||0)===0)await this.sendLifecycle({emailType:'FIRST_CLAIM_ONBOARDING',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_users',objectId:claim.claimant_user_id,stateVersion:'first-managed-profile',orgId:claim.org_id,message:customerLifecycleEmail({type:'FIRST_CLAIM_ONBOARDING',profileName:profile.display_name_snapshot||profile.native_slug,detail:'Review public evidence, complete business information, request corrections, publish approved responses, manage team access, and enable monitoring where available.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
     }
     return { grantId: grant!.id };
   }
