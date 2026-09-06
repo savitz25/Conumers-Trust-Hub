@@ -34,7 +34,7 @@ export default async function ClaimStatusPage({ params }: { params: Promise<{ id
     const status = row.status as ClaimStatus;
     const copy = CLAIM_EXPERIENCE[status];
     const hub = row.hub_id as CustomerHubId;
-    const actions = copy.actions.map((action) => action.href === '/manage' && status === 'approved' ? { ...action, href: `/manage/${row.native_profile_id}` } : action);
+    const actions = copy.actions.map((action) => action.href === '/manage' && status === 'approved' ? { ...action, href: '/manage?claimed=1' } : action);
     return (
       <div className="mx-auto max-w-xl space-y-5 px-4 py-12">
         <ClaimFunnelAnalytics event={status === 'approved' ? 'claim_completed' : 'claim_started'} hub={hub} resultState={status} authenticated />

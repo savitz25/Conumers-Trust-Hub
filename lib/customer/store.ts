@@ -1521,6 +1521,57 @@ export class CustomerPlatform {
     return res.rows;
   }
 
+  /**
+   * Fixed-query, authorization-scoped data for the private My Trust Hub home.
+   * Profile detail is aggregated in SQL so the home never performs one read per profile.
+   */
+  async myTrustHubHome(sessionToken: string) {
+    const user = await this.sessionUser(sessionToken);
+    if (!user) throw new AuthError('missing_session');
+    const profiles = await this.deps.sql.query<Record<string, unknown>>(
+      `SELECT g.id AS grant_id,g.status AS grant_status,o.id AS org_id,o.display_name AS organization_name,
+              p.hub_id,p.native_profile_id::text,p.native_credential_key,p.display_name_snapshot,p.canonical_url,p.entity_class,
+              m.role,COALESCE(s.enabled,false) AS monitoring_enabled,
+              (SELECT count(*)::int FROM ath_business_profile_fields f WHERE f.org_id=o.id AND f.hub_profile_id=p.id AND btrim(f.value_text)<>'') AS business_field_count,
+              (SELECT count(DISTINCT i.category)::int FROM ath_business_profile_items i WHERE i.org_id=o.id AND i.hub_profile_id=p.id) AS business_item_category_count,
+              EXISTS(SELECT 1 FROM ath_business_profile_hours h WHERE h.org_id=o.id AND h.hub_profile_id=p.id) AS business_hours_present,
+              (SELECT min(x.last_confirmed_at)::text FROM (
+                 SELECT f.last_confirmed_at FROM ath_business_profile_fields f WHERE f.org_id=o.id AND f.hub_profile_id=p.id
+                 UNION ALL SELECT i.last_confirmed_at FROM ath_business_profile_items i WHERE i.org_id=o.id AND i.hub_profile_id=p.id
+                 UNION ALL SELECT h.last_confirmed_at FROM ath_business_profile_hours h WHERE h.org_id=o.id AND h.hub_profile_id=p.id
+               ) x) AS last_confirmed_at,
+              (SELECT count(*)::int FROM ath_record_issues ri WHERE ri.org_id=o.id AND ri.hub_profile_id=p.id AND ri.status IN ('OPEN','UNDER_REVIEW','NEEDS_INFORMATION')) AS open_issue_count,
+              (SELECT count(*)::int FROM ath_record_issues ri WHERE ri.org_id=o.id AND ri.hub_profile_id=p.id AND ri.status='NEEDS_INFORMATION') AS issue_needs_info_count,
+              (SELECT count(*)::int FROM ath_business_replies br WHERE br.org_id=o.id AND br.hub_profile_id=p.id AND br.status='DRAFT') AS draft_reply_count,
+              (SELECT count(*)::int FROM ath_business_replies br WHERE br.org_id=o.id AND br.hub_profile_id=p.id AND br.status='APPROVED') AS published_reply_count,
+              (SELECT count(*)::int FROM ath_notifications n WHERE n.org_id=o.id AND n.user_id=$1 AND n.hub_profile_id=p.id AND n.read_at IS NULL) AS unread_notification_count
+         FROM ath_management_grants g
+         JOIN ath_organizations o ON o.id=g.org_id AND o.status='active'
+         JOIN ath_hub_profiles p ON p.id=g.hub_profile_id
+         JOIN ath_memberships m ON m.org_id=o.id AND m.user_id=$1 AND m.status='active'
+         LEFT JOIN ath_monitoring_subscriptions s ON s.org_id=o.id AND s.hub_profile_id=p.id
+        WHERE g.status='active' ORDER BY o.display_name,p.display_name_snapshot`, [user.id]);
+    const claims = await this.deps.sql.query<Record<string, unknown>>(
+      `SELECT c.id::text,c.status,c.created_at::text,p.hub_id,p.native_profile_id::text,p.display_name_snapshot
+         FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id
+        WHERE c.claimant_user_id=$1 ORDER BY c.created_at DESC`, [user.id]);
+    const organizations = await this.deps.sql.query<Record<string, unknown>>(
+      `SELECT o.id::text,o.display_name,m.role,
+              (SELECT count(*)::int FROM ath_memberships tm WHERE tm.org_id=o.id AND tm.status='active') AS team_count,
+              (SELECT count(*)::int FROM ath_organization_invitations oi WHERE oi.org_id=o.id AND oi.status='PENDING' AND oi.expires_at>now()) AS pending_invitation_count,
+              (SELECT count(*)::int FROM ath_management_grants g WHERE g.org_id=o.id AND g.status='active') AS profile_count,
+              (SELECT string_agg(DISTINCT p.hub_id,',' ORDER BY p.hub_id) FROM ath_management_grants g JOIN ath_hub_profiles p ON p.id=g.hub_profile_id WHERE g.org_id=o.id AND g.status='active') AS hub_ids
+         FROM ath_organizations o JOIN ath_memberships m ON m.org_id=o.id AND m.user_id=$1 AND m.status='active'
+        WHERE o.status='active' ORDER BY o.display_name`, [user.id]);
+    const activity = await this.deps.sql.query<Record<string, unknown>>(
+      `SELECT a.id::text,a.action,a.created_at::text,a.org_id::text,o.display_name AS organization_name
+         FROM ath_audit_events a JOIN ath_organizations o ON o.id=a.org_id
+        WHERE EXISTS(SELECT 1 FROM ath_memberships m WHERE m.org_id=a.org_id AND m.user_id=$1 AND m.status='active')
+          AND a.action IN ('business_profile_updated','business_profile_reconfirmed','claim_submitted','claim_approved','record_issue_created','business_reply_submitted','business_reply_published','monitoring_enabled','monitoring_disabled','regulatory_notification_created','organization_member_invited','organization_invite_accepted')
+        ORDER BY a.created_at DESC LIMIT 20`, [user.id]);
+    return { profiles: profiles.rows, claims: claims.rows, organizations: organizations.rows, activity: activity.rows };
+  }
+
   async customerClaims(sessionToken: string) {
     const user = await this.sessionUser(sessionToken);
     if (!user) throw new AuthError('missing_session');
