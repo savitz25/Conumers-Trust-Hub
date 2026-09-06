@@ -23,7 +23,8 @@ async function fixtureTransaction<T>(work:(sql:SqlClient)=>Promise<T>):Promise<T
   const pool=new Pool({connectionString,max:1,ssl:{rejectUnauthorized:false}});
   const client=await pool.connect();
   try{
-    await applyCustomerMigrations({query:(text,params)=>client.query(text,params)});
+    const schemaExists=(await client.query<{exists:boolean}>(`SELECT to_regclass('public.ath_users') IS NOT NULL AS exists`)).rows[0]?.exists;
+    if(!schemaExists)await applyCustomerMigrations({query:(text,params)=>client.query(text,params)});
     await client.query('BEGIN');
     await enableAppRole({query:(text,params)=>client.query(text,params)});
     const result=await work({query:(text,params)=>client.query(text,params)});
@@ -38,10 +39,10 @@ export async function POST(request:Request){
     assertR2FixtureEnvironment(process.env,request.headers.get('x-ath-fixture-confirmation')||'');
     const body=await request.json().catch(()=>({})) as {action?:string};
     if(body.action==='create'){
-      await fixtureTransaction(createR2Fixture);
+      const fixture=await fixtureTransaction(async sql=>{await createR2Fixture(sql);return verifyR2Fixture(sql);});
       const owner=await withPlatform(p=>p.requestMagicLink({email:R2_FIXTURE.ownerEmail,purpose:'login',nextPath:'/manage'}));
       const empty=await withPlatform(p=>p.requestMagicLink({email:R2_FIXTURE.emptyEmail,purpose:'login',nextPath:'/manage'}));
-      return NextResponse.json({ok:true,fixture:await fixtureTransaction(verifyR2Fixture),ownerAuthPath:relativeMagicLink(owner.preview),emptyAuthPath:relativeMagicLink(empty.preview)},{headers});
+      return NextResponse.json({ok:true,fixture,ownerAuthPath:relativeMagicLink(owner.preview),emptyAuthPath:relativeMagicLink(empty.preview)},{headers});
     }
     if(body.action==='verify')return NextResponse.json({ok:true,fixture:await fixtureTransaction(verifyR2Fixture)},{headers});
     if(body.action==='cleanup'){
