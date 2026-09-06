@@ -20,6 +20,7 @@ const SPECIALIST_CARD_HUBS = new Set<string>(SPECIALIST_OWNED_HUBS);
 
 type LedgerSource = { source_id: string; publisher: string; dataset: string; establishes: string; official_as_of: string | null; retrieval_date: string; limitations: string };
 type LedgerArtifact = { sources: LedgerSource[] };
+type NetworkPolicyArtifact = { global_policy: { paid_status_affects_search_order: boolean } };
 
 const CARD_CONFIG: Record<string, { eyebrow: string; metricIds: string[]; href: string; action: string }> = {
   move: { eyebrow: 'Moving', metricIds: [], href: 'https://www.movetrusthub.com', action: 'Research movers' },
@@ -121,7 +122,14 @@ export async function NetworkIntelligenceHome() {
   const inventory = buildAskNetworkEvidenceInventory(contracts);
   const stateCoverage = buildAskStateCoverage(contracts);
   const ledger = readArtifact<LedgerArtifact>('network-source-ledger-v1.json');
+  const policy = readArtifact<NetworkPolicyArtifact>('ask-network-intel-v1.json');
   const publisherCount = new Set(ledger.sources.map((source) => source.publisher)).size;
+  const heroFacts = [
+    [String(SPECIALIST_OWNED_HUBS.length), 'specialist research systems'],
+    [String(stateCoverage.length), 'network state gateways'],
+    [String(Object.keys(NETWORK_EVIDENCE_FAMILY_LABELS).length), 'source-native evidence families'],
+    [String(Number(policy.global_policy.paid_status_affects_search_order)), 'paid ranking signals'],
+  ];
 
   return (
     <>
@@ -132,7 +140,7 @@ export async function NetworkIntelligenceHome() {
           <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed sm:text-lg" style={{ color: ASK_BRAND.ink }}>Ask one question. Research the right official identity, regulatory system, public evidence, and state context across six specialist Trust Hubs.</p>
           <NetworkAskInput />
           <div className="mx-auto mt-7 grid max-w-3xl grid-cols-2 gap-3 text-left sm:grid-cols-4">
-            {[['6', 'specialist research systems'], ['6', 'network state gateways'], ['12', 'source-native evidence families'], ['0', 'paid ranking signals']].map(([value, label]) => <div key={label} className="rounded-xl border bg-slate-50 p-3" style={{ borderColor: ASK_BRAND.border }}><p className="text-xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>{value}</p><p className="text-xs leading-snug text-slate-600">{label}</p></div>)}
+            {heroFacts.map(([value, label]) => <div key={label} className="rounded-xl border bg-slate-50 p-3" style={{ borderColor: ASK_BRAND.border }}><p className="text-xl font-semibold tabular-nums" style={{ color: ASK_BRAND.navy }}>{value}</p><p className="text-xs leading-snug text-slate-600">{label}</p></div>)}
           </div>
           <div className="mx-auto mt-6 max-w-3xl rounded-xl border bg-indigo-50/60 p-4 text-left text-sm" style={{ borderColor: ASK_BRAND.border }}><strong>Structured network research comes first.</strong> Intelligent Search routes identities, states, and evidence to the appropriate specialist. The AI Concierge remains optional guidance. <a href="#ask" className="font-semibold underline" style={{ color: ASK_BRAND.indigo }}>Ask the AI Concierge</a>.</div>
         </div>

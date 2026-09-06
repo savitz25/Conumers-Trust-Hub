@@ -12,8 +12,8 @@ type NetworkContract = {
   aggregate_assessments: Array<{ metric: string; classification: string }>;
   refresh_strategy: { failure_behavior: string };
 };
-type CoverageCell = { level: string; evidenceFamilies: string[]; routes: string[]; limitations: string[] };
-type Coverage = { jurisdictions: Record<string, Record<string, CoverageCell>> };
+type CoverageCell = { askPath: string; specialistPublished: string[]; nationalOnly: string[]; noComparableStateUniverse?: string[]; limitations: string[] };
+type Coverage = { jurisdictions: Record<string, CoverageCell> };
 const contract = readArtifact<NetworkContract>('ask-network-intel-v1.json');
 const coverage = readArtifact<Coverage>('network-coverage-v1.json');
 
@@ -54,12 +54,15 @@ test('no universal score, paid ordering, or unsupported provider mega-total', ()
   assert.equal(contract.aggregate_assessments.find((x) => x.metric.includes('provider'))?.classification, 'NOT_SAFE_TO_SUM');
 });
 
-test('Florida six-hub matrix and future-state structure are represented honestly', () => {
-  assert.deepEqual(Object.keys(coverage.jurisdictions['US-FL']).sort(), [...HUB_IDS].sort());
-  for (const state of ['US-NJ', 'US-TX', 'US-NY', 'US-WA', 'US-CA', 'US-IL']) assert.ok(state in coverage.jurisdictions);
-  for (const cell of Object.values(coverage.jurisdictions['US-FL'])) {
-    assert.ok(cell.level && cell.evidenceFamilies.length && cell.routes.length && cell.limitations.length);
-  }
+test('six-state routing metadata preserves asymmetric specialist coverage', () => {
+  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ']);
+  assert.equal(coverage.jurisdictions['US-FL'].askPath, '/florida');
+  assert.deepEqual(coverage.jurisdictions['US-FL'].nationalOnly, ['investor']);
+  for (const state of ['US-NJ', 'US-CA', 'US-TX', 'US-WA']) assert.deepEqual([...coverage.jurisdictions[state].specialistPublished].sort(), [...HUB_IDS].sort());
+  assert.deepEqual([...coverage.jurisdictions['US-AZ'].specialistPublished].sort(), ['contractor', 'investor', 'lender', 'senior']);
+  assert.deepEqual(coverage.jurisdictions['US-AZ'].nationalOnly, ['insurance']);
+  assert.deepEqual(coverage.jurisdictions['US-AZ'].noComparableStateUniverse, ['move']);
+  for (const cell of Object.values(coverage.jurisdictions)) assert.ok(cell.askPath && cell.limitations.length);
 });
 
 test('source ledger, coverage, and network fingerprints are deterministic', () => {

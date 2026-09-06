@@ -8,6 +8,7 @@ import move from '../../data/network-metrics/move-v1-fallback.json' with { type:
 import lender from '../../data/network-metrics/lender-v1-fallback.json' with { type: 'json' };
 import insurance from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
 import investor from '../../data/network-metrics/investor-v1-fallback.json' with { type: 'json' };
+import coverageArtifact from '../../data/network-intelligence/network-coverage-v1.json' with { type: 'json' };
 import { adaptContractorCard, adaptInsuranceCard, adaptInvestorCard, adaptLenderCard, adaptMoveCard, adaptSeniorCard } from './adapt.ts';
 import { buildAskNetworkEvidenceInventory, buildAskStateCoverage, NETWORK_EVIDENCE_FAMILY_LABELS } from './network-evidence.ts';
 import { ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, type SpecialistHubId } from './sources.ts';
@@ -26,7 +27,10 @@ test('six accepted specialist fallbacks and fingerprints are current', () => {
 
 test('network inventory is publication gated and retains source-native grains', () => {
   const inventory = buildAskNetworkEvidenceInventory(contracts);
-  assert.ok(inventory.length > 80);
+  assert.equal(inventory.length, 119);
+  assert.deepEqual(Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub) => [hub, inventory.filter((metric) => metric.hub === hub).length])), {
+    move: 28, lender: 20, insurance: 27, contractor: 13, senior: 16, investor: 15,
+  });
   assert.equal(inventory.some((metric) => ['INTERNAL', 'REJECTED', 'UNSUPPORTED'].includes(metric.publicationStatus)), false);
   assert.equal(inventory.every((metric) => metric.hub && metric.grain && metric.specialistFingerprint && metric.origin), true);
   assert.equal(new Set(inventory.map((metric) => metric.hub)).size, 6);
@@ -45,6 +49,13 @@ test('six-state model preserves asymmetric specialist coverage', () => {
   assert.equal(fl.hubs.find((hub) => hub.hub === 'investor')?.mode, 'NATIONAL_ONLY');
   assert.equal(states.find((state) => state.code === 'WA')?.hubs.find((hub) => hub.hub === 'move')?.mode, 'SPECIALIST_PUBLISHED');
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
+  for (const state of states) {
+    const accepted = coverageArtifact.jurisdictions[`US-${state.code}` as keyof typeof coverageArtifact.jurisdictions];
+    assert.equal(state.askHref, accepted.askPath);
+    assert.deepEqual(state.hubs.filter((hub) => hub.mode === 'SPECIALIST_PUBLISHED').map((hub) => hub.hub).sort(), [...accepted.specialistPublished].sort());
+    assert.deepEqual(state.hubs.filter((hub) => hub.mode === 'NATIONAL_ONLY').map((hub) => hub.hub).sort(), [...accepted.nationalOnly].sort());
+    assert.deepEqual(state.hubs.filter((hub) => hub.mode === 'NO_COMPARABLE_STATE_UNIVERSE').map((hub) => hub.hub).sort(), [...('noComparableStateUniverse' in accepted ? accepted.noComparableStateUniverse : [])].sort());
+  }
 });
 
 test('Move five-state and missing-universe semantics remain intact', () => {
