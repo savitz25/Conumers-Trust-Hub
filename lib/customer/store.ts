@@ -17,6 +17,7 @@ import { one, type SqlClient } from './sql.ts';
 import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
 import { businessFreshness, oldestConfirmation } from './freshness.ts';
 import { isLifecycleQaOperator } from './lifecycle-qa-auth.ts';
+import { ageBucket, buildHealth, completeHubRows, type LaunchOpsSnapshot } from './launch-ops.ts';
 import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public-profile.ts';
 import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssueError, validateRecordIssue, type RecordIssueStatus } from './record-issues.ts';
 import { BUSINESS_REPLY_STATUSES, BusinessReplyError, STAFF_REPLY_TRANSITIONS, validateBusinessReply, type BusinessReplyStatus } from './business-replies.ts';
@@ -1609,6 +1610,44 @@ export class CustomerPlatform {
         WHERE c.claimant_user_id=$1 ORDER BY c.created_at DESC`, [user.id]
     );
     return res.rows;
+  }
+
+  async launchOpsSnapshot(sessionToken: string): Promise<LaunchOpsSnapshot> {
+    await this.requireStaff(sessionToken);
+    const now = this.now();
+    const [summaryResult, claimsResult, hubsResult, sourcesResult, recoveriesResult, mailResult] = await Promise.all([
+      this.deps.sql.query<Record<string, unknown>>(`SELECT
+        count(*)::int AS claims_all,
+        count(*) FILTER (WHERE c.status='approved')::int AS approved_all,
+        count(*) FILTER (WHERE c.created_at >= now()-interval '24 hours')::int AS claims_24h,
+        count(*) FILTER (WHERE c.created_at >= now()-interval '7 days')::int AS claims_7d,
+        count(*) FILTER (WHERE c.status IN ('submitted','in_review'))::int AS awaiting_review,
+        count(*) FILTER (WHERE c.status='needs_info')::int AS needs_info,
+        count(*) FILTER (WHERE c.status='approved' AND c.reviewed_at >= now()-interval '7 days')::int AS approved_7d,
+        count(DISTINCT c.claimant_user_id) FILTER (WHERE c.status='approved')::int AS approved_owners,
+        percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch FROM (COALESCE(c.reviewed_at,now())-c.created_at))/3600) FILTER (WHERE c.status='approved') AS median_review_hours,
+        max(extract(epoch FROM (now()-c.created_at))/3600) FILTER (WHERE c.status IN ('submitted','needs_info','in_review')) AS oldest_unresolved_hours,
+        (SELECT count(DISTINCT a.actor_user_id)::int FROM ath_audit_events a JOIN ath_claims ac ON ac.claimant_user_id=a.actor_user_id AND ac.status='approved' AND ac.reviewed_at<=a.created_at WHERE a.created_at>=now()-interval '7 days' AND a.action IN ('business_profile_updated','business_profile_reconfirmed','record_issue_created','business_reply_submitted','monitoring_enabled','organization_member_invited')) AS activations_7d,
+        (SELECT count(*)::int FROM ath_record_issues WHERE status IN ('OPEN','UNDER_REVIEW','NEEDS_INFORMATION')) AS record_issues_open,
+        (SELECT count(*)::int FROM ath_business_replies WHERE status IN ('SUBMITTED','UNDER_REVIEW','NEEDS_INFORMATION')) AS replies_awaiting,
+        (SELECT count(*)::int FROM ath_notification_deliveries WHERE status='FAILED' AND updated_at>=now()-interval '24 hours') AS mail_failures_24h,
+        (SELECT count(*)::int FROM ath_monitoring_subscriptions) AS monitoring_eligible,
+        (SELECT count(*)::int FROM ath_monitoring_subscriptions WHERE enabled) AS monitoring_enabled
+        FROM ath_claims c`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT c.id::text AS claim_id,COALESCE(p.display_name_snapshot,p.native_slug) AS display_name,p.hub_id,COALESCE(p.entity_class,'unknown') AS entity_class,p.native_credential_key,p.home_state,c.status,c.created_at::text,COALESCE(c.updated_at,c.created_at)::text AS last_activity_at,extract(epoch FROM (now()-c.created_at))/3600 AS age_hours,COALESCE(c.attestation->>'acquisition_source','unknown') AS acquisition_source FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id ORDER BY CASE c.status WHEN 'needs_info' THEN 0 WHEN 'submitted' THEN 1 WHEN 'in_review' THEN 2 ELSE 3 END,c.created_at ASC LIMIT 100`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT p.hub_id,count(*)::int AS started,count(*) FILTER(WHERE c.status='approved')::int AS approved,count(*) FILTER(WHERE c.status IN ('submitted','needs_info','in_review'))::int AS awaiting FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id GROUP BY p.hub_id`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT CASE WHEN c.attestation->>'acquisition_source' IN ('organic','manual_outreach','email_campaign','internal_test') THEN c.attestation->>'acquisition_source' ELSE 'unknown' END AS source,count(*)::int AS count FROM ath_claims c GROUP BY 1`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT COALESCE(after_state->>'recovery_code',after_state->>'reason','unknown') AS reason,count(*)::int AS count FROM ath_audit_events WHERE action IN ('claim_validation_failed','claim_recovery_viewed','claim_handoff_failed') GROUP BY 1 ORDER BY count(*) DESC LIMIT 20`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT status,count(*)::int AS count FROM ath_notification_deliveries WHERE created_at>=now()-interval '30 days' GROUP BY status ORDER BY status`),
+    ]);
+    const raw = summaryResult.rows[0] ?? {};
+    const summary: Record<string, number | null> = {
+      claimsAll:Number(raw.claims_all||0),approvedAll:Number(raw.approved_all||0),claims24h:Number(raw.claims_24h||0),claims7d:Number(raw.claims_7d||0),awaitingReview:Number(raw.awaiting_review||0),needsInfo:Number(raw.needs_info||0),approved7d:Number(raw.approved_7d||0),
+      medianReviewHours:raw.median_review_hours==null?null:Number(raw.median_review_hours),oldestUnresolvedHours:raw.oldest_unresolved_hours==null?null:Number(raw.oldest_unresolved_hours),approvedOwners:Number(raw.approved_owners||0),activations7d:Number(raw.activations_7d||0),recordIssuesOpen:Number(raw.record_issues_open||0),repliesAwaiting:Number(raw.replies_awaiting||0),mailFailures24h:Number(raw.mail_failures_24h||0),monitoringEligible:Number(raw.monitoring_eligible||0),monitoringEnabled:Number(raw.monitoring_enabled||0),
+    };
+    const claims = claimsResult.rows.map((row) => { const hours=Number(row.age_hours||0),status=String(row.status); return {claimId:String(row.claim_id),displayName:String(row.display_name),hub:String(row.hub_id) as CustomerHubId,entityClass:String(row.entity_class),identifier:String(row.native_credential_key),homeState:row.home_state?String(row.home_state):null,status,source:['organic','manual_outreach','email_campaign','internal_test'].includes(String(row.acquisition_source))?String(row.acquisition_source):'unknown',ageHours:hours,ageBucket:ageBucket(hours),lastActivityAt:String(row.last_activity_at),nextAction:status==='needs_info'?'Review information needed':status==='submitted'?'Start review':status==='in_review'?'Continue review':'View claim'}; });
+    const snapshot: LaunchOpsSnapshot = { generatedAt:now.toISOString(),summary,claims,byHub:completeHubRows(hubsResult.rows.map(row=>({hub:String(row.hub_id),started:Number(row.started),approved:Number(row.approved),awaiting:Number(row.awaiting)}))),bySource:['organic','manual_outreach','email_campaign','internal_test','unknown'].map(source=>({source,count:Number(sourcesResult.rows.find(row=>row.source===source)?.count||0)})),recoveries:recoveriesResult.rows.map(row=>({reason:String(row.reason),count:Number(row.count)})),mail:mailResult.rows.map(row=>({status:String(row.status),count:Number(row.count)})),health:buildHealth(summary)};
+    return snapshot;
   }
 }
 
