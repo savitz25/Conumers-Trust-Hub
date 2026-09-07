@@ -1532,16 +1532,16 @@ export class CustomerPlatform {
     await this.requireLifecycleQaOperator(sessionToken);
     const recipient=process.env.ATH_LIFECYCLE_QA_EMAIL;
     if(!recipient||!isEmailShape(normalizeEmail(recipient))||!process.env.RESEND_API_KEY||askFromEmail()!=='Ask Trust Hub <hello@asktrusthub.com>')throw new ClaimError('qa_configuration_missing');
-    const definitions:Array<{type:CustomerEmailType;objectId:string;detail:string;actionPath:string;actionLabel:string}>=[
-      {type:'CLAIM_STARTED',objectId:'00000000-0000-4000-8000-000000001c01',detail:'We received this synthetic claim QA message. No business claim was created.',actionPath:'/claim/help?category=profile_claim',actionLabel:'View claim help'},
-      {type:'CLAIM_NEEDS_INFORMATION',objectId:'00000000-0000-4000-8000-000000001c02',detail:'Return to the secure claim workflow to review what is needed. Do not email passwords, signed links, identity documents, or financial records.',actionPath:'/claim/help?category=authority_problem',actionLabel:'Review claim help'},
-      {type:'CLAIM_APPROVED',objectId:'00000000-0000-4000-8000-000000001c03',detail:'This synthetic profile connection confirms the transactional email path. Public-source evidence remains independent.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},
-      {type:'TEAM_INVITATION',objectId:'00000000-0000-4000-8000-000000001c04',detail:'This is a synthetic team invitation QA message. No membership or invitation was created.',actionPath:'/manage/invitations/accept',actionLabel:'Review invitations'},
-      {type:'RECORD_ISSUE_RECEIVED',objectId:'00000000-0000-4000-8000-000000001c05',detail:'This synthetic receipt confirms the mail path. No issue was created and underlying evidence was not changed.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},
+    const definitions:Array<{type:CustomerEmailType;objectId:string;stateVersion:'r1-v1'|'r2-v2';detail:string;actionPath:string;actionLabel:string}>=[
+      {type:'CLAIM_STARTED',objectId:'00000000-0000-4000-8000-000000001c01',stateVersion:'r1-v1',detail:'We received this synthetic claim QA message. No business claim was created.',actionPath:'/claim/help?category=profile_claim',actionLabel:'View claim help'},
+      {type:'CLAIM_NEEDS_INFORMATION',objectId:'00000000-0000-4000-8000-000000001c02',stateVersion:'r1-v1',detail:'Return to the secure claim workflow to review what is needed. Do not email passwords, signed links, identity documents, or financial records.',actionPath:'/claim/help?category=authority_problem',actionLabel:'Review claim help'},
+      {type:'CLAIM_APPROVED',objectId:'00000000-0000-4000-8000-000000001c03',stateVersion:'r1-v1',detail:'This synthetic profile connection confirms the transactional email path. Public-source evidence remains independent.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},
+      {type:'TEAM_INVITATION',objectId:'00000000-0000-4000-8000-000000001c04',stateVersion:'r2-v2',detail:'This is a synthetic team invitation QA message. No membership or invitation was created.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},
+      {type:'RECORD_ISSUE_RECEIVED',objectId:'00000000-0000-4000-8000-000000001c05',stateVersion:'r1-v1',detail:'This synthetic receipt confirms the mail path. No issue was created and underlying evidence was not changed.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},
     ];
     const result={attempted:definitions.length,sent:0,suppressed:0,failed:0,types:definitions.map(d=>d.type)};
     for(const item of definitions){
-      const outcome=await this.sendLifecycle({emailType:item.type,recipient,objectType:'ath_launch_001c_qa',objectId:item.objectId,stateVersion:'r1-v1',message:customerLifecycleEmail({type:item.type,profileName:'Harbor Test Builders',organizationName:'Harbor Test Holdings',hub:'contractor',detail:item.detail,actionPath:item.actionPath,actionLabel:item.actionLabel},this.deps.siteUrl)});
+      const outcome=await this.sendLifecycle({emailType:item.type,recipient,objectType:'ath_launch_001c_qa',objectId:item.objectId,stateVersion:item.stateVersion,message:customerLifecycleEmail({type:item.type,profileName:'Harbor Test Builders',organizationName:'Harbor Test Holdings',hub:'contractor',detail:item.detail,actionPath:item.actionPath,actionLabel:item.actionLabel},this.deps.siteUrl)});
       result[outcome]++;
       if(outcome==='failed')break;
     }
