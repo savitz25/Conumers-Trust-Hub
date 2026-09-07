@@ -74,6 +74,7 @@
     "check:ath-launch-001c": "node --experimental-strip-types --test lib/customer/ath-launch-001c.test.ts lib/customer/customer-emails.test.ts lib/customer/mail.test.ts",
     "check:ath-launch-001c-r1": "node --experimental-strip-types --test lib/customer/ath-launch-001c-r1.test.ts",
     "check:ath-launch-001c-r2": "node --experimental-strip-types --test lib/customer/ath-launch-001c-r2.test.ts",
+    "check:ath-launch-001d": "node --experimental-strip-types --test lib/customer/ath-launch-001d.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
