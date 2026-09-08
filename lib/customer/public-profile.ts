@@ -2,7 +2,7 @@ import type { BusinessFreshness } from './freshness.ts';
 
 export const PUBLIC_BUSINESS_FIELD_KEYS = [
   'description', 'website', 'public_phone', 'public_email', 'founded_year',
-  'emergency_service', 'contact_context',
+  'emergency_service',
 ] as const;
 
 export type PublicBusinessProfile = {

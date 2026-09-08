@@ -75,6 +75,7 @@ test('public contract is allowlisted and requires active exact-profile managemen
   const publicProfile = await platform.publicBusinessProfile(PROFILE);
   assert.equal(publicProfile?.managed, true); assert.equal(publicProfile?.nativeProfileId, PROFILE);
   assert.equal(publicProfile?.fields.description, valid.fields.description); assert.deepEqual(publicProfile?.services, ['Roofing']);
+  assert.equal('contact_context' in (publicProfile?.fields ?? {}), false);
   const serialized = JSON.stringify(publicProfile);
   for (const privateKey of ['orgId','org_id','userId','user_id','grantId','claim','audit']) {
     assert.equal(serialized.includes(privateKey), false, `public contract leaked ${privateKey}`);
