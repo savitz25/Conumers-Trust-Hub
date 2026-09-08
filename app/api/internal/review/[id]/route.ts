@@ -1,16 +1,23 @@
 import { NextResponse } from 'next/server';
 import { AuthError, ClaimError } from '@/lib/customer/store';
 import { currentContext, readSessionToken, withPlatform } from '@/lib/customer/server';
+import type { AuthorityEvidenceCode, ClaimDecisionCategory } from '@/lib/customer/claim-governance';
 
 export const runtime = 'nodejs';
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
+  const origin=request.headers.get('origin');
+  if(!origin||origin!==new URL(request.url).origin)return NextResponse.json({ok:false,error:'forbidden'},{status:403});
   const { id } = await ctx.params;
   const sessionToken = await readSessionToken();
   const reqCtx = await currentContext();
   const body = (await request.json().catch(() => ({}))) as {
     decision?: 'approve' | 'reject' | 'needs_info';
-    reason?: string;
+    evidenceCodes?: AuthorityEvidenceCode[];
+    evidenceNote?: string;
+    internalRationale?: string;
+    claimantMessage?: string;
+    reasonCategory?: ClaimDecisionCategory;
   };
   try {
     const result = await withPlatform((p) =>
@@ -18,7 +25,11 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
         sessionToken: sessionToken || '',
         claimId: id,
         decision: body.decision || 'needs_info',
-        reason: body.reason || '',
+        evidenceCodes: Array.isArray(body.evidenceCodes) ? body.evidenceCodes : [],
+        evidenceNote: body.evidenceNote || '',
+        internalRationale: body.internalRationale || '',
+        claimantMessage: body.claimantMessage || '',
+        reasonCategory: body.reasonCategory || 'OTHER_POLICY_REASON',
         ctx: reqCtx,
       })
     );

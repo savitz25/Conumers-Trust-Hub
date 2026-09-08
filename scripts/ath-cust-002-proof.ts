@@ -182,7 +182,11 @@ const decided = await platform.staffDecide({
   sessionToken: staff.sessionToken,
   claimId: submitted.claimId,
   decision: 'approve',
-  reason: 'Controlled ATH-CUST-002 proof. License key matches the pointed Florida profile.',
+  evidenceCodes: ['CORPORATE_OFFICER_MATCH','COMPANY_DOMAIN_CONTROL'],
+  evidenceNote: 'Controlled proof independently checked officer evidence and business-domain control.',
+  internalRationale: 'Independent authority plus validated control meets the Contractor V1 rule for this proof.',
+  claimantMessage: 'Ask Trust Hub verified authority through independent records and contact verification.',
+  reasonCategory: 'AUTHORITY_VERIFIED',
 });
 
 const active = await sql.query<{ n: string }>(
