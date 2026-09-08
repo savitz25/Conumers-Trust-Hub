@@ -33,8 +33,8 @@ export default function PromisePage() {
         <div className="prose-trust">
           <p>
             {BRAND.name} rejects sponsored “top” lists that present as independent research. Across
-            the parent site and every Trust Hub, editorial trust signals—ranking order, Trust Scores,
-            and verification badges—cannot be purchased.
+            the parent site and every Trust Hub, public evidence, research findings, and listing order
+            cannot be purchased or rewritten by a participating business.
           </p>
           <p>
             {ASK_NETWORK_OWNERSHIP_LINE} Independence in this policy means research and listing order
@@ -58,7 +58,7 @@ export default function PromisePage() {
           <h2>What “no paid placements” means</h2>
           <ul>
             <li>Providers cannot buy higher rank, featured badges, or preferred sort order.</li>
-            <li>Trust Scores and verification badges are not commercial products for sale.</li>
+            <li>No business-quality score or endorsement badge is created by claiming a profile.</li>
             <li>
               Any future advertising or opt-in commercial tools will be labeled and isolated from
               organic research ordering.

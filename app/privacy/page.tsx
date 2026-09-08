@@ -2,86 +2,19 @@ import { PageHeader } from '@/components/page-header';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { BRAND } from '@/lib/brand';
 
-export const metadata = createPageMetadata({
-  title: 'Privacy Policy',
-  description: `Privacy policy for ${BRAND.name} (${BRAND.domain}).`,
-  path: '/privacy',
-});
+export const metadata = createPageMetadata({ title: 'Privacy Policy', description: `Privacy policy for ${BRAND.name} (${BRAND.domain}), including Ask accounts and business profile management.`, path: '/privacy' });
 
 export default function PrivacyPage() {
-  return (
-    <>
-      <PageHeader
-        label="Legal"
-        title="Privacy Policy"
-        description={`Last updated: July 1, 2026 · Applies to ${BRAND.domain}`}
-      />
-
-      <div className="container-page py-14 sm:py-16">
-        <div className="prose-trust">
-          <h2>Overview</h2>
-          <p>
-            {BRAND.name} (“we,” “us,” or “our”) operates {BRAND.domain}. This policy describes how
-            we collect, use, and protect information on the parent network site. Specialist Trust
-            Hubs may publish additional notices for their own features.
-          </p>
-
-          <h2>Information we collect</h2>
-          <ul>
-            <li>
-              <strong>Usage data:</strong> pages visited, approximate location derived from IP,
-              device/browser type, and referral source via analytics.
-            </li>
-            <li>
-              <strong>Contact data:</strong> name, email, and message content when you email us.
-            </li>
-            <li>
-              <strong>Technical cookies:</strong> essential site operation and, if enabled, privacy-
-              respectful analytics.
-            </li>
-          </ul>
-
-          <h2>How we use information</h2>
-          <p>
-            We use information to operate and improve the site, respond to inquiries, measure
-            performance, and protect against abuse. We do not sell personal information.
-          </p>
-
-          <h2>Analytics</h2>
-          <p>
-            We may use Vercel Analytics and/or Google Analytics to understand aggregate traffic. You
-            can block analytics via browser settings or extensions. Cross-domain measurement may
-            include specialist Trust Hub domains when configured.
-          </p>
-
-          <h2>Third-party sites</h2>
-          <p>
-            Links to MoveTrustHub, InsuranceTrustHub, LenderTrustHub, and external regulators leave
-            this site. Their privacy practices are governed by their own policies.
-          </p>
-
-          <h2>Data retention</h2>
-          <p>
-            Contact emails are retained as long as needed to resolve the inquiry and maintain a
-            reasonable compliance record. Analytics data is retained according to the analytics
-            provider’s configuration.
-          </p>
-
-          <h2>Your choices</h2>
-          <p>
-            To request access or deletion of personal information you have sent us, email{' '}
-            <a className="link-inline" href={`mailto:${BRAND.email}`}>
-              {BRAND.email}
-            </a>
-            . We will respond within a reasonable period consistent with applicable law.
-          </p>
-
-          <h2>Contact</h2>
-          <p>
-            Privacy questions: {BRAND.email}
-          </p>
-        </div>
-      </div>
-    </>
-  );
+  return <><PageHeader label="Legal" title="Privacy Policy" description={`Last updated: September 7, 2026 · Applies to ${BRAND.domain}`} /><main className="container-page py-14 sm:py-16"><div className="prose-trust">
+    <h2>Overview</h2><p>{BRAND.name} (“we,” “us,” or “our”) operates {BRAND.domain}. This policy describes information used on Ask and its account and business-management platform. Specialist Trust Hubs may publish additional notices for their features.</p>
+    <h2>Information we collect</h2><ul><li><strong>Account and authentication data:</strong> email address, passwordless authentication and session records, and security events.</li><li><strong>Claim and authority data:</strong> claim records, relationship attestations, authority-review records, profile management grants, and records needed to prevent fraud or profile hijacking.</li><li><strong>Organization data:</strong> organizations, memberships, roles, team invitations, and access changes.</li><li><strong>Business participation data:</strong> business-supplied information, correction requests, business responses, monitoring preferences and notifications.</li><li><strong>Communications:</strong> support messages and transactional service-email delivery records, including claim, correction, response, team/access, and enabled monitoring notices.</li><li><strong>Usage and operations data:</strong> pages and product actions, approximate location derived from IP, device/browser type, referral or acquisition source, and bounded operational analytics.</li></ul>
+    <h2>How we use information</h2><p>We use this information to authenticate users; verify authority to manage exact business profiles; provide account, organization, and profile tools; prevent abuse; review corrections and responses; send transactional communications; maintain security and audit records; provide supported monitoring; measure operation; and improve the service.</p>
+    <h2>Public evidence and business accounts</h2><p>Public-source business and regulatory information can exist without a business creating an Ask account. An account controls access to supported business-supplied information, correction and response workflows, monitoring, and team tools. It does not become the source of truth for regulator evidence.</p><p>Information designated for public profile display may be published on the relevant Trust Hub. Business-supplied content remains distinguishable from public-source evidence.</p>
+    <h2>Team users</h2><p>Organization administrators may invite other users to collaborate on managed profiles. Access is limited to organizations and profiles for which the user has an active authorized relationship.</p>
+    <h2>Analytics and service providers</h2><p>We may use service providers such as Vercel for hosting and aggregate analytics and Resend for transactional email. We do not add open-tracking pixels to lifecycle mail and do not sell personal information.</p>
+    <h2>Retention and security</h2><p>We retain information as needed to operate the service, preserve claim and decision audit history, prevent abuse, resolve requests, and meet applicable obligations. We do not publish sensitive staff review rationale or authentication material.</p>
+    <h2>Your choices and account requests</h2><p>To request access to or correction of account information, removal of account access, or another privacy review, email <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>. A complete self-service account-deletion tool is not currently offered.</p><p>Closing an Ask account or removing management access does not automatically delete accurate, publication-eligible government or regulatory evidence. Report factual inaccuracies through our corrections process.</p>
+    <h2>Transactional messages</h2><p>Essential service messages may concern authentication, claim status, additional information, profile connection, corrections, business responses, team access, or monitoring where enabled. These are distinct from any future marketing outreach.</p>
+    <h2>Legal scope and contact</h2><p>This policy describes product operation and is not a certification under any particular privacy law. Privacy questions may be sent to {BRAND.email}.</p>
+  </div></main></>;
 }

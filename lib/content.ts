@@ -133,17 +133,18 @@ export const REVENUE_MODEL = {
   current: [
     'The network is early-stage and founder-operated.',
     'Core research pages and directories are free for consumers.',
-    'We do not currently sell paid placements, sponsored rankings, or “featured” slots that alter trust ordering.',
+    'Business profile claiming is free and the business-management workspace is in controlled rollout.',
+    'We do not currently sell paid placements, sponsored rankings, or “featured” slots that alter research ordering.',
   ],
   intended: [
-    'Optional premium tools for consumers (e.g., deeper planning utilities) that never rewrite independent rankings.',
-    'Transparent B2B products that do not buy trust—such as verified profile data access, compliance dashboards, or opt-in lead products clearly labeled as commercial and separated from editorial ranking.',
-    'If advertising or affiliate relationships are ever introduced, they will be labeled and structurally isolated from Trust Scores and organic research ordering.',
+    'Optional business software or advanced tools may be offered separately.',
+    'Paying for software would not alter independent evidence, rankings, research findings, or publication standards.',
+    'If advertising or affiliate relationships are ever introduced, they will be labeled and structurally isolated from research ordering.',
   ],
   never: [
     'Selling ranking position',
     'Undisclosed paid endorsements',
-    'Letting providers edit Trust Scores',
+    'Letting providers edit or suppress public-source evidence',
     'Pretending commercial content is independent research',
   ],
 } as const;

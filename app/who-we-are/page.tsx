@@ -34,7 +34,7 @@ const ACCOUNTABILITY = [
   },
   {
     q: 'Can ranking or placement be purchased?',
-    a: 'No. Ranking order, Trust Scores, and verification badges are not commercial products for sale. See the Independence Policy.',
+    a: 'No. Research order, source-backed evidence, and endorsements are not commercial products for sale. Claiming a profile does not change that boundary. See the Independence Policy.',
   },
   {
     q: 'How are corrections handled?',
@@ -124,6 +124,8 @@ export default function WhoWeArePage() {
         </section>
 
         <section className="prose-trust mt-14 max-w-3xl">
+          <h2>Business participation and research independence</h2>
+          <p>Businesses may claim exact existing profiles and manage supported business-supplied information. That participation does not transfer editorial control, alter public-source evidence, or purchase a conclusion. Trust Hub keeps business-supplied content distinguishable from sourced research. We cite. You decide.</p>
           <h2>Legal entity details</h2>
           <p>
             Public display name: <strong>{BRAND.name}</strong>. Schema <code>legalName</code>{' '}

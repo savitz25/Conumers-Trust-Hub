@@ -6,6 +6,7 @@ import { CUSTOMER_HUB_REGISTRY } from '@/lib/customer/hub-registry';
 import { ClaimRecoveryCard } from '@/components/customer/ClaimRecoveryCard';
 import { ClaimProgress } from '@/components/customer/ClaimProgress';
 import { ClaimFunnelAnalytics } from '@/components/customer/ClaimFunnelAnalytics';
+import { PUBLIC_CLAIM_CONTRACT } from '@/lib/customer/public-claim-contract';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,7 +58,7 @@ export default async function ClaimContinuePage({
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           You are requesting permission to manage business-supplied information associated with
           this specific TrustHub profile. Confirming your email does not verify ownership.
-          Authorization is not an endorsement.
+          Authorization is not an endorsement. {PUBLIC_CLAIM_CONTRACT.claimedMeaning}
         </p>
         <div className="mt-4 rounded-lg border border-border bg-slate-50 p-4 text-sm">
           <p><strong>Claiming lets you:</strong> manage information supplied by the business, submit corrections and use eligible account tools.</p>
@@ -66,6 +67,7 @@ export default async function ClaimContinuePage({
         <a className="link-inline mt-3 inline-block text-sm" href={intent.profileHref}>
           View public Trust Report
         </a>
+        <p className="mt-3 text-sm"><a className="link-inline" href="/claim/what-claiming-means">Read what claiming means</a></p>
       </div>
       <ClaimContinueForm
         authed={Boolean(user)}

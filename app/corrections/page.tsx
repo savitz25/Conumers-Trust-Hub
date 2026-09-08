@@ -59,6 +59,7 @@ export default function CorrectionsPage() {
             </li>
             <li>Your relationship to the matter (consumer, provider, journalist, other)</li>
           </ul>
+          <p><strong>Payment and profile claiming are not required to report an inaccuracy.</strong> Submitting a report starts a review and does not automatically remove or change public evidence.</p>
 
           <h2>How reports are handled</h2>
           <ul>
