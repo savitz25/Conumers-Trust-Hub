@@ -1657,3 +1657,7 @@ export function parseStaffEmails(raw: string | undefined): string[] {
     .map((s) => s.trim())
     .filter(Boolean);
 }
+
+export function combineStaffEmails(primary: string | undefined, extra: string | undefined): string[] {
+  return [...new Set([...parseStaffEmails(primary), ...parseStaffEmails(extra)].map(normalizeEmail))];
+}
