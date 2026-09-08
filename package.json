@@ -77,6 +77,7 @@
     "check:ath-launch-001d": "node --experimental-strip-types --test lib/customer/ath-launch-001d.test.ts",
     "check:ath-claim-governance-001": "node --experimental-strip-types --test lib/customer/ath-claim-governance-001.test.ts lib/customer/platform.test.ts",
     "check:ath-claim-public-001": "node --experimental-strip-types --test lib/customer/ath-claim-public-001.test.ts",
+    "check:ath-claim-publish-001": "node --experimental-strip-types --test lib/customer/ath-claim-publish-001.test.ts lib/customer/business-profile.test.ts lib/customer/business-replies.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
