@@ -20,7 +20,7 @@ export default function HowWeMakeMoneyPage() {
       <PageHeader
         label="How we make money"
         title="Transparent revenue. No hidden ranking market."
-        description="If a research network will not explain how it gets paid, assume the ranking is the product being sold."
+        description="Our business tooling is in controlled rollout. Software may support the work; it cannot buy influence over the research."
       />
 
       <div className="container-page py-14 sm:py-16">
@@ -40,7 +40,7 @@ export default function HowWeMakeMoneyPage() {
 
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           <section className="card-surface p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">Current</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Today</h2>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
               {REVENUE_MODEL.current.map((item) => (
                 <li key={item} className="flex gap-2">
@@ -52,7 +52,7 @@ export default function HowWeMakeMoneyPage() {
           </section>
 
           <section className="card-surface p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">Intended</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Potential future software</h2>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
               {REVENUE_MODEL.intended.map((item) => (
                 <li key={item} className="flex gap-2">

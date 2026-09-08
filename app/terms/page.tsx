@@ -14,7 +14,7 @@ export default function TermsPage() {
       <PageHeader
         label="Legal"
         title="Terms of Service"
-        description={`Last updated: July 1, 2026 · Applies to ${BRAND.domain}`}
+        description={`Last updated: September 7, 2026 · Applies to ${BRAND.domain}`}
       />
 
       <div className="container-page py-14 sm:py-16">
@@ -36,8 +36,8 @@ export default function TermsPage() {
           <h2>No paid placements</h2>
           <p>
             Network policy prohibits paid ranking placements that alter organic research ordering.
-            Commercial relationships, if any, will be disclosed and isolated from Trust Scores and
-            editorial ranking.
+            Commercial relationships, if any, will be disclosed and isolated from public evidence,
+            research findings, and editorial ordering. Claiming a profile does not create an endorsement.
           </p>
 
           <h2>No professional relationship</h2>
