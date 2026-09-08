@@ -4,7 +4,7 @@ import { withAskTx } from './db';
 import { cthReadDirectory } from './cth-read';
 import { compositeCustomerDirectory } from './specialist-read';
 import { resendMailer } from './mail';
-import { CustomerPlatform, parseStaffEmails } from './store';
+import { CustomerPlatform, combineStaffEmails } from './store';
 import { INTENT_COOKIE, SESSION_COOKIE, sessionCookieOptions } from './cookies';
 import type { RequestContext } from './types';
 import type { PoolClient } from 'pg';
@@ -32,7 +32,7 @@ export async function withPlatform<T>(fn: (platform: CustomerPlatform, sql: SqlC
       cth: compositeCustomerDirectory(cthReadDirectory),
       mailer: resendMailer,
       handoffSecret: secret,
-      staffEmails: parseStaffEmails(process.env.ATH_STAFF_EMAILS),
+      staffEmails: combineStaffEmails(process.env.ATH_STAFF_EMAILS, process.env.ATH_STAFF_EMAILS_EXTRA),
       siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com',
     });
     return fn(platform, sql);
