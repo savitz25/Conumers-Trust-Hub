@@ -36,6 +36,7 @@ import type {
 } from './types.ts';
 import { customerHub } from './hub-registry.ts';
 import { customerLifecycleEmail, type CustomerLifecycleEmail, type CustomerEmailType } from './customer-emails.ts';
+import { AUTHORITY_EVIDENCE,CLAIM_DECISION_CATEGORIES,evaluateAuthority,validateGovernanceText,type AuthorityEvidenceCode,type ClaimDecisionCategory } from './claim-governance.ts';
 
 const MAGIC_TTL_MS = 30 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -629,7 +630,7 @@ export class CustomerPlatform {
       `SELECT c.*, u.email AS claimant_email, u.email_confirmed_at,
               o.display_name AS org_name,
               p.hub_id,p.native_profile_id, p.native_slug, p.native_credential_key, p.display_name_snapshot, p.home_state,
-              p.identifier_namespace,p.entity_class,p.native_source_system
+              p.identifier_namespace,p.entity_class,p.native_source_system,p.canonical_url
          FROM ath_claims c
          JOIN ath_users u ON u.id = c.claimant_user_id
          JOIN ath_organizations o ON o.id = c.org_id
@@ -655,7 +656,8 @@ export class CustomerPlatform {
         ORDER BY created_at ASC`,
       [claimId]
     );
-    return { claim, grant, competing: competing.rows, audit: audit.rows };
+    const memberships=await this.deps.sql.query(`SELECT m.role,m.status,o.display_name AS org_name FROM ath_memberships m JOIN ath_organizations o ON o.id=m.org_id WHERE m.user_id=$1 ORDER BY m.created_at`,[claim.claimant_user_id]);
+    return { claim, grant, competing: competing.rows, memberships:memberships.rows, audit: audit.rows };
   }
 
   private async requireStaff(sessionToken: string) {
@@ -669,7 +671,11 @@ export class CustomerPlatform {
     sessionToken: string;
     claimId: string;
     decision: 'approve' | 'reject' | 'needs_info';
-    reason: string;
+    evidenceCodes: AuthorityEvidenceCode[];
+    evidenceNote: string;
+    internalRationale: string;
+    claimantMessage: string;
+    reasonCategory: ClaimDecisionCategory;
     ctx?: RequestContext;
   }): Promise<{ grantId?: string }> {
     const staff = await this.requireStaff(input.sessionToken);
@@ -685,11 +691,22 @@ export class CustomerPlatform {
       hub_profile_id: string;
       claimant_user_id: string;
       status: ClaimStatus;
-    }>(this.deps.sql, `SELECT id, org_id, hub_profile_id, claimant_user_id, status FROM ath_claims WHERE id = $1`, [
+      relationship_type: RelationshipType;
+      hub_id: CustomerHubId;
+    }>(this.deps.sql, `SELECT c.id,c.org_id,c.hub_profile_id,c.claimant_user_id,c.status,c.relationship_type,p.hub_id FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id WHERE c.id = $1`, [
       input.claimId,
     ]);
     if (!claim) throw new ClaimError('missing_intent');
     if (claim.status === 'rejected') throw new ClaimError('rejected_claim');
+    if(!['submitted','needs_info','in_review'].includes(claim.status))throw new ClaimError('invalid_transition');
+    let evidenceNote:string,internalRationale:string,claimantMessage:string;
+    try{evidenceNote=validateGovernanceText(input.evidenceNote,20,4000);internalRationale=validateGovernanceText(input.internalRationale,20,4000);claimantMessage=validateGovernanceText(input.claimantMessage,10,2000)}catch{throw new ClaimError('governance_details_required')}
+    const allowedEvidence=Object.keys(AUTHORITY_EVIDENCE);if(!input.evidenceCodes.length||input.evidenceCodes.some(code=>!allowedEvidence.includes(code)))throw new ClaimError('authority_evidence_required');
+    if(!CLAIM_DECISION_CATEGORIES.includes(input.reasonCategory)|| (input.decision==='approve'&&input.reasonCategory!=='AUTHORITY_VERIFIED') || (input.decision!=='approve'&&input.reasonCategory==='AUTHORITY_VERIFIED'))throw new ClaimError('invalid_decision_category');
+    const active=await one<{id:string}>(this.deps.sql,`SELECT id FROM ath_management_grants WHERE hub_profile_id=$1 AND status='active'`,[claim.hub_profile_id]);
+    const competingCount=await one<{n:string}>(this.deps.sql,`SELECT count(*)::text n FROM ath_claims WHERE hub_profile_id=$1 AND id<>$2 AND status IN ('submitted','needs_info','in_review')`,[claim.hub_profile_id,claim.id]);
+    const governance=evaluateAuthority({hub:claim.hub_id,relationship:claim.relationship_type,evidence:input.evidenceCodes,competingClaims:Number(competingCount?.n||0),activeGrant:Boolean(active)});
+    const governanceAudit={decision_category:input.reasonCategory,authority_evidence_codes:[...new Set(input.evidenceCodes)],evidence_note:evidenceNote,internal_rationale:internalRationale,claimant_facing_reason:claimantMessage,competing_claim_present:Number(competingCount?.n||0)>0,active_grant_present:Boolean(active),governance_result:governance.result};
 
     const profile = await one<{ display_name_snapshot: string; native_slug: string }>(
       this.deps.sql,
@@ -705,7 +722,7 @@ export class CustomerPlatform {
     if (input.decision === 'needs_info') {
       await this.deps.sql.query(
         `UPDATE ath_claims SET status = 'needs_info', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
-        [claim.id, this.now().toISOString(), staff.id, input.reason]
+        [claim.id, this.now().toISOString(), staff.id, claimantMessage]
       );
       await this.audit({
         actorUserId: staff.id,
@@ -715,12 +732,12 @@ export class CustomerPlatform {
         objectId: claim.id,
         action: 'claim_needs_info',
         before: { status: claim.status },
-        after: { status: 'needs_info' },
+        after: { status: 'needs_info',...governanceAudit },
         ctx: input.ctx,
       });
       customerLog('staff_decision', { decision: 'needs_info', claimId: claim.id });
       if (claimant && profile) {
-        await this.sendLifecycle({emailType:'CLAIM_NEEDS_INFORMATION',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'needs_info',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NEEDS_INFORMATION',profileName:profile.display_name_snapshot||profile.native_slug,detail:`Review note: ${input.reason} Do not send passwords, signed links, identity documents, or sensitive financial information by ordinary email.`,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review what is needed'},this.deps.siteUrl)});
+        await this.sendLifecycle({emailType:'CLAIM_NEEDS_INFORMATION',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'needs_info',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NEEDS_INFORMATION',profileName:profile.display_name_snapshot||profile.native_slug,detail:`${claimantMessage} Do not send passwords, signed links, identity documents, or sensitive financial information by ordinary email.`,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review what is needed'},this.deps.siteUrl)});
       }
       return {};
     }
@@ -728,7 +745,7 @@ export class CustomerPlatform {
     if (input.decision === 'reject') {
       await this.deps.sql.query(
         `UPDATE ath_claims SET status = 'rejected', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
-        [claim.id, this.now().toISOString(), staff.id, input.reason]
+        [claim.id, this.now().toISOString(), staff.id, claimantMessage]
       );
       await this.deps.sql.query(
         `UPDATE ath_review_queue SET status = 'resolved', resolved_at = $2
@@ -743,29 +760,24 @@ export class CustomerPlatform {
         objectId: claim.id,
         action: 'claim_rejected',
         before: { status: claim.status },
-        after: { status: 'rejected' },
+        after: { status: 'rejected',...governanceAudit },
         ctx: input.ctx,
       });
       customerLog('staff_decision', { decision: 'reject', claimId: claim.id });
       if (claimant && profile) {
-        await this.sendLifecycle({emailType:'CLAIM_NOT_APPROVED',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'rejected',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NOT_APPROVED',profileName:profile.display_name_snapshot||profile.native_slug,detail:input.reason,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review claim outcome'},this.deps.siteUrl)});
+        await this.sendLifecycle({emailType:'CLAIM_NOT_APPROVED',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'rejected',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_NOT_APPROVED',profileName:profile.display_name_snapshot||profile.native_slug,detail:claimantMessage,actionPath:`/claim/status/${claim.id}`,actionLabel:'Review claim outcome'},this.deps.siteUrl)});
       }
       return {};
     }
 
-    const active = await one<{ id: string }>(
-      this.deps.sql,
-      `SELECT id FROM ath_management_grants WHERE hub_profile_id = $1 AND status = 'active'`,
-      [claim.hub_profile_id]
-    );
-    if (active) {
+    if (!governance.eligibleForHumanApproval) {
       await this.deps.sql.query(
         `UPDATE ath_claims SET status = 'in_review', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
         [
           claim.id,
           this.now().toISOString(),
           staff.id,
-          'Competing request: an active management grant already exists. The existing grant was not transferred.',
+          governance.reasons.join(' '),
         ]
       );
       await this.deps.sql.query(
@@ -779,16 +791,16 @@ export class CustomerPlatform {
         orgId: claim.org_id,
         objectType: 'ath_claims',
         objectId: claim.id,
-        action: 'competing_claim_blocked_transfer',
-        after: { existing_grant_id: active.id },
+        action: governance.result==='CONFLICT'?'competing_claim_blocked_transfer':'claim_approval_governance_blocked',
+        after: {...governanceAudit,blocking_reasons:governance.reasons},
         ctx: input.ctx,
       });
-      throw new ClaimError('already_granted_elsewhere');
+      throw new ClaimError(governance.result==='CONFLICT'?'unresolved_authority_conflict':'authority_standard_not_met');
     }
 
     await this.deps.sql.query(
       `UPDATE ath_claims SET status = 'approved', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
-      [claim.id, this.now().toISOString(), staff.id, input.reason]
+      [claim.id, this.now().toISOString(), staff.id, claimantMessage]
     );
     await this.deps.sql.query(
       `UPDATE ath_memberships SET status = 'active', role = 'owner'
@@ -816,7 +828,7 @@ export class CustomerPlatform {
       objectId: claim.id,
       action: 'claim_approved',
       before: { status: claim.status },
-      after: { status: 'approved' },
+      after: { status: 'approved',...governanceAudit },
       ctx: input.ctx,
     });
     await this.audit({
@@ -855,20 +867,23 @@ export class CustomerPlatform {
     sessionToken: string;
     grantId: string;
     reason: string;
+    accountFacingReason?: string;
     ctx?: RequestContext;
   }): Promise<void> {
     const staff = await this.requireStaff(input.sessionToken);
+    let internalReason:string,accountFacingReason:string;try{internalReason=validateGovernanceText(input.reason,20,4000);accountFacingReason=validateGovernanceText(input.accountFacingReason||'Your access to this organization profile has changed. Contact Ask Trust Hub support if you believe this is an error.',10,2000)}catch{throw new ClaimError('revocation_reason_required')}
     const grant = await one<{ id: string; org_id: string; hub_profile_id: string; status: string }>(
       this.deps.sql,
       `SELECT id, org_id, hub_profile_id, status FROM ath_management_grants WHERE id = $1`,
       [input.grantId]
     );
     if (!grant) throw new ClaimError('missing_intent');
+    if(grant.status!=='active'&&grant.status!=='contested')throw new ClaimError('invalid_transition');
     await this.deps.sql.query(
       `UPDATE ath_management_grants
           SET status = 'revoked', revoked_at = $2, revoked_by = $3, revocation_reason = $4
         WHERE id = $1`,
-      [input.grantId, this.now().toISOString(), staff.id, input.reason]
+      [input.grantId, this.now().toISOString(), staff.id, internalReason]
     );
     await this.audit({
       actorUserId: staff.id,
@@ -878,7 +893,7 @@ export class CustomerPlatform {
       objectId: grant.id,
       action: 'grant_revoked',
       before: { status: grant.status },
-      after: { status: 'revoked' },
+      after: { status: 'revoked',internal_reason:internalReason,account_facing_reason:accountFacingReason,hub_profile_id:grant.hub_profile_id },
       ctx: input.ctx,
     });
     const stopped = await this.deps.sql.query<{id:string}>(
@@ -887,6 +902,8 @@ export class CustomerPlatform {
       [grant.org_id,grant.hub_profile_id,this.now().toISOString()]);
     for(const subscription of stopped.rows) await this.audit({actorUserId:staff.id,actorKind:'staff',orgId:grant.org_id,
       objectType:'ath_monitoring_subscriptions',objectId:subscription.id,action:'monitoring_disabled',after:{reason:'management_grant_revoked'}});
+    const affected=await one<{email:string;user_id:string;display_name_snapshot:string}>(this.deps.sql,`SELECT u.email,u.id user_id,p.display_name_snapshot FROM ath_management_grants g JOIN ath_claims c ON c.id=g.granted_from_claim_id JOIN ath_users u ON u.id=c.claimant_user_id JOIN ath_hub_profiles p ON p.id=g.hub_profile_id WHERE g.id=$1`,[grant.id]);
+    if(affected)await this.sendLifecycle({emailType:'ACCESS_REMOVED',recipient:affected.email,recipientUserId:affected.user_id,objectType:'ath_management_grants',objectId:grant.id,stateVersion:'revoked',orgId:grant.org_id,message:customerLifecycleEmail({type:'ACCESS_REMOVED',profileName:affected.display_name_snapshot,detail:accountFacingReason,actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
     customerLog('grant_revoked', { grantId: grant.id });
   }
 
@@ -1115,6 +1132,7 @@ export class CustomerPlatform {
 
   async customerRecordIssueAction(input:{sessionToken:string;nativeProfileId:string;issueId:string;action:'withdraw'|'respond';version:number;message?:string;ctx?:RequestContext}) {
     const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
+    await this.hitRateLimit('record_issue_customer_action',`${access.user_id}:${access.hub_profile_id}`,10,60*60*1000).catch(()=>{throw new RecordIssueError('rate_limited')});
     const issue=await one<{id:string;status:RecordIssueStatus;version:number}>(this.deps.sql,`SELECT id,status,version FROM ath_record_issues WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 FOR UPDATE`,[input.issueId,access.org_id,access.hub_profile_id]);
     if(!issue) throw new RecordIssueError('not_found'); if(issue.version!==input.version) throw new RecordIssueError('stale_version');
     const next=input.action==='withdraw'?'WITHDRAWN':'OPEN'; if(!CUSTOMER_TRANSITIONS[issue.status]?.includes(next)) throw new RecordIssueError('invalid_transition');
@@ -1171,7 +1189,7 @@ export class CustomerPlatform {
 
   async createBusinessReply(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}){const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);const data=validateBusinessReply(input.body);await this.hitRateLimit('business_reply_write',`${access.user_id}:${access.hub_profile_id}`,10,60*60*1000);try{const reply=await one<{id:string;created_at:string}>(this.deps.sql,`INSERT INTO ath_business_replies(org_id,hub_profile_id,submitted_by_user_id,reply_type,target_type,target_record_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,created_at::text`,[access.org_id,access.hub_profile_id,access.user_id,data.replyType,data.targetType,data.targetRecordId]);if(!reply)throw new BusinessReplyError('validation_failed');const revision=await one<{id:string}>(this.deps.sql,`INSERT INTO ath_business_reply_revisions(reply_id,revision_number,body,created_by_user_id,moderation_status) VALUES($1,1,$2,$3,'DRAFT') RETURNING id`,[reply.id,data.body,access.user_id]);await this.deps.sql.query(`UPDATE ath_business_replies SET active_revision_id=$2 WHERE id=$1`,[reply.id,revision!.id]);await this.businessReplyEvent({replyId:reply.id,orgId:access.org_id,hubProfileId:access.hub_profile_id,actorUserId:access.user_id,actorKind:'user',eventType:'business_reply_draft_created',revisionId:revision!.id,toStatus:'DRAFT'});await this.audit({actorUserId:access.user_id,orgId:access.org_id,objectType:'ath_business_replies',objectId:reply.id,action:'business_reply_draft_created',after:{target_type:data.targetType,reply_type:data.replyType},ctx:input.ctx});return{id:reply.id,status:'DRAFT',version:1}}catch(error){if(/duplicate key/i.test(String(error)))throw new BusinessReplyError('duplicate');throw error}}
 
-  async customerBusinessReplyAction(input:{sessionToken:string;nativeProfileId:string;replyId:string;action:'update'|'submit'|'withdraw'|'respond'|'revise';version:number;body?:unknown;message?:string;ctx?:RequestContext}){const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);const reply=await one<{id:string;status:BusinessReplyStatus;version:number;active_revision_id:string;published_revision_id:string|null;reply_type:string;target_type:string;target_record_id:string|null}>(this.deps.sql,`SELECT id,status,version,active_revision_id,published_revision_id,reply_type,target_type,target_record_id FROM ath_business_replies WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 FOR UPDATE`,[input.replyId,access.org_id,access.hub_profile_id]);if(!reply)throw new BusinessReplyError('not_found');if(reply.version!==input.version)throw new BusinessReplyError('stale_version');const now=this.now().toISOString();let next=reply.status,event='business_reply_updated',revisionId=reply.active_revision_id;
+  async customerBusinessReplyAction(input:{sessionToken:string;nativeProfileId:string;replyId:string;action:'update'|'submit'|'withdraw'|'respond'|'revise';version:number;body?:unknown;message?:string;ctx?:RequestContext}){const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);await this.hitRateLimit('business_reply_customer_action',`${access.user_id}:${access.hub_profile_id}`,15,60*60*1000).catch(()=>{throw new BusinessReplyError('rate_limited')});const reply=await one<{id:string;status:BusinessReplyStatus;version:number;active_revision_id:string;published_revision_id:string|null;reply_type:string;target_type:string;target_record_id:string|null}>(this.deps.sql,`SELECT id,status,version,active_revision_id,published_revision_id,reply_type,target_type,target_record_id FROM ath_business_replies WHERE id=$1 AND org_id=$2 AND hub_profile_id=$3 FOR UPDATE`,[input.replyId,access.org_id,access.hub_profile_id]);if(!reply)throw new BusinessReplyError('not_found');if(reply.version!==input.version)throw new BusinessReplyError('stale_version');const now=this.now().toISOString();let next=reply.status,event='business_reply_updated',revisionId=reply.active_revision_id;
     if(input.action==='update'){if(reply.status!=='DRAFT')throw new BusinessReplyError('invalid_transition');const data=validateBusinessReply({...(input.body as object),replyType:reply.reply_type,targetType:reply.target_type,targetRecordId:reply.target_record_id});await this.deps.sql.query(`UPDATE ath_business_reply_revisions SET body=$2 WHERE id=$1 AND moderation_status='DRAFT'`,[revisionId,data.body]);}
     else if(input.action==='revise'){if(reply.status!=='APPROVED')throw new BusinessReplyError('invalid_transition');const data=validateBusinessReply({...(input.body as object),replyType:reply.reply_type,targetType:reply.target_type,targetRecordId:reply.target_record_id});const rev=await one<{id:string}>(this.deps.sql,`INSERT INTO ath_business_reply_revisions(reply_id,revision_number,body,created_by_user_id,moderation_status) SELECT $1,COALESCE(MAX(revision_number),0)+1,$2,$3,'DRAFT' FROM ath_business_reply_revisions WHERE reply_id=$1 RETURNING id`,[reply.id,data.body,access.user_id]);revisionId=rev!.id;next='DRAFT';event='business_reply_revision_created';}
     else if(input.action==='submit'){if(reply.status!=='DRAFT')throw new BusinessReplyError('invalid_transition');next='SUBMITTED';event='business_reply_submitted';await this.deps.sql.query(`UPDATE ath_business_reply_revisions SET moderation_status='SUBMITTED',submitted_at=$2 WHERE id=$1`,[revisionId,now]);await this.deps.sql.query(`INSERT INTO ath_review_queue(work_type,object_type,object_id,status,risk_state) VALUES('business_reply','ath_business_replies',$1,'open','standard')`,[reply.id]);}

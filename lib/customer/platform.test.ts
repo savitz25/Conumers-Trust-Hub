@@ -14,6 +14,20 @@ const SECRET = 'ath-handoff-secret-for-tests-32chars-min';
 const PROFILE_ID = '11111111-1111-4111-8111-111111111111';
 const THIN_ID = '22222222-2222-4222-8222-222222222222';
 const TX_ID = '33333333-3333-4333-8333-333333333333';
+const governedApproval = {
+  evidenceCodes: ['CORPORATE_OFFICER_MATCH','COMPANY_DOMAIN_CONTROL'] as const,
+  evidenceNote: 'Current corporate officer source checked independently; authenticated business-domain control confirmed.',
+  internalRationale: 'Independent authority plus separately validated control satisfies the Contractor V1 standard.',
+  claimantMessage: 'Ask Trust Hub verified authority through independent business records and contact verification.',
+  reasonCategory: 'AUTHORITY_VERIFIED' as const,
+};
+const governedDenial = {
+  evidenceCodes: ['CREDENTIAL_KNOWLEDGE'] as const,
+  evidenceNote: 'Only public credential knowledge was available; no independent authority source confirmed.',
+  internalRationale: 'Public profile identity matched, but claimant authority was not independently established.',
+  claimantMessage: 'We could not verify authority to manage this profile based on the information available.',
+  reasonCategory: 'AUTHORITY_NOT_ESTABLISHED' as const,
+};
 
 const profiles = new Map<string, CthProfileRecord>([
   [
@@ -185,7 +199,7 @@ test('happy path: confirm ≠ grant; approval creates one active grant', async (
     sessionToken: staff.sessionToken,
     claimId: submitted.claimId,
     decision: 'approve',
-    reason: 'License key matches the pointed Florida DBPR credential.',
+    ...governedApproval,
   });
   assert.ok(decided.grantId);
 
@@ -196,6 +210,13 @@ test('happy path: confirm ≠ grant; approval creates one active grant', async (
 
   const home = await platform.managedHome(claimant.sessionToken);
   assert.equal(home.length, 1);
+  const decisionAudit=await sql.query<{after_state:Record<string,unknown>}>(`SELECT after_state FROM ath_audit_events WHERE object_id=$1 AND action='claim_approved'`,[submitted.claimId]);
+  assert.deepEqual(decisionAudit.rows[0].after_state.authority_evidence_codes,['CORPORATE_OFFICER_MATCH','COMPANY_DOMAIN_CONTROL']);
+  assert.equal(decisionAudit.rows[0].after_state.internal_rationale,governedApproval.internalRationale);
+  assert.equal(decisionAudit.rows[0].after_state.claimant_facing_reason,governedApproval.claimantMessage);
+  await platform.revokeGrant({sessionToken:staff.sessionToken,grantId:decided.grantId!,reason:'Controlled governance test revocation preserves history and ends access immediately.'});
+  assert.equal((await platform.managedHome(claimant.sessionToken)).length,0);
+  assert.equal((await sql.query(`SELECT count(*)::text n FROM ath_claims WHERE id=$1`,[submitted.claimId])).rows[0].n,'1');
   await db.close();
 });
 
@@ -229,7 +250,7 @@ test('non-staff cannot access review actions', async () => {
         sessionToken: user.sessionToken,
         claimId: '00000000-0000-4000-8000-000000000000',
         decision: 'approve',
-        reason: 'nope',
+        ...governedApproval,
       }),
     (e: unknown) => e instanceof AuthError && e.code === 'not_staff'
   );
@@ -257,7 +278,7 @@ test('rejected claim cannot grant access', async () => {
     sessionToken: staff.sessionToken,
     claimId: submitted.claimId,
     decision: 'reject',
-    reason: 'Could not match the submitted credential to this profile.',
+    ...governedDenial,
   });
   await assert.rejects(
     () =>
@@ -265,7 +286,7 @@ test('rejected claim cannot grant access', async () => {
         sessionToken: staff.sessionToken,
         claimId: submitted.claimId,
         decision: 'approve',
-        reason: 'retry',
+        ...governedApproval,
       }),
     (e: unknown) => e instanceof ClaimError && e.code === 'rejected_claim'
   );
@@ -295,7 +316,7 @@ test('competing claim cannot steal the active grant', async () => {
     sessionToken: staff.sessionToken,
     claimId: claim1.claimId,
     decision: 'approve',
-    reason: 'Match.',
+    ...governedApproval,
   });
 
   const second = mintHandoffToken(SECRET, {
@@ -322,9 +343,9 @@ test('competing claim cannot steal the active grant', async () => {
         sessionToken: staff.sessionToken,
         claimId: claim2.claimId,
         decision: 'approve',
-        reason: 'transfer',
+        ...governedApproval,
       }),
-    (e: unknown) => e instanceof ClaimError && e.code === 'already_granted_elsewhere'
+    (e: unknown) => e instanceof ClaimError && e.code === 'unresolved_authority_conflict'
   );
 
   const active = await sql.query<{ id: string; n: string }>(
