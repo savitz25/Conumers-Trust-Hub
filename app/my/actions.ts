@@ -12,8 +12,8 @@ import {
   getMyTrustHubFeatureFlags,
 } from "@/lib/my-trusthub/feature-flags";
 import {
-  getSupabasePublishableKey,
-  getSupabaseUrl,
+  getMyTrustHubSupabasePublishableKey,
+  getMyTrustHubSupabaseUrl,
 } from "@/lib/my-trusthub/runtime-config";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
@@ -54,8 +54,8 @@ export async function requestMagicLinkAction(formData: FormData) {
   }
 
   const client = await createMyTrustHubSupabaseClient();
-  const url = getSupabaseUrl();
-  const key = getSupabasePublishableKey();
+  const url = getMyTrustHubSupabaseUrl();
+  const key = getMyTrustHubSupabasePublishableKey();
   if (!client || !url || !key) throw new Error("My TrustHub sign-in is not configured");
 
   const origin = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");

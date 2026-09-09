@@ -1,13 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
+import {
+  getMyTrustHubSupabasePublishableKey,
+  getMyTrustHubSupabaseUrl,
+} from "@/lib/my-trusthub/runtime-config";
 
 export async function refreshMyTrustHubSession(request: NextRequest) {
   let response = NextResponse.next({ request });
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = getMyTrustHubSupabaseUrl();
+  const key = getMyTrustHubSupabasePublishableKey();
   if (!url || !key) return response;
 
   const supabase = createServerClient(url, key, {

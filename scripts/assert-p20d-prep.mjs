@@ -62,6 +62,46 @@ assert(!/consumer-lab|Boca|fictional provider/i.test(runtimeSource), "fixture/de
 assert(!/user_metadata|raw_user_meta_data/.test(runtimeSource), "user-editable metadata used by runtime");
 assert(!/MY_TRUSTHUB_SUPABASE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY/.test(runtimeSource), "admin secret referenced by runtime");
 assert(!/NEXT_PUBLIC_[A-Z0-9_]*(SECRET|SERVICE_ROLE)/.test(runtimeSource), "secret-shaped public variable");
+for (const existingVariable of [
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+]) {
+  assert(
+    !runtimeSource.includes(existingVariable),
+    `My TrustHub runtime references existing Ask variable: ${existingVariable}`,
+  );
+}
+
+const runtimeConfig = read("lib/my-trusthub/runtime-config.ts");
+assert(
+  runtimeConfig.includes("NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL"),
+  "namespaced My TrustHub Supabase URL missing",
+);
+assert(
+  runtimeConfig.includes("NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY"),
+  "namespaced My TrustHub publishable key missing",
+);
+assert(
+  runtimeConfig.includes('"qvvxvbcdmbjzrgvwjatw.supabase.co"'),
+  "permanent My TrustHub project host guard missing",
+);
+
+const envExample = read(".env.example");
+assert(
+  envExample.includes("NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL="),
+  "namespaced URL absent from env template",
+);
+assert(
+  envExample.includes("NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY="),
+  "namespaced publishable key absent from env template",
+);
+assert(
+  envExample.includes("# NEXT_PUBLIC_SUPABASE_URL=") &&
+    envExample.includes("# NEXT_PUBLIC_SUPABASE_ANON_KEY=") &&
+    envExample.includes("# SUPABASE_SERVICE_ROLE_KEY="),
+  "existing Ask Supabase placeholders were repurposed",
+);
 
 const canary = read("lib/my-trusthub/canary-access.ts");
 assert(

@@ -11,18 +11,28 @@ issue comments.
 2. Select the Ask Trust Hub project (`conumers-trust-hub`).
 3. Open **Settings → Environment Variables**.
 4. Select **Production** scope only.
-5. Add or update every production-runtime variable in
+5. Preserve the existing `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and all `ATH_*`
+   variables exactly as found. Do not edit, delete, or repurpose them.
+6. Verify the existing `NEXT_PUBLIC_SITE_URL` is exactly
+   `https://www.asktrusthub.com`. Reuse it as the canonical origin; do not
+   recreate or rename it if already exact.
+7. Add or update only the My TrustHub variables in
    `config/my-trusthub-p20d-vercel-env.md`.
-6. Enter the approved founder address only in
+8. Enter the approved founder address only in
    `MY_TRUSTHUB_CANARY_EMAILS`.
-7. Copy the project URL and publishable key from Supabase using the project's
-   **Connect** dialog. The browser key must be the modern publishable key, not a
-   secret or legacy `service_role` key.
-8. Verify all later-stage flags are explicitly `false`.
-9. Save the variables. Do not deploy or redeploy yet.
+9. Set `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` to the permanent Consumer project
+   URL shown in the manifest.
+10. From the **Conumers-Trust-Hub** Supabase project's **Connect** dialog, copy
+    its modern publishable key into
+    `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY`. Do not use any existing
+    AskTrustHub generic key and do not use a secret or legacy service-role key.
+11. Verify all later-stage flags are explicitly `false`.
+12. Save the variables. Do not deploy or redeploy yet.
 
-Do **not** add `MY_TRUSTHUB_SUPABASE_SECRET_KEY` to Vercel. It is only for the
-one-time local script in Step 2.
+Do **not** add `MY_TRUSTHUB_SUPABASE_SECRET_KEY` to Vercel and do not replace or
+reuse the existing `SUPABASE_SERVICE_ROLE_KEY`. The My TrustHub secret is only a
+temporary local-process input for Step 2.
 
 ## Step 2 — create or verify the one canonical Auth user
 

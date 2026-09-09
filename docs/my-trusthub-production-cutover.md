@@ -9,8 +9,8 @@ The recovered tree was preserved on local snapshot branch
 `my-trusthub-p20d-recovered-snapshot` at
 `a5b569c9a53e6227891757cb4387ceab1587921d`. The deployable preparation lives on
 `my-trusthub-p20d-canary-integration`, based on confirmed production-main commit
-`41ff303c894e454d6114671411f758c38423a770`. Vercel deployment
-`dpl_FPYHgm7Jm1sNVSNKtQLyNTJtQjJa` is READY at that same SHA.
+`f8a80a10535d37776b46ba85ee770495ffa5fa3e`. Vercel deployment
+`dpl_8qqLF6QqVDD4pzy2t8o8zL7ddFFh` is READY at that same SHA.
 
 The package contains only the Stage 1 Auth, Home, Saved, Project, and membership
 runtime. Consumer Lab and later-stage My TrustHub routes/adapters are absent.

@@ -24,15 +24,35 @@
       "deployment of the recovered old-base tree"
     ]
   },
+  "environment_collision_followup": {
+    "checked_at_utc": "2026-09-09T17:32:23Z",
+    "founder_changed_vercel_variables": false,
+    "generic_variables_preserved": [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "ATH_*"
+    ],
+    "shared_canonical_site_variable": "NEXT_PUBLIC_SITE_URL",
+    "shared_canonical_site_expected_value": "https://www.asktrusthub.com",
+    "my_trusthub_runtime_variables": [
+      "NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL",
+      "NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY"
+    ],
+    "my_trusthub_project_url": "https://qvvxvbcdmbjzrgvwjatw.supabase.co",
+    "generic_supabase_fallback_in_my_trusthub": false,
+    "my_trusthub_admin_secret_in_vercel": false,
+    "auth_admin_script_changed_or_executed": false
+  },
   "work_preservation": {
     "branch": "my-trusthub-p20d-recovered-snapshot",
     "commit": "a5b569c9a53e6227891757cb4387ceab1587921d",
     "discarded": false
   },
   "production_alignment": {
-    "origin_main_sha": "41ff303c894e454d6114671411f758c38423a770",
-    "vercel_deployment_id": "dpl_FPYHgm7Jm1sNVSNKtQLyNTJtQjJa",
-    "vercel_git_sha": "41ff303c894e454d6114671411f758c38423a770",
+    "origin_main_sha": "f8a80a10535d37776b46ba85ee770495ffa5fa3e",
+    "vercel_deployment_id": "dpl_8qqLF6QqVDD4pzy2t8o8zL7ddFFh",
+    "vercel_git_sha": "f8a80a10535d37776b46ba85ee770495ffa5fa3e",
     "vercel_state": "READY",
     "aligned": true
   },
@@ -93,7 +113,7 @@
     "changed_file_lint": "pass",
     "production_build": "pass",
     "p11_p19_static_contracts": "pass",
-    "p20d_prep_assertions": "57/57 pass",
+    "p20d_prep_assertions": "66/66 pass after environment collision correction",
     "git_diff_check": "pass",
     "runtime_fixture_scan": "pass",
     "source_and_bundle_secret_scan": "pass",

@@ -1,15 +1,17 @@
 # My TrustHub P20D Vercel environment manifest
 
 Scope: Ask Trust Hub Vercel project, **Production** environment only. This file
-contains no credential or founder-email value.
+contains no credential or founder-email value. The existing generic Supabase
+variables belong to the established AskTrustHub environment and must not be
+changed, copied, or repurposed for My TrustHub.
 
 ## Production runtime variables
 
 | Variable | Stage 1 value | Classification | Purpose |
 |---|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | `https://www.asktrusthub.com` | PUBLIC | Canonical origin and Auth callback construction |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://qvvxvbcdmbjzrgvwjatw.supabase.co` | PUBLIC | Consumer Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `<COPY PUBLISHABLE KEY FROM SUPABASE>` | PUBLIC | Browser/SSR Data API and Auth client key |
+| `NEXT_PUBLIC_SITE_URL` | verify existing value is `https://www.asktrusthub.com`; do not replace if already exact | PUBLIC, EXISTING SHARED CONFIG | Existing AskTrustHub canonical origin, also used for the Auth callback |
+| `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` | `https://qvvxvbcdmbjzrgvwjatw.supabase.co` | PUBLIC | Namespaced My TrustHub Consumer Supabase project URL |
+| `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY` | `<COPY PUBLISHABLE KEY FROM CONUMERS-TRUST-HUB>` | PUBLIC | Namespaced My TrustHub browser/SSR Data API and Auth key |
 | `MY_TRUSTHUB_CANARY_ONLY` | `true` | NON-SECRET SERVER CONFIG | Keeps admission closed |
 | `MY_TRUSTHUB_CANARY_EMAILS` | `<SET TO APPROVED FOUNDER EMAIL OUT OF BAND>` | NON-SECRET SERVER CONFIG, PRIVATE | OTP-request allowlist; never commit the value |
 | `MY_TRUSTHUB_CANARY_USER_IDS` | empty | NON-SECRET SERVER CONFIG | Optional secondary canonical-ID allowlist; not needed for the one-user canary |
@@ -31,6 +33,19 @@ Supabase Auth must separately retain:
 - redirect URL `https://www.asktrusthub.com/auth/callback`
 - public signup disabled
 
+## Existing AskTrustHub variables — preserve exactly
+
+Do not edit, delete, or reuse these existing Production variables during P20D:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- all existing `ATH_*` variables
+
+Do not add `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` as a generic fallback. My
+TrustHub has no fallback to any generic Supabase variable; its URL and
+publishable key must both use the namespaced variables above.
+
 ## One-time local Auth Admin variables
 
 These variables are for `scripts/create-my-trusthub-canary.mjs` in a temporary
@@ -44,7 +59,8 @@ founder PowerShell process. They are **not** Vercel runtime requirements.
 | `MY_TRUSTHUB_CONFIRM_CREATE` | `CREATE_ONE_MY_TRUSTHUB_CANARY` | NON-SECRET SAFETY CONFIRMATION |
 | `MY_TRUSTHUB_ALLOW_EXISTING_UNRELATED_USERS` | unset | NON-SECRET SAFETY OVERRIDE; must remain unset for P20D |
 
-Do not add `MY_TRUSTHUB_SUPABASE_SECRET_KEY` to Vercel for Stage 1. The deployed
-application performs no Auth Admin operation. If a legacy `service_role` key is
-used instead of a modern `sb_secret_...` key, it has the same highly privileged,
-server-only handling requirement.
+Do not add `MY_TRUSTHUB_SUPABASE_SECRET_KEY` to Vercel for Stage 1 and do not
+reuse the existing `SUPABASE_SERVICE_ROLE_KEY`. The deployed application performs
+no Auth Admin operation. If a legacy service-role key is used instead of a modern
+`sb_secret_...` key for the one-time local script, it has the same highly
+privileged, server-only handling requirement.

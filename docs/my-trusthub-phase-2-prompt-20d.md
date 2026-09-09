@@ -1,5 +1,48 @@
 # My TrustHub Phase 2 / Prompt 20D
 
+## P20D-PREP follow-up — production environment collision correction
+
+Date: 2026-09-09
+
+Result: **CORRECTED — NO VERCEL CHANGE — NO DEPLOYMENT — NO USER CREATED**
+
+Founder inspection established that the AskTrustHub Production environment
+already contains generic Supabase variables. The first P20D-PREP manifest would
+have assigned the new Consumer project to generic names and therefore created an
+unacceptable collision. No Dashboard value had been changed.
+
+The source audit showed that current production main already uses
+`NEXT_PUBLIC_SITE_URL` as the shared canonical AskTrustHub origin for robots,
+sitemap, handoff, and customer code, so My TrustHub continues to reuse that
+existing variable only after verifying its value remains
+`https://www.asktrusthub.com`.
+
+Current production main does not use the generic Supabase variables in My
+TrustHub code because My TrustHub is not present there. The initial integration
+had introduced all active references to those generic names in
+`lib/my-trusthub/runtime-config.ts` and `lib/supabase/middleware.ts`. Those
+references and the generic anon-key fallback were removed.
+
+The Stage 1 browser/SSR client now accepts only:
+
+- `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL`
+- `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY`
+
+The runtime also rejects a URL whose host is not exactly
+`qvvxvbcdmbjzrgvwjatw.supabase.co`. Existing `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `ATH_*`
+variables are not read or changed by My TrustHub. No generic publishable-key
+fallback exists.
+
+The one-time local Auth Admin script remains unchanged and continues to use only
+`MY_TRUSTHUB_SUPABASE_URL` and `MY_TRUSTHUB_SUPABASE_SECRET_KEY` from its
+temporary founder PowerShell process. No My TrustHub admin secret is required in
+Vercel.
+
+Follow-up validation passed TypeScript, changed-file lint, an optimized
+Next.js 16.3.3 build, the expanded P20D-PREP static gate at **66/66**, source and
+client-bundle secret/collision scans, and `git diff --check`.
+
 ## P20D-PREP — clean production-main integration package
 
 Date: 2026-09-09
@@ -10,21 +53,21 @@ Result: **P20D PREPARATION COMPLETE — CANARY NOT YET CREATED — PRODUCTION NO
 
 The Stage 1 package is ready on local branch
 `my-trusthub-p20d-canary-integration`. It is based on the same
-`41ff303c894e454d6114671411f758c38423a770` commit now present on
+`f8a80a10535d37776b46ba85ee770495ffa5fa3e` commit now present on
 `origin/main` and the active Vercel production deployment. No production
 deployment, Vercel environment change, Supabase configuration change, Auth
 email, Auth user, or product-data write occurred.
 
 ### B. CURRENT PRODUCTION MAIN
 
-- latest fetched `origin/main`: `41ff303c894e454d6114671411f758c38423a770`
-- active Vercel production deployment: `dpl_FPYHgm7Jm1sNVSNKtQLyNTJtQjJa`, READY
-- deployment Git SHA: `41ff303c894e454d6114671411f758c38423a770`
+- latest fetched `origin/main`: `f8a80a10535d37776b46ba85ee770495ffa5fa3e`
+- active Vercel production deployment: `dpl_8qqLF6QqVDD4pzy2t8o8zL7ddFFh`, READY
+- deployment Git SHA: `f8a80a10535d37776b46ba85ee770495ffa5fa3e`
 - alignment: **PASS — exact match**
 
-Production advanced once during preparation. The integration was rebased onto
-the new commit, retaining current-main architecture and its ATH-ADMIN-003
-changes before certification was repeated.
+Production advanced twice during preparation/follow-up. The integration was
+rebased each time, retaining current-main architecture and the newer
+ATH-ADMIN-003/004 changes before certification was repeated.
 
 ### C. WORK PRESERVATION
 
@@ -121,7 +164,7 @@ The script was reviewed and linted but **not executed**.
 Static source and built-output scans found no committed founder address,
 secret-key value, JWT credential, or public secret variable. No secret/admin
 variable starts with `NEXT_PUBLIC_`. Browser code uses only
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; the one-time Admin client exists only in
+`NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY`; the one-time Admin client exists only in
 the local script. The repository contains placeholders and variable names, not
 credential values.
 

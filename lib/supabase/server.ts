@@ -3,13 +3,13 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import {
-  getSupabasePublishableKey,
-  getSupabaseUrl,
+  getMyTrustHubSupabasePublishableKey,
+  getMyTrustHubSupabaseUrl,
 } from "@/lib/my-trusthub/runtime-config";
 
 export async function createMyTrustHubSupabaseClient() {
-  const url = getSupabaseUrl();
-  const publishableKey = getSupabasePublishableKey();
+  const url = getMyTrustHubSupabaseUrl();
+  const publishableKey = getMyTrustHubSupabasePublishableKey();
   if (!url || !publishableKey) return null;
 
   const cookieStore = await cookies();
