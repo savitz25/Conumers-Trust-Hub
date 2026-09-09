@@ -42,7 +42,7 @@ async function requiredAdapter() {
 export async function requestMagicLinkAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_ENABLED");
   const email = textField(formData, "email", 254).toLowerCase();
-  if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error("Enter a valid email address");
+  if (!/^\S+@\S+\.\S+$/.test(email)) redirect("/my/sign-in?error=invalid");
 
   const flags = getMyTrustHubFeatureFlags();
   const canaryOnly = isMyTrustHubCanaryOnly();
@@ -56,7 +56,7 @@ export async function requestMagicLinkAction(formData: FormData) {
   const client = await createMyTrustHubSupabaseClient();
   const url = getMyTrustHubSupabaseUrl();
   const key = getMyTrustHubSupabasePublishableKey();
-  if (!client || !url || !key) throw new Error("My TrustHub sign-in is not configured");
+  if (!client || !url || !key) redirect("/my/sign-in?error=unavailable");
 
   const origin = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
   const { error } = await client.auth.signInWithOtp({
@@ -75,7 +75,7 @@ export async function requestMagicLinkAction(formData: FormData) {
       status: error.status ?? null,
       message: safeMessage,
     }));
-    throw new Error("Unable to send the sign-in link");
+    redirect("/my/sign-in?error=delivery");
   }
   redirect("/my/sign-in?sent=1");
 }

@@ -16,6 +16,7 @@ export default async function SignInPage({
   const sent = query.sent === "1";
   const restricted = query.access === "restricted";
   const missing = query.configuration === "missing" || !adapter;
+  const error = typeof query.error === "string" ? query.error : null;
   const canaryOnly = isMyTrustHubCanaryOnly();
 
   return (
@@ -27,6 +28,9 @@ export default async function SignInPage({
         {sent ? <p className="myth-notice" role="status">Check your email for a secure sign-in link.</p> : null}
         {restricted ? <p className="myth-warning" role="status">This account does not have access to the internal canary.</p> : null}
         {missing ? <p className="myth-warning" role="status">Sign-in infrastructure is not configured in this environment.</p> : null}
+        {error === "invalid" ? <p className="myth-warning" role="alert">Enter a valid email address.</p> : null}
+        {error === "unavailable" ? <p className="myth-warning" role="alert">Sign-in is temporarily unavailable. Please try again later.</p> : null}
+        {error === "delivery" ? <p className="myth-warning" role="alert">We could not send the sign-in link. Please wait a moment and try again.</p> : null}
         {flags.MY_TRUSTHUB_ENABLED && !missing ? (
           <form action={requestMagicLinkAction} className="myth-form">
             <label htmlFor="email">Email</label>
