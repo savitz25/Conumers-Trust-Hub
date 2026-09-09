@@ -1,5 +1,6 @@
 import type { AskResearchRouteCard } from './ask-research-route.ts';
 import type { GuidedResultState } from '../guided-research/contract.ts';
+import type { SearchTerminalOutcome } from '../control-plane/contracts/product-event-v1.ts';
 export const ASK_INTEL_OBSERVABILITY_VERSION='ask-intel-observability-v1' as const;
 export type AskIntelSurface='ASK_SSR'|'GUIDED'|'CONCIERGE'|'JOURNEY';
 export type ResultCountBucket='0'|'1'|'2-10'|'11-25'|'26-100'|'101-500'|'501-1000'|'1001+';
@@ -13,3 +14,21 @@ export function observeAskRoute(route:AskResearchRouteCard,input:{surface?:AskIn
 export const PROHIBITED_OBSERVABILITY_KEYS=['query','question','entityName','identifierValue','streetAddress','chatTranscript','messages','nmls','usdot','crd','npn'] as const;
 export function validateAskIntelObservation(value:Record<string,unknown>):string[]{const keys=Object.keys(value).map(k=>k.toLowerCase());return PROHIBITED_OBSERVABILITY_KEYS.filter(k=>keys.includes(k.toLowerCase())).map(k=>`prohibited_property:${k}`)}
 export function askIntelAnalyticsProps(o:AskIntelObservation):Record<string,string|number|boolean>{return {...o}}
+export function searchTerminalOutcome(o:AskIntelObservation):SearchTerminalOutcome {
+  if (!o.success || ['BACKEND_UNAVAILABLE', 'TIMEOUT'].includes(o.resultState)) return 'ERROR';
+  if (o.resultState === 'CLARIFICATION_REQUIRED' || !o.executionAllowed) return 'CLARIFICATION';
+  if (['UNSUPPORTED_CAPABILITY', 'UNSUPPORTED_STATE_CAPABILITY', 'UNSUPPORTED_TRADE_CAPABILITY', 'INVALID_QUERY'].includes(o.resultState)) {
+    return o.destinationType !== 'none' || o.officialSourceOffered ? 'FAIL_CLOSED_WITH_ACTION' : 'FAIL_CLOSED_DEAD_END';
+  }
+  return 'RESULTS';
+}
+export function searchTerminalAnalyticsProps(o:AskIntelObservation):Record<string,string|number|boolean>{
+  return {schema_version:'product_event.v1',hub:o.hub,intent:o.intent,terminal_outcome:searchTerminalOutcome(o),next_action_type:o.destinationType,failure_reason:o.success?'none':o.resultState,result_count_bucket:o.resultCountBucket,duration_bucket:o.latencyBucket,route_family:'/ask',surface:o.surface};
+}
+export function guidedSearchTerminalOutcome(state:GuidedResultState,total:number,hasNextAction:boolean):SearchTerminalOutcome{
+  if(['BACKEND_UNAVAILABLE','TIMEOUT'].includes(state))return 'ERROR';
+  if(['CLARIFICATION_REQUIRED','AMBIGUOUS_IDENTITIES','IDENTITY_COLLISION'].includes(state))return 'CLARIFICATION';
+  if(total>0||['SUPPORTED_RESULTS','EXACT_IDENTITY'].includes(state))return 'RESULTS';
+  if(['UNSUPPORTED_CAPABILITY','UNSUPPORTED_STATE_CAPABILITY','UNSUPPORTED_TRADE_CAPABILITY','INVALID_QUERY','PUBLICATION_RESTRICTED','NO_CONFIDENT_MATCH','ZERO_MATCHING_ROWS'].includes(state))return hasNextAction?'FAIL_CLOSED_WITH_ACTION':'FAIL_CLOSED_DEAD_END';
+  return hasNextAction?'FAIL_CLOSED_WITH_ACTION':'FAIL_CLOSED_DEAD_END';
+}
