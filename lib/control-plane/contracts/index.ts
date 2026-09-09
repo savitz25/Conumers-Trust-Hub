@@ -3,3 +3,4 @@ export * from './product-event-v1.ts';
 export * from './ops-case-v1.ts';
 export * from './admin-command-v1.ts';
 export * from './claim-policy-v1.ts';
+export * from './capability-health-v1.ts';
