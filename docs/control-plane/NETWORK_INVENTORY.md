@@ -4,7 +4,7 @@ Read-only audit date: 2026-09-08. SHAs are fetched `origin/main`, not inferred f
 
 | Hub | Repository / main SHA | Production / Vercel project | Runtime / data ownership |
 |---|---|---|---|
-| Ask | `savitz25/Conumers-Trust-Hub` / `4dc1f25d432e33da52098beebd2c13e2e9113d1d` | asktrusthub.com / `conumers-trust-hub` | Next 16.3.3; network orchestration, customer/organization/claim/grant/Layer B and aggregate network contracts; PostgreSQL URLs, no committed Supabase ref found. |
+| Ask | `savitz25/Conumers-Trust-Hub` / `4dc1f25d432e33da52098beebd2c13e2e9113d1d` | asktrusthub.com / `conumers-trust-hub` | Next 16.3.3; network orchestration, customer/organization/claim/grant/Layer B and aggregate network contracts; Supabase integration ref `qvvxvbcdmbjzrgvwjatw` (name not exposed by the integration status). |
 | Contractor | `savitz25/contractor-trust-hub` / `697052a4fd2d1ba2ced985c5373315fd16517ed8` | contractortrusthub.com / `contractor-trust-hub` | Next 16.3.3; DBPR identity/evidence, Florida contractor publication and specialist Search. Supabase-backed; ref not safely committed. |
 | Move | `savitz25/Move-trust-Hub` / `bb7177cdf7eb9c26ffe8c24884212a4f16950d07` | movetrusthub.com / `move-trust-hub` | Next 15.5.19; FMCSA, FDACS and state mover evidence, publication and Search. Supabase refs are environment-selected; no single safe canonical ref in source. |
 | Lender | `savitz25/Lender-Trust-Hub` / `964faacdb780d0421f7a404c6f9daecaf0af17d3` | lendertrusthub.com / `lender-trust-hub` | Next 16.2.9; lender identity, HMDA, CFPB/OFR/state evidence and Search. Supabase-backed; ref not safely committed. |
