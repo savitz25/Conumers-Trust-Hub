@@ -18,7 +18,8 @@ export default async function ReviewQueuePage() {
     const rows = await withPlatform((p) => p.listOpenReviews(sessionToken || ''));
     return (
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-12">
-        <h1 className="text-2xl font-semibold text-navy">Review queue</h1>
+        <h1 className="text-2xl font-semibold text-navy">Review queue <span className="text-sm font-medium text-muted-foreground">Legacy</span></h1>
+        <p className="rounded-lg border border-border p-3 text-sm">The named-staff Control Plane replacement is available at <Link className="link-inline" href="/admin/operations/claims">Claim Operations</Link>. This legacy surface remains available during parity stabilization.</p>
         <Link href="/internal/record-issues" className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold">Open record-issue queue</Link>
         <p className="text-sm text-muted-foreground">Staff only. Entitlements do not change review order.</p>
         {rows.length === 0 ? <p>No open items.</p> : null}
