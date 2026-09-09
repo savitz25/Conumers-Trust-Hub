@@ -1,0 +1,5 @@
+import {NextResponse}from'next/server';
+import{withAskTx}from'@/lib/customer/db';
+import{runSearchCanarySuite}from'@/lib/control-plane/search-reliability';
+export const dynamic='force-dynamic';export const runtime='nodejs';export const maxDuration=60;
+export async function GET(request:Request){const secret=process.env.CRON_SECRET??'';if(secret.length<16||request.headers.get('authorization')!==`Bearer ${secret}`)return new Response('Unauthorized',{status:401});try{const result=await withAskTx(async sql=>{const lock=await sql.query<{ok:boolean}>(`SELECT pg_try_advisory_xact_lock(hashtext('ath-search-canaries')) ok`);if(!lock.rows[0]?.ok)throw new Error('suite_already_running');const hour=new Date().getUTCHours(),kind=hour%6===0?'FULL':'QUICK';return runSearchCanarySuite(sql,kind)});return NextResponse.json({ok:true,kind:new Date().getUTCHours()%6===0?'FULL':'QUICK',gate:result.gate,buildId:result.buildId,runGroupId:result.runGroupId},{headers:{'Cache-Control':'no-store'}})}catch{return NextResponse.json({ok:false,error:'CANARY_RUN_UNAVAILABLE'},{status:503,headers:{'Cache-Control':'no-store'}})}}
