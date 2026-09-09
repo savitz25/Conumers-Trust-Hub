@@ -31,6 +31,19 @@ async function main(){
   const client=new pg.Client({connectionString:url.toString(),ssl:{rejectUnauthorized:false},connectionTimeoutMillis:15000,statement_timeout:30000});
   await client.connect();
   try{
+    if(mode==='admin-state'){
+      await client.query(`SELECT set_config('ath.app_role','server',false)`);
+      const state=await client.query(`SELECT
+        (SELECT count(*)::int FROM ath_users) users,
+        (SELECT count(*)::int FROM ath_sessions) sessions,
+        (SELECT count(*)::int FROM ath_admin_staff) staff,
+        (SELECT count(*)::int FROM ath_admin_staff WHERE role='SUPER_ADMIN' AND status='ACTIVE') active_super_admin,
+        (SELECT count(*)::int FROM ath_admin_audit_log) audit_rows,
+        (SELECT count(*)::int FROM ath_admin_audit_log WHERE event_type='ADMIN_BOOTSTRAPPED') bootstrap_audits,
+        (SELECT count(*)::int FROM ath_control_flags) flags,
+        (SELECT count(*)::int FROM ath_admin_commands) commands`);
+      console.log(JSON.stringify({identity,state:state.rows[0]},null,2));return
+    }
     if(mode==='preflight'){console.log(JSON.stringify({identity,migrationHash,rollbackHash,...await snapshot(client)},null,2));return}
     if(mode==='post'){
       const constraints=await client.query(`SELECT conrelid::regclass::text AS table_name,conname,contype,pg_get_constraintdef(oid) definition FROM pg_constraint WHERE conrelid=ANY($1::regclass[]) ORDER BY 1,2`,[ADMIN_TABLES]);
@@ -41,7 +54,7 @@ async function main(){
       await client.query('BEGIN');let ordinaryCount,serverCount;try{await client.query(`SELECT set_config('ath.app_role','',true)`);ordinaryCount=(await client.query(`SELECT count(*)::text count FROM ath_admin_staff`)).rows[0].count;await client.query(`SELECT set_config('ath.app_role','server',true)`);serverCount=(await client.query(`SELECT count(*)::text count FROM ath_admin_staff`)).rows[0].count}finally{await client.query('ROLLBACK')}
       console.log(JSON.stringify({identity,migrationHash,rollbackHash,snapshot:await snapshot(client),constraints:constraints.rows,indexes:indexes.rows,triggers:triggers.rows,policies:policies.rows,publicGrants:grants.rows,rlsProof:{ordinaryVisibleRows:ordinaryCount,serverVisibleRows:serverCount}},null,2));return
     }
-    if(mode!=='apply')throw new Error('Mode must be preflight, post, or apply');
+    if(mode!=='apply')throw new Error('Mode must be admin-state, preflight, post, or apply');
     if(identity.provider!=='Neon Postgres'||identity.database!=='neondb')throw new Error('Refusing unexpected production target');
     if(identity.pooled)throw new Error('Refusing schema migration over pooled endpoint; use a direct Neon connection');
     const before=await snapshot(client);if(before.missingRequired.length||before.adminPresent.length)throw new Error('Pre-migration schema gate failed');
