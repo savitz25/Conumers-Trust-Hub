@@ -4,6 +4,7 @@
   "description": "AskTrustHub.com — thin parent brand for the independent consumer research network",
   "private": true,
   "scripts": {
+    "check:ath-admin-008": "node --conditions=react-server --experimental-strip-types --test lib/control-plane/ath-admin-008.test.ts lib/control-plane/ath-admin-007.test.ts lib/control-plane/ath-admin-002.test.ts",
     "check:ath-admin-007": "node --experimental-strip-types --test lib/control-plane/ath-admin-007.test.ts lib/control-plane/ath-admin-006.test.ts lib/control-plane/ath-admin-002.test.ts",
     "check:search-release": "node --experimental-strip-types scripts/check-search-release.mjs",
     "check:ath-admin-006": "node --experimental-strip-types --test lib/control-plane/ath-admin-006.test.ts lib/customer/monitoring.test.ts lib/control-plane/ath-admin-002.test.ts",
