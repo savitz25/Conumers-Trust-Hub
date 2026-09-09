@@ -27,7 +27,8 @@ try {
     count(*) FILTER (WHERE event_name='search_terminal_outcome')::int AS real_search_events,
     (SELECT count(*)::int FROM ath_search_canary_runs) AS canary_runs,
     (SELECT count(*)::int FROM ath_search_release_evaluations) AS release_evaluations,
-    (SELECT count(*)::int FROM ath_search_incidents WHERE status IN ('OPEN','ACKNOWLEDGED')) AS open_incidents`);
+    (SELECT count(*)::int FROM ath_search_incidents WHERE status IN ('OPEN','ACKNOWLEDGED')) AS open_incidents
+    FROM ath_product_events`);
 
   console.log(JSON.stringify({ before: before.rows[0], release, quick, after: after.rows[0] }));
 } catch (error) {
