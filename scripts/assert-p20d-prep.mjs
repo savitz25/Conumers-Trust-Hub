@@ -114,6 +114,10 @@ const actions = read("app/my/actions.ts");
 assert(actions.includes("shouldCreateUser: flags.MY_TRUSTHUB_SIGNUP_ENABLED && !canaryOnly"), "canary OTP creation gate changed");
 assert(actions.includes('assertMyTrustHubFeature("MY_TRUSTHUB_SAVED_ENABLED")'), "Save gate missing");
 assert(actions.includes('assertMyTrustHubFeature("MY_TRUSTHUB_PROJECTS_ENABLED")'), "Project gate missing");
+assert(actions.includes('redirect("/my/sign-in?error=delivery")'), "expected delivery failures can still crash the page");
+const signInPage = read("app/my/sign-in/page.tsx");
+assert(signInPage.includes('error === "delivery"'), "generic delivery error is not rendered inline");
+assert(signInPage.includes('role="alert"'), "inline sign-in errors are not announced accessibly");
 
 const adapter = read("lib/my-trusthub/production-adapter.ts");
 for (const contract of [
