@@ -663,7 +663,7 @@ export class CustomerPlatform {
   private async requireStaff(sessionToken: string) {
     const user = await this.sessionUser(sessionToken);
     if (!user) throw new AuthError('missing_session');
-    if (!user.isStaff) throw new AuthError('not_staff');
+    if (!user.isStaff) { const named=await one(this.deps.sql,`SELECT 1 FROM ath_admin_staff WHERE user_id=$1 AND status='ACTIVE' AND role IN('SUPER_ADMIN','TRUST_OPS')`,[user.id]); if(!named)throw new AuthError('not_staff'); }
     return user;
   }
 

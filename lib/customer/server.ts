@@ -16,6 +16,8 @@ function asSql(client: PoolClient): SqlClient {
   };
 }
 
+export function customerPlatformForSql(sql:SqlClient):CustomerPlatform{return new CustomerPlatform({sql,cth:compositeCustomerDirectory(cthReadDirectory),mailer:resendMailer,handoffSecret:process.env.ATH_HANDOFF_SECRET||'',staffEmails:combineStaffEmails(process.env.ATH_STAFF_EMAILS,process.env.ATH_STAFF_EMAILS_EXTRA),siteUrl:process.env.NEXT_PUBLIC_SITE_URL||'https://www.asktrusthub.com'})}
+
 export function requestContextFromHeaders(h: Headers): RequestContext {
   return {
     ip: h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip'),
@@ -24,17 +26,9 @@ export function requestContextFromHeaders(h: Headers): RequestContext {
 }
 
 export async function withPlatform<T>(fn: (platform: CustomerPlatform, sql: SqlClient) => Promise<T>): Promise<T> {
-  const secret = process.env.ATH_HANDOFF_SECRET || '';
   return withAskTx(async (client) => {
     const sql = asSql(client);
-    const platform = new CustomerPlatform({
-      sql,
-      cth: compositeCustomerDirectory(cthReadDirectory),
-      mailer: resendMailer,
-      handoffSecret: secret,
-      staffEmails: combineStaffEmails(process.env.ATH_STAFF_EMAILS, process.env.ATH_STAFF_EMAILS_EXTRA),
-      siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com',
-    });
+    const platform = customerPlatformForSql(sql);
     return fn(platform, sql);
   });
 }
