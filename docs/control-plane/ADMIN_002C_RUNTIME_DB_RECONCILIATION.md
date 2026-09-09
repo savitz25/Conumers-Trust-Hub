@@ -1,6 +1,6 @@
 # ATH-ADMIN-002C runtime database reconciliation
 
-Status: **TRUE RUNTIME MIGRATED — SUPER ADMIN BOOTSTRAP PENDING**  
+Status: **COMPLETE — TRUE RUNTIME ACTIVATED**
 Recorded: 2026-09-09 UTC  
 Starting/foundation SHA: `ee0a913f7f84e8ade435d6b0e31d403f62fd89ec`
 
@@ -70,8 +70,26 @@ Immediately before migration, users remained `10`, sessions `34`, all required c
 
 Post-migration, users remained `10`, sessions remained `34`, and claims, grants, organizations, memberships, review records, Layer B records, and hub profiles retained their pre-migration counts. All five Admin tables exist with the validated structure and zero public grants. Database health remained clear with zero blocked locks and zero queries beyond five minutes.
 
-## Remaining production proofs
+## Named Super Admin and post-bootstrap proof
 
-The existing real Ask session must now complete `/admin/bootstrap` using the server-side legacy bootstrap proof. After bootstrap, verify exactly one active `SUPER_ADMIN`, replay closure, named Admin route access, one harmless `NOT_YET_CONNECTED` flag, one rejected/not-connected idempotent command, append-only audit mutation rejection, and public/search/claim regressions.
+The real authenticated operator completed the protected one-time bootstrap. Production then proved:
 
-The temporary runtime diagnostic is no longer present in source and must not remain deployed after this reconciliation record reaches production.
+- exactly one active `SUPER_ADMIN`;
+- bootstrap closed after initialization;
+- exactly one `ADMIN_BOOTSTRAPPED` event;
+- named access to `/admin`, `/admin/security`, `/admin/audit`, and `/admin/controls`;
+- one disabled `SEARCH_FEATURE_DISABLED` intent at `feature:ath-admin-002c-proof` with reason `PRODUCTION_ACTIVATION_PROOF` and connection state `NOT_YET_CONNECTED`;
+- one `SEARCH_FEATURE_DISABLE` command persisted as `REJECTED / NOT_YET_CONNECTED`;
+- two submissions with idempotency key `ath-admin-002c-production-proof-v1` produced exactly one command row (`false` then `true` for replay);
+- audit UPDATE and DELETE were both rejected by the append-only trigger using rollback-protected savepoints;
+- three append-only Admin audit rows after proof completion.
+
+No specialist endpoint ran and no control flag was connected to product behavior. The proof endpoint returned only aggregate booleans/statuses and was removed immediately afterward.
+
+## Authentication transition
+
+Ordinary Admin authorization now uses the canonical Ask session plus the active `ath_admin_staff` record on every privileged request. `ATH_OPERATOR_SECRET` is not accepted by `/admin`, `/admin/security`, `/admin/audit`, `/admin/controls`, or their ordinary APIs; its only remaining code path is the already-closed bootstrap operation. It is therefore no longer ordinary human Admin authentication. It was not rotated in this ticket and remains sealed recovery/bootstrap configuration pending the ordered rotation plan.
+
+## Completion
+
+ATH-ADMIN-002C closes the production activation gate for ATH-ADMIN-002. Search, ranking, claims, publication, Layer A evidence, consumer privacy, and specialist systems were not changed. The final merged main SHA after proof-route removal is the required ADMIN-003 integration base.
