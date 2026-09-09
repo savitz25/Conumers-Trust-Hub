@@ -1,15 +1,53 @@
 {
-  "prompt": "P20D-PREP",
+  "prompt": "P20D-RESUME",
   "project_id": "qvvxvbcdmbjzrgvwjatw",
-  "checked_at_utc": "2026-09-09T16:55:55Z",
-  "result": "PREPARATION_COMPLETE_NO_ACTIVATION",
-  "ready_for_manual_p20d_activation": true,
+  "checked_at_utc": "2026-09-09T20:41:47Z",
+  "result": "HARD_STOP_AUTH_EMAIL_DELIVERY",
+  "ready_for_manual_p20d_activation": false,
   "ready_for_stage_2_approval": false,
   "labels": [
-    "P20D PREPARATION COMPLETE",
-    "CANARY NOT YET CREATED",
-    "PRODUCTION NOT YET DEPLOYED"
+    "CLOSED STAGE 1 DEPLOYED",
+    "ONE CANONICAL CANARY USER PRESENT",
+    "RUNTIME CANARY HARD-STOPPED BEFORE AUTHENTICATION"
   ],
+  "resume_attempt": {
+    "production_base_before_p20d": "f8db26989522f478e62d98c7bdcf8ebf87661a3b",
+    "p20d_deployment_commit": "b0a8383054269f3bbd5364a0044597c59eb307d0",
+    "p20d_deployment_id": "dpl_EFBh8ARHHoc2MjVsGHF5cH2cXPrS",
+    "current_production_commit": "15edadbf4d32904f002a3ecf083dcc39b7a0e42e",
+    "current_production_deployment_id": "dpl_6nVexyWQwcbUTnMAnxDPwanevhqU",
+    "current_production_contains_p20d_commit": true,
+    "predeploy_validation": {
+      "repository_tests": "pass",
+      "typescript": "pass",
+      "changed_file_lint": "pass",
+      "production_build": "pass",
+      "p20d_assertions": "66/66 pass",
+      "secret_and_client_bundle_scan": "pass",
+      "runtime_fixture_scan": "pass",
+      "git_diff_check": "pass"
+    },
+    "anonymous_checks": {
+      "homepage": 200,
+      "ask": 200,
+      "admin": "307 to /admin/login",
+      "my_saved": "307 to /my/sign-in",
+      "my_projects": "307 to /my/sign-in",
+      "my_watches": 404,
+      "my_alerts": 404,
+      "private_no_store_noindex_headers": true
+    },
+    "non_allowlisted_request_generic": true,
+    "non_allowlisted_user_created": false,
+    "founder_magic_link_result": "failed_before_delivery",
+    "founder_magic_link_http_status": 500,
+    "founder_magic_link_error": "Unable to send the sign-in link",
+    "diagnosis": "Supabase built-in SMTP refuses recipients that are not members of the project organization; resolving this requires approved organization membership or custom SMTP configuration.",
+    "pkce_session_established": false,
+    "saved_project_canary_started": false,
+    "kill_switch_runtime_test_started": false,
+    "hard_stop_observed": true
+  },
   "history": {
     "original_p20d_result": "HARD_STOP_BEFORE_ACTIVATION",
     "original_checked_at_utc": "2026-09-09T15:27:58Z",
@@ -50,9 +88,9 @@
     "discarded": false
   },
   "production_alignment": {
-    "origin_main_sha": "f8a80a10535d37776b46ba85ee770495ffa5fa3e",
-    "vercel_deployment_id": "dpl_8qqLF6QqVDD4pzy2t8o8zL7ddFFh",
-    "vercel_git_sha": "f8a80a10535d37776b46ba85ee770495ffa5fa3e",
+    "origin_main_sha": "15edadbf4d32904f002a3ecf083dcc39b7a0e42e",
+    "vercel_deployment_id": "dpl_6nVexyWQwcbUTnMAnxDPwanevhqU",
+    "vercel_git_sha": "15edadbf4d32904f002a3ecf083dcc39b7a0e42e",
     "vercel_state": "READY",
     "aligned": true
   },
@@ -69,7 +107,7 @@
     ],
     "later_stage_routes_present": false,
     "preview_deployed": false,
-    "production_deployed": false
+    "production_deployed": true
   },
   "canary_creation_script": {
     "path": "scripts/create-my-trusthub-canary.mjs",
@@ -78,26 +116,29 @@
     "uses_trusted_app_metadata": true,
     "uses_user_metadata_for_authorization": false,
     "idempotent": true,
-    "executed": false
+    "executed": true,
+    "canonical_user_id": "3d53d9df-f414-495a-b366-fc5843d14650"
   },
   "founder_email": {
     "supplied": true,
     "stored_in_git_or_artifact": false
   },
   "production_mutations": {
-    "auth_users_created": 0,
+    "auth_users_created": 1,
     "emails_sent": 0,
-    "deployments_created": 0,
-    "environment_variables_changed": 0,
+    "auth_email_failed_attempts_observed": 4,
+    "deployments_created": 1,
+    "environment_variables_changed_by_builder": 0,
+    "environment_variables_configured_by_founder": true,
     "supabase_configuration_changed": false,
-    "database_rows_written": 0,
+    "database_rows_written": 1,
     "database_ddl_changed": false
   },
   "live_read_only": {
     "project_status": "ACTIVE_HEALTHY",
     "region": "us-east-1",
     "postgres_version": "17.6.1.141",
-    "auth_users": 0,
+    "auth_users": 1,
     "consumer_profiles": 0,
     "saved": 0,
     "projects": 0,
@@ -120,16 +161,13 @@
     "route_inventory": "pass"
   },
   "advisors": {
-    "security_error_or_warn": 0,
+    "security_warn": 1,
     "security_info_rls_no_policy": 19,
     "performance_unused_index_info": 28,
     "performance_auth_connection_info": 1,
     "changes_made": false
   },
   "post_migration_physical_backup": "pending_founder_dashboard_verification",
-  "manual_steps": [
-    "Configure the exact Vercel Production manifest without deploying.",
-    "Run the local supported one-time Auth Admin script with ephemeral process variables."
-  ],
-  "remaining_blocker_before_manual_steps": null
+  "remaining_blocker": "Authorize delivery to the founder address through Supabase organization membership, if appropriate and approved, or configure approved custom SMTP; then request a fresh Magic Link in the same browser profile.",
+  "ready_for_stage_2_reason": "No production PKCE session, Save flow, Project flow, authenticated authorization, kill-switch preservation, or authenticated mobile/accessibility certification has completed."
 }

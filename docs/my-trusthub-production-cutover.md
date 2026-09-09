@@ -1,7 +1,15 @@
 # My TrustHub production cutover plan
 
 Date: 2026-09-09
-Current recommendation: **P20D PREPARATION COMPLETE; READY FOR MANUAL P20D ACTIVATION**. The clean Stage 1 integration is based on the exact SHA now shared by `origin/main` and Vercel production. P11-P19 remain installed/certified at **577/577**, `auth.users` remains zero, public signup remains disabled, and every My TrustHub product capability remains off. No deployment, environment change, user creation, email, or canary write occurred during preparation.
+Current recommendation: **P20D CLOSED DEPLOYMENT COMPLETE; AUTH EMAIL HARD STOP; NOT READY FOR STAGE 2**. The reviewed Stage 1 code is live on current production main. Exactly one canonical, entitled founder Auth user exists and public signup remains disabled, but Supabase Auth refused the Magic Link before delivery. Profiles, Saved, Projects, Watches, Alerts, deliveries, and source observations remain zero. No later-stage capability is active.
+
+## P20D resume - 2026-09-09
+
+The P20D delta was rebased onto the live production base, passed repository tests, TypeScript, lint, optimized build, 66/66 P20D assertions, secret/fixture scans, and `git diff --check`, then deployed through the guarded `main` Git integration. Active production is `15edadbf4d32904f002a3ecf083dcc39b7a0e42e` / `dpl_6nVexyWQwcbUTnMAnxDPwanevhqU`, which contains the P20D deployment commit `b0a8383054269f3bbd5364a0044597c59eb307d0`.
+
+Homepage, Ask, and protected Admin checks remained healthy. Anonymous Saved and Projects redirect to sign-in; Watch and Alert routes are absent; My TrustHub responses are private/no-store and noindex. A non-allowlisted email received generic copy and created no user. The approved founder request failed with `Unable to send the sign-in link`; current Supabase built-in SMTP restricts recipients to project-organization members unless custom SMTP is configured. Organization membership may be privileged/paid and custom SMTP requires new credentials/configuration, so neither was changed under P20D.
+
+The hard stop preserved the safe database state: one entitled Auth user and zero profiles, Saved rows, Projects, Watches, Alerts, deliveries, or source observations. Resume only after the founder approves and completes an Auth delivery path, then request/open a fresh Magic Link in the same browser profile. Stage 2 remains blocked until PKCE, Save, Projects, authenticated authorization, kill-switch preservation, and authenticated desktop/mobile/accessibility checks pass.
 
 ## P20D-PREP clean production-main integration - 2026-09-09
 

@@ -1,5 +1,59 @@
 # My TrustHub Phase 2 / Prompt 20D
 
+## P20D resume — closed deployment completed, Auth email hard stop
+
+Result: **CLOSED STAGE 1 DEPLOYED; RUNTIME CANARY HARD-STOPPED BEFORE AUTHENTICATION**
+
+At `2026-09-09T20:41:47Z`, the reviewed P20D commits had been rebased twice
+onto the then-current production base and passed repository tests, TypeScript,
+changed-file lint, an optimized production build, all 66/66 P20D assertions,
+secret/client-bundle scans, runtime fixture exclusion, and `git diff --check`.
+The guarded fast-forward to `main` created Vercel production deployment
+`dpl_EFBh8ARHHoc2MjVsGHF5cH2cXPrS` at
+`b0a8383054269f3bbd5364a0044597c59eb307d0`. Production subsequently advanced
+normally to `15edadbf4d32904f002a3ecf083dcc39b7a0e42e` /
+`dpl_6nVexyWQwcbUTnMAnxDPwanevhqU`; that commit contains the P20D deployment
+commit and is the SHA shared by `origin/main` and active Vercel production.
+
+Anonymous production checks passed: `/` and `/ask` returned 200, `/admin`
+remained protected, `/my/saved` and `/my/projects` redirected to
+`/my/sign-in`, and `/my/watches` and `/my/alerts` returned 404. My TrustHub
+responses carried private/no-store, noindex/nofollow/noarchive,
+`Referrer-Policy: no-referrer`, frame denial, and content-type protection. The
+existing generic AskTrustHub Supabase variables were not changed and the My
+TrustHub runtime retains zero generic Supabase fallback.
+
+The non-allowlisted sign-in request returned the same generic success copy and
+did not create an Auth user. The permanent project still has exactly one Auth
+user, canonical subject `3d53d9df-f414-495a-b366-fc5843d14650`, with trusted
+`app_metadata.my_trusthub_canary=true`, and zero unrelated users.
+
+The founder Magic Link request reached the deployed server action but failed
+before delivery with HTTP 500 and the intentionally non-enumerating message
+`Unable to send the sign-in link`. Vercel recorded four failed attempts and no
+successful Auth email. Current Supabase documentation explains the applicable
+built-in SMTP restriction: without custom SMTP, Auth refuses delivery to an
+address that is not a member of the project's organization. Resolving that
+requires either approved organization membership (which can be privileged or
+paid) or approved custom SMTP credentials. Neither change was authorized, so
+the runtime canary stopped without bypassing PKCE.
+
+Read-only final counts are: Auth users 1; profiles, Saved, Projects, Watches,
+Alerts, deliveries, and source observations all 0. No Save/Project action,
+authenticated authorization check, kill-switch data-preservation test, or
+authenticated mobile/accessibility test ran. Security Advisor reports the 19
+expected server-only no-policy informational findings plus the accepted
+password-leak warning; Performance Advisor reports 28 unused-index information
+items and the existing fixed Auth connection-allocation information item. No
+advisor-driven changes were made.
+
+P20D is **NOT READY FOR STAGE 2 APPROVAL**. The smallest remaining blocker is
+successful Auth email delivery to the sole approved founder address. After an
+approved delivery path exists, request a fresh link in one browser profile,
+open it in that same profile, and resume from the PKCE callback. Do not create
+another user or enable Watch, Alerts, monitoring, P0 email, export/delete, or
+specialist writes.
+
 ## P20D-PREP follow-up — production environment collision correction
 
 Date: 2026-09-09
