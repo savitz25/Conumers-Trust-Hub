@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';
+import {AdminAuthError} from './security';
+export function adminErrorResponse(error:unknown){if(error instanceof AdminAuthError){const status=error.code==='UNAUTHENTICATED'?401:error.code==='DISABLED'||error.code==='FORBIDDEN'?403:400;return NextResponse.json({ok:false,error:error.code},{status,headers:{'Cache-Control':'no-store'}})}return NextResponse.json({ok:false,error:'UNAVAILABLE'},{status:503,headers:{'Cache-Control':'no-store'}})}
+export function requireSameOrigin(request:Request):void{const origin=request.headers.get('origin');if(!origin||origin!==new URL(request.url).origin)throw new AdminAuthError('FORBIDDEN');if(!request.headers.get('content-type')?.toLowerCase().startsWith('application/json'))throw new AdminAuthError('VALIDATION_FAILED')}
