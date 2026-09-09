@@ -66,7 +66,17 @@ export async function requestMagicLinkAction(formData: FormData) {
       shouldCreateUser: flags.MY_TRUSTHUB_SIGNUP_ENABLED && !canaryOnly,
     },
   });
-  if (error) throw new Error("Unable to send the sign-in link");
+  if (error) {
+    const safeMessage = error.message.replaceAll(email, "[redacted-email]");
+    console.error(JSON.stringify({
+      level: "error",
+      event: "my_trusthub_magic_link_failed",
+      code: error.code ?? "unknown",
+      status: error.status ?? null,
+      message: safeMessage,
+    }));
+    throw new Error("Unable to send the sign-in link");
+  }
   redirect("/my/sign-in?sent=1");
 }
 
