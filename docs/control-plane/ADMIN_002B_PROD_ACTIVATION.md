@@ -1,5 +1,7 @@
 # ATH-ADMIN-002B production activation record
 
+> **Superseded by ATH-ADMIN-002C:** subsequent authenticated runtime proof established that the database named below was not the production Ask runtime database. It is classified `NON_RUNTIME_NEON_PROJECT_REQUIRES_LATER_CLEANUP_REVIEW`. Do not use this record as a production target. See `ADMIN_002C_RUNTIME_DB_RECONCILIATION.md`.
+
 Status: **MIGRATION ACTIVE — SUPER ADMIN BOOTSTRAP WAITING FOR OPERATOR SIGN-IN**  
 Recorded: 2026-09-09 UTC  
 Repository starting SHA: `de7338312ca9ea54cd0cd968ee6c42b97fd0aca0`  
