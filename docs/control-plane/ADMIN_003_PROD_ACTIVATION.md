@@ -51,3 +51,5 @@ Migration 013 aligns `event_id` persistence with the frozen V1 contract's bounde
 - result: `COMMITTED`
 
 The validation-to-Production schema diff was `CLEAN_EXPECTED_DIFF`: only the `event_id` type and bounded-string constraint differed. Production retained forced RLS, `ath_server_all`, zero public/anonymous/authenticated grants, the primary key, and all query indexes. A bounded string event ID was inserted inside a transaction and rolled back successfully. Post-migration health remained users `10`, sessions `34`, active staff `1`, blocked locks `0`.
+
+The Founder read model was also executed read-only against the true Production schema. It returned all five terminal Search states, 14 provenance-bearing KPI models, and four durable claim stages. Metrics without adequate instrumentation returned `null` with `NOT_INSTRUMENTED` or `UNAVAILABLE`; no missing value was converted to zero.
