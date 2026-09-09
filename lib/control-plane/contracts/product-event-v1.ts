@@ -34,6 +34,10 @@ export function validateProductEventV1(input: unknown): ValidationResult<Product
   for (const key of ['event_id', 'event_name', 'occurred_at', 'surface']) requiredString(input, key, errors);
   oneOf(input, 'hub', CONTROL_PLANE_HUBS, errors);
   if (input.terminal_outcome !== undefined) oneOf(input, 'terminal_outcome', SEARCH_TERMINAL_OUTCOMES, errors);
+  if(input.auth_state!==undefined)oneOf(input,'auth_state',['ANONYMOUS','AUTHENTICATED','UNKNOWN'],errors);
+  if(input.acquisition_source!==undefined)oneOf(input,'acquisition_source',['ORGANIC','MANUAL_OUTREACH','EMAIL_CAMPAIGN','INTERNAL_TEST','UNKNOWN'],errors);
+  if(input.result_count_bucket!==undefined)oneOf(input,'result_count_bucket',['0','1','2-10','11-25','26-100','101-500','501-1000','1001+'],errors);
+  if(input.duration_ms!==undefined&&(!Number.isInteger(input.duration_ms)||Number(input.duration_ms)<0||Number(input.duration_ms)>300000))errors.push('duration_ms:invalid');
   const lowerKeys = Object.keys(input).map((key) => key.toLowerCase());
   for (const key of PRODUCT_EVENT_PROHIBITED_FIELDS) if (lowerKeys.includes(key)) errors.push(`${key}:prohibited`);
   return errors.length ? { ok: false, errors } : { ok: true, value: input as ProductEventV1 };
