@@ -8,6 +8,8 @@ import { buildAskResearchRoute } from '@/lib/network/ask-research-route';
 import { ResearchRouteCard } from '@/components/ask-research-route-card';
 import {AskRouteAnalytics} from '@/components/ask-route-analytics';
 import {observeAskRoute} from '@/lib/network/ask-intel-observability';
+import {recordSearchObservation} from '@/lib/control-plane/product-events';
+import {after} from 'next/server';
 
 export const revalidate = 3600;
 
@@ -22,6 +24,8 @@ export default async function AskPage({
   const query = (q ?? '').trim();
   const route=query?buildAskResearchRoute(query):null;
   const guided=query&&!route?.journey?createGuidedSession(query):null;
+  const observation=route?observeAskRoute(route):null;
+  if(observation && (route?.journey || !guided)) after(()=>recordSearchObservation(observation));
   return (
     <>
       <PageHeader
@@ -52,7 +56,7 @@ export default async function AskPage({
             </button>
           </div>
         </form>
-        {route?<><AskRouteAnalytics observation={observeAskRoute(route)} terminal={Boolean(route.journey||!guided)}/><ResearchRouteCard route={route}/></>:null}
+        {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||!guided)}/><ResearchRouteCard route={route}/></>:null}
         {query ? (route?.journey ? null : guided ? <GuidedResearch query={query} initialSession={guided} routeDestinationHrefs={route?.destinations.map(row=>row.href)??[]} /> : <NetworkAskResult query={query} hideInterpretation />) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
