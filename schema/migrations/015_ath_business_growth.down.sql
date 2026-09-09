@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS ath_marketing_suppressions,ath_claim_attribution,ath_growth_campaign_events,ath_growth_campaign_targets,ath_growth_campaigns,ath_business_activity_events,ath_business_activity_epochs;

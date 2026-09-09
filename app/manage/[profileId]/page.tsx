@@ -9,6 +9,7 @@ import { MonitoringPanel } from '@/components/customer/MonitoringPanel';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 import { CUSTOMER_HUB_REGISTRY, customerEntityClassLabel } from '@/lib/customer/hub-registry';
+import {customerLog} from '@/lib/customer/log';
 
 export const dynamic = 'force-dynamic';
 export const metadata = createPageMetadata({
@@ -31,6 +32,9 @@ export default async function ManageProfilePage({ params }: { params: Promise<{ 
     ]);
   }
   catch (error) { if (error instanceof AuthError || error instanceof ManagementError) notFound(); throw error; }
+  // Authorization above resolved the exact org/profile grant. Usage telemetry is observational and fail-open.
+  try { await withPlatform((p)=>p.recordManagedProfileOpen(token,profileId)); }
+  catch (error) { customerLog('business_activity_record_failed',{eventType:'MANAGED_PROFILE_OPENED',errorClass:error instanceof Error?error.name:'unknown'},'error'); }
   const fields = Object.fromEntries(model.fields.map((row) => [row.field_key, row.value_text]));
   const items = (category: string) => model.items.filter((row) => row.category === category).map((row) => row.value_text);
   const canEdit = ['owner', 'manager', 'staff'].includes(model.access.role);

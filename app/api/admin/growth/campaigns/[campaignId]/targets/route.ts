@@ -1,0 +1,5 @@
+import {NextResponse} from 'next/server';
+import {withAdminSecurity} from '@/lib/control-plane/server';
+import {AdminAuthError} from '@/lib/control-plane/security';
+import {createCampaignTarget} from '@/lib/control-plane/business-growth';
+export async function POST(request:Request,{params}:{params:Promise<{campaignId:string}>}){try{const body=await request.json(),{campaignId}=await params;const row=await withAdminSecurity(async(s,t,ctx,sql)=>{await s.require(t,'GROWTH_OPS');const target=await createCampaignTarget(sql,campaignId,String(body.hubProfileId??''),String(body.claimPath??''));await s.recordGrowthOperation(t,{eventType:'CAMPAIGN_TARGET_CREATED',targetType:'campaign_target',targetRef:target.targetId,reason:'EXACT_PROFILE_TARGET',result:'SUCCEEDED',after:{campaignId}},ctx);return target});return NextResponse.json({ok:true,targetId:row.targetId,claimLink:`/go/claim/${row.token}`})}catch(e){return NextResponse.json({ok:false,error:e instanceof AdminAuthError?e.code:'VALIDATION_FAILED'},{status:e instanceof AdminAuthError?403:400})}}
