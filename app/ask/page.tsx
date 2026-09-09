@@ -52,7 +52,7 @@ export default async function AskPage({
             </button>
           </div>
         </form>
-        {route?<><AskRouteAnalytics observation={observeAskRoute(route)}/><ResearchRouteCard route={route}/></>:null}
+        {route?<><AskRouteAnalytics observation={observeAskRoute(route)} terminal={Boolean(route.journey||!guided)}/><ResearchRouteCard route={route}/></>:null}
         {query ? (route?.journey ? null : guided ? <GuidedResearch query={query} initialSession={guided} routeDestinationHrefs={route?.destinations.map(row=>row.href)??[]} /> : <NetworkAskResult query={query} hideInterpretation />) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[

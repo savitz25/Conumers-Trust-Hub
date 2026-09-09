@@ -6,7 +6,7 @@ import { GUIDED_SESSION_VERSION } from '@/lib/guided-research/contract';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
-import {bucketLatency,bucketResultCount} from '@/lib/network/ask-intel-observability';
+import {bucketLatency,bucketResultCount,guidedSearchTerminalOutcome} from '@/lib/network/ask-intel-observability';
 
 const STORAGE_PREFIX='ath-guided-research-v1:';
 function storageKey(query:string){let hash=0;for(const char of query)hash=((hash<<5)-hash+char.charCodeAt(0))|0;return `${STORAGE_PREFIX}${Math.abs(hash)}`;}
@@ -29,11 +29,11 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
       if(!response.ok)throw new Error(body.message??'Guided Research could not continue.');
       const missingRestoredResult=action.type==='RESUME'&&Boolean(body.session.lastExecution)&&!body.result;
       setSession(body.session);setResult(body.result??null);
-      if(body.result)trackEvent(ANALYTICS_EVENTS.ASK_SPECIALIST_RESULT_RECEIVED,{hub:body.session.hub??'unknown',result_state:body.result.resultState,latency_bucket:bucketLatency(performance.now()-started),result_count_bucket:bucketResultCount(body.result.total),success:!['BACKEND_UNAVAILABLE','TIMEOUT'].includes(body.result.resultState)});
+      if(body.result){const common={hub:body.session.hub??'unknown',result_state:body.result.resultState,latency_bucket:bucketLatency(performance.now()-started),result_count_bucket:bucketResultCount(body.result.total),success:!['BACKEND_UNAVAILABLE','TIMEOUT'].includes(body.result.resultState)};trackEvent(ANALYTICS_EVENTS.ASK_SPECIALIST_RESULT_RECEIVED,common);trackEvent(ANALYTICS_EVENTS.SEARCH_TERMINAL_OUTCOME,{schema_version:'product_event.v1',hub:common.hub,intent:body.session.researchPlan.intent,terminal_outcome:guidedSearchTerminalOutcome(body.result.resultState,body.result.total,Boolean(body.result.destinations.length||body.result.nextActions?.length)),failure_reason:body.result.error?.code??(body.result.total?'none':body.result.resultState),next_action_type:body.result.nextActions?.[0]?.type??body.result.destinations[0]?.type??'none',result_count_bucket:common.result_count_bucket,duration_bucket:common.latency_bucket,route_family:'/ask',surface:'GUIDED'});}
       if(missingRestoredResult){setError('The specialist explanation could not be restored. Retry the public-source research.');setResumeRecovery(true);}
       try{sessionStorage.setItem(storageKey(query),JSON.stringify(body.session));}catch{/* Current in-memory research remains usable when tab storage is unavailable. */}
       requestAnimationFrame(()=>headingRef.current?.focus());
-    }catch(reason){setError(reason instanceof Error?reason.message:'Guided Research could not continue.');}
+    }catch(reason){trackEvent(ANALYTICS_EVENTS.SEARCH_TERMINAL_OUTCOME,{schema_version:'product_event.v1',hub:(current??session)?.hub??'unknown',intent:(current??session)?.researchPlan.intent??'unknown',terminal_outcome:'ERROR',failure_reason:'GUIDED_REQUEST_FAILED',next_action_type:'RETRY',result_count_bucket:'0',duration_bucket:bucketLatency(performance.now()-started),route_family:'/ask',surface:'GUIDED'});setError(reason instanceof Error?reason.message:'Guided Research could not continue.');}
     finally{setBusy(false);}
   },[query,session]);
 
