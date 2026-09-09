@@ -1,0 +1,5 @@
+import {NextResponse} from 'next/server';
+import {withAdminSecurity} from '@/lib/control-plane/server';
+import {AdminAuthError} from '@/lib/control-plane/security';
+import {updateCampaignStatus} from '@/lib/control-plane/business-growth';
+export async function PATCH(request:Request,{params}:{params:Promise<{campaignId:string}>}){try{const body=await request.json(),{campaignId}=await params;const status=String(body.status) as 'ACTIVE'|'PAUSED'|'COMPLETED'|'ARCHIVED';if(!['ACTIVE','PAUSED','COMPLETED','ARCHIVED'].includes(status))throw new Error('VALIDATION_FAILED');const row=await withAdminSecurity(async(s,t,ctx,sql)=>{await s.require(t,'GROWTH_OPS');const changed=await updateCampaignStatus(sql,campaignId,status);if(!changed)throw new Error('NOT_FOUND');await s.recordGrowthOperation(t,{eventType:'CAMPAIGN_STATUS_CHANGED',targetType:'campaign',targetRef:campaignId,reason:String(body.reason??'CAMPAIGN_OPERATION'),result:'SUCCEEDED',after:{status}},ctx);return changed});return NextResponse.json({ok:true,...row})}catch(e){return NextResponse.json({ok:false,error:e instanceof AdminAuthError?e.code:'VALIDATION_FAILED'},{status:e instanceof AdminAuthError?403:400})}}

@@ -963,6 +963,18 @@ export class CustomerPlatform {
       freshness: confirmed ? businessFreshness(confirmed, this.now()) : null };
   }
 
+  /** Exact, server-authorized Business Manager usage. Failure is handled fail-open by the route. */
+  async recordManagedProfileOpen(sessionToken: string, nativeProfileId: string) {
+    const access = await this.requireProfileAccess(sessionToken, nativeProfileId);
+    const minute = this.now().toISOString().slice(0, 16);
+    await this.deps.sql.query(
+      `INSERT INTO ath_business_activity_events(event_type,org_id,hub_profile_id,actor_user_id,idempotency_key)
+       VALUES('MANAGED_PROFILE_OPENED',$1,$2,$3,$4) ON CONFLICT(idempotency_key) DO NOTHING`,
+      [access.org_id, access.hub_profile_id, access.user_id, `manager-open:${access.user_id}:${access.hub_profile_id}:${minute}`]
+    );
+    return {orgId:access.org_id,hubProfileId:access.hub_profile_id};
+  }
+
   async publicBusinessProfile(hubOrProfile: import('./types.ts').CustomerHubId|string, profileId?: string): Promise<PublicBusinessProfile | null> {
     const legacy=!profileId,hubId=profileId?hubOrProfile as import('./types.ts').CustomerHubId:'contractor',nativeProfileId=profileId??hubOrProfile;
     const profile = await one<{ org_id: string; hub_profile_id: string; native_profile_id: string }>(this.deps.sql,
