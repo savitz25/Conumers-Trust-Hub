@@ -1,0 +1,16 @@
+# Local/branch configuration only. This file is not authorization to link or
+# apply migrations to the permanent Conumers-Trust-Hub project.
+project_id = "my-trusthub-control-plane-local"
+
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+major_version = 17
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://localhost:3000/**", "http://127.0.0.1:3000/**"]

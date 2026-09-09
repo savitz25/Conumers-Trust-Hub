@@ -1,0 +1,156 @@
+{
+  "prompt": "P20C-RESUME",
+  "project": {
+    "id": "qvvxvbcdmbjzrgvwjatw",
+    "name": "Conumers-Trust-Hub",
+    "region": "us-east-1",
+    "status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6.1.141"
+  },
+  "result": "CERTIFIED_577_OF_577",
+  "ready_for_internal_canary_approval": true,
+  "preflight_checked_at_utc": "2026-09-09T13:22:58Z",
+  "p19_applied_at_utc": "2026-09-09T14:28:44Z",
+  "final_certification_checked_at_utc": "2026-09-09T14:43:42Z",
+  "audit_trail": [
+    {
+      "event": "initial_p20c_hard_stop",
+      "state": "P11-P15 installed; P16-P19 absent",
+      "reason": "P15 event_v2 fixture checkpoint used fixed 2026-09-08 timestamps and correctly became stale under the production two-hour freshness contract on 2026-09-09"
+    },
+    {
+      "event": "p15_test_only_correction",
+      "files": [
+        "supabase/tests/p15_source_observations.sql",
+        "scripts/assert-p15-foundation.mjs"
+      ],
+      "migration_files_changed": false,
+      "production_freshness_contract_changed": false,
+      "method": "one transaction_timestamp() anchor with deterministic relative offsets preserving current, delayed, degraded, historical, conflict, pause/resume, and anomaly cases"
+    },
+    {
+      "event": "resume_certification_harness_correction",
+      "reason": "P18 and P19 validation seeds contain their own transaction wrappers; an initial cumulative runner allowed P18 COMMIT to persist earlier P14-P17 validation configuration",
+      "remediation": "asserted the exact deterministic seed inventory, deleted only those validation rows, then isolated each phase and omitted P18/P19 wrapper BEGIN/COMMIT lines in memory so the outer rollback remained authoritative",
+      "repository_files_changed": false,
+      "migration_history_changed": false,
+      "post_cleanup_fixture_counts_zero": true
+    }
+  ],
+  "backup": {
+    "pre_cutover_latest_accepted_utc": "2026-09-09T05:30:36Z",
+    "type": "scheduled_physical_daily",
+    "restore_actions_observed": true,
+    "recovery_operator": "Founder / authorized Trust Hub operator",
+    "next_scheduled_backup_after_completed_migration": "pending_verification",
+    "pitr_required_for_internal_canary": false
+  },
+  "data_api": {
+    "setting": "pgrst.db_schemas=public, graphql_public, consumer",
+    "probes": {
+      "public_nonexistent_relation": 404,
+      "consumer_nonexistent_relation": 404,
+      "network_schema": 406,
+      "ops_schema": 406,
+      "anonymous_consumer_profiles_get": 401,
+      "anonymous_consumer_profiles_post": 401
+    },
+    "consumer_exposed": true,
+    "network_browser_unavailable": true,
+    "ops_browser_unavailable": true
+  },
+  "migrations": [
+    {"prompt":"P11","version":"20260909132546","name":"my_trusthub_identity_foundation","matrix":"31/31","passed":true},
+    {"prompt":"P12","version":"20260909134746","name":"my_trusthub_saved_projects_guest_import","matrix":"56/56","passed":true},
+    {"prompt":"P13","version":"20260909134856","name":"my_trusthub_cross_hub_handoffs","matrix":"58/58","passed":true},
+    {"prompt":"P14","version":"20260909134927","name":"my_trusthub_watch_capabilities","matrix":"62/62","passed":true},
+    {"prompt":"P15","version":"20260909135223","name":"my_trusthub_source_observations","matrix":"64/64","passed":true,"migration_reapplied":false},
+    {"prompt":"P16","version":"20260909142431","name":"my_trusthub_consumer_alerts","matrix":"67/67","passed":true},
+    {"prompt":"P17","version":"20260909142550","name":"my_trusthub_notification_delivery","matrix":"70/70","passed":true},
+    {"prompt":"P18","version":"20260909142706","name":"my_trusthub_saved_sessions","matrix":"72/72","passed":true},
+    {"prompt":"P19","version":"20260909142844","name":"my_trusthub_decisions_export_delete","matrix":"97/97","passed":true}
+  ],
+  "full_permanent_regression": {
+    "required": 577,
+    "passed": 577,
+    "failed": 0,
+    "permanent_project": true
+  },
+  "structure": {
+    "schemas": ["consumer", "network", "ops"],
+    "tables": 58,
+    "tables_without_rls": 0,
+    "tables_without_forced_rls": 0,
+    "functions": {"consumer":103,"network":30,"ops":44},
+    "anonymous_table_privileges": 0,
+    "business_role_consumer_table_privileges": 0,
+    "authenticated_consumer_access": "SELECT only, owner-scoped by forced RLS",
+    "network_browser_schema_usage": false,
+    "ops_browser_schema_usage": false
+  },
+  "post_certification_counts": {
+    "auth_users": 0,
+    "consumer_profiles": 0,
+    "network_entities": 0,
+    "watch_capabilities": 0,
+    "watch_capability_events": 0,
+    "observation_contracts": 0,
+    "severity_rules": 0,
+    "source_observations": 0,
+    "change_events": 0,
+    "source_checkpoints": 0,
+    "monitoring_events": 0,
+    "alert_templates": 0,
+    "source_presentations": 0,
+    "notification_templates": 0,
+    "session_schemas": 0,
+    "session_schema_migrations": 0,
+    "watches": 0,
+    "watch_coverage": 0,
+    "alerts": 0,
+    "notification_events": 0,
+    "deliveries": 0,
+    "saved_sessions": 0,
+    "decisions": 0,
+    "exports": 0,
+    "deletions": 0
+  },
+  "auth": {
+    "users": 0,
+    "disable_signup": true,
+    "email_enabled": true,
+    "phone_enabled": false,
+    "anonymous_users_enabled": false,
+    "mailer_autoconfirm": false
+  },
+  "advisors": {
+    "security": {
+      "error_or_warn_count": 0,
+      "info_rls_enabled_no_policy_count": 19,
+      "disposition": "expected fail-closed server-only network/ops tables with forced RLS and no browser schema access"
+    },
+    "performance": {
+      "unused_index_info_count": 28,
+      "auth_absolute_connection_info_count": 1,
+      "changes_made": false,
+      "disposition": "expected before traffic; review after canary workload"
+    }
+  },
+  "feature_state": {
+    "production_health_route_status": 404,
+    "ui_deployed": false,
+    "edge_functions": 0,
+    "cron_extension_installed": false,
+    "workers_active": false,
+    "users_created": false,
+    "public_signup": false,
+    "all_my_trusthub_product_capabilities_off": true
+  },
+  "known_non_blocking_notes": [
+    "The next scheduled physical backup after the completed migration is pending operator verification.",
+    "The PostgREST exposed schema list is owned by the explicit authenticator role override.",
+    "The migration/test executor has non-inheriting, non-settable myth_* memberships granted by supabase_admin; they do not create a browser/runtime path and require the authorized supabase_admin path if cleanup is desired.",
+    "CAPTCHA and custom SMTP remain public-launch gates, not internal-canary blockers."
+  ],
+  "p0_blocker_to_one_internal_canary": null
+}

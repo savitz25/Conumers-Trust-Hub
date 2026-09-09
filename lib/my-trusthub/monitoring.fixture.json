@@ -1,0 +1,30 @@
+{
+  "version": "mytrusthub-monitoring/validation-v1",
+  "environment": "validation_only",
+  "livePolling": false,
+  "healthOrder": ["current", "delayed", "degraded", "unknown"],
+  "clockPolicy": ["source_as_of", "published_at", "snapshot_as_of", "retrieved_at"],
+  "pauseCatchUp": "none",
+  "quarantineReleaseAuthority": "parent_monitoring_operator",
+  "capabilities": [
+    "contractor.fl.dbpr.license_status",
+    "contractor.fl.dbpr.discipline",
+    "contractor.fl.sunbiz.entity_status",
+    "move.federal.fmcsa.operating_authority",
+    "lender.nmls.public_status",
+    "insurance.fl.dfs.agency_status",
+    "senior.cms.ownership",
+    "investor.sec.form_adv.material_change"
+  ],
+  "observations": [
+    { "capability": "contractor.fl.dbpr.license_status", "entity": "fixture-contractor", "normalizedValue": { "status": "Active" }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "contractor.fl.dbpr.discipline", "entity": "fixture-contractor", "normalizedValue": { "record_keys": [] }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "contractor.fl.sunbiz.entity_status", "entity": "fixture-contractor", "normalizedValue": { "status": "Active" }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "move.federal.fmcsa.operating_authority", "entity": "fixture-mover", "normalizedValue": { "status": "Authorized" }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "lender.nmls.public_status", "entity": "fixture-lender", "normalizedValue": { "status": "Active" }, "sourceAsOf": null, "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "insurance.fl.dfs.agency_status", "entity": "fixture-insurance", "normalizedValue": { "status": "Active" }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "senior.cms.ownership", "entity": "fixture-senior", "normalizedValue": { "owner_id": "fixture-owner-a" }, "sourceAsOf": "2026-09-01T00:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" },
+    { "capability": "investor.sec.form_adv.material_change", "entity": "fixture-adviser", "normalizedValue": { "material_filing_hash": "fixture-filing-a" }, "sourceAsOf": "2026-09-08T09:00:00Z", "retrievedAt": "2026-09-08T10:55:00Z" }
+  ],
+  "disclosure": "Deterministic source and observation fixtures validate monitoring semantics only. No live regulator source is connected."
+}

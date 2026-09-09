@@ -1,0 +1,60 @@
+{
+  "observed_at": "2026-09-08",
+  "project": {
+    "ref": "qvvxvbcdmbjzrgvwjatw",
+    "name": "Conumers-Trust-Hub",
+    "region": "us-east-1",
+    "status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6.1.141",
+    "auth_user_count": 0
+  },
+  "database": {
+    "migrations": [
+      {
+        "version": "20260907170303",
+        "name": "remote_schema"
+      }
+    ],
+    "p11_p19_tables": 0,
+    "branches": ["main"]
+  },
+  "auth_public_settings": {
+    "email_enabled": true,
+    "public_signup_disabled": false,
+    "email_autoconfirm": false,
+    "google_enabled": false,
+    "phone_enabled": false,
+    "anonymous_users_enabled": false,
+    "saml_enabled": false,
+    "passkeys_enabled": false,
+    "site_url": "unverified",
+    "redirect_allowlist": "unverified",
+    "session_policy": "unverified",
+    "captcha_and_rate_controls": "unverified",
+    "smtp_and_sender": "unverified"
+  },
+  "data_api": {
+    "public_schema_probe_status": 404,
+    "consumer_schema_probe_status": 406,
+    "network_schema_probe_status": 406,
+    "ops_schema_probe_status": 406,
+    "current_adapter_path_ready": false
+  },
+  "backup_restore": {
+    "organization_plan": "pro",
+    "project_backup_tier": "unverified",
+    "schedule": "unverified",
+    "latest_successful_backup": "unverified",
+    "retention": "unverified",
+    "pitr": "unverified",
+    "restore_targets": "unverified",
+    "responsible_operator": "unassigned",
+    "recovery_estimate": "unverified"
+  },
+  "advisors": {
+    "security_findings": 0,
+    "performance_findings": ["auth_db_connections_absolute"]
+  },
+  "permanent_mutations_performed": false,
+  "ready_for_migration_approval": false
+}

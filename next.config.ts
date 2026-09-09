@@ -6,6 +6,22 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
+  async headers() {
+    const privateHeaders = [
+      { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
+      { key: 'Vary', value: 'Cookie' },
+      { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+      { key: 'Referrer-Policy', value: 'no-referrer' },
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'X-Frame-Options', value: 'DENY' },
+      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+    ];
+
+    return [
+      { source: '/my/:path*', headers: privateHeaders },
+      { source: '/auth/:path*', headers: privateHeaders },
+    ];
+  },
   async redirects() {
     return [
       // Legal / policy aliases (/trust is a real Trust Center index page — do not redirect it)

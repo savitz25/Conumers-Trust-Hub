@@ -8,6 +8,8 @@
     "check:ath-admin-005": "node --experimental-strip-types --test lib/control-plane/ath-admin-005.test.ts lib/control-plane/ath-admin-004.test.ts lib/control-plane/ath-admin-002.test.ts",
     "check:ath-admin-004": "node --experimental-strip-types --test lib/control-plane/ath-admin-004.test.ts lib/control-plane/ath-admin-002.test.ts lib/customer/ath-claim-governance-001.test.ts lib/customer/platform.test.ts",
     "check:ath-admin-003": "node --experimental-strip-types --test lib/control-plane/ath-admin-003.test.ts lib/control-plane/ath-admin-002.test.ts lib/control-plane/contracts/ath-admin-001.test.ts",
+    "check:my-trusthub-p11-p19": "node scripts/assert-p11-foundation.mjs && node scripts/assert-p12-foundation.mjs && node scripts/assert-p13-foundation.mjs && node scripts/test-p13-contract.mjs && node scripts/assert-p14-foundation.mjs && node scripts/assert-p15-foundation.mjs && node scripts/assert-p16-foundation.mjs && node scripts/assert-p17-foundation.mjs && node scripts/assert-p18-foundation.mjs && node scripts/assert-p19-foundation.mjs",
+    "check:my-trusthub-p20d-prep": "node scripts/assert-p20d-prep.mjs",
     "check:ath-admin-002": "node --experimental-strip-types --test lib/control-plane/ath-admin-002.test.ts lib/control-plane/contracts/ath-admin-001.test.ts",
     "check:ath-admin-002c": "node --experimental-strip-types --test lib/control-plane/ath-admin-002c.test.ts lib/control-plane/ath-admin-002.test.ts",
     "check:ath-admin-001": "node --experimental-strip-types --test lib/control-plane/contracts/ath-admin-001.test.ts",
@@ -92,6 +94,8 @@
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.0",
+    "@supabase/supabase-js": "2.110.0",
     "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.22.0",

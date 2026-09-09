@@ -1,0 +1,148 @@
+{
+  "observed_at": "2026-09-09",
+  "resumed_from": "2026-09-08 P20B partial checkpoint",
+  "preserves": [
+    "artifacts/p20a-permanent-preflight.json",
+    "artifacts/p20a-migration-sha256.json"
+  ],
+  "project": {
+    "ref": "qvvxvbcdmbjzrgvwjatw",
+    "name": "Conumers-Trust-Hub",
+    "region": "us-east-1",
+    "status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6.1.141",
+    "auth_user_count": 0,
+    "branches": ["main"],
+    "evidence": "revalidated_through_supabase_connector_2026-09-09"
+  },
+  "database": {
+    "migrations": [
+      {
+        "version": "20260907170303",
+        "name": "remote_schema"
+      }
+    ],
+    "consumer_schema_exists": false,
+    "network_schema_exists": false,
+    "ops_schema_exists": false,
+    "p11_p19_tables": 0,
+    "permanent_ddl_performed": false,
+    "evidence": "revalidated_through_supabase_connector_2026-09-09"
+  },
+  "backup_restore": {
+    "gate": "pass_for_stage_0_empty_database_internal_canary",
+    "evidence": "founder_supplied_permanent_project_dashboard_observation_2026-09-09",
+    "backup_type": "physical",
+    "schedule": "daily",
+    "latest_visible_successful_backup_utc": "2026-09-09T05:30:36Z",
+    "visible_daily_backup_range": {
+      "oldest_date": "2026-09-02",
+      "newest_date": "2026-09-09"
+    },
+    "restore_action_visible_for_each_backup": true,
+    "pitr_required_for_initial_canary": false,
+    "primary_recovery_operator_role": "Founder / authorized Trust Hub operator",
+    "restore_drill_and_measured_rto": "deferred_public_launch_gate"
+  },
+  "auth": {
+    "gate": "pass_for_closed_internal_canary",
+    "public_settings_evidence": "revalidated_through_auth_v1_settings_2026-09-09",
+    "dashboard_only_evidence": "founder_supplied_permanent_project_dashboard_observation_2026-09-09",
+    "public_signup_disabled": true,
+    "manual_linking_enabled": false,
+    "email_enabled": true,
+    "email_autoconfirm": false,
+    "phone_enabled": false,
+    "anonymous_users_enabled": false,
+    "google_enabled": false,
+    "other_unnecessary_providers_enabled": false,
+    "saml_enabled": false,
+    "passkeys_enabled": false,
+    "site_url": "https://www.asktrusthub.com",
+    "redirect_allowlist": [
+      "https://www.asktrusthub.com/auth/callback"
+    ],
+    "email_service": "supabase_builtin_internal_canary_only",
+    "magic_link_template": "{{ .ConfirmationURL }}",
+    "callback_contract": {
+      "initiation": "signInWithOtp_with_emailRedirectTo_and_shouldCreateUser_false_in_canary",
+      "flow": "supabase_ssr_pkce_code_exchange",
+      "callback": "/auth/callback",
+      "exchange": "exchangeCodeForSession(code)",
+      "template_compatible": true,
+      "template_change_required": false,
+      "token_hash_alternative_requires_coordinated_verifyOtp_callback_change": true
+    },
+    "sessions": {
+      "single_session_enforcement": false,
+      "time_box_seconds": 0,
+      "inactivity_timeout_seconds": 0,
+      "access_token_expiry_seconds": 3600,
+      "compromised_refresh_token_detection": true,
+      "refresh_token_reuse_interval_seconds": 10,
+      "accepted_for_internal_canary": true
+    },
+    "rate_limits": {
+      "auth_email_sends_per_hour": 2,
+      "token_refresh_requests_per_5_minutes_per_ip": 150,
+      "token_verification_requests_per_5_minutes_per_ip": 30,
+      "signup_signin_requests_per_5_minutes_per_ip": 30,
+      "anonymous_requests_per_hour": 30,
+      "ip_address_forwarding": false,
+      "accepted_for_internal_canary": true
+    },
+    "attack_protection": {
+      "captcha_enabled": false,
+      "captcha": "deferred_public_launch_gate",
+      "leaked_password_protection_enabled": false,
+      "leaked_password_protection": "not_applicable_blocker_for_passwordless_email_first_canary"
+    },
+    "custom_smtp": "deferred_public_launch_gate",
+    "configuration_mutation_performed_by_p20b_resume": false
+  },
+  "data_api": {
+    "gate": "approved_interstitial_sequence_pending_p11",
+    "consumer_schema_currently_available": false,
+    "last_verified_schema_probe_2026_09_09": {
+      "public": 404,
+      "consumer": 406,
+      "network": 406,
+      "ops": 406
+    },
+    "required_exposed_schemas_after_p11": ["consumer"],
+    "required_server_only_schemas": ["network", "ops"],
+    "approved_sequence": [
+      "apply_p11_with_all_product_flags_off",
+      "expose_only_consumer",
+      "verify_consumer_schema_recognition",
+      "verify_network_and_ops_remain_unavailable",
+      "continue_p12_p19_only_after_success"
+    ],
+    "configuration_mutation_performed": false,
+    "out_of_band_empty_schema_rejected": true
+  },
+  "ask_production": {
+    "vercel_project": "conumers-trust-hub",
+    "vercel_project_id": "prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB",
+    "canonical_alias_confirmed": "www.asktrusthub.com",
+    "latest_deployment_id": "dpl_4e1hmnv9y2jJVbfaPaoX2in6ep5y",
+    "latest_deployment_created_at": "2026-09-09T03:13:59.753Z",
+    "latest_deployment_ready": true,
+    "my_trusthub_health_status": 404,
+    "my_trusthub_effectively_enabled": false,
+    "environment_variable_values_verified": false,
+    "feature_flag_gate": "effective_off_current_deployment_predates_my_trusthub_routes",
+    "service_role_in_browser_found": false
+  },
+  "advisors": {
+    "security_findings": 0,
+    "performance_findings": ["auth_db_connections_absolute"],
+    "evidence": "revalidated_through_supabase_connector_2026-09-09"
+  },
+  "production_configuration_changes_performed_by_p20b_resume": false,
+  "users_created_by_p20b_resume": 0,
+  "product_traffic_enabled": false,
+  "canary_started": false,
+  "ready_for_migration_approval": true,
+  "migration_approval_scope": "P11-P19 with all My TrustHub features effectively off and the approved P11-to-consumer-Data-API interstitial gate"
+}

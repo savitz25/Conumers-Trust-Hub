@@ -1,0 +1,327 @@
+# My TrustHub Phase 2 / Prompt 20D
+
+## P20D-PREP — clean production-main integration package
+
+Date: 2026-09-09
+
+Result: **P20D PREPARATION COMPLETE — CANARY NOT YET CREATED — PRODUCTION NOT YET DEPLOYED**
+
+### A. STATUS
+
+The Stage 1 package is ready on local branch
+`my-trusthub-p20d-canary-integration`. It is based on the same
+`41ff303c894e454d6114671411f758c38423a770` commit now present on
+`origin/main` and the active Vercel production deployment. No production
+deployment, Vercel environment change, Supabase configuration change, Auth
+email, Auth user, or product-data write occurred.
+
+### B. CURRENT PRODUCTION MAIN
+
+- latest fetched `origin/main`: `41ff303c894e454d6114671411f758c38423a770`
+- active Vercel production deployment: `dpl_FPYHgm7Jm1sNVSNKtQLyNTJtQjJa`, READY
+- deployment Git SHA: `41ff303c894e454d6114671411f758c38423a770`
+- alignment: **PASS — exact match**
+
+Production advanced once during preparation. The integration was rebased onto
+the new commit, retaining current-main architecture and its ATH-ADMIN-003
+changes before certification was repeated.
+
+### C. WORK PRESERVATION
+
+The recovered dirty tree was preserved without reset, clean, or discard on
+local branch `my-trusthub-p20d-recovered-snapshot`, commit
+`a5b569c9a53e6227891757cb4387ceab1587921d`. That snapshot includes the P11–P20
+documents/artifacts, accepted migrations and validation assets, Consumer Lab,
+and unrelated recovered work. The clean integration lives in a separate Git
+worktree.
+
+### D. CLEAN INTEGRATION BRANCH
+
+`my-trusthub-p20d-canary-integration` descends directly from the confirmed
+production-main SHA. Only reviewed My TrustHub additions were transplanted.
+The sole rebase conflict was `package.json`; resolution retained current-main's
+`check:ath-admin-003` script and added the two My TrustHub checks.
+
+### E. PRODUCTION FILE DELTA
+
+Runtime additions are limited to:
+
+- Supabase SSR server/session helpers and Next.js 16 `proxy.ts`
+- `/auth/callback`
+- `/my`, `/my/sign-in`, `/my/saved`, `/my/projects`, and
+  `/my/projects/[projectId]`
+- server-side actions and the Stage 1 production adapter for Save, Project,
+  archive/restore, and membership only
+- closed canary admission, feature flags, runtime configuration, private
+  headers, robots exclusions, and the My TrustHub shell/styles
+- pinned compatible Supabase client dependencies
+
+Accepted P11–P19 migrations, rollback files, database tests, static contracts,
+validation-only seeds/fixtures, and P20 evidence are carried forward for audit
+and certification. They are not imported by the runtime or applied by P20D.
+
+### F. FIXTURE/LAB EXCLUSION
+
+**No Phase 1 fixture routes in the production delta: YES.** There is no
+`app/consumer-lab`, Consumer Lab component/runtime library, Boca fixture, fake
+provider, demo Watch, or demo Alert in the Stage 1 runtime or built route
+inventory. Validation-only P11–P19 fixtures remain isolated under accepted
+contract/test/seed paths and are not bundled into the application runtime.
+
+### G. STAGE 1 ROUTES
+
+- `/my`
+- `/my/sign-in`
+- `/my/saved`
+- `/my/projects`
+- `/my/projects/[projectId]`
+- `/auth/callback`
+
+No `/my/watches`, `/my/alerts`, `/my/notifications`, `/my/you`, export/delete,
+specialist-handoff, source-monitoring, email-delivery, or `/v1/my` route is
+included.
+
+### H. FEATURE FLAG MANIFEST
+
+Stage 1 ON after manual activation: `MY_TRUSTHUB_ENABLED`,
+`MY_TRUSTHUB_SAVED_ENABLED`, `MY_TRUSTHUB_PROJECTS_ENABLED`.
+
+Closed admission: `MY_TRUSTHUB_CANARY_ONLY=true` and
+`MY_TRUSTHUB_SIGNUP_ENABLED=false`. The one user is provisioned by Auth Admin;
+the OTP request therefore retains `shouldCreateUser=false`.
+
+Explicitly OFF: `MY_TRUSTHUB_WATCH_ENABLED`, `MY_TRUSTHUB_ALERTS_ENABLED`,
+`MY_TRUSTHUB_EMAIL_ENABLED`, `MY_TRUSTHUB_EXPORT_ENABLED`,
+`MY_TRUSTHUB_DELETE_ENABLED`, `MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED`, and
+`MY_TRUSTHUB_SOURCE_MONITORING_ENABLED`.
+
+### I. VERCEL ENV MANIFEST
+
+The exact names, values/placeholders, classifications, Supabase URL, canonical
+site URL, allowlist, and all flags are in
+`config/my-trusthub-p20d-vercel-env.md`. No secret value or founder address is
+stored in Git. The deployed Stage 1 app needs only the publishable browser key;
+the Auth Admin secret is a one-time local-script input and must not be added to
+Vercel.
+
+### J. SUPABASE CANARY CREATION SCRIPT
+
+`scripts/create-my-trusthub-canary.mjs` uses the installed Supabase JS Auth
+Admin API only: `listUsers`, `createUser`, and idempotent `updateUserById`. It
+hard-checks the permanent project ref, reads all private inputs from the current
+process, refuses duplicate matching users, refuses unrelated users unless the
+documented explicit override is supplied, confirms the founder-owned email,
+and writes only trusted `app_metadata.my_trusthub_canary=true`. It never writes
+`auth.users` directly and never authorizes with `user_metadata`.
+
+The script was reviewed and linted but **not executed**.
+
+### K. SECRET-HANDLING REVIEW
+
+Static source and built-output scans found no committed founder address,
+secret-key value, JWT credential, or public secret variable. No secret/admin
+variable starts with `NEXT_PUBLIC_`. Browser code uses only
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; the one-time Admin client exists only in
+the local script. The repository contains placeholders and variable names, not
+credential values.
+
+### L. LOCAL VALIDATION
+
+- `npm test`: PASS
+- TypeScript `tsc --noEmit`: PASS
+- changed-file ESLint: PASS, zero errors/warnings
+- optimized Next.js 16.3.3 production build: PASS
+- P11–P19 static contract stack: PASS
+- P20D-PREP static gate: **57/57 PASS**
+- `git diff --check`: PASS
+- Stage 1 route inventory: PASS
+- runtime fixture/Lab scan: PASS
+- source/client-bundle secret scan: PASS
+
+The full validation was repeated after rebasing onto the final production-main
+SHA.
+
+### M. PREVIEW RESULT
+
+No Vercel preview was created. A preview with real Consumer Auth requires a
+safely isolated Supabase/Auth environment, which was not in scope and was not
+invented. The optimized local production build is the prep validation result.
+No branch was pushed and no preview or production traffic changed.
+
+### N. POST-MIGRATION BACKUP
+
+The accepted pre-migration physical backup remains
+`2026-09-09T05:30:36Z`. Tooling still cannot read the physical-backup list, so
+the first backup newer than P19 completion (`2026-09-09T14:28:44Z`) remains
+**pending founder Dashboard verification**. No paid recovery feature changed.
+
+### O. FILES CHANGED
+
+The exact machine-readable delta is `git diff --name-status origin/main...HEAD`
+on the integration branch. It contains the Stage 1 runtime files described
+above, environment/manual-activation documentation, the unexecuted Auth Admin
+script, static assertions, and preserved accepted P11–P20 evidence. It contains
+no Consumer Lab application/component/runtime path.
+
+### P. EXACT MANUAL FOUNDER STEPS
+
+The founder handoff is `docs/my-trusthub-p20d-manual-activation.md`:
+
+1. In Vercel, populate the exact Production manifest but do not deploy yet.
+2. In a fresh local PowerShell process, obtain the permanent project's modern
+   Supabase secret (or legacy `service_role` only if necessary), set it and the
+   approved email interactively, run the one-time script, clear the process
+   variables, and report only its safe non-secret result.
+
+Do not paste the email or secret into Git, docs, issues, ChatGPT, or Codex.
+
+### Q. RESUME READINESS
+
+1. **Is the integration branch based on current production main?** Yes.
+2. **Does it exclude Phase 1 fixture/demo routes from the production delta?** Yes.
+3. **Does build/test pass?** Yes.
+4. **Is the exact Vercel env manifest ready?** Yes.
+5. **Is a supported Auth Admin canary script ready but unexecuted?** Yes.
+6. **Are all secret values absent from Git/client bundles?** Yes.
+7. **Is `auth.users` still zero?** Yes; rechecked read-only after preparation.
+8. **Was production deployment untouched?** Yes.
+9. **Is there any blocker before the founder performs the two manual activation steps?** No P0 blocker; the post-migration physical-backup check remains an informational Dashboard item.
+10. **READY FOR MANUAL P20D ACTIVATION: YES or NO?** **YES.**
+
+---
+
+## Original P20D hard-stop audit (preserved)
+
+Date: 2026-09-09
+Permanent project: `Conumers-Trust-Hub` (`qvvxvbcdmbjzrgvwjatw`)
+Execution mode: closed production canary
+Result: **HARD STOP BEFORE ACTIVATION — NO PRODUCTION CHANGE**
+
+## A. STATUS
+
+P20D did not start the one-user canary. The approved founder address was received and treated as private configuration, but the available Supabase connection has no Auth Admin create/invite or app-metadata operation, and the available Vercel connection has no environment-variable operation. The checked-out branch also predates current production `main`; deploying it directly would regress unrelated production work and expose Phase 1 fixture routes.
+
+The hard stop occurred before user creation, email delivery, feature activation, deployment, or canary data writes. Production remains in the certified P20C state.
+
+## B. DEPLOYMENT / FEATURE FLAGS
+
+No deployment was made. Current production is Vercel deployment `dpl_6KTxRPNuQL2vUdySmHvwniPnKbZU`, built from `main` commit `1359892dd499f3e922fa1ff912dc0c8f114959e2`.
+
+Live checks returned 404 for `/my`, `/auth/callback`, and `/v1/my/health`. No My TrustHub surface is active. The required P20D flag configuration was not applied because the connected Vercel interface cannot read or change project environment variables. No founder email was hard-coded into the public repository.
+
+## C. CANARY USER
+
+- exactly one user: **no; zero users exist**
+- canonical subject created: **no**
+- trusted canary entitlement applied: **no**
+- additional users: **none**
+
+The approved founder address was not written to this public-repository evidence. Direct insertion into `auth.users` was rejected as an unsupported and unsafe substitute for a canonical Supabase Auth Admin operation.
+
+## D. AUTH FLOW
+
+Not executed. Static inspection confirms the intended flow requests an OTP with `shouldCreateUser=false` during canary-only operation, exchanges the PKCE code at `/auth/callback`, and rejects a session lacking trusted canary entitlement. Production callback and `/my` routes are not deployed, so no Auth email was sent.
+
+Supabase Auth settings were revalidated immediately before the stop: email enabled, email confirmation required, phone disabled, anonymous sign-in disabled, and `disable_signup=true`.
+
+## E. ACCESS-CONTROL RESULTS
+
+Static contract: PASS. Canary admission uses a server-only email allowlist before an OTP request and checks trusted `app_metadata.my_trusthub_canary` (not user-editable metadata) for the protected workspace and callback.
+
+Runtime canary checks were not possible because no canonical user or P20D deployment exists. Production remains closed with all three P20D routes returning 404.
+
+## F. SAVE FLOW
+
+Not executed. Permanent `consumer.consumer_saved_entities` remains at zero rows.
+
+## G. PROJECT FLOW
+
+Not executed. Permanent `consumer.consumer_projects` remains at zero rows.
+
+## H. DATABASE ROW COUNTS
+
+Live pre-stop counts:
+
+- `auth.users`: 0
+- `consumer.consumer_profiles`: 0
+- `consumer.consumer_saved_entities`: 0
+- `consumer.consumer_projects`: 0
+- `consumer.consumer_watches`: 0
+- `consumer.consumer_alerts`: 0
+- `ops.consumer_alert_deliveries`: 0
+- `network.source_observations`: 0
+- approved-address Auth users: 0
+- canary-entitled Auth users: 0
+
+## I. WATCH / ALERT INACTIVITY
+
+PASS for inactivity. No Watch, Alert, delivery, or source observation exists, and no worker was enabled. A Save was not attempted.
+
+## J. RLS / AUTHORIZATION
+
+P20C's permanent 577/577 certification remains the latest complete database authorization result. No database DDL, grant, policy, role membership, or data was changed in P20D. Runtime founder-own-row and transaction-scoped cross-user checks are pending activation.
+
+## K. CACHE / SEO / PRIVACY
+
+The reviewed source defines private/no-store, noindex, no-referrer headers for My TrustHub and Auth routes. Runtime header certification is pending because those routes are not deployed. The founder address was not committed or embedded in a client bundle.
+
+## L. MOBILE / ACCESSIBILITY
+
+The recovered implementation passed its local TypeScript, static assertions, lint (zero errors; six pre-existing warnings), and production build. Authenticated production checks at 1440, 390, and 320 pixels were not run because the canary was not activated.
+
+## M. KILL SWITCH
+
+Static design: PASS. Every dependent My TrustHub flag also requires `MY_TRUSTHUB_ENABLED`, and workspace routing enforces the master flag server-side. Runtime OFF -> closed -> ON preservation testing is pending deployment. Production is presently in the OFF/undeployed state with data preserved.
+
+## N. LOG / ERROR REVIEW
+
+No P20D Auth, callback, Save, Project, RLS, or 500 event could exist because no request or deployment occurred. The current Vercel 24-hour error report contains one unrelated existing PostgreSQL SSL-mode warning group; it is not caused by P20D.
+
+## O. SUPABASE ADVISORS
+
+Security Advisor: no ERROR or WARN finding; 19 INFO `rls_enabled_no_policy` findings remain the expected fail-closed server-only `network`/`ops` tables.
+
+Performance Advisor: 28 INFO unused-index findings plus one existing Auth connection-allocation INFO. No optimization was made before workload exists.
+
+## P. POST-MIGRATION BACKUP
+
+The accepted pre-migration physical backup remains `2026-09-09T05:30:36Z`. The first physical backup newer than P19 completion at `2026-09-09T14:28:44Z` remains pending founder/Dashboard verification; no paid PITR or backup service was enabled.
+
+## Q. FILES / ARTIFACTS CHANGED
+
+- created `docs/my-trusthub-phase-2-prompt-20d.md`
+- created `artifacts/p20d-internal-canary.json`
+- updated `docs/my-trusthub-production-cutover.md`
+
+No source, migration, seed, test, environment variable, Auth user, or production deployment was changed.
+
+## R. CANARY STATE LEFT BEHIND
+
+None. There is no canary account, profile, Saved item, Project, Watch, Alert, delivery, or monitoring observation.
+
+## S. REMAINING RISKS
+
+The single blocking condition is the absence of a supported privileged production control-plane path in the connected tools. Completion requires both parts of that path:
+
+1. Supabase Auth Admin invite/create for the approved founder address with trusted `app_metadata.my_trusthub_canary=true`, without enabling public signup.
+2. Vercel production environment configuration and a deployment built from current production `main` plus only the reviewed My TrustHub integration (not this old-base working tree).
+
+Once those capabilities are available, P20D must resume from zero users, revalidate all stop gates, send the one authorized Auth email, and execute the runtime A–T checks. No direct `auth.users` write and no public-source email constant may be used.
+
+## T. STAGE 2 READINESS
+
+1. **Did exactly one canary account get created?** No; zero users exist.
+2. **Can arbitrary users create accounts?** No; Supabase reports `disable_signup=true`.
+3. **Can an unentitled user access `/my`?** No live My TrustHub route exists; source enforcement passes statically, but runtime certification is pending.
+4. **Did login/PKCE succeed end-to-end?** No; not executed.
+5. **Can founder Save real canary state?** Not tested.
+6. **Can founder create/manage a Project?** Not tested.
+7. **Did Save create any Watch or Alert?** No Save occurred; Watch and Alert counts remain zero.
+8. **Can cross-user access occur?** P20C database tests passed; actual-founder runtime and transaction-scoped P20D checks remain pending.
+9. **Are network and ops still server-only?** Yes; P20D made no exposure change.
+10. **Did any fixture/fake provider data leak?** No.
+11. **Can the master kill switch close My TrustHub without deleting data?** Proven statically; runtime toggle test pending.
+12. **Are mobile/accessibility checks green?** Local implementation checks passed; authenticated production checks are pending.
+13. **Is there a verified post-migration physical backup?** Not yet; pending Dashboard verification.
+14. **Is there any P0 blocker?** Yes: no supported privileged Auth/Vercel activation path is available to this session.
+15. **READY FOR STAGE 2 APPROVAL: YES or NO?** **NO.**

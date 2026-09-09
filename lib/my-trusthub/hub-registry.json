@@ -1,0 +1,90 @@
+{
+  "version": "mytrusthub-hubs/v1",
+  "batchLimit": 50,
+  "hubs": [
+    {
+      "key": "ask",
+      "issuer": "urn:trusthub:ask",
+      "audience": "urn:trusthub:ask:bff",
+      "serviceIdentity": "svc:trusthub:ask:bff:v1",
+      "productionOrigins": ["https://www.asktrusthub.com", "https://asktrusthub.com"],
+      "stagingOrigins": ["https://conumers-trust-hub.vercel.app"],
+      "developmentOrigins": ["http://localhost:3000"],
+      "returnPrefixes": ["/my", "/consumer-lab"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "move",
+      "issuer": "urn:trusthub:move",
+      "audience": "urn:trusthub:move:bff",
+      "serviceIdentity": "svc:trusthub:move:bff:v1",
+      "productionOrigins": ["https://www.movetrusthub.com", "https://movetrusthub.com"],
+      "stagingOrigins": ["https://move-trust-hub.vercel.app"],
+      "developmentOrigins": ["http://localhost:3001"],
+      "returnPrefixes": ["/companies", "/verify-dot", "/moving-calculator", "/my-move", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "lender",
+      "issuer": "urn:trusthub:lender",
+      "audience": "urn:trusthub:lender:bff",
+      "serviceIdentity": "svc:trusthub:lender:bff:v1",
+      "productionOrigins": ["https://www.lendertrusthub.com", "https://lendertrusthub.com"],
+      "stagingOrigins": ["https://lender-trust-hub-savitz25-s-projects.vercel.app"],
+      "developmentOrigins": ["http://localhost:3002"],
+      "returnPrefixes": ["/lenders", "/local-lenders", "/my-lending", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "insurance",
+      "issuer": "urn:trusthub:insurance",
+      "audience": "urn:trusthub:insurance:bff",
+      "serviceIdentity": "svc:trusthub:insurance:bff:v1",
+      "productionOrigins": ["https://www.insurancetrusthub.com", "https://insurancetrusthub.com"],
+      "stagingOrigins": ["https://insurance-trust-hub-savitz25-s-projects.vercel.app"],
+      "developmentOrigins": ["http://localhost:3003"],
+      "returnPrefixes": ["/directory", "/companies", "/my-insurance", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "contractor",
+      "issuer": "urn:trusthub:contractor",
+      "audience": "urn:trusthub:contractor:bff",
+      "serviceIdentity": "svc:trusthub:contractor:bff:v1",
+      "productionOrigins": ["https://www.contractortrusthub.com", "https://contractortrusthub.com"],
+      "stagingOrigins": ["https://contractor-trust-hub.vercel.app"],
+      "developmentOrigins": ["http://localhost:3004"],
+      "returnPrefixes": ["/contractors", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "senior",
+      "issuer": "urn:trusthub:senior",
+      "audience": "urn:trusthub:senior:bff",
+      "serviceIdentity": "svc:trusthub:senior:bff:v1",
+      "productionOrigins": ["https://www.seniortrusthub.com", "https://seniortrusthub.com"],
+      "stagingOrigins": ["https://care-trust-hub.vercel.app"],
+      "developmentOrigins": ["http://localhost:3005"],
+      "returnPrefixes": ["/facilities", "/providers", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    },
+    {
+      "key": "investor",
+      "issuer": "urn:trusthub:investor",
+      "audience": "urn:trusthub:investor:bff",
+      "serviceIdentity": "svc:trusthub:investor:bff:v1",
+      "productionOrigins": ["https://www.investortrusthub.com", "https://investortrusthub.com"],
+      "stagingOrigins": ["https://investor-trust-hub-web.vercel.app"],
+      "developmentOrigins": ["http://localhost:3006"],
+      "returnPrefixes": ["/firms", "/advisers", "/auth/network-handoff"],
+      "scopes": ["entity:read", "saved:write", "project:read", "project:write", "watch:read", "watch:write", "session:read", "session:write", "decision:read", "handoff:issue", "handoff:consume"],
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+    "generated_at":  "2026-09-08",
+    "basis":  "P20 rehearsal-applied checked-in chain; no migration edits in P20A",
+    "migrations":  [
+                       {
+                           "file":  "20260907160000_my_trusthub_identity_foundation.sql",
+                           "sha256":  "af84401f403da201d643f2763daeef18239ed326e2373ef271d32955b900d079",
+                           "bytes":  30979
+                       },
+                       {
+                           "file":  "20260907190000_my_trusthub_saved_projects_guest_import.sql",
+                           "sha256":  "a3d94882a1c8c1f73b031c2aaa4a258c95825b9fbb7843d8796060af623cf7a5",
+                           "bytes":  47343
+                       },
+                       {
+                           "file":  "20260907220000_my_trusthub_cross_hub_handoffs.sql",
+                           "sha256":  "2677b6efb9b736ff5558b0e95097a9b60e83fc58077ed2aa85e8042ccb13cccb",
+                           "bytes":  40796
+                       },
+                       {
+                           "file":  "20260908122551_my_trusthub_watch_capabilities.sql",
+                           "sha256":  "259c15781fa6b975cbfa66cf65d17d1da0f79dd41f1f8f5d99d80665b77f18c4",
+                           "bytes":  53575
+                       },
+                       {
+                           "file":  "20260908134944_my_trusthub_source_observations.sql",
+                           "sha256":  "1ad97315fd3e3650217335b78ae8b98985484a90e1f78847610ecb5df5d44485",
+                           "bytes":  62999
+                       },
+                       {
+                           "file":  "20260908153000_my_trusthub_consumer_alerts.sql",
+                           "sha256":  "e24e50129861163f5c96c3f7f96077821c847322173e2be3ff7124db63b54685",
+                           "bytes":  37125
+                       },
+                       {
+                           "file":  "20260908180000_my_trusthub_notification_delivery.sql",
+                           "sha256":  "20df878eec733a513e1f82ef4a9013783b8b33136a2efb756f62fdaa22853e87",
+                           "bytes":  42084
+                       },
+                       {
+                           "file":  "20260908190000_my_trusthub_saved_sessions.sql",
+                           "sha256":  "9c9c8e622ce0cce21dea555ed6f539cb7f97962efd780b026efa980f9c46bf49",
+                           "bytes":  65936
+                       },
+                       {
+                           "file":  "20260908210000_my_trusthub_decisions_export_delete.sql",
+                           "sha256":  "30873dadc02711e7b8d43db3f432f8b338d55e56c44ea5e334ddf044157d217a",
+                           "bytes":  67599
+                       }
+                   ]
+}
