@@ -252,3 +252,8 @@ Prepare one synthetic/internal consumer-only account and one controlled dual-rol
 5. Keep Watch and email flags off until at least one source and the transactional provider separately pass certification.
 
 This allows a narrower GO for Stage 0–2 while later stages remain off.
+# Stage 4 controlled Watch activation — 2026-09-10
+
+Stage 4 added `/my/watches` and activated one version-pinned Florida DBPR construction-license-status capability for the founder canary. One exact real Contractor profile was Saved through the governed parent binding, then explicitly Watched. Pause/resume/stop/restart, RLS isolation, responsive layouts, and the master OFF/ON gate passed. The data survived the gate test.
+
+Alerts and email remain off. The first accepted P15 record is a baseline only; the UI does not claim “no change.” Full P13 specialist handoff, Move cross-domain resume, and scheduled P15 source collection remain blocked on scoped runtime broker/ingestor credentials and are not represented as live.
