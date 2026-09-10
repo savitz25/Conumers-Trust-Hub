@@ -1,0 +1,41 @@
+{
+  "stage": "MY_TRUSTHUB_STAGE_2",
+  "status": "CLOSED",
+  "ready_for_stage_3": true,
+  "date": "2026-09-09",
+  "implementation_main_sha": "7674cb6207bb8e4eadd16bb2380bc66dd20174de",
+  "canonical_user_id": "3d53d9df-f414-495a-b366-fc5843d14650",
+  "certification": {
+    "home": "PASS",
+    "projects": "PASS",
+    "saved_research": "PASS",
+    "private_notes": "PASS_CREATE_EDIT_DELETE",
+    "guest_restore": "PASS_DUPLICATE_IDEMPOTENT",
+    "you_privacy": "PASS",
+    "sign_out_sign_in": "PASS",
+    "cross_user_rls": "PASS_ZERO_ROWS",
+    "anonymous": "DENIED",
+    "business_specialist_bypass": "DENIED",
+    "network_browser": "UNAVAILABLE",
+    "ops_browser": "UNAVAILABLE",
+    "kill_switch": "PASS_OFF_ON_DATA_INTACT",
+    "responsive": [1440, 390, 320],
+    "accessibility": "PASS_TARGETED",
+    "public_regression": "PASS"
+  },
+  "final_counts": {
+    "auth_users": 1,
+    "profiles": 1,
+    "saved": 1,
+    "projects": 2,
+    "project_memberships": 2,
+    "notes": 0,
+    "guest_imports": 1,
+    "guest_import_items": 1,
+    "watches": 0,
+    "alerts": 0,
+    "deliveries": 0,
+    "source_observations": 0
+  },
+  "later_stage_flags": "OFF"
+}
