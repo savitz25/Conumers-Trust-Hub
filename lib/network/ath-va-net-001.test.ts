@@ -171,6 +171,20 @@ test('other-state wording does not hijack Virginia; no invented local route', ()
   assert.equal(buildNetworkAskPlan('California contractor moving to Virginia').placeLensHref, '/california');
 });
 
+test('West Virginia is not Virginia', () => {
+  assert.equal(queryLooksLikeVirginia('West Virginia contractor'), false);
+  assert.equal(queryLooksLikeVirginia('Is this contractor licensed in West Virginia?'), false);
+  assert.equal(queryLooksLikeVirginia('contractor in Fairfax, West Virginia'), false);
+  assert.equal(routeVaAsk('West Virginia contractor'), undefined);
+  assert.equal(routeVaAsk('Is this contractor licensed in West Virginia?'), undefined);
+  assert.equal(parseNetworkAsk('West Virginia contractor').geography?.stateCode, 'WV');
+  assert.equal(parseNetworkAsk('Is this contractor licensed in West Virginia?').geography?.stateCode, 'WV');
+  assert.equal(routeVaAsk('West Virginia contractor licensed in Virginia'), undefined);
+  assert.equal(parseNetworkAsk('West Virginia contractor licensed in Virginia').geography?.stateCode, 'WV');
+  assert.equal(queryLooksLikeVirginia('Is this contractor licensed in Virginia?'), true);
+  assert.equal(routeVaAsk('Is this contractor licensed in Virginia?')?.hubId, 'contractor');
+});
+
 test('claim eligibility surfaces are unchanged', () => {
   assert.equal(existsSync('app/promise/page.tsx'), true);
   assert.equal(existsSync('lib/customer/handoff.ts'), true);

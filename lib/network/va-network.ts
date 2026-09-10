@@ -35,6 +35,8 @@ const VA_CITY_RE =
   /\b(richmond|virginia beach|norfolk|alexandria|arlington|fairfax|chesapeake|newport news|hampton|roanoke|lynchburg|charlottesville)\b/i;
 const VA_COUNTY_RE =
   /\b(fairfax|arlington|loudoun|prince william|henrico|chesterfield|virginia beach)\s+county\b/i;
+const WEST_VIRGINIA_RE = /\bwest\s+virginia\b/i;
+const STANDALONE_VIRGINIA_RE = /(?<!\bwest\s)virginia\b/i;
 
 export function detectVaCity(query: string): string | undefined {
   const m = query.match(VA_CITY_RE);
@@ -42,8 +44,16 @@ export function detectVaCity(query: string): string | undefined {
   return m[1].replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+/** Index of "Virginia" that is not the "Virginia" inside "West Virginia". */
+export function standaloneVirginiaIndex(query: string): number {
+  const match = STANDALONE_VIRGINIA_RE.exec(query);
+  return match?.index ?? -1;
+}
+
 export function queryLooksLikeVirginia(query: string): boolean {
-  if (/\bvirginia\b/i.test(query)) return true;
+  const standalone = standaloneVirginiaIndex(query) >= 0;
+  if (WEST_VIRGINIA_RE.test(query) && !standalone) return false;
+  if (standalone) return true;
   if (/\bvirginia beach\b/i.test(query)) return true;
   if (/\bdpor\b/i.test(query) && /\b(contractor|license|class a|class b|class c)\b/i.test(query)) {
     return true;
@@ -105,7 +115,7 @@ export type VaRoute = {
 };
 
 function earlierStateNamed(query: string, other: RegExp): boolean {
-  const va = query.search(/\bvirginia\b/i);
+  const va = standaloneVirginiaIndex(query);
   const otherAt = query.search(other);
   if (otherAt < 0) return false;
   if (va < 0) return true;
@@ -149,6 +159,7 @@ export function classifyVaHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeVaAsk(query: string): VaRoute | undefined {
+  if (earlierStateNamed(query, /\bwest\s+virginia\b/i)) return undefined;
   if (earlierStateNamed(query, /\bcalifornia\b|\bcalif\b/i)) return undefined;
   if (earlierStateNamed(query, /\btexas\b|\btexan\b/i)) return undefined;
   if (earlierStateNamed(query, /\bnew\s+jersey\b/i)) return undefined;

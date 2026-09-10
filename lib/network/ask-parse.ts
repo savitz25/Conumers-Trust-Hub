@@ -32,7 +32,7 @@ import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
 import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
-import { detectVaCity, queryLooksLikeVirginia } from './va-network.ts';
+import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -162,38 +162,45 @@ function geography(q: string): ParsedGeography | undefined {
   })();
   const californiaNamedBeforeVirginia = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
-    const va = q.search(/\bvirginia\b/i);
+    const va = standaloneVirginiaIndex(q);
     if (ca < 0) return false;
     if (va < 0) return true;
     return ca < va;
   })();
   const texasNamedBeforeVirginia = (() => {
     const tx = q.search(/\btexas\b|\btexan\b/i);
-    const va = q.search(/\bvirginia\b/i);
+    const va = standaloneVirginiaIndex(q);
     if (tx < 0) return false;
     if (va < 0) return true;
     return tx < va;
   })();
   const washingtonNamedBeforeVirginia = (() => {
     const wa = q.search(/\bwashington\b/i);
-    const va = q.search(/\bvirginia\b/i);
+    const va = standaloneVirginiaIndex(q);
     if (wa < 0) return false;
     if (va < 0) return true;
     return wa < va;
   })();
   const arizonaNamedBeforeVirginia = (() => {
     const az = q.search(/\barizona\b/i);
-    const va = q.search(/\bvirginia\b/i);
+    const va = standaloneVirginiaIndex(q);
     if (az < 0) return false;
     if (va < 0) return true;
     return az < va;
   })();
   const coloradoNamedBeforeVirginia = (() => {
     const co = q.search(/\bcolorado\b/i);
-    const va = q.search(/\bvirginia\b/i);
+    const va = standaloneVirginiaIndex(q);
     if (co < 0) return false;
     if (va < 0) return true;
     return co < va;
+  })();
+  const westVirginiaNamedBeforeVirginia = (() => {
+    const wv = q.search(/\bwest\s+virginia\b/i);
+    const va = standaloneVirginiaIndex(q);
+    if (wv < 0) return false;
+    if (va < 0) return true;
+    return wv < va;
   })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
   if (
@@ -345,7 +352,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (vaNamedEarly) {
+  if (vaNamedEarly && !westVirginiaNamedBeforeVirginia) {
     const vaCity = detectVaCity(q);
     return {
       stateCode: 'VA',
