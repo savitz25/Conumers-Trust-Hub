@@ -165,7 +165,8 @@ function geography(q: string): ParsedGeography | undefined {
     !njNamedEarly &&
     (!txNamedEarly || californiaNamedFirst) &&
     (!waNamedEarly || californiaNamedBeforeWashington) &&
-    (!azNamedEarly || californiaNamedBeforeArizona)
+    (!azNamedEarly || californiaNamedBeforeArizona) &&
+    (!coNamedEarly || californiaNamedBeforeColorado)
   ) {
     return {
       stateCode: 'CA',

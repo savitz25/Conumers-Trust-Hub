@@ -177,8 +177,11 @@ test('Search V3 Colorado routes do not steal other states', () => {
   assert.equal(parseNetworkAsk('Colorado mover to California').geography?.stateCode, 'CO');
   assert.equal(parseNetworkAsk('California mover to Colorado').geography?.stateCode, 'CA');
   assert.equal(parseNetworkAsk('Colorado mover to Arizona').geography?.stateCode, 'CO');
+  assert.equal(parseNetworkAsk('Colorado mover to California and Arizona').geography?.stateCode, 'CO');
+  assert.equal(parseNetworkAsk('California mover to Colorado and Arizona').geography?.stateCode, 'CA');
   assert.equal(buildNetworkAskPlan('Colorado mover to California').placeLensHref, '/colorado');
   assert.equal(buildNetworkAskPlan('California mover to Colorado').placeLensHref, '/california');
+  assert.equal(buildNetworkAskPlan('Colorado mover to California and Arizona').placeLensHref, '/colorado');
 });
 
 test('authorized-insurer and state-RIA questions reject the wrong grains', () => {
