@@ -9,7 +9,7 @@
   "colorado_local_phase": "NO",
   "trust_score": false,
   "paid_ranking": false,
-  "status": "ASK_PREVIEW_NOT_FINAL",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
   "conceptual_statement": "Colorado’s strongest Trust Hub evidence is specialty contractor credentials (not a statewide general-contractor license), a genuine PUC household-goods permit layer, separate CMS senior provider classes with CDPHE verification context, HMDA mortgage-market activity with a search-only company roster, an unusually strong IAPD state-registration layer for investment advisers, and DOI market, surplus-lines, and complaint evidence that is not a live authorized-insurer roster. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
   "release_gate": {
     "passed": true,

@@ -142,10 +142,13 @@ test('missing/search-only != zero', () => {
   assert.match(CO_PUBLICATION_MANIFEST.conceptual_statement, /unknown — not zero/);
 });
 
-test('state closeout remains not-final until Production certification', () => {
-  assert.equal(closeout.status, 'ASK_PREVIEW_NOT_FINAL');
-  assert.equal(CO_PUBLICATION_MANIFEST.status, 'ASK_PREVIEW_NOT_FINAL');
-  assert.match(closeout.note, /not CLOSED until Production certification/);
+test('state closeout is Production verified after Ask /colorado certification', () => {
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(CO_PUBLICATION_MANIFEST.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.match(closeout.note, /COLORADO STATEWIDE EXPANSION CLOSED/);
+  assert.equal(closeout.ask_production.merge_sha, '19d6601b6db2af6fa50078b35f93b421161b7447');
+  assert.equal(closeout.ask_production.deployment_id, 6374596054);
+  assert.equal(closeout.publication_manifest_fingerprint, '0ce737cf5660c0b7383b24cce41fac911f2448b75f8297e1b9416822ef85d653');
   assert.equal(closeout.local_work_decision, 'NO');
   assert.ok(closeout.backlog.some((row: { id: string }) => row.id === 'INV-STATE-IAPD-001'));
 });
