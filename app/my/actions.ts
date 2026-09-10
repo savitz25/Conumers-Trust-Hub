@@ -17,6 +17,7 @@ import {
 } from "@/lib/my-trusthub/runtime-config";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
+import { DBPR_LOOKUP_CONSENT } from "@/lib/my-trusthub/dbpr-lookup";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -433,3 +434,14 @@ export async function pauseWatchAction(formData: FormData) { return mutateWatch(
 export async function resumeWatchAction(formData: FormData) { return mutateWatch(formData, "resume"); }
 export async function stopWatchAction(formData: FormData) { return mutateWatch(formData, "stop"); }
 export async function restartWatchAction(formData: FormData) { return mutateWatch(formData, "restart"); }
+
+export async function upgradeDbprWatchAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_WATCH_ENABLED");
+  const adapter = await requiredAdapter();
+  if (formData.get("consent") !== DBPR_LOOKUP_CONSENT) redirect("/my/watches?error=consent-required");
+  await safeMutation("my_trusthub_watch_upgrade_failed", "/my/watches?error=unable", () =>
+    adapter.upgradeDbprWatch(uuidField(formData, "watchId"), uuidField(formData, "fromCapabilityId"),
+      uuidField(formData, "toCapabilityId"), rowVersionField(formData), uuidField(formData, "idempotencyKey"), DBPR_LOOKUP_CONSENT));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/watches");
+  redirect("/my/watches?upgraded=2");
+}
