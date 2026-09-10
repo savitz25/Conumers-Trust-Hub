@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { parseDbprExtract, DbprSourceError } from '../lib/my-trusthub/dbpr-adapter.ts';
+const makeRow=(credential='CCC1332036',primary='C',secondary='A')=>['06',credential.slice(0,3),'Sample, Contractor','',...Array(8).fill(''),credential.slice(3),primary,secondary,'05/13/2019','09/26/2024','08/31/2026','','',credential,''].map(v=>'"'+v.replaceAll('"','""')+'"').join(',');
+const filler=Array.from({length:1000},(_,i)=>makeRow('CGC'+String(i).padStart(7,'0'))).join('\r\n');
+const extract=(...rows)=>filler+'\r\n'+rows.join('\r\n');
+test('DBPR exact prefixed credential normalizes only the material status',()=>assert.deepEqual(parseDbprExtract(extract(makeRow()),['CCC1332036']),[{credential:'CCC1332036',status:'active'}]));
+test('numeric-only collision cannot satisfy exact identity',()=>assert.throws(()=>parseDbprExtract(extract(makeRow('CRC1332036')),['CCC1332036']),e=>e instanceof DbprSourceError&&e.code==='SOURCE_IDENTITY_MISSING'));
+test('duplicate exact identity fails closed',()=>assert.throws(()=>parseDbprExtract(extract(makeRow(),makeRow()),['CCC1332036'])));
+test('malformed schema and truncated download fail closed',()=>{assert.throws(()=>parseDbprExtract('error page',[]));assert.throws(()=>parseDbprExtract(filler+'\n"unterminated',[]));assert.throws(()=>parseDbprExtract(extract(makeRow()+',"new column"'),['CCC1332036']));});
+test('unsupported primary regulatory status is not reassuring active',()=>assert.throws(()=>parseDbprExtract(extract(makeRow('CCC1332036','D','A')),['CCC1332036']),e=>e.code==='SOURCE_SCHEMA_INVALID'));
+test('inactive/current and quoted CSV are handled',()=>{assert.equal(parseDbprExtract(extract(makeRow('CCC1332036','C','I')),['CCC1332036'])[0].status,'inactive');assert.equal(parseDbprExtract(extract(makeRow('CCC1332036','C','')),['CCC1332036'])[0].status,'current');});

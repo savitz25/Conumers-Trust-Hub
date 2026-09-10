@@ -27,10 +27,10 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
       adapter.listAvailableWatchCapabilities(item.saved_entity_id),
       adapter.getWatch(item.saved_entity_id),
     ]);
-    const [coverage, health] = watch
-      ? await Promise.all([adapter.getWatchCoverage(watch.watch_id), adapter.getWatchSourceHealth(item.saved_entity_id)])
-      : [[], []];
-    return { item, capabilities, watch, coverage, health };
+    const [coverage, health, checks] = watch
+      ? await Promise.all([adapter.getWatchCoverage(watch.watch_id), adapter.getWatchSourceHealth(item.saved_entity_id), adapter.getWatchCheckDetails(item.saved_entity_id)])
+      : [[], [], []];
+    return { item, capabilities, watch, coverage, health, checks };
   }));
   const watchable = items.filter(({ capabilities, watch }) => watch || capabilities.some((capability) => capability.eligible));
 
@@ -42,7 +42,7 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
       {query.started ? <p className="myth-notice" role="status">Watch started with the coverage you selected.</p> : null}
       {query.error ? <p className="myth-warning" role="alert">That Watch change could not be completed safely. Refresh and try again.</p> : null}
       <section className="myth-list" aria-label="Your Watches">
-        {watchable.length ? watchable.map(({ item, capabilities, watch, coverage, health }) => {
+        {watchable.length ? watchable.map(({ item, capabilities, watch, coverage, health, checks }) => {
           const eligible = capabilities.filter((capability) => capability.eligible);
           const overallHealth = health.some((row) => row.health_status === "unknown") ? "unknown"
             : health.some((row) => row.health_status === "degraded") ? "degraded"
@@ -54,6 +54,11 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
                 {watch ? <span className={`myth-status myth-status-${watch.watch_status}`}>{watch.watch_status}</span> : null}
               </div>
               <p className="myth-muted">{item.primary_hub} · exact saved profile binding</p>
+              {checks.map((check) => <div key={check.capability_id}>
+                <p><strong>{check.source_identifier}</strong> · {check.identifier_namespace}</p>
+                <dl className="myth-detail-grid"><div><dt>Checked at</dt><dd>{dateTime(check.checked_at)}</dd></div><div><dt>Last successful check</dt><dd>{dateTime(check.last_successful_check)}</dd></div></dl>
+                {check.error_code ? <p className="myth-warning" role="status">The latest official source check could not confirm compatible status for this exact license. No-change assurance is unavailable. Missing from an extract does not establish a license status.</p> : null}
+              </div>)}
               {!watch ? (
                 <form action={startWatchAction} className="myth-watch-start">
                   <input type="hidden" name="savedEntityId" value={item.saved_entity_id} />
@@ -76,7 +81,7 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
                   <ul className="myth-coverage-list">
                     {coverage.map((row) => (
                       <li key={row.coverage_id}>
-                        <div><strong>{row.display_name}</strong><small>{row.source_key} · version {row.capability_version}</small></div>
+                        <div><strong>{row.display_name}</strong><small>{row.source_key} · version {row.capability_version} · {row.grain_key}</small></div>
                         <span>{row.coverage_status}</span>
                         {row.coverage_limitations.length ? <div className="myth-limitations"><strong>Not currently watched</strong><ul>{row.coverage_limitations.map((limit) => <li key={limit}>{limit}</li>)}</ul></div> : null}
                       </li>
@@ -88,7 +93,6 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
                       <h3>{row.source_key}</h3>
                       <dl className="myth-detail-grid">
                         <div><dt>Source as of</dt><dd>{dateTime(row.source_as_of)}</dd></div>
-                        <div><dt>Last successful check</dt><dd>{dateTime(row.last_successful_check)}</dd></div>
                         <div><dt>Completeness</dt><dd>{row.completeness_status}</dd></div>
                         <div><dt>Schema</dt><dd>{row.schema_status}</dd></div>
                       </dl>

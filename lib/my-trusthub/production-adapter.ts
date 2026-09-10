@@ -286,6 +286,10 @@ export class ProductionMyTrustHubAdapter {
     return rows<WatchSourceHealthRow>(await this.rpc("get_watch_source_health", { p_saved_entity_id: savedEntityId }));
   }
 
+  async getWatchCheckDetails(savedEntityId: string): Promise<Array<{ capability_id: string; identifier_namespace: string; source_identifier: string; checked_at: string | null; last_successful_check: string | null; error_code: string | null }>> {
+    return rows(await this.rpc("get_watch_check_details", { p_saved_entity_id: savedEntityId }));
+  }
+
   async startWatch(savedEntityId: string, capabilityIds: string[], idempotencyKey: string) {
     return one<{ watch_id: string; created: boolean; row_version: number }>(await this.rpc("start_watch", {
       p_saved_entity_id: savedEntityId,

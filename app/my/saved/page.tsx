@@ -23,7 +23,7 @@ import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 export default async function SavedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string }>;
+  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string }>;
 }) {
   const { adapter, user } = await requireWorkspace();
   const [query, saved, projects, notes, sessions] = await Promise.all([
@@ -44,6 +44,7 @@ export default async function SavedPage({
       <PageHeading eyebrow="PRIVATE RESEARCH LIBRARY" title="Saved Research">
         Saved profiles stay available whether or not they belong to a Project.
       </PageHeading>
+      {query.handoff === "saved" ? <p className="myth-notice" role="status">Contractor profile saved to My TrustHub. Existing Saves are kept once. Watching is a separate choice.</p> : null}
       {importState === "complete" ? <p className="myth-notice" role="status">Guest research restored. Existing Saves were kept once.</p> : null}
       {importState === "invalid" ? <p className="myth-warning" role="alert">That guest research could not be restored safely.</p> : null}
       {error ? <p className="myth-warning" role="alert">That change could not be completed. Refresh and try again.</p> : null}
