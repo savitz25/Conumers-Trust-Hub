@@ -4,7 +4,7 @@ import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './r
 
 export const VA_NETWORK_CONTRACT = 'ath-va-network-release-v1' as const;
 export const VA_PUBLICATION_FINGERPRINT =
-  'baa916e0f9a75d0c6a052e518748adf7d05c9cf28dca60468ab5467424877e05';
+  'a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd';
 
 export type VaHubManifest = (typeof manifestJson)['hubs'][number];
 

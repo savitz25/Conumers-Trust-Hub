@@ -5,7 +5,7 @@
   "ask_route": "/virginia",
   "ask_canonical": "https://www.asktrusthub.com/virginia",
   "network_contract": "ath-va-network-release-v1",
-  "publication_manifest_fingerprint": "baa916e0f9a75d0c6a052e518748adf7d05c9cf28dca60468ab5467424877e05",
+  "publication_manifest_fingerprint": "a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd",
   "local_work_decision": "NO",
   "virginia_local_phase": "NO",
   "hardcoded_county_routes": false,

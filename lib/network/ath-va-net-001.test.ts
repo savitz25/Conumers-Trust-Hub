@@ -129,6 +129,62 @@ test('investor grain: 697 is not office, ERA, notice, or 4481 firms', () => {
   assert.match(VA_SEMANTIC_GUARDRAILS.investor_697_ne_office_ne_notice, /not 4,481 firms/);
 });
 
+test('ATH-VA-NET-001A2: source-native expansion ledgers and identity namespaces', () => {
+  const ledgers = VA_PUBLICATION_MANIFEST.hub_expansion_ledgers;
+  const moveHub = listVaHubs().find((h) => h.hub_id === 'move')!;
+  const lenderHub = listVaHubs().find((h) => h.hub_id === 'lender')!;
+  const strip = VA_PUBLICATION_MANIFEST.intelligence_strip.map((row) => row.display);
+
+  assert.equal(ledgers.move.NEW_VA_HHG_AUTHORITY_IDENTITIES, 192);
+  assert.equal(ledgers.move.NEW_VA_PROPERTY_AUTHORITY_IDENTITIES, 4914);
+  assert.equal(ledgers.move.NEW_VA_STATE_IDENTITIES, 5106);
+  assert.equal(ledgers.move.NEW_STATE_CREDENTIAL_ROWS, 5108);
+  assert.ok(moveHub.primary_identifiers.includes('VA-DMV-PROP:{authority}'));
+  assert.equal(moveHub.primary_identifiers.includes('VA-DMV-PC:{authority}'), false);
+  assert.doesNotMatch(JSON.stringify(moveHub), /VA-DMV-PC/);
+
+  assert.equal(ledgers.senior.NEW_VA_ALF_STATE_IDENTITIES, 573);
+  assert.equal(ledgers.senior.NEW_VA_ADC_STATE_IDENTITIES, 82);
+  assert.equal('NET_NEW_STATE_IDENTITIES' in ledgers.senior, false);
+
+  assert.equal(ledgers.lender.VA_DATED_SCC_COMPANY_ROWS, 1257);
+  assert.equal(ledgers.lender.EXACT_VA_MC_TO_NMLS_CROSSWALKS, 1257);
+  assert.equal(ledgers.lender.claimEligibilityBroadened, false);
+  assert.equal('NET_NEW_STATE_IDENTITIES' in ledgers.lender, false);
+  assert.ok(lenderHub.primary_identifiers.includes('VA-SCC-BFI:{MC}'));
+  assert.ok(lenderHub.primary_identifiers.includes('NMLS:{id}'));
+  assert.match(lenderHub.primary_identity, /VA-SCC-BFI:\{MC\}/);
+  assert.equal(lenderHub.primary_identifiers.some((id) => id.startsWith('VA-MC:')), false);
+  assert.equal(lenderHub.identifier_types.includes('VA-MC'), false);
+
+  assert.equal(ledgers.investor.VA_STATE_IA_REGISTRATION_IDENTITIES, 700);
+  assert.equal(ledgers.investor.VA_STATE_IA_APPROVED_CURRENT, 697);
+  assert.equal(ledgers.investor.VA_STATE_ERA_IDENTITIES, 107);
+  assert.equal(ledgers.investor.NEW_VA_STATE_IDENTITIES, 807);
+  assert.equal('NET_NEW_STATE_IDENTITIES' in ledgers.investor, false);
+
+  assert.equal(ledgers.insurance.NEW_VA_MARKET_OBSERVATION_ROWS, 1546);
+  assert.equal(ledgers.insurance.NEW_VA_DISTINCT_STAT_REPORT_NAIC_IDS, 1546);
+  assert.equal(ledgers.insurance.EXACT_NAIC_MATCH_OBSERVATIONS, 1727);
+  assert.equal(ledgers.insurance.UNIQUE_UNMATCHED_NAIC_IDS_ACROSS_HIGH_YIELD_LAYERS, 5);
+  assert.equal(ledgers.insurance.NET_NEW_CANONICAL_LEGAL_INSURERS, 0);
+  assert.equal('NET_NEW_STATE_IDENTITIES' in ledgers.insurance, false);
+
+  assert.equal(ledgers.contractor.NEW_STATE_IDENTITIES, 53840);
+  assert.equal(ledgers.contractor.EXACT_LICENSE_LINKED_EVIDENCE_ROWS, 120);
+  assert.equal(ledgers.contractor.REVOCATION_DISTINCT_CASES, 119);
+
+  assert.deepEqual(strip, [
+    '53,840 Class A/B/C contractor-business license numbers',
+    '192 Virginia HHG certificate authority numbers',
+    '573 licensed assisted-living facilities',
+    '1,257 dated SCC mortgage-company roster rows',
+    '1,546 2025 statistical-report NAIC company observations',
+    '697 APPROVED Virginia state-registered IA firms',
+  ]);
+  assert.equal(strip.some((row) => row.includes('5,106') || row.includes('807')), false);
+});
+
 test('unknown and search-only are not zero; no Trust Score or ranking', () => {
   assert.match(VA_SEMANTIC_GUARDRAILS.missing_ne_zero, /not zero/);
   assert.match(VA_SEMANTIC_GUARDRAILS.search_only_ne_zero, /not zero/);

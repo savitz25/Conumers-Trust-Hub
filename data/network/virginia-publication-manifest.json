@@ -75,52 +75,72 @@
   ],
   "hub_expansion_ledgers": {
     "contractor": {
+      "NEW_STATE_IDENTITIES": 53840,
       "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 53840,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 53840,
       "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "53,840 is license numbers, not unique companies. Ask does not mint contractor organizations from this aggregation."
+      "EXACT_LICENSE_LINKED_EVIDENCE_ROWS": 120,
+      "REVOCATION_OBSERVATION_ROWS": 120,
+      "REVOCATION_DISTINCT_CASES": 119,
+      "REVOCATION_DISTINCT_LICENSE_IDS": 100,
+      "grain_note": "53,840 is distinct Class A/B/C contractor-business LICENSE NUMBERS, not unique companies. 120 revocation observations / 119 cases / 100 license IDs stay evidence."
     },
     "move": {
+      "NEW_VA_HHG_AUTHORITY_IDENTITIES": 192,
+      "NEW_VA_PROPERTY_AUTHORITY_IDENTITIES": 4914,
+      "NEW_VA_STATE_IDENTITIES": 5106,
+      "NEW_STATE_CREDENTIAL_ROWS": 5108,
       "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 192,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
       "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 192,
-      "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "192 HHG certificate identities. Property Carrier rows are a separate grain and are not added here."
+      "EXACT_STATE_TO_FEDERAL_CROSSWALKS": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "grain_note": "5,108 listing/credential rows != 5,106 distinct non-null authority identities. 192 is HHG certificate identities. 4,914 is Property Carrier authority identities. Do not treat 192 as all Virginia Move state identities. Authority 1276 is SOURCE_IDENTIFIER_CONFLICT."
     },
     "senior": {
-      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 573,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 7032,
+      "NEW_VA_ALF_STATE_IDENTITIES": 573,
+      "NEW_VA_ALF_LICENSE_ROWS": 573,
+      "NEW_VA_INSPECTION_OBSERVATION_ROWS": 7032,
+      "NEW_VA_COMPLAINT_RELATED_INSPECTION_ROWS": 2488,
+      "NEW_VA_VIOLATION_FLAGGED_INSPECTION_ROWS": 4066,
+      "NEW_VA_ADC_STATE_IDENTITIES": 82,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
       "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "573 ALF research identities are not claimable profiles. Inspection observations stay evidence rows."
+      "EXACT_STATE_TO_CMS_CROSSWALKS": 0,
+      "grain_note": "ALF and Adult Day remain separate source classes. Do not add 573 + 82 as Virginia senior providers. No derived combined facility denominator."
     },
     "lender": {
+      "VA_DATED_SCC_COMPANY_ROWS": 1257,
+      "EXACT_VA_MC_TO_NMLS_CROSSWALKS": 1257,
       "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 1257,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 1257,
-      "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "1,257 dated SCC company rows. Not current 2026 lenders. HMDA and MLO remain separate grains."
+      "NET_NEW_PUBLIC_LENDER_PROFILES": 0,
+      "claimEligibilityBroadened": false,
+      "grain_note": "1,257 dated SCC company rows with exact VA-MC \u2192 NMLS bridges. Not 1,257 current lenders and not 1,257 new canonical lenders. Canonical state identity is VA-SCC-BFI:{MC}."
     },
     "investor": {
+      "VA_STATE_IA_REGISTRATION_IDENTITIES": 700,
+      "VA_STATE_IA_APPROVED_CURRENT": 697,
+      "VA_STATE_ERA_IDENTITIES": 107,
+      "NEW_VA_STATE_IDENTITIES": 807,
       "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 697,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 697,
-      "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "697 APPROVED state IA firms. Principal-office, ERA, and notice remain separate. Not a combined adviser total."
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "grain_note": "807 = 700 state-IA identities + 107 state-ERA identities. TERMREQUEST = 3. State IA \u2229 ERA = 0. 697 is APPROVED current state-RIA, not the complete state identity ledger. Not 807 advisers, current RIAs, or public profiles."
     },
     "insurance": {
-      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
-      "NET_NEW_STATE_IDENTITIES": 0,
-      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
-      "NEW_EVIDENCE_ROWS": 1546,
+      "NEW_VA_MARKET_OBSERVATION_ROWS": 1546,
+      "NEW_VA_DISTINCT_STAT_REPORT_NAIC_IDS": 1546,
+      "NEW_VA_REGULATORY_ACTION_ROWS": 124,
+      "NEW_VA_REGULATORY_ACTION_CASES": 79,
+      "NEW_VA_MARKET_CONDUCT_ROWS": 117,
+      "NEW_VA_MARKET_CONDUCT_DISTINCT_NAIC_IDS": 100,
+      "EXACT_NAIC_MATCH_OBSERVATIONS": 1727,
+      "UNIQUE_UNMATCHED_NAIC_IDS_ACROSS_HIGH_YIELD_LAYERS": 5,
+      "NET_NEW_CANONICAL_LEGAL_INSURERS": 0,
+      "NET_NEW_CANONICAL_AGENCIES": 0,
+      "NET_NEW_CANONICAL_PERSONS": 0,
       "NET_NEW_PUBLIC_PROFILES": 0,
-      "note": "1,546 statistical-report observations. Exact NAIC matches are read-only and not enrichment writes."
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "grain_note": "Observation growth, not a current authorized-insurer identity universe. 1,546 dated statistical-report observations. 1,727 exact-match observations are not unique insurers."
     }
   },
   "expansion_ledger": {
@@ -264,10 +284,11 @@
       ],
       "primary_identifiers": [
         "VA-DMV-HHG:{authority}",
-        "VA-DMV-PC:{authority}"
+        "VA-DMV-PROP:{authority}"
       ],
       "identifier_types": [
-        "VA-DMV"
+        "VA-DMV-HHG",
+        "VA-DMV-PROP"
       ],
       "source_summary": "Virginia DMV lists Household Goods Carrier certificates and Property Carrier permits as separate authority grains. Interstate authority remains FMCSA.",
       "coverage_summary": "192 HHG certificate authority numbers. 4,916 Property Carrier listing rows are not a mover census. Do not add 192 + 4,916.",
@@ -368,7 +389,7 @@
       "fingerprint": "1d15e78c49d24827268c9e4064ba816cf6e7ea227db8fd58a01816fec751cba9",
       "source_clock": "Virginia SCC mortgage narrative as of 2025-12-31; HMDA 2025",
       "primary_regulator": "Virginia SCC; NMLS; CFPB HMDA",
-      "primary_identity": "VA-MC:{number} / NMLS:{id}",
+      "primary_identity": "VA-SCC-BFI:{MC} / NMLS:{id}",
       "topic": "Which mortgage lenders are licensed in Virginia?",
       "plain_question": "Which mortgage companies are on Virginia\u2019s dated SCC roster \u2014 and is that the current 2026 count?",
       "research_topics": [
@@ -378,11 +399,11 @@
         "HMDA 2025 Virginia applications"
       ],
       "primary_identifiers": [
-        "VA-MC:{number}",
+        "VA-SCC-BFI:{MC}",
         "NMLS:{id}"
       ],
       "identifier_types": [
-        "VA-MC",
+        "VA-SCC-BFI",
         "NMLS"
       ],
       "source_summary": "Virginia SCC publishes a dated mortgage-company roster with Virginia MC numbers and NMLS IDs. Live 2026 company denominator remains unknown. Current verification is NMLS Consumer Access.",
