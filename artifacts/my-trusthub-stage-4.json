@@ -1,45 +1,30 @@
 {
-  "schema": "my-trusthub-stage-4/v2",
-  "recordedAt": "2026-09-10T13:48:22.873Z",
-  "status": "OPEN_SOURCE_ACCEPTANCE_GAP",
-  "sourceFollowUp": {
-    "checkedAt": "2026-09-10T14:06:56.882Z",
-    "method": "HTTP HEAD plus official source-contract and renewal-FAQ review",
-    "httpStatus": 200,
-    "sourceAsOf": "2026-09-10T10:48:32Z",
-    "bytes": 46172026,
-    "extractUnchanged": true,
-    "productionMainsAndDeploymentsUnchanged": true,
-    "dailyCronStillConfigured": true,
-    "officialExplanation": "https://www2.myfloridalicense.com/construction-industry/faqs/",
-    "portalStatusInterpretation": "Delinquent,Active does not mean current active; Active describes the prior status.",
-    "portalPublicationClockCertified": false,
-    "compatibleAlternativeInputEstablished": false,
-    "sourceContractOrWatchSelectionChanged": false
-  },
+  "schema": "my-trusthub-stage-4/v3",
+  "recordedAt": "2026-09-10T15:14:48.431Z",
+  "status": "CLOSED",
   "releaseEvidence": {
     "note": "Immutable production deployments tested before this documentation commit; final containing-main deployment is recorded in the closeout report.",
     "deployments": [
       {
         "project": "conumers-trust-hub",
         "id": "prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB",
-        "deployment": "dpl_4g1NHUd1qZr1srDBG8rybQbpuS8F",
-        "url": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+        "deployment": "dpl_BX7KeKhvK5sZWsBfQvt8ZzFu9abz",
+        "url": "conumers-trust-bmd95bnxt-savitz25-s-projects.vercel.app",
         "state": "READY",
-        "sha": "81a05f65c64c16237a584e8a70090a89803c6576",
+        "sha": "19d6601b6db2af6fa50078b35f93b421161b7447",
         "crons": [
           {
-            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "host": "conumers-trust-bmd95bnxt-savitz25-s-projects.vercel.app",
             "path": "/api/cron/my-trusthub-dbpr",
             "schedule": "41 12 * * *"
           },
           {
-            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "host": "conumers-trust-bmd95bnxt-savitz25-s-projects.vercel.app",
             "path": "/api/cron/regulatory-monitoring",
             "schedule": "17 13 * * *"
           },
           {
-            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "host": "conumers-trust-bmd95bnxt-savitz25-s-projects.vercel.app",
             "path": "/api/cron/search-canaries",
             "schedule": "23 * * * *"
           }
@@ -48,10 +33,10 @@
       {
         "project": "contractor-trust-hub",
         "id": "prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq",
-        "deployment": "dpl_6JagnwyuFuKox73Yj6Nyz7D6uAvs",
-        "url": "contractor-trust-7rprije95-savitz25-s-projects.vercel.app",
+        "deployment": "dpl_AsvdqFLX6J24jppXPcxxYLDBr2ej",
+        "url": "contractor-trust-h73mqf7ea-savitz25-s-projects.vercel.app",
         "state": "READY",
-        "sha": "8a70080a26e8d7745c7e481003239fdc544e95c2",
+        "sha": "e3168916ea437af20147aff0ebe31df77acc34a4",
         "crons": []
       },
       {
@@ -140,24 +125,46 @@
           }
         ]
       }
+    ],
+    "certifiedV2Deployment": {
+      "id": "dpl_ddWW6gMDG26Xv5q5GPCjgo9xAY8x",
+      "sha": "4042dae6457d1824fcc3a56745613ccda0fbaee5",
+      "acceptedProductionSchedulerRuns": 2
+    },
+    "reconciledUnrelatedAdvances": {
+      "ask": "19d6601b6db2af6fa50078b35f93b421161b7447",
+      "contractor": "e3168916ea437af20147aff0ebe31df77acc34a4",
+      "insurance": "e79ed2c3cd4e709ab83bc86be1e095747ef0bb32"
+    },
+    "migrations": [
+      {
+        "name": "my_trusthub_dbpr_v2",
+        "productionVersion": "20260910143944",
+        "repositoryVersion": "20260910142334"
+      },
+      {
+        "name": "my_trusthub_dbpr_v2_validation",
+        "productionVersion": "20260910144237",
+        "repositoryVersion": "20260910144104"
+      }
     ]
   },
   "matrix": [
     {
       "hub": "Ask",
-      "saveHandoff": "Live receiver for the exact Contractor profile only",
-      "resumeHandoff": "Parent saved inventory remains readable; no cross-domain Move consumer",
-      "watchCapability": "Parent UX for contractor.fl.dbpr.license_status v1",
-      "sourceMonitoring": "Daily scoped DBPR scheduler deployed; current exact record unavailable",
-      "deferredGaps": "Accepted compatible unattended observation"
+      "saveHandoff": "Live receiver for exact certified Contractor profile",
+      "resumeHandoff": "Parent move.inventory/v1 retained; cross-domain consumer deferred",
+      "watchCapability": "Parent UX for contractor.fl.dbpr.license_status v2; disabled v1 history retained",
+      "sourceMonitoring": "Daily exact DBPR lookup; two accepted real scheduler-path observations",
+      "deferredGaps": "Other hub/profile classes"
     },
     {
       "hub": "Contractor",
       "saveHandoff": "Live: CCC1332036 / native 0001ac38-0c96-4e2f-8bf6-9ab243f7b79b only",
       "resumeHandoff": "Unsupported",
-      "watchCapability": "contractor.fl.dbpr.license_status v1",
-      "sourceMonitoring": "Parent-owned daily DBPR extract check",
-      "deferredGaps": "Other profiles and source states outside the approved v1 contract"
+      "watchCapability": "contractor.fl.dbpr.license_status v2 through parent",
+      "sourceMonitoring": "Parent-owned daily exact license lookup",
+      "deferredGaps": "Additional profiles and other grains"
     },
     {
       "hub": "Move",
@@ -225,7 +232,9 @@
       "role": "myth_p15_dbpr_runtime",
       "functions": [
         "ops.dbpr_poll_targets()",
-        "ops.run_dbpr_poll(text,timestamptz,timestamptz,timestamptz,jsonb,text)"
+        "ops.run_dbpr_poll(text,timestamptz,timestamptz,timestamptz,jsonb,text)",
+        "ops.dbpr_v2_poll_targets()",
+        "ops.run_dbpr_v2_poll(text,timestamptz,timestamptz,jsonb,text)"
       ]
     },
     "tableGrants": 0,
@@ -240,34 +249,125 @@
     "cron": "41 12 * * *",
     "timezone": "UTC",
     "cadence": "daily",
-    "reason": "Conservative state-license source polling; no hourly need",
+    "reason": "Conservative state professional-license lookup; no hourly requirement",
     "existingPlan": "Vercel Pro",
     "configured": true,
     "firstFutureWallClockRun": "2026-09-11T12:41:00Z",
-    "manualSchedulerInvocation": "2026-09-10T13:27:35.273Z",
+    "wallClockRunAlreadyObserved": false,
     "invocationMethod": "vercel crons run /api/cron/my-trusthub-dbpr",
-    "httpStatus": 200,
-    "outcome": "source_unavailable",
-    "failure": "SOURCE_IDENTITY_MISSING",
-    "checkpointId": "e0015098-e2cc-4cb0-9542-bc1166a6c0b8",
-    "checkpointError": "RECORD_COUNT_COLLAPSE",
-    "sourceAsOf": "2026-09-10T10:48:32Z",
-    "retrievedAt": "2026-09-10T13:27:38.239Z",
-    "acceptedNewObservations": 0,
-    "newChangeEvents": 0
+    "manualSchedulerInvocations": [
+      "2026-09-10T15:03:17.776Z",
+      "2026-09-10T15:04:23.627Z"
+    ],
+    "sameProductionCronCodepathAndAuthentication": true,
+    "outcome": "checked",
+    "acceptedNewObservations": 2,
+    "newChangeEvents": 0,
+    "checkpoints": [
+      {
+        "id": "b6f1eb7b-923f-4e1c-8fa1-33f3a5cf72e1",
+        "run_id": "daily:53da7ac4-2e67-4a4e-a40a-75e6f7aa51ba",
+        "created_at": "2026-09-10T15:03:21.097977+00:00",
+        "error_code": null,
+        "run_status": "succeeded",
+        "source_key": "fl.dbpr.verify_licensee",
+        "started_at": "2026-09-10T15:03:18.464+00:00",
+        "updated_at": "2026-09-10T15:03:21.097977+00:00",
+        "completed_at": "2026-09-10T15:03:21.096+00:00",
+        "jurisdiction": "FL",
+        "retrieved_at": "2026-09-10T15:03:21.096+00:00",
+        "source_as_of": null,
+        "capability_id": "8f9106e4-383a-4a5d-a80c-d273b36b4840",
+        "error_summary": null,
+        "health_status": "current",
+        "schema_status": "compatible",
+        "last_success_at": "2026-09-10T15:03:21.096+00:00",
+        "jurisdiction_key": "fl",
+        "capability_version": 2,
+        "mass_change_status": "none",
+        "completeness_status": "complete",
+        "request_fingerprint": "f06622108cb30356d6567ca234614aea1168551eddca235763b31d735697ab73",
+        "expected_record_count": 1,
+        "material_change_count": 0,
+        "observed_record_count": 1
+      },
+      {
+        "id": "c0640c07-c010-41c5-89d2-2ccbc04acd78",
+        "run_id": "daily:7bcf0ae4-44fd-4857-b529-97da936412ca",
+        "created_at": "2026-09-10T15:04:26.750228+00:00",
+        "error_code": null,
+        "run_status": "succeeded",
+        "source_key": "fl.dbpr.verify_licensee",
+        "started_at": "2026-09-10T15:04:24.131+00:00",
+        "updated_at": "2026-09-10T15:04:26.750228+00:00",
+        "completed_at": "2026-09-10T15:04:26.748+00:00",
+        "jurisdiction": "FL",
+        "retrieved_at": "2026-09-10T15:04:26.748+00:00",
+        "source_as_of": null,
+        "capability_id": "8f9106e4-383a-4a5d-a80c-d273b36b4840",
+        "error_summary": null,
+        "health_status": "current",
+        "schema_status": "compatible",
+        "last_success_at": "2026-09-10T15:04:26.748+00:00",
+        "jurisdiction_key": "fl",
+        "capability_version": 2,
+        "mass_change_status": "none",
+        "completeness_status": "complete",
+        "request_fingerprint": "4c54187a7ec4aa74c760cc2f423f95e6d1826a4cd7cec85b66df708b60a82d44",
+        "expected_record_count": 1,
+        "material_change_count": 0,
+        "observed_record_count": 1
+      }
+    ],
+    "observations": [
+      {
+        "id": "f69064ee-1ee6-4916-8683-48cf48e140d9",
+        "observed_at": "2026-09-10T15:03:21.097977+00:00",
+        "retrieved_at": "2026-09-10T15:03:21.096+00:00",
+        "source_as_of": null,
+        "normalized_value": {
+          "primary_status": "delinquent",
+          "official_status": "Delinquent,Active",
+          "secondary_status": "active"
+        },
+        "capability_version": 2,
+        "observation_status": "accepted",
+        "change_evaluation_status": "baseline"
+      },
+      {
+        "id": "c76e36b6-8f43-4a2d-b367-84aff33b203d",
+        "observed_at": "2026-09-10T15:04:26.750228+00:00",
+        "retrieved_at": "2026-09-10T15:04:26.748+00:00",
+        "source_as_of": null,
+        "normalized_value": {
+          "primary_status": "delinquent",
+          "official_status": "Delinquent,Active",
+          "secondary_status": "active"
+        },
+        "capability_version": 2,
+        "observation_status": "accepted",
+        "change_evaluation_status": "no_change"
+      }
+    ]
   },
   "watch": {
     "capability": "contractor.fl.dbpr.license_status",
-    "version": 1,
+    "version": 2,
     "namespace": "fl.dbpr.license",
     "credential": "CCC1332036",
     "status": "active",
-    "healthShown": "degraded",
-    "checkpointHealthStored": "unknown",
-    "completeness": "partial",
-    "schema": "unknown",
-    "noChangeEligible": false,
-    "saveCreatesWatch": false
+    "healthShown": "current",
+    "checkpointHealthStored": "current",
+    "completeness": "complete",
+    "schema": "compatible",
+    "noChangeEligible": true,
+    "saveCreatesWatch": false,
+    "officialStatus": "Delinquent,Active",
+    "primaryStatus": "delinquent",
+    "secondaryStatus": "active",
+    "sourceAsOf": null,
+    "checkedAt": "2026-09-10T15:04:26.748Z",
+    "bulkAbsenceDegradesV2": false
   },
   "security": {
     "productionRoleChecks": [
@@ -395,7 +495,15 @@
           },
           {
             "nspname": "ops",
+            "proname": "dbpr_v2_poll_targets"
+          },
+          {
+            "nspname": "ops",
             "proname": "run_dbpr_poll"
+          },
+          {
+            "nspname": "ops",
+            "proname": "run_dbpr_v2_poll"
           }
         ]
       },
@@ -472,7 +580,7 @@
     "secretScans": [
       {
         "repo": "stage4-closeout-ask",
-        "trackedFiles": 1232,
+        "trackedFiles": 1253,
         "browserFiles": 49,
         "knownCredentialsAbsent": true,
         "privateEnvMarkersAbsentFromBrowser": true,
@@ -480,7 +588,7 @@
       },
       {
         "repo": "stage4-closeout-contractor",
-        "trackedFiles": 1294,
+        "trackedFiles": 1312,
         "browserFiles": 63,
         "knownCredentialsAbsent": true,
         "privateEnvMarkersAbsentFromBrowser": true,
@@ -493,6 +601,76 @@
       "statementMode": "ddl",
       "errorParameterLength": 0,
       "passwordActivation": "SCRAM verifier only; no raw runtime password in SQL"
+    },
+    "postConsentProductionAuthorizationChecks": 8,
+    "postConsentProductionAuthorizationPassed": true,
+    "runtimeEnvironment": {
+      "flags": {
+        "MY_TRUSTHUB_ENABLED": "true",
+        "MY_TRUSTHUB_CANARY_ONLY": "true",
+        "MY_TRUSTHUB_SIGNUP_ENABLED": "false",
+        "MY_TRUSTHUB_WATCH_ENABLED": "true",
+        "MY_TRUSTHUB_SOURCE_MONITORING_ENABLED": "true",
+        "MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED": "true",
+        "MY_TRUSTHUB_ALERTS_ENABLED": "false",
+        "MY_TRUSTHUB_EMAIL_ENABLED": "false",
+        "MY_TRUSTHUB_EXPORT_ENABLED": "false",
+        "MY_TRUSTHUB_DELETE_ENABLED": "false"
+      },
+      "projects": [
+        {
+          "name": "Ask",
+          "keys": [
+            {
+              "key": "MY_TRUSTHUB_P13_DATABASE_URL",
+              "type": "sensitive",
+              "target": [
+                "production"
+              ]
+            },
+            {
+              "key": "MY_TRUSTHUB_P15_DATABASE_URL",
+              "type": "sensitive",
+              "target": [
+                "production"
+              ]
+            },
+            {
+              "key": "MY_TRUSTHUB_DATABASE_CA",
+              "type": "sensitive",
+              "target": [
+                "production"
+              ]
+            },
+            {
+              "key": "MY_TRUSTHUB_P13_CONTRACTOR_SECRET",
+              "type": "sensitive",
+              "target": [
+                "production"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Contractor",
+          "keys": [
+            {
+              "key": "MY_TRUSTHUB_P13_CONTRACTOR_SECRET",
+              "type": "sensitive",
+              "target": [
+                "production"
+              ]
+            },
+            {
+              "key": "MY_TRUSTHUB_CONTRACTOR_SAVE_ENABLED",
+              "type": "encrypted",
+              "target": [
+                "production"
+              ]
+            }
+          ]
+        }
+      ]
     }
   },
   "changeDetection": {
@@ -500,10 +678,10 @@
     "isolatedP15Passed": 64,
     "exactCsvAdapterTests": 6,
     "exactCsvAdapterPassed": 6,
-    "productionCurrentObservationCertified": false,
+    "productionCurrentObservationCertified": true,
     "productionFailureProtectionCertified": true,
     "massChangeQuarantinePreserved": true,
-    "classifier": "Approved status_transition v1 / license_status_changed / P2; event only, no Alert fanout",
+    "classifier": "dbpr_status_pair_transition v1 / license_status_changed / neutral P2; both primary and secondary fields material; no consumer Alert fanout",
     "scopedRuntimeWrapperChecks": [
       {
         "name": "scoped wrapper accepts baseline",
@@ -537,15 +715,252 @@
         "name": "expected deterministic observation/event counts",
         "pass": true
       }
-    ]
+    ],
+    "exactLookupAdapterTests": 9,
+    "exactLookupAdapterPassed": 9,
+    "v2RuntimeChecks": [
+      {
+        "name": "v2 registration creates no automatic coverage",
+        "pass": true
+      },
+      {
+        "name": "original v1 coverage remains enabled",
+        "pass": true
+      },
+      {
+        "name": "v1 contract remains immutable",
+        "pass": true
+      },
+      {
+        "name": "v2 source and clock semantics are immutable",
+        "pass": true
+      },
+      {
+        "name": "Consumer B cannot upgrade founder Watch",
+        "pass": true
+      },
+      {
+        "name": "Consumer B cannot read accepted private status",
+        "pass": true
+      },
+      {
+        "name": "missing explicit consent is denied",
+        "pass": true
+      },
+      {
+        "name": "unrecognized consent revision is denied",
+        "pass": true
+      },
+      {
+        "name": "stale version consent is denied",
+        "pass": true
+      },
+      {
+        "name": "unrelated capability cannot replace v1",
+        "pass": true
+      },
+      {
+        "name": "explicit consent atomically upgrades one Watch",
+        "pass": true
+      },
+      {
+        "name": "same consent retry is idempotent",
+        "pass": true
+      },
+      {
+        "name": "consent key cannot be reused for another version",
+        "pass": true
+      },
+      {
+        "name": "explicit consent atomically upgrades one Watch",
+        "pass": true
+      },
+      {
+        "name": "same consent retry is idempotent",
+        "pass": true
+      },
+      {
+        "name": "consent key cannot be reused for another version",
+        "pass": true
+      },
+      {
+        "name": "exactly one enabled v2 row per Watch",
+        "pass": true
+      },
+      {
+        "name": "v1 history is retained disabled after consent",
+        "pass": true
+      },
+      {
+        "name": "durable consent receipt captures both versions",
+        "pass": true
+      },
+      {
+        "name": "scoped targets contain only selected exact v2 credentials",
+        "pass": true
+      },
+      {
+        "name": "upgraded Watches no longer poll the bulk v1 path",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot read consumer.consumer_watches",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot read consumer.consumer_saved_entities",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot read network.source_observations",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot read ops.source_feed_checkpoints",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot read auth.users",
+        "pass": true
+      },
+      {
+        "name": "scoped runtime cannot release quarantine",
+        "pass": true
+      },
+      {
+        "name": "undated exact lookup yields accepted baseline",
+        "pass": true
+      },
+      {
+        "name": "identical scheduled run is deduplicated",
+        "pass": true
+      },
+      {
+        "name": "same pair on next check creates no change event",
+        "pass": true
+      },
+      {
+        "name": "source clock stays null while retrieval and observation clocks persist",
+        "pass": true
+      },
+      {
+        "name": "delinquent and active are separate retained material statuses",
+        "pass": true
+      },
+      {
+        "name": "complete unchanged exact lookup permits bounded no-change statement",
+        "pass": true
+      },
+      {
+        "name": "two missed daily checks remove current health",
+        "pass": true
+      },
+      {
+        "name": "primary status transition creates deterministic events",
+        "pass": true
+      },
+      {
+        "name": "repeated changed status creates no duplicate event",
+        "pass": true
+      },
+      {
+        "name": "secondary transition is independently material",
+        "pass": true
+      },
+      {
+        "name": "transport failure degrades previously successful source health",
+        "pass": true
+      },
+      {
+        "name": "failed source prevents no-change assurance",
+        "pass": true
+      },
+      {
+        "name": "a compatible exact lookup recovers from transient failure",
+        "pass": true
+      },
+      {
+        "name": "out-of-order lookup produces no change",
+        "pass": true
+      },
+      {
+        "name": "out-of-order observations remain historical",
+        "pass": true
+      },
+      {
+        "name": "schema failure records unsuccessful check",
+        "pass": true
+      },
+      {
+        "name": "schema drift requires review",
+        "pass": true
+      },
+      {
+        "name": "conflicting status at same retrieval time quarantines",
+        "pass": true
+      },
+      {
+        "name": "mismatched official and normalized statuses rejected",
+        "pass": true
+      },
+      {
+        "name": "duplicate exact identities rejected",
+        "pass": true
+      },
+      {
+        "name": "unrelated data fields rejected",
+        "pass": true
+      },
+      {
+        "name": "unapproved source URL rejected",
+        "pass": true
+      },
+      {
+        "name": "manufactured source-as-of rejected",
+        "pass": true
+      },
+      {
+        "name": "out-of-window retrieval clock rejected",
+        "pass": true
+      },
+      {
+        "name": "null payload rejected",
+        "pass": true
+      },
+      {
+        "name": "mass change invokes quarantine",
+        "pass": true
+      },
+      {
+        "name": "mass quarantine stays locked to operator review",
+        "pass": true
+      },
+      {
+        "name": "batch events cannot remain active after mass quarantine",
+        "pass": true
+      },
+      {
+        "name": "zero consumer Alerts and deliveries with all P11-P19 tables present",
+        "pass": true
+      },
+      {
+        "name": "Watch count preserved throughout consent",
+        "pass": true
+      }
+    ],
+    "productionSamePairNoEventCertified": true
   },
   "killSwitch": {
-    "offDeployment": "dpl_BdSnjtEpfnURhpkkR2m7jsbi1J87",
+    "offDeployment": "dpl_2GTbC9WkwCApxzBwuY9hn8fbwY6b",
+    "onDeployment": "dpl_BX7KeKhvK5sZWsBfQvt8ZzFu9abz",
     "masterOffWorkspace404": true,
     "masterOffHandoff404": true,
-    "cronInvocationWhileOff": "2026-09-10T13:37:50.012Z",
-    "checkpointCountUnchanged": true,
+    "cronInvocationWhileOff": "2026-09-10T15:07:25.436Z",
+    "checkpointCountBefore": 4,
+    "checkpointCountAfter": 4,
     "watchRowAndCoverageIntact": true,
+    "watchRowVersionBefore": 6,
+    "watchRowVersionAfter": 6,
     "monitoringStopsWithMaster": true,
     "masterRestored": true
   },
@@ -558,10 +973,16 @@
     "overflow": false,
     "namedControls": true,
     "ctaMinHeight": 44,
-    "nestedWorkspaceMainFixed": true
+    "nestedWorkspaceMainFixed": true,
+    "v2ConsentAndCurrentStatusVerified": true,
+    "upgradeConsentInitiallyUnchecked": true,
+    "sourceClocksSeparate": true,
+    "sourceHealthCurrent": true,
+    "browserErrors": 0,
+    "mobileCoverageWrapFixed": true
   },
   "networkSmoke": {
-    "checkedAt": "2026-09-10T13:40:44.579Z",
+    "checkedAt": "2026-09-10T15:09:36.084Z",
     "pages": [
       {
         "name": "ask",
@@ -653,29 +1074,67 @@
     "researchSessions": 2,
     "watches": 1,
     "enabledWatchCoverage": 1,
-    "sourceObservations": 1,
+    "disabledV1Coverage": 1,
+    "sourceObservations": 3,
+    "v2AcceptedObservations": 2,
     "changeEvents": 0,
     "alerts": 0,
     "deliveries": 0,
     "p13HandoffIntents": 6,
     "p13SaveHandoffs": 6,
-    "sourceCheckpoints": 2
+    "sourceCheckpoints": 4,
+    "checkedAt": "2026-09-10T15:08:50.120106+00:00"
   },
   "advisors": {
     "askSecurity": "No Stage 4 security regression; closed operations tables intentionally have RLS/no browser policies. Existing leaked-password-protection warning remains.",
     "askPerformance": "New foreign-key indexes added; only informational unused-index and Auth connection allocation findings remain.",
-    "contractor": "No database change in this release. Existing public-schema RLS, definer-view, mutable-search-path and public-extension findings remain."
+    "contractor": "No database change in this release. Existing public-schema RLS, definer-view, mutable-search-path and public-extension findings remain.",
+    "latestAsk": {
+      "security": [
+        {
+          "name": "rls_enabled_no_policy",
+          "level": "INFO",
+          "count": 20,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+        },
+        {
+          "name": "auth_leaked_password_protection",
+          "level": "WARN",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+        }
+      ],
+      "performance": [
+        {
+          "name": "unused_index",
+          "level": "INFO",
+          "count": 30,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+        },
+        {
+          "name": "auth_db_connections_absolute",
+          "level": "INFO",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/deployment/going-into-prod"
+        }
+      ]
+    }
   },
   "logs": {
     "newHandoffAndPollerUnhandledErrors": 0,
     "sourceFailureLoggedHonestly": true,
     "contractorRecent5xx": 0,
-    "existingAskWarning": "Unchanged business/claim pg sslmode deprecation warning; no connection failure"
+    "existingAskWarning": "Unchanged business/claim pg sslmode deprecation warning; no connection failure",
+    "askRecent5xx": 0,
+    "reviewedAt": "2026-09-10T15:10:00Z"
   },
   "prs": {
     "ask": [
       111,
-      112
+      112,
+      113,
+      115,
+      116
     ],
     "contractor": [
       55,
@@ -683,15 +1142,115 @@
     ]
   },
   "readiness": {
-    "stage4Closed": false,
-    "stage5Ready": false,
-    "blockingGaps": [
-      "The real scheduler fetch cannot produce a compatible current observation for exact CCC1332036: the official bulk feed omits it."
-    ],
+    "stage4Closed": true,
+    "stage5Ready": true,
+    "blockingGaps": [],
     "nonblockingDeferrals": [
       "Move aggregate cross-domain P18 resume",
       "Additional specialist profile/hub P13 support",
-      "Additional Watch adapters"
+      "Additional Watch adapters",
+      "Stage 5 Alert activation and later email/export/delete activation remain separate work"
     ]
+  },
+  "historicalV1SourceBoundary": {
+    "checkedAt": "2026-09-10T14:06:56.882Z",
+    "method": "HTTP HEAD plus official source-contract and renewal-FAQ review",
+    "httpStatus": 200,
+    "sourceAsOf": "2026-09-10T10:48:32Z",
+    "bytes": 46172026,
+    "extractUnchanged": true,
+    "productionMainsAndDeploymentsUnchanged": true,
+    "dailyCronStillConfigured": true,
+    "officialExplanation": "https://www2.myfloridalicense.com/construction-industry/faqs/",
+    "portalStatusInterpretation": "Delinquent,Active does not mean current active; Active describes the prior status.",
+    "portalPublicationClockCertified": false,
+    "compatibleAlternativeInputEstablished": false,
+    "sourceContractOrWatchSelectionChanged": false,
+    "note": "Historical diagnostic evidence before the separately registered v2 contract and explicit founder consent. Not a current acceptance blocker."
+  },
+  "sourceContract": {
+    "capability": "contractor.fl.dbpr.license_status",
+    "version": 2,
+    "namespace": "fl.dbpr.license",
+    "grain": "license_status",
+    "primarySource": "DBPR Verify a Licensee / Search by License Number",
+    "searchUrl": "https://www.myfloridalicense.com/wl11.asp?mode=1&search=LicNbr",
+    "secondarySource": "Construction bulk extract: discovery only; absence never implies status",
+    "credential": "CCC1332036",
+    "officialStatus": "Delinquent,Active",
+    "primaryStatus": "delinquent",
+    "secondaryStatus": "active",
+    "sourceAsOf": null,
+    "officialClockPolicy": "Not published by DBPR; never substitute render clock, expiry or retrieval time",
+    "ordering": "Retrieval ordering for this explicitly undated source; separate observation time",
+    "materialFields": [
+      "primary_status",
+      "secondary_status"
+    ],
+    "exclusions": [
+      "discipline",
+      "Sunbiz",
+      "permits",
+      "lawsuits",
+      "reviews",
+      "insurance cancellation"
+    ],
+    "immutable": true
+  },
+  "consent": {
+    "method": "Authorized founder canary browser form: unchecked consent selected, then Upgrade to version 2 submitted",
+    "revision": "dbpr-exact-lookup-v2/2026-09-10",
+    "occurredAt": "2026-09-10T15:02:49.138315Z",
+    "watchId": "1274ad8a-036f-4343-8245-1b684c8ce9f5",
+    "rowVersionBefore": 5,
+    "rowVersionAfter": 6,
+    "registrationDidNotChangeCoverage": true,
+    "missingConsentDenied": true,
+    "coverage": [
+      {
+        "status": "disabled",
+        "enabled_at": "2026-09-10T04:06:34.355317+00:00",
+        "disabled_at": "2026-09-10T15:02:49.138315+00:00",
+        "capability_id": "54000000-0000-4000-8000-000000000010",
+        "disabled_reason": "consumer_upgraded_to_version_2",
+        "capability_version": 1
+      },
+      {
+        "status": "enabled",
+        "enabled_at": "2026-09-10T15:02:49.138315+00:00",
+        "disabled_at": null,
+        "capability_id": "8f9106e4-383a-4a5d-a80c-d273b36b4840",
+        "disabled_reason": null,
+        "capability_version": 2
+      }
+    ],
+    "receiptEvents": [
+      {
+        "id": 266,
+        "metadata": {
+          "reason": "explicit_version_upgrade",
+          "consent_version": "dbpr-exact-lookup-v2/2026-09-10",
+          "to_capability_id": "8f9106e4-383a-4a5d-a80c-d273b36b4840"
+        },
+        "event_type": "coverage_removed",
+        "occurred_at": "2026-09-10T15:02:49.138315+00:00",
+        "capability_id": "54000000-0000-4000-8000-000000000010"
+      },
+      {
+        "id": 267,
+        "metadata": {
+          "reason": "explicit_version_upgrade",
+          "to_version": 2,
+          "from_version": 1,
+          "consent_version": "dbpr-exact-lookup-v2/2026-09-10",
+          "from_capability_id": "54000000-0000-4000-8000-000000000010",
+          "resulting_row_version": 6
+        },
+        "event_type": "coverage_added",
+        "occurred_at": "2026-09-10T15:02:49.138315+00:00",
+        "capability_id": "8f9106e4-383a-4a5d-a80c-d273b36b4840"
+      }
+    ],
+    "watchCountUnchanged": true
   }
 }

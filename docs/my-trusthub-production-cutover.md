@@ -1,9 +1,9 @@
 # My TrustHub production cutover plan
 
-Date: 2026-09-09
-Current recommendation: **STAGE 4 OPEN — SOURCE ACCEPTANCE GAP.** The exact Contractor P13 Save handoff and scoped daily DBPR scheduler are deployed and production-certified. The official bulk feed omits CCC1332036, so the scheduler correctly records degraded/unknown source health without a new accepted observation. Stage 5 is not ready. See docs/my-trusthub-stage-4.md and artifacts/my-trusthub-stage-4.json.
+Date: 2026-09-10
+Current recommendation: **STAGE 4 = CLOSED. READY FOR STAGE 5 = YES.** Production Contractor Save and daily exact-license DBPR v2 polling are certified. The founder explicitly accepted the source-contract change; one enabled v2 coverage row replaces v1 while retaining history. Two actual scheduler-path checks accepted Delinquent,Active with separate statuses and no manufactured official clock. Alerts and email remain OFF; canary-only remains ON and signup OFF. See [Stage 4 evidence](my-trusthub-stage-4.md) and ../artifacts/my-trusthub-stage-4.json.
 
-Stage 4 source follow-up, 2026-09-10 14:06 UTC: production revisions and daily cron remain unchanged. DBPR's unchanged bulk extract still omits the selected credential. Its official FAQ confirms that the portal's Delinquent,Active result cannot be treated as current active status. The source-acceptance gap remains open; no subscription, contract version or freshness clock was changed to bypass it.
+Earlier checkpoints and prelaunch instructions below are historical records, superseded for completed stages by their recorded authorized cutovers. They do not reopen Stage 4 or authorize later feature activation.
 
 ## Stage 3 closeout - 2026-09-09
 
@@ -258,14 +258,20 @@ This allows a narrower GO for Stage 0–2 while later stages remain off.
 
 | Hub | Save handoff | Resume handoff | Watch capability | Source monitoring | Deferred gaps |
 |---|---|---|---|---|---|
-| Ask | Live receiver for the exact Contractor profile only | Parent saved inventory remains readable; no cross-domain Move consumer | Parent UX for contractor.fl.dbpr.license_status v1 | Daily scoped DBPR scheduler deployed; current exact record unavailable | Accepted compatible unattended observation |
-| Contractor | Live: CCC1332036 / native 0001ac38-0c96-4e2f-8bf6-9ab243f7b79b only | Unsupported | contractor.fl.dbpr.license_status v1 | Parent-owned daily DBPR extract check | Other profiles and source states outside the approved v1 contract |
+| Ask | Live receiver for exact certified Contractor profile | Parent move.inventory/v1 retained; cross-domain consumer deferred | Parent UX for contractor.fl.dbpr.license_status v2; disabled v1 history retained | Daily exact DBPR lookup; two accepted real scheduler-path observations | Other hub/profile classes |
+| Contractor | Live: CCC1332036 / native 0001ac38-0c96-4e2f-8bf6-9ab243f7b79b only | Unsupported | contractor.fl.dbpr.license_status v2 through parent | Parent-owned daily exact license lookup | Additional profiles and other grains |
 | Move | Deferred; CTA omitted | Deferred: itemized calculator cannot reconstruct inventory from aggregates | Deferred | No My TrustHub adapter | Scoped P13 integration and aggregate P18 receiving model |
 | Lender | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
 | Insurance | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
 | Senior | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
 | Investor | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
 
-The former scoped-credential and scheduler blockers are resolved. Production Contractor Save, wrong issuer/audience, browser-state binding, exact-code replay, expiry, private Watch authorization and the master OFF/ON test passed. Alerts, email, export, deletion and signup remain OFF; the canary remains closed.
+The v2 primary source is DBPR Verify a Licensee / exact Search by License Number. Bulk data is discovery only and absence never implies status. The real CCC1332036 lookup returns Delinquent,Active, retained as primary delinquent and secondary active. source_as_of is NULL because DBPR publishes no record-as-of timestamp. Retrieved/checked-at and observation time are separate.
 
-Daily Vercel execution is configured at 12:41 UTC using the new two-function DBPR role. The real scheduler invocation fetched the official extract and stored a failed exact-record checkpoint at 2026-09-10T13:27:38.239Z. The exact license is absent from the feed; no replacement status or freshness was invented. This keeps Stage 4 open on the accepted-current-observation criterion. Additional hub Watch adapters and Move resume are explicitly nonblocking deferrals. The detailed source evidence, grants, clocks, counts and release snapshots are in the Stage 4 documents.
+At 15:02:49.138315 UTC the authorized founder canary explicitly submitted consent revision dbpr-exact-lookup-v2/2026-09-10. Registration had left v1 selected. The atomic operation disabled v1, enabled one v2 row and retained the same active Watch/history. Production scheduler invocations at 15:03:17.776 and 15:04:23.627 UTC accepted a baseline and unchanged check. Daily execution remains 12:41 UTC; its next future wall-clock run is September 11.
+
+The scoped ingestor has only the four fixed v1/v2 target/poll functions, zero table grants, no broad consumer access and no Alert fanout. P13 remains live for the exact Contractor profile only. Issuer/audience/state/replay/expiry and private Watch authorization pass. Version consent, status-pair changes, idempotence, failure health, ordering/schema protections and mass-change quarantine pass isolated certification. No fake observations entered production.
+
+The final master OFF/ON test preserved Watch row version 6 and one enabled v2 coverage; monitoring intentionally stops while master is OFF. All seven production homes and key routes passed. The 1440/390/320 consent and Watch UI checks passed after a mobile layout fix. Current health is complete/compatible/current. Counts are 1 Auth user, 1 profile, 2 Saved, 2 Projects, 2 research Sessions, 1 Watch, 1 enabled v2 coverage, 3 observations, 4 checkpoints, 0 change events, 0 Alerts and 0 deliveries.
+
+Alerts, email, export, deletion and signup remain OFF; master, Watch, certified source monitoring, the exact specialist handoff and canary-only remain ON. Move resume, other Save classes and additional Watch grains are explicitly nonblocking deferrals. **Stage 4 is closed; Stage 5 may begin as separate work.**
