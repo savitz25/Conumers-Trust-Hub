@@ -1,11 +1,11 @@
 import { LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
-import { removeWatchNotificationOverrideAction, setWatchNotificationOverrideAction, signOutAction, updateNotificationPreferencesAction } from "@/app/my/actions";
+import { cancelWorkspaceDeletionAction, removeWatchNotificationOverrideAction, requestDeletionConfirmationAction, requestExportAction, requestWorkspaceDeletionAction, setWatchNotificationOverrideAction, signOutAction, updateNotificationPreferencesAction } from "@/app/my/actions";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
 import { notFound } from "next/navigation";
 import { MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 
-export default async function YouPage() {
+export default async function YouPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { user } = await requireWorkspace();
   const adapter = await ProductionMyTrustHubAdapter.create();
   if (!adapter) notFound();
@@ -13,6 +13,10 @@ export default async function YouPage() {
   const saved = adapter ? await adapter.listSavedEntities() : [];
   const watches = (await Promise.all(saved.filter((row) => !row.removed_at).map(async (row) => ({ saved: row, watch: adapter ? await adapter.getWatch(row.saved_entity_id) : null })))).filter((row) => row.watch);
   const email = user.email ?? "Email unavailable";
+  const query = await searchParams;
+  const exportRef = typeof query.export === "string" ? query.export : null;
+  const deletionRef = typeof query.deletion === "string" ? query.deletion : null;
+  const existingDeletion = deletionRef ? await adapter.getWorkspaceDeletionStatus(deletionRef) : null;
 
   return (
     <MyTrustHubShell active="You" email={email}>
@@ -52,13 +56,35 @@ export default async function YouPage() {
           <p className="myth-muted">Businesses cannot see your shortlist. Saving does not create a Watch, endorsement, ranking signal, claim, or management grant.</p>
         </article>
         <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2><ShieldCheck aria-hidden="true" />Your data</h2></div>
+          <p>Download a copy of your private My TrustHub research, or request workspace deletion. Public regulatory evidence and Business Manager records are independent and are not removed by consumer deletion.</p>
+          <div className="myth-form-row">
+            <form action={requestExportAction}><button className="myth-secondary" type="submit">Download my data</button></form>
+            {exportRef ? <ExportStatusCard adapter={adapter} exportRef={exportRef} /> : null}
+          </div>
+          <p className="myth-muted">Exports are private, expire after seven days, and are available only to this account.</p>
+          <div className="myth-danger-zone">
+            <h3>Delete My TrustHub workspace</h3>
+            <p>This starts a seven-day grace period. You can cancel during the grace period. Deletion stops Watches and removes private workspace data while shared public records remain.</p>
+            <form action={requestDeletionConfirmationAction}><button className="myth-secondary" type="submit">Start deletion request</button></form>
+            {deletionRef && existingDeletion ? <div><p role="status">Deletion status: {existingDeletion.status}. Grace ends {existingDeletion.graceExpiresAt ?? "after the review period"}.</p>{existingDeletion.status === "grace_period" ? <form action={cancelWorkspaceDeletionAction}><input type="hidden" name="deletionRef" value={deletionRef} /><button className="myth-secondary" type="submit">Cancel deletion</button></form> : null}</div> : null}
+            {typeof query.delete_code === "string" ? <form action={requestWorkspaceDeletionAction}><label htmlFor="delete-confirmation">Enter the one-time confirmation code</label><input id="delete-confirmation" name="confirmationCode" required maxLength={120} /><button className="myth-danger" type="submit">Confirm workspace deletion</button></form> : null}
+          </div>
+        </article>
+        <article className="myth-panel myth-span-three">
           <div className="myth-panel-heading"><h2><ShieldCheck aria-hidden="true" />Separate from Business Manager</h2></div>
           <p>My TrustHub is your consumer workspace. Business Manager is a separate business-authorized product with separate memberships and management grants.</p>
-          <p className="myth-muted">Export, account deletion, and public signup remain disabled. Notification controls above affect email delivery only; Watches and in-app Alerts remain separate.</p>
+          <p className="myth-muted">Notification controls affect email delivery only; Watches and in-app Alerts remain separate. Public signup is closed while this product is in its internal canary posture.</p>
         </article>
       </section>
     </MyTrustHubShell>
   );
+}
+
+async function ExportStatusCard({ adapter, exportRef }: { adapter: ProductionMyTrustHubAdapter; exportRef: string }) {
+  const status = await adapter.getExportStatus(exportRef);
+  if (!status) return <span className="myth-muted">Export request not found.</span>;
+  return <span className="myth-muted" role="status">Export: {status.status}{status.artifactAvailable ? <> · <a href={`/api/my-trusthub/export/${encodeURIComponent(exportRef)}`}>Download file</a></> : " · preparing securely"}</span>;
 }
 
 async function WatchNotificationSettings({ watch, entityName, adapter }: { watch: { watch_id: string; watch_status: string }; entityName: string; adapter: ProductionMyTrustHubAdapter }) {

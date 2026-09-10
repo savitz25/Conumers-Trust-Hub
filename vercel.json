@@ -4,6 +4,7 @@
   "crons": [
     { "path": "/api/cron/my-trusthub-dbpr", "schedule": "41 12 * * *" },
     { "path": "/api/cron/my-trusthub-notifications", "schedule": "7 * * * *" },
+    { "path": "/api/cron/my-trusthub-lifecycle", "schedule": "17 * * * *" },
     { "path": "/api/cron/regulatory-monitoring", "schedule": "17 13 * * *" },
     { "path": "/api/cron/search-canaries", "schedule": "23 * * * *" }
   ]

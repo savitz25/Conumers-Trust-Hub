@@ -2,8 +2,8 @@ import "server-only";
 import { Pool } from "pg";
 
 const pools = new Map<string, Pool>();
-export function scopedRuntime(kind: "broker" | "dbpr" | "notification") {
-  const key = kind === "broker" ? "MY_TRUSTHUB_P13_DATABASE_URL" : kind === "notification" ? "MY_TRUSTHUB_P17_DATABASE_URL" : "MY_TRUSTHUB_P15_DATABASE_URL";
+export function scopedRuntime(kind: "broker" | "dbpr" | "notification" | "export" | "deletion") {
+  const key = kind === "broker" ? "MY_TRUSTHUB_P13_DATABASE_URL" : kind === "notification" ? "MY_TRUSTHUB_P17_DATABASE_URL" : kind === "export" ? "MY_TRUSTHUB_P19_EXPORT_DATABASE_URL" : kind === "deletion" ? "MY_TRUSTHUB_P19_DELETE_DATABASE_URL" : "MY_TRUSTHUB_P15_DATABASE_URL";
   const url = process.env[key];
   const ca = process.env.MY_TRUSTHUB_DATABASE_CA;
   if (!url || !ca) throw new Error("SCOPED_RUNTIME_UNAVAILABLE");

@@ -166,6 +166,8 @@ export interface WatchSourceHealthRow {
   monitoring_status: string;
   no_change_eligible: boolean;
 }
+export interface ExportStatus { exportRef: string; version: string; status: string; requestedAt: string | null; expiresAt: string | null; artifactAvailable: boolean; artifactRef: string | null; }
+export interface DeletionStatus { deletionRef: string; status: string; requestedAt: string | null; graceExpiresAt: string | null; completedAt: string | null; }
 
 type AlertListDbRow = {
   alert_id: string; severity: "P0" | "P1" | "P2"; read_state: "unread" | "read";
@@ -400,6 +402,33 @@ export class ProductionMyTrustHubAdapter {
     const row = one<Record<string, unknown>>(await this.rpc("get_notification_preferences"));
     if (!row) throw new Error("Notification preferences unavailable");
     return { p0EmailEnabled: Boolean(row.p0_email_enabled), p1DigestEnabled: Boolean(row.p1_digest_enabled), p2DigestEnabled: Boolean(row.p2_digest_enabled), periodicWatchSummaryEnabled: Boolean(row.periodic_watch_summary_enabled), timezone: String(row.timezone || "UTC"), digestTimeLocal: String(row.digest_time_local || "08:00:00"), rowVersion: Number(row.row_version) };
+  }
+
+  async requestExport(idempotencyKey: string): Promise<string> {
+    const value = await this.rpc<string>("request_export", { p_idempotency_key: idempotencyKey });
+    return String(value);
+  }
+  async getExportStatus(exportRef: string): Promise<ExportStatus | null> {
+    const row = one<Record<string, unknown>>(await this.rpc("get_export_status", { p_job_id: exportRef }));
+    if (!row) return null;
+    return { exportRef: String(row.export_ref), version: String(row.version), status: String(row.status), requestedAt: row.requested_at as string | null, expiresAt: row.expires_at as string | null, artifactAvailable: Boolean(row.artifact_available), artifactRef: row.artifact_ref as string | null };
+  }
+  async downloadExport(exportRef: string): Promise<Record<string, unknown> | null> {
+    return one<Record<string, unknown>>(await this.rpc("download_export", { p_job_id: exportRef }));
+  }
+  async requestWorkspaceDeletion(confirmationCode: string, idempotencyKey: string): Promise<string> {
+    return String(await this.rpc("request_workspace_deletion", { p_confirmation_code: confirmationCode, p_idempotency_key: idempotencyKey }));
+  }
+  async issueDeletionConfirmation(): Promise<string> {
+    return String(await this.rpc("issue_workspace_deletion_confirmation"));
+  }
+  async cancelWorkspaceDeletion(deletionRef: string): Promise<boolean> {
+    return Boolean(await this.rpc("cancel_workspace_deletion", { p_job_id: deletionRef }));
+  }
+  async getWorkspaceDeletionStatus(deletionRef: string): Promise<DeletionStatus | null> {
+    const row = one<Record<string, unknown>>(await this.rpc("get_workspace_deletion_status", { p_job_id: deletionRef }));
+    if (!row) return null;
+    return { deletionRef: String(row.deletion_ref), status: String(row.status), requestedAt: row.requested_at as string | null, graceExpiresAt: row.grace_expires_at as string | null, completedAt: row.completed_at as string | null };
   }
 
   async updateNotificationPreferences(input: Omit<NotificationPreferences, "rowVersion"> & { expectedRowVersion: number; idempotencyKey: string }): Promise<number> {
