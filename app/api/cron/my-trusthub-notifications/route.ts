@@ -3,7 +3,7 @@ import { authorized, safeHeaders } from "@/lib/my-trusthub/p13-runtime";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { scopedRuntime } from "@/lib/my-trusthub/scoped-runtime";
 import { sendMyTrustHubEmail } from "@/lib/my-trusthub/notification-mail";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 180;
@@ -16,6 +16,11 @@ export async function GET(request: Request) {
   if (!isMyTrustHubFeatureEnabled("MY_TRUSTHUB_EMAIL_ENABLED")) return NextResponse.json({ outcome: "disabled", sent: 0 }, { headers: safeHeaders });
   try {
     const db = scopedRuntime("notification");
+    let transportCanary: string | null = null;
+    if (process.env.MY_TRUSTHUB_CANARY_ONLY?.toLowerCase() === "true" && (await db.query<{ transport_canary_needed: boolean }>("select ops.transport_canary_needed() as transport_canary_needed")).rows[0]?.transport_canary_needed) {
+      const mail = await sendMyTrustHubEmail({ to: "hello@asktrusthub.com", subject: "My TrustHub internal notification delivery test", text: "My TrustHub internal notification delivery test. This message is a transport canary and does not describe a real public-record change." });
+      transportCanary = (await db.query<{ record_transport_canary: string }>("select ops.record_transport_canary($1,$2,$3,$4) as record_transport_canary", [createHash("sha256").update("hello@asktrusthub.com").digest("hex"), mail.outcome === "success" ? "accepted" : "failed", mail.providerMessageRef ?? null, mail.outcome === "success" ? null : mail.outcome])).rows[0]?.record_transport_canary ?? null;
+    }
     const candidates = await db.query<{ alert_id: string; idempotency_key: string }>("select * from ops.pending_alert_delivery_candidates($1)", [100]);
     let enqueued = 0;
     for (const candidate of candidates.rows) {
@@ -45,8 +50,8 @@ export async function GET(request: Request) {
       digestBatches += 1;
     }
     const outcome = failed ? "completed_with_failures" : "complete";
-    console.info(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome, enqueued, p0: p0.rows.length, sent, failed, digest_batches: digestBatches }));
-    return NextResponse.json({ outcome, enqueued, sent, failed, digestBatches }, { headers: safeHeaders });
+    console.info(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome, enqueued, p0: p0.rows.length, sent, failed, digest_batches: digestBatches, transport_canary: Boolean(transportCanary) }));
+    return NextResponse.json({ outcome, enqueued, sent, failed, digestBatches, transportCanary: Boolean(transportCanary) }, { headers: safeHeaders });
   } catch (error) {
     console.error(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome: "runtime_failed", code: error instanceof Error ? error.name : "unknown", message: error instanceof Error ? error.message.slice(0, 180) : "unknown" }));
     return NextResponse.json({ outcome: "runtime_failed" }, { status: 503, headers: safeHeaders });
