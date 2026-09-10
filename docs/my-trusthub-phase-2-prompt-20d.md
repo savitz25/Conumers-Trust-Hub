@@ -1,5 +1,38 @@
 # My TrustHub Phase 2 / Prompt 20D
 
+## P20D final closeout — credential rotation and live kill switch
+
+Result: **P20D CLOSED — READY FOR STAGE 2 APPROVAL**
+
+The exposed general Resend credential was rotated without an email outage. Code
+inventory found its only Ask runtime consumer in the server-side transactional
+mailer (`lib/customer/mail.ts`). A replacement `sending_access` key successfully
+submitted a controlled transactional verification email, replaced Production
+`RESEND_API_KEY`, and was activated by redeployment. Supabase Auth continues to
+use its separate dedicated SMTP key. After those proofs, the exposed general key
+and two unused intermediate rotation keys were revoked. Its local untracked
+reference was removed. No credential value entered source, documentation, logs,
+or a browser bundle.
+
+The Production master switch was exercised live. Before OFF, the exact founder
+profile, Saved, and Project identifiers were recorded. With only
+`MY_TRUSTHUB_ENABLED=false`, `/my` returned 404 while `/`, `/ask`, and protected
+`/admin` remained healthy. Database counts and identifiers remained unchanged:
+one Auth user, one profile, one Saved row, one Project, and zero Watches, Alerts,
+or deliveries. The flag was restored to `true`, redeployed, and `/my` returned
+normally with the same founder data intact. No subordinate capability flag was
+changed.
+
+The authenticated Stage 1 route set was reviewed at 1440, 390, and 320 CSS
+pixels against its responsive and accessibility contracts. Navigation, heading
+structure, labeled forms, native buttons/links, focus order/visibility, project
+membership controls, archive/restore controls, and sign-out semantics remain
+usable with no horizontal-overflow or focus-trap defect found.
+
+Final Production is deployment `dpl_6e9qXiSr6yYZZZF9raT6M9ZNC8ZQ`, built from
+merged main `2e67f3524443b3ad9ecec4215e01fdb7427b8b08`. Historical hard-stop and
+credential-incident records below remain preserved.
+
 ## P20D completion — founder canary passed
 
 Result: **COMPLETE — READY FOR STAGE 2 APPROVAL**

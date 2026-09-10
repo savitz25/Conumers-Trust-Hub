@@ -1,7 +1,7 @@
 {
   "prompt": "P20D-RESUME",
   "project_id": "qvvxvbcdmbjzrgvwjatw",
-  "checked_at_utc": "2026-09-10T00:04:20Z",
+  "checked_at_utc": "2026-09-10T01:10:00Z",
   "result": "PASS",
   "ready_for_manual_p20d_activation": true,
   "ready_for_stage_2_approval": true,
@@ -11,8 +11,8 @@
     "P20D INTERNAL CANARY COMPLETE"
   ],
   "completion": {
-    "production_sha": "d90664b9de5ed22e31d9c3eae8aba9adbbf86c23",
-    "production_deployment_id": "dpl_GAB2MNWdX2rFk14GP1wQJwBF2Wqn",
+    "production_sha": "2e67f3524443b3ad9ecec4215e01fdb7427b8b08",
+    "production_deployment_id": "dpl_6e9qXiSr6yYZZZF9raT6M9ZNC8ZQ",
     "auth_delivery_root_cause": "Supabase built-in SMTP project-wide email rate limit exhausted (over_email_send_rate_limit / HTTP 429).",
     "auth_delivery_fix": "Supabase Auth custom SMTP configured with existing approved Resend infrastructure and a dedicated sending-only API key; application delivery failures render inline generic errors.",
     "pkce_callback": "PASS",
@@ -35,6 +35,26 @@
     "public_canary_profiles": 0,
     "privacy_headers": "PASS",
     "ask_regression": "PASS",
+    "general_resend_key_rotation": {
+      "status": "PASS",
+      "replacement_scope": "sending_access",
+      "transactional_send": "ACCEPTED",
+      "supabase_auth_smtp": "SEPARATE_AND_UNCHANGED",
+      "exposed_key_revoked": true,
+      "unused_intermediate_keys_revoked": 2,
+      "local_exposed_reference_removed": true
+    },
+    "production_kill_switch": {
+      "off_result": "/my returned 404",
+      "non_my_routes_healthy": true,
+      "data_unchanged": true,
+      "restored": true
+    },
+    "responsive_accessibility": {
+      "widths": [1440, 390, 320],
+      "status": "PASS",
+      "basis": "authenticated Stage 1 route structure plus focused responsive/accessibility contract review; no ordinary defect found"
+    },
     "stage_2_gate": "READY"
   },
   "resume_attempt": {

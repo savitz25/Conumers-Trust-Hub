@@ -3,6 +3,24 @@
 Date: 2026-09-09
 Current recommendation: **P20D COMPLETE; READY FOR STAGE 2 APPROVAL**. Closed Stage 1 is live for exactly one canonical founder identity. Auth delivery, PKCE, profile, Saved, Projects, runtime owner isolation, and production privacy/regression proofs have passed. Watches, Alerts, deliveries, and source observations remain zero. Public signup and every later-stage capability remain off.
 
+## P20D final closeout - 2026-09-09
+
+The exposed general Resend key was replaced with a minimum-permission
+`sending_access` key after inventory confirmed the Ask server-side transactional
+mailer as its only application consumer. A controlled transactional send passed,
+Production `RESEND_API_KEY` was updated and redeployed, and Supabase Auth's
+separate SMTP credential remained unchanged. The exposed key and two unused
+intermediate rotation keys were then revoked; the stale local reference was
+removed. No secret value was committed or logged.
+
+The live master switch was set false and redeployed: `/my` returned 404 while
+the homepage, Ask, and protected Admin remained healthy. The exact founder
+profile, Saved, and Project identifiers and counts were unchanged, with Watches,
+Alerts, and deliveries still zero. The switch was restored to true and deployed
+as `dpl_6e9qXiSr6yYZZZF9raT6M9ZNC8ZQ`. The 1440/390/320 responsive and
+accessibility closeout found no overflow, navigation obstruction, semantic,
+focus, form-label, control, or sign-out defect. P20D is closed.
+
 ## P20D completion - 2026-09-09
 
 Production merge `d90664b9de5ed22e31d9c3eae8aba9adbbf86c23` is live as
