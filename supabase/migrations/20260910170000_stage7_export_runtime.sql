@@ -46,6 +46,8 @@ do $$ begin
   if not exists (select 1 from pg_roles where rolname='myth_export_worker') then create role myth_export_worker login; end if;
   if not exists (select 1 from pg_roles where rolname='myth_deletion_worker') then create role myth_deletion_worker login; end if;
 end $$;
+alter role myth_export_worker login;
+alter role myth_deletion_worker login;
 grant usage on schema ops to myth_export_worker, myth_deletion_worker;
 grant select on ops.consumer_export_jobs to myth_export_worker;
 grant select on ops.consumer_deletion_jobs, ops.consumer_deletion_steps to myth_deletion_worker;
