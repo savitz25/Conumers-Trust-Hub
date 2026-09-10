@@ -1,7 +1,15 @@
 # My TrustHub production cutover plan
 
 Date: 2026-09-09
-Current recommendation: **P20D COMPLETE; READY FOR STAGE 2 APPROVAL**. Closed Stage 1 is live for exactly one canonical founder identity. Auth delivery, PKCE, profile, Saved, Projects, runtime owner isolation, and production privacy/regression proofs have passed. Watches, Alerts, deliveries, and source observations remain zero. Public signup and every later-stage capability remain off.
+Current recommendation: **STAGE 2 COMPLETE; READY FOR STAGE 3 APPROVAL**. The complete parent consumer workspace is live for exactly one canonical founder identity. Home, full Projects, Saved organization/private notes, You/privacy, guest restore, runtime owner isolation, kill-switch survival, responsive/accessibility, and production regression proofs have passed. Watches, Alerts, deliveries, and source observations remain zero. Public signup and every Stage 3+ capability remain off.
+
+## Stage 2 closeout - 2026-09-09
+
+Stage 2 code merged as `7674cb6207bb8e4eadd16bb2380bc66dd20174de` and was production-certified on the matching deployment lineage. The workspace now includes coherent Home, Projects, Saved, and You navigation; many-to-many Saved membership; Project rename/archive/restore; private notes; and explicit P12 guest-import preview/commit behavior.
+
+The live founder canary completed duplicate-Save, multi-Project, membership removal/re-addition, archive/restore, private-note create/edit/delete, device-local guest restore, sign-out/sign-in, and 1440/390/320 responsive checks. The master gate was deployed OFF and returned `/my` as unavailable without changing any consumer row, then restored ON. `/`, `/ask`, and protected `/admin` remained healthy throughout.
+
+Final controlled state is one confirmed canonical Auth user, one Profile, one Saved record, two Projects, two memberships, zero Notes, one sanitized guest-import receipt/item, and zero Watches, Alerts, deliveries, or source observations. Full evidence and remaining boundaries are in `docs/my-trusthub-stage-2.md` and `artifacts/my-trusthub-stage-2.json`.
 
 ## P20D final closeout - 2026-09-09
 
