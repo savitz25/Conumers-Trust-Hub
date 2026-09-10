@@ -33,6 +33,9 @@ export default async function SignInPage({
         {error === "unavailable" ? <p className="myth-warning" role="alert">Sign-in is temporarily unavailable. Please try again later.</p> : null}
         {error === "delivery" ? <p className="myth-warning" role="alert">We could not send the sign-in link. Please wait a moment and try again.</p> : null}
         {error === "captcha" ? <p className="myth-warning" role="alert">Complete the security check, then try again.</p> : null}
+        {error === "callback_missing_code" ? <p className="myth-warning" role="alert">That sign-in link is incomplete. Request a fresh link and try again.</p> : null}
+        {error === "callback_exchange" ? <p className="myth-warning" role="alert">That sign-in link expired or could not be verified. Request a fresh link and try again.</p> : null}
+        {error === "callback_session" || error === "callback_unavailable" ? <p className="myth-warning" role="alert">We could not finish sign-in safely. Request a fresh link and try again.</p> : null}
         {flags.MY_TRUSTHUB_ENABLED && !missing ? (
           <form action={requestMagicLinkAction} className="myth-form">
             <label htmlFor="email">Email</label>
