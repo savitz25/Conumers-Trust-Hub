@@ -106,6 +106,8 @@ export async function requestMagicLinkAction(formData: FormData) {
   const url = getMyTrustHubSupabaseUrl();
   const key = getMyTrustHubSupabasePublishableKey();
   if (!client || !url || !key) redirect("/my/sign-in?error=unavailable");
+  const captchaToken = String(formData.get("captchaToken") ?? "").trim();
+  if (process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY && !captchaToken) redirect("/my/sign-in?error=captcha");
 
   const origin = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
   const { error } = await client.auth.signInWithOtp({
@@ -113,6 +115,7 @@ export async function requestMagicLinkAction(formData: FormData) {
     options: {
       emailRedirectTo: `${origin}/auth/callback?next=/my`,
       shouldCreateUser: flags.MY_TRUSTHUB_SIGNUP_ENABLED && !canaryOnly,
+      ...(captchaToken ? { captchaToken } : {}),
     },
   });
   if (error) {

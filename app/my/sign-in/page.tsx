@@ -4,6 +4,7 @@ import { requestMagicLinkAction } from "@/app/my/actions";
 import { isMyTrustHubCanaryOnly } from "@/lib/my-trusthub/canary-access";
 import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
 import { getMyTrustHubFeatureFlags } from "@/lib/my-trusthub/feature-flags";
+import { TurnstileField } from "@/components/my-trusthub/turnstile-field";
 
 export default async function SignInPage({
   searchParams,
@@ -31,10 +32,12 @@ export default async function SignInPage({
         {error === "invalid" ? <p className="myth-warning" role="alert">Enter a valid email address.</p> : null}
         {error === "unavailable" ? <p className="myth-warning" role="alert">Sign-in is temporarily unavailable. Please try again later.</p> : null}
         {error === "delivery" ? <p className="myth-warning" role="alert">We could not send the sign-in link. Please wait a moment and try again.</p> : null}
+        {error === "captcha" ? <p className="myth-warning" role="alert">Complete the security check, then try again.</p> : null}
         {flags.MY_TRUSTHUB_ENABLED && !missing ? (
           <form action={requestMagicLinkAction} className="myth-form">
             <label htmlFor="email">Email</label>
             <input id="email" name="email" type="email" autoComplete="email" required maxLength={254} />
+            {process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY ? <TurnstileField siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} /> : null}
             <button className="myth-primary" type="submit">Email me a sign-in link</button>
           </form>
         ) : (
