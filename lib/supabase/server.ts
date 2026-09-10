@@ -22,7 +22,7 @@ export async function createMyTrustHubSupabaseClient() {
             cookieStore.set(name, value, options);
           }
         } catch {
-          // Server Components cannot write cookies. Middleware refreshes sessions.
+          console.warn(JSON.stringify({ level: "warn", event: "my_trusthub_cookie_write_failed", surface: "server_client" }));
         }
       },
     },
