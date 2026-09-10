@@ -6,13 +6,12 @@ import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
 
 type RpcResult = { data: unknown; error: { message: string; code?: string } | null };
 type QueryResult = PromiseLike<RpcResult>;
+type SelectQuery = QueryResult & { eq(column: string, value: unknown): QueryResult };
 
 interface SchemaApi {
   rpc(name: string, args?: Record<string, unknown>): Promise<RpcResult>;
   from(table: string): {
-    select(columns?: string): {
-      eq(column: string, value: unknown): QueryResult;
-    };
+    select(columns?: string): SelectQuery;
   };
 }
 
@@ -42,6 +41,28 @@ export interface SavedEntityRow {
   saved_at: string;
   removed_at: string | null;
   project_ids: string[];
+}
+
+export interface PrivateNoteRow {
+  id: string;
+  project_id: string | null;
+  saved_entity_id: string | null;
+  note_type: "general" | "research" | "reminder";
+  body: string;
+  row_version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GuestImportPreviewRow {
+  client_item_id: string;
+  item_status: "accepted" | "duplicate" | "review_required" | "unresolved" | "invalid";
+  valid: boolean;
+  importable: boolean;
+  binding_id: string | null;
+  network_entity_id: string | null;
+  existing_saved_entity_id: string | null;
+  project_assignment_eligible: boolean;
 }
 
 function rows<T>(value: unknown): T[] {
@@ -147,6 +168,22 @@ export class ProductionMyTrustHubAdapter {
     });
   }
 
+  async updateProject(input: {
+    projectId: string;
+    rowVersion: number;
+    name: string;
+    locationContext?: Record<string, string>;
+    targetDate?: string;
+  }): Promise<number> {
+    return this.rpc("update_project", {
+      p_project_id: input.projectId,
+      p_expected_row_version: input.rowVersion,
+      p_name: input.name,
+      p_location_context: input.locationContext ?? null,
+      p_target_date: input.targetDate ?? null,
+    });
+  }
+
   async archiveProject(projectId: string, rowVersion: number): Promise<number> {
     return this.rpc("archive_project", {
       p_project_id: projectId,
@@ -180,5 +217,71 @@ export class ProductionMyTrustHubAdapter {
       p_project_id: projectId,
       p_saved_entity_id: savedEntityId,
     });
+  }
+
+
+  async listNotes(): Promise<PrivateNoteRow[]> {
+    const result = await this.client
+      .schema("consumer")
+      .from("consumer_notes")
+      .select("id,project_id,saved_entity_id,note_type,body,row_version,created_at,updated_at");
+    if (result.error) fail(result.error);
+    return rows<PrivateNoteRow>(result.data);
+  }
+
+  async createNote(input: {
+    requestId: string;
+    projectId?: string;
+    savedEntityId?: string;
+    noteType: "general" | "research" | "reminder";
+    body: string;
+  }): Promise<string> {
+    return this.rpc("create_note", {
+      p_client_request_id: input.requestId,
+      p_project_id: input.projectId ?? null,
+      p_saved_entity_id: input.savedEntityId ?? null,
+      p_note_type: input.noteType,
+      p_body: input.body,
+    });
+  }
+
+  async updateNote(input: {
+    noteId: string;
+    rowVersion: number;
+    noteType: "general" | "research" | "reminder";
+    body: string;
+  }): Promise<number> {
+    return this.rpc("update_note", {
+      p_note_id: input.noteId,
+      p_expected_row_version: input.rowVersion,
+      p_note_type: input.noteType,
+      p_body: input.body,
+    });
+  }
+
+  async deleteNote(noteId: string): Promise<boolean> {
+    return this.rpc("delete_note", { p_note_id: noteId });
+  }
+
+  async previewGuestImport(payload: Record<string, unknown>): Promise<GuestImportPreviewRow[]> {
+    return rows<GuestImportPreviewRow>(
+      await this.rpc("preview_guest_import", { p_payload: payload }),
+    );
+  }
+
+  async commitGuestImport(input: {
+    payload: Record<string, unknown>;
+    selectedItemIds: string[];
+    idempotencyKey: string;
+    projectId?: string;
+  }): Promise<Record<string, unknown> | null> {
+    return one<Record<string, unknown>>(
+      await this.rpc("commit_guest_import", {
+        p_payload: input.payload,
+        p_selected_item_ids: input.selectedItemIds,
+        p_idempotency_key: input.idempotencyKey,
+        p_project_id: input.projectId ?? null,
+      }),
+    );
   }
 }

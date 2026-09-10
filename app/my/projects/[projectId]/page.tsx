@@ -6,6 +6,7 @@ import {
   archiveProjectAction,
   removeSavedFromProjectAction,
   restoreProjectAction,
+  updateProjectAction,
 } from "@/app/my/actions";
 import {
   MyTrustHubEmpty,
@@ -16,12 +17,15 @@ import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 
 export default async function ProjectPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ projectId: string }>;
+  searchParams: Promise<{ error?: string; updated?: string }>;
 }) {
-  const [{ projectId }, workspace] = await Promise.all([
+  const [{ projectId }, workspace, query] = await Promise.all([
     params,
     requireWorkspace(),
+    searchParams,
   ]);
   const { adapter, user } = workspace;
   const [project, memberships, saved] = await Promise.all([
@@ -51,6 +55,20 @@ export default async function ProjectPage({
         {String(project.life_event_type).replaceAll("_", " ")} · Saved
         Research stays preserved through archive and restore.
       </PageHeading>
+      {query.updated ? <p className="myth-notice" role="status">Project updated.</p> : null}
+      {query.error ? <p className="myth-warning" role="alert">That Project change could not be completed. Refresh and try again.</p> : null}
+      <details className="myth-create">
+        <summary>Edit Project</summary>
+        <form action={updateProjectAction} className="myth-form myth-form-grid">
+          <input type="hidden" name="projectId" value={projectId} />
+          <input type="hidden" name="rowVersion" value={rowVersion} />
+          <label htmlFor="edit-project-name">Project name</label>
+          <input id="edit-project-name" name="name" defaultValue={String(project.name)} required maxLength={120} />
+          <label htmlFor="edit-target-date">Target date <span>(optional)</span></label>
+          <input id="edit-target-date" name="targetDate" type="date" defaultValue={project.target_date ? String(project.target_date) : ""} />
+          <button className="myth-primary" type="submit">Save changes</button>
+        </form>
+      </details>
       <div className="myth-actions">
         {status === "active" ? (
           <form action={archiveProjectAction}>

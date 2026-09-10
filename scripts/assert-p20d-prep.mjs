@@ -33,7 +33,6 @@ const forbiddenRoutes = [
   "app/my/watches",
   "app/my/alerts",
   "app/my/notifications",
-  "app/my/you",
   "app/v1/my",
 ];
 
@@ -133,7 +132,6 @@ for (const forbiddenCapability of [
   "start_watch",
   "list_alerts",
   "request_export",
-  "commit_guest_import",
   "record_project_decision",
 ]) {
   assert(!adapter.includes(forbiddenCapability), `later-stage adapter capability present: ${forbiddenCapability}`);

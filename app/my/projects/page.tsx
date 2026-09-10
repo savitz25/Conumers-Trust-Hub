@@ -15,15 +15,16 @@ const templates = [
   ["Blank Project", "blank"],
 ] as const;
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { adapter, user } = await requireWorkspace();
-  const projects = await adapter.listProjects();
+  const [projects, { error }] = await Promise.all([adapter.listProjects(), searchParams]);
   const canCreate = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_PROJECTS_ENABLED");
   return (
     <MyTrustHubShell active="Projects" email={user.email ?? "Signed in"}>
       <PageHeading eyebrow="PROJECTS / LIFE EVENTS" title="Projects">
         Organize saved research around a decision. A Project is optional.
       </PageHeading>
+      {error ? <p className="myth-warning" role="alert">That Project change could not be completed. Refresh and try again.</p> : null}
       {canCreate ? (
         <details className="myth-create">
           <summary>Create Project</summary>
