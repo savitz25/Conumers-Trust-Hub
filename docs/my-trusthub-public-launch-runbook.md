@@ -4,7 +4,7 @@
 2. Confirm the intended `origin/main` commit and production deployment.
 3. Check Auth SMTP, notification worker, and Resend health.
 4. Check the daily DBPR Watch poller and source health.
-5. Verify the chosen CAPTCHA provider secret and Supabase CAPTCHA/abuse controls.
+5. Verify Cloudflare Turnstile is enabled in Supabase Auth Attack Protection and the public site key is present; the secret remains in Supabase.
 6. Set `MY_TRUSTHUB_CANARY_ONLY=false` and `MY_TRUSTHUB_SIGNUP_ENABLED=true`.
 7. Enable Supabase public signup and retain email confirmation.
 8. Smoke create-account, verified magic-link return, Save, Project, export, and deletion controls.

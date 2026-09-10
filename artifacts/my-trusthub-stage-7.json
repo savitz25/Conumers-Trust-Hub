@@ -12,8 +12,9 @@
   "launch_configuration_documented": { "MY_TRUSTHUB_CANARY_ONLY": false, "MY_TRUSTHUB_SIGNUP_ENABLED": true, "supabase_public_signup": true },
   "export": { "version": "mytrusthub-export/v1", "expiry": "7 days", "owner_only": true, "private_no_store": true },
   "deletion": { "grace_period": "7 days", "operational_retention": "30 days", "cancel_during_grace": true, "shared_public_records_preserved": true },
-  "captcha": { "provider_secret_provisioned": false, "launch_switch_dependency": true },
+  "captcha": { "provider": "Cloudflare Turnstile", "site_key_configured": true, "secret_side_configured_in_supabase": true, "public_signup_tested": true, "returned_off": true },
+  "backup": { "physical_backup_at": "2026-09-10T05:28:13Z", "p19_completed_at": "2026-09-09T14:28:44Z", "restore_available": true, "recovery_operator": "Founder / authorized Trust Hub operator" },
   "real_counts": { "auth_users": 1, "profiles": 1, "saved": 2, "projects": 2, "sessions": 2, "watches": 1, "alerts": 0, "deliveries": 0, "transport_canaries": 1 },
   "watch_coverage": ["contractor.fl.dbpr.license_status/v2"],
-  "deferred": ["CAPTCHA provider/account provisioning before public signup", "additional Watch grains", "Move cross-domain resume"]
+  "deferred": ["additional Watch grains", "Move cross-domain resume"]
 }
