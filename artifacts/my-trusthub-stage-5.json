@@ -8,7 +8,22 @@
     "source": "DBPR Verify a Licensee exact license-number lookup",
     "watch_coverage": "enabled v2; historical v1 disabled",
     "severity_rule": "license_status_changed / dbpr_status_pair_transition / P2",
-    "production_alert_count": 0
+    "production_alert_count": 0,
+    "database_counts": {
+      "auth_users": 1,
+      "profiles": 1,
+      "saved": 2,
+      "projects": 2,
+      "sessions": 2,
+      "watches": 1,
+      "enabled_v2_coverage": 1,
+      "disabled_v1_coverage": 1,
+      "observations": 4,
+      "checkpoints": 5,
+      "change_events": 0,
+      "alerts": 0,
+      "deliveries": 0
+    }
   },
   "ui": ["/my/alerts", "alert detail", "unread/read", "all/P0/P1/P2 filters"],
   "protections": ["exact watch/version match", "owner isolation", "idempotent fanout", "pause boundary", "mass-change quarantine", "source-failure suppression", "correction/retraction history"],
