@@ -81,6 +81,35 @@
 .myth-alert-rail h2 { font-size: 14px; }
 .myth-alert-rail p { color: var(--myth-muted); font-size: 12px; }
 .myth-alert-rail a { min-height: 44px; display: inline-flex; align-items: center; font-weight: 700; }
+.myth-alert-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; padding: 12px 14px; border: 1px solid var(--myth-line); border-radius: 9px; background: white; }
+.myth-filter-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.myth-filter-links a { min-height: 40px; display: inline-flex; align-items: center; padding: 8px 11px; border-radius: 6px; color: var(--myth-muted); font-size: 12px; }
+.myth-filter-links a:hover, .myth-filter-active { color: var(--myth-navy) !important; background: #eaf2ee; font-weight: 700; }
+.myth-alert-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 18px 20px; border: 1px solid var(--myth-line); border-left: 4px solid #55758b; border-radius: 10px; background: white; }
+.myth-alert-card.myth-alert-p0 { border-left-color: #995547; }
+.myth-alert-card.myth-alert-p1 { border-left-color: #ad8646; }
+.myth-alert-card.myth-alert-unread { box-shadow: 0 8px 25px rgb(16 45 67 / 7%); }
+.myth-alert-card-main { min-width: 0; flex: 1; }
+.myth-alert-card-heading { display: flex; align-items: center; gap: 9px; color: var(--myth-muted); font-size: 11px; }
+.myth-severity-label { display: inline-flex; min-height: 26px; align-items: center; padding: 4px 8px; border-radius: 999px; color: var(--myth-navy); background: #e6eef2; font-size: 10px; font-weight: 800; }
+.myth-alert-p0 .myth-severity-label { color: #733d34; background: #f4e5e1; }
+.myth-alert-p1 .myth-severity-label { color: #725421; background: #f8efdd; }
+.myth-alert-state { text-transform: uppercase; letter-spacing: .06em; }
+.myth-alert-card h2 { margin: 11px 0 6px; font-size: 18px; }
+.myth-alert-card h2 a:hover, .myth-text-link:hover { text-decoration: underline; }
+.myth-alert-card p { margin: 0 0 10px; color: var(--myth-muted); font-size: 12px; }
+.myth-alert-card-actions { display: flex; align-items: flex-end; flex-direction: column; gap: 8px; }
+.myth-text-button { min-height: 44px; border: 0; color: var(--myth-teal); background: transparent; text-decoration: underline; font-size: 12px; }
+.myth-alert-detail { margin-bottom: 18px; }
+.myth-alert-detail h2 { margin: 14px 0 4px; font-size: 26px; }
+.myth-alert-detail h3 { margin: 0 0 9px; font-size: 14px; }
+.myth-change-values { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+.myth-change-values section { padding: 15px; border: 1px solid var(--myth-line); border-radius: 8px; background: #fbfcfb; }
+.myth-change-values dl { margin: 0; }
+.myth-change-values dl > div { display: flex; justify-content: space-between; gap: 15px; padding: 7px 0; border-top: 1px solid #edf1f2; }
+.myth-change-values dt { color: var(--myth-muted); font-size: 11px; text-transform: capitalize; }
+.myth-change-values dd { margin: 0; font-size: 12px; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+.myth-alert-detail .myth-disclosure { padding-top: 14px; border-top: 1px solid #edf1f2; }
 .myth-stats, .myth-settings { margin: 0; }
 .myth-stats > div, .myth-settings > div { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 11px 0; border-top: 1px solid #edf1f2; }
 .myth-stats > div:first-child, .myth-settings > div:first-child { border-top: 0; }
@@ -187,6 +216,12 @@
   .myth-guest { align-items: stretch; flex-direction: column; }
   .myth-alert-rail div { min-width: calc(100% - 45px); }
   .myth-alert-rail a { margin-left: 36px; }
+  .myth-alert-toolbar { align-items: stretch; flex-direction: column; }
+  .myth-alert-toolbar .myth-secondary { width: 100%; }
+  .myth-alert-card { flex-direction: column; }
+  .myth-alert-card-actions { align-items: stretch; width: 100%; }
+  .myth-alert-card-actions > *, .myth-alert-card-actions .myth-secondary { width: 100%; }
+  .myth-change-values { grid-template-columns: 1fr; }
   .myth-form-grid { grid-template-columns: 1fr; }
   .myth-form-grid button { grid-column: 1; width: 100%; }
   .myth-inline-details { margin-left: 0; }

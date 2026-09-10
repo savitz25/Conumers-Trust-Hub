@@ -55,6 +55,9 @@ export interface AlertDetail extends ConsumerAlert {
   whyReceived: "You asked My TrustHub to Watch supported public-record changes for this record.";
   disclosure: "Extracts can lag. This is not a TrustHub verdict." | string;
   correctionNotice: string | null;
+  previousValue: Record<string, unknown> | null;
+  currentValue: Record<string, unknown> | null;
+  retractionReason: string | null;
 }
 
 export interface CoverageWatchCheck {

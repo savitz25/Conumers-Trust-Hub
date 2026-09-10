@@ -275,3 +275,9 @@ The scoped ingestor has only the four fixed v1/v2 target/poll functions, zero ta
 The final master OFF/ON test preserved Watch row version 6 and one enabled v2 coverage; monitoring intentionally stops while master is OFF. All seven production homes and key routes passed. The 1440/390/320 consent and Watch UI checks passed after a mobile layout fix. Current health is complete/compatible/current. Counts are 1 Auth user, 1 profile, 2 Saved, 2 Projects, 2 research Sessions, 1 Watch, 1 enabled v2 coverage, 3 observations, 4 checkpoints, 0 change events, 0 Alerts and 0 deliveries.
 
 Alerts, email, export, deletion and signup remain OFF; master, Watch, certified source monitoring, the exact specialist handoff and canary-only remain ON. Move resume, other Save classes and additional Watch grains are explicitly nonblocking deferrals. **Stage 4 is closed; Stage 5 may begin as separate work.**
+
+## Stage 5 production cutover — 2026-09-10
+
+The existing P16 Alert foundation is live with the additive runtime and UI. `MY_TRUSTHUB_ALERTS_ENABLED=true` is enabled for production; `MY_TRUSTHUB_EMAIL_ENABLED=false` remains unchanged. The daily DBPR cron now polls through the existing scoped P15 runtime and drains only approved pending material events through the governed P16 fanout function. The runtime has no browser credential and no consumer table grant.
+
+The founder canary remains pinned to enabled v2. The exact unchanged CCC1332036 record produced no material event and no consumer Alert. A rollback-only exact-v2 fixture produced one deterministic P2 Alert, duplicate fanout remained one, and no fixture Alert or change event remains in production. P16 pause, version, owner, source-failure, correction/retraction, read-state, and mass-change protections remain governed by the existing foundation matrix. `/my/alerts` is private and no-store with truthful empty/no-new-change states. Stage 6 is responsible for any email, push, SMS, or digest delivery.
