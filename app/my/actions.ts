@@ -445,3 +445,20 @@ export async function upgradeDbprWatchAction(formData: FormData) {
   revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/watches");
   redirect("/my/watches?upgraded=2");
 }
+
+export async function setAlertReadStateAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_ALERTS_ENABLED");
+  const adapter = await requiredAdapter();
+  const alertRef = uuidField(formData, "alertRef");
+  const read = String(formData.get("read")) === "true";
+  await safeMutation("my_trusthub_alert_read_state_failed", "/my/alerts?error=unable", () =>
+    adapter.setAlertReadState({ alertRef, read, expectedRowVersion: rowVersionField(formData) }));
+  revalidatePath("/my"); revalidatePath("/my/alerts"); revalidatePath(`/my/alerts/${alertRef}`);
+}
+
+export async function markAllAlertsReadAction() {
+  assertMyTrustHubFeature("MY_TRUSTHUB_ALERTS_ENABLED");
+  const adapter = await requiredAdapter();
+  await safeMutation("my_trusthub_alert_mark_all_read_failed", "/my/alerts?error=unable", () => adapter.markAllAlertsRead());
+  revalidatePath("/my"); revalidatePath("/my/alerts");
+}

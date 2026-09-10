@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   Bookmark,
+  Bell,
   FolderKanban,
   Home,
   Radar,
@@ -16,6 +17,7 @@ const nav = [
   ["Projects", "/my/projects", FolderKanban],
   ["Saved", "/my/saved", Bookmark],
   ["Watches", "/my/watches", Radar],
+  ["Alerts", "/my/alerts", Bell],
   ["You", "/my/you", UserRound],
 ] as const;
 
@@ -28,7 +30,10 @@ export function MyTrustHubShell({
   active: (typeof nav)[number][0];
   email: string;
 }) {
-  const visibleNav = nav.filter(([label]) => label !== "Watches" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_WATCH_ENABLED"));
+  const visibleNav = nav.filter(([label]) =>
+    (label !== "Watches" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_WATCH_ENABLED")) &&
+    (label !== "Alerts" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ALERTS_ENABLED")),
+  );
   return (
     <div className="myth-app">
       <a className="myth-skip" href="#myth-content">Skip to content</a>

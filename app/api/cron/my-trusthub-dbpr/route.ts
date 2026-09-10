@@ -38,11 +38,34 @@ export async function GET(request: Request) {
       const result = await db.query<{ result: Record<string, unknown> }>("select ops.run_dbpr_v2_poll($1,$2,$3,$4::jsonb,$5) as result", [`daily:${randomUUID()}`, lookupStarted, new Date().toISOString(), JSON.stringify(failure ? [] : rows), failure]);
       results.push({ version: 2, failure, ...result.rows[0].result });
     }
+    const fanout = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ALERTS_ENABLED")
+      ? await fanoutPending(db)
+      : { outcome: "disabled", events: 0, alerts: 0, duplicates: 0 };
     const outcome = !results.length ? "no_certified_targets" : results.some(row => row.failure || row.quarantined || row.health !== "current") ? "source_unavailable" : "checked";
-    console.info(JSON.stringify({ event: "my_trusthub_dbpr_poll", outcome, results }));
-    return NextResponse.json({ outcome, results }, { headers: safeHeaders });
+    console.info(JSON.stringify({ event: "my_trusthub_dbpr_poll", outcome, results, fanout }));
+    return NextResponse.json({ outcome, results, fanout }, { headers: safeHeaders });
   } catch {
     console.error(JSON.stringify({ event: "my_trusthub_dbpr_poll", outcome: "runtime_failed" }));
     return NextResponse.json({ outcome: "runtime_failed" }, { status: 503, headers: safeHeaders });
   }
+}
+
+async function fanoutPending(db: ReturnType<typeof scopedRuntime>) {
+  const pending = await db.query<{ change_event_id: string }>("select change_event_id from ops.alert_fanout_pending_events($1)", [50]);
+  let alerts = 0;
+  let duplicates = 0;
+  let failures = 0;
+  for (const row of pending.rows) {
+    try {
+      const result = await db.query<{ matching_watches: number; alerts_created: number; duplicates_skipped: number; outcome: string }>(
+        "select * from consumer.fanout_change_event($1)", [row.change_event_id],
+      );
+      const value = result.rows[0];
+      alerts += Number(value?.alerts_created ?? 0);
+      duplicates += Number(value?.duplicates_skipped ?? 0);
+    } catch {
+      failures += 1;
+    }
+  }
+  return { outcome: failures ? "retryable_failure" : "complete", events: pending.rows.length, alerts, duplicates, failures };
 }

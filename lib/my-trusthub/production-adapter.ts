@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { User } from "@supabase/supabase-js";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
+import type { AlertDetail, AlertListRequest, AlertsOverview, ConsumerAlert, SetAlertReadStateRequest, WatchCheckState, WatchObservationHistoryEntry } from "@/lib/my-trusthub/alert-contract";
 
 type RpcResult = { data: unknown; error: { message: string; code?: string } | null };
 type QueryResult = PromiseLike<RpcResult>;
@@ -165,6 +166,28 @@ export interface WatchSourceHealthRow {
   no_change_eligible: boolean;
 }
 
+type AlertListDbRow = {
+  alert_id: string; severity: "P0" | "P1" | "P2"; read_state: "unread" | "read";
+  headline: string; hub: ConsumerAlert["hub"]; entity_name: string;
+  official_as_of: string | null; observed_at: string; surfaced_at: string;
+  source_organization: string; project_context: { projects?: Array<{ project_ref: string; name: string; status: "active" | "completed" | "archived"; current_status?: "active" | "completed" | "archived" }> } | null;
+  event_state: "active" | "retracted"; row_version: number;
+};
+
+function mapAlert(row: AlertListDbRow): ConsumerAlert {
+  return {
+    alertRef: row.alert_id, severity: row.severity, readState: row.read_state,
+    headline: row.headline, hub: row.hub, entityName: row.entity_name,
+    officialAsOf: row.official_as_of, observedAt: row.observed_at, surfacedAt: row.surfaced_at,
+    sourceOrganization: row.source_organization,
+    projectContext: (row.project_context?.projects ?? []).map((project) => ({
+      projectRef: project.project_ref, name: project.name, status: project.status,
+      currentStatus: project.current_status ?? project.status,
+    })),
+    eventState: row.event_state, rowVersion: Number(row.row_version),
+  };
+}
+
 function rows<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
@@ -292,6 +315,84 @@ export class ProductionMyTrustHubAdapter {
 
   async getDbprWatchStatus(savedEntityId: string): Promise<Array<{ capability_id: string; primary_status: string | null; secondary_status: string | null; official_status: string | null; source_url: string | null; source_as_of: string | null; retrieved_at: string | null; observed_at: string | null; evaluation_status: string | null }>> {
     return rows(await this.rpc("get_dbpr_watch_status", { p_saved_entity_id: savedEntityId }));
+  }
+
+  async listAlerts(request: AlertListRequest = {}): Promise<ConsumerAlert[]> {
+    const rowsResult = await this.rpc<AlertListDbRow[]>("list_alerts", {
+      p_severity: request.severity ?? null, p_unread_only: request.unreadOnly ?? false,
+      p_limit: request.limit ?? 50, p_before: request.before ?? null,
+    });
+    return rows<AlertListDbRow>(rowsResult).map(mapAlert);
+  }
+
+  async getAlertDetail(alertRef: string): Promise<AlertDetail | null> {
+    const [detailRows, valueRows] = await Promise.all([
+      this.rpc<Array<Record<string, unknown>>>("get_alert_detail", { p_alert_id: alertRef }),
+      this.rpc<Array<Record<string, unknown>>>("get_alert_change_values", { p_alert_id: alertRef }),
+    ]);
+    const row = one<Record<string, unknown>>(detailRows);
+    const values = one<Record<string, unknown>>(valueRows);
+    if (!row) return null;
+    return {
+      alertRef: String(row.alert_id), severity: row.severity as AlertDetail["severity"],
+      readState: row.read_state as AlertDetail["readState"], headline: String(row.what_changed),
+      hub: row.hub as AlertDetail["hub"], entityName: String(row.entity_name),
+      officialAsOf: row.official_as_of as string | null, observedAt: String(row.observed_at),
+      surfacedAt: String(row.observed_at), sourceOrganization: String(row.source_organization),
+      projectContext: ((row.project_context as { projects?: Array<Record<string, unknown>> } | null)?.projects ?? []).map((project) => ({
+        projectRef: String(project.project_ref), name: String(project.name), status: project.status as AlertDetail["projectContext"][number]["status"], currentStatus: project.current_status as AlertDetail["projectContext"][number]["currentStatus"] ?? project.status as AlertDetail["projectContext"][number]["status"],
+      })), eventState: row.event_state as AlertDetail["eventState"], rowVersion: Number(row.row_version),
+      identifier: row.identifier as string | null, whatChanged: String(row.what_changed), detailBody: String(row.detail_body),
+      checkedAt: row.checked_at as string | null, sourceConfirmationRef: row.source_confirmation_ref as string | null,
+      coverageRef: String(row.coverage_id), capabilityRef: String(row.capability_id), capabilityVersion: Number(row.capability_version),
+      watchedGrain: String(row.watched_grain), coverageDisplayName: String(row.coverage_display_name),
+      whyReceived: row.why_received as AlertDetail["whyReceived"], disclosure: String(row.disclosure), correctionNotice: row.correction_notice as string | null,
+      previousValue: (values?.previous_value as Record<string, unknown> | null) ?? null,
+      currentValue: (values?.current_value as Record<string, unknown> | null) ?? null,
+      retractionReason: values?.retraction_reason as string | null,
+    };
+  }
+
+  async setAlertReadState(request: SetAlertReadStateRequest): Promise<number> {
+    return this.rpc<number>("set_alert_read_state", {
+      p_alert_id: request.alertRef, p_read: request.read, p_expected_row_version: request.expectedRowVersion,
+    });
+  }
+
+  async markAllAlertsRead(): Promise<number> {
+    return this.rpc<number>("mark_all_alerts_read");
+  }
+
+  async getAlertsOverview(): Promise<AlertsOverview> {
+    const row = one<Record<string, unknown>>(await this.rpc("get_alerts_overview"));
+    return {
+      totalAlerts: Number(row?.total_alerts ?? 0), unreadAlerts: Number(row?.unread_alerts ?? 0),
+      unreadBySeverity: { P0: Number(row?.p0_unread ?? 0), P1: Number(row?.p1_unread ?? 0), P2: Number(row?.p2_unread ?? 0) },
+      allRead: Boolean(row?.all_read), hasMonitoringHealthIssue: Boolean(row?.has_monitoring_health_issue),
+    };
+  }
+
+  async getWatchChecks(savedRef: string): Promise<WatchCheckState> {
+    const [summaryRows, coverage] = await Promise.all([
+      this.rpc<Array<Record<string, unknown>>>("get_watch_summary", { p_saved_entity_id: savedRef }),
+      this.rpc<Array<Record<string, unknown>>>("get_watch_coverage_checks", { p_saved_entity_id: savedRef }),
+    ]);
+    const summary = one<Record<string, unknown>>(summaryRows);
+    return {
+      savedRef, summary: summary?.summary_state as WatchCheckState["summary"] ?? "unknown",
+      health: summary?.health_status as WatchCheckState["health"] ?? "unknown",
+      alertCount: Number(summary?.alert_count ?? 0), unreadAlertCount: Number(summary?.unread_alert_count ?? 0),
+      allEnabledCoverageNoChange: Boolean(summary?.all_enabled_coverage_no_change),
+      coverage: rows<Record<string, unknown>>(coverage).map((row) => ({
+        coverageRef: String(row.coverage_id), capabilityRef: String(row.capability_id), capabilityKey: String(row.capability_key), capabilityVersion: Number(row.capability_version), coverageDisplayName: String(row.coverage_display_name), sourceOrganization: String(row.source_organization), health: row.health_status as WatchCheckState["health"], lastSuccessfulCheck: row.last_successful_check as string | null, sourceAsOf: row.source_as_of as string | null, state: row.check_state as WatchCheckState["coverage"][number]["state"], alertCount: Number(row.alert_count ?? 0), unreadAlertCount: Number(row.unread_alert_count ?? 0), coverageDisclosure: String(row.coverage_disclosure),
+      })),
+    };
+  }
+
+  async getWatchObservationHistory(savedRef: string, limit = 50): Promise<WatchObservationHistoryEntry[]> {
+    return rows<Record<string, unknown>>(await this.rpc("get_watch_observation_history", { p_saved_entity_id: savedRef, p_limit: limit })).map((row) => ({
+      occurredAt: String(row.occurred_at), type: row.entry_type as WatchObservationHistoryEntry["type"], title: String(row.title), capabilityKey: row.capability_key as string | null, sourceOrganization: row.source_organization as string | null, alertRef: row.alert_id as string | null, eventState: row.event_state as WatchObservationHistoryEntry["eventState"],
+    }));
   }
 
   async upgradeDbprWatch(watchId: string, fromCapabilityId: string, toCapabilityId: string, rowVersion: number, idempotencyKey: string, consentVersion: string) {

@@ -1,0 +1,27 @@
+{
+  "stage": 5,
+  "status": "closed",
+  "ready_for_stage_6": true,
+  "live_alerts": {
+    "capability": "contractor.fl.dbpr.license_status",
+    "version": 2,
+    "source": "DBPR Verify a Licensee exact license-number lookup",
+    "watch_coverage": "enabled v2; historical v1 disabled",
+    "severity_rule": "license_status_changed / dbpr_status_pair_transition / P2",
+    "production_alert_count": 0
+  },
+  "ui": ["/my/alerts", "alert detail", "unread/read", "all/P0/P1/P2 filters"],
+  "protections": ["exact watch/version match", "owner isolation", "idempotent fanout", "pause boundary", "mass-change quarantine", "source-failure suppression", "correction/retraction history"],
+  "flags": {
+    "MY_TRUSTHUB_ALERTS_ENABLED": true,
+    "MY_TRUSTHUB_EMAIL_ENABLED": false,
+    "MY_TRUSTHUB_CANARY_ONLY": true,
+    "MY_TRUSTHUB_SIGNUP_ENABLED": false
+  },
+  "certification": {
+    "real_unchanged_poll": "passed; zero events and zero alerts",
+    "isolated_material_change": "passed; one P2 alert, duplicate remained one, rolled back",
+    "p16_foundation": "existing governed matrix retained; direct production fixture was rollback-only"
+  },
+  "deferred": ["Stage 6 email/push/SMS/digest delivery", "additional watch grains", "Move resume follow-up"]
+}
