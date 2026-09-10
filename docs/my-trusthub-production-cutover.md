@@ -1,7 +1,7 @@
 # My TrustHub production cutover plan
 
 Date: 2026-09-09
-Current recommendation: **STAGE 3 COMPLETE; READY FOR STAGE 4 APPROVAL**. P18 Saved Sessions are live for exactly one reviewed Move inventory contract and the canonical founder identity. Save/update, private display, Project association, guest-session import/deduplication, schema rejection, resume compatibility, replay protection, owner isolation, kill-switch survival, responsive/accessibility, and production regression proofs have passed. Cross-hub resume remains honestly unavailable and broad specialist handoff stays off. Watches, Alerts, deliveries, and source observations remain zero.
+Current recommendation: **STAGE 4 OPEN — SOURCE ACCEPTANCE GAP.** The exact Contractor P13 Save handoff and scoped daily DBPR scheduler are deployed and production-certified. The official bulk feed omits CCC1332036, so the scheduler correctly records degraded/unknown source health without a new accepted observation. Stage 5 is not ready. See docs/my-trusthub-stage-4.md and artifacts/my-trusthub-stage-4.json.
 
 ## Stage 3 closeout - 2026-09-09
 
@@ -252,8 +252,18 @@ Prepare one synthetic/internal consumer-only account and one controlled dual-rol
 5. Keep Watch and email flags off until at least one source and the transactional provider separately pass certification.
 
 This allows a narrower GO for Stage 0–2 while later stages remain off.
-# Stage 4 controlled Watch activation — 2026-09-10
+## Stage 4 runtime closeout — 2026-09-10
 
-Stage 4 added `/my/watches` and activated one version-pinned Florida DBPR construction-license-status capability for the founder canary. One exact real Contractor profile was Saved through the governed parent binding, then explicitly Watched. Pause/resume/stop/restart, RLS isolation, responsive layouts, and the master OFF/ON gate passed. The data survived the gate test.
+| Hub | Save handoff | Resume handoff | Watch capability | Source monitoring | Deferred gaps |
+|---|---|---|---|---|---|
+| Ask | Live receiver for the exact Contractor profile only | Parent saved inventory remains readable; no cross-domain Move consumer | Parent UX for contractor.fl.dbpr.license_status v1 | Daily scoped DBPR scheduler deployed; current exact record unavailable | Accepted compatible unattended observation |
+| Contractor | Live: CCC1332036 / native 0001ac38-0c96-4e2f-8bf6-9ab243f7b79b only | Unsupported | contractor.fl.dbpr.license_status v1 | Parent-owned daily DBPR extract check | Other profiles and source states outside the approved v1 contract |
+| Move | Deferred; CTA omitted | Deferred: itemized calculator cannot reconstruct inventory from aggregates | Deferred | No My TrustHub adapter | Scoped P13 integration and aggregate P18 receiving model |
+| Lender | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
+| Insurance | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
+| Senior | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
+| Investor | Deferred; CTA omitted | Unsupported | Deferred | No My TrustHub adapter | Hub/class-specific P13 and Watch certification |
 
-Alerts and email remain off. The first accepted P15 record is a baseline only; the UI does not claim “no change.” Full P13 specialist handoff, Move cross-domain resume, and scheduled P15 source collection remain blocked on scoped runtime broker/ingestor credentials and are not represented as live.
+The former scoped-credential and scheduler blockers are resolved. Production Contractor Save, wrong issuer/audience, browser-state binding, exact-code replay, expiry, private Watch authorization and the master OFF/ON test passed. Alerts, email, export, deletion and signup remain OFF; the canary remains closed.
+
+Daily Vercel execution is configured at 12:41 UTC using the new two-function DBPR role. The real scheduler invocation fetched the official extract and stored a failed exact-record checkpoint at 2026-09-10T13:27:38.239Z. The exact license is absent from the feed; no replacement status or freshness was invented. This keeps Stage 4 open on the accepted-current-observation criterion. Additional hub Watch adapters and Move resume are explicitly nonblocking deferrals. The detailed source evidence, grants, clocks, counts and release snapshots are in the Stage 4 documents.
