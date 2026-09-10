@@ -18,8 +18,8 @@
       "watches": 1,
       "enabled_v2_coverage": 1,
       "disabled_v1_coverage": 1,
-      "observations": 4,
-      "checkpoints": 5,
+      "observations": 5,
+      "checkpoints": 6,
       "change_events": 0,
       "alerts": 0,
       "deliveries": 0
