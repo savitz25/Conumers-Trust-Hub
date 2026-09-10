@@ -396,3 +396,40 @@ export async function commitGuestSessionImportAction(formData: FormData) {
     redirect("/my/saved?session_import=invalid");
   }
 }
+
+function capabilityIds(formData: FormData): string[] {
+  return formData.getAll("capabilityId").map(String).filter((value) => /^[0-9a-f-]{36}$/i.test(value));
+}
+
+export async function startWatchAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_WATCH_ENABLED");
+  const adapter = await requiredAdapter();
+  const savedEntityId = uuidField(formData, "savedEntityId");
+  const selected = capabilityIds(formData);
+  if (!selected.length) redirect("/my/watches?error=coverage-required");
+  await safeMutation("my_trusthub_watch_start_failed", "/my/watches?error=unable", () =>
+    adapter.startWatch(savedEntityId, selected, uuidField(formData, "idempotencyKey")));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/watches");
+  redirect("/my/watches?started=1");
+}
+
+async function mutateWatch(formData: FormData, operation: "pause" | "resume" | "stop" | "restart") {
+  assertMyTrustHubFeature("MY_TRUSTHUB_WATCH_ENABLED");
+  const adapter = await requiredAdapter();
+  const watchId = uuidField(formData, "watchId");
+  const rowVersion = rowVersionField(formData);
+  await safeMutation(`my_trusthub_watch_${operation}_failed`, "/my/watches?error=unable", () => {
+    if (operation === "pause") return adapter.pauseWatch(watchId, rowVersion);
+    if (operation === "resume") return adapter.resumeWatch(watchId, rowVersion);
+    if (operation === "stop") return adapter.stopWatch(watchId, rowVersion);
+    const selected = capabilityIds(formData);
+    if (!selected.length) throw new Error("COVERAGE_REQUIRED");
+    return adapter.restartWatch(watchId, selected, rowVersion);
+  });
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/watches");
+}
+
+export async function pauseWatchAction(formData: FormData) { return mutateWatch(formData, "pause"); }
+export async function resumeWatchAction(formData: FormData) { return mutateWatch(formData, "resume"); }
+export async function stopWatchAction(formData: FormData) { return mutateWatch(formData, "stop"); }
+export async function restartWatchAction(formData: FormData) { return mutateWatch(formData, "restart"); }

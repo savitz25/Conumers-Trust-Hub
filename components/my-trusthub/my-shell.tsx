@@ -4,15 +4,18 @@ import {
   Bookmark,
   FolderKanban,
   Home,
+  Radar,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { signOutAction } from "@/app/my/actions";
+import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 
 const nav = [
   ["Home", "/my", Home],
   ["Projects", "/my/projects", FolderKanban],
   ["Saved", "/my/saved", Bookmark],
+  ["Watches", "/my/watches", Radar],
   ["You", "/my/you", UserRound],
 ] as const;
 
@@ -25,6 +28,7 @@ export function MyTrustHubShell({
   active: (typeof nav)[number][0];
   email: string;
 }) {
+  const visibleNav = nav.filter(([label]) => label !== "Watches" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_WATCH_ENABLED"));
   return (
     <div className="myth-app">
       <a className="myth-skip" href="#myth-content">Skip to content</a>
@@ -35,7 +39,7 @@ export function MyTrustHubShell({
             <span>My TrustHub</span>
           </Link>
           <nav className="myth-desktop-nav" aria-label="My TrustHub">
-            {nav.map(([label, href]) => (
+            {visibleNav.map(([label, href]) => (
               <Link
                 key={href}
                 href={href}
@@ -53,7 +57,7 @@ export function MyTrustHubShell({
       </header>
       <main id="myth-content" className="myth-main">{children}</main>
       <nav className="myth-mobile-nav" aria-label="My TrustHub mobile navigation">
-        {nav.map(([label, href, Icon]) => (
+        {visibleNav.map(([label, href, Icon]) => (
           <Link
             key={href}
             href={href}
