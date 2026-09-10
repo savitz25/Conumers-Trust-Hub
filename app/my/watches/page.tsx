@@ -51,7 +51,7 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
             <article className="myth-row-card" key={item.saved_entity_id}>
               <div className="myth-panel-heading">
                 <h2><Radar aria-hidden="true" size={20} />{item.canonical_name}</h2>
-                {watch ? <span className={`myth-status myth-status-${watch.watch_status}`}>{watch.watch_status}</span> : null}
+                {watch ? <span className={`myth-status myth-status-${watch.watch_status}`}>Watch {watch.watch_status}</span> : null}
               </div>
               <p className="myth-muted">{item.primary_hub} · exact saved profile binding</p>
               {checks.map((check) => <div key={check.capability_id}>
