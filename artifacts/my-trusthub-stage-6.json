@@ -1,0 +1,46 @@
+{
+  "stage": 6,
+  "status": "closed",
+  "ready_for_stage_7": true,
+  "provider": "Resend",
+  "sender": "Ask Trust Hub transactional sender",
+  "preferences": {
+    "p0_email": true,
+    "p1_digest": true,
+    "p2_digest": false,
+    "watch_summary": true,
+    "timezone_fallback": "UTC",
+    "digest_time_local": "08:00"
+  },
+  "delivery": {
+    "p0": "immediate",
+    "p1": "hourly due-local-time digest",
+    "p2": "digest only when explicitly enabled",
+    "retry_attempt_limit": 5,
+    "retry_delays": ["1m", "5m", "30m", "2h", "8h"],
+    "email_kill_switch": true
+  },
+  "transport_canary": {
+    "classification": "test/canary",
+    "recipient": "hello@asktrusthub.com",
+    "provider_accepted": true,
+    "alert_created": false
+  },
+  "final_counts": {
+    "auth_users": 1,
+    "profiles": 1,
+    "saved": 2,
+    "projects": 2,
+    "sessions": 2,
+    "watches": 1,
+    "enabled_v2_coverage": 1,
+    "disabled_v1_coverage": 1,
+    "observations": 5,
+    "checkpoints": 6,
+    "change_events": 0,
+    "alerts": 0,
+    "consumer_deliveries": 0,
+    "transport_canaries": 1
+  },
+  "deferred": ["Stage 7 richer delivery history and additional channels", "additional Watch grains", "Move resume follow-up"]
+}

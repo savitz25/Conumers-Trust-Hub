@@ -274,6 +274,12 @@ The scoped ingestor has only the four fixed v1/v2 target/poll functions, zero ta
 
 The final master OFF/ON test preserved Watch row version 6 and one enabled v2 coverage; monitoring intentionally stops while master is OFF. All seven production homes and key routes passed. The 1440/390/320 consent and Watch UI checks passed after a mobile layout fix. Current health is complete/compatible/current. Counts at final Stage 5 verification are 1 Auth user, 1 profile, 2 Saved, 2 Projects, 2 research Sessions, 1 Watch, 1 enabled v2 coverage, 1 disabled v1 coverage, 5 observations, 6 checkpoints, 0 change events, 0 Alerts and 0 deliveries.
 
+## Stage 6 production cutover — 2026-09-10
+
+P17 notification delivery is live through the existing P17 tables and a dedicated `myth_notification_delivery` runtime. `MY_TRUSTHUB_EMAIL_ENABLED=true` is restored after a kill-switch test. P0 is immediate; P1 is batched into hourly due-local-time digests; P2 remains disabled by default. `/my/you` exposes global defaults, timezone/digest controls, and per-Watch inheritance/override controls. Resend credentials remain server-only.
+
+The unchanged real DBPR Watch still has zero Alerts and zero consumer delivery rows. The worker ran successfully with no pending work. One labeled `test/canary` transport email to `hello@asktrusthub.com` was accepted by Resend and recorded in the separate transport-canary ledger without creating an Alert. Provider retries are bounded, delivery uniqueness is Alert/channel/policy/window based, and the email kill switch suppresses new outbound sends without changing Alerts, Watches, or source polling. Stage 7 owns additional channels and richer delivery history.
+
 Alerts, email, export, deletion and signup remain OFF; master, Watch, certified source monitoring, the exact specialist handoff and canary-only remain ON. Move resume, other Save classes and additional Watch grains are explicitly nonblocking deferrals. **Stage 4 is closed; Stage 5 may begin as separate work.**
 
 ## Stage 5 production cutover — 2026-09-10
