@@ -446,6 +446,40 @@ export async function upgradeDbprWatchAction(formData: FormData) {
   redirect("/my/watches?upgraded=2");
 }
 
+export async function updateNotificationPreferencesAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_EMAIL_ENABLED");
+  const adapter = await requiredAdapter();
+  const timezone = textField(formData, "timezone", 100);
+  const digestTimeLocal = textField(formData, "digestTimeLocal", 8);
+  if (!/^\d{2}:\d{2}$/.test(digestTimeLocal)) throw new Error("Invalid digest time");
+  await safeMutation("my_trusthub_notification_preferences_failed", "/my/you?error=notifications", () => adapter.updateNotificationPreferences({
+    p0EmailEnabled: formData.get("p0EmailEnabled") === "on",
+    p1DigestEnabled: formData.get("p1DigestEnabled") === "on",
+    p2DigestEnabled: formData.get("p2DigestEnabled") === "on",
+    periodicWatchSummaryEnabled: formData.get("periodicWatchSummaryEnabled") === "on",
+    timezone, digestTimeLocal: `${digestTimeLocal}:00`, expectedRowVersion: rowVersionField(formData), idempotencyKey: randomUUID(),
+  }));
+  revalidatePath("/my/you");
+}
+
+export async function setWatchNotificationOverrideAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_EMAIL_ENABLED");
+  const adapter = await requiredAdapter();
+  const severity = textField(formData, "severity", 2);
+  if (!("P0 P1 P2" as string).split(" ").includes(severity)) throw new Error("Invalid severity");
+  await safeMutation("my_trusthub_watch_notification_override_failed", "/my/you?error=notifications", () => adapter.setWatchNotificationOverride(uuidField(formData, "watchId"), severity as "P0" | "P1" | "P2", formData.get("enabled") === "on", randomUUID()));
+  revalidatePath("/my/you");
+}
+
+export async function removeWatchNotificationOverrideAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_EMAIL_ENABLED");
+  const adapter = await requiredAdapter();
+  const severity = textField(formData, "severity", 2);
+  if (!("P0 P1 P2" as string).split(" ").includes(severity)) throw new Error("Invalid severity");
+  await safeMutation("my_trusthub_watch_notification_override_remove_failed", "/my/you?error=notifications", () => adapter.removeWatchNotificationOverride(uuidField(formData, "watchId"), severity as "P0" | "P1" | "P2", randomUUID()));
+  revalidatePath("/my/you");
+}
+
 export async function setAlertReadStateAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_ALERTS_ENABLED");
   const adapter = await requiredAdapter();
