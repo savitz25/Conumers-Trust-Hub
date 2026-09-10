@@ -30,15 +30,17 @@ export async function GET(request: Request) {
     const p0 = await db.query<{ delivery_id: string }>("select delivery_id from ops.pending_p0_deliveries($1)", [100]);
     let sent = 0; let failed = 0;
     for (const row of p0.rows) {
-      const [payloadResult, recipientResult] = await Promise.all([
+      const [payloadResult, recipientResult, pathResult] = await Promise.all([
         db.query<{ get_p0_email_payload: P0Payload }>("select ops.get_p0_email_payload($1) as get_p0_email_payload", [row.delivery_id]),
         db.query<{ get_email_recipient: string }>("select ops.get_email_recipient($1) as get_email_recipient", [row.delivery_id]),
+        db.query<{ get_alert_private_path: string }>("select ops.get_alert_private_path($1) as get_alert_private_path", [row.delivery_id]),
       ]);
       const payload = payloadResult.rows[0]?.get_p0_email_payload;
       const recipient = recipientResult.rows[0]?.get_email_recipient;
-      if (!payload || !recipient) { failed += 1; continue; }
+      const alertPath = pathResult.rows[0]?.get_alert_private_path;
+      if (!payload || !recipient || !alertPath) { failed += 1; continue; }
       const official = payload.official_as_of ? `Official/source-as-of: ${payload.official_as_of}` : "Official/source-as-of: not published by the source";
-      const mail = await sendMyTrustHubEmail({ to: recipient, subject: payload.subject, text: `${payload.body}\n\nWatched record: ${payload.watched_grain}\nSource: ${payload.source}\n${official}\nObserved/checked-at: ${payload.observed_at}\n\n${payload.disclosure}\nManage notifications: ${process.env.NEXT_PUBLIC_SITE_URL || "https://www.asktrusthub.com"}${payload.manage_notifications_path}` });
+      const mail = await sendMyTrustHubEmail({ to: recipient, subject: payload.subject, text: `${payload.body}\n\nWatched record: ${payload.watched_grain}\nSource: ${payload.source}\n${official}\nObserved/checked-at: ${payload.observed_at}\n\n${payload.disclosure}\nReview this private Alert: ${process.env.NEXT_PUBLIC_SITE_URL || "https://www.asktrusthub.com"}${alertPath}\nManage notifications: ${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.asktrusthub.com")}/my/you` });
       const result = await db.query<{ delivery_status: string; process_outcome: string }>("select delivery_status,process_outcome from ops.process_email_result($1,$2,$3,$4,$5,$6)", [row.delivery_id, mail.outcome, mail.providerMessageRef ?? null, mail.outcome === "success" ? null : mail.outcome.toUpperCase(), `p17:${randomUUID()}`, new Date().toISOString()]);
       if (result.rows[0]?.delivery_status === "delivered") sent += 1; else failed += 1;
     }
