@@ -55,7 +55,7 @@ export function MyTrustHubShell({
           </form>
         </div>
       </header>
-      <main id="myth-content" className="myth-main">{children}</main>
+      <div id="myth-content" className="myth-main" tabIndex={-1}>{children}</div>
       <nav className="myth-mobile-nav" aria-label="My TrustHub mobile navigation">
         {visibleNav.map(([label, href, Icon]) => (
           <Link

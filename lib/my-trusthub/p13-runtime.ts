@@ -3,13 +3,9 @@ import { randomBytes, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { isMyTrustHubFeatureEnabled } from "./feature-flags";
 
-// A temporary, parent-only canary gate permits production certification before
-// announcing specialist support. The prepare/finish routes still require the
-// authenticated allowlisted founder; master OFF always wins.
 export function contractorSaveEnabled() {
   return isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SAVED_ENABLED") &&
-    (isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED") ||
-      (process.env.MY_TRUSTHUB_CANARY_ONLY === "true" && process.env.MY_TRUSTHUB_P13_CERTIFICATION_ENABLED === "true"));
+    isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED");
 }
 
 export const ASK_ORIGIN = "https://www.asktrusthub.com";
