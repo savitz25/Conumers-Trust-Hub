@@ -1,7 +1,30 @@
 # My TrustHub production cutover plan
 
 Date: 2026-09-09
-Current recommendation: **P20D CLOSED DEPLOYMENT COMPLETE; AUTH EMAIL HARD STOP; NOT READY FOR STAGE 2**. The reviewed Stage 1 code is live on current production main. Exactly one canonical, entitled founder Auth user exists and public signup remains disabled, but Supabase Auth refused the Magic Link before delivery. Profiles, Saved, Projects, Watches, Alerts, deliveries, and source observations remain zero. No later-stage capability is active.
+Current recommendation: **P20D COMPLETE; READY FOR STAGE 2 APPROVAL**. Closed Stage 1 is live for exactly one canonical founder identity. Auth delivery, PKCE, profile, Saved, Projects, runtime owner isolation, and production privacy/regression proofs have passed. Watches, Alerts, deliveries, and source observations remain zero. Public signup and every later-stage capability remain off.
+
+## P20D completion - 2026-09-09
+
+Production merge `d90664b9de5ed22e31d9c3eae8aba9adbbf86c23` is live as
+`dpl_GAB2MNWdX2rFk14GP1wQJwBF2Wqn`. The Auth blocker was the Supabase built-in
+SMTP project-wide email rate limit (`over_email_send_rate_limit`, HTTP 429).
+Supabase Auth was moved to the existing approved Resend transactional service
+with a dedicated sending-only credential. The application now handles expected
+delivery errors as generic inline form errors rather than route-level 500s.
+
+The Production PKCE callback established the sole canonical founder session.
+The controlled data canary contains one profile, one idempotent Saved record,
+and one active restored Project. Membership remove/re-add and Project
+archive/restore preserve the Saved record. Transaction-scoped cross-user,
+anonymous, specialist-role, `network`, and `ops` browser-access checks all fail
+closed. The backing canary entity is internal-only, has no public profile route,
+and cannot affect ranking.
+
+Final counts: Auth users 1; profiles 1; Saved 1; Projects 1; Watches 0; Alerts 0;
+deliveries 0; delivery attempts 0; source observations 0. Private/no-store,
+noindex, and no-referrer headers remain present. `/`, `/ask`, and protected
+`/admin` passed regression checks. The founder-only feature state is restored;
+public signup and all Stage 2 capabilities remain disabled.
 
 ## P20D resume - 2026-09-09
 
