@@ -1,0 +1,68 @@
+{
+  "schema": "my-trusthub-stage-4/v1",
+  "certifiedAt": "2026-09-10T00:00:00-04:00",
+  "ask": {
+    "main": "d9d7207f211fd65cd1aeb1719cba189c9496fcc4",
+    "deployment": "dpl_EAqVVzLRSpgcDeZpuT3Z2qxudCDV",
+    "url": "https://www.asktrusthub.com"
+  },
+  "specialistMains": {
+    "move": "ba72d609a013ed9d432975276f62c85d3e237492",
+    "lender": "0530e3351072d35780e7bd9258372cecf02b24e7",
+    "insurance": "fca65060a9d8c27eae5ab70626ead0716a212dd5",
+    "contractor": "58d6b4de6b36d725e1fd9f25053cb0e44ed565d8",
+    "senior": "e893c7cf86e210741fa39895cf1dd6590c385675",
+    "investor": "5725419bbd03f1b8f8822d088cb72b5bce9a1edf"
+  },
+  "featureFlags": {
+    "MY_TRUSTHUB_ENABLED": true,
+    "MY_TRUSTHUB_CANARY_ONLY": true,
+    "MY_TRUSTHUB_SIGNUP_ENABLED": false,
+    "MY_TRUSTHUB_WATCH_ENABLED": true,
+    "MY_TRUSTHUB_SOURCE_MONITORING_ENABLED": true,
+    "MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED": false,
+    "MY_TRUSTHUB_ALERTS_ENABLED": false,
+    "MY_TRUSTHUB_EMAIL_ENABLED": false
+  },
+  "watch": {
+    "count": 1,
+    "coverageCount": 1,
+    "status": "active",
+    "capabilityKey": "contractor.fl.dbpr.license_status",
+    "capabilityVersion": 1,
+    "identifierNamespace": "fl.dbpr.license",
+    "identifier": "CCC1332036",
+    "source": "fl.dbpr",
+    "sourceConnection": "configured",
+    "baselineObservations": 1,
+    "changeEvents": 0
+  },
+  "sideEffects": {
+    "alerts": 0,
+    "deliveries": 0
+  },
+  "checks": {
+    "p13Static": "PASS",
+    "p14Static": "PASS",
+    "p15Static": "PASS",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "build": "PASS",
+    "tests": "PASS",
+    "crossUserIsolation": "PASS",
+    "killSwitch": "PASS",
+    "responsive1440": "PASS",
+    "responsive390": "PASS",
+    "responsive320": "PASS",
+    "networkSmoke": "PASS"
+  },
+  "readiness": {
+    "stage4Closed": false,
+    "stage5Ready": false,
+    "blockingGaps": [
+      "P13 scoped broker runtime credential and specialist endpoints are not deployed",
+      "P18 Move cross-domain resume consumer is not deployed",
+      "P15 unattended Contractor source-ingestor credential and schedule are not deployed"
+    ]
+  }
+}
