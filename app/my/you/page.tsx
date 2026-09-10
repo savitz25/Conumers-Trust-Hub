@@ -1,10 +1,17 @@
 import { LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
-import { signOutAction } from "@/app/my/actions";
+import { removeWatchNotificationOverrideAction, setWatchNotificationOverrideAction, signOutAction, updateNotificationPreferencesAction } from "@/app/my/actions";
+import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
+import { notFound } from "next/navigation";
 import { MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 
 export default async function YouPage() {
   const { user } = await requireWorkspace();
+  const adapter = await ProductionMyTrustHubAdapter.create();
+  if (!adapter) notFound();
+  const preferences = adapter ? await adapter.getNotificationPreferences() : null;
+  const saved = adapter ? await adapter.listSavedEntities() : [];
+  const watches = (await Promise.all(saved.filter((row) => !row.removed_at).map(async (row) => ({ saved: row, watch: adapter ? await adapter.getWatch(row.saved_entity_id) : null })))).filter((row) => row.watch);
   const email = user.email ?? "Email unavailable";
 
   return (
@@ -13,6 +20,21 @@ export default async function YouPage() {
         Your consumer research account and the privacy boundaries that protect it.
       </PageHeading>
       <section className="myth-grid">
+        {preferences ? <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2><ShieldCheck aria-hidden="true" />Notification preferences</h2></div>
+          <p className="myth-muted">Urgent alerts arrive immediately. Important updates are grouped into a digest. Lower-priority updates are off by default. These settings never stop a Watch or remove an in-app Alert.</p>
+          <form action={updateNotificationPreferencesAction} className="myth-notification-form">
+            <input type="hidden" name="rowVersion" value={preferences.rowVersion} />
+            <label><input type="checkbox" name="p0EmailEnabled" defaultChecked={preferences.p0EmailEnabled} /> Urgent P0 email alerts</label>
+            <label><input type="checkbox" name="p1DigestEnabled" defaultChecked={preferences.p1DigestEnabled} /> Important P1 digest</label>
+            <label><input type="checkbox" name="p2DigestEnabled" defaultChecked={preferences.p2DigestEnabled} /> Lower-priority P2 digest</label>
+            <label><input type="checkbox" name="periodicWatchSummaryEnabled" defaultChecked={preferences.periodicWatchSummaryEnabled} /> Periodic Watch summary</label>
+            <label>Timezone<select name="timezone" defaultValue={preferences.timezone}><option value="UTC">UTC</option><option value="America/New_York">Eastern Time</option><option value="America/Chicago">Central Time</option><option value="America/Denver">Mountain Time</option><option value="America/Los_Angeles">Pacific Time</option></select></label>
+            <label>Digest local time<input type="time" name="digestTimeLocal" defaultValue={preferences.digestTimeLocal.slice(0,5)} /></label>
+            <button className="myth-primary" type="submit">Save notification preferences</button>
+          </form>
+          {watches.length ? <div className="myth-watch-notification-list"><h3>Per-Watch email settings</h3>{watches.map(({ saved: entity, watch }) => watch ? <WatchNotificationSettings key={watch.watch_id} watch={watch} entityName={entity.canonical_name} adapter={adapter} /> : null)}</div> : null}
+        </article> : null}
         <article className="myth-panel myth-span-two">
           <div className="myth-panel-heading"><h2><UserRound aria-hidden="true" />Account</h2></div>
           <dl className="myth-settings">
@@ -32,9 +54,14 @@ export default async function YouPage() {
         <article className="myth-panel myth-span-three">
           <div className="myth-panel-heading"><h2><ShieldCheck aria-hidden="true" />Separate from Business Manager</h2></div>
           <p>My TrustHub is your consumer workspace. Business Manager is a separate business-authorized product with separate memberships and management grants.</p>
-          <p className="myth-muted">Export, account deletion, Watches, Alerts, and public signup are not enabled in this stage, so no inactive controls are shown here.</p>
+          <p className="myth-muted">Export, account deletion, and public signup remain disabled. Notification controls above affect email delivery only; Watches and in-app Alerts remain separate.</p>
         </article>
       </section>
     </MyTrustHubShell>
   );
+}
+
+async function WatchNotificationSettings({ watch, entityName, adapter }: { watch: { watch_id: string; watch_status: string }; entityName: string; adapter: ProductionMyTrustHubAdapter }) {
+  const overrides = await adapter.getWatchNotificationOverrides(watch.watch_id);
+  return <div className="myth-watch-notification"><strong>{entityName}</strong><span className="myth-muted">{watch.watch_status === "active" ? "Active Watch" : "Watch paused or stopped"}</span><div className="myth-override-grid">{(["P0", "P1", "P2"] as const).map((severity) => { const current = overrides.find((item) => item.severity === severity); return <form key={severity} action={current ? removeWatchNotificationOverrideAction : setWatchNotificationOverrideAction}><input type="hidden" name="watchId" value={watch.watch_id} /><input type="hidden" name="severity" value={severity} />{current ? <button className="myth-secondary" type="submit">{severity}: {current.enabled ? "On" : "Off"} · remove override</button> : <label><input type="checkbox" name="enabled" defaultChecked={severity === "P0"} /> {severity}: override email</label>}</form>; })}</div></div>;
 }

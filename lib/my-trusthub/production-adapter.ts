@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
 import type { AlertDetail, AlertListRequest, AlertsOverview, ConsumerAlert, SetAlertReadStateRequest, WatchCheckState, WatchObservationHistoryEntry } from "@/lib/my-trusthub/alert-contract";
+import type { NotificationPreferences, WatchNotificationOverride } from "@/lib/my-trusthub/notification-contract";
 
 type RpcResult = { data: unknown; error: { message: string; code?: string } | null };
 type QueryResult = PromiseLike<RpcResult>;
@@ -393,6 +394,28 @@ export class ProductionMyTrustHubAdapter {
     return rows<Record<string, unknown>>(await this.rpc("get_watch_observation_history", { p_saved_entity_id: savedRef, p_limit: limit })).map((row) => ({
       occurredAt: String(row.occurred_at), type: row.entry_type as WatchObservationHistoryEntry["type"], title: String(row.title), capabilityKey: row.capability_key as string | null, sourceOrganization: row.source_organization as string | null, alertRef: row.alert_id as string | null, eventState: row.event_state as WatchObservationHistoryEntry["eventState"],
     }));
+  }
+
+  async getNotificationPreferences(): Promise<NotificationPreferences> {
+    const row = one<Record<string, unknown>>(await this.rpc("get_notification_preferences"));
+    if (!row) throw new Error("Notification preferences unavailable");
+    return { p0EmailEnabled: Boolean(row.p0_email_enabled), p1DigestEnabled: Boolean(row.p1_digest_enabled), p2DigestEnabled: Boolean(row.p2_digest_enabled), periodicWatchSummaryEnabled: Boolean(row.periodic_watch_summary_enabled), timezone: String(row.timezone || "UTC"), digestTimeLocal: String(row.digest_time_local || "08:00:00"), rowVersion: Number(row.row_version) };
+  }
+
+  async updateNotificationPreferences(input: Omit<NotificationPreferences, "rowVersion"> & { expectedRowVersion: number; idempotencyKey: string }): Promise<number> {
+    return Number(await this.rpc("update_notification_preferences", { p_p0_email_enabled: input.p0EmailEnabled, p_p1_digest_enabled: input.p1DigestEnabled, p_p2_digest_enabled: input.p2DigestEnabled, p_periodic_watch_summary_enabled: input.periodicWatchSummaryEnabled, p_timezone: input.timezone, p_digest_time_local: input.digestTimeLocal, p_expected_row_version: input.expectedRowVersion, p_idempotency_key: input.idempotencyKey }));
+  }
+
+  async getWatchNotificationOverrides(watchId: string): Promise<WatchNotificationOverride[]> {
+    return rows<Record<string, unknown>>(await this.rpc("get_watch_notification_overrides", { p_watch_id: watchId })).map((row) => ({ watchRef: watchId, channel: "email", severity: String(row.severity) as "P0" | "P1" | "P2", enabled: Boolean(row.enabled), rowVersion: Number(row.row_version) }));
+  }
+
+  async setWatchNotificationOverride(watchId: string, severity: "P0" | "P1" | "P2", enabled: boolean, idempotencyKey: string): Promise<number> {
+    return Number(await this.rpc("set_watch_notification_override", { p_watch_id: watchId, p_channel: "email", p_severity: severity, p_enabled: enabled, p_idempotency_key: idempotencyKey }));
+  }
+
+  async removeWatchNotificationOverride(watchId: string, severity: "P0" | "P1" | "P2", idempotencyKey: string): Promise<void> {
+    await this.rpc("remove_watch_notification_override", { p_watch_id: watchId, p_channel: "email", p_severity: severity, p_idempotency_key: idempotencyKey });
   }
 
   async upgradeDbprWatch(watchId: string, fromCapabilityId: string, toCapabilityId: string, rowVersion: number, idempotencyKey: string, consentVersion: string) {

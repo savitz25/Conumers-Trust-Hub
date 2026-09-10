@@ -191,6 +191,15 @@
 .myth-auth-card .myth-form { margin: 24px 0; }
 .myth-lander .myth-primary { margin: 24px 0 8px; }
 .myth-mobile-nav { display: none; }
+.myth-notification-form { display:grid; gap: .8rem; grid-template-columns: repeat(2,minmax(0,1fr)); margin-top:1rem; }
+.myth-notification-form label, .myth-override-grid label { display:flex; align-items:center; gap:.55rem; font-size:.92rem; }
+.myth-notification-form input[type="checkbox"], .myth-override-grid input[type="checkbox"] { accent-color:#1d4ed8; width:1rem; height:1rem; }
+.myth-notification-form select, .myth-notification-form input[type="time"] { display:block; margin-top:.3rem; border:1px solid #cbd5e1; border-radius:.5rem; min-height:2.5rem; padding:.45rem .6rem; background:#fff; }
+.myth-notification-form button { grid-column:1/-1; justify-self:start; }
+.myth-watch-notification-list { margin-top:1.5rem; border-top:1px solid #e2e8f0; padding-top:1rem; }
+.myth-watch-notification-list h3 { font-size:1rem; font-weight:700; }
+.myth-watch-notification { display:grid; gap:.45rem; margin-top:1rem; padding:1rem; border:1px solid #e2e8f0; border-radius:.75rem; }
+.myth-override-grid { display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
 
 @media (max-width: 850px) {
   .myth-desktop-nav, .myth-account span { display: none; }
@@ -228,6 +237,8 @@
   .myth-coverage-list > li { flex-direction: column; flex-wrap: nowrap; gap: 8px; }
   .myth-coverage-list > li > p, .myth-limitations { flex-basis: auto; }
   .myth-coverage-list span { text-align: left; }
+  .myth-notification-form { grid-template-columns:1fr; }
+  .myth-override-grid { display:grid; grid-template-columns:1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
