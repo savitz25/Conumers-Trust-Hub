@@ -473,7 +473,12 @@
       }
     ],
     "liveBrowserBundleFiles": 20,
-    "liveBrowserCredentialsAbsent": true
+    "liveBrowserCredentialsAbsent": true,
+    "databaseLogging": {
+      "statementMode": "ddl",
+      "errorParameterLength": 0,
+      "passwordActivation": "SCRAM verifier only; no raw runtime password in SQL"
+    }
   },
   "changeDetection": {
     "isolatedP15Checks": 64,
@@ -654,7 +659,8 @@
   },
   "prs": {
     "ask": [
-      111
+      111,
+      112
     ],
     "contractor": [
       55,
