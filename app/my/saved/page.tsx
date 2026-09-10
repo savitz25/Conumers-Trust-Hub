@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Bookmark, LockKeyhole } from "lucide-react";
 import {
   addSavedToProjectAction,
@@ -6,8 +7,11 @@ import {
   removeSavedFromProjectAction,
   saveCanaryEntityAction,
   updatePrivateNoteAction,
+  saveMoveInventorySessionAction,
 } from "@/app/my/actions";
 import { GuestRestore } from "@/components/my-trusthub/guest-restore";
+import { GuestSessionRestore } from "@/components/my-trusthub/guest-session-restore";
+import { SessionCard } from "@/components/my-trusthub/session-card";
 import {
   MyTrustHubEmpty,
   MyTrustHubShell,
@@ -19,18 +23,21 @@ import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 export default async function SavedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ import?: string; error?: string }>;
+  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string }>;
 }) {
   const { adapter, user } = await requireWorkspace();
-  const [{ import: importState, error }, saved, projects, notes] = await Promise.all([
+  const [query, saved, projects, notes, sessions] = await Promise.all([
     searchParams,
     adapter.listSavedEntities(),
     adapter.listProjects(),
     adapter.listNotes(),
+    adapter.listSavedSessions(),
   ]);
+  const { import: importState, error, session, session_error: sessionError, session_import: sessionImport } = query;
   const active = saved.filter((item) => !item.removed_at);
   const activeProjects = projects.filter((project) => project.status === "active");
   const canSave = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SAVED_ENABLED");
+  const canUseSessions = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SESSIONS_ENABLED");
 
   return (
     <MyTrustHubShell active="Saved" email={user.email ?? "Signed in"}>
@@ -40,7 +47,26 @@ export default async function SavedPage({
       {importState === "complete" ? <p className="myth-notice" role="status">Guest research restored. Existing Saves were kept once.</p> : null}
       {importState === "invalid" ? <p className="myth-warning" role="alert">That guest research could not be restored safely.</p> : null}
       {error ? <p className="myth-warning" role="alert">That change could not be completed. Refresh and try again.</p> : null}
+      {session === "saved" ? <p className="myth-notice" role="status">Research session saved privately.</p> : null}
+      {sessionError ? <p className="myth-warning" role="alert">That research session could not be saved safely.</p> : null}
+      {sessionImport === "complete" ? <p className="myth-notice" role="status">Guest research session restored. Existing sessions were kept once.</p> : null}
+      {sessionImport === "invalid" ? <p className="myth-warning" role="alert">That guest research session was incompatible or invalid.</p> : null}
       <GuestRestore projects={activeProjects} importComplete={importState === "complete"} />
+      {canUseSessions ? <GuestSessionRestore projects={activeProjects} importComplete={sessionImport === "complete"} /> : null}
+      {canUseSessions ? (
+        <details className="myth-create">
+          <summary>Save a moving inventory session</summary>
+          <form action={saveMoveInventorySessionAction} className="myth-form myth-form-grid">
+            <input type="hidden" name="idempotencyKey" value={randomUUID()} />
+            <label htmlFor="session-title">Session name</label><input id="session-title" name="title" defaultValue="Moving inventory estimate" required maxLength={120} />
+            <label htmlFor="session-rooms">Rooms included</label><input id="session-rooms" name="rooms" type="number" min={1} max={20} defaultValue={5} required />
+            <label htmlFor="session-volume">Estimated cubic feet</label><input id="session-volume" name="estimatedCubicFeet" type="number" min={50} max={20000} defaultValue={900} required />
+            <label htmlFor="session-project">Project <span>(optional)</span></label><select id="session-project" name="projectId" defaultValue=""><option value="">Leave Unfiled</option>{activeProjects.map((project) => <option value={project.project_id} key={project.project_id}>{project.name}</option>)}</select>
+            <button className="myth-primary" type="submit">Save research session</button>
+          </form>
+          <p className="myth-muted">Stores aggregate inventory planning fields only. It never starts a Watch or changes provider visibility.</p>
+        </details>
+      ) : null}
       {canSave ? (
         <details className="myth-create">
           <summary>Save controlled canary entity</summary>
@@ -66,6 +92,10 @@ export default async function SavedPage({
         <p className="myth-warning">Save mutations are disabled by the launch gate.</p>
       )}
       <section className="myth-grid">
+        <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2>Continue research</h2><span>{sessions.length}</span></div>
+          {sessions.length ? sessions.map((item) => <SessionCard session={item} key={item.saved_session_id} />) : <p className="myth-muted">No supported research sessions saved yet.</p>}
+        </article>
         <article className="myth-panel myth-span-two">
           <div className="myth-panel-heading">
             <h2>Saved profiles</h2>

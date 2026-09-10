@@ -1,5 +1,6 @@
 import "server-only";
 
+import { randomUUID } from "node:crypto";
 import type { User } from "@supabase/supabase-js";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
@@ -62,6 +63,48 @@ export interface GuestImportPreviewRow {
   binding_id: string | null;
   network_entity_id: string | null;
   existing_saved_entity_id: string | null;
+  project_assignment_eligible: boolean;
+}
+
+export interface SavedSessionSummaryRow {
+  saved_session_id: string;
+  title: string;
+  hub: string;
+  session_type: "comparison" | "calculator" | "plan" | "worksheet" | "inventory";
+  summary: Record<string, string | number | boolean | null>;
+  status: "active" | "archived" | "read_only" | "invalidated";
+  schema_key: string;
+  schema_version: number;
+  schema_status: "draft" | "approved" | "deprecated" | "retired";
+  project_memberships: Array<{ project_ref: string; name: string; status: string }>;
+  last_activity_at: string;
+  resume_available: boolean;
+  resume_ref: string;
+  row_version?: number;
+}
+
+export interface SavedSessionDetailRow {
+  id: string;
+  hub: string;
+  session_type: SavedSessionSummaryRow["session_type"];
+  schema_key: string;
+  schema_version: number;
+  payload: Record<string, unknown>;
+  summary: Record<string, string | number | boolean | null>;
+  status: SavedSessionSummaryRow["status"];
+  resume_ref: string;
+  row_version: number;
+  created_at: string;
+  updated_at: string;
+  last_resumed_at: string | null;
+}
+
+export interface GuestSessionPreviewRow {
+  client_item_id: string;
+  item_status: "valid" | "duplicate" | "unsupported_version" | "expired" | "invalid" | "oversized";
+  valid: boolean;
+  importable: boolean;
+  existing_saved_session_id: string | null;
   project_assignment_eligible: boolean;
 }
 
@@ -283,5 +326,76 @@ export class ProductionMyTrustHubAdapter {
         p_project_id: input.projectId ?? null,
       }),
     );
+  }
+
+  async listSavedSessions(limit = 50): Promise<SavedSessionSummaryRow[]> {
+    return rows<SavedSessionSummaryRow>(await this.rpc("list_saved_session_summaries", { p_limit: limit }));
+  }
+
+  async getSavedSession(sessionId: string): Promise<SavedSessionDetailRow | null> {
+    const summary = (await this.listSavedSessions()).find((item) => item.saved_session_id === sessionId);
+    if (!summary || !summary.resume_available) return null;
+    const resumable = one<Record<string, unknown>>(await this.rpc("get_saved_session_for_resume", { p_resume_ref: summary.resume_ref }));
+    if (!resumable) return null;
+    return {
+      id: sessionId, hub: summary.hub, session_type: summary.session_type,
+      schema_key: summary.schema_key, schema_version: summary.schema_version,
+      payload: resumable.payload as Record<string, unknown>, summary: summary.summary,
+      status: summary.status, resume_ref: summary.resume_ref,
+      row_version: Number(resumable.row_version), created_at: summary.last_activity_at,
+      updated_at: summary.last_activity_at, last_resumed_at: null,
+    };
+  }
+
+  async saveSession(input: {
+    hub: string; sessionType: string; schemaKey: string; schemaVersion: number;
+    payload: Record<string, unknown>; summary: Record<string, unknown>;
+    projectId?: string; idempotencyKey: string;
+  }): Promise<Record<string, unknown> | null> {
+    return one<Record<string, unknown>>(await this.rpc("save_session", {
+      p_hub: input.hub, p_session_type: input.sessionType, p_schema_key: input.schemaKey,
+      p_schema_version: input.schemaVersion, p_payload: input.payload, p_summary: input.summary,
+      p_project_id: input.projectId ?? null, p_idempotency_key: input.idempotencyKey,
+      p_guest_origin_key: null,
+    }));
+  }
+
+  async updateSavedSession(input: {
+    sessionId: string; schemaKey: string; schemaVersion: number;
+    payload: Record<string, unknown>; summary: Record<string, unknown>;
+    rowVersion: number; idempotencyKey: string;
+  }): Promise<number> {
+    return this.rpc("update_saved_session", {
+      p_saved_session_id: input.sessionId, p_schema_key: input.schemaKey,
+      p_schema_version: input.schemaVersion, p_payload: input.payload, p_summary: input.summary,
+      p_expected_row_version: input.rowVersion, p_idempotency_key: input.idempotencyKey,
+    });
+  }
+
+  async addSessionToProject(sessionId: string, projectId: string): Promise<boolean> {
+    return this.rpc("add_saved_session_to_project", {
+      p_project_id: projectId, p_saved_session_id: sessionId, p_idempotency_key: randomUUID(),
+    });
+  }
+
+  async removeSessionFromProject(sessionId: string, projectId: string): Promise<boolean> {
+    return this.rpc("remove_saved_session_from_project", {
+      p_project_id: projectId, p_saved_session_id: sessionId, p_idempotency_key: randomUUID(),
+    });
+  }
+
+  async validateSessionForResume(resumeRef: string): Promise<Record<string, unknown> | null> {
+    return one<Record<string, unknown>>(await this.rpc("get_saved_session_for_resume", { p_resume_ref: resumeRef }));
+  }
+
+  async previewGuestSessionImport(payload: Record<string, unknown>): Promise<GuestSessionPreviewRow[]> {
+    return rows<GuestSessionPreviewRow>(await this.rpc("preview_guest_session_import", { p_payload: payload }));
+  }
+
+  async commitGuestSessionImport(input: { payload: Record<string, unknown>; selectedItemIds: string[]; projectId?: string; idempotencyKey: string }) {
+    return one<Record<string, unknown>>(await this.rpc("commit_guest_session_import", {
+      p_payload: input.payload, p_selected_item_ids: input.selectedItemIds,
+      p_project_id: input.projectId ?? null, p_idempotency_key: input.idempotencyKey,
+    }));
   }
 }

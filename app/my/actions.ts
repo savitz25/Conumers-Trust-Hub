@@ -59,6 +59,19 @@ function guestPayload(raw: string): Record<string, unknown> {
   return parsed as Record<string, unknown>;
 }
 
+function boundedInteger(formData: FormData, name: string, minimum: number, maximum: number): number {
+  const value = Number(formData.get(name));
+  if (!Number.isSafeInteger(value) || value < minimum || value > maximum) throw new Error(`Invalid ${name}`);
+  return value;
+}
+
+function sessionGuestPayload(raw: string): Record<string, unknown> {
+  if (!raw || new TextEncoder().encode(raw).length > 256 * 1024) throw new Error("Invalid guest session payload");
+  const parsed: unknown = JSON.parse(raw);
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Invalid guest session payload");
+  return parsed as Record<string, unknown>;
+}
+
 async function requiredAdapter() {
   const adapter = await ProductionMyTrustHubAdapter.create();
   if (!adapter || !(await adapter.getUser())) redirect("/my/sign-in");
@@ -284,5 +297,102 @@ export async function commitGuestImportAction(formData: FormData) {
   } catch (error) {
     if (error && typeof error === "object" && "digest" in error) throw error;
     redirect("/my/saved?import=invalid");
+  }
+}
+
+export async function saveMoveInventorySessionAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  const rooms = boundedInteger(formData, "rooms", 1, 20);
+  const estimatedCubicFeet = boundedInteger(formData, "estimatedCubicFeet", 50, 20000);
+  const title = textField(formData, "title", 120);
+  await safeMutation("my_trusthub_session_save_failed", "/my/saved?session_error=unable", () => adapter.saveSession({
+    hub: "move",
+    sessionType: "inventory",
+    schemaKey: "move.inventory/v1",
+    schemaVersion: 1,
+    payload: { room_counts: { total: rooms }, estimated_cubic_feet: estimatedCubicFeet },
+    summary: { title, primary_value: estimatedCubicFeet, unit: "estimated cubic feet", label: `${rooms} rooms` },
+    projectId: optionalUuidField(formData, "projectId"),
+    idempotencyKey: uuidField(formData, "idempotencyKey"),
+  }));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/projects");
+  redirect("/my/saved?session=saved");
+}
+
+export async function updateMoveInventorySessionAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  const sessionId = uuidField(formData, "sessionId");
+  const current = await adapter.getSavedSession(sessionId);
+  if (!current || current.schema_key !== "move.inventory/v1" || current.schema_version !== 1) redirect("/my/saved?session_error=unsupported");
+  const rooms = boundedInteger(formData, "rooms", 1, 20);
+  const estimatedCubicFeet = boundedInteger(formData, "estimatedCubicFeet", 50, 20000);
+  const title = textField(formData, "title", 120);
+  await safeMutation("my_trusthub_session_update_failed", `/my/sessions/${sessionId}?error=unable`, () => adapter.updateSavedSession({
+    sessionId, schemaKey: current.schema_key, schemaVersion: current.schema_version,
+    payload: { room_counts: { total: rooms }, estimated_cubic_feet: estimatedCubicFeet },
+    summary: { title, primary_value: estimatedCubicFeet, unit: "estimated cubic feet", label: `${rooms} rooms` },
+    rowVersion: rowVersionField(formData), idempotencyKey: randomUUID(),
+  }));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath(`/my/sessions/${sessionId}`);
+  redirect(`/my/sessions/${sessionId}?updated=1`);
+}
+
+export async function addSessionToProjectAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  const sessionId = uuidField(formData, "sessionId");
+  const projectId = uuidField(formData, "projectId");
+  await safeMutation("my_trusthub_session_project_add_failed", `/my/sessions/${sessionId}?error=unable`, () => adapter.addSessionToProject(sessionId, projectId));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath(`/my/sessions/${sessionId}`); revalidatePath(`/my/projects/${projectId}`);
+}
+
+export async function removeSessionFromProjectAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  const sessionId = uuidField(formData, "sessionId");
+  const projectId = uuidField(formData, "projectId");
+  await safeMutation("my_trusthub_session_project_remove_failed", `/my/sessions/${sessionId}?error=unable`, () => adapter.removeSessionFromProject(sessionId, projectId));
+  revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath(`/my/sessions/${sessionId}`); revalidatePath(`/my/projects/${projectId}`);
+}
+
+export async function resumeSavedSessionAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  const sessionId = uuidField(formData, "sessionId");
+  const session = await adapter.getSavedSession(sessionId);
+  if (!session) redirect("/my/saved?session_error=not-found");
+  await safeMutation("my_trusthub_session_resume_validation_failed", `/my/sessions/${sessionId}?resume=unsupported`, () => adapter.validateSessionForResume(session.resume_ref));
+  // Cross-hub handoff remains deliberately disabled. Validation proves the preserved
+  // session is current without exposing its payload or resume reference in a URL.
+  redirect(`/my/sessions/${sessionId}?resume=hub-unavailable`);
+}
+
+export type GuestSessionPreviewState = { ok: boolean; error?: string; items?: Awaited<ReturnType<ProductionMyTrustHubAdapter["previewGuestSessionImport"]>> };
+
+export async function previewGuestSessionImportAction(rawPayload: string): Promise<GuestSessionPreviewState> {
+  try {
+    assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+    const adapter = await requiredAdapter();
+    return { ok: true, items: await adapter.previewGuestSessionImport(sessionGuestPayload(rawPayload)) };
+  } catch {
+    return { ok: false, error: "This guest research session could not be restored safely." };
+  }
+}
+
+export async function commitGuestSessionImportAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const adapter = await requiredAdapter();
+  try {
+    const payload = sessionGuestPayload(textField(formData, "payload", 262144));
+    const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean);
+    if (!selectedItemIds.length) redirect("/my/saved?session_import=none");
+    await adapter.commitGuestSessionImport({ payload, selectedItemIds, projectId: optionalUuidField(formData, "projectId"), idempotencyKey: uuidField(formData, "idempotencyKey") });
+    revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/projects");
+    redirect("/my/saved?session_import=complete");
+  } catch (error) {
+    if (error && typeof error === "object" && "digest" in error) throw error;
+    redirect("/my/saved?session_import=invalid");
   }
 }

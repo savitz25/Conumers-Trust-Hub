@@ -11,6 +11,8 @@ import {
 } from "@/components/my-trusthub/my-shell";
 import { isMyTrustHubCanaryOnly } from "@/lib/my-trusthub/canary-access";
 import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
+import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
+import { SessionCard } from "@/components/my-trusthub/session-card";
 
 export default async function MyTrustHubHome() {
   const adapter = await getEnabledAdapter();
@@ -45,9 +47,11 @@ export default async function MyTrustHubHome() {
     );
   }
 
-  const [projects, saved] = await Promise.all([
+  const sessionsEnabled = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SESSIONS_ENABLED");
+  const [projects, saved, sessions] = await Promise.all([
     adapter.listProjects(),
     adapter.listSavedEntities(),
+    sessionsEnabled ? adapter.listSavedSessions(5) : Promise.resolve([]),
   ]);
   const activeProjects = projects.filter((project) => project.status === "active");
   const activeSaved = saved.filter((item) => !item.removed_at);
@@ -75,6 +79,10 @@ export default async function MyTrustHubHome() {
         Your Saved Research and Projects—kept together privately.
       </PageHeading>
       <section className="myth-grid">
+        <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2>Continue your research</h2><Link href="/my/saved">View Saved Research</Link></div>
+          {sessions.length ? sessions.filter((session) => session.status === "active").map((session) => <SessionCard session={session} key={session.saved_session_id} />) : <p className="myth-muted">Saved calculators, worksheets, and comparisons appear here when a supported specialist experience is available.</p>}
+        </article>
         <article className="myth-panel myth-span-two">
           <div className="myth-panel-heading">
             <h2>Active Projects</h2>
