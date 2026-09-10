@@ -82,14 +82,15 @@
     "enforcementIndexRowsProfiled": 205
   },
   "network": {
-    "publishedStateIntelligencePages": 6,
+    "publishedStateIntelligencePages": 7,
     "publishedStateIntelligencePaths": [
       "/new-jersey",
       "/california",
       "/texas",
       "/washington",
       "/arizona",
-      "/colorado"
+      "/colorado",
+      "/virginia"
     ]
   },
   "rejectedTotals": [
@@ -196,7 +197,7 @@
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "ERA facts with reporting status.",
-        "doesNotCount": "Not RIAs. Not a combined “advisers” total without stating both classes.",
+        "doesNotCount": "Not RIAs. Not a combined \u201cadvisers\u201d total without stating both classes.",
         "contributingSourceSystems": [
           "form_adv_firm_facts"
         ],
@@ -267,7 +268,7 @@
       "valueState": "KNOWN",
       "grain": "form_adv_attribute_observation",
       "denominator": "form_adv_reported_attributes rows",
-      "description": "Normalized Item-level observations. Evidence depth — not 5 million advisers.",
+      "description": "Normalized Item-level observations. Evidence depth \u2014 not 5 million advisers.",
       "coverage": "Current extract Item observations",
       "contributingSourceSystems": [
         "form_adv"
@@ -401,7 +402,7 @@
       "value": null,
       "valueState": "REQUEST_ONLY",
       "grain": "nj_state_ria_roster",
-      "denominator": "NJ Bureau of Securities state-RIA bulk roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "denominator": "NJ Bureau of Securities state-RIA bulk roster \u2014 SOURCE_AVAILABLE_BY_REQUEST",
       "description": "Complete NJ state-registered adviser count is UNKNOWN, not zero, and not the 438 SEC principal-office overlay.",
       "coverage": "New Jersey",
       "contributingSourceSystems": [
@@ -429,7 +430,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "ca_state_ria_roster",
-      "denominator": "California DFPI state-RIA bulk roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "California DFPI state-RIA bulk roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk California state-RIA roster was acquired. Complete licensed-adviser count is UNKNOWN, not zero.",
       "coverage": "California",
       "contributingSourceSystems": [
@@ -457,7 +458,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "tx_state_ria_roster",
-      "denominator": "Texas State Securities Board state-RIA bulk roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Texas State Securities Board state-RIA bulk roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk Texas state-RIA roster was acquired. Complete licensed-adviser count is UNKNOWN, not zero.",
       "coverage": "Texas",
       "contributingSourceSystems": [
@@ -485,7 +486,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "wa_state_ria_roster",
-      "denominator": "Washington DFI state-RIA bulk roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Washington DFI state-RIA bulk roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk Washington state-RIA roster was acquired. Complete licensed-adviser count is UNKNOWN, not zero.",
       "coverage": "Washington",
       "contributingSourceSystems": [
@@ -513,7 +514,7 @@
       "value": null,
       "valueState": "REQUEST_ONLY",
       "grain": "az_state_ria_roster",
-      "denominator": "ACC Securities state-IA bulk roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "denominator": "ACC Securities state-IA bulk roster \u2014 SOURCE_AVAILABLE_BY_REQUEST",
       "description": "Complete Arizona state-licensed adviser count is UNKNOWN, not zero, and not the 213 SEC principal-office overlay.",
       "coverage": "Arizona",
       "contributingSourceSystems": [

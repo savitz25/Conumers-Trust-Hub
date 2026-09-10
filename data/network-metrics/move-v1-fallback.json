@@ -54,14 +54,15 @@
     "historicalMoverUniverse": null
   },
   "network": {
-    "publishedStateIntelligencePages": 6,
+    "publishedStateIntelligencePages": 7,
     "publishedStateIntelligencePaths": [
       "/florida",
       "/new-jersey",
       "/california",
       "/texas",
       "/washington",
-      "/colorado"
+      "/colorado",
+      "/virginia"
     ],
     "floridaResearchCountyLandings": 4,
     "localMoverStateLandings": 51
@@ -101,22 +102,22 @@
       "buckets": [
         {
           "id": "0-30",
-          "label": "0–30 days since last recorded refresh",
+          "label": "0\u201330 days since last recorded refresh",
           "count": 4640
         },
         {
           "id": "31-60",
-          "label": "31–60 days",
+          "label": "31\u201360 days",
           "count": 0
         },
         {
           "id": "61-90",
-          "label": "61–90 days",
+          "label": "61\u201390 days",
           "count": 0
         },
         {
           "id": "91-365",
-          "label": "91–365 days",
+          "label": "91\u2013365 days",
           "count": 0
         },
         {
@@ -372,7 +373,7 @@
       "value": null,
       "valueState": "REQUEST_ONLY",
       "grain": "nj_pmw_authority_roster",
-      "denominator": "NJ DCA Public Movers and Warehousemen roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "denominator": "NJ DCA Public Movers and Warehousemen roster \u2014 SOURCE_AVAILABLE_BY_REQUEST",
       "description": "The complete NJ PM/PW/PC roster was not bulk-acquired. Statewide mover count is UNKNOWN, not zero.",
       "coverage": "New Jersey",
       "contributingSourceSystems": [
@@ -402,7 +403,7 @@
       "grain": "nj_operation_safe_move_nov",
       "denominator": "Acquired official OSM respondent tables (2025=11 + 2024=23). Highlight-only years are excluded.",
       "description": "Acquired NOV rows. A Notice of Violation is not a final order. Not a statewide mover count.",
-      "coverage": "New Jersey — acquired OSM years only",
+      "coverage": "New Jersey \u2014 acquired OSM years only",
       "contributingSourceSystems": [
         "nj_oag_operation_safe_move"
       ],
@@ -427,7 +428,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "ca_cal_t_household_mover_permit",
-      "denominator": "BHGS Household Mover (CAL-T) roster — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "denominator": "BHGS Household Mover (CAL-T) roster \u2014 OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
       "description": "No bulk CAL-T roster was acquired. Complete licensed-mover count is UNKNOWN, not zero.",
       "coverage": "California",
       "contributingSourceSystems": [
@@ -536,7 +537,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "txdmv_household_goods_certificate_roster",
-      "denominator": "Complete current TxDMV household-goods certificate roster — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "denominator": "Complete current TxDMV household-goods certificate roster \u2014 OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
       "description": "The complete current Texas certificate denominator is unknown, not zero. TxDMV authority is separate from FMCSA authority.",
       "coverage": "Texas",
       "contributingSourceSystems": [

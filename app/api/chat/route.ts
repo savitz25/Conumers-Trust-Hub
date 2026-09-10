@@ -4,6 +4,7 @@ import { caConciergeContext } from '@/lib/network/ca-network';
 import { txConciergeContext } from '@/lib/network/tx-network';
 import { waConciergeContext } from '@/lib/network/wa-network';
 import { coConciergeContext } from '@/lib/network/co-network';
+import { vaConciergeContext } from '@/lib/network/va-network';
 import { planAskResearch } from '@/lib/network/research-planner';
 import { resolveResearchScope } from '@/lib/network/research-scope';
 import { conciergeDestinationContext, resolveResearchDestinations } from '@/lib/network/research-destinations';
@@ -73,7 +74,7 @@ export async function POST(request: Request) {
 
     const plan=planAskResearch(lastUser.content);const scope=resolveResearchScope(plan);const destinations=resolveResearchDestinations({researchPlan:plan,executionScope:scope,limit:3});
     const apiMessages: ChatMessage[] = [
-      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}\n\n${coConciergeContext()}\n\n${conciergeDestinationContext(plan,scope)}` },
+      { role: 'system', content: `${ASK_CONCIERGE_SYSTEM_PROMPT}\n\n${caConciergeContext()}\n\n${txConciergeContext()}\n\n${waConciergeContext()}\n\n${coConciergeContext()}\n\n${vaConciergeContext()}\n\n${conciergeDestinationContext(plan,scope)}` },
       ...messages,
     ];
 

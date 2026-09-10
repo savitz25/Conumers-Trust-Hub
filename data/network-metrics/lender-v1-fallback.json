@@ -91,7 +91,7 @@
     "searchUnionIsNotNationalHeadline": true
   },
   "network": {
-    "publishedStateIntelligencePages": 7,
+    "publishedStateIntelligencePages": 8,
     "publishedStateIntelligencePaths": [
       "/florida",
       "/new-jersey",
@@ -99,7 +99,8 @@
       "/texas",
       "/washington",
       "/arizona",
-      "/colorado"
+      "/colorado",
+      "/virginia"
     ],
     "njCountyIntelligencePages": 4
   },
@@ -624,7 +625,7 @@
       "grain": "person_mlo_entity",
       "denominator": "lender_national_entities.entity_kind = 'person_mlo'",
       "description": "Internal person_mlo identities. Not a public MLO directory.",
-      "coverage": "National identity graph — unpublished as people pages",
+      "coverage": "National identity graph \u2014 unpublished as people pages",
       "contributingSourceSystems": [
         "lender_national_entities"
       ],
@@ -871,7 +872,7 @@
       "value": null,
       "valueState": "REQUEST_ONLY",
       "grain": "nj_rmla_license_roster",
-      "denominator": "NJ RMLA bulk licensee roster — SOURCE_AVAILABLE_BY_REQUEST",
+      "denominator": "NJ RMLA bulk licensee roster \u2014 SOURCE_AVAILABLE_BY_REQUEST",
       "description": "No bulk RMLA roster was acquired. Statewide NJ licensee count is UNKNOWN, not zero.",
       "coverage": "New Jersey",
       "contributingSourceSystems": [
@@ -901,7 +902,7 @@
       "grain": "nj_dobi_unique_order",
       "denominator": "Acquired NJDOBI enforcement order identifiers in the published NJ snapshot",
       "description": "Acquired unique orders. Later OCF years remain SOURCE_NOT_ACQUIRED and are not zero.",
-      "coverage": "New Jersey — acquired DOBI years only",
+      "coverage": "New Jersey \u2014 acquired DOBI years only",
       "contributingSourceSystems": [
         "nj_dobi"
       ],
@@ -910,7 +911,7 @@
       "publicationStatus": "PUBLIC_PARTIAL",
       "trace": {
         "counts": "Unique acquired DOBI order identifiers.",
-        "doesNotCount": "Not the RMLA roster. Not 2023–2026 OCF years. Not a statewide lender count.",
+        "doesNotCount": "Not the RMLA roster. Not 2023\u20132026 OCF years. Not a statewide lender count.",
         "contributingSourceSystems": [
           "nj_dobi"
         ],
@@ -926,7 +927,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "ca_crmla_live_roster",
-      "denominator": "Live CRMLA roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Live CRMLA roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk live CRMLA roster was acquired. Complete licensed-lender count is UNKNOWN, not zero.",
       "coverage": "California",
       "contributingSourceSystems": [
@@ -981,7 +982,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "tx_sml_live_roster",
-      "denominator": "Live Texas mortgage-company roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Texas mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Texas mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Texas",
       "contributingSourceSystems": [
@@ -1011,7 +1012,7 @@
       "grain": "tx_sml_order",
       "denominator": "SML enforcement-order CSV rows in the published Texas snapshot",
       "description": "Acquired SML orders. Order count is not quality. Name-only rows are not a live roster.",
-      "coverage": "Texas — SML orders file",
+      "coverage": "Texas \u2014 SML orders file",
       "contributingSourceSystems": [
         "tx_sml"
       ],
@@ -1036,7 +1037,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "wa_dfi_live_roster",
-      "denominator": "Live Washington mortgage-company roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Washington mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Washington mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Washington",
       "contributingSourceSystems": [
@@ -1066,7 +1067,7 @@
       "grain": "wa_dfi_enforcement_row",
       "denominator": "DFI enforcement HTML table rows in the published Washington snapshot",
       "description": "Acquired DFI table rows. Order count is not quality. Name-only rows are not a live roster.",
-      "coverage": "Washington — DFI Consumer Services enforcement table",
+      "coverage": "Washington \u2014 DFI Consumer Services enforcement table",
       "contributingSourceSystems": [
         "wa_dfi"
       ],
@@ -1091,7 +1092,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "az_difi_live_roster",
-      "denominator": "Live Arizona mortgage-company roster — SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Arizona mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Arizona mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Arizona",
       "contributingSourceSystems": [
@@ -1121,7 +1122,7 @@
       "grain": "az_cfpb_mortgage_complaint_row",
       "denominator": "CFPB mortgage product complaints with state = AZ",
       "description": "Statewide CFPB mortgage complaint overlay. A complaint is not a violation and is not a company ranking.",
-      "coverage": "Arizona — CFPB mortgage product",
+      "coverage": "Arizona \u2014 CFPB mortgage product",
       "contributingSourceSystems": [
         "cfpb"
       ],

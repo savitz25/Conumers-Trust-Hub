@@ -12,6 +12,7 @@ import { txReleaseGatePassed } from '@/lib/network/tx-network';
 import { waReleaseGatePassed } from '@/lib/network/wa-network';
 import { azReleaseGatePassed } from '@/lib/network/az-network';
 import { coReleaseGatePassed } from '@/lib/network/co-network';
+import { vaReleaseGatePassed } from '@/lib/network/va-network';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -89,7 +90,8 @@ export function Footer() {
                       (item.href !== '/texas' || txReleaseGatePassed()) &&
                       (item.href !== '/washington' || waReleaseGatePassed()) &&
                       (item.href !== '/arizona' || azReleaseGatePassed()) &&
-                      (item.href !== '/colorado' || coReleaseGatePassed()),
+                      (item.href !== '/colorado' || coReleaseGatePassed()) &&
+                      (item.href !== '/virginia' || vaReleaseGatePassed()),
                   )
                   .map((item) => (
                   <li key={item.href}>
