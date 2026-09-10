@@ -1,5 +1,52 @@
 # My TrustHub Phase 2 / Prompt 20D
 
+## P20D completion — founder canary passed
+
+Result: **COMPLETE — READY FOR STAGE 2 APPROVAL**
+
+On 2026-09-09, Production was repaired and certified on merge SHA
+`d90664b9de5ed22e31d9c3eae8aba9adbbf86c23`, deployment
+`dpl_GAB2MNWdX2rFk14GP1wQJwBF2Wqn`. The safe diagnostic identified the actual
+Supabase Auth failure as `over_email_send_rate_limit` (HTTP 429): the built-in
+SMTP project's email allowance was exhausted. Supabase Auth now uses the
+existing approved Resend transactional infrastructure through a dedicated
+sending-only credential. No email credential is present in source, logs, the
+browser bundle, or this record. Expected delivery failures now return generic,
+accessible inline copy instead of a Next.js 500.
+
+The fresh Magic Link completed the Production PKCE callback. The resulting Auth
+session belongs to canonical subject `3d53d9df-f414-495a-b366-fc5843d14650`,
+whose confirmed email and trusted `app_metadata.my_trusthub_canary=true`
+entitlement remain intact. There is exactly one Auth user and no unrelated user.
+
+The controlled runtime canary created one consumer profile, one idempotent Save,
+and one Project named `Internal My TrustHub Canary`. The backing entity is an
+explicit internal-only, non-public, non-ranking canary identity with no public
+profile route. Project membership add, remove, re-add, archive, and restore all
+completed; the Saved row survived every Project lifecycle operation. Owner reads
+returned one profile, one Save, and one Project. A transaction-scoped Consumer B
+returned no Consumer A rows. Anonymous and specialist roles have no consumer
+table access, while `network` and `ops` remain unavailable to browser roles.
+
+Final data-plane counts are: Auth users 1; profiles 1; Saved 1; Projects 1;
+Watches 0; Alerts 0; deliveries 0; delivery attempts 0; source observations 0.
+No public canary profile exists. `/my` responses remain private/no-store,
+noindex/nofollow/noarchive, and `Referrer-Policy: no-referrer`; anonymous Saved
+and Projects redirect to sign-in. Homepage and Ask return 200, and anonymous
+Admin redirects to `/admin/login`. Watches, Alerts, notification email, public
+signup, export/delete, specialist handoff, and source monitoring remain off.
+
+The master flag's closed-state behavior and dependent-flag suppression remain
+covered by the production implementation/static gate; production was restored
+and left in the closed founder-only state with all canary data intact. The
+Security Advisor retains 19 intentional server-only RLS-with-no-browser-policy
+information findings and the password-leak-protection warning (password login is
+not enabled for this canary). Performance Advisor retains 28 expected unused
+index information findings at this one-user volume and the existing Auth
+connection-allocation information item.
+
+The historical hard stops below are preserved as the audit trail.
+
 ## P20D resume — closed deployment completed, Auth email hard stop
 
 Result: **CLOSED STAGE 1 DEPLOYED; RUNTIME CANARY HARD-STOPPED BEFORE AUTHENTICATION**
