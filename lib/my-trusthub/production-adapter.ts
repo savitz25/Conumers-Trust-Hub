@@ -290,6 +290,17 @@ export class ProductionMyTrustHubAdapter {
     return rows(await this.rpc("get_watch_check_details", { p_saved_entity_id: savedEntityId }));
   }
 
+  async getDbprWatchStatus(savedEntityId: string): Promise<Array<{ capability_id: string; primary_status: string | null; secondary_status: string | null; official_status: string | null; source_url: string | null; source_as_of: string | null; retrieved_at: string | null; observed_at: string | null; evaluation_status: string | null }>> {
+    return rows(await this.rpc("get_dbpr_watch_status", { p_saved_entity_id: savedEntityId }));
+  }
+
+  async upgradeDbprWatch(watchId: string, fromCapabilityId: string, toCapabilityId: string, rowVersion: number, idempotencyKey: string, consentVersion: string) {
+    return this.rpc<number>("upgrade_dbpr_watch", {
+      p_watch_id: watchId, p_from_capability_id: fromCapabilityId, p_to_capability_id: toCapabilityId,
+      p_expected_row_version: rowVersion, p_idempotency_key: idempotencyKey, p_consent_version: consentVersion,
+    });
+  }
+
   async startWatch(savedEntityId: string, capabilityIds: string[], idempotencyKey: string) {
     return one<{ watch_id: string; created: boolean; row_version: number }>(await this.rpc("start_watch", {
       p_saved_entity_id: savedEntityId,

@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {parseDbprSearch,parseDbprDetail,normalizeDbprLookupStatus,fetchDbprLookup} from '../lib/my-trusthub/dbpr-lookup.ts';
+const id='EA5C6D8D8BF68DA859387B39EBCDDB02';
+const searchRow=(credential='CCC1332036',detail=id)=>`<a href='LicenseDetail.asp?SID=&id=${detail}'>Fixture</a></font></td><td><font>Primary</font></td><td><font>${credential}<br/>Cert Roofing</font></td>`;
+const detail=(credential='CCC1332036',status='Delinquent,Active')=>`<label for="LicenseNumber">License Number</label><div>${credential}</div><label for="LicStatus">Status</label><div>${status}</div>`;
+test('exact prefix identity; primary and DBA may share one official detail',()=>assert.equal(parseDbprSearch(searchRow()+searchRow(),'CCC1332036'),id));
+test('numeric-core collision cannot match the credential',()=>assert.throws(()=>parseDbprSearch('hLicNbr'+searchRow('CRC1332036'),'CCC1332036'),e=>e.code==='SOURCE_IDENTITY_MISSING'));
+test('two distinct official details for the exact credential fail closed',()=>assert.throws(()=>parseDbprSearch(searchRow()+searchRow('CCC1332036','F'.repeat(32)),'CCC1332036'),e=>e.code==='SOURCE_IDENTITY_AMBIGUOUS'));
+test('detail must independently confirm exact license identity',()=>assert.throws(()=>parseDbprDetail(detail('CRC1332036'),'CCC1332036')));
+test('delinquency is retained separately from underlying active status',()=>assert.deepEqual(parseDbprDetail(detail(),'CCC1332036'),{credential:'CCC1332036',primary_status:'delinquent',secondary_status:'active',official_status:'Delinquent,Active'}));
+test('documented current, inactive, omitted and null/void combinations retain meaning',()=>{
+ assert.deepEqual(normalizeDbprLookupStatus('Current, Inactive'),{primary_status:'current',secondary_status:'inactive'});
+ assert.deepEqual(normalizeDbprLookupStatus('Null & Void'),{primary_status:'null_and_void',secondary_status:'not_reported'});
+ assert.deepEqual(normalizeDbprLookupStatus('Involuntarily Inactive'),{primary_status:'involuntarily_inactive',secondary_status:'not_reported'});
+ assert.equal(parseDbprDetail(detail('CCC1332036','Null &amp; Void'),'CCC1332036').primary_status,'null_and_void');
+});
+test('new or malformed status combinations require schema review',()=>{for(const status of ['Active','New Regulatory Code,Active','Current,New Status','Current,Active,Extra','Current,'])assert.throws(()=>normalizeDbprLookupStatus(status),e=>e.code==='SOURCE_SCHEMA_INVALID');});
+test('missing or duplicated detail fields fail closed',()=>{assert.throws(()=>parseDbprDetail('<html>unavailable</html>','CCC1332036'));assert.throws(()=>parseDbprDetail(detail()+detail(),'CCC1332036'));});
+test('arbitrary credential input is rejected before network access',async()=>{await assert.rejects(fetchDbprLookup('1332036'));await assert.rejects(fetchDbprLookup('https://example.invalid'));});
