@@ -1,0 +1,47 @@
+{
+  "state": "CO",
+  "ACQUIRED": [
+    "DORA EC/PC business credentials",
+    "Colorado PUC ACTIVE HHG permits",
+    "CMS NH/HHA/Hospice overlays",
+    "HMDA 2025 Colorado property-location slice",
+    "DRE MLO person rows",
+    "IAPD state IA/ERA/notice/principal-office layers",
+    "DOI 2025 statistical directory",
+    "DOI 2026–2027 surplus-lines list",
+    "DOI 2025 standard complaint ratio/index tables"
+  ],
+  "OPEN_SEARCH_ONLY": [
+    "DORA live license lookup",
+    "NMLS Consumer Access for mortgage companies",
+    "CDPHE Find and Compare",
+    "IAPD / Division of Securities live lookup",
+    "Sircon / DOI company-agency-producer lookup",
+    "Interactive DOI complaint database"
+  ],
+  "SOURCE_NOT_ACQUIRED": [
+    "mover bulk complaint data",
+    "complete current ALR bulk universe",
+    "current Colorado mortgage-company bulk roster",
+    "insurance agency bulk roster",
+    "insurance producer bulk roster",
+    "current authorized-insurer bulk roster"
+  ],
+  "SOURCE_AVAILABLE_BY_REQUEST": [
+    "possible CORA insurance bulk extracts — not requested on the specialist ticket"
+  ],
+  "SOURCE_USE_RESTRICTED": [],
+  "HISTORICAL_STALE": [
+    "CDPHE 2017 health-facilities GIS"
+  ],
+  "UNKNOWN": [
+    "live 2026 authorized-company census",
+    "live producer and agency counts",
+    "complete current ALR count"
+  ],
+  "NOT_APPLICABLE": [
+    "statewide general-contractor license universe (local licensing model)",
+    "Colorado county/city Ask routes in this phase",
+    "Arizona-style no-HHG-universe (Colorado does have PUC HHG permits)"
+  ]
+}

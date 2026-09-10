@@ -91,14 +91,15 @@
     "searchUnionIsNotNationalHeadline": true
   },
   "network": {
-    "publishedStateIntelligencePages": 6,
+    "publishedStateIntelligencePages": 7,
     "publishedStateIntelligencePaths": [
       "/florida",
       "/new-jersey",
       "/california",
       "/texas",
       "/washington",
-      "/arizona"
+      "/arizona",
+      "/colorado"
     ],
     "njCountyIntelligencePages": 4
   },
@@ -1142,12 +1143,12 @@
       "unit": "count",
       "key": "published_state_intelligence_pages",
       "label": "Published state mortgage-intelligence pages",
-      "value": 6,
+      "value": 7,
       "valueState": "KNOWN",
       "grain": "published_state_intelligence_page",
       "denominator": "Indexable specialist state intelligence routes currently published",
-      "description": "Florida, New Jersey, California, Texas, Washington, and Arizona state intelligence pages. Not a count of lenders.",
-      "coverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona",
+      "description": "Florida, New Jersey, California, Texas, Washington, Arizona, and Colorado state intelligence pages. Not a count of lenders.",
+      "coverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado",
       "contributingSourceSystems": [
         "lender-state-intel"
       ],
@@ -1155,12 +1156,12 @@
       "generatedAt": "2026-09-04T20:16:18.922Z",
       "publicationStatus": "PUBLIC",
       "trace": {
-        "counts": "Published /florida, /new-jersey, /california, /texas, /washington, and /arizona intelligence routes.",
+        "counts": "Published /florida, /new-jersey, /california, /texas, /washington, /arizona, and /colorado intelligence routes.",
         "doesNotCount": "Not NJ county pages and not national directory rows.",
         "contributingSourceSystems": [
           "lender-state-intel"
         ],
-        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona",
+        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado",
         "sourceDates": "Publication gates in specialist catalogs",
         "generationDate": "2026-09-04"
       }

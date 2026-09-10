@@ -63,6 +63,7 @@ import { caCaveatForHub, caSpecialistUrl, routeCaAsk } from './ca-network.ts';
 import { txCaveatForHub, txSpecialistUrl, routeTxAsk } from './tx-network.ts';
 import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
+import { coCaveatForHub, coSpecialistUrl, routeCoAsk } from './co-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -186,6 +187,8 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'CA') return '/california';
   if (parsed.geography?.stateCode === 'TX') return '/texas';
   if (parsed.geography?.stateCode === 'WA') return '/washington';
+  if (parsed.geography?.stateCode === 'AZ') return '/arizona';
+  if (parsed.geography?.stateCode === 'CO') return '/colorado';
   return undefined;
 }
 
@@ -916,6 +919,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: waSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${waCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'CO') {
+    const coRoute = routeCoAsk(parsed.query);
+    if (coRoute) {
+      const already = hubs.some((h) => h.hubId === coRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: coRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[coRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: coRoute.destination,
+            reason: coRoute.caveat,
+            whatItCanAnswer: `Colorado research on ${NETWORK_PUBLIC_NAMES[coRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Colorado',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === coRoute.hubId
+            ? {
+                ...h,
+                destination: coRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${coRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === coRoute.hubId), ...hubs.filter((h) => h.hubId !== coRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: coSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${coCaveatForHub(primary)}`,
             }
           : h,
       );

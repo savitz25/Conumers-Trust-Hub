@@ -1,0 +1,518 @@
+{
+  "state_code": "CO",
+  "state_name": "Colorado",
+  "ask_path": "/colorado",
+  "ask_canonical": "https://www.asktrusthub.com/colorado",
+  "version": "ath-co-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "colorado_local_phase": "NO",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_NOT_FINAL",
+  "conceptual_statement": "Colorado’s strongest Trust Hub evidence is specialty contractor credentials (not a statewide general-contractor license), a genuine PUC household-goods permit layer, separate CMS senior provider classes with CDPHE verification context, HMDA mortgage-market activity with a search-only company roster, an unusually strong IAPD state-registration layer for investment advisers, and DOI market, surplus-lines, and complaint evidence that is not a live authorized-insurer roster. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_colorado_pages": ["contractor", "move", "senior", "lender", "investor", "insurance"],
+    "required_hubs": ["contractor", "move", "senior", "lender", "investor", "insurance"],
+    "blocker": null,
+    "rule": "All six specialist /colorado pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /colorado is indexable. Any one specialist failure fails the gate. Do not weaken the gate. No Colorado county or city routes.",
+    "verified_at": "2026-09-10T13:37:08.370Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "7,936 active EC/PC contractor credentials",
+      "grain": "Active electrical (EC) and plumbing (PC) business-credential rows. Not unique contractors, not general contractors, not all construction companies. No statewide Colorado general-contractor license."
+    },
+    {
+      "hub_id": "move",
+      "display": "203 active Colorado PUC household-goods permits",
+      "grain": "State HHG permit authority. Colorado HHG permit is not USDOT and not MC authority. State permit is not federal interstate authority."
+    },
+    {
+      "hub_id": "senior",
+      "display": "210 nursing homes · 222 home health · 88 hospice",
+      "grain": "Separate CMS provider classes. Do not add 210+222+88 into one Colorado senior-providers denominator. CMS CCN is not a state facility license."
+    },
+    {
+      "hub_id": "lender",
+      "display": "260,212 Colorado HMDA applications in 2025",
+      "grain": "HMDA applications for Colorado property location. Not a lender count. Not a license roster. 21,865 MLO person-license rows are not companies. Company roster remains search-only."
+    },
+    {
+      "hub_id": "investor",
+      "display": "740 Colorado state-registered IA firms",
+      "grain": "APPROVED Colorado state IA firms. Separate from 589 principal-office firms, 209 state ERA, and 3,673 notice filings. Populations need not be disjoint. Six CRDs appear in both approved state IA and notice-filed sets."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,839 NAIC company rows in Colorado DOI's 2025 market directory",
+      "grain": "Dated 2025 statistical-report directory rows as of 2025-12-31. Not currently authorized Colorado insurers. 259 current dated surplus identities and 415 DOI complaint company×line observations are separate grains."
+    }
+  ],
+  "what_makes_colorado_different": [
+    "Colorado contractor licensing is specialty-based statewide for electrical and plumbing. There is no statewide general-contractor license universe. General contractors remain primarily a local licensing model.",
+    "Colorado has a genuine PUC household-goods permit layer that is separate from FMCSA interstate authority. A state HHG permit is not a USDOT number and not MC authority.",
+    "Senior evidence is strongest when CMS nursing homes, home health, and hospice stay separate classes and CDPHE adds state verification context. Do not publish one Colorado senior-providers total.",
+    "Lender has strong MLO person-license and 2025 HMDA property-location intelligence, but no acquired current bulk mortgage-company roster. HMDA is not a license. An MLO is not a lender company.",
+    "Investor has an unusually strong state-registration layer because official IAPD state compilation exposes jurisdiction-based IA and ERA records. 740 approved state IA firms are not 589 principal-office firms and not 3,673 notice filings.",
+    "Insurance has strong DOI market, surplus-lines, and complaint evidence despite missing free agency, producer, and current-authorized bulk rosters. 1,839 statistical-directory rows are not current authorization. DOI Complaint Ratio/Index is not a TrustHub score."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": null,
+      "EXISTING_ORGANIZATIONS_ENRICHED": null,
+      "NEW_EVIDENCE_ROWS": 7936,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "7,936 is active EC/PC business credential rows, not unique contractors. Discipline 5,990 observation rows / 5,198 distinct cases remain separate. Null means the specialist did not report a compatible Ask-level identity-growth field."
+    },
+    "move": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 203,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 203,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "203 active Colorado PUC HHG permits. State permit identities are not FMCSA companies minted here."
+    },
+    "senior": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": null,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": null,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "CMS classes remain 210 NH / 222 HHA / 88 hospice. Do not sum. Null evidence-row total because classes are not one grain."
+    },
+    "lender": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 260212,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "260,212 is HMDA applications, not lenders. 21,865 MLO person rows are not companies. Company roster SOURCE_NOT_ACQUIRED."
+    },
+    "investor": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 950,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 4623,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "Specialist-owned: 950 new state identities (740 APPROVED IA + 209 ERA + 1 TERMREQUEST) and 4,623 observation rows including 3,673 notice filings. Not a combined adviser total. Exact CRD overlap of 6 is allowed."
+    },
+    "insurance": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 1839,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "1,839 statistical-directory rows, 259 surplus identities, and 415 complaint company×line rows are snapshot observations. Exact NAIC matches are read-only and not enrichment writes."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "HMDA applications, MLO people, contractor credentials, CMS providers, investment-adviser grains, insurance rows, and mover permits are incompatible. Ask does not publish a Colorado-records total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /colorado pages plus Ask /colorado. Not an organization count."
+    }
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "coverage_type": "STATE_SPECIALTY_CREDENTIALS",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.contractortrusthub.com/colorado",
+      "snapshot_version": "contractor-co-state-intel-v1",
+      "fingerprint": "d4895200fa822677843095ce1e4e216ecab7bf267a5d7945f7a1feabbc365b30",
+      "source_clock": "DORA professional-license extract 2026-09-09",
+      "primary_regulator": "Colorado DORA",
+      "primary_identity": "CO-DORA:{licensePrefix}:{licenseNumber}",
+      "topic": "Is this contractor licensed in Colorado?",
+      "plain_question": "Is this contractor licensed in Colorado — and is there a statewide general-contractor license?",
+      "research_topics": [
+        "Electrical Contractor (EC) business credentials",
+        "Plumbing Contractor (PC) business credentials",
+        "DORA lookup",
+        "No statewide general-contractor universe"
+      ],
+      "primary_identifiers": ["CO-DORA:EC:{number}", "CO-DORA:PC:{number}"],
+      "identifier_types": ["CO-DORA"],
+      "source_summary": "Colorado DORA publishes professional-license rows. Contractor-business specialty credentials are Electrical Contractor (EC) and Plumbing Contractor (PC). Person electrician/plumber credentials remain person grain.",
+      "coverage_summary": "7,936 active EC/PC business credential rows. Not unique contractors. Not general contractors. No statewide Colorado general-contractor license. 1,606,852 total professional-license rows are not contractor businesses.",
+      "coverage_limitation": "No statewide GC license. Person credentials are not the business denominator.",
+      "what_research": "DORA EC/PC business credentials and official lookup",
+      "next_step": "Verify the license on DORA / ContractorTrustHub Colorado",
+      "semantic_guardrails": [
+        "license row ≠ unique business",
+        "person ≠ business",
+        "EC/PC credential ≠ general contractor",
+        "1,606,852 professional rows ≠ contractor businesses",
+        "no statewide GC universe"
+      ],
+      "verified_facts": [
+        "Active EC+PC business credential rows: 7,936 (EC Active 4,789; PC Active 3,147).",
+        "Electrical Contractor all rows: 12,495. Plumbing Contractor all rows: 5,415.",
+        "Discipline: 5,990 observation rows / 5,198 distinct cases. Observation is not a unique case.",
+        "Colorado does not have a statewide general-contractor license universe."
+      ],
+      "routing_intents": [
+        "Is this contractor licensed in Colorado?",
+        "Can I look up an electrical contractor in Colorado?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": [
+        "statewide general-contractor license universe (not applicable / local model)",
+        "person electrician/plumber credentials as a business count"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "coverage_type": "STATE_HHG_PERMIT",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.movetrusthub.com/colorado",
+      "snapshot_version": "move-co-state-intel-v1",
+      "fingerprint": "382df2ce695bbd694ab410345fa2a54244e0014108db50ef370dc71f8d8e9d1b",
+      "source_clock": "Colorado PUC household-goods permits 2026-09-09",
+      "primary_regulator": "Colorado Public Utilities Commission",
+      "primary_identity": "CO-PUC-HHG:{permitNumber}",
+      "topic": "Can I check a mover in Colorado?",
+      "plain_question": "Can I check a Colorado mover — and does a state permit mean they can move me interstate?",
+      "research_topics": [
+        "Colorado PUC household-goods permits",
+        "State permit versus FMCSA interstate authority",
+        "USDOT versus MC authority",
+        "Official PUC verification"
+      ],
+      "primary_identifiers": ["CO-PUC-HHG"],
+      "identifier_types": ["CO-PUC-HHG", "USDOT"],
+      "source_summary": "Colorado PUC publishes household-goods permits. MoveTrustHub treats 203 ACTIVE permits as the current state HHG grain.",
+      "coverage_summary": "203 active Colorado PUC household-goods permits. State permit is not USDOT, not MC authority, and not federal interstate authority. Do not name-match PUC holders to FMCSA.",
+      "coverage_limitation": "Bulk complaint data not acquired. Historical permit statuses exist and are not the Ask hero.",
+      "what_research": "PUC HHG permit identity and FMCSA separately for interstate authority",
+      "next_step": "Verify the PUC permit on MoveTrustHub Colorado; use FMCSA for interstate authority",
+      "semantic_guardrails": [
+        "Colorado HHG permit ≠ USDOT",
+        "Colorado HHG permit ≠ MC authority",
+        "intrastate authority ≠ federal interstate authority"
+      ],
+      "verified_facts": [
+        "ACTIVE Colorado PUC household-goods permits: 203.",
+        "Identity: CO-PUC-HHG:{permitNumber}."
+      ],
+      "routing_intents": [
+        "Can I check a mover in Colorado?",
+        "Does a Colorado moving permit mean they can haul my stuff to another state?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": ["bulk mover complaint data", "FMCSA name-match to PUC"]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "coverage_type": "CMS_CLASSES_PLUS_CDPHE_CONTEXT",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.seniortrusthub.com/colorado",
+      "snapshot_version": "senior-co-state-intel-v1",
+      "fingerprint": "5f56bc927c981a15293f941cb794a317e3b2182100c1e7167dd7a78c0f57b9e3",
+      "source_clock": "CMS overlay / CDPHE verification 2026-09-09",
+      "primary_regulator": "CMS plus Colorado CDPHE HFEMSD",
+      "primary_identity": "CMS CCN; state facility license when source-native",
+      "topic": "Find nursing homes in Colorado.",
+      "plain_question": "How do I find a Colorado nursing home — and is home health the same thing?",
+      "research_topics": [
+        "CMS Nursing Homes",
+        "CMS Home Health Agencies",
+        "CMS Hospice",
+        "CDPHE Find and Compare verification"
+      ],
+      "primary_identifiers": ["CMS CCN"],
+      "identifier_types": ["CCN"],
+      "source_summary": "SeniorTrustHub publishes CMS Colorado provider classes separately and points to CDPHE Find and Compare for state verification. 2017 GIS is historical/stale.",
+      "coverage_summary": "210 nursing homes, 222 home health agencies, 88 hospice providers. Separate classes. Do not add them into 520 Colorado senior providers. CMS CCN is not a state license. Assisted living, home care, and adult day remain separate state classes.",
+      "coverage_limitation": "Complete current ALR bulk universe not acquired/unknown. Stale 2017 GIS is not a current roster.",
+      "what_research": "CMS class identity plus CDPHE Find and Compare",
+      "next_step": "Open SeniorTrustHub Colorado, then verify on CMS and CDPHE",
+      "semantic_guardrails": [
+        "nursing home ≠ home health ≠ hospice",
+        "CMS CCN ≠ state license",
+        "do not sum 210+222+88",
+        "2017 GIS ≠ current roster"
+      ],
+      "verified_facts": [
+        "CMS Nursing Homes: 210. Home Health Agencies: 222. Hospice: 88.",
+        "These are separate provider classes, not one denominator."
+      ],
+      "routing_intents": [
+        "Find nursing homes in Colorado.",
+        "Are home health agencies in Colorado the same as nursing homes?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": ["complete current ALR bulk universe", "other state class bulk rosters"]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "coverage_type": "MLO_PERSON_PLUS_HMDA_MARKET",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.lendertrusthub.com/colorado",
+      "snapshot_version": "lender-co-state-intel-v1",
+      "fingerprint": "acb8bae197f4e815f1411d49a35342c66183304fdba7f8e88ca4a7643e6d03b3",
+      "source_clock": "HMDA 2025; DRE MLO 2026-09-09",
+      "primary_regulator": "Colorado Division of Real Estate / CFPB HMDA",
+      "primary_identity": "NMLS person for MLOs; LEI on HMDA; company NMLS when a live lookup returns it",
+      "topic": "Which mortgage lenders are licensed in Colorado?",
+      "plain_question": "Which mortgage lenders are licensed in Colorado — and is HMDA a license list?",
+      "research_topics": [
+        "Colorado MLO person licenses",
+        "2025 HMDA Colorado property-location activity",
+        "NMLS Consumer Access",
+        "Company roster remains search-only"
+      ],
+      "primary_identifiers": ["NMLS", "LEI"],
+      "identifier_types": ["NMLS", "LEI"],
+      "source_summary": "LenderTrustHub publishes Colorado MLO person rows and the specialist-owned 2025 HMDA state-intel slice. The live mortgage-company bulk roster is SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY.",
+      "coverage_summary": "21,865 MLO person-license rows (21,584 Active / 281 Inactive). An MLO is not a lender company. HMDA 260,212 applications / 156,145 originations / 40,435 denials across 64 counties. HMDA is not a license. Company roster count is UNKNOWN, not zero. CFPB mortgage complaints 8,627 are not violations. CHFA 2 program families is not licensure.",
+      "coverage_limitation": "Current Colorado mortgage-company bulk roster not acquired.",
+      "what_research": "HMDA market activity and MLO person licenses; NMLS for company verification",
+      "next_step": "Open LenderTrustHub Colorado, then verify companies on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "MLO ≠ lender company",
+        "HMDA application ≠ lender",
+        "HMDA ≠ license",
+        "complaint ≠ violation",
+        "CHFA participation ≠ licensure",
+        "search-only ≠ zero"
+      ],
+      "verified_facts": [
+        "HMDA 2025 Colorado property-location applications: 260,212.",
+        "MLO person-license rows: 21,865. Company roster: SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "Which mortgage lenders are licensed in Colorado?",
+        "How much mortgage lending happened in Colorado last year?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": ["current mortgage-company bulk roster"]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investor Trust Hub",
+      "coverage_type": "STATE_IA_ERA_PLUS_NOTICE_AND_OFFICE",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.investortrusthub.com/colorado",
+      "snapshot_version": "investor-co-state-intel-v1",
+      "fingerprint": "b4a5808d2758bc5fd41e747156f6cbf9ca4cb3a263c6a2def4ae6897fff220e5",
+      "source_clock": "IAPD STATE/SEC compilations as of 2026-08-27; retrieved 2026-09-09",
+      "primary_regulator": "Colorado Division of Securities / SEC IARD",
+      "primary_identity": "CRD",
+      "topic": "How many investment advisers are registered in Colorado?",
+      "plain_question": "How many investment advisers are registered in Colorado — and is a principal office the same as state registration?",
+      "research_topics": [
+        "Colorado APPROVED state-registered IA firms",
+        "Colorado state ERA",
+        "SEC/IARD principal-office overlay",
+        "Colorado notice filings"
+      ],
+      "primary_identifiers": ["CRD"],
+      "identifier_types": ["CRD"],
+      "source_summary": "InvestorTrustHub publishes four distinct adviser-related layers from official IAPD compilations. Grain distinction does not rely on numeric inequality.",
+      "coverage_summary": "740 APPROVED Colorado state IA firms (plus 1 TERMREQUEST in source census). 209 ACTIVE state ERA. 589 SEC/IARD principal-office firms. 3,673 notice filings, all FirmType=Registered. Six approved state-IA CRDs also appear in the notice-filed set — overlap is allowed. Do not add 589+740+209+3,673. Sanctions narrative 10; exact adverse attachments 0. Name-only adverse remains unsafe.",
+      "coverage_limitation": "Some enforcement bulk remains search/index-limited.",
+      "what_research": "IAPD state compilation plus Colorado Division of Securities; BrokerCheck only for broker-dealer/person context",
+      "next_step": "Open InvestorTrustHub Colorado, then verify on IAPD / Division of Securities",
+      "semantic_guardrails": [
+        "principal-office geography ≠ state registration",
+        "state RIA ≠ federal notice filing",
+        "ERA ≠ RIA",
+        "740 ≠ 589 ≠ 3,673 ≠ 209 as grains, not because the numbers differ",
+        "name-only adverse = UNSAFE",
+        "six-CRD overlap allowed"
+      ],
+      "verified_facts": [
+        "APPROVED Colorado state-registered IA firms: 740.",
+        "SEC/IARD principal-office overlay: 589. State ERA ACTIVE: 209. Notice filings: 3,673.",
+        "Exact CRD overlap between APPROVED state IA and notice: 6 CRDs. Keep both classifications."
+      ],
+      "routing_intents": [
+        "How many investment advisers are registered in Colorado?",
+        "Does a Colorado principal office mean the adviser is state-registered?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": ["some enforcement bulk remains search/index-limited"]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "coverage_type": "DOI_MARKET_SURPLUS_COMPLAINT",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.insurancetrusthub.com/colorado",
+      "snapshot_version": "insurance-co-state-intel-v1",
+      "fingerprint": "1430467e59b9b5555643853c077369e9132b26f2a445eb34285d16124742ef89",
+      "source_clock": "2025 statistical report as of 2025-12-31; surplus list updated 2026-07-24; complaint tables 2025",
+      "primary_regulator": "Colorado Division of Insurance",
+      "primary_identity": "NAIC CoCode for legal insurers; NPN/Colorado license when a live lookup returns them",
+      "topic": "Which insurance companies are authorized in Colorado?",
+      "plain_question": "Which insurance companies are authorized in Colorado — and is the 2025 market directory a live roster?",
+      "research_topics": [
+        "2025 DOI statistical-report directory",
+        "2026–2027 eligible non-admitted surplus-lines list",
+        "DOI Complaint Ratio / Index",
+        "Sircon / DOI live lookup"
+      ],
+      "primary_identifiers": ["NAIC CoCode", "NPN"],
+      "identifier_types": ["NAIC", "NPN"],
+      "source_summary": "InsuranceTrustHub publishes dated DOI market-directory rows, the current 2026–2027 surplus-lines eligibility list, and DOI complaint ratio/index tables. Producer, agency, and current authorized-company bulk rosters remain search-only.",
+      "coverage_summary": "1,839 NAIC Companies directory rows as of 2025-12-31 — not current authorization. 259 eligible non-admitted identities (225 NAIC + 34 alien AA-) effective 2026-07-01 through 2027-06-30. 415 2025 complaint company×line observations. DOI Complaint Ratio/Index uses received complaints and is not a TrustHub score. Domestic certificates: 49 company entries, not all authorized insurers.",
+      "coverage_limitation": "Current full agency/producer/authorized-company bulk rosters not acquired.",
+      "what_research": "DOI market, surplus, and complaint evidence plus Sircon live lookup",
+      "next_step": "Open InsuranceTrustHub Colorado, then verify on DOI / Sircon",
+      "semantic_guardrails": [
+        "statistical participant ≠ current authorization",
+        "surplus eligibility ≠ admitted status",
+        "alien AA- ≠ NAIC CoCode",
+        "complaint ratio/index ≠ TrustHub score",
+        "complaint ≠ violation",
+        "search-only ≠ zero"
+      ],
+      "verified_facts": [
+        "2025 NAIC Companies directory rows / distinct CoCodes: 1,839. Source as-of 2025-12-31.",
+        "2026–2027 eligible non-admitted identities: 259 (225 NAIC + 34 alien AA-).",
+        "2025 standard complaint company×line rows: 415."
+      ],
+      "routing_intents": [
+        "Which insurance companies are authorized in Colorado?",
+        "Does Colorado's complaint index mean an insurer is a bad company?"
+      ],
+      "verified_at": "2026-09-10T13:37:08.370Z",
+      "gap_examples": [
+        "current authorized-company bulk roster",
+        "agency bulk roster",
+        "producer bulk roster"
+      ]
+    }
+  ],
+  "evidence_catalog": [
+    {
+      "row": "Contractor EC/PC credentials",
+      "hub": "contractor",
+      "agency": "Colorado DORA",
+      "source": "DORA professional-license extract",
+      "as_of": "2026-09-09",
+      "grain": "active EC/PC business credential row",
+      "count": "7,936 active; EC 4,789 / PC 3,147",
+      "identity": "CO-DORA:{prefix}:{number}",
+      "access": "ACQUIRED",
+      "publication": "specialist /colorado",
+      "limitation": "Not unique contractors. No statewide GC license.",
+      "specialist_url": "https://www.contractortrusthub.com/colorado"
+    },
+    {
+      "row": "Move PUC HHG permits",
+      "hub": "move",
+      "agency": "Colorado PUC",
+      "source": "Household-goods permit list",
+      "as_of": "2026-09-09",
+      "grain": "ACTIVE state HHG permit",
+      "count": "203",
+      "identity": "CO-PUC-HHG:{permitNumber}",
+      "access": "ACQUIRED",
+      "publication": "specialist /colorado",
+      "limitation": "State permit ≠ FMCSA interstate authority.",
+      "specialist_url": "https://www.movetrusthub.com/colorado"
+    },
+    {
+      "row": "Senior CMS provider classes",
+      "hub": "senior",
+      "agency": "CMS / CDPHE",
+      "source": "CMS provider overlay; CDPHE Find and Compare",
+      "as_of": "2026-09-09",
+      "grain": "CMS provider class",
+      "count": "NH 210 / HHA 222 / Hospice 88",
+      "identity": "CMS CCN",
+      "access": "ACQUIRED overlay + OPEN_SEARCH_ONLY state verify",
+      "publication": "specialist /colorado",
+      "limitation": "Do not sum classes. CCN ≠ state license.",
+      "specialist_url": "https://www.seniortrusthub.com/colorado"
+    },
+    {
+      "row": "Lender HMDA 2025",
+      "hub": "lender",
+      "agency": "CFPB HMDA",
+      "source": "LenderTrustHub CO-LEND-001 state-intel slice",
+      "as_of": "HMDA 2025",
+      "grain": "application for Colorado property location",
+      "count": "260,212 applications / 156,145 originations / 40,435 denials / 64 counties",
+      "identity": "LEI on HMDA",
+      "access": "ACQUIRED",
+      "publication": "specialist /colorado",
+      "limitation": "HMDA ≠ license. Not a lender count.",
+      "specialist_url": "https://www.lendertrusthub.com/colorado"
+    },
+    {
+      "row": "Investor state IA",
+      "hub": "investor",
+      "agency": "IAPD / Colorado Division of Securities",
+      "source": "IA_FIRM_STATE compilation 2026-08-27",
+      "as_of": "2026-08-27",
+      "grain": "APPROVED state-registered IA firm",
+      "count": "740 APPROVED; 209 ERA; 589 principal-office; 3,673 notice",
+      "identity": "CRD",
+      "access": "ACQUIRED",
+      "publication": "specialist /colorado",
+      "limitation": "Do not add the four layers. Six-CRD overlap allowed.",
+      "specialist_url": "https://www.investortrusthub.com/colorado"
+    },
+    {
+      "row": "Insurance 2025 DOI directory",
+      "hub": "insurance",
+      "agency": "Colorado DOI",
+      "source": "2025 statistical report; 2026–2027 surplus list; 2025 complaint tables",
+      "as_of": "2025-12-31 directory; surplus updated 2026-07-24",
+      "grain": "dated directory row / surplus eligibility identity / company×line complaint observation",
+      "count": "1,839 directory; 259 surplus; 415 complaint rows",
+      "identity": "NAIC CoCode; alien AA- kept separate",
+      "access": "ACQUIRED as dated evidence; live authorized roster SEARCH_ONLY",
+      "publication": "specialist /colorado",
+      "limitation": "1,839 ≠ current authorization. Surplus ≠ admitted. Ratio/Index ≠ TrustHub score.",
+      "specialist_url": "https://www.insurancetrusthub.com/colorado"
+    }
+  ],
+  "data_moat": {
+    "organizations_facilities": [
+      "CMS NH 210 / HHA 222 / Hospice 88 as separate classes — not one senior-provider total",
+      "740 APPROVED state IA firms are not 589 principal-office firms and not 3,673 notice filings",
+      "203 PUC HHG permits are state identities, not FMCSA companies minted here"
+    ],
+    "licenses_registrations": [
+      "7,936 active EC/PC business credentials — not unique contractors and not a GC universe",
+      "21,865 MLO person-license rows — not lender companies",
+      "Insurance producer/agency/authorized-company bulk remain search-only"
+    ],
+    "regulatory_market_evidence": [
+      "HMDA 2025: 260,212 applications / 156,145 originations / 40,435 denials / 64 counties",
+      "DOI 2025 directory 1,839; surplus 259; complaint company×line 415",
+      "Contractor discipline 5,990 observations / 5,198 cases"
+    ],
+    "search_only_restricted": [
+      "Colorado mortgage-company bulk roster SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY",
+      "Insurance producer/agency/current authorized-company bulk SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY",
+      "Interactive DOI complaint database OPEN_SEARCH_ONLY"
+    ]
+  },
+  "coverage_gaps": [
+    "statewide general-contractor license universe (not applicable / local licensing model)",
+    "mover bulk complaint data",
+    "complete current ALR bulk universe",
+    "current Colorado mortgage-company bulk roster",
+    "some investor enforcement bulk remains search/index-limited",
+    "current full insurance agency/producer/authorized-company bulk rosters"
+  ]
+}

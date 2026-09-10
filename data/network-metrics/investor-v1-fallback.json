@@ -82,13 +82,14 @@
     "enforcementIndexRowsProfiled": 205
   },
   "network": {
-    "publishedStateIntelligencePages": 5,
+    "publishedStateIntelligencePages": 6,
     "publishedStateIntelligencePaths": [
       "/new-jersey",
       "/california",
       "/texas",
       "/washington",
-      "/arizona"
+      "/arizona",
+      "/colorado"
     ]
   },
   "rejectedTotals": [
@@ -537,12 +538,12 @@
       "unit": "count",
       "key": "published_state_intelligence_pages",
       "label": "Published state investment-intelligence pages",
-      "value": 5,
+      "value": 6,
       "valueState": "KNOWN",
       "grain": "published_state_intelligence_page",
       "denominator": "Indexable specialist state intelligence routes currently published",
-      "description": "New Jersey, California, Texas, Washington, and Arizona state intelligence pages. Not a count of advisers.",
-      "coverage": "/new-jersey, /california, /texas, /washington, /arizona",
+      "description": "New Jersey, California, Texas, Washington, Arizona, and Colorado state intelligence pages. Not a count of advisers.",
+      "coverage": "/new-jersey, /california, /texas, /washington, /arizona, /colorado",
       "contributingSourceSystems": [
         "investor-state-intel"
       ],
@@ -550,12 +551,12 @@
       "generatedAt": "2026-09-04T20:11:51.639Z",
       "publicationStatus": "PUBLIC",
       "trace": {
-        "counts": "Published /new-jersey, /california, /texas, /washington, and /arizona intelligence routes.",
+        "counts": "Published /new-jersey, /california, /texas, /washington, /arizona, and /colorado intelligence routes.",
         "doesNotCount": "Not county pages. Not national roster rows. Florida is not published on this hub.",
         "contributingSourceSystems": [
           "investor-state-intel"
         ],
-        "geographicCoverage": "/new-jersey, /california, /texas, /washington, /arizona",
+        "geographicCoverage": "/new-jersey, /california, /texas, /washington, /arizona, /colorado",
         "sourceDates": "Publication gates in specialist catalogs",
         "generationDate": "2026-09-04"
       }

@@ -1,0 +1,133 @@
+{
+  "ticket": "ATH-CO-001",
+  "version": "ath-co-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/colorado",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_NOT_FINAL",
+  "release_gate_passed": true,
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "contractor-co-state-intel-v1",
+      "fingerprint": "d4895200fa822677843095ce1e4e216ecab7bf267a5d7945f7a1feabbc365b30",
+      "source_clock": "DORA professional-license extract 2026-09-09"
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "move-co-state-intel-v1",
+      "fingerprint": "382df2ce695bbd694ab410345fa2a54244e0014108db50ef370dc71f8d8e9d1b",
+      "source_clock": "Colorado PUC household-goods permits 2026-09-09"
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "senior-co-state-intel-v1",
+      "fingerprint": "5f56bc927c981a15293f941cb794a317e3b2182100c1e7167dd7a78c0f57b9e3",
+      "source_clock": "CMS overlay / CDPHE verification 2026-09-09"
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "lender-co-state-intel-v1",
+      "fingerprint": "acb8bae197f4e815f1411d49a35342c66183304fdba7f8e88ca4a7643e6d03b3",
+      "source_clock": "HMDA 2025; DRE MLO 2026-09-09"
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "investor-co-state-intel-v1",
+      "fingerprint": "b4a5808d2758bc5fd41e747156f6cbf9ca4cb3a263c6a2def4ae6897fff220e5",
+      "source_clock": "IAPD STATE/SEC compilations as of 2026-08-27; retrieved 2026-09-09"
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/colorado",
+      "publication_status": "live",
+      "snapshot_version": "insurance-co-state-intel-v1",
+      "fingerprint": "1430467e59b9b5555643853c077369e9132b26f2a445eb34285d16124742ef89",
+      "source_clock": "2025 statistical report as of 2025-12-31; surplus list updated 2026-07-24; complaint tables 2025"
+    }
+  ],
+  "stress_pass": true,
+  "stress_count": 12,
+  "verification_hubs": [
+    {
+      "hub_id": "contractor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Contractor License &amp; Regulatory Intelligence"
+    },
+    {
+      "hub_id": "move",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Moving &amp; Household-Goods Intelligence"
+    },
+    {
+      "hub_id": "senior",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Senior Care Research"
+    },
+    {
+      "hub_id": "lender",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Mortgage &amp; Lending Intelligence"
+    },
+    {
+      "hub_id": "investor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Investment Adviser &amp; Securities Intelligence"
+    },
+    {
+      "hub_id": "insurance",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/colorado",
+      "robots": "index, follow",
+      "headline": "Colorado Insurance Market &amp; Regulatory Intelligence"
+    }
+  ],
+  "network_findings": [
+    "Colorado contractor licensing is specialty-based statewide for electrical and plumbing. There is no statewide general-contractor license universe. General contractors remain primarily a local licensing model.",
+    "Colorado has a genuine PUC household-goods permit layer that is separate from FMCSA interstate authority. A state HHG permit is not a USDOT number and not MC authority.",
+    "Senior evidence is strongest when CMS nursing homes, home health, and hospice stay separate classes and CDPHE adds state verification context. Do not publish one Colorado senior-providers total.",
+    "Lender has strong MLO person-license and 2025 HMDA property-location intelligence, but no acquired current bulk mortgage-company roster. HMDA is not a license. An MLO is not a lender company.",
+    "Investor has an unusually strong state-registration layer because official IAPD state compilation exposes jurisdiction-based IA and ERA records. 740 approved state IA firms are not 589 principal-office firms and not 3,673 notice filings.",
+    "Insurance has strong DOI market, surplus-lines, and complaint evidence despite missing free agency, producer, and current-authorized bulk rosters. 1,839 statistical-directory rows are not current authorization. DOI Complaint Ratio/Index is not a TrustHub score."
+  ],
+  "conceptual_statement": "Colorado\u2019s strongest Trust Hub evidence is specialty contractor credentials (not a statewide general-contractor license), a genuine PUC household-goods permit layer, separate CMS senior provider classes with CDPHE verification context, HMDA mortgage-market activity with a search-only company roster, an unusually strong IAPD state-registration layer for investment advisers, and DOI market, surplus-lines, and complaint evidence that is not a live authorized-insurer roster. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown \u2014 not zero.",
+  "local_work_decision": "NO",
+  "backlog": [
+    {
+      "id": "INV-STATE-IAPD-001",
+      "purpose": "Retrofit existing Investor state pages NJ/CA/TX/WA/AZ using official IAPD state-compilation registration jurisdiction. Do not execute during Colorado Ask closeout. Colorado is already correct."
+    }
+  ],
+  "fingerprint": "0ce737cf5660c0b7383b24cce41fac911f2448b75f8297e1b9416822ef85d653",
+  "generated_at": "2026-09-10T13:50:00Z",
+  "snapshot": "ath-co-network-release-v1",
+  "ask_fingerprint": "0ce737cf5660c0b7383b24cce41fac911f2448b75f8297e1b9416822ef85d653"
+}

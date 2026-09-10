@@ -1,0 +1,80 @@
+{
+  "state": "CO",
+  "status": "ASK_PREVIEW_NOT_FINAL",
+  "note": "COLORADO STATEWIDE EXPANSION IS COMPLETE at the specialist layer. Ask /colorado is not CLOSED until Production certification after merge.",
+  "ask_route": "/colorado",
+  "ask_canonical": "https://www.asktrusthub.com/colorado",
+  "local_work_decision": "NO",
+  "colorado_local_phase": "NO",
+  "hardcoded_county_routes": false,
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-10T13:37:08.370Z"
+  },
+  "six_hubs": [
+    {
+      "hub": "contractor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.contractortrusthub.com/colorado",
+      "source_strengths": "DORA EC/PC business credentials; discipline observation vs case",
+      "source_gaps": "no statewide GC universe; person credentials not a business count"
+    },
+    {
+      "hub": "move",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.movetrusthub.com/colorado",
+      "source_strengths": "203 ACTIVE PUC HHG permits",
+      "source_gaps": "bulk complaint data not acquired"
+    },
+    {
+      "hub": "senior",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.seniortrusthub.com/colorado",
+      "source_strengths": "CMS NH/HHA/Hospice kept separate; CDPHE verification context",
+      "source_gaps": "complete current ALR bulk unknown; 2017 GIS historical"
+    },
+    {
+      "hub": "lender",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.lendertrusthub.com/colorado",
+      "source_strengths": "HMDA 2025 state-intel slice; MLO person rows",
+      "source_gaps": "current mortgage-company bulk roster not acquired"
+    },
+    {
+      "hub": "investor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.investortrusthub.com/colorado",
+      "source_strengths": "IAPD state IA/ERA plus notice and principal-office overlay",
+      "source_gaps": "some enforcement bulk remains search/index-limited"
+    },
+    {
+      "hub": "insurance",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.insurancetrusthub.com/colorado",
+      "source_strengths": "2025 DOI directory, 2026–2027 surplus list, 2025 complaint tables",
+      "source_gaps": "agency/producer/current authorized-company bulk not acquired"
+    }
+  ],
+  "backlog": [
+    {
+      "id": "INV-STATE-IAPD-001",
+      "purpose": "Retrofit existing Investor state pages NJ/CA/TX/WA/AZ using official IAPD state-compilation registration jurisdiction. Do not execute during Colorado Ask closeout. Colorado is already correct."
+    }
+  ],
+  "semantic_guardrails": [
+    "license row != unique business",
+    "person != business",
+    "state license != federal license",
+    "complaint != violation",
+    "principal-office geography != state registration",
+    "state RIA != federal notice filing",
+    "market participant != current insurer authorization",
+    "surplus eligibility != admitted status",
+    "complaint ratio/index != TrustHub score",
+    "search-only != zero",
+    "no Trust Score",
+    "no paid ranking",
+    "no Colorado local routes"
+  ]
+}

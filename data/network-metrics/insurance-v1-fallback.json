@@ -106,7 +106,8 @@
       "/texas",
       "/new-jersey",
       "/california",
-      "/washington"
+      "/washington",
+      "/colorado"
     ]
   },
   "rejectedTotals": {
@@ -818,12 +819,12 @@
       "unit": "count",
       "key": "published_state_intelligence_pages",
       "label": "Published state intelligence pages",
-      "value": 5,
+      "value": 6,
       "valueState": "KNOWN",
       "grain": "published_state_intelligence_page",
-      "denominator": "Indexable /florida /texas /new-jersey /california /washington publication gates",
+      "denominator": "Indexable /florida /texas /new-jersey /california /washington /colorado publication gates",
       "description": "State intelligence routes currently published. Not an agency or company count.",
-      "coverage": "FL, TX, NJ, CA, WA",
+      "coverage": "FL, TX, NJ, CA, WA, CO",
       "contributingSourceSystems": [
         "state-intelligence-publication"
       ],
@@ -838,9 +839,10 @@
           "texas-intel",
           "nj-intel",
           "ca-intel",
-          "wa-intel"
+          "wa-intel",
+          "co-intel"
         ],
-        "geographicCoverage": "/florida, /texas, /new-jersey, /california, /washington",
+        "geographicCoverage": "/florida, /texas, /new-jersey, /california, /washington, /colorado",
         "sourceDates": "Publication gates; Texas source clock is the newest documented official date among these pages",
         "generationDate": "2026-09-04"
       }

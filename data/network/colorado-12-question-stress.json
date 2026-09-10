@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Is this contractor licensed in Colorado?",
+    "expected_hub": "contractor",
+    "interpreted_intent": "Colorado contractor licensing research",
+    "capability": "SPECIALTY_CREDENTIALS_ONLY",
+    "expected_handoff": "https://www.contractortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "statewide general-contractor license universe",
+    "source_grain_caveat": "7,936 is active electrical/plumbing contractor credentials, not unique contractors and not general contractors. Colorado has no statewide general-contractor license. Person electrician/plumber credentials are not the business denominator. 1,606,852 professional-license rows are not contractor businesses.",
+    "result": "PASS"
+  },
+  {
+    "question": "Can I look up an electrical contractor in Colorado?",
+    "expected_hub": "contractor",
+    "interpreted_intent": "Colorado EC business-credential research",
+    "capability": "DORA_EC_LOOKUP",
+    "expected_handoff": "https://www.contractortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "EC credential equals all contractors or GC status",
+    "source_grain_caveat": "7,936 is active electrical/plumbing contractor credentials, not unique contractors and not general contractors. Colorado has no statewide general-contractor license. Person electrician/plumber credentials are not the business denominator. 1,606,852 professional-license rows are not contractor businesses.",
+    "result": "PASS"
+  },
+  {
+    "question": "Can I check a mover in Colorado?",
+    "expected_hub": "move",
+    "interpreted_intent": "Colorado household-goods permit research",
+    "capability": "PUC_HHG_PERMIT",
+    "expected_handoff": "https://www.movetrusthub.com/colorado",
+    "unsupported_assumption_rejected": "state permit equals interstate FMCSA authority",
+    "source_grain_caveat": "203 active Colorado PUC household-goods permits are a state permit grain. A Colorado HHG permit is not USDOT, not MC authority, and not federal interstate authority.",
+    "result": "PASS"
+  },
+  {
+    "question": "Does a Colorado moving permit mean they can haul my stuff to another state?",
+    "expected_hub": "move",
+    "interpreted_intent": "state-versus-federal mover authority",
+    "capability": "STATE_PERMIT_NOT_INTERSTATE",
+    "expected_handoff": "https://www.movetrusthub.com/colorado",
+    "unsupported_assumption_rejected": "PUC permit = USDOT = MC authority",
+    "source_grain_caveat": "203 active Colorado PUC household-goods permits are a state permit grain. A Colorado HHG permit is not USDOT, not MC authority, and not federal interstate authority.",
+    "result": "PASS"
+  },
+  {
+    "question": "Find nursing homes in Colorado.",
+    "expected_hub": "senior",
+    "interpreted_intent": "CMS nursing-home class research",
+    "capability": "CMS_NH_CLASS",
+    "expected_handoff": "https://www.seniortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "combined Colorado senior-providers denominator",
+    "source_grain_caveat": "210 nursing homes, 222 home health agencies, and 88 hospice providers are separate CMS classes. Do not add them into one Colorado senior-providers denominator. A CMS CCN is not a state facility license.",
+    "result": "PASS"
+  },
+  {
+    "question": "Are home health agencies in Colorado the same as nursing homes?",
+    "expected_hub": "senior",
+    "interpreted_intent": "care-class distinction",
+    "capability": "SEPARATE_CMS_CLASSES",
+    "expected_handoff": "https://www.seniortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "home health = nursing home = hospice",
+    "source_grain_caveat": "210 nursing homes, 222 home health agencies, and 88 hospice providers are separate CMS classes. Do not add them into one Colorado senior-providers denominator. A CMS CCN is not a state facility license.",
+    "result": "PASS"
+  },
+  {
+    "question": "Which mortgage lenders are licensed in Colorado?",
+    "expected_hub": "lender",
+    "interpreted_intent": "mortgage-company licensing",
+    "capability": "COMPANY_ROSTER_SEARCH_ONLY",
+    "expected_handoff": "https://www.lendertrusthub.com/colorado",
+    "unsupported_assumption_rejected": "MLO person rows or HMDA applications as a licensed-lender roster",
+    "source_grain_caveat": "An MLO person license is not a lender company. HMDA applications are not a license roster and not a lender count. The current Colorado mortgage-company bulk roster remains search-only — unknown, not zero. A complaint is not a violation.",
+    "result": "PASS"
+  },
+  {
+    "question": "How much mortgage lending happened in Colorado last year?",
+    "expected_hub": "lender",
+    "interpreted_intent": "HMDA market activity",
+    "capability": "HMDA_PROPERTY_LOCATION",
+    "expected_handoff": "https://www.lendertrusthub.com/colorado",
+    "unsupported_assumption_rejected": "HMDA applications as licensed lenders",
+    "source_grain_caveat": "An MLO person license is not a lender company. HMDA applications are not a license roster and not a lender count. The current Colorado mortgage-company bulk roster remains search-only — unknown, not zero. A complaint is not a violation.",
+    "result": "PASS"
+  },
+  {
+    "question": "How many investment advisers are registered in Colorado?",
+    "expected_hub": "investor",
+    "interpreted_intent": "Colorado state-registered IA count",
+    "capability": "STATE_IA_APPROVED",
+    "expected_handoff": "https://www.investortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "589 principal-office firms or 3,673 notice filings as the state-RIA answer",
+    "source_grain_caveat": "740 APPROVED Colorado state-registered IA firms are the relevant state-RIA measure. They are not 589 principal-office firms, not 209 state ERA firms, and not 3,673 notice filings. Grain distinction does not rely on numeric inequality. Six CRDs may appear in both approved state IA and notice-filed sets.",
+    "result": "PASS"
+  },
+  {
+    "question": "Does a Colorado principal office mean the adviser is state-registered?",
+    "expected_hub": "investor",
+    "interpreted_intent": "principal-office versus state registration",
+    "capability": "OFFICE_GEOGRAPHY_NOT_STATE_IA",
+    "expected_handoff": "https://www.investortrusthub.com/colorado",
+    "unsupported_assumption_rejected": "principal-office overlay = Colorado state IA",
+    "source_grain_caveat": "740 APPROVED Colorado state-registered IA firms are the relevant state-RIA measure. They are not 589 principal-office firms, not 209 state ERA firms, and not 3,673 notice filings. Grain distinction does not rely on numeric inequality. Six CRDs may appear in both approved state IA and notice-filed sets.",
+    "result": "PASS"
+  },
+  {
+    "question": "Which insurance companies are authorized in Colorado?",
+    "expected_hub": "insurance",
+    "interpreted_intent": "current authorized-insurer lookup",
+    "capability": "AUTHORIZED_ROSTER_SEARCH_ONLY",
+    "expected_handoff": "https://www.insurancetrusthub.com/colorado",
+    "unsupported_assumption_rejected": "1,839 2025 statistical-directory rows as currently authorized insurers",
+    "source_grain_caveat": "1,839 NAIC company rows in Colorado DOI’s 2025 market directory are dated market evidence as of 2025-12-31, not currently authorized insurers. 259 surplus identities are eligible non-admitted, not admitted. DOI Complaint Ratio/Index is not a TrustHub score. Producer, agency, and current authorized-company bulk remain search-only — unknown, not zero.",
+    "result": "PASS"
+  },
+  {
+    "question": "Does Colorado's complaint index mean an insurer is a bad company?",
+    "expected_hub": "insurance",
+    "interpreted_intent": "DOI complaint index semantics",
+    "capability": "DOI_RATIO_INDEX_NOT_SCORE",
+    "expected_handoff": "https://www.insurancetrusthub.com/colorado",
+    "unsupported_assumption_rejected": "Complaint Index = TrustHub score / quality ranking",
+    "source_grain_caveat": "1,839 NAIC company rows in Colorado DOI’s 2025 market directory are dated market evidence as of 2025-12-31, not currently authorized insurers. 259 surplus identities are eligible non-admitted, not admitted. DOI Complaint Ratio/Index is not a TrustHub score. Producer, agency, and current authorized-company bulk remain search-only — unknown, not zero.",
+    "result": "PASS"
+  }
+]

@@ -31,6 +31,7 @@ import { detectCaCity, queryLooksLikeCalifornia } from './ca-network.ts';
 import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
 import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
+import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -93,6 +94,7 @@ function geography(q: string): ParsedGeography | undefined {
   const txNamedEarly = queryLooksLikeTexas(q);
   const waNamedEarly = queryLooksLikeWashington(q);
   const azNamedEarly = queryLooksLikeArizona(q);
+  const coNamedEarly = queryLooksLikeColorado(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -127,6 +129,34 @@ function geography(q: string): ParsedGeography | undefined {
     if (wa < 0) return false;
     if (az < 0) return true;
     return wa < az;
+  })();
+  const californiaNamedBeforeColorado = (() => {
+    const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
+    const co = q.search(/\bcolorado\b/i);
+    if (ca < 0) return false;
+    if (co < 0) return true;
+    return ca < co;
+  })();
+  const texasNamedBeforeColorado = (() => {
+    const tx = q.search(/\btexas\b|\btexan\b/i);
+    const co = q.search(/\bcolorado\b/i);
+    if (tx < 0) return false;
+    if (co < 0) return true;
+    return tx < co;
+  })();
+  const washingtonNamedBeforeColorado = (() => {
+    const wa = q.search(/\bwashington\b/i);
+    const co = q.search(/\bcolorado\b/i);
+    if (wa < 0) return false;
+    if (co < 0) return true;
+    return wa < co;
+  })();
+  const arizonaNamedBeforeColorado = (() => {
+    const az = q.search(/\barizona\b/i);
+    const co = q.search(/\bcolorado\b/i);
+    if (az < 0) return false;
+    if (co < 0) return true;
+    return az < co;
   })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
   if (
@@ -216,7 +246,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (caNamedEarly && (!txNamedEarly || californiaNamedFirst)) {
+  if (caNamedEarly && (!txNamedEarly || californiaNamedFirst) && (!coNamedEarly || californiaNamedBeforeColorado)) {
     const caCity = detectCaCity(q);
     return {
       stateCode: 'CA',
@@ -228,7 +258,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (txNamedEarly && (!azNamedEarly || texasNamedBeforeArizona)) {
+  if (txNamedEarly && (!azNamedEarly || texasNamedBeforeArizona) && (!coNamedEarly || texasNamedBeforeColorado)) {
     const txCity = detectTxCity(q);
     return {
       stateCode: 'TX',
@@ -240,7 +270,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona)) {
+  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona) && (!coNamedEarly || washingtonNamedBeforeColorado)) {
     const waCity = detectWaCity(q);
     return {
       stateCode: 'WA',
@@ -252,7 +282,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (azNamedEarly) {
+  if (azNamedEarly && (!coNamedEarly || arizonaNamedBeforeColorado)) {
     const azCity = detectAzCity(q);
     return {
       stateCode: 'AZ',
@@ -261,6 +291,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: azCity
         ? `${azCity}, Arizona. Arizona research is state-level; a city or county name is not an Arizona county Ask route.`
         : 'Arizona. State licensing is not physical location; specialist geography meaning differs by hub. Arizona city and county Ask pages are not published.',
+    };
+  }
+
+  if (coNamedEarly) {
+    const coCity = detectCoCity(q);
+    return {
+      stateCode: 'CO',
+      stateName: 'Colorado',
+      city: coCity,
+      meaning: coCity
+        ? `${coCity}, Colorado. Colorado research is state-level; a city or county name is not a Colorado county Ask route.`
+        : 'Colorado. State licensing is not physical location; specialist geography meaning differs by hub. Colorado city and county Ask pages are not published.',
     };
   }
 

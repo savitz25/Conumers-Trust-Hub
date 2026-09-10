@@ -39,15 +39,16 @@ test('network inventory is publication gated and retains source-native grains', 
   assert.equal(inventory.some((metric) => metric.key === 'disclosure_events'), false);
 });
 
-test('six-state model preserves asymmetric specialist coverage', () => {
+test('seven-state model preserves asymmetric specialist coverage', () => {
   const states = buildAskStateCoverage(contracts);
-  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona']);
+  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado']);
   const az = states.find((state) => state.code === 'AZ')!;
   assert.equal(az.hubs.find((hub) => hub.hub === 'move')?.mode, 'NO_COMPARABLE_STATE_UNIVERSE');
   assert.equal(az.hubs.find((hub) => hub.hub === 'insurance')?.mode, 'NATIONAL_ONLY');
   const fl = states.find((state) => state.code === 'FL')!;
   assert.equal(fl.hubs.find((hub) => hub.hub === 'investor')?.mode, 'NATIONAL_ONLY');
   assert.equal(states.find((state) => state.code === 'WA')?.hubs.find((hub) => hub.hub === 'move')?.mode, 'SPECIALIST_PUBLISHED');
+  assert.equal(states.find((state) => state.code === 'CO')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
     const accepted = coverageArtifact.jurisdictions[`US-${state.code}` as keyof typeof coverageArtifact.jurisdictions];
@@ -60,7 +61,7 @@ test('six-state model preserves asymmetric specialist coverage', () => {
 
 test('Move five-state and missing-universe semantics remain intact', () => {
   const paths = (move.network as { publishedStateIntelligencePaths: string[] }).publishedStateIntelligencePaths;
-  assert.deepEqual(paths, ['/florida', '/new-jersey', '/california', '/texas', '/washington']);
+  assert.deepEqual(paths, ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado']);
   const metrics = move.metrics as Array<{ key: string; value: number | null; grain: string }>;
   assert.equal(metrics.find((metric) => metric.key === 'tx_txdmv_household_goods_mover_universe')?.value, null);
   assert.equal(metrics.find((metric) => metric.key === 'wa_utc_active_household_goods_directory_results')?.value, 284);
