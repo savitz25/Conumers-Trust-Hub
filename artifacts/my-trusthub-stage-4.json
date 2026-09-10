@@ -2,6 +2,21 @@
   "schema": "my-trusthub-stage-4/v2",
   "recordedAt": "2026-09-10T13:48:22.873Z",
   "status": "OPEN_SOURCE_ACCEPTANCE_GAP",
+  "sourceFollowUp": {
+    "checkedAt": "2026-09-10T14:06:56.882Z",
+    "method": "HTTP HEAD plus official source-contract and renewal-FAQ review",
+    "httpStatus": 200,
+    "sourceAsOf": "2026-09-10T10:48:32Z",
+    "bytes": 46172026,
+    "extractUnchanged": true,
+    "productionMainsAndDeploymentsUnchanged": true,
+    "dailyCronStillConfigured": true,
+    "officialExplanation": "https://www2.myfloridalicense.com/construction-industry/faqs/",
+    "portalStatusInterpretation": "Delinquent,Active does not mean current active; Active describes the prior status.",
+    "portalPublicationClockCertified": false,
+    "compatibleAlternativeInputEstablished": false,
+    "sourceContractOrWatchSelectionChanged": false
+  },
   "releaseEvidence": {
     "note": "Immutable production deployments tested before this documentation commit; final containing-main deployment is recorded in the closeout report.",
     "deployments": [

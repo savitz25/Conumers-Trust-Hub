@@ -3,6 +3,8 @@
 Date: 2026-09-09
 Current recommendation: **STAGE 4 OPEN — SOURCE ACCEPTANCE GAP.** The exact Contractor P13 Save handoff and scoped daily DBPR scheduler are deployed and production-certified. The official bulk feed omits CCC1332036, so the scheduler correctly records degraded/unknown source health without a new accepted observation. Stage 5 is not ready. See docs/my-trusthub-stage-4.md and artifacts/my-trusthub-stage-4.json.
 
+Stage 4 source follow-up, 2026-09-10 14:06 UTC: production revisions and daily cron remain unchanged. DBPR's unchanged bulk extract still omits the selected credential. Its official FAQ confirms that the portal's Delinquent,Active result cannot be treated as current active status. The source-acceptance gap remains open; no subscription, contract version or freshness clock was changed to bypass it.
+
 ## Stage 3 closeout - 2026-09-09
 
 Stage 3 implementation merged as `0e9e0eb738d8cd45aeeb8abc94e043d2b40dd704`. Production registered only `move.inventory/v1`, based on the real Move inventory calculator's aggregate planning grain. The founder canary left two explainable private sessions: one directly saved/updated session and one device-local guest import; duplicate guest import created no extra session.
