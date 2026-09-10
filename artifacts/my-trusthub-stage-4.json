@@ -1,68 +1,682 @@
 {
-  "schema": "my-trusthub-stage-4/v1",
-  "certifiedAt": "2026-09-10T00:00:00-04:00",
-  "ask": {
-    "main": "d9d7207f211fd65cd1aeb1719cba189c9496fcc4",
-    "deployment": "dpl_EAqVVzLRSpgcDeZpuT3Z2qxudCDV",
-    "url": "https://www.asktrusthub.com"
+  "schema": "my-trusthub-stage-4/v2",
+  "recordedAt": "2026-09-10T13:48:22.873Z",
+  "status": "OPEN_SOURCE_ACCEPTANCE_GAP",
+  "releaseEvidence": {
+    "note": "Immutable production deployments tested before this documentation commit; final containing-main deployment is recorded in the closeout report.",
+    "deployments": [
+      {
+        "project": "conumers-trust-hub",
+        "id": "prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB",
+        "deployment": "dpl_4g1NHUd1qZr1srDBG8rybQbpuS8F",
+        "url": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "81a05f65c64c16237a584e8a70090a89803c6576",
+        "crons": [
+          {
+            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "path": "/api/cron/my-trusthub-dbpr",
+            "schedule": "41 12 * * *"
+          },
+          {
+            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "path": "/api/cron/regulatory-monitoring",
+            "schedule": "17 13 * * *"
+          },
+          {
+            "host": "conumers-trust-73m43vxla-savitz25-s-projects.vercel.app",
+            "path": "/api/cron/search-canaries",
+            "schedule": "23 * * * *"
+          }
+        ]
+      },
+      {
+        "project": "contractor-trust-hub",
+        "id": "prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq",
+        "deployment": "dpl_6JagnwyuFuKox73Yj6Nyz7D6uAvs",
+        "url": "contractor-trust-7rprije95-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "8a70080a26e8d7745c7e481003239fdc544e95c2",
+        "crons": []
+      },
+      {
+        "project": "insurance-trust-hub",
+        "id": "prj_ARBlfWYNhpJWBtaPO4vUJlraa5BK",
+        "deployment": "dpl_AtuR26cXGVbrbBGfufyD4K3FDekh",
+        "url": "insurance-trust-bq35i9brw-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "e79ed2c3cd4e709ab83bc86be1e095747ef0bb32",
+        "crons": []
+      },
+      {
+        "project": "investor-trust-hub-web",
+        "id": "prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8",
+        "deployment": "dpl_BG1PnsuQTtCfMaiqtAREW29xmstG",
+        "url": "investor-trust-hub-8vkxdpt7a-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "5725419bbd03f1b8f8822d088cb72b5bce9a1edf",
+        "crons": []
+      },
+      {
+        "project": "lender-trust-hub",
+        "id": "prj_Il28Mv0ebRiIrumFO7iBX6JrSbdD",
+        "deployment": "dpl_7kksnxRNHKY9KEmKdoXFxZgtn1h6",
+        "url": "lender-trust-i6ov8bsvu-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "0530e3351072d35780e7bd9258372cecf02b24e7",
+        "crons": []
+      },
+      {
+        "project": "care-trust-hub",
+        "id": "prj_k9GyyXn28JZkyYKqLhBJ4rUQcpUb",
+        "deployment": "dpl_FAUkh5NgbMff9pzkRsqkcmSSrwME",
+        "url": "care-trust-kveivut1b-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "e893c7cf86e210741fa39895cf1dd6590c385675",
+        "crons": []
+      },
+      {
+        "project": "move-trust-hub",
+        "id": "prj_gudPGeW9SZBkgiL8zxvi3Swfo6T0",
+        "deployment": "dpl_7S2RqrgPs7Ezc6xQw5Q43JcVTL79",
+        "url": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+        "state": "READY",
+        "sha": "ba72d609a013ed9d432975276f62c85d3e237492",
+        "crons": [
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/bbb?mode=full",
+            "schedule": "0 4 * * 0"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/bbb?mode=incremental",
+            "schedule": "30 7 * * *"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/fmcsa?mode=full",
+            "schedule": "0 5 * * 0"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/fmcsa?mode=incremental",
+            "schedule": "0 6 * * *"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/insurance-providers?mode=full&limit=50",
+            "schedule": "0 2 * * 0"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/insurance-providers?mode=incremental&limit=40",
+            "schedule": "0 9 * * *"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/lenders?mode=full&limit=80",
+            "schedule": "0 3 * * 0"
+          },
+          {
+            "host": "move-trust-r8payns7d-savitz25-s-projects.vercel.app",
+            "path": "/api/refresh/lenders?mode=incremental&limit=40",
+            "schedule": "0 8 * * *"
+          }
+        ]
+      }
+    ]
   },
-  "specialistMains": {
-    "move": "ba72d609a013ed9d432975276f62c85d3e237492",
-    "lender": "0530e3351072d35780e7bd9258372cecf02b24e7",
-    "insurance": "fca65060a9d8c27eae5ab70626ead0716a212dd5",
-    "contractor": "58d6b4de6b36d725e1fd9f25053cb0e44ed565d8",
-    "senior": "e893c7cf86e210741fa39895cf1dd6590c385675",
-    "investor": "5725419bbd03f1b8f8822d088cb72b5bce9a1edf"
-  },
+  "matrix": [
+    {
+      "hub": "Ask",
+      "saveHandoff": "Live receiver for the exact Contractor profile only",
+      "resumeHandoff": "Parent saved inventory remains readable; no cross-domain Move consumer",
+      "watchCapability": "Parent UX for contractor.fl.dbpr.license_status v1",
+      "sourceMonitoring": "Daily scoped DBPR scheduler deployed; current exact record unavailable",
+      "deferredGaps": "Accepted compatible unattended observation"
+    },
+    {
+      "hub": "Contractor",
+      "saveHandoff": "Live: CCC1332036 / native 0001ac38-0c96-4e2f-8bf6-9ab243f7b79b only",
+      "resumeHandoff": "Unsupported",
+      "watchCapability": "contractor.fl.dbpr.license_status v1",
+      "sourceMonitoring": "Parent-owned daily DBPR extract check",
+      "deferredGaps": "Other profiles and source states outside the approved v1 contract"
+    },
+    {
+      "hub": "Move",
+      "saveHandoff": "Deferred; CTA omitted",
+      "resumeHandoff": "Deferred: itemized calculator cannot reconstruct inventory from aggregates",
+      "watchCapability": "Deferred",
+      "sourceMonitoring": "No My TrustHub adapter",
+      "deferredGaps": "Scoped P13 integration and aggregate P18 receiving model"
+    },
+    {
+      "hub": "Lender",
+      "saveHandoff": "Deferred; CTA omitted",
+      "resumeHandoff": "Unsupported",
+      "watchCapability": "Deferred",
+      "sourceMonitoring": "No My TrustHub adapter",
+      "deferredGaps": "Hub/class-specific P13 and Watch certification"
+    },
+    {
+      "hub": "Insurance",
+      "saveHandoff": "Deferred; CTA omitted",
+      "resumeHandoff": "Unsupported",
+      "watchCapability": "Deferred",
+      "sourceMonitoring": "No My TrustHub adapter",
+      "deferredGaps": "Hub/class-specific P13 and Watch certification"
+    },
+    {
+      "hub": "Senior",
+      "saveHandoff": "Deferred; CTA omitted",
+      "resumeHandoff": "Unsupported",
+      "watchCapability": "Deferred",
+      "sourceMonitoring": "No My TrustHub adapter",
+      "deferredGaps": "Hub/class-specific P13 and Watch certification"
+    },
+    {
+      "hub": "Investor",
+      "saveHandoff": "Deferred; CTA omitted",
+      "resumeHandoff": "Unsupported",
+      "watchCapability": "Deferred",
+      "sourceMonitoring": "No My TrustHub adapter",
+      "deferredGaps": "Hub/class-specific P13 and Watch certification"
+    }
+  ],
   "featureFlags": {
     "MY_TRUSTHUB_ENABLED": true,
     "MY_TRUSTHUB_CANARY_ONLY": true,
     "MY_TRUSTHUB_SIGNUP_ENABLED": false,
     "MY_TRUSTHUB_WATCH_ENABLED": true,
     "MY_TRUSTHUB_SOURCE_MONITORING_ENABLED": true,
-    "MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED": false,
+    "MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED": true,
     "MY_TRUSTHUB_ALERTS_ENABLED": false,
-    "MY_TRUSTHUB_EMAIL_ENABLED": false
+    "MY_TRUSTHUB_EMAIL_ENABLED": false,
+    "MY_TRUSTHUB_EXPORT_ENABLED": false,
+    "MY_TRUSTHUB_DELETE_ENABLED": false
+  },
+  "credentials": {
+    "p13": {
+      "role": "myth_p13_save_runtime",
+      "functions": [
+        "ops.prepare_contractor_save(text,text,text,uuid)",
+        "ops.issue_contractor_save(text,text,text,text)",
+        "ops.consume_contractor_save(text,text,text,uuid,text,text)"
+      ]
+    },
+    "p15": {
+      "role": "myth_p15_dbpr_runtime",
+      "functions": [
+        "ops.dbpr_poll_targets()",
+        "ops.run_dbpr_poll(text,timestamptz,timestamptz,timestamptz,jsonb,text)"
+      ]
+    },
+    "tableGrants": 0,
+    "otherApplicationSecurityDefinerFunctions": 0,
+    "roleMemberships": 0,
+    "productionOnly": true,
+    "tlsCertificateValidation": true,
+    "credentialsInArtifacts": false
+  },
+  "scheduler": {
+    "path": "/api/cron/my-trusthub-dbpr",
+    "cron": "41 12 * * *",
+    "timezone": "UTC",
+    "cadence": "daily",
+    "reason": "Conservative state-license source polling; no hourly need",
+    "existingPlan": "Vercel Pro",
+    "configured": true,
+    "firstFutureWallClockRun": "2026-09-11T12:41:00Z",
+    "manualSchedulerInvocation": "2026-09-10T13:27:35.273Z",
+    "invocationMethod": "vercel crons run /api/cron/my-trusthub-dbpr",
+    "httpStatus": 200,
+    "outcome": "source_unavailable",
+    "failure": "SOURCE_IDENTITY_MISSING",
+    "checkpointId": "e0015098-e2cc-4cb0-9542-bc1166a6c0b8",
+    "checkpointError": "RECORD_COUNT_COLLAPSE",
+    "sourceAsOf": "2026-09-10T10:48:32Z",
+    "retrievedAt": "2026-09-10T13:27:38.239Z",
+    "acceptedNewObservations": 0,
+    "newChangeEvents": 0
   },
   "watch": {
-    "count": 1,
-    "coverageCount": 1,
+    "capability": "contractor.fl.dbpr.license_status",
+    "version": 1,
+    "namespace": "fl.dbpr.license",
+    "credential": "CCC1332036",
     "status": "active",
-    "capabilityKey": "contractor.fl.dbpr.license_status",
-    "capabilityVersion": 1,
-    "identifierNamespace": "fl.dbpr.license",
-    "identifier": "CCC1332036",
-    "source": "fl.dbpr",
-    "sourceConnection": "configured",
-    "baselineObservations": 1,
-    "changeEvents": 0
+    "healthShown": "degraded",
+    "checkpointHealthStored": "unknown",
+    "completeness": "partial",
+    "schema": "unknown",
+    "noChangeEligible": false,
+    "saveCreatesWatch": false
   },
-  "sideEffects": {
+  "security": {
+    "productionRoleChecks": [
+      {
+        "name": "myth_p13_save_runtime: deny consumer",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: deny network",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: deny ops",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: deny auth",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: no role escalation",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: no detector role",
+        "pass": true
+      },
+      {
+        "name": "myth_p13_save_runtime: exact callable grants",
+        "pass": true,
+        "grants": [
+          {
+            "nspname": "ops",
+            "proname": "consume_contractor_save"
+          },
+          {
+            "nspname": "ops",
+            "proname": "issue_contractor_save"
+          },
+          {
+            "nspname": "ops",
+            "proname": "prepare_contractor_save"
+          }
+        ]
+      },
+      {
+        "name": "P13 wrong issuer issue",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong audience issue",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong browser state",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong nonce",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong issuer consume",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong audience consume",
+        "pass": true
+      },
+      {
+        "name": "P13 wrong canonical user",
+        "pass": true
+      },
+      {
+        "name": "P13 null issuer",
+        "pass": true
+      },
+      {
+        "name": "P13 null audience",
+        "pass": true
+      },
+      {
+        "name": "P13 null canonical user",
+        "pass": true
+      },
+      {
+        "name": "P13 exact binding consumed",
+        "pass": true
+      },
+      {
+        "name": "P13 replay rejected",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: deny consumer",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: deny network",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: deny ops",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: deny auth",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: no role escalation",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: no detector role",
+        "pass": true
+      },
+      {
+        "name": "myth_p15_dbpr_runtime: exact callable grants",
+        "pass": true,
+        "grants": [
+          {
+            "nspname": "ops",
+            "proname": "dbpr_poll_targets"
+          },
+          {
+            "nspname": "ops",
+            "proname": "run_dbpr_poll"
+          }
+        ]
+      },
+      {
+        "name": "exact DBPR target only",
+        "pass": true,
+        "rows": [
+          {
+            "binding_id": "54000000-0000-4000-8000-000000000002",
+            "credential": "CCC1332036"
+          }
+        ]
+      }
+    ],
+    "productionHttpHandoffChecks": [
+      {
+        "name": "start_redirect",
+        "pass": true
+      },
+      {
+        "name": "canonical_parent_intent",
+        "pass": true
+      },
+      {
+        "name": "missing_issuer_credential",
+        "pass": true
+      },
+      {
+        "name": "wrong_issuer",
+        "pass": true
+      },
+      {
+        "name": "wrong_audience",
+        "pass": true
+      },
+      {
+        "name": "specialist_opaque_issue",
+        "pass": true
+      },
+      {
+        "name": "arrival_has_no_code_in_url",
+        "pass": true
+      },
+      {
+        "name": "exact_save_completed",
+        "pass": true
+      },
+      {
+        "name": "browser_state_cleared",
+        "pass": true
+      },
+      {
+        "name": "same_code_and_browser_state_replay_rejected",
+        "pass": true
+      },
+      {
+        "name": "cross_site_start_denied",
+        "pass": true
+      },
+      {
+        "name": "anonymous_workspace_denied",
+        "pass": true
+      }
+    ],
+    "expiry": {
+      "pass": true,
+      "elapsedSeconds": 263
+    },
+    "productionAuthorizationChecks": 7,
+    "productionAuthorizationPassed": true,
+    "syntheticSubjectsRolledBack": true,
+    "browserP13RoundTrip": true,
+    "temporaryFounderCertifier": "JWT-protected 410 tombstone; short-lived challenge expired; no mail sent",
+    "secretScans": [
+      {
+        "repo": "stage4-closeout-ask",
+        "trackedFiles": 1232,
+        "browserFiles": 49,
+        "knownCredentialsAbsent": true,
+        "privateEnvMarkersAbsentFromBrowser": true,
+        "addedLineSecretPatternsAbsent": true
+      },
+      {
+        "repo": "stage4-closeout-contractor",
+        "trackedFiles": 1294,
+        "browserFiles": 63,
+        "knownCredentialsAbsent": true,
+        "privateEnvMarkersAbsentFromBrowser": true,
+        "addedLineSecretPatternsAbsent": true
+      }
+    ],
+    "liveBrowserBundleFiles": 20,
+    "liveBrowserCredentialsAbsent": true,
+    "databaseLogging": {
+      "statementMode": "ddl",
+      "errorParameterLength": 0,
+      "passwordActivation": "SCRAM verifier only; no raw runtime password in SQL"
+    }
+  },
+  "changeDetection": {
+    "isolatedP15Checks": 64,
+    "isolatedP15Passed": 64,
+    "exactCsvAdapterTests": 6,
+    "exactCsvAdapterPassed": 6,
+    "productionCurrentObservationCertified": false,
+    "productionFailureProtectionCertified": true,
+    "massChangeQuarantinePreserved": true,
+    "classifier": "Approved status_transition v1 / license_status_changed / P2; event only, no Alert fanout",
+    "scopedRuntimeWrapperChecks": [
+      {
+        "name": "scoped wrapper accepts baseline",
+        "pass": true
+      },
+      {
+        "name": "same data produces no change",
+        "pass": true
+      },
+      {
+        "name": "scoped wrapper generates status events",
+        "pass": true
+      },
+      {
+        "name": "repeat material value produces no duplicate events",
+        "pass": true
+      },
+      {
+        "name": "missing exact input fails health without observation",
+        "pass": true
+      },
+      {
+        "name": "null payload denied",
+        "pass": true
+      },
+      {
+        "name": "wrapper role private read denied",
+        "pass": true
+      },
+      {
+        "name": "expected deterministic observation/event counts",
+        "pass": true
+      }
+    ]
+  },
+  "killSwitch": {
+    "offDeployment": "dpl_BdSnjtEpfnURhpkkR2m7jsbi1J87",
+    "masterOffWorkspace404": true,
+    "masterOffHandoff404": true,
+    "cronInvocationWhileOff": "2026-09-10T13:37:50.012Z",
+    "checkpointCountUnchanged": true,
+    "watchRowAndCoverageIntact": true,
+    "monitoringStopsWithMaster": true,
+    "masterRestored": true
+  },
+  "responsive": {
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "overflow": false,
+    "namedControls": true,
+    "ctaMinHeight": 44,
+    "nestedWorkspaceMainFixed": true
+  },
+  "networkSmoke": {
+    "checkedAt": "2026-09-10T13:40:44.579Z",
+    "pages": [
+      {
+        "name": "ask",
+        "status": 200,
+        "finalUrl": "https://www.asktrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "ask_my",
+        "status": 200,
+        "finalUrl": "https://www.asktrusthub.com/my",
+        "pass": true
+      },
+      {
+        "name": "ask_search",
+        "status": 200,
+        "finalUrl": "https://www.asktrusthub.com/ask",
+        "pass": true
+      },
+      {
+        "name": "ask_watches",
+        "status": 200,
+        "finalUrl": "https://www.asktrusthub.com/my/watches",
+        "pass": true
+      },
+      {
+        "name": "contractor",
+        "status": 200,
+        "finalUrl": "https://www.contractortrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "contractor_profile",
+        "status": 200,
+        "finalUrl": "https://www.contractortrusthub.com/contractors/ccc1332036-infinite-construction-services-llc",
+        "pass": true
+      },
+      {
+        "name": "contractor_search",
+        "status": 200,
+        "finalUrl": "https://www.contractortrusthub.com/search",
+        "pass": true
+      },
+      {
+        "name": "insurance",
+        "status": 200,
+        "finalUrl": "https://www.insurancetrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "investor",
+        "status": 200,
+        "finalUrl": "https://www.investortrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "lender",
+        "status": 200,
+        "finalUrl": "https://www.lendertrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "move",
+        "status": 200,
+        "finalUrl": "https://www.movetrusthub.com/",
+        "pass": true
+      },
+      {
+        "name": "move_calculator",
+        "status": 200,
+        "finalUrl": "https://www.movetrusthub.com/moving-calculator",
+        "pass": true
+      },
+      {
+        "name": "senior",
+        "status": 200,
+        "finalUrl": "https://www.seniortrusthub.com/",
+        "pass": true
+      }
+    ],
+    "liveBrowserBundleFiles": 20,
+    "privateRuntimeMaterialAbsent": true
+  },
+  "counts": {
+    "authUsers": 1,
+    "profiles": 1,
+    "saved": 2,
+    "projects": 2,
+    "researchSessions": 2,
+    "watches": 1,
+    "enabledWatchCoverage": 1,
+    "sourceObservations": 1,
+    "changeEvents": 0,
     "alerts": 0,
-    "deliveries": 0
+    "deliveries": 0,
+    "p13HandoffIntents": 6,
+    "p13SaveHandoffs": 6,
+    "sourceCheckpoints": 2
   },
-  "checks": {
-    "p13Static": "PASS",
-    "p14Static": "PASS",
-    "p15Static": "PASS",
-    "typecheck": "PASS",
-    "lint": "PASS",
-    "build": "PASS",
-    "tests": "PASS",
-    "crossUserIsolation": "PASS",
-    "killSwitch": "PASS",
-    "responsive1440": "PASS",
-    "responsive390": "PASS",
-    "responsive320": "PASS",
-    "networkSmoke": "PASS"
+  "advisors": {
+    "askSecurity": "No Stage 4 security regression; closed operations tables intentionally have RLS/no browser policies. Existing leaked-password-protection warning remains.",
+    "askPerformance": "New foreign-key indexes added; only informational unused-index and Auth connection allocation findings remain.",
+    "contractor": "No database change in this release. Existing public-schema RLS, definer-view, mutable-search-path and public-extension findings remain."
+  },
+  "logs": {
+    "newHandoffAndPollerUnhandledErrors": 0,
+    "sourceFailureLoggedHonestly": true,
+    "contractorRecent5xx": 0,
+    "existingAskWarning": "Unchanged business/claim pg sslmode deprecation warning; no connection failure"
+  },
+  "prs": {
+    "ask": [
+      111,
+      112
+    ],
+    "contractor": [
+      55,
+      56
+    ]
   },
   "readiness": {
     "stage4Closed": false,
     "stage5Ready": false,
     "blockingGaps": [
-      "P13 scoped broker runtime credential and specialist endpoints are not deployed",
-      "P18 Move cross-domain resume consumer is not deployed",
-      "P15 unattended Contractor source-ingestor credential and schedule are not deployed"
+      "The real scheduler fetch cannot produce a compatible current observation for exact CCC1332036: the official bulk feed omits it."
+    ],
+    "nonblockingDeferrals": [
+      "Move aggregate cross-domain P18 resume",
+      "Additional specialist profile/hub P13 support",
+      "Additional Watch adapters"
     ]
   }
 }

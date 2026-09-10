@@ -3,13 +3,9 @@ import { randomBytes, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { isMyTrustHubFeatureEnabled } from "./feature-flags";
 
-// A temporary, parent-only canary gate permits production certification before
-// announcing specialist support. The prepare/finish routes still require the
-// authenticated allowlisted founder; master OFF always wins.
 export function contractorSaveEnabled() {
   return isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SAVED_ENABLED") &&
-    (isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED") ||
-      (process.env.MY_TRUSTHUB_CANARY_ONLY === "true" && process.env.MY_TRUSTHUB_P13_CERTIFICATION_ENABLED === "true"));
+    isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED");
 }
 
 export const ASK_ORIGIN = "https://www.asktrusthub.com";
@@ -30,5 +26,5 @@ export function handoffError(status = 400) {
 export function relayForm(destination: string, name: "intent" | "code", value: string) {
   if (![`${CONTRACTOR_ORIGIN}/api/my-trusthub/issue`, `${ASK_ORIGIN}/my/handoff/arrive`].includes(destination) || !validOpaque(value)) throw new Error("INVALID_RELAY");
   const nonce = opaque();
-  return new NextResponse(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Continue secure Save</title><body><main><h1>Continue to My TrustHub</h1><form method="post" action="${destination}"><input type="hidden" name="${name}" value="${value}"><button type="submit">Continue secure Save</button></form></main><script nonce="${nonce}">document.forms[0].submit()</script></body></html>`, { headers: { ...safeHeaders, "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; form-action ${destination}; frame-ancestors 'none'; base-uri 'none'` } });
+  return new NextResponse(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Continue secure Save</title><body><main><h1>Continue to My TrustHub</h1><form method="post" action="${destination}"><input type="hidden" name="${name}" value="${value}"><button type="submit">Continue secure Save</button></form></main><script nonce="${nonce}">document.forms[0].submit()</script></body></html>`, { headers: { ...safeHeaders, "Referrer-Policy": "strict-origin", "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; form-action ${destination}; frame-ancestors 'none'; base-uri 'none'` } });
 }
