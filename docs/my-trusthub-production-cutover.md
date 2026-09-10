@@ -1,7 +1,13 @@
 # My TrustHub production cutover plan
 
 Date: 2026-09-09
-Current recommendation: **STAGE 2 COMPLETE; READY FOR STAGE 3 APPROVAL**. The complete parent consumer workspace is live for exactly one canonical founder identity. Home, full Projects, Saved organization/private notes, You/privacy, guest restore, runtime owner isolation, kill-switch survival, responsive/accessibility, and production regression proofs have passed. Watches, Alerts, deliveries, and source observations remain zero. Public signup and every Stage 3+ capability remain off.
+Current recommendation: **STAGE 3 COMPLETE; READY FOR STAGE 4 APPROVAL**. P18 Saved Sessions are live for exactly one reviewed Move inventory contract and the canonical founder identity. Save/update, private display, Project association, guest-session import/deduplication, schema rejection, resume compatibility, replay protection, owner isolation, kill-switch survival, responsive/accessibility, and production regression proofs have passed. Cross-hub resume remains honestly unavailable and broad specialist handoff stays off. Watches, Alerts, deliveries, and source observations remain zero.
+
+## Stage 3 closeout - 2026-09-09
+
+Stage 3 implementation merged as `0e9e0eb738d8cd45aeeb8abc94e043d2b40dd704`. Production registered only `move.inventory/v1`, based on the real Move inventory calculator's aggregate planning grain. The founder canary left two explainable private sessions: one directly saved/updated session and one device-local guest import; duplicate guest import created no extra session.
+
+The live master gate was deployed OFF/ON without changing session rows. Cross-user/business-role isolation, sensitive and invalid payload rejection, P18 one-use handoff replay protection, 1440/390/320 layout, cache/SEO privacy, and public Ask regression checks passed. See `docs/my-trusthub-stage-3.md` and `artifacts/my-trusthub-stage-3.json`.
 
 ## Stage 2 closeout - 2026-09-09
 
