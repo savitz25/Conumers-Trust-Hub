@@ -54,13 +54,14 @@
     "historicalMoverUniverse": null
   },
   "network": {
-    "publishedStateIntelligencePages": 5,
+    "publishedStateIntelligencePages": 6,
     "publishedStateIntelligencePaths": [
       "/florida",
       "/new-jersey",
       "/california",
       "/texas",
-      "/washington"
+      "/washington",
+      "/colorado"
     ],
     "floridaResearchCountyLandings": 4,
     "localMoverStateLandings": 51
@@ -904,12 +905,12 @@
       "unit": "count",
       "key": "published_state_intelligence_pages",
       "label": "Published state moving-intelligence pages",
-      "value": 5,
+      "value": 6,
       "valueState": "KNOWN",
       "grain": "published_state_intelligence_page",
       "denominator": "Indexable specialist state intelligence routes currently published",
-      "description": "Florida, New Jersey, California, Texas, and Washington specialist intelligence pages. Not a count of movers.",
-      "coverage": "/florida, /new-jersey, /california, /texas, /washington",
+      "description": "Florida, New Jersey, California, Texas, Washington, and Colorado specialist intelligence pages. Not a count of movers.",
+      "coverage": "/florida, /new-jersey, /california, /texas, /washington, /colorado",
       "contributingSourceSystems": [
         "move-state-intel"
       ],
@@ -917,12 +918,12 @@
       "generatedAt": "2026-09-06T00:56:38.444Z",
       "publicationStatus": "PUBLIC",
       "trace": {
-        "counts": "Published /florida, /new-jersey, /california, /texas, /washington intelligence routes.",
+        "counts": "Published /florida, /new-jersey, /california, /texas, /washington, /colorado intelligence routes.",
         "doesNotCount": "Not local-mover landings and not federal directory rows.",
         "contributingSourceSystems": [
           "move-state-intel"
         ],
-        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington",
+        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington, /colorado",
         "sourceDates": "Publication gates in specialist catalogs",
         "generationDate": "2026-09-06"
       }

@@ -1,0 +1,91 @@
+{
+  "ticket": "ATH-CO-001",
+  "state": "CO",
+  "rows": [
+    {
+      "hub": "contractor",
+      "source_authority": "Colorado DORA",
+      "dataset_name": "DORA professional-license extract — EC/PC business credentials",
+      "source_grain": "active electrical/plumbing contractor business credential row",
+      "sourceAsOf": "2026-09-09",
+      "retrievedAt": "2026-09-09",
+      "coverage": "statewide specialty credentials",
+      "capability_status": "ACQUIRED",
+      "canonical_specialist_page": "https://www.contractortrusthub.com/colorado",
+      "consumer_meaning": "7,936 active EC/PC credentials can be researched. There is no statewide general-contractor license.",
+      "doesNotProve": "unique contractors; general-contractor status; quality",
+      "identifier_type": "CO-DORA:{licensePrefix}:{licenseNumber}"
+    },
+    {
+      "hub": "move",
+      "source_authority": "Colorado Public Utilities Commission",
+      "dataset_name": "Household-goods permits",
+      "source_grain": "ACTIVE state HHG permit",
+      "sourceAsOf": "2026-09-09",
+      "retrievedAt": "2026-09-09",
+      "coverage": "statewide HHG permits",
+      "capability_status": "ACQUIRED",
+      "canonical_specialist_page": "https://www.movetrusthub.com/colorado",
+      "consumer_meaning": "203 active PUC HHG permits. Verify interstate authority on FMCSA separately.",
+      "doesNotProve": "USDOT; MC authority; interstate operating authority; quality",
+      "identifier_type": "CO-PUC-HHG:{permitNumber}"
+    },
+    {
+      "hub": "senior",
+      "source_authority": "CMS / CDPHE",
+      "dataset_name": "CMS provider classes plus CDPHE Find and Compare",
+      "source_grain": "CMS provider class (NH / HHA / Hospice)",
+      "sourceAsOf": "2026-09-09",
+      "retrievedAt": "2026-09-09",
+      "coverage": "CMS Colorado classes; CDPHE is verification context",
+      "capability_status": "ACQUIRED overlay; state lookup OPEN_SEARCH_ONLY",
+      "canonical_specialist_page": "https://www.seniortrusthub.com/colorado",
+      "consumer_meaning": "210 nursing homes, 222 home health, 88 hospice — separate classes.",
+      "doesNotProve": "one senior-providers total; CMS CCN is a state license; 2017 GIS is current",
+      "identifier_type": "CMS CCN"
+    },
+    {
+      "hub": "lender",
+      "source_authority": "CFPB HMDA / Colorado DRE",
+      "dataset_name": "HMDA 2025 Colorado property-location slice; DRE MLO person rows",
+      "source_grain": "HMDA application; MLO person license",
+      "sourceAsOf": "HMDA 2025; MLO retrieved 2026-09-09",
+      "retrievedAt": "2026-09-09",
+      "coverage": "statewide HMDA property location; MLO persons; company roster search-only",
+      "capability_status": "ACQUIRED market/person; company roster SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY",
+      "canonical_specialist_page": "https://www.lendertrusthub.com/colorado",
+      "consumer_meaning": "260,212 HMDA applications describe market activity. Company licensing is NMLS search-only.",
+      "doesNotProve": "lender count; license roster; MLO is a company; complaint is a violation",
+      "identifier_type": "LEI on HMDA; NMLS person"
+    },
+    {
+      "hub": "investor",
+      "source_authority": "IAPD / Colorado Division of Securities",
+      "dataset_name": "IAPD STATE and SEC compilations 2026-08-27",
+      "source_grain": "state IA / ERA / notice filing / principal-office overlay",
+      "sourceAsOf": "2026-08-27",
+      "retrievedAt": "2026-09-09",
+      "coverage": "jurisdiction-based IA/ERA plus notice and office overlay",
+      "capability_status": "ACQUIRED",
+      "canonical_specialist_page": "https://www.investortrusthub.com/colorado",
+      "consumer_meaning": "740 APPROVED state IA firms is the relevant state-RIA measure.",
+      "doesNotProve": "principal office is state registration; notice filing is state IA; combined adviser total",
+      "identifier_type": "CRD"
+    },
+    {
+      "hub": "insurance",
+      "source_authority": "Colorado Division of Insurance",
+      "dataset_name": "2025 statistical report; 2026–2027 surplus list; 2025 standard complaint tables",
+      "source_grain": "dated directory row; surplus eligibility identity; company×line complaint observation",
+      "sourceAsOf": "2025-12-31 directory; surplus updated 2026-07-24",
+      "publishedAt": "statistical report August 2026",
+      "retrievedAt": "2026-09-09",
+      "coverage": "dated market, current dated surplus window, 2025 complaint tables; live authorized roster search-only",
+      "capability_status": "ACQUIRED as dated evidence; live authorized/agency/producer SOURCE_NOT_ACQUIRED / OPEN_SEARCH_ONLY",
+      "canonical_specialist_page": "https://www.insurancetrusthub.com/colorado",
+      "consumer_meaning": "1,839 is a 2025 market-directory grain. Current authorization is Sircon/DOI lookup.",
+      "doesNotProve": "current authorization; surplus is admitted; complaint index is a TrustHub score",
+      "identifier_type": "NAIC CoCode; alien AA- kept separate"
+    }
+  ]
+}
