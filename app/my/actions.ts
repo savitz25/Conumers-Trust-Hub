@@ -496,3 +496,36 @@ export async function markAllAlertsReadAction() {
   await safeMutation("my_trusthub_alert_mark_all_read_failed", "/my/alerts?error=unable", () => adapter.markAllAlertsRead());
   revalidatePath("/my"); revalidatePath("/my/alerts");
 }
+
+export async function requestExportAction() {
+  assertMyTrustHubFeature("MY_TRUSTHUB_EXPORT_ENABLED");
+  const adapter = await requiredAdapter();
+  const ref = await safeMutation("my_trusthub_export_request_failed", "/my/you?error=export", () => adapter.requestExport(randomUUID()));
+  revalidatePath("/my/you");
+  redirect(`/my/you?export=${encodeURIComponent(ref)}`);
+}
+
+export async function requestDeletionConfirmationAction() {
+  assertMyTrustHubFeature("MY_TRUSTHUB_DELETE_ENABLED");
+  const adapter = await requiredAdapter();
+  const code = await safeMutation("my_trusthub_deletion_confirmation_failed", "/my/you?error=deletion", () => adapter.issueDeletionConfirmation());
+  revalidatePath("/my/you");
+  redirect(`/my/you?delete_code=${encodeURIComponent(code)}`);
+}
+
+export async function requestWorkspaceDeletionAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_DELETE_ENABLED");
+  const adapter = await requiredAdapter();
+  const code = textField(formData, "confirmationCode", 120);
+  const ref = await safeMutation("my_trusthub_deletion_request_failed", "/my/you?error=deletion", () => adapter.requestWorkspaceDeletion(code, randomUUID()));
+  revalidatePath("/my/you");
+  redirect(`/my/you?deletion=${encodeURIComponent(ref)}`);
+}
+
+export async function cancelWorkspaceDeletionAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_DELETE_ENABLED");
+  const adapter = await requiredAdapter();
+  await safeMutation("my_trusthub_deletion_cancel_failed", "/my/you?error=deletion", () => adapter.cancelWorkspaceDeletion(uuidField(formData, "deletionRef")));
+  revalidatePath("/my/you");
+  redirect("/my/you?deletion_cancelled=1");
+}
