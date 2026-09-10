@@ -1,0 +1,42 @@
+{
+  "stage": "MY_TRUSTHUB_STAGE_3",
+  "status": "CLOSED",
+  "ready_for_stage_4": true,
+  "date": "2026-09-09",
+  "implementation_main_sha": "0e9e0eb738d8cd45aeeb8abc94e043d2b40dd704",
+  "implementation_deployment": "dpl_CYPvVcxTJFTtqKXaNHXkREyLVyrC",
+  "supported_schema": { "schema_key": "move.inventory/v1", "version": 1, "session_type": "inventory" },
+  "certification": {
+    "create_read_update": "PASS",
+    "project_many_to_many": "PASS",
+    "project_archive_survival": "PASS",
+    "guest_import": "PASS",
+    "guest_duplicate": "PASS_NO_EXTRA_SESSION",
+    "current_version": "PASS",
+    "unknown_version": "REJECTED",
+    "malformed_payload": "REJECTED",
+    "sensitive_payload": "REJECTED",
+    "specialist_resume": "NOT_CONNECTED_TRUTHFULLY_DISPLAYED",
+    "handoff_replay": "PASS_DENIED",
+    "cross_user_rls": "PASS_ZERO_ROWS",
+    "kill_switch": "PASS_OFF_ON_DATA_INTACT",
+    "responsive": [1440, 390, 320],
+    "public_regression": "PASS"
+  },
+  "final_counts": {
+    "auth_users": 1,
+    "profiles": 1,
+    "saved": 1,
+    "projects": 2,
+    "project_saved_memberships": 2,
+    "saved_sessions": 2,
+    "session_memberships": 2,
+    "session_events": 6,
+    "guest_session_imports": 2,
+    "guest_session_import_items": 2,
+    "watches": 0,
+    "alerts": 0,
+    "deliveries": 0,
+    "source_observations": 0
+  }
+}
