@@ -14,6 +14,7 @@ import {
   PageHeading,
 } from "@/components/my-trusthub/my-shell";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
+import { SessionCard } from "@/components/my-trusthub/session-card";
 
 export default async function ProjectPage({
   params,
@@ -28,10 +29,11 @@ export default async function ProjectPage({
     searchParams,
   ]);
   const { adapter, user } = workspace;
-  const [project, memberships, saved] = await Promise.all([
+  const [project, memberships, saved, sessions] = await Promise.all([
     adapter.getProject(projectId),
     adapter.getProjectMemberships(projectId),
     adapter.listSavedEntities(),
+    adapter.listSavedSessions(),
   ]);
   if (!project) notFound();
 
@@ -89,6 +91,11 @@ export default async function ProjectPage({
         )}
       </div>
       <section className="myth-grid">
+        <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2>Research sessions</h2><Link href="/my/saved">Manage</Link></div>
+          {sessions.filter((session) => session.project_memberships.some((membership) => membership.project_ref === projectId)).map((session) => <SessionCard session={session} key={session.saved_session_id} />)}
+          {!sessions.some((session) => session.project_memberships.some((membership) => membership.project_ref === projectId)) ? <p className="myth-muted">No research sessions are assigned to this Project.</p> : null}
+        </article>
         <article className="myth-panel myth-span-two">
           <div className="myth-panel-heading">
             <h2>Saved Research</h2>

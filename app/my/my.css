@@ -110,6 +110,14 @@
 .myth-membership-grid form { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .myth-note select { min-height: 44px; border: 1px solid #bdcbd1; border-radius: 6px; padding: 8px; background: white; }
 .myth-note button { justify-self: start; }
+.myth-session-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; border-top: 1px solid #edf1f2; }
+.myth-session-card:first-of-type { border-top: 0; }
+.myth-session-card h3,.myth-session-card p { margin: 0 0 6px; }
+.myth-session-card .myth-muted { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 520px) {
+  .myth-session-card { align-items: stretch; flex-direction: column; }
+  .myth-session-card .myth-secondary { justify-content: center; width: 100%; }
+}
 .myth-text-danger { min-height: 44px; border: 0; color: #7f3737; background: transparent; text-decoration: underline; }
 .myth-you-signout { margin-top: 20px; }
 .myth-decision-form { max-width: 720px; margin-top: 18px; }
