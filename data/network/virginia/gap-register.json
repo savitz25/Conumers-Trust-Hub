@@ -1,0 +1,60 @@
+{
+  "state": "VA",
+  "ACQUIRED": [
+    "DPOR Class A/B/C contractor-business license numbers",
+    "Virginia DMV HHG certificates and Property Carrier permits",
+    "DSS ALF/ADC licenses and inspection observations",
+    "CMS NH/HHA/Hospice overlays",
+    "Dated SCC mortgage-company roster with VA-MC and NMLS IDs",
+    "HMDA 2025 Virginia applications",
+    "SCC 2025 insurance statistical-report NAIC observations",
+    "SCC Regulatory Actions and Market Conduct tables",
+    "IAPD Virginia IA/ERA/notice/principal-office layers"
+  ],
+  "OPEN_SEARCH_ONLY": [
+    "DPOR live license lookup",
+    "NMLS Consumer Access",
+    "VDH nursing-home informational portal",
+    "SCC current insurance company search",
+    "Agent / Agency / Navigator search",
+    "IAPD live lookup"
+  ],
+  "SOURCE_NOT_ACQUIRED": [
+    "contractor Recovery Fund bulk",
+    "contractor complaint bulk",
+    "mover complaint bulk",
+    "carrier-specific tariffs",
+    "VDH HCO/hospice bulk roster",
+    "live 2026 mortgage-company bulk roster",
+    "MLO directory bulk",
+    "current insurance authorization bulk",
+    "insurance agent/agency bulk",
+    "surplus-lines eligible list",
+    "complaint-ratio bulk",
+    "U4/U5 histories",
+    "Form D"
+  ],
+  "SOURCE_AVAILABLE_BY_REQUEST": [
+    "FOIA / extra SCC extracts — not requested"
+  ],
+  "SOURCE_USE_RESTRICTED": [],
+  "HISTORICAL_STALE": [],
+  "UNKNOWN": [
+    "live September 2026 authorized-insurer census",
+    "live 2026 mortgage-company census",
+    "current BD/agent rosters"
+  ],
+  "NOT_APPLICABLE": [
+    "Virginia city/county Ask routes this phase"
+  ],
+  "LEFT_LOCAL_FUTURE": [
+    "Richmond",
+    "Virginia Beach",
+    "Norfolk",
+    "Alexandria",
+    "Arlington",
+    "Fairfax",
+    "Loudoun",
+    "Prince William"
+  ]
+}

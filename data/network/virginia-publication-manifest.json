@@ -1,0 +1,529 @@
+{
+  "state_code": "VA",
+  "state_name": "Virginia",
+  "ask_path": "/virginia",
+  "ask_canonical": "https://www.asktrusthub.com/virginia",
+  "version": "ath-va-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "virginia_local_phase": "NO",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "conceptual_statement": "Virginia\u2019s strongest Trust Hub evidence is a statewide DPOR Class A/B/C contractor-license spine, separate DMV Household Goods certificates and Property Carrier permits with a 30-mile rule, DSS assisted-living licensing and inspection intelligence separate from CMS, a dated SCC mortgage-company roster that prints Virginia MC numbers and NMLS IDs, SCC insurance financial/action/exam evidence that is not a live authorized roster, and IAPD lenses that must not collapse into one adviser total. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown \u2014 not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_virginia_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "investor",
+      "insurance"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "investor",
+      "insurance"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /virginia pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /virginia is indexable. Any one specialist failure fails the gate. Do not weaken the gate. No Virginia county or city routes.",
+    "verified_at": "2026-09-10T20:10:31.000Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "53,840 Class A/B/C contractor-business license numbers",
+      "grain": "Distinct contractor-business LICENSE NUMBERS, not unique companies, not tradesmen, not all Virginia construction businesses. 30,120 tradesman/person rows stay a separate person grain."
+    },
+    {
+      "hub_id": "move",
+      "display": "192 Virginia HHG certificate authority numbers",
+      "grain": "Household Goods Carrier certificates. Not Property Carrier permits. Not a mover census. Do not add 192 + 4,916. State DMV authority is not USDOT, MC, or FMCSA interstate authority."
+    },
+    {
+      "hub_id": "senior",
+      "display": "573 licensed assisted-living facilities",
+      "grain": "DSS Assisted Living licenses. Licensed capacity 38,010 is not occupancy. Adult Day 82 and CMS 289/237/110 stay separate classes. Do not add them into one Virginia senior-provider total."
+    },
+    {
+      "hub_id": "lender",
+      "display": "1,257 dated SCC mortgage-company roster rows",
+      "grain": "Dated 2025 SCC company rows with exact VA-MC \u2192 NMLS bridges. Not a live September 2026 lender count. 24,222 MLO persons are not companies. HMDA applications are not lenders."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,546 2025 statistical-report NAIC company observations",
+      "grain": "Dated financial/market evidence, year ended 2025-12-31, reported as of 2026-06-01. Not current authorization. 1,727 exact-match observations are not unique insurers."
+    },
+    {
+      "hub_id": "investor",
+      "display": "697 APPROVED Virginia state-registered IA firms",
+      "grain": "APPROVED state IA firms. Not 339 principal-office firms, not 107 ERA, not 3,289 notice filings. 4,481 SCC annual activity is not 4,481 firms. Do not add these populations."
+    }
+  ],
+  "what_makes_virginia_different": [
+    "Contractor: DPOR provides a strong statewide Class A/B/C contractor-license spine, plus tradesmen as a separate person grain.",
+    "Move: Virginia DMV has separate Household Goods Carrier certificates and Property Carrier permits, with an important 30-mile rule. Interstate authority remains FMCSA.",
+    "Senior: Virginia DSS gives unusually rich assisted-living licensing and inspection intelligence separate from CMS nursing/home-health/hospice.",
+    "Lender: The dated SCC mortgage-company roster prints both Virginia MC numbers and NMLS IDs, providing strong exact identity bridges. Live 2026 company denominator remains unknown.",
+    "Insurance: SCC provides dated financial/company observations plus bounded Regulatory Action and Market Conduct tables using NAIC identities. That is not a live authorized-insurer universe.",
+    "Investor: IAPD exposes separate Virginia state IA, ERA, notice-filing, and principal-office lenses; these cannot be collapsed into one adviser total."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 53840,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 53840,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "53,840 is license numbers, not unique companies. Ask does not mint contractor organizations from this aggregation."
+    },
+    "move": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 192,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 192,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "192 HHG certificate identities. Property Carrier rows are a separate grain and are not added here."
+    },
+    "senior": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 573,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 7032,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "573 ALF research identities are not claimable profiles. Inspection observations stay evidence rows."
+    },
+    "lender": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 1257,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 1257,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "1,257 dated SCC company rows. Not current 2026 lenders. HMDA and MLO remain separate grains."
+    },
+    "investor": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 697,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 697,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "697 APPROVED state IA firms. Principal-office, ERA, and notice remain separate. Not a combined adviser total."
+    },
+    "insurance": {
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_STATE_IDENTITIES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "NEW_EVIDENCE_ROWS": 1546,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "note": "1,546 statistical-report observations. Exact NAIC matches are read-only and not enrichment writes."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Contractor licenses, mover authorities, senior facilities/inspections, HMDA applications, mortgage companies, insurance observations, adviser registrations, and regulatory cases are incompatible grains. Ask does not publish a Virginia-records total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /virginia pages plus Ask /virginia. Page/surface count only \u2014 not a business, record, provider, or license count."
+    }
+  },
+  "data_moat": {
+    "organizations_facilities": [
+      "DSS Assisted Living Facilities (573)",
+      "DSS Adult Day Centers (82)",
+      "CMS nursing homes / home health / hospice overlays"
+    ],
+    "licenses_registrations": [
+      "DPOR Class A/B/C contractor-business license numbers (53,840)",
+      "Virginia DMV HHG certificates (192)",
+      "Dated SCC mortgage-company roster (1,257)",
+      "IAPD APPROVED state IA (697)"
+    ],
+    "regulatory_market_evidence": [
+      "ALF inspection observations",
+      "SCC insurance Regulatory Actions and Market Conduct tables",
+      "HMDA 2025 Virginia applications",
+      "CFPB mortgage complaint observations"
+    ],
+    "search_only_restricted": [
+      "NMLS Consumer Access",
+      "SCC current insurance company search",
+      "VDH nursing portal",
+      "IAPD live lookup",
+      "DPOR live lookup"
+    ]
+  },
+  "juice_squeeze_network": {
+    "GRABBED \u2014 HIGH YIELD": [
+      "DPOR statewide contractor license spine",
+      "DMV HHG / Property authority",
+      "DSS ALF/ADC + inspections",
+      "SCC mortgage roster with MC/NMLS IDs",
+      "SCC insurance financial/action/exam evidence",
+      "IAPD Virginia IA/ERA/notice layers + SCC activity"
+    ],
+    "LEFT \u2014 SEARCH / VERIFY": [
+      "several live regulator lookup systems"
+    ],
+    "LEFT \u2014 TOO MUCH WORK FOR CURRENT YIELD": [
+      "deep order/PDF archaeology",
+      "complaint case-by-case history",
+      "U4/U5 work",
+      "detailed tariff/insurance documents"
+    ],
+    "LEFT \u2014 SHARED NETWORK BACKLOG": [
+      "SCC corporate entity/officer/name-history graph"
+    ],
+    "LEFT \u2014 LOCAL / FUTURE": [
+      "Virginia county/city expansions"
+    ]
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "coverage_type": "STATE_CONTRACTOR_BUSINESS_LICENSES",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.contractortrusthub.com/virginia",
+      "snapshot_version": "contractor-va-state-intel-v1",
+      "fingerprint": "f758a837d397d7480eb80ff57889a9dd845a016b86edc95a0b4d8f457022eaa3",
+      "source_clock": "Virginia DPOR Class A/B/C contractor-business license extract \u2014 specialist-accepted contractor-va-state-intel-v1",
+      "primary_regulator": "Virginia DPOR",
+      "primary_identity": "VA-DPOR:{class}:{licenseNumber}",
+      "topic": "Is this contractor licensed in Virginia?",
+      "plain_question": "Is this contractor licensed in Virginia \u2014 and are those unique companies?",
+      "research_topics": [
+        "Class A/B/C contractor-business license numbers",
+        "Tradesman/person rows as a separate grain",
+        "Official specialty taxonomy",
+        "Revocation observations versus cases"
+      ],
+      "primary_identifiers": [
+        "VA-DPOR:A:{number}",
+        "VA-DPOR:B:{number}",
+        "VA-DPOR:C:{number}"
+      ],
+      "identifier_types": [
+        "VA-DPOR"
+      ],
+      "source_summary": "Virginia DPOR publishes statewide Class A/B/C contractor-business license numbers. Tradesmen remain a person grain. Revocation observations are not unique cases.",
+      "coverage_summary": "53,840 distinct Class A/B/C contractor-business license numbers (A 34,213; B 8,374; C 11,253). Not unique companies. 30,120 tradesman/person rows are not contractor businesses.",
+      "coverage_limitation": "License number is not a unique organization. Recovery Fund, complaint bulk, and current bond proof remain unacquired.",
+      "what_research": "DPOR Class A/B/C licenses and official lookup",
+      "next_step": "Verify the license on DPOR / ContractorTrustHub Virginia",
+      "semantic_guardrails": [
+        "license number \u2260 unique company",
+        "tradesman \u2260 contractor business",
+        "revocation observation \u2260 criminal conviction",
+        "120 observation rows \u2260 119 cases"
+      ],
+      "verified_facts": [
+        "53,840 distinct Class A/B/C contractor-business license numbers.",
+        "Class A 34,213; Class B 8,374; Class C 11,253.",
+        "30,120 tradesman/person rows stay a separate person grain.",
+        "45 official classifications/specialties. Revocation: 120 observation rows / 119 cases / 100 license IDs."
+      ],
+      "routing_intents": [
+        "Is this contractor licensed in Virginia?",
+        "How many contractors are in Virginia?"
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "Recovery Fund bulk",
+        "complaint bulk",
+        "current bond/insurance proof"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "coverage_type": "STATE_HHG_CERTIFICATE",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.movetrusthub.com/virginia",
+      "snapshot_version": "move-va-state-intel-v1",
+      "fingerprint": "dfe6091caa29d71d5f045734346861af8c69ae3c2eed06ca37c7cf717425eca9",
+      "source_clock": "Virginia DMV Household Goods Carrier and Property Carrier listings \u2014 specialist-accepted move-va-state-intel-v1",
+      "primary_regulator": "Virginia DMV",
+      "primary_identity": "VA-DMV-HHG:{authorityNumber}",
+      "topic": "Can I check a mover in Virginia?",
+      "plain_question": "Can I check a Virginia mover \u2014 and is a Property Carrier the same as a Household Goods certificate?",
+      "research_topics": [
+        "Household Goods Carrier certificates",
+        "Property Carrier permits",
+        "30-mile HHG rule",
+        "DMV authority versus FMCSA"
+      ],
+      "primary_identifiers": [
+        "VA-DMV-HHG:{authority}",
+        "VA-DMV-PC:{authority}"
+      ],
+      "identifier_types": [
+        "VA-DMV"
+      ],
+      "source_summary": "Virginia DMV lists Household Goods Carrier certificates and Property Carrier permits as separate authority grains. Interstate authority remains FMCSA.",
+      "coverage_summary": "192 HHG certificate authority numbers. 4,916 Property Carrier listing rows are not a mover census. Do not add 192 + 4,916.",
+      "coverage_limitation": "Property Carrier is not a mover census. State DMV authority is not USDOT, MC, or active interstate authority.",
+      "what_research": "Virginia DMV HHG certificates and Property Carrier permits",
+      "next_step": "Verify authority on MoveTrustHub Virginia and FMCSA for interstate moves",
+      "semantic_guardrails": [
+        "192 HHG \u2260 Property Carrier",
+        "Property Carrier \u2260 mover census",
+        "do not add 192 + 4,916",
+        "further than 30 miles: HHG certificate",
+        "less than 31 road-miles: qualifying Property Carrier may transport HHG",
+        "DMV \u2260 USDOT \u2260 MC \u2260 FMCSA",
+        "authority 1276 is SOURCE_IDENTIFIER_CONFLICT"
+      ],
+      "verified_facts": [
+        "HHG: 192 listing rows / 192 distinct non-null authority numbers. Legal document: CERTIFICATE.",
+        "Property Carrier: 4,916 listing rows; 4,915 non-null; 4,914 distinct; 1 blank identifier row.",
+        "Authority 1276 is SOURCE_IDENTIFIER_CONFLICT.",
+        "Interstate moves remain FMCSA."
+      ],
+      "routing_intents": [
+        "Can I check a mover in Virginia?",
+        "Does a Virginia Property Carrier permit mean they can move my household goods?"
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "carrier-specific tariffs",
+        "complaint bulk",
+        "no state\u2192FMCSA name matching"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "coverage_type": "STATE_ALF_PLUS_CMS_OVERLAY",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.seniortrusthub.com/virginia",
+      "snapshot_version": "senior-va-state-intel-v1",
+      "fingerprint": "c98e5373d60c765690f03493e0c1fd85d4b24f2c4693fb964abd27b5d5d73d68",
+      "source_clock": "Virginia DSS ALF/ADC official search JSON retrieved 2026-09-10; CMS overlay as of 2026-08-27",
+      "primary_regulator": "Virginia DSS DOLP; CMS",
+      "primary_identity": "VA-DSS-ALF:{licenseId}",
+      "topic": "Find assisted living in Virginia.",
+      "plain_question": "Find assisted living in Virginia \u2014 and is that the same as a nursing home?",
+      "research_topics": [
+        "DSS Assisted Living licenses",
+        "ALF inspection observations",
+        "Adult Day Centers as a separate class",
+        "CMS nursing homes, home health, and hospice"
+      ],
+      "primary_identifiers": [
+        "VA-DSS-ALF:{licenseId}",
+        "CMS CCN"
+      ],
+      "identifier_types": [
+        "VA-DSS-ALF",
+        "CMS-CCN"
+      ],
+      "source_summary": "Virginia DSS licenses Assisted Living Facilities and Adult Day Centers. CMS overlays remain separate provider classes.",
+      "coverage_summary": "573 licensed ALFs; 38,010 licensed capacity, not occupancy. 7,032 ALF inspection observations. 82 Adult Day Centers. CMS: 289 NH / 237 HHA / 110 hospice. Do not add these classes.",
+      "coverage_limitation": "ALF license is not a CMS CCN. VDH nursing portal remains search-only.",
+      "what_research": "DSS ALF/ADC licenses and inspections; CMS class overlays",
+      "next_step": "Open SeniorTrustHub Virginia and the official DSS or CMS lookup",
+      "semantic_guardrails": [
+        "ALF \u2260 nursing home",
+        "capacity \u2260 occupancy",
+        "complaint-related \u2260 substantiated complaint",
+        "violations=Y \u2260 violation count",
+        "inspection \u2260 disciplinary action",
+        "Adult Day \u2260 ALF \u2260 NH",
+        "do not add 573+82+289+237+110"
+      ],
+      "verified_facts": [
+        "573 licensed DSS Assisted Living Facilities. Licensed capacity 38,010.",
+        "7,032 ALF inspection observations; 2,488 complaint-related; 4,066 violations=Y.",
+        "82 licensed Adult Day Centers; 615 inspection observations.",
+        "CMS Virginia: 289 nursing homes, 237 home health, 110 hospice."
+      ],
+      "routing_intents": [
+        "Find assisted living in Virginia.",
+        "Find nursing homes in Virginia."
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "VDH nursing portal search-only",
+        "no ALF\u2192CMS name crosswalk",
+        "violation PDFs not crawled"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "coverage_type": "DATED_SCC_MORTGAGE_ROSTER",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.lendertrusthub.com/virginia",
+      "snapshot_version": "lender-va-state-intel-v1",
+      "fingerprint": "1d15e78c49d24827268c9e4064ba816cf6e7ea227db8fd58a01816fec751cba9",
+      "source_clock": "Virginia SCC mortgage narrative as of 2025-12-31; HMDA 2025",
+      "primary_regulator": "Virginia SCC; NMLS; CFPB HMDA",
+      "primary_identity": "VA-MC:{number} / NMLS:{id}",
+      "topic": "Which mortgage lenders are licensed in Virginia?",
+      "plain_question": "Which mortgage companies are on Virginia\u2019s dated SCC roster \u2014 and is that the current 2026 count?",
+      "research_topics": [
+        "Dated SCC mortgage-company roster with MC and NMLS IDs",
+        "Broker / lender / lender-and-broker categories",
+        "MLO persons as a separate grain",
+        "HMDA 2025 Virginia applications"
+      ],
+      "primary_identifiers": [
+        "VA-MC:{number}",
+        "NMLS:{id}"
+      ],
+      "identifier_types": [
+        "VA-MC",
+        "NMLS"
+      ],
+      "source_summary": "Virginia SCC publishes a dated mortgage-company roster with Virginia MC numbers and NMLS IDs. Live 2026 company denominator remains unknown. Current verification is NMLS Consumer Access.",
+      "coverage_summary": "1,257 dated SCC mortgage-company roster rows with 1,257 exact VA-MC \u2192 NMLS bridges. SCC narrative 713/180/364 versus parsed 713/178/366, both totaling 1,257. Not 1,257 current lenders. 24,222 MLO persons are not companies.",
+      "coverage_limitation": "Dated 2025 roster is not a live September 2026 company denominator. MLO is not a company. HMDA application is not a lender.",
+      "what_research": "SCC dated roster, NMLS lookup, HMDA 2025",
+      "next_step": "Open LenderTrustHub Virginia and verify current status on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "dated 2025 roster \u2260 current 2026",
+        "MLO \u2260 company",
+        "HMDA application \u2260 lender",
+        "complaint \u2260 violation",
+        "do not call 1,257 Virginia lenders",
+        "SCC narrative 713/180/364 versus parsed 713/178/366 is a source discrepancy, not a bug to hide"
+      ],
+      "verified_facts": [
+        "SCC narrative as of 2025-12-31: brokers 713 companies / 839 offices; lenders 180 / 501; lender-and-brokers 364 / 2,709.",
+        "Parsed dated roster: 1,257 company rows and 1,257 exact VA-MC \u2192 NMLS ID bridges.",
+        "Source-internal classification discrepancy: narrative 713/180/364 versus parsed 713/178/366; both total 1,257.",
+        "MLO 24,222 persons. HMDA 2025: 340,304 applications, 202,417 originations, 53,970 denials. CFPB: 14,563 mortgage complaint observations."
+      ],
+      "routing_intents": [
+        "Which mortgage lenders are licensed in Virginia?",
+        "How much mortgage lending happened in Virginia last year?"
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "live 2026 bulk company roster",
+        "MLO directory bulk",
+        "enforcement PDF census"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "coverage_type": "IAPD_STATE_LENSES",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.investortrusthub.com/virginia",
+      "snapshot_version": "investor-va-state-intel-v1",
+      "fingerprint": "b5f82ff25157a614a18ec134253996ab54fc5961b282bda68ff228e85a525a7b",
+      "source_clock": "IAPD Virginia state/SEC compilations \u2014 specialist-accepted investor-va-state-intel-v1",
+      "primary_regulator": "SEC IAPD; Virginia SCC",
+      "primary_identity": "CRD:{number}",
+      "topic": "How many investment advisers are registered in Virginia?",
+      "plain_question": "How many investment advisers are registered in Virginia \u2014 and is a principal office the same as state registration?",
+      "research_topics": [
+        "APPROVED Virginia state-registered IA firms",
+        "Principal-office geography",
+        "ERA reporting firms",
+        "Federal notice filings"
+      ],
+      "primary_identifiers": [
+        "CRD:{number}"
+      ],
+      "identifier_types": [
+        "CRD"
+      ],
+      "source_summary": "IAPD exposes separate Virginia state IA, ERA, notice-filing, and principal-office lenses. SCC 4,481 is annual activity, not firms.",
+      "coverage_summary": "697 APPROVED Virginia state-registered IA firms. Separate from 339 principal-office firms, 107 ERA, and 3,289 notice filings. 4 CRDs overlap state IA and notice. Do not add these populations.",
+      "coverage_limitation": "Principal office is not state registration. ERA is not RIA. SCC 4,481 is activity, not 4,481 firms.",
+      "what_research": "IAPD Virginia IA/ERA/notice/office lenses and SCC activity",
+      "next_step": "Open InvestorTrustHub Virginia and verify on IAPD",
+      "semantic_guardrails": [
+        "697 state IA \u2260 339 principal office",
+        "697 state IA \u2260 107 ERA",
+        "697 state IA \u2260 3,289 notice",
+        "4,481 annual activity \u2260 firms",
+        "4 CRD overlap is allowed",
+        "name-only adverse joins remain unsafe"
+      ],
+      "verified_facts": [
+        "339 Virginia principal-office SEC/IARD firms.",
+        "697 APPROVED state-registered IA firms; 107 state ERA; 3,289 federal notice filings.",
+        "Exact state-IA / notice overlap: 4 CRDs.",
+        "SCC 2025: 4,481 IA registrations/renewals/amendments approved \u2014 activity, not firms. SCC regulatory activity: 146 observations / 113 cases, mixed Securities & Retail Franchising subjects."
+      ],
+      "routing_intents": [
+        "How many investment advisers are registered in Virginia?",
+        "Does a Virginia principal office mean the adviser is state-registered?"
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "SCC live search not bulk-acquired",
+        "U4/U5 histories",
+        "Form D not acquired"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "coverage_type": "DATED_STATISTICAL_REPORT",
+      "publication_status": "live",
+      "canonical_state_url": "https://www.insurancetrusthub.com/virginia",
+      "snapshot_version": "insurance-va-state-intel-v1",
+      "fingerprint": "fd4e95d83bf1d909e51ee8dc8aaab3d399861d389d81d31c8cdfa70094c613fb",
+      "source_clock": "Virginia SCC 2025 Insurance Company Statistical Report: year ended 2025-12-31, reported as of 2026-06-01",
+      "primary_regulator": "Virginia SCC Bureau of Insurance",
+      "primary_identity": "NAIC:{cocode}",
+      "topic": "Which insurance companies are authorized in Virginia?",
+      "plain_question": "Which insurance companies are authorized in Virginia \u2014 and is the 2025 statistical report a live authorized roster?",
+      "research_topics": [
+        "2025 statistical-report NAIC observations",
+        "Regulatory Actions table",
+        "Market Conduct examinations",
+        "Current SCC company verification path"
+      ],
+      "primary_identifiers": [
+        "NAIC:{cocode}"
+      ],
+      "identifier_types": [
+        "NAIC"
+      ],
+      "source_summary": "Virginia SCC publishes dated 2025 financial/company observations plus bounded Regulatory Action and Market Conduct tables. Current authorization remains search-only.",
+      "coverage_summary": "1,546 distinct 2025 statistical-report NAIC company observations, year ended 2025-12-31, reported as of 2026-06-01. Not current authorization. 124 Regulatory Action observations / 79 cases. 117 Market Conduct observations.",
+      "coverage_limitation": "2025 report is not a live authorized-insurer universe. 1,727 exact-match observations are not unique insurers. Agency/producer bulk remains search-only.",
+      "what_research": "SCC 2025 statistical report, Regulatory Actions, Market Conduct, live company lookup",
+      "next_step": "Open InsuranceTrustHub Virginia and verify current status on SCC company search",
+      "semantic_guardrails": [
+        "2025 statistical observation \u2260 current authorization",
+        "regulatory action \u2260 conviction",
+        "market conduct exam \u2260 violation",
+        "1,727 exact-match observations \u2260 unique insurers",
+        "company \u2260 agency \u2260 producer"
+      ],
+      "verified_facts": [
+        "1,546 distinct NAIC company observations from the 2025 statistical-report financial-data PDFs.",
+        "Regulatory Actions: 124 observation rows / 79 cases / 87 NAIC IDs.",
+        "Market Conduct: 117 observation rows / 100 NAIC IDs.",
+        "Current SCC company verification and agency/producer bulk remain OPEN_SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "Which insurance companies are authorized in Virginia?",
+        "Does this insurer have a Virginia regulatory action?"
+      ],
+      "verified_at": "2026-09-10T20:10:31.000Z",
+      "gap_examples": [
+        "current authorization bulk",
+        "agent/agency bulk",
+        "surplus list",
+        "case PDFs"
+      ]
+    }
+  ]
+}

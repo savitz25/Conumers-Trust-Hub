@@ -32,6 +32,7 @@ import { detectTxCity, queryLooksLikeTexas } from './tx-network.ts';
 import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
+import { detectVaCity, queryLooksLikeVirginia } from './va-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -95,6 +96,7 @@ function geography(q: string): ParsedGeography | undefined {
   const waNamedEarly = queryLooksLikeWashington(q);
   const azNamedEarly = queryLooksLikeArizona(q);
   const coNamedEarly = queryLooksLikeColorado(q);
+  const vaNamedEarly = queryLooksLikeVirginia(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -158,6 +160,41 @@ function geography(q: string): ParsedGeography | undefined {
     if (co < 0) return true;
     return az < co;
   })();
+  const californiaNamedBeforeVirginia = (() => {
+    const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
+    const va = q.search(/\bvirginia\b/i);
+    if (ca < 0) return false;
+    if (va < 0) return true;
+    return ca < va;
+  })();
+  const texasNamedBeforeVirginia = (() => {
+    const tx = q.search(/\btexas\b|\btexan\b/i);
+    const va = q.search(/\bvirginia\b/i);
+    if (tx < 0) return false;
+    if (va < 0) return true;
+    return tx < va;
+  })();
+  const washingtonNamedBeforeVirginia = (() => {
+    const wa = q.search(/\bwashington\b/i);
+    const va = q.search(/\bvirginia\b/i);
+    if (wa < 0) return false;
+    if (va < 0) return true;
+    return wa < va;
+  })();
+  const arizonaNamedBeforeVirginia = (() => {
+    const az = q.search(/\barizona\b/i);
+    const va = q.search(/\bvirginia\b/i);
+    if (az < 0) return false;
+    if (va < 0) return true;
+    return az < va;
+  })();
+  const coloradoNamedBeforeVirginia = (() => {
+    const co = q.search(/\bcolorado\b/i);
+    const va = q.search(/\bvirginia\b/i);
+    if (co < 0) return false;
+    if (va < 0) return true;
+    return co < va;
+  })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
   if (
     caNamedEarly &&
@@ -166,7 +203,8 @@ function geography(q: string): ParsedGeography | undefined {
     (!txNamedEarly || californiaNamedFirst) &&
     (!waNamedEarly || californiaNamedBeforeWashington) &&
     (!azNamedEarly || californiaNamedBeforeArizona) &&
-    (!coNamedEarly || californiaNamedBeforeColorado)
+    (!coNamedEarly || californiaNamedBeforeColorado) &&
+    (!vaNamedEarly || californiaNamedBeforeVirginia)
   ) {
     return {
       stateCode: 'CA',
@@ -247,7 +285,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (caNamedEarly && (!txNamedEarly || californiaNamedFirst) && (!coNamedEarly || californiaNamedBeforeColorado)) {
+  if (caNamedEarly && (!txNamedEarly || californiaNamedFirst) && (!coNamedEarly || californiaNamedBeforeColorado) && (!vaNamedEarly || californiaNamedBeforeVirginia)) {
     const caCity = detectCaCity(q);
     return {
       stateCode: 'CA',
@@ -259,7 +297,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (txNamedEarly && (!azNamedEarly || texasNamedBeforeArizona) && (!coNamedEarly || texasNamedBeforeColorado)) {
+  if (txNamedEarly && (!azNamedEarly || texasNamedBeforeArizona) && (!coNamedEarly || texasNamedBeforeColorado) && (!vaNamedEarly || texasNamedBeforeVirginia)) {
     const txCity = detectTxCity(q);
     return {
       stateCode: 'TX',
@@ -271,7 +309,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona) && (!coNamedEarly || washingtonNamedBeforeColorado)) {
+  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona) && (!coNamedEarly || washingtonNamedBeforeColorado) && (!vaNamedEarly || washingtonNamedBeforeVirginia)) {
     const waCity = detectWaCity(q);
     return {
       stateCode: 'WA',
@@ -283,7 +321,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (azNamedEarly && (!coNamedEarly || arizonaNamedBeforeColorado)) {
+  if (azNamedEarly && (!coNamedEarly || arizonaNamedBeforeColorado) && (!vaNamedEarly || arizonaNamedBeforeVirginia)) {
     const azCity = detectAzCity(q);
     return {
       stateCode: 'AZ',
@@ -295,7 +333,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (coNamedEarly) {
+  if (coNamedEarly && (!vaNamedEarly || coloradoNamedBeforeVirginia)) {
     const coCity = detectCoCity(q);
     return {
       stateCode: 'CO',
@@ -304,6 +342,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: coCity
         ? `${coCity}, Colorado. Colorado research is state-level; a city or county name is not a Colorado county Ask route.`
         : 'Colorado. State licensing is not physical location; specialist geography meaning differs by hub. Colorado city and county Ask pages are not published.',
+    };
+  }
+
+  if (vaNamedEarly) {
+    const vaCity = detectVaCity(q);
+    return {
+      stateCode: 'VA',
+      stateName: 'Virginia',
+      city: vaCity,
+      meaning: vaCity
+        ? `${vaCity}, Virginia. Virginia research is state-level; a city or county name is not a Virginia county Ask route.`
+        : 'Virginia. State licensing is not physical location; specialist geography meaning differs by hub. Virginia city and county Ask pages are not published.',
     };
   }
 

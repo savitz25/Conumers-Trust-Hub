@@ -107,7 +107,8 @@
       "/new-jersey",
       "/california",
       "/washington",
-      "/colorado"
+      "/colorado",
+      "/virginia"
     ]
   },
   "rejectedTotals": {
@@ -219,7 +220,7 @@
       "valueState": "KNOWN",
       "grain": "agency_appointment",
       "denominator": "TDI active agency-to-company appointment rows (avjc-7u2m)",
-      "description": "Active Texas agency↔company appointments. Appointment count is not quality and is not an agency count.",
+      "description": "Active Texas agency\u2194company appointments. Appointment count is not quality and is not an agency count.",
       "coverage": "Texas TDI",
       "contributingSourceSystems": [
         "texas_tdi_agency_appointments"
@@ -575,7 +576,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "surplus_lines_observation",
-      "denominator": "NJDOBI surplus-lines eligible list — not acquired as a bulk census",
+      "denominator": "NJDOBI surplus-lines eligible list \u2014 not acquired as a bulk census",
       "description": "Not acquired. Missing is not zero eligible companies.",
       "coverage": "New Jersey",
       "contributingSourceSystems": [
@@ -603,7 +604,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "authorized_company_row",
-      "denominator": "TDI company-licensing report — SOURCE_NOT_ACQUIRED",
+      "denominator": "TDI company-licensing report \u2014 SOURCE_NOT_ACQUIRED",
       "description": "Interactive TDI company report. No deterministic bulk export. Missing is not zero companies.",
       "coverage": "Texas",
       "contributingSourceSystems": [
@@ -631,7 +632,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "admitted_legal_insurer_row",
-      "denominator": "CDI company lookup — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "denominator": "CDI company lookup \u2014 OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
       "description": "Complete CDI admitted universe is not acquired. Missing is not zero companies.",
       "coverage": "California",
       "contributingSourceSystems": [
@@ -686,7 +687,7 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "authorized_company_row",
-      "denominator": "OIC Agent and Company Lookup — OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
+      "denominator": "OIC Agent and Company Lookup \u2014 OPEN_SEARCH_ONLY / SOURCE_NOT_ACQUIRED",
       "description": "Current authorized-company roster is not acquired. The 2,924 annual-report aggregate is a different grain. Missing is not zero companies.",
       "coverage": "Washington",
       "contributingSourceSystems": [
@@ -778,7 +779,7 @@
       "generatedAt": "2026-09-04T18:09:27.287Z",
       "publicationStatus": "PUBLIC",
       "trace": {
-        "counts": "One TDI complaint-index row (NAIC × year × line).",
+        "counts": "One TDI complaint-index row (NAIC \u00d7 year \u00d7 line).",
         "doesNotCount": "Not complaint-name observations, not companies, not a TrustHub score, not wrongdoing.",
         "contributingSourceSystems": [
           "texas_tdi"

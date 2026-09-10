@@ -211,8 +211,8 @@ export function validateMoveManifest(raw: unknown): Record<string, unknown> {
   const paths = Array.isArray(network.publishedStateIntelligencePaths)
     ? network.publishedStateIntelligencePaths.map(String)
     : [];
-  if (network.publishedStateIntelligencePages !== 6 || !['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado'].every((path) => paths.includes(path))) {
-    throw new Error('Move specialist contract must expose exactly six accepted state-intelligence paths');
+  if (network.publishedStateIntelligencePages !== 7 || !['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado', '/virginia'].every((path) => paths.includes(path))) {
+    throw new Error('Move specialist contract must expose exactly seven accepted state-intelligence paths');
   }
   const wa = map.get('wa_utc_active_household_goods_directory_results');
   if (!wa || wa.value !== 284 || wa.grain !== 'utc_active_household_goods_directory_result') {

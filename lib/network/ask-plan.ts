@@ -64,6 +64,7 @@ import { txCaveatForHub, txSpecialistUrl, routeTxAsk } from './tx-network.ts';
 import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
 import { coCaveatForHub, coSpecialistUrl, routeCoAsk } from './co-network.ts';
+import { vaCaveatForHub, vaSpecialistUrl, routeVaAsk } from './va-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -189,6 +190,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'WA') return '/washington';
   if (parsed.geography?.stateCode === 'AZ') return '/arizona';
   if (parsed.geography?.stateCode === 'CO') return '/colorado';
+  if (parsed.geography?.stateCode === 'VA') return '/virginia';
   return undefined;
 }
 
@@ -964,6 +966,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: coSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${coCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'VA') {
+    const vaRoute = routeVaAsk(parsed.query);
+    if (vaRoute) {
+      const already = hubs.some((h) => h.hubId === vaRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: vaRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[vaRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: vaRoute.destination,
+            reason: vaRoute.caveat,
+            whatItCanAnswer: `Virginia research on ${NETWORK_PUBLIC_NAMES[vaRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Virginia',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === vaRoute.hubId
+            ? {
+                ...h,
+                destination: vaRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${vaRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === vaRoute.hubId), ...hubs.filter((h) => h.hubId !== vaRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: vaSpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${vaCaveatForHub(primary)}`,
             }
           : h,
       );

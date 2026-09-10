@@ -1,0 +1,74 @@
+{
+  "verified_at": "2026-09-10T20:10:31.000Z",
+  "release_gate_passed": true,
+  "missing": [],
+  "method": "Live HTTP probe of specialist Production /virginia pages. Specialist fingerprints are coordinator-accepted provenance, not invented from page HTML.",
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "url": "https://www.contractortrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.contractortrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Contractor Research"
+    },
+    {
+      "hub_id": "move",
+      "url": "https://www.movetrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.movetrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Moving Research"
+    },
+    {
+      "hub_id": "senior",
+      "url": "https://www.seniortrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.seniortrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Senior Care Research"
+    },
+    {
+      "hub_id": "lender",
+      "url": "https://www.lendertrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.lendertrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Mortgage Research"
+    },
+    {
+      "hub_id": "investor",
+      "url": "https://www.investortrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.investortrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Investment Adviser Research"
+    },
+    {
+      "hub_id": "insurance",
+      "url": "https://www.insurancetrusthub.com/virginia",
+      "http_status": 200,
+      "ok": true,
+      "selfCanonical": true,
+      "canonical": "https://www.insurancetrusthub.com/virginia",
+      "robots": "index, follow",
+      "sso": false,
+      "title": "Virginia Insurance Market & Regulatory Intelligence"
+    }
+  ]
+}

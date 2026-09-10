@@ -1,0 +1,80 @@
+{
+  "state": "VA",
+  "status": "ASK_PREVIEW_READY",
+  "note": "Ask /virginia is ready for Production certification. Specialist 6/6 Production pages are live. Do not mark CLOSED_PRODUCTION_VERIFIED until Ask Production exists.",
+  "ask_route": "/virginia",
+  "ask_canonical": "https://www.asktrusthub.com/virginia",
+  "network_contract": "ath-va-network-release-v1",
+  "publication_manifest_fingerprint": "baa916e0f9a75d0c6a052e518748adf7d05c9cf28dca60468ab5467424877e05",
+  "local_work_decision": "NO",
+  "virginia_local_phase": "NO",
+  "hardcoded_county_routes": false,
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-10T20:10:31.000Z"
+  },
+  "six_hubs": [
+    {
+      "hub": "contractor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.contractortrusthub.com/virginia",
+      "snapshot_version": "contractor-va-state-intel-v1",
+      "fingerprint": "f758a837d397d7480eb80ff57889a9dd845a016b86edc95a0b4d8f457022eaa3",
+      "source_strengths": "DPOR Class A/B/C contractor-business license spine; tradesmen as a separate person grain",
+      "source_gaps": "Recovery Fund bulk; complaint bulk; current bond/insurance proof"
+    },
+    {
+      "hub": "move",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.movetrusthub.com/virginia",
+      "snapshot_version": "move-va-state-intel-v1",
+      "fingerprint": "dfe6091caa29d71d5f045734346861af8c69ae3c2eed06ca37c7cf717425eca9",
+      "source_strengths": "DMV HHG certificates and Property Carrier permits with 30-mile rule",
+      "source_gaps": "tariffs; complaint bulk; no state→FMCSA name matching"
+    },
+    {
+      "hub": "senior",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.seniortrusthub.com/virginia",
+      "snapshot_version": "senior-va-state-intel-v1",
+      "fingerprint": "c98e5373d60c765690f03493e0c1fd85d4b24f2c4693fb964abd27b5d5d73d68",
+      "source_strengths": "DSS ALF/ADC licenses and inspections; CMS class overlays",
+      "source_gaps": "VDH nursing portal search-only; no ALF→CMS name crosswalk"
+    },
+    {
+      "hub": "lender",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.lendertrusthub.com/virginia",
+      "snapshot_version": "lender-va-state-intel-v1",
+      "fingerprint": "1d15e78c49d24827268c9e4064ba816cf6e7ea227db8fd58a01816fec751cba9",
+      "source_strengths": "Dated SCC roster with VA-MC and NMLS IDs; HMDA 2025",
+      "source_gaps": "live 2026 company roster; MLO directory bulk"
+    },
+    {
+      "hub": "insurance",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.insurancetrusthub.com/virginia",
+      "snapshot_version": "insurance-va-state-intel-v1",
+      "fingerprint": "fd4e95d83bf1d909e51ee8dc8aaab3d399861d389d81d31c8cdfa70094c613fb",
+      "source_strengths": "2025 statistical-report NAIC observations; Regulatory Actions; Market Conduct",
+      "source_gaps": "current authorization bulk; agent/agency bulk; surplus list"
+    },
+    {
+      "hub": "investor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.investortrusthub.com/virginia",
+      "snapshot_version": "investor-va-state-intel-v1",
+      "fingerprint": "b5f82ff25157a614a18ec134253996ab54fc5961b282bda68ff228e85a525a7b",
+      "source_strengths": "IAPD state IA/ERA/notice/office lenses; SCC activity",
+      "source_gaps": "U4/U5; Form D; current BD/agent rosters"
+    }
+  ],
+  "gap_summary": "Intentional search-only and unacquired layers remain. They are not Ask release blockers. No local Virginia phase.",
+  "backlog": [
+    {
+      "id": "SCC-CORPORATE-GRAPH",
+      "purpose": "Shared SCC corporate entity/officer/name-history graph. Later network improvement. Do not execute in this ticket."
+    }
+  ]
+}
