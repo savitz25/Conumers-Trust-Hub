@@ -47,8 +47,8 @@ export async function GET(request: Request) {
     const outcome = failed ? "completed_with_failures" : "complete";
     console.info(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome, enqueued, p0: p0.rows.length, sent, failed, digest_batches: digestBatches }));
     return NextResponse.json({ outcome, enqueued, sent, failed, digestBatches }, { headers: safeHeaders });
-  } catch {
-    console.error(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome: "runtime_failed" }));
+  } catch (error) {
+    console.error(JSON.stringify({ event: "my_trusthub_notification_delivery", outcome: "runtime_failed", code: error instanceof Error ? error.name : "unknown", message: error instanceof Error ? error.message.slice(0, 180) : "unknown" }));
     return NextResponse.json({ outcome: "runtime_failed" }, { status: 503, headers: safeHeaders });
   }
 }
