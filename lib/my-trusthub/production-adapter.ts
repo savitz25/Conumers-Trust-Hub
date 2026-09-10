@@ -108,6 +108,63 @@ export interface GuestSessionPreviewRow {
   project_assignment_eligible: boolean;
 }
 
+export interface AvailableWatchCapabilityRow {
+  capability_id: string;
+  capability_key: string;
+  capability_version: number;
+  display_name: string;
+  consumer_description: string;
+  source_key: string;
+  grain_key: string;
+  coverage_notes: string | null;
+  coverage_limitations: string[];
+  freshness_expectation: string;
+  eligible: boolean;
+  unavailable_reason: string | null;
+  source_check_status: string;
+}
+
+export interface WatchRow {
+  watch_id: string;
+  watch_status: "active" | "paused" | "stopped";
+  row_version: number;
+  resume_policy: string;
+  resume_boundary_at: string;
+  enabled_coverage_count: number;
+  historical_coverage_count: number;
+  limited_coverage: boolean;
+  source_check_status: string;
+  source_check_message: string;
+}
+
+export interface WatchCoverageRow {
+  coverage_id: string;
+  capability_id: string;
+  capability_key: string;
+  capability_version: number;
+  display_name: string;
+  source_key: string;
+  grain_key: string;
+  coverage_status: "enabled" | "paused_by_capability" | "disabled" | "retired";
+  coverage_notes: string | null;
+  coverage_limitations: string[];
+  disabled_reason: string | null;
+}
+
+export interface WatchSourceHealthRow {
+  coverage_id: string;
+  capability_key: string;
+  capability_version: number;
+  source_key: string;
+  health_status: "current" | "delayed" | "degraded" | "unknown";
+  last_successful_check: string | null;
+  source_as_of: string | null;
+  completeness_status: "complete" | "partial" | "failed" | "unknown";
+  schema_status: "compatible" | "changed" | "invalid" | "unknown";
+  monitoring_status: string;
+  no_change_eligible: boolean;
+}
+
 function rows<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
@@ -208,6 +265,53 @@ export class ProductionMyTrustHubAdapter {
       p_life_event_type: input.lifeEventType,
       p_location_context: input.locationContext ?? null,
       p_target_date: input.targetDate ?? null,
+    });
+  }
+
+  async listAvailableWatchCapabilities(savedEntityId: string): Promise<AvailableWatchCapabilityRow[]> {
+    return rows<AvailableWatchCapabilityRow>(await this.rpc("list_available_watch_capabilities", {
+      p_saved_entity_id: savedEntityId,
+    }));
+  }
+
+  async getWatch(savedEntityId: string): Promise<WatchRow | null> {
+    return one<WatchRow>(await this.rpc("get_watch", { p_saved_entity_id: savedEntityId }));
+  }
+
+  async getWatchCoverage(watchId: string): Promise<WatchCoverageRow[]> {
+    return rows<WatchCoverageRow>(await this.rpc("get_watch_coverage", { p_watch_id: watchId }));
+  }
+
+  async getWatchSourceHealth(savedEntityId: string): Promise<WatchSourceHealthRow[]> {
+    return rows<WatchSourceHealthRow>(await this.rpc("get_watch_source_health", { p_saved_entity_id: savedEntityId }));
+  }
+
+  async startWatch(savedEntityId: string, capabilityIds: string[], idempotencyKey: string) {
+    return one<{ watch_id: string; created: boolean; row_version: number }>(await this.rpc("start_watch", {
+      p_saved_entity_id: savedEntityId,
+      p_capability_ids: capabilityIds,
+      p_idempotency_key: idempotencyKey,
+    }));
+  }
+
+  async pauseWatch(watchId: string, rowVersion: number) {
+    return this.rpc<number>("pause_watch", { p_watch_id: watchId, p_expected_row_version: rowVersion, p_idempotency_key: randomUUID() });
+  }
+
+  async resumeWatch(watchId: string, rowVersion: number) {
+    return this.rpc<number>("resume_watch", { p_watch_id: watchId, p_expected_row_version: rowVersion, p_idempotency_key: randomUUID() });
+  }
+
+  async stopWatch(watchId: string, rowVersion: number) {
+    return this.rpc<number>("stop_watch", { p_watch_id: watchId, p_expected_row_version: rowVersion, p_idempotency_key: randomUUID() });
+  }
+
+  async restartWatch(watchId: string, capabilityIds: string[], rowVersion: number) {
+    return this.rpc<number>("restart_watch", {
+      p_watch_id: watchId,
+      p_capability_ids: capabilityIds,
+      p_expected_row_version: rowVersion,
+      p_idempotency_key: randomUUID(),
     });
   }
 
