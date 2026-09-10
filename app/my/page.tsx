@@ -52,6 +52,22 @@ export default async function MyTrustHubHome() {
   const activeProjects = projects.filter((project) => project.status === "active");
   const activeSaved = saved.filter((item) => !item.removed_at);
   const unfiled = activeSaved.filter((item) => item.project_ids.length === 0);
+  const recentActivity = [
+    ...activeSaved.map((item) => ({
+      key: `saved-${item.saved_entity_id}`,
+      at: item.saved_at,
+      title: `Saved ${item.canonical_name}`,
+      detail: item.project_ids.length ? `Filed in ${item.project_ids.length} Project${item.project_ids.length === 1 ? "" : "s"}` : "Unfiled research",
+      href: "/my/saved",
+    })),
+    ...projects.map((project) => ({
+      key: `project-${project.project_id}`,
+      at: project.updated_at,
+      title: `${project.status === "archived" ? "Archived" : "Updated"} ${project.name}`,
+      detail: `${project.saved_count} Saved record${project.saved_count === 1 ? "" : "s"}`,
+      href: `/my/projects/${project.project_id}`,
+    })),
+  ].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 5);
 
   return (
     <MyTrustHubShell active="Home" email={user.email ?? "Signed in"}>
@@ -116,6 +132,19 @@ export default async function MyTrustHubHome() {
           </div>
           <p className="myth-large-number">{unfiled.length}</p>
           <p className="myth-muted">Saved records do not need a Project.</p>
+        </article>
+        <article className="myth-panel myth-span-three">
+          <div className="myth-panel-heading"><h2>Recent activity</h2></div>
+          {recentActivity.length ? recentActivity.map((activity) => (
+            <Link className="myth-row" href={activity.href} key={activity.key}>
+              <span>
+                <strong>{activity.title}</strong>
+                <small>{activity.detail} · {new Date(activity.at).toLocaleDateString()}</small>
+              </span>
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          )) : <p className="myth-muted">Activity appears here after you Save research or create a Project.</p>}
+          <p className="myth-muted">This timeline uses supported Saved and Project timestamps only.</p>
         </article>
       </section>
     </MyTrustHubShell>

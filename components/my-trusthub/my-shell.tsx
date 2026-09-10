@@ -5,6 +5,7 @@ import {
   FolderKanban,
   Home,
   ShieldCheck,
+  UserRound,
 } from "lucide-react";
 import { signOutAction } from "@/app/my/actions";
 
@@ -12,6 +13,7 @@ const nav = [
   ["Home", "/my", Home],
   ["Projects", "/my/projects", FolderKanban],
   ["Saved", "/my/saved", Bookmark],
+  ["You", "/my/you", UserRound],
 ] as const;
 
 export function MyTrustHubShell({
