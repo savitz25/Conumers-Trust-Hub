@@ -265,11 +265,21 @@ test('state page count increments exactly once and places/concierge stay gated',
   assert.equal(VA_PUBLICATION_MANIFEST.version, VA_NETWORK_CONTRACT);
 });
 
-test('preview closeout is not Production-closed; fingerprint is locked; local work is NO', () => {
-  assert.equal(closeout.status, 'ASK_PREVIEW_READY');
-  assert.doesNotMatch(closeout.status, /CLOSED_PRODUCTION_VERIFIED/);
-  assert.equal(closeout.local_work_decision, 'NO');
+test('state closeout is Production verified after Ask /virginia certification', () => {
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.match(closeout.note, /Virginia statewide expansion closed/i);
+  assert.equal(closeout.ask_production.merge_sha, '6c21c279b33e62199c4bb260dac949078faf52fa');
+  assert.equal(closeout.ask_production.deployment_id, 6381519615);
+  assert.equal(closeout.ask_production.live_route, 'https://www.asktrusthub.com/virginia');
+  assert.equal(closeout.ask_production.http_status, 200);
+  assert.equal(closeout.ask_production.canonical, 'https://www.asktrusthub.com/virginia');
+  assert.equal(closeout.ask_production.robots, 'index, follow');
+  assert.equal(closeout.ask_production.sso, false);
   assert.equal(closeout.publication_manifest_fingerprint, VA_PUBLICATION_FINGERPRINT);
+  assert.equal(VA_PUBLICATION_FINGERPRINT, 'a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd');
+  assert.equal(closeout.local_work_decision, 'NO');
+  assert.equal(closeout.virginia_local_phase, 'NO');
+  assert.equal(closeout.hardcoded_county_routes, false);
   assert.ok(Array.isArray(gaps.OPEN_SEARCH_ONLY));
   assert.ok(gaps.LEFT_LOCAL_FUTURE.length >= 1);
 });

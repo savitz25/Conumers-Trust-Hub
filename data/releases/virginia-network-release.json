@@ -6,7 +6,7 @@
   "hardcoded_county_routes": false,
   "trust_score": false,
   "paid_ranking": false,
-  "status": "ASK_PREVIEW_READY",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
   "release_gate_passed": true,
   "specialist_hubs": [
     {
@@ -115,5 +115,20 @@
   "fingerprint": "a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd",
   "generated_at": "2026-09-10T20:10:31.000Z",
   "snapshot": "ath-va-network-release-v1",
-  "ask_fingerprint": "a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd"
+  "ask_fingerprint": "a6558550fcb6e9a5fdc9241e6c363f1f458495d16575532485a497c19eadcbdd",
+  "ask_production": {
+    "verified_at": "2026-09-10T21:33:00.000Z",
+    "merge_sha": "6c21c279b33e62199c4bb260dac949078faf52fa",
+    "pr": 132,
+    "deployment_id": 6381519615,
+    "environment": "Production",
+    "deployed_sha": "6c21c279b33e62199c4bb260dac949078faf52fa",
+    "unique_deployment_url": "https://conumers-trust-8u75f4rh1-savitz25-s-projects.vercel.app",
+    "live_hostname": "https://www.asktrusthub.com",
+    "live_route": "https://www.asktrusthub.com/virginia",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/virginia",
+    "robots": "index, follow",
+    "sso": false
+  }
 }
