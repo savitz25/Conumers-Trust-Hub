@@ -254,6 +254,38 @@ test('requested registration and debarment jurisdiction wins through the final p
   assert.equal(buildNetworkAskPlan('adviser registered in or near New York').parsed.geography?.stateCode, 'NY');
 });
 
+test('multiple requested registration states clarify instead of collapsing', () => {
+  const queries = [
+    'An adviser registered in New York and registered in Florida',
+    'An adviser registered in New York and Florida',
+    'An adviser registered in NY and FL',
+    'New Jersey adviser registered in New York and Florida',
+  ];
+  for (const query of queries) {
+    const requested = requestedLegalJurisdiction(query);
+    const parsed = parseNetworkAsk(query);
+    const plan = buildNetworkAskPlan(query);
+    const hub = plan.hubs[0];
+    assert.equal(requested?.ambiguous, true, query);
+    assert.ok(requested?.codes.includes('NY'), query);
+    assert.ok(requested?.codes.includes('FL'), query);
+    assert.equal(parsed.geography?.stateCode, undefined, query);
+    assert.match(parsed.geography?.meaning ?? '', /New York/i, query);
+    assert.match(parsed.geography?.meaning ?? '', /Florida/i, query);
+    assert.doesNotMatch(parsed.geography?.meaning ?? '', /first state mentioned/i, query);
+    assert.equal(plan.parsed.geography?.stateCode, undefined, query);
+    assert.equal(hub?.mode, 'fail_closed', query);
+    assert.notEqual(hub?.capabilityStatus, 'execute', query);
+    assert.doesNotMatch(hub?.destination ?? '', /\/ask(\?|$)/i, query);
+    assert.doesNotMatch(hub?.destination ?? '', /investortrusthub\.com\/ask/i, query);
+    assert.match(`${hub?.whatItCanAnswer ?? ''} ${hub?.reason ?? ''} ${hub?.geographyCapability ?? ''}`, /New York/i, query);
+    assert.match(`${hub?.whatItCanAnswer ?? ''} ${hub?.reason ?? ''} ${hub?.geographyCapability ?? ''}`, /Florida/i, query);
+  }
+  const officeOnly = buildNetworkAskPlan('Florida adviser registered in New York');
+  assert.equal(officeOnly.parsed.geography?.stateCode, 'NY');
+  assert.notEqual(officeOnly.hubs[0]?.mode, 'fail_closed');
+});
+
 test('NYC names stay statewide and do not invent local routes', () => {
   assert.equal(queryLooksLikeNewYork('contractor in Brooklyn'), true);
   assert.equal(routeNyAsk('contractor in Manhattan')?.hubId, 'contractor');

@@ -313,39 +313,83 @@ export type RequestedLegalJurisdiction = {
   name: string;
   verb: 'registered' | 'debarred';
   ambiguous: boolean;
+  codes: string[];
+  names: string[];
 };
 
 function jurisdictionNamePattern(name: string): string {
   return name.replace(/\s+/g, '\\s+');
 }
 
+function matchJurisdictionAt(
+  text: string,
+  start: number,
+): { code: string; name: string; length: number } | undefined {
+  const slice = text.slice(start);
+  const jurisdictions = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length);
+  for (const place of jurisdictions) {
+    if (place.code === 'VA' && /^\s*west\s+virginia\b/i.test(slice)) continue;
+    const nameRe = new RegExp(`^${jurisdictionNamePattern(place.name)}\\b`, 'i');
+    const nameMatch = slice.match(nameRe);
+    if (nameMatch) return { code: place.code, name: place.name, length: nameMatch[0].length };
+  }
+  for (const place of jurisdictions) {
+    const codeRe = new RegExp(`^${place.code}\\b`);
+    const codeMatch = slice.match(codeRe);
+    if (codeMatch) return { code: place.code, name: place.name, length: codeMatch[0].length };
+  }
+  return undefined;
+}
+
 export function requestedLegalJurisdiction(query: string): RequestedLegalJurisdiction | undefined {
   const stripped = query.replace(/\bnew york life\b/gi, ' ');
   const found: Array<{ code: string; name: string; verb: 'registered' | 'debarred' }> = [];
-  const verbs: Array<'registered' | 'debarred'> = ['registered', 'debarred'];
-  const jurisdictions = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length);
-  for (const verb of verbs) {
-    for (const place of jurisdictions) {
-      if (place.code === 'VA' && /\bwest\s+virginia\b/i.test(stripped) && !/\b(?<!west\s)virginia\b/i.test(stripped)) {
-        continue;
-      }
-      const nameRe = new RegExp(`\\b${verb}\\s+in\\s+${jurisdictionNamePattern(place.name)}\\b`, 'i');
-      // Two-letter codes must appear as the official uppercase abbreviation.
-      // Case-insensitive matching would treat "registered in or near New York" as Oregon.
-      const codeRe = new RegExp(`\\b${verb}\\s+in\\s+${place.code}\\b`);
-      if (nameRe.test(stripped) || codeRe.test(stripped)) {
-        found.push({ code: place.code, name: place.name, verb });
-        break;
-      }
+  const verbRe = /\b(registered|debarred)\s+in\s+/gi;
+  let verbMatch: RegExpExecArray | null;
+  while ((verbMatch = verbRe.exec(stripped))) {
+    const verb = verbMatch[1]!.toLowerCase() as 'registered' | 'debarred';
+    let pos = verbMatch.index + verbMatch[0].length;
+    const first = matchJurisdictionAt(stripped, pos);
+    if (!first) continue;
+    found.push({ code: first.code, name: first.name, verb });
+    pos += first.length;
+    while (true) {
+      const conjunction = stripped.slice(pos).match(/^\s*(?:,|and)\s+/i);
+      if (!conjunction) break;
+      pos += conjunction[0].length;
+      const next = matchJurisdictionAt(stripped, pos);
+      if (!next) break;
+      found.push({ code: next.code, name: next.name, verb });
+      pos += next.length;
     }
   }
   if (found.length === 0) return undefined;
-  const unique = [...new Set(found.map((row) => row.code))];
-  if (unique.length > 1) {
-    return { code: unique.join('|'), name: found.map((row) => row.name).join(' / '), verb: found[0]!.verb, ambiguous: true };
+  const uniqueCodes: string[] = [];
+  const uniqueNames: string[] = [];
+  for (const row of found) {
+    if (uniqueCodes.includes(row.code)) continue;
+    uniqueCodes.push(row.code);
+    uniqueNames.push(row.name);
   }
-  const match = found.find((row) => row.code === unique[0])!;
-  return { ...match, ambiguous: false };
+  const verb = found[0]!.verb;
+  if (uniqueCodes.length > 1) {
+    return {
+      code: uniqueCodes.join('|'),
+      name: uniqueNames.join(' / '),
+      verb,
+      ambiguous: true,
+      codes: uniqueCodes,
+      names: uniqueNames,
+    };
+  }
+  return {
+    code: uniqueCodes[0]!,
+    name: uniqueNames[0]!,
+    verb,
+    ambiguous: false,
+    codes: uniqueCodes,
+    names: uniqueNames,
+  };
 }
 
 export function classifyNyHub(query: string): SpecialistHubId | undefined {

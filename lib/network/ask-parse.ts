@@ -100,7 +100,7 @@ function geography(q: string): ParsedGeography | undefined {
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
   const requestedJurisdiction = requestedLegalJurisdiction(q);
-  const nyInvolved = nyNamedEarly || requestedJurisdiction?.code === 'NY';
+  const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
@@ -208,6 +208,28 @@ function geography(q: string): ParsedGeography | undefined {
     return wv < va;
   })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
+
+  if (nyInvolved && requestedJurisdiction?.ambiguous) {
+    const listed = requestedJurisdiction.names.join(' and ');
+    return {
+      meaning: `Multiple requested ${requestedJurisdiction.verb} jurisdictions: ${listed}. Ask does not pick one state or run a nationwide substitute. Name the registration or debarment state.`,
+    };
+  }
+  if (nyInvolved && requestedJurisdiction && !requestedJurisdiction.ambiguous) {
+    if (requestedJurisdiction.code === 'NY') {
+      return {
+        stateCode: 'NY',
+        stateName: 'New York',
+        meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is New York. Office, origin, or business location in another state is not the requested jurisdiction.`,
+      };
+    }
+    return {
+      stateCode: requestedJurisdiction.code,
+      stateName: requestedJurisdiction.name,
+      meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is ${requestedJurisdiction.name}. New York origin or office is not the requested jurisdiction.`,
+    };
+  }
+
   if (
     caNamedEarly &&
     otherDest &&
@@ -240,27 +262,6 @@ function geography(q: string): ParsedGeography | undefined {
   if (tampa) city = 'Tampa';
   else if (miami) city = 'Miami';
   else if (bocaRaton) city = 'Boca Raton';
-
-  if (nyInvolved && requestedJurisdiction?.ambiguous) {
-    return {
-      meaning:
-        'Multiple requested registration or debarment jurisdictions. Ask does not pick the first state mentioned. Name the registration or debarment state.',
-    };
-  }
-  if (nyInvolved && requestedJurisdiction && !requestedJurisdiction.ambiguous) {
-    if (requestedJurisdiction.code === 'NY') {
-      return {
-        stateCode: 'NY',
-        stateName: 'New York',
-        meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is New York. Office, origin, or business location in another state is not the requested jurisdiction.`,
-      };
-    }
-    return {
-      stateCode: requestedJurisdiction.code,
-      stateName: requestedJurisdiction.name,
-      meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is ${requestedJurisdiction.name}. New York origin or office is not the requested jurisdiction.`,
-    };
-  }
 
   if (broward) {
     return {

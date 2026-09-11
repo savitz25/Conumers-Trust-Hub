@@ -65,7 +65,7 @@ import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
 import { coCaveatForHub, coSpecialistUrl, routeCoAsk } from './co-network.ts';
 import { vaCaveatForHub, vaSpecialistUrl, routeVaAsk } from './va-network.ts';
-import { nyCaveatForHub, nySpecialistUrl, routeNyAsk } from './ny-network.ts';
+import { nyCaveatForHub, nySpecialistUrl, requestedLegalJurisdiction, routeNyAsk } from './ny-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -1063,6 +1063,41 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateNy(h, nyCaveatForHub(primary)) : h));
     }
+  }
+
+  const requested = requestedLegalJurisdiction(parsed.query);
+  if (requested?.ambiguous && (requested.codes.includes('NY') || parsed.geography?.meaning?.includes('Multiple requested'))) {
+    const clarification =
+      parsed.geography?.meaning ??
+      `Multiple requested ${requested.verb} jurisdictions: ${requested.names.join(' and ')}. Ask does not pick one state or run a nationwide substitute. Name the registration or debarment state.`;
+    if (hubs.length === 0 && parsed.suggestedHubs[0]) {
+      hubs = [
+        {
+          hubId: parsed.suggestedHubs[0],
+          name: NETWORK_PUBLIC_NAMES[parsed.suggestedHubs[0]],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: clarification,
+        },
+      ];
+    }
+    hubs = hubs.map((hub) => ({
+      ...hub,
+      capabilityStatus: 'unsupported',
+      mode: 'fail_closed',
+      failKind: 'hard',
+      destination: undefined,
+      reason: clarification,
+      whatItCanAnswer: clarification,
+      geographyCapability: clarification,
+      preview: {
+        headline: clarification,
+        grain: 'fail_closed',
+        limitation: clarification,
+      },
+    }));
   }
 
   return {
