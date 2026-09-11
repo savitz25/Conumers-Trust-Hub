@@ -65,6 +65,7 @@ import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
 import { coCaveatForHub, coSpecialistUrl, routeCoAsk } from './co-network.ts';
 import { vaCaveatForHub, vaSpecialistUrl, routeVaAsk } from './va-network.ts';
+import { nyCaveatForHub, nySpecialistUrl, requestedLegalJurisdiction, routeNyAsk } from './ny-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -191,6 +192,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'AZ') return '/arizona';
   if (parsed.geography?.stateCode === 'CO') return '/colorado';
   if (parsed.geography?.stateCode === 'VA') return '/virginia';
+  if (parsed.geography?.stateCode === 'NY') return '/new-york';
   return undefined;
 }
 
@@ -382,7 +384,8 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
           ? parsed.identifier?.family.id === 'mc'
             ? 'Labeled MC docket identity — not a ranking'
             : 'Labeled USDOT identity — not an endorsement'
-          : /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query)
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query) &&
+              !/\bnew york\b|\bin ny\b|\bnysdot\b/i.test(parsed.query)
             ? 'FDACS Intrastate Mover registration rows'
             : roleLabel
               ? `directory ${roleLabel} profiles (dual-role disclosed, not double-counted)`
@@ -1015,6 +1018,86 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
           : h,
       );
     }
+  }
+
+  if (parsed.geography?.stateCode === 'NY') {
+    const nyRoute = routeNyAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(
+        dest &&
+          (/\/ask(\?|$)/i.test(dest) ||
+            /\/api\/ask/i.test(dest) ||
+            /\/verify(\?|$)/i.test(dest) ||
+            /\/companies\?/i.test(dest)),
+      );
+    const annotateNy = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : nySpecialistUrl(hub.hubId),
+        geographyCapability: hub.geographyCapability,
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? nySpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (nyRoute) {
+      const already = hubs.some((h) => h.hubId === nyRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: nyRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[nyRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: nyRoute.destination,
+            reason: nyRoute.caveat,
+            whatItCanAnswer: `New York research on ${NETWORK_PUBLIC_NAMES[nyRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'New York',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === nyRoute.hubId ? annotateNy(h, nyRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === nyRoute.hubId), ...hubs.filter((h) => h.hubId !== nyRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateNy(h, nyCaveatForHub(primary)) : h));
+    }
+  }
+
+  const requested = requestedLegalJurisdiction(parsed.query);
+  if (requested?.ambiguous && (requested.codes.includes('NY') || parsed.geography?.meaning?.includes('Multiple requested'))) {
+    const clarification =
+      parsed.geography?.meaning ??
+      `Multiple requested ${requested.verb} jurisdictions: ${requested.names.join(' and ')}. Ask does not pick one state or run a nationwide substitute. Name the registration or debarment state.`;
+    if (hubs.length === 0 && parsed.suggestedHubs[0]) {
+      hubs = [
+        {
+          hubId: parsed.suggestedHubs[0],
+          name: NETWORK_PUBLIC_NAMES[parsed.suggestedHubs[0]],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: clarification,
+        },
+      ];
+    }
+    hubs = hubs.map((hub) => ({
+      ...hub,
+      capabilityStatus: 'unsupported',
+      mode: 'fail_closed',
+      failKind: 'hard',
+      destination: undefined,
+      reason: clarification,
+      whatItCanAnswer: clarification,
+      geographyCapability: clarification,
+      preview: {
+        headline: clarification,
+        grain: 'fail_closed',
+        limitation: clarification,
+      },
+    }));
   }
 
   return {

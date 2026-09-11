@@ -1,0 +1,79 @@
+{
+  "state": "NY",
+  "ACQUIRED": [
+    "NYSDOL public-work contractor certificate registry",
+    "NYSDOT 2026 Weekly Bulletin household-goods application observations",
+    "NYSDOH Nursing Home Profile identities, ACF research identities, surveys/citations",
+    "CMS NY nursing-home / HHA / hospice overlays",
+    "HMDA 2025 New York-property applications",
+    "End-of-2024 NYDFS banker/broker/servicer/MLO aggregates",
+    "DFS insurance company-directory rows",
+    "IAPD NY state IA / ERA / notice / principal-office lenses"
+  ],
+  "OPEN_SEARCH_ONLY": [
+    "Current NYSDOT CarCert household-goods roster",
+    "Current NYDFS company licensing roster",
+    "NMLS Consumer Access",
+    "IAPD live lookup",
+    "DFS current writing-authority search"
+  ],
+  "SOURCE_NOT_ACQUIRED": [
+    "contractor specialty business lists",
+    "contractor EDList bulk",
+    "current NYSDOT HHG authority bulk",
+    "mover complaint bulk",
+    "mover insurance bulk",
+    "mover tariff corpus",
+    "senior unacquired detailed layers",
+    "current mortgage-company roster",
+    "CFPB NY mortgage bulk",
+    "current insurance authorization bulk",
+    "insurance agency/producer bulk",
+    "health complaint bulk",
+    "investor OAG bounded enforcement",
+    "investor person/BD histories"
+  ],
+  "SOURCE_AVAILABLE_BY_REQUEST": [],
+  "SOURCE_USE_RESTRICTED": [],
+  "HISTORICAL_STALE": [
+    "end-of-2024 banker/broker/servicer/MLO aggregates are dated, not live 2026 licenses",
+    "featured insurance auto complaint ranking observations are 2024 filing-year data"
+  ],
+  "UNKNOWN": [
+    "current NYSDOT authorized household-goods mover count",
+    "current 2026 mortgage-company census",
+    "current writing-authority insurer census",
+    "OAG bounded enforcement count"
+  ],
+  "NOT_APPLICABLE": [
+    "Ask NYC/borough/county intelligence routes this phase"
+  ],
+  "LEFT_LOCAL_FUTURE": [
+    {
+      "order": 1,
+      "item": "DCWP contractor licensing and consumer-protection evidence",
+      "status": "NOT_STARTED"
+    },
+    {
+      "order": 2,
+      "item": "DOB permits + PLUTO",
+      "status": "NOT_STARTED"
+    },
+    {
+      "order": 3,
+      "item": "Bounded ACRIS property/mortgage evidence",
+      "status": "NOT_STARTED"
+    },
+    {
+      "order": 4,
+      "item": "Westchester: short access test only, not automatic expansion",
+      "status": "NOT_STARTED"
+    }
+  ],
+  "accepted_gaps_are_not_ask_release_blockers": true,
+  "nyc_phase": {
+    "decision": "APPROVED_AFTER_STATEWIDE_CLOSEOUT",
+    "status": "NOT_STARTED",
+    "note": "Do not copy Virginia’s permanent no-local-phase decision into New York. No local datasets, local routes, scraping, or preparatory acquisition in this execution."
+  }
+}

@@ -33,6 +33,7 @@ import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
+import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -97,6 +98,10 @@ function geography(q: string): ParsedGeography | undefined {
   const azNamedEarly = queryLooksLikeArizona(q);
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
+  const nyNamedEarly = queryLooksLikeNewYork(q);
+  const requestedJurisdiction = requestedLegalJurisdiction(q);
+  const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
+  const vaMortgageProduct = /\bva mortgage\b/i.test(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -203,6 +208,28 @@ function geography(q: string): ParsedGeography | undefined {
     return wv < va;
   })();
   const otherDest = /\b(nevada|arizona|oregon|washington|texas)\b/i.test(q) || florida;
+
+  if (nyInvolved && requestedJurisdiction?.ambiguous) {
+    const listed = requestedJurisdiction.names.join(' and ');
+    return {
+      meaning: `Multiple requested ${requestedJurisdiction.verb} jurisdictions: ${listed}. Ask does not pick one state or run a nationwide substitute. Name the registration or debarment state.`,
+    };
+  }
+  if (nyInvolved && requestedJurisdiction && !requestedJurisdiction.ambiguous) {
+    if (requestedJurisdiction.code === 'NY') {
+      return {
+        stateCode: 'NY',
+        stateName: 'New York',
+        meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is New York. Office, origin, or business location in another state is not the requested jurisdiction.`,
+      };
+    }
+    return {
+      stateCode: requestedJurisdiction.code,
+      stateName: requestedJurisdiction.name,
+      meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is ${requestedJurisdiction.name}. New York origin or office is not the requested jurisdiction.`,
+    };
+  }
+
   if (
     caNamedEarly &&
     otherDest &&
@@ -352,7 +379,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (vaNamedEarly && !westVirginiaNamedBeforeVirginia) {
+  if (vaNamedEarly && !westVirginiaNamedBeforeVirginia && !(nyNamedEarly && vaMortgageProduct)) {
     const vaCity = detectVaCity(q);
     return {
       stateCode: 'VA',
@@ -364,8 +391,21 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (nyNamedEarly) {
+    const nyCity = detectNyCity(q);
+    return {
+      stateCode: 'NY',
+      stateName: 'New York',
+      city: nyCity,
+      meaning: nyCity
+        ? `${nyCity}, New York. New York research is statewide; NYC/borough/county names are not local Ask routes. Local NYC datasets are not started.`
+        : 'New York. State licensing is not physical location; specialist geography meaning differs by hub. NYC local Ask pages are not published.',
+    };
+  }
+
   const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
     if (j.code === 'WA' && /\bwashington\s*,?\s*d\.?c\.?\b|\bwashington\s+dc\b/i.test(q)) return false;
+    if (j.code === 'NY' && !queryLooksLikeNewYork(q)) return false;
     const nameRe = new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i');
     return nameRe.test(q);
   });
@@ -580,7 +620,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
         ? 'Household-goods broker research'
         : moveRegulatoryRole === 'carrier_broker'
           ? 'Carrier / broker research'
-          : /\b(fdacs|intrastate mover|im registration)\b/i.test(query)
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(query) && !queryLooksLikeNewYork(query)
             ? 'Florida Intrastate Mover registration research'
             : 'Household-goods motor carrier research';
   } else if (insurance) {

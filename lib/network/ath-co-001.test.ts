@@ -214,11 +214,11 @@ test('claim eligibility surfaces are unchanged', () => {
 });
 
 test('state page count increments exactly once and places/concierge stay gated', () => {
-  assert.equal(ASK_NETWORK_STATES.length, 8);
+  assert.equal(ASK_NETWORK_STATES.length, 9);
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'CO').length, 1);
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york'],
   );
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/colorado'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/colorado/denver'), false);

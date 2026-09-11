@@ -12,6 +12,15 @@ test('Move registry is live execute with move-ask-v1', () => {
   assert.equal(HUB_CAPABILITY_REGISTRY.move.structuredAskApiUrl, 'https://www.movetrusthub.com/api/ask');
 });
 
+test('Find USDOT 3244649 in New York keeps the Move Ask destination', () => {
+  const plan = buildNetworkAskPlan('Find USDOT 3244649 in New York');
+  assert.equal(plan.hubs[0].hubId, 'move');
+  assert.equal(plan.hubs[0].capabilityStatus, 'execute');
+  assert.equal(plan.hubs[0].mode, 'identifier');
+  assert.match(plan.hubs[0].destination ?? '', /movetrusthub.com\/ask/);
+  assert.doesNotMatch(plan.hubs[0].destination ?? '', /\/new-york$/);
+});
+
 test('Find USDOT 3244649 executes Move, not Insurance', () => {
   const plan = buildNetworkAskPlan('Find USDOT 3244649.');
   assert.deepEqual(plan.hubs.map((h) => h.hubId), ['move']);

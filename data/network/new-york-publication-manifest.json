@@ -1,0 +1,507 @@
+{
+  "state_code": "NY",
+  "state_name": "New York",
+  "ask_path": "/new-york",
+  "ask_canonical": "https://www.asktrusthub.com/new-york",
+  "version": "ath-ny-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_nyc_routes": false,
+  "new_york_local_phase": "APPROVED_AFTER_STATEWIDE_CLOSEOUT",
+  "new_york_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "New York’s strongest Trust Hub evidence is a public-work contractor certificate registry that is not a residential HIC license, a search-only NYSDOT household-goods roster with 2026 bulletin application observations that are not current movers, NYSDOH nursing-home and adult-care grains that must not be added, dated DFS lender aggregates plus HMDA applications that are not current licenses, a DFS insurance company directory that is not current writing authority, and IAPD state-IA/ERA/notice/office lenses that cannot collapse into one adviser census. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_new_york_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /new-york pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /new-york is indexable. Any one specialist failure fails the gate. Do not weaken the gate. NYC/local routes remain deferred.",
+    "verified_at": "2026-09-11T19:55:00.696Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "14,665 public-work registry certificate rows",
+      "grain": "Public-work certificate rows, not unique companies and not a statewide residential home-improvement contractor license."
+    },
+    {
+      "hub_id": "move",
+      "display": "Current NYSDOT HHG roster: search/verification only",
+      "grain": "Current authorized-mover count is unknown, not zero. Supporting evidence: 108 household-goods application observations across 36 2026 bulletin issues, 103 distinct Case Numbers. Application is not authorization. Do not force a numeric authorized-mover headline."
+    },
+    {
+      "hub_id": "senior",
+      "display": "597 NYSDOH Nursing Home Profile facility identities",
+      "grain": "Supporting: 527 ACF research identities with PARTIAL currentness and 6,036 nursing-home survey observations. 527 is not proven currently active ACFs."
+    },
+    {
+      "hub_id": "lender",
+      "display": "388,207 HMDA 2025 applications for New York properties",
+      "grain": "HMDA applications are not lenders. Separately, 151 bankers / 439 brokers are end-of-2024 regulatory aggregates, not current licensing counts."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,054 DFS company-directory rows",
+      "grain": "Not a complete current-writing-authority denominator. Supporting: 147 enforcement observations and 128 auto complaint ranking observations for the featured 2024 filing year. Regulator complaint ranks are not TrustHub recommendations."
+    },
+    {
+      "hub_id": "investor",
+      "display": "1,297 approved NY state-IA firms",
+      "grain": "Accepted 2026-08-27 compilation. Separately preserve 327 State ERA, 5,856 notice filings, and the pre-existing 3,152 principal-office overlay. Do not add these populations."
+    }
+  ],
+  "what_makes_new_york_different": [
+    "Contractor: NYSDOL public-work certificate registration is a project-labor grain, not a statewide residential HIC license.",
+    "Move: Current CarCert household-goods search remains under development. 2026 Weekly Bulletin observations are applications, not current movers, and Case Number is not an authority identifier.",
+    "Senior: NYSDOH nursing-home identities stay separate from ACF research identities, CMS overlays, and home-care classes.",
+    "Lender: HMDA 2025 New York-property applications are a market grain. Banker/broker/servicer/MLO figures are end-of-2024 aggregates, not a live license roster.",
+    "Insurance: DFS company-directory rows are not current writing authority. 2024 auto complaint ranking observations are not TrustHub scores.",
+    "Investor: State IA, ERA, notice filings, and principal-office overlay are separate IAPD lenses and cannot be collapsed into one adviser census."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "NEW_STATE_IDENTITIES": 14665,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "identity_namespace": "NY-DOL-PW:{certificateNumber}",
+      "grain_note": "14,665 newly acquired research certificate identities over an established empty baseline. Not unique companies. Canonical organizations / public profiles / graph writes remain zero."
+    },
+    "move": {
+      "hhgApplicationObservations": 108,
+      "distinctCaseNumbers": 103,
+      "bulletinIssues": 36,
+      "currentHhgAuthorityRows": null,
+      "currentHhgAuthorityIds": null,
+      "EXACT_NY_STATE_TO_FEDERAL_CROSSWALKS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "identity_namespace": null,
+      "grain_note": "108 application observations and 103 Case Numbers are not authority identities. Current authority rows/IDs remain null. Do not invent NY-DOT-HHG from a Case Number. No exact state-to-federal crosswalks."
+    },
+    "senior": {
+      "NYSDOH_NH_PROFILE_FACILITY_IDENTITIES": 597,
+      "ROWS_WITH_CCN": 595,
+      "DISTINCT_SOURCE_NATIVE_CCNS": 594,
+      "CMS_NY_NURSING_HOMES": 593,
+      "ACF_RESEARCH_IDENTITIES": 527,
+      "NH_SURVEY_OBSERVATIONS": 6036,
+      "DO_NOT_REFER_OBSERVATIONS": 117,
+      "EXACT_OPCERT_RESEARCH_MATCHES": 6,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "grain_note": "Carry the specialist source-native bridge. Do not relabel 594 distinct CCNs as 594 new CMS profiles or force state/CMS equality. 527 ACF identities are not 1,612 certification rows. ALR/EALR/SNALR/ALP designations overlap and are not summed. 117 Do Not Refer observations are not 117 active/closed/violating facilities. Keep state home-care classes separate from CMS HHA."
+    },
+    "lender": {
+      "HMDA_2025_NY_PROPERTY_APPLICATIONS": 388207,
+      "END_OF_2024_BANKERS": 151,
+      "END_OF_2024_BROKERS": 439,
+      "END_OF_2024_SERVICERS": 36,
+      "END_OF_2024_MLO_PERSONS": 9769,
+      "BULLETIN_ACTIVITY_OBSERVATIONS": 2318,
+      "ENFORCEMENT_OBSERVATIONS": 198,
+      "CFPB_NY_MORTGAGE_BULK_COUNT": null,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_LENDER_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "grain_note": "151/439/36/9,769 are end-of-2024 aggregates, not current licensing counts. 2,318 bulletin observations are not a current roster. 198 enforcement observations are not unique lenders. CFPB NY mortgage bulk remains null. Existing FDIC overlay is not new organization enrichment."
+    },
+    "insurance": {
+      "DFS_COMPANY_DIRECTORY_ROWS": 1054,
+      "DFS_COMPANY_DIRECTORY_NAIC_IDS": 1054,
+      "NY_DOMICILE_ROWS": 210,
+      "AH_ORGANIZATION_TYPE_ROWS": 26,
+      "ENFORCEMENT_OBSERVATIONS": 147,
+      "FEATURED_2024_AUTO_COMPLAINT_RANKING_OBSERVATIONS": 128,
+      "HEALTH_COMPLAINT_BULK_COUNT": null,
+      "NET_NEW_CANONICAL_LEGAL_INSURERS": 0,
+      "NET_NEW_CANONICAL_AGENCIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "grain_note": "1,054 directory rows/NAIC IDs are not current authorized insurers. 210 NY-domicile rows and 26 AH organization-type rows are different fields. 147 enforcement observations remain unattached without exact identity. 128 featured auto observations are 2024 data. Health complaint bulk remains unknown. Read-only NAIC matches are not graph writes."
+    },
+    "investor": {
+      "NY_STATE_IA_APPROVED_CURRENT": 1297,
+      "NY_STATE_ERA_IDENTITIES": 327,
+      "NEW_NY_STATE_IDENTITIES": 1624,
+      "NOTICE_FILINGS": 5856,
+      "IA_NOTICE_OVERLAP_EXACT_CRDS": 27,
+      "PRINCIPAL_OFFICE_OVERLAY": 3152,
+      "OAG_BOUNDED_ENFORCEMENT_COUNT": null,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "grain_note": "1,297 state IA + 327 state ERA = 1,624 state research identities under the accepted specialist definition—not a combined adviser census. Principal-office overlay 3,152 is pre-existing, not new enrichment. OAG bounded enforcement remains unknown, not zero."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Certificate rows, bulletin observations, facility identities, HMDA applications, insurance directory rows, and adviser registrations are incompatible grains. Ask does not publish a New York-records total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /new-york pages plus Ask /new-york. Page/surface count only — not a business, record, provider, or license count. Ask Production certification is separate from this Preview gateway."
+    }
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractor Trust Hub",
+      "coverage_type": "STATE_PUBLIC_WORK_CERTIFICATE",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/new-york",
+      "snapshot_version": "contractor-ny-state-intel-v1",
+      "fingerprint": "27f39aad84544a1ecfb4db74934ddbac55f94bd087b2a9cf3b5de20305685f14",
+      "certified_release_sha": "862da0d952275a99e4214b6e88b2082581cb837b",
+      "source_clock": "Specialist-accepted contractor-ny-state-intel-v1 public-work certificate registry. Ask does not invent a retrieval instant.",
+      "primary_regulator": "NYSDOL",
+      "primary_identity": "NY-DOL-PW:{certificateNumber}",
+      "topic": "Is this contractor registered for public work in New York?",
+      "plain_question": "Is this contractor on the New York public-work registry — and is that a residential license?",
+      "research_topics": [
+        "Public-work certificate rows",
+        "Certificate number as the native identity",
+        "Not a statewide residential HIC license",
+        "Not unique companies"
+      ],
+      "primary_identifiers": [
+        "NY-DOL-PW:{certificateNumber}"
+      ],
+      "identifier_types": [
+        "NY-DOL-PW"
+      ],
+      "source_summary": "NYSDOL public-work contractor registration is a certificate registry for public work. It is not a statewide residential home-improvement contractor license.",
+      "coverage_summary": "14,665 public-work registry certificate rows. Not unique companies and not a statewide residential HIC license.",
+      "coverage_limitation": "Specialty business lists and EDList bulk were not acquired. A certificate row is not a unique company.",
+      "what_research": "NYSDOL public-work certificates",
+      "next_step": "Verify the certificate on ContractorTrustHub New York and NYSDOL",
+      "semantic_guardrails": [
+        "certificate row ≠ unique company",
+        "public-work registry ≠ residential HIC license",
+        "canonical organizations remain zero"
+      ],
+      "verified_facts": [
+        "14,665 public-work registry certificate rows.",
+        "Identity namespace NY-DOL-PW:{certificateNumber}.",
+        "Canonical organizations / public profiles / graph writes remain zero."
+      ],
+      "routing_intents": [
+        "How many public-work contractors are registered in New York?",
+        "Is this contractor registered for public work in New York?"
+      ],
+      "gap_examples": [
+        "specialty business lists",
+        "EDList bulk"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Move Trust Hub",
+      "coverage_type": "STATE_HHG_BULLETIN_PLUS_FEDERAL_OVERLAY",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/new-york",
+      "snapshot_version": "move-ny-state-intel-v1",
+      "fingerprint": "9dce86a315eb652f36026620361b8ac0657c734ccafe576d533ed240f6338b83",
+      "certified_release_sha": "866bde6eeeed692d23257c7de75ebca38cb11e78",
+      "source_clock": "Bulletin window 2026-01-07 through 2026-09-09; bulletin sourceAsOf 2026-09-09; retrievedAt 2026-09-11 date-only, exact instant unknown; overall source as_of unknown.",
+      "primary_regulator": "NYSDOT; FMCSA for interstate",
+      "primary_identity": "Case Number on bulletin observations; NYDOT number required for consumer verification when available",
+      "topic": "Can I check a mover in New York?",
+      "plain_question": "Can I check a New York mover — and is a bulletin application the same as current authority?",
+      "research_topics": [
+        "Current NYSDOT household-goods roster (search only)",
+        "2026 Weekly Bulletin household-goods applications",
+        "Federal interstate geography as recorded headquarters",
+        "Exact USDOT/MC identity research"
+      ],
+      "primary_identifiers": [
+        "USDOT",
+        "MC"
+      ],
+      "identifier_types": [
+        "USDOT",
+        "MC"
+      ],
+      "source_summary": "Current CarCert household-goods search is under development. 2026 Weekly Bulletin observations are applications, not current movers. Interstate research remains FMCSA.",
+      "coverage_summary": "Current NYSDOT HHG roster is search/verification only; count unknown. Supporting evidence: 108 application observations across 36 issues, 103 distinct Case Numbers.",
+      "coverage_limitation": "Application is not authorization. Case Number is not an authority identifier. Current authority/complaint/insurance bulk not acquired. NYSDOT roster unavailable does not mean federal NY research unavailable.",
+      "what_research": "NYSDOT bulletin observations and FMCSA interstate identity/geography",
+      "next_step": "Open MoveTrustHub New York; use a labeled USDOT/MC for federal identity research",
+      "semantic_guardrails": [
+        "108 observations ≠ 108 authorized movers",
+        "103 cases ≠ 103 active authorities",
+        "application ≠ authorization",
+        "Case Number ≠ NYDOT authority",
+        "USDOT ≠ NY intrastate authority",
+        "fail_closed / NOT_ACQUIRED is not a known NYSDOT population",
+        "recorded headquarters ≠ service territory"
+      ],
+      "verified_facts": [
+        "36 bulletin issues, 2026-01-07 through 2026-09-09.",
+        "108 HHG application observations; 103 distinct Case Numbers.",
+        "Current HHG authority rows/IDs remain null.",
+        "Exact NY state-to-federal crosswalks: 0."
+      ],
+      "routing_intents": [
+        "Show intrastate movers in New York",
+        "Show current interstate carriers headquartered in NY"
+      ],
+      "gap_examples": [
+        "current NYSDOT authority bulk",
+        "complaint bulk",
+        "insurance bulk"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "coverage_type": "STATE_NH_ACF_PLUS_CMS_OVERLAY",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/new-york",
+      "snapshot_version": "senior-ny-state-intel-v1",
+      "fingerprint": "0ba069ebbd93faeb3274f3849a34703be2a9ce6fa66289468d6a2dfa5c73af54",
+      "certified_release_sha": "eaff708dd7459c8ca24eca00c1ce0039100b5979",
+      "source_clock": "Specialist-accepted senior-ny-state-intel-v1. CMS overlay as of 2026-08-27. Ask does not invent a retrieval instant.",
+      "primary_regulator": "NYSDOH; CMS",
+      "primary_identity": "NYSDOH Facility ID; CMS CCN where printed",
+      "topic": "Find nursing homes in New York.",
+      "plain_question": "Find nursing homes in New York — and is that the same as licensed home care?",
+      "research_topics": [
+        "NYSDOH Nursing Home Profile identities",
+        "Adult-care facility research identities",
+        "Survey and citation observations",
+        "CMS nursing home / HHA / hospice overlays"
+      ],
+      "primary_identifiers": [
+        "NYSDOH Facility ID",
+        "CMS CCN"
+      ],
+      "identifier_types": [
+        "NYSDOH-FACILITY",
+        "CMS-CCN"
+      ],
+      "source_summary": "NYSDOH nursing-home identities, ACF research identities, and CMS overlays remain separate classes.",
+      "coverage_summary": "597 NYSDOH Nursing Home Profile facility identities. Supporting: 527 ACF research identities with PARTIAL currentness; 6,036 nursing-home survey observations.",
+      "coverage_limitation": "527 is not proven currently active ACFs. State home-care classes stay separate from CMS HHA. Equal state/CMS hospice counts do not establish identity.",
+      "what_research": "NYSDOH NH/ACF research and CMS class overlays",
+      "next_step": "Open SeniorTrustHub New York and the official NYSDOH or CMS lookup",
+      "semantic_guardrails": [
+        "nursing home ≠ LHCSA ≠ CMS HHA",
+        "527 ACF identities ≠ currently active ACFs",
+        "527 identities ≠ 1,612 certification rows",
+        "ALR/EALR/SNALR/ALP overlap and are not summed",
+        "117 Do Not Refer observations ≠ 117 facilities",
+        "do not relabel 594 CCNs as 594 new CMS profiles"
+      ],
+      "verified_facts": [
+        "597 NYSDOH NH Profile facility identities; 595 rows with CCN; 594 distinct source-native CCNs; 593 CMS NY nursing homes.",
+        "527 ACF research identities with PARTIAL currentness.",
+        "6,036 nursing-home survey observations.",
+        "117 Do Not Refer observations; 6 exact OPCERT research matches; no profile attachments."
+      ],
+      "routing_intents": [
+        "Nursing homes in New York",
+        "licensed home-care agencies in NY"
+      ],
+      "gap_examples": [
+        "ACF currentness/capacity limitations",
+        "unacquired detailed layers"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lender Trust Hub",
+      "coverage_type": "HMDA_PLUS_DATED_DFS_AGGREGATES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/new-york",
+      "snapshot_version": "lender-ny-state-intel-v1",
+      "fingerprint": "d3a07f5b5d7114e54917ef0aa0d338e81f90f87e2bb0fc9eddabe2fa75eb6b82",
+      "certified_release_sha": "8ea55825d3a4cc5ef4d8aabd80f7c2e8348ee1ed",
+      "source_clock": "HMDA 2025 New York-property applications. Banker/broker/servicer/MLO figures are end-of-2024 regulatory aggregates, not a live license clock.",
+      "primary_regulator": "NYDFS; CFPB HMDA",
+      "primary_identity": "NMLS where printed; HMDA is an application grain",
+      "topic": "Which mortgage lenders are licensed in New York?",
+      "plain_question": "Which mortgage lenders are licensed in New York — and is that the same as 2024 banker/broker totals?",
+      "research_topics": [
+        "HMDA 2025 New York-property applications",
+        "End-of-2024 banker/broker/servicer/MLO aggregates",
+        "2026 weekly bulletin observations",
+        "NYDFS enforcement observations"
+      ],
+      "primary_identifiers": [
+        "NMLS:{id}"
+      ],
+      "identifier_types": [
+        "NMLS"
+      ],
+      "source_summary": "HMDA counts applications for New York properties. NYDFS company and MLO figures in the accepted snapshot are end-of-2024 aggregates. Current company roster remains open search.",
+      "coverage_summary": "388,207 HMDA 2025 applications for New York properties. Separately, 151 bankers / 439 brokers are end-of-2024 regulatory aggregates, not current licensing counts.",
+      "coverage_limitation": "Current company roster and CFPB NY mortgage bulk were not acquired. An HMDA application is not a lender. A VA mortgage product is not Virginia geography.",
+      "what_research": "HMDA New York-property activity and dated NYDFS aggregates",
+      "next_step": "Open LenderTrustHub New York; verify current licensing on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "HMDA application ≠ lender",
+        "151/439 ≠ current licenses",
+        "2,318 bulletin observations ≠ current roster",
+        "198 enforcement observations ≠ unique lenders",
+        "VA mortgage ≠ Virginia geography",
+        "complaint ≠ violation"
+      ],
+      "verified_facts": [
+        "388,207 HMDA 2025 applications for New York properties.",
+        "End of 2024: 151 bankers / 439 brokers / 36 servicers / 9,769 MLO persons.",
+        "2,318 bulletin activity observations; 198 enforcement observations.",
+        "CFPB NY mortgage bulk count remains null."
+      ],
+      "routing_intents": [
+        "How much mortgage lending happened in New York in 2025?",
+        "Which mortgage lenders are currently licensed in New York?"
+      ],
+      "gap_examples": [
+        "current company roster",
+        "CFPB NY bulk"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance Trust Hub",
+      "coverage_type": "DFS_COMPANY_DIRECTORY",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/new-york",
+      "snapshot_version": "insurance-ny-state-intel-v1",
+      "fingerprint": "d4832c3c41c0390d6ffa15755142c6d669e49e6fb0db858f55f761ea894b212e",
+      "certified_release_sha": "a12b6d59d8420a0cb8a2076a0b8b00b18b88c41f",
+      "source_clock": "Specialist-accepted insurance-ny-state-intel-v1 DFS company directory. Featured auto complaint ranking observations are 2024 filing-year data.",
+      "primary_regulator": "NYDFS",
+      "primary_identity": "NAIC company code on directory rows",
+      "topic": "Which insurance companies are in the New York DFS directory?",
+      "plain_question": "Which insurance companies are in the New York DFS directory — and is that current writing authority?",
+      "research_topics": [
+        "DFS company-directory rows",
+        "NY-domicile versus organization type",
+        "Enforcement observations",
+        "2024 auto complaint ranking observations"
+      ],
+      "primary_identifiers": [
+        "NAIC:{code}"
+      ],
+      "identifier_types": [
+        "NAIC"
+      ],
+      "source_summary": "DFS company-directory rows are not a complete current-writing-authority denominator. Agency/producer bulk and health complaint bulk remain unacquired.",
+      "coverage_summary": "1,054 DFS company-directory rows. Not a complete current-writing-authority denominator. Supporting: 147 enforcement observations and 128 auto complaint ranking observations for 2024.",
+      "coverage_limitation": "Company directory is not agency/producer coverage and not current writing authority. Regulator complaint ranks are not TrustHub recommendations.",
+      "what_research": "DFS company directory and dated complaint/enforcement observations",
+      "next_step": "Open InsuranceTrustHub New York and verify on NYDFS",
+      "semantic_guardrails": [
+        "1,054 directory rows ≠ currently authorized insurers",
+        "210 NY-domicile rows ≠ 26 AH organization-type rows",
+        "147 enforcement observations remain unattached without exact identity",
+        "128 auto observations are 2024 data",
+        "complaint rank ≠ TrustHub recommendation",
+        "directory ≠ agency/producer"
+      ],
+      "verified_facts": [
+        "1,054 DFS company-directory rows / NAIC IDs.",
+        "210 NY-domicile rows; 26 AH organization-type rows.",
+        "147 enforcement observations; 128 featured 2024 auto complaint ranking observations.",
+        "Health complaint bulk count remains unknown."
+      ],
+      "routing_intents": [
+        "Which insurance companies are in the New York DFS directory?",
+        "Does this insurer have a New York DFS enforcement observation?"
+      ],
+      "gap_examples": [
+        "current authorization bulk",
+        "agency/producer bulk",
+        "health complaint bulk"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "coverage_type": "IAPD_STATE_IA_ERA_NOTICE",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/new-york",
+      "snapshot_version": "investor-ny-state-intel-v1",
+      "fingerprint": "99934341f3307ee00802256cc143d904085d2cf464f9cc15fd97ae48f9c00a1a",
+      "certified_release_sha": "e1f57a1b5092233892365f1c02a21b2cc935a2f5",
+      "source_clock": "Accepted IAPD compilation as of 2026-08-27. Principal-office overlay is pre-existing, not new enrichment.",
+      "primary_regulator": "IAPD / SEC; NY overlay",
+      "primary_identity": "CRD",
+      "topic": "How many investment advisers are registered in New York?",
+      "plain_question": "How many investment advisers are registered in New York — and is a principal office the same as state registration?",
+      "research_topics": [
+        "Approved NY state-IA firms",
+        "State ERA identities",
+        "Notice filings",
+        "Principal-office overlay"
+      ],
+      "primary_identifiers": [
+        "CRD:{id}"
+      ],
+      "identifier_types": [
+        "CRD"
+      ],
+      "source_summary": "State IA, ERA, notice, and principal-office overlay are separate IAPD lenses. Registration jurisdiction is not principal office.",
+      "coverage_summary": "1,297 approved NY state-IA firms in the accepted 2026-08-27 compilation. Separately preserve 327 State ERA, 5,856 notice filings, and the pre-existing 3,152 principal-office overlay.",
+      "coverage_limitation": "1,624 state research identities are not a combined adviser census. OAG bounded enforcement remains unknown. Person/BD histories were not acquired.",
+      "what_research": "IAPD New York IA/ERA/notice/office lenses",
+      "next_step": "Open InvestorTrustHub New York and verify on IAPD",
+      "semantic_guardrails": [
+        "1,297 IA ≠ 327 ERA ≠ 5,856 notice ≠ 3,152 office",
+        "1,297 + 327 = 1,624 state research identities, not a census",
+        "principal office ≠ registration jurisdiction",
+        "IA ∩ notice overlap = 27 exact CRDs",
+        "OAG count unknown, not zero"
+      ],
+      "verified_facts": [
+        "1,297 approved NY state-IA firms (2026-08-27 compilation).",
+        "327 State ERA; 5,856 notice filings; 3,152 principal-office overlay.",
+        "Approved IA ∩ notice overlap: 27 exact CRDs.",
+        "NEW_NY_STATE_IDENTITIES=1,624 under the accepted specialist definition."
+      ],
+      "routing_intents": [
+        "How many investment advisers are registered in New York?",
+        "Does a New York principal office mean the adviser is state-registered?"
+      ],
+      "gap_examples": [
+        "OAG bounded enforcement",
+        "person/BD histories"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "ticket": "ATH-NY-NET-001",
+  "version": "ath-ny-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/new-york",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_nyc_routes": false,
+  "new_york_local_phase": "APPROVED_AFTER_STATEWIDE_CLOSEOUT",
+  "new_york_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "release_gate_passed": true,
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "contractor-ny-state-intel-v1",
+      "fingerprint": "27f39aad84544a1ecfb4db74934ddbac55f94bd087b2a9cf3b5de20305685f14",
+      "certified_release_sha": "862da0d952275a99e4214b6e88b2082581cb837b",
+      "source_clock": "Specialist-accepted contractor-ny-state-intel-v1 public-work certificate registry. Ask does not invent a retrieval instant."
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "move-ny-state-intel-v1",
+      "fingerprint": "9dce86a315eb652f36026620361b8ac0657c734ccafe576d533ed240f6338b83",
+      "certified_release_sha": "866bde6eeeed692d23257c7de75ebca38cb11e78",
+      "source_clock": "Bulletin window 2026-01-07 through 2026-09-09; bulletin sourceAsOf 2026-09-09; retrievedAt 2026-09-11 date-only, exact instant unknown; overall source as_of unknown."
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "senior-ny-state-intel-v1",
+      "fingerprint": "0ba069ebbd93faeb3274f3849a34703be2a9ce6fa66289468d6a2dfa5c73af54",
+      "certified_release_sha": "eaff708dd7459c8ca24eca00c1ce0039100b5979",
+      "source_clock": "Specialist-accepted senior-ny-state-intel-v1. CMS overlay as of 2026-08-27. Ask does not invent a retrieval instant."
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "lender-ny-state-intel-v1",
+      "fingerprint": "d3a07f5b5d7114e54917ef0aa0d338e81f90f87e2bb0fc9eddabe2fa75eb6b82",
+      "certified_release_sha": "8ea55825d3a4cc5ef4d8aabd80f7c2e8348ee1ed",
+      "source_clock": "HMDA 2025 New York-property applications. Banker/broker/servicer/MLO figures are end-of-2024 regulatory aggregates, not a live license clock."
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "insurance-ny-state-intel-v1",
+      "fingerprint": "d4832c3c41c0390d6ffa15755142c6d669e49e6fb0db858f55f761ea894b212e",
+      "certified_release_sha": "a12b6d59d8420a0cb8a2076a0b8b00b18b88c41f",
+      "source_clock": "Specialist-accepted insurance-ny-state-intel-v1 DFS company directory. Featured auto complaint ranking observations are 2024 filing-year data."
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/new-york",
+      "publication_status": "live",
+      "snapshot_version": "investor-ny-state-intel-v1",
+      "fingerprint": "99934341f3307ee00802256cc143d904085d2cf464f9cc15fd97ae48f9c00a1a",
+      "certified_release_sha": "e1f57a1b5092233892365f1c02a21b2cc935a2f5",
+      "source_clock": "Accepted IAPD compilation as of 2026-08-27. Principal-office overlay is pre-existing, not new enrichment."
+    }
+  ],
+  "verification_hubs": [
+    {
+      "hub_id": "contractor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/new-york",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "move",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/new-york",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "senior",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/new-york",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "lender",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/new-york",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "investor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/new-york",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "insurance",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/new-york",
+      "robots": "index, follow"
+    }
+  ],
+  "network_findings": [
+    "Contractor: NYSDOL public-work certificate registration is a project-labor grain, not a statewide residential HIC license.",
+    "Move: Current CarCert household-goods search remains under development. 2026 Weekly Bulletin observations are applications, not current movers, and Case Number is not an authority identifier.",
+    "Senior: NYSDOH nursing-home identities stay separate from ACF research identities, CMS overlays, and home-care classes.",
+    "Lender: HMDA 2025 New York-property applications are a market grain. Banker/broker/servicer/MLO figures are end-of-2024 aggregates, not a live license roster.",
+    "Insurance: DFS company-directory rows are not current writing authority. 2024 auto complaint ranking observations are not TrustHub scores.",
+    "Investor: State IA, ERA, notice filings, and principal-office overlay are separate IAPD lenses and cannot be collapsed into one adviser census."
+  ],
+  "conceptual_statement": "New York\u2019s strongest Trust Hub evidence is a public-work contractor certificate registry that is not a residential HIC license, a search-only NYSDOT household-goods roster with 2026 bulletin application observations that are not current movers, NYSDOH nursing-home and adult-care grains that must not be added, dated DFS lender aggregates plus HMDA applications that are not current licenses, a DFS insurance company directory that is not current writing authority, and IAPD state-IA/ERA/notice/office lenses that cannot collapse into one adviser census. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown \u2014 not zero.",
+  "local_work_decision": "DEFERRED",
+  "fingerprint": "486ab780e92eb5008d3bd58aab68ec43c745e37de536f3cd087e7f4729d5ba3b",
+  "generated_at": "2026-09-11T20:05:57.733474+00:00",
+  "snapshot": "ath-ny-network-release-v1",
+  "ask_fingerprint": "486ab780e92eb5008d3bd58aab68ec43c745e37de536f3cd087e7f4729d5ba3b"
+}
