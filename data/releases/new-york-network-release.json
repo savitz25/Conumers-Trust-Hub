@@ -9,8 +9,22 @@
   "new_york_local_phase_status": "NOT_STARTED",
   "trust_score": false,
   "paid_ranking": false,
-  "status": "ASK_PREVIEW_READY",
-  "ask_production": null,
+  "status": "CLOSED_PRODUCTION_VERIFIED",
+  "ask_production": {
+    "verified_at": "2026-09-11T21:48:00.000Z",
+    "merge_sha": "744d5ea142a340c941038cd6e440311b52a024c9",
+    "pr": 135,
+    "feature_prs": [134, 135],
+    "deployment_id": 6402322095,
+    "environment": "Production",
+    "deployed_sha": "744d5ea142a340c941038cd6e440311b52a024c9",
+    "live_hostname": "https://www.asktrusthub.com",
+    "live_route": "https://www.asktrusthub.com/new-york",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/new-york",
+    "robots": "index, follow",
+    "sso": false
+  },
   "release_gate_passed": true,
   "specialist_hubs": [
     {

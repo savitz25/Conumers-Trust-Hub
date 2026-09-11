@@ -1,10 +1,26 @@
 {
   "state": "NY",
-  "status": "ASK_PREVIEW_READY",
-  "note": "New York statewide Ask gateway is Preview-ready. Six specialist /new-york pages are CLOSED \u2014 PRODUCTION VERIFIED. Ask /new-york is not Production-closed. NYC local phase is APPROVED AFTER STATEWIDE CLOSEOUT and NOT_STARTED. ask_production remains null until actually certified.",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
+  "note": "New York statewide expansion closed \u2014 Production verified. Specialist 6/6 Production pages remain live. Ask /new-york is Production-certified at merge SHA 744d5ea142a340c941038cd6e440311b52a024c9. Publication semantic fingerprint is unchanged. NYC local phase remains APPROVED AFTER STATEWIDE CLOSEOUT and NOT_STARTED.",
   "ask_route": "/new-york",
   "ask_canonical": "https://www.asktrusthub.com/new-york",
-  "ask_production": null,
+  "ask_production": {
+    "verified_at": "2026-09-11T21:48:00.000Z",
+    "merge_sha": "744d5ea142a340c941038cd6e440311b52a024c9",
+    "pr": 135,
+    "feature_prs": [134, 135],
+    "deployment_id": 6402322095,
+    "environment": "Production",
+    "deployed_sha": "744d5ea142a340c941038cd6e440311b52a024c9",
+    "deployment_url": "https://vercel.com/savitz25-s-projects/conumers-trust-hub/8yUKXkKf1kWgXkSp5SH5tw3sD5en",
+    "live_hostname": "https://www.asktrusthub.com",
+    "live_route": "https://www.asktrusthub.com/new-york",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/new-york",
+    "robots": "index, follow",
+    "sso": false,
+    "dpl_id": "dpl_8yUKXkKf1kWgXkSp5SH5tw3sD5en"
+  },
   "network_contract": "ath-ny-network-release-v1",
   "publication_manifest_fingerprint": "486ab780e92eb5008d3bd58aab68ec43c745e37de536f3cd087e7f4729d5ba3b",
   "local_work_decision": "DEFERRED",
@@ -15,7 +31,7 @@
   "network_release_gate": {
     "passed": true,
     "required_hubs": 6,
-    "verified_at": "2026-09-11T19:55:00.696Z"
+    "verified_at": "2026-09-11T21:39:31.981Z"
   },
   "six_hubs": [
     {
