@@ -33,7 +33,7 @@ import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
-import { detectNyCity, queryLooksLikeNewYork } from './ny-network.ts';
+import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -99,7 +99,8 @@ function geography(q: string): ParsedGeography | undefined {
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
-  const registeredInNewYork = /\bregistered in new york\b/i.test(q);
+  const requestedJurisdiction = requestedLegalJurisdiction(q);
+  const nyInvolved = nyNamedEarly || requestedJurisdiction?.code === 'NY';
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
@@ -240,6 +241,27 @@ function geography(q: string): ParsedGeography | undefined {
   else if (miami) city = 'Miami';
   else if (bocaRaton) city = 'Boca Raton';
 
+  if (nyInvolved && requestedJurisdiction?.ambiguous) {
+    return {
+      meaning:
+        'Multiple requested registration or debarment jurisdictions. Ask does not pick the first state mentioned. Name the registration or debarment state.',
+    };
+  }
+  if (nyInvolved && requestedJurisdiction && !requestedJurisdiction.ambiguous) {
+    if (requestedJurisdiction.code === 'NY') {
+      return {
+        stateCode: 'NY',
+        stateName: 'New York',
+        meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is New York. Office, origin, or business location in another state is not the requested jurisdiction.`,
+      };
+    }
+    return {
+      stateCode: requestedJurisdiction.code,
+      stateName: requestedJurisdiction.name,
+      meaning: `Requested ${requestedJurisdiction.verb} jurisdiction is ${requestedJurisdiction.name}. New York origin or office is not the requested jurisdiction.`,
+    };
+  }
+
   if (broward) {
     return {
       stateCode: 'FL',
@@ -260,7 +282,7 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: 'Palm Beach County, Florida. County meaning differs by hub.',
     };
   }
-  if (florida && !registeredInNewYork) {
+  if (florida) {
     return {
       stateCode: 'FL',
       stateName: 'Florida',
@@ -368,17 +390,15 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (nyNamedEarly || registeredInNewYork) {
+  if (nyNamedEarly) {
     const nyCity = detectNyCity(q);
     return {
       stateCode: 'NY',
       stateName: 'New York',
       city: nyCity,
-      meaning: registeredInNewYork
-        ? 'New York registration jurisdiction. Principal office is a different grain from state registration.'
-        : nyCity
-          ? `${nyCity}, New York. New York research is statewide; NYC/borough/county names are not local Ask routes. Local NYC datasets are not started.`
-          : 'New York. State licensing is not physical location; specialist geography meaning differs by hub. NYC local Ask pages are not published.',
+      meaning: nyCity
+        ? `${nyCity}, New York. New York research is statewide; NYC/borough/county names are not local Ask routes. Local NYC datasets are not started.`
+        : 'New York. State licensing is not physical location; specialist geography meaning differs by hub. NYC local Ask pages are not published.',
     };
   }
 

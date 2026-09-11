@@ -2,19 +2,24 @@ import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
+  ACCEPTED_NY_SPECIALIST_RELEASES,
+  NY_FINGERPRINT_METHOD,
   NY_NETWORK_CONTRACT,
   NY_PUBLICATION_FINGERPRINT,
   NY_PUBLICATION_MANIFEST,
   NY_SEMANTIC_GUARDRAILS,
   NY_VERIFICATION,
   classifyNyHub,
+  evaluateNyPageEvidence,
   nyPublicationSemanticFingerprint,
   nyReleaseGatePassed,
   nySixHubIdsComplete,
   listNyHubs,
   queryLooksLikeNewYork,
+  requestedLegalJurisdiction,
   routeNyAsk,
 } from './ny-network.ts';
+import { MOVE_ASK_ROUTE } from './move-ask.ts';
 import { parseNetworkAsk } from './ask-parse.ts';
 import { buildNetworkAskPlan } from './ask-plan.ts';
 import { SPECIALIST_HUB_IDS } from './registry.ts';
@@ -30,9 +35,12 @@ const gaps = JSON.parse(readFileSync('data/network/new-york/gap-register.json', 
 const release = JSON.parse(readFileSync('data/releases/new-york-network-release.json', 'utf8'));
 
 test('six required specialist New York pages, unique hub IDs, canonical URLs', () => {
+  assert.equal(listNyHubs().length, 6);
   assert.equal(nySixHubIdsComplete(), true);
   const ids = listNyHubs().map((h) => h.hub_id);
+  assert.equal(ids.length, 6);
   assert.equal(new Set(ids).size, 6);
+  assert.equal(nySixHubIdsComplete([...listNyHubs(), listNyHubs()[0]!]), false);
   for (const id of SPECIALIST_HUB_IDS) {
     const row = listNyHubs().find((h) => h.hub_id === id);
     assert.ok(row, `missing hub ${id}`);
@@ -158,50 +166,89 @@ test('New York routing: two queries per hub plus cross-boundary cases', () => {
   assert.equal(routeNyAsk('New York contractor debarred in Florida'), undefined);
 });
 
-test('Move NYSDOT limitation is not Florida IM; federal NY geography stays available', () => {
+test('exact USDOT identity keeps the structured Ask destination', () => {
+  const plan = buildNetworkAskPlan('Find USDOT 3244649 in New York');
+  const move = plan.hubs.find((h) => h.hubId === 'move');
+  assert.equal(plan.parsed.intent, 'identifier');
+  assert.equal(plan.parsed.identifier?.family.id, 'usdot');
+  assert.match(plan.parsed.identifier?.raw ?? '', /3244649/);
+  assert.equal(move?.capabilityStatus, 'execute');
+  assert.equal(move?.mode, 'identifier');
+  assert.equal(move?.structuredFilters?.identifier, plan.parsed.identifier?.raw);
+  assert.match(move?.destination ?? '', /movetrusthub\.com\/ask\?/);
+  assert.match(move?.destination ?? '', /3244649/);
+  assert.doesNotMatch(move?.destination ?? '', /\/new-york$/);
+  assert.notEqual(move?.preview?.sourceFamily, 'nysdot');
+  assert.match(move?.geographyCapability ?? '', /Identifier routing/i);
+});
+
+test('federal NY headquarters research keeps structured Ask execution', () => {
+  const plan = buildNetworkAskPlan('Show current interstate carriers headquartered in NY');
+  const move = plan.hubs.find((h) => h.hubId === 'move');
+  assert.equal(plan.parsed.geography?.stateCode, 'NY');
+  assert.notEqual(plan.parsed.topic, 'Florida Intrastate Mover registration research');
+  assert.equal(move?.capabilityStatus, 'execute');
+  assert.equal(move?.mode, 'entity');
+  assert.match(move?.destination ?? '', new RegExp(MOVE_ASK_ROUTE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(move?.destination ?? '', /\/new-york$/);
+  assert.match(move?.geographyCapability ?? '', /headquarters|recorded/i);
+  assert.doesNotMatch(move?.preview?.grain ?? '', /FDACS/);
+});
+
+test('NYSDOT intrastate roster stays fail-closed and does not become Florida IM', () => {
   const intra = parseNetworkAsk('Show intrastate movers in New York');
   assert.equal(intra.geography?.stateCode, 'NY');
   assert.notEqual(intra.topic, 'Florida Intrastate Mover registration research');
-  assert.equal(routeNyAsk('Show intrastate movers in New York')?.hubId, 'move');
-  assert.match(routeNyAsk('Show intrastate movers in New York')?.caveat ?? '', /NOT_ACQUIRED|search\/verification only|unknown, not zero/);
-  const federal = parseNetworkAsk('Show current interstate carriers headquartered in NY');
-  assert.equal(federal.geography?.stateCode, 'NY');
-  assert.equal(federal.suggestedHubs[0], 'move');
-  assert.notEqual(federal.topic, 'Florida Intrastate Mover registration research');
-  const plan = buildNetworkAskPlan('Show current interstate carriers headquartered in NY');
-  assert.equal(plan.placeLensHref, '/new-york');
-  assert.equal(plan.parsed.suggestedHubs[0], 'move');
-  assert.ok(plan.hubs.some((h) => h.hubId === 'move') || plan.parsed.suggestedHubs.includes('move'));
+  const plan = buildNetworkAskPlan('Show intrastate movers in New York');
+  const move = plan.hubs.find((h) => h.hubId === 'move');
+  assert.equal(move?.mode, 'fail_closed');
+  assert.match(move?.whatItCanAnswer ?? move?.reason ?? '', /not acquired|Florida IM registration is not a substitute/i);
+  assert.doesNotMatch(move?.preview?.grain ?? '', /FDACS/);
   const fdacs = parseNetworkAsk('Show Florida intrastate movers registered with FDACS');
   assert.equal(fdacs.geography?.stateCode, 'FL');
   assert.equal(fdacs.topic, 'Florida Intrastate Mover registration research');
 });
 
-test('exact identifiers remain usable and stay distinct from NYSDOT complaints', () => {
-  const usdot = parseNetworkAsk('Find USDOT 3244649 in New York');
-  assert.equal(usdot.intent, 'identifier');
-  assert.equal(usdot.identifier?.family.id, 'usdot');
-  const nysdotComplaint = routeNyAsk('NYSDOT complaints for USDOT 3244649');
-  assert.equal(nysdotComplaint?.hubId, 'move');
-  assert.match(nysdotComplaint?.caveat ?? '', /USDOT is not NY intrastate|NOT_ACQUIRED|complaint/);
+test('complaint evidence keeps source scope through the final plan', () => {
+  const federal = buildNetworkAskPlan('Show complaint observations for USDOT 3244649, a New York mover');
+  const federalMove = federal.hubs.find((h) => h.hubId === 'move');
+  assert.equal(federal.parsed.intent, 'identifier');
+  assert.equal(federalMove?.mode, 'evidence');
+  assert.match(federalMove?.destination ?? '', /movetrusthub\.com\/ask\?/);
+  assert.doesNotMatch(federalMove?.destination ?? '', /\/new-york$/);
+  const nysdot = buildNetworkAskPlan('NYSDOT complaints for USDOT 3244649');
+  const nysdotMove = nysdot.hubs.find((h) => h.hubId === 'move');
+  assert.equal(nysdotMove?.mode, 'fail_closed');
+  assert.match(nysdotMove?.whatItCanAnswer ?? nysdotMove?.reason ?? '', /NYSDOT complaint corpus is not acquired/i);
+  assert.doesNotMatch(nysdotMove?.preview?.grain ?? '', /FDACS|federal complaint rows/i);
 });
 
-test('other-state wording, New York Life, VA mortgage, and West Virginia/New Jersey', () => {
+test('requested registration and debarment jurisdiction wins through the final plan', () => {
+  const cases: Array<[string, string]> = [
+    ['New Jersey adviser registered in New York', 'NY'],
+    ['California adviser registered in New York', 'NY'],
+    ['Florida adviser registered in NY', 'NY'],
+    ['New York adviser registered in Florida', 'FL'],
+    ['New York contractor debarred in Texas', 'TX'],
+  ];
+  for (const [query, code] of cases) {
+    const parsed = parseNetworkAsk(query);
+    const plan = buildNetworkAskPlan(query);
+    assert.equal(parsed.geography?.stateCode, code, query);
+    assert.equal(plan.parsed.geography?.stateCode, code, query);
+    assert.doesNotMatch(parsed.geography?.meaning ?? '', /first state mentioned/i);
+  }
+  assert.equal(requestedLegalJurisdiction('Florida adviser registered in NY')?.code, 'NY');
+  assert.equal(requestedLegalJurisdiction('New York contractor debarred in Texas')?.code, 'TX');
+  assert.equal(routeNyAsk('New York contractor debarred in Texas'), undefined);
+  assert.equal(routeNyAsk('New Jersey adviser registered in New York')?.hubId, 'investor');
+  const vaMortgage = buildNetworkAskPlan('VA mortgage in New York');
+  assert.equal(vaMortgage.parsed.geography?.stateCode, 'NY');
+  assert.equal(vaMortgage.hubs[0]?.hubId, 'lender');
   assert.equal(queryLooksLikeNewYork('New York Life'), false);
-  assert.equal(routeNyAsk('New York Life'), undefined);
-  assert.equal(parseNetworkAsk('New York Life').geography?.stateCode !== 'NY' || parseNetworkAsk('New York Life').intent !== 'place', true);
-  assert.equal(routeNyAsk('California contractor moving to New York'), undefined);
-  assert.equal(parseNetworkAsk('California contractor moving to New York').geography?.stateCode, 'CA');
-  assert.equal(parseNetworkAsk('VA mortgage in New York').geography?.stateCode, 'NY');
-  assert.equal(parseNetworkAsk('VA mortgage in New York').suggestedHubs[0], 'lender');
+  assert.equal(parseNetworkAsk('New York Life').geography?.stateCode, undefined);
   assert.equal(parseNetworkAsk('West Virginia contractor').geography?.stateCode, 'WV');
-  assert.equal(queryLooksLikeNewYork('Is this mover licensed in New Jersey?'), false);
   assert.equal(parseNetworkAsk('Is this mover licensed in New Jersey?').geography?.stateCode, 'NJ');
-  const registeredNy = parseNetworkAsk('Florida adviser registered in New York');
-  assert.equal(registeredNy.geography?.stateCode, 'NY');
-  assert.match(registeredNy.geography?.meaning ?? '', /registration jurisdiction/i);
-  const registeredFl = parseNetworkAsk('New York adviser registered in Florida');
-  assert.equal(registeredFl.geography?.stateCode, 'FL');
 });
 
 test('NYC names stay statewide and do not invent local routes', () => {
@@ -215,11 +262,17 @@ test('NYC names stay statewide and do not invent local routes', () => {
 });
 
 test('ranking and malformed identifiers do not become counts', () => {
-  const best = parseNetworkAsk('best mover in New York');
-  assert.notEqual(best.intent, 'count');
+  const best = buildNetworkAskPlan('best mover in New York');
+  const move = best.hubs.find((h) => h.hubId === 'move');
+  assert.notEqual(move?.mode, 'count');
+  assert.match(move?.destination ?? '', /movetrusthub\.com\/ask/);
+  assert.doesNotMatch(move?.destination ?? '', /\/new-york$/);
+  assert.match(`${move?.judgmentNote ?? ''} ${move?.whatItCanAnswer ?? ''}`, /rank/i);
   assert.match(NY_SEMANTIC_GUARDRAILS.no_ranking, /does not publish paid rankings/);
   const banana = parseNetworkAsk('USDOT banana');
   assert.notEqual(banana.intent, 'count');
+  const named = buildNetworkAskPlan('Is Acme Moving licensed in New York?');
+  assert.notEqual(named.hubs[0]?.mode, 'count');
 });
 
 test('claim eligibility surfaces are unchanged', () => {
@@ -238,6 +291,67 @@ test('state page inventory adds New York once', () => {
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/new-york'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/new-york/manhattan'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New York network gateway/);
+  assert.doesNotMatch(ASK_CONCIERGE_SYSTEM_PROMPT, /ASK_PREVIEW_READY, not Production-closed/);
   assert.equal(NY_NETWORK_CONTRACT, 'ath-ny-network-release-v1');
   assert.equal(NY_PUBLICATION_MANIFEST.version, NY_NETWORK_CONTRACT);
+  assert.match(NY_FINGERPRINT_METHOD, /not recomputed from HTML/i);
+});
+
+test('release gate fails on modified fixtures', () => {
+  const goodPage = {
+    hub_id: 'move',
+    url: 'https://www.movetrusthub.com/new-york',
+    http_status: 200,
+    canonical: 'https://www.movetrusthub.com/new-york',
+    robots: 'index, follow',
+    x_robots_tag: null,
+    final_url: 'https://www.movetrusthub.com/new-york',
+    sso: false,
+    headline_ok: true,
+    intended_intelligence_page: true,
+    not_noindex: true,
+  };
+  const expected = ACCEPTED_NY_SPECIALIST_RELEASES.move.canonical_state_url;
+  assert.equal(evaluateNyPageEvidence(goodPage, expected).ok, true);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, canonical: 'https://www.otherexample.com/new-york' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, canonical: 'https://www.movetrusthub.com/florida' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, final_url: 'https://www.movetrusthub.com/' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, sso: true, final_url: 'https://vercel.com/login' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, robots: 'noindex, follow' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, x_robots_tag: 'noindex' }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, http_status: 404 }, expected).ok, false);
+  assert.equal(evaluateNyPageEvidence({ ...goodPage, headline_ok: false }, expected).ok, false);
+
+  const hubs = structuredClone(NY_PUBLICATION_MANIFEST.hubs);
+  assert.equal(nySixHubIdsComplete(hubs), true);
+  assert.equal(nySixHubIdsComplete(hubs.slice(0, 5)), false);
+  assert.equal(nySixHubIdsComplete([...hubs, hubs[0]!]), false);
+
+  const verification = structuredClone(NY_VERIFICATION);
+  assert.equal(nyReleaseGatePassed(NY_PUBLICATION_MANIFEST, verification), true);
+
+  const duplicateManifest = { ...NY_PUBLICATION_MANIFEST, hubs: [...hubs, hubs[0]!] };
+  assert.equal(nyReleaseGatePassed(duplicateManifest, verification), false);
+
+  const missingHub = { ...NY_PUBLICATION_MANIFEST, hubs: hubs.filter((h) => h.hub_id !== 'insurance') };
+  assert.equal(nyReleaseGatePassed(missingHub, verification), false);
+
+  const duplicateVerification = { ...verification, hubs: [...verification.hubs, verification.hubs[0]!] };
+  assert.equal(nyReleaseGatePassed(NY_PUBLICATION_MANIFEST, duplicateVerification), false);
+
+  const wrongOrigin = structuredClone(NY_PUBLICATION_MANIFEST);
+  wrongOrigin.hubs[0]!.canonical_state_url = 'https://www.example.com/new-york';
+  assert.equal(nyReleaseGatePassed(wrongOrigin, verification), false);
+
+  const noindexVerification = structuredClone(verification);
+  noindexVerification.hubs[0]!.robots = 'noindex, follow';
+  assert.equal(nyReleaseGatePassed(NY_PUBLICATION_MANIFEST, noindexVerification), false);
+
+  const wrongSnapshot = structuredClone(NY_PUBLICATION_MANIFEST);
+  wrongSnapshot.hubs[0]!.snapshot_version = 'contractor-ny-state-intel-v0';
+  assert.equal(nyReleaseGatePassed(wrongSnapshot, verification), false);
+
+  const wrongFingerprint = structuredClone(NY_PUBLICATION_MANIFEST);
+  wrongFingerprint.hubs[0]!.fingerprint = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  assert.equal(nyReleaseGatePassed(wrongFingerprint, verification), false);
 });

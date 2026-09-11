@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * ATH-NY-NET-001 six-hub New York release/QA probe. Not used at runtime.
+ * Compares normalized public URLs to the trusted specialist origins.
  */
 import { writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -14,44 +15,74 @@ const HUBS = [
   { hub_id: 'move', url: 'https://www.movetrusthub.com/new-york', expect: /new york|nysdot|household|bulletin/i },
   { hub_id: 'senior', url: 'https://www.seniortrusthub.com/new-york', expect: /new york|nysdoh|nursing|adult care/i },
   { hub_id: 'lender', url: 'https://www.lendertrusthub.com/new-york', expect: /new york|hmda|nydfs|mortgage/i },
-  { hub_id: 'investor', url: 'https://www.investortrusthub.com/new-york', expect: /new york|adviser|iapd|investment/i },
   { hub_id: 'insurance', url: 'https://www.insurancetrusthub.com/new-york', expect: /new york|dfs|insurance|naic/i },
+  { hub_id: 'investor', url: 'https://www.investortrusthub.com/new-york', expect: /new york|adviser|iapd|investment/i },
 ];
 
-async function probe(url, expect) {
+function normalizePublicUrl(value) {
+  if (!value) return null;
   try {
-    const res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'ATH-NY-NET-001/1.0' } });
+    const url = new URL(value);
+    if (url.protocol !== 'https:') return null;
+    const path = url.pathname.replace(/\/+$/, '') || '/';
+    return `https://${url.hostname.toLowerCase()}${path}`;
+  } catch {
+    return null;
+  }
+}
+
+function samePage(actual, expected) {
+  const left = normalizePublicUrl(actual);
+  const right = normalizePublicUrl(expected);
+  return Boolean(left && right && left === right);
+}
+
+async function probe(expectedUrl, expect) {
+  try {
+    const res = await fetch(expectedUrl, { redirect: 'follow', headers: { 'User-Agent': 'ATH-NY-NET-001/1.0' } });
     const html = await res.text();
     const canonical = html.match(/rel="canonical" href="([^"]+)"/)?.[1] ?? null;
     const robots = html.match(/name="robots" content="([^"]+)"/)?.[1] ?? null;
+    const xRobots = res.headers.get('x-robots-tag');
     const title = html.match(/<title>([^<]+)<\/title>/)?.[1] ?? null;
     const h1 = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] || '')
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
-    const looks404 = /page not found|404/i.test(title || '') || /page not found/i.test(h1);
-    const sso = /sso-api|vercel.com\/login/i.test(html.slice(0, 2000)) && res.url.includes('vercel.com/login');
-    const selfCanonical = /\/new-york\/?$/i.test(canonical || '');
-    const noindex = /noindex/i.test(robots || '');
+    const looks404 = res.status === 404 || /page not found|404/i.test(title || '') || /page not found/i.test(h1);
+    const sso = /sso-api|vercel.com\/login/i.test(res.url) || (/sso-api|vercel.com\/login/i.test(html.slice(0, 2000)) && /vercel.com\/login/i.test(res.url));
+    const noindex = /noindex/i.test(robots || '') || /noindex/i.test(xRobots || '');
     const headlineOk = expect.test(h1) || expect.test(title || '');
+    const finalMatches = samePage(res.url, expectedUrl);
+    const canonicalMatches = samePage(canonical, expectedUrl);
+    const ok =
+      res.status === 200 &&
+      !looks404 &&
+      finalMatches &&
+      canonicalMatches &&
+      !noindex &&
+      Boolean(headlineOk) &&
+      !sso;
     return {
       http_status: res.status,
+      expected_url: expectedUrl,
       final_url: res.url,
-      ok: res.status === 200 && !looks404 && selfCanonical && !noindex && Boolean(headlineOk) && !sso,
+      ok,
       canonical,
       robots,
+      x_robots_tag: xRobots,
       title,
       headline: h1,
-      intended_intelligence_page: selfCanonical && !looks404,
+      intended_intelligence_page: canonicalMatches && !looks404,
       headline_ok: Boolean(headlineOk),
       not_noindex: !noindex,
-      selfCanonical,
+      selfCanonical: canonicalMatches,
       sso,
       fingerprint_method:
-        'Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML.',
+        'Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML.',
     };
   } catch (err) {
-    return { http_status: null, ok: false, error: String(err) };
+    return { http_status: null, ok: false, expected_url: expectedUrl, error: String(err) };
   }
 }
 
@@ -73,6 +104,8 @@ const out = {
   required_hubs: HUBS.map((h) => h.hub_id),
   missing,
   blocker: passed ? null : `Specialist New York pages failed: ${missing.join(', ')}`,
+  fingerprint_method:
+    'Accepted specialist snapshot artifact at certified repository SHA. Not recomputed from public HTML.',
   hubs,
 };
 

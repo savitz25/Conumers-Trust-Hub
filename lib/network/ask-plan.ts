@@ -384,7 +384,8 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
           ? parsed.identifier?.family.id === 'mc'
             ? 'Labeled MC docket identity — not a ranking'
             : 'Labeled USDOT identity — not an endorsement'
-          : /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query)
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(parsed.query) &&
+              !/\bnew york\b|\bin ny\b|\bnysdot\b/i.test(parsed.query)
             ? 'FDACS Intrastate Mover registration rows'
             : roleLabel
               ? `directory ${roleLabel} profiles (dual-role disclosed, not double-counted)`
@@ -1021,6 +1022,24 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
 
   if (parsed.geography?.stateCode === 'NY') {
     const nyRoute = routeNyAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(
+        dest &&
+          (/\/ask(\?|$)/i.test(dest) ||
+            /\/api\/ask/i.test(dest) ||
+            /\/verify(\?|$)/i.test(dest) ||
+            /\/companies\?/i.test(dest)),
+      );
+    const annotateNy = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : nySpecialistUrl(hub.hubId),
+        geographyCapability: hub.geographyCapability,
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? nySpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
     if (nyRoute) {
       const already = hubs.some((h) => h.hubId === nyRoute.hubId);
       if (!already) {
@@ -1037,30 +1056,12 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
           ...hubs,
         ];
       } else {
-        hubs = hubs.map((h) =>
-          h.hubId === nyRoute.hubId
-            ? {
-                ...h,
-                destination: nyRoute.destination,
-                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
-                reason: `${h.reason} ${nyRoute.caveat}`,
-              }
-            : h,
-        );
+        hubs = hubs.map((h) => (h.hubId === nyRoute.hubId ? annotateNy(h, nyRoute.caveat) : h));
         hubs = [...hubs.filter((h) => h.hubId === nyRoute.hubId), ...hubs.filter((h) => h.hubId !== nyRoute.hubId)];
       }
     } else if (parsed.suggestedHubs[0]) {
       const primary = parsed.suggestedHubs[0];
-      hubs = hubs.map((h) =>
-        h.hubId === primary
-          ? {
-              ...h,
-              destination: nySpecialistUrl(primary),
-              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
-              reason: `${h.reason} ${nyCaveatForHub(primary)}`,
-            }
-          : h,
-      );
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateNy(h, nyCaveatForHub(primary)) : h));
     }
   }
 

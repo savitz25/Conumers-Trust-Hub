@@ -2,9 +2,64 @@ import { createHash } from 'node:crypto';
 import manifestJson from '../../data/network/new-york-publication-manifest.json' with { type: 'json' };
 import verificationJson from '../../data/network/new-york-verification.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
-import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
+import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
+import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 
 export const NY_NETWORK_CONTRACT = 'ath-ny-network-release-v1' as const;
+
+export const REQUIRED_NY_HUB_IDS = [
+  'contractor',
+  'move',
+  'senior',
+  'lender',
+  'insurance',
+  'investor',
+] as const satisfies readonly SpecialistHubId[];
+
+export const NY_FINGERPRINT_METHOD =
+  'Accepted specialist snapshot artifact at the certified repository SHA. Public HTML confirms the intended state page; the fingerprint is not recomputed from HTML.';
+
+export const ACCEPTED_NY_SPECIALIST_RELEASES: Record<
+  SpecialistHubId,
+  { snapshot_version: string; fingerprint: string; certified_release_sha: string; canonical_state_url: string }
+> = {
+  contractor: {
+    snapshot_version: 'contractor-ny-state-intel-v1',
+    fingerprint: '27f39aad84544a1ecfb4db74934ddbac55f94bd087b2a9cf3b5de20305685f14',
+    certified_release_sha: '862da0d952275a99e4214b6e88b2082581cb837b',
+    canonical_state_url: 'https://www.contractortrusthub.com/new-york',
+  },
+  move: {
+    snapshot_version: 'move-ny-state-intel-v1',
+    fingerprint: '9dce86a315eb652f36026620361b8ac0657c734ccafe576d533ed240f6338b83',
+    certified_release_sha: '866bde6eeeed692d23257c7de75ebca38cb11e78',
+    canonical_state_url: 'https://www.movetrusthub.com/new-york',
+  },
+  senior: {
+    snapshot_version: 'senior-ny-state-intel-v1',
+    fingerprint: '0ba069ebbd93faeb3274f3849a34703be2a9ce6fa66289468d6a2dfa5c73af54',
+    certified_release_sha: 'eaff708dd7459c8ca24eca00c1ce0039100b5979',
+    canonical_state_url: 'https://www.seniortrusthub.com/new-york',
+  },
+  lender: {
+    snapshot_version: 'lender-ny-state-intel-v1',
+    fingerprint: 'd3a07f5b5d7114e54917ef0aa0d338e81f90f87e2bb0fc9eddabe2fa75eb6b82',
+    certified_release_sha: '8ea55825d3a4cc5ef4d8aabd80f7c2e8348ee1ed',
+    canonical_state_url: 'https://www.lendertrusthub.com/new-york',
+  },
+  insurance: {
+    snapshot_version: 'insurance-ny-state-intel-v1',
+    fingerprint: 'd4832c3c41c0390d6ffa15755142c6d669e49e6fb0db858f55f761ea894b212e',
+    certified_release_sha: 'a12b6d59d8420a0cb8a2076a0b8b00b18b88c41f',
+    canonical_state_url: 'https://www.insurancetrusthub.com/new-york',
+  },
+  investor: {
+    snapshot_version: 'investor-ny-state-intel-v1',
+    fingerprint: '99934341f3307ee00802256cc143d904085d2cf464f9cc15fd97ae48f9c00a1a',
+    certified_release_sha: 'e1f57a1b5092233892365f1c02a21b2cc935a2f5',
+    canonical_state_url: 'https://www.investortrusthub.com/new-york',
+  },
+};
 
 export type NyHubManifest = (typeof manifestJson)['hubs'][number];
 
@@ -49,25 +104,121 @@ export function nySpecialistUrl(id: SpecialistHubId): string {
   return nyHubById(id)?.canonical_state_url ?? `${CANONICAL_ORIGINS[id]}/new-york`;
 }
 
-export function nySixHubIdsComplete(): boolean {
-  const ids = NY_PUBLICATION_MANIFEST.hubs.map((h) => h.hub_id);
-  return SPECIALIST_HUB_IDS.every((id) => ids.includes(id)) && new Set(ids).size === 6;
+export type NyGateHub = {
+  hub_id: string;
+  canonical_state_url?: string;
+  snapshot_version?: string;
+  fingerprint?: string;
+  certified_release_sha?: string;
+  publication_status?: string;
+};
+
+export type NyGateManifest = {
+  hubs: NyGateHub[];
+  scope?: string;
+  hardcoded_nyc_routes?: boolean;
+};
+
+export type NyPageEvidence = {
+  hub_id?: string;
+  url?: string | null;
+  expected_url?: string | null;
+  http_status?: number | null;
+  ok?: boolean;
+  canonical?: string | null;
+  robots?: string | null;
+  x_robots_tag?: string | null;
+  final_url?: string | null;
+  selfCanonical?: boolean;
+  sso?: boolean;
+  headline_ok?: boolean;
+  intended_intelligence_page?: boolean;
+  not_noindex?: boolean;
+};
+
+export type NyGateVerification = {
+  release_gate_passed?: boolean;
+  missing?: string[];
+  hubs: NyPageEvidence[];
+};
+
+export function nySixHubIdsComplete(hubs: NyGateHub[] = listNyHubs()): boolean {
+  if (!Array.isArray(hubs) || hubs.length !== REQUIRED_NY_HUB_IDS.length) return false;
+  const ids = hubs.map((hub) => hub.hub_id);
+  if (new Set(ids).size !== REQUIRED_NY_HUB_IDS.length) return false;
+  return REQUIRED_NY_HUB_IDS.every((id) => ids.includes(id));
 }
 
-export function nyReleaseGatePassed(): boolean {
-  if (!nySixHubIdsComplete()) return false;
-  if (NY_PUBLICATION_MANIFEST.scope !== 'STATE_LEVEL_ONLY') return false;
-  if (NY_PUBLICATION_MANIFEST.hardcoded_nyc_routes !== false) return false;
-  if (NY_VERIFICATION.release_gate_passed !== true) return false;
-  if (!Array.isArray(NY_VERIFICATION.hubs) || NY_VERIFICATION.hubs.length !== 6) return false;
-  if ((NY_VERIFICATION.missing ?? []).length !== 0) return false;
-  for (const hub of listNyHubs()) {
-    const verified = NY_VERIFICATION.hubs.find((row) => row.hub_id === hub.hub_id);
-    if (!verified || verified.ok !== true || verified.http_status !== 200) return false;
-    if (verified.url !== hub.canonical_state_url) return false;
-    if (verified.selfCanonical !== true || verified.sso !== false) return false;
-    if (!hub.snapshot_version || !/^[a-f0-9]{64}$/.test(hub.fingerprint)) return false;
+export function normalizeNyPublicUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:') return null;
+    const host = url.hostname.toLowerCase();
+    if (!host) return null;
+    const path = (url.pathname.replace(/\/+$/, '') || '/') as string;
+    if (url.username || url.password) return null;
+    return `https://${host}${path}`;
+  } catch {
+    return null;
+  }
+}
+
+export function urlsAreSameNyPage(actual: string | null | undefined, expected: string): boolean {
+  const left = normalizeNyPublicUrl(actual);
+  const right = normalizeNyPublicUrl(expected);
+  return Boolean(left && right && left === right);
+}
+
+export function evaluateNyPageEvidence(
+  probe: NyPageEvidence,
+  expectedUrl: string,
+): { ok: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+  if (probe.http_status !== 200) reasons.push('http_status');
+  if (probe.sso !== false) reasons.push('sso');
+  const finalUrl = probe.final_url ?? probe.url ?? null;
+  if (!urlsAreSameNyPage(finalUrl, expectedUrl)) reasons.push('final_url');
+  if (!urlsAreSameNyPage(probe.canonical, expectedUrl)) reasons.push('canonical');
+  const robots = `${probe.robots ?? ''} ${probe.x_robots_tag ?? ''}`;
+  if (/noindex/i.test(robots) || probe.not_noindex === false) reasons.push('noindex');
+  if (probe.headline_ok !== true) reasons.push('headline');
+  if (probe.intended_intelligence_page === false) reasons.push('not_intelligence_page');
+  const looksSoft404 = /page not found|\b404\b/i.test(`${probe.canonical ?? ''} ${probe.final_url ?? ''}`);
+  if (looksSoft404) reasons.push('soft_404');
+  return { ok: reasons.length === 0, reasons };
+}
+
+export function nyReleaseGatePassed(
+  manifest: NyGateManifest = NY_PUBLICATION_MANIFEST,
+  verification: NyGateVerification = NY_VERIFICATION,
+): boolean {
+  if (!nySixHubIdsComplete(manifest.hubs)) return false;
+  if (manifest.scope !== 'STATE_LEVEL_ONLY') return false;
+  if (manifest.hardcoded_nyc_routes !== false) return false;
+  if (!Array.isArray(verification.hubs) || verification.hubs.length !== REQUIRED_NY_HUB_IDS.length) return false;
+  const verifiedIds = verification.hubs.map((row) => row.hub_id).filter((id): id is string => Boolean(id));
+  if (verifiedIds.length !== REQUIRED_NY_HUB_IDS.length || new Set(verifiedIds).size !== REQUIRED_NY_HUB_IDS.length) {
+    return false;
+  }
+  if (!REQUIRED_NY_HUB_IDS.every((id) => verifiedIds.includes(id))) return false;
+  if ((verification.missing ?? []).length !== 0) return false;
+  for (const hub of manifest.hubs) {
+    const id = hub.hub_id as SpecialistHubId;
+    const accepted = ACCEPTED_NY_SPECIALIST_RELEASES[id];
+    if (!accepted) return false;
+    if (hub.canonical_state_url !== accepted.canonical_state_url) return false;
+    if (hub.snapshot_version !== accepted.snapshot_version) return false;
+    if (hub.fingerprint !== accepted.fingerprint) return false;
+    if (hub.certified_release_sha && hub.certified_release_sha !== accepted.certified_release_sha) return false;
     if (hub.publication_status !== 'live') return false;
+    const verified = verification.hubs.find((row) => row.hub_id === hub.hub_id);
+    if (!verified) return false;
+    const page = evaluateNyPageEvidence(
+      { ...verified, url: verified.url ?? verified.expected_url ?? hub.canonical_state_url },
+      accepted.canonical_state_url,
+    );
+    if (!page.ok) return false;
   }
   return true;
 }
@@ -157,12 +308,42 @@ export type NyRoute = {
   caveat: string;
 };
 
-function earlierStateNamed(query: string, other: RegExp): boolean {
-  const ny = query.search(/\bnew york\b/i);
-  const otherAt = query.search(other);
-  if (otherAt < 0) return false;
-  if (ny < 0) return true;
-  return otherAt < ny;
+export type RequestedLegalJurisdiction = {
+  code: string;
+  name: string;
+  verb: 'registered' | 'debarred';
+  ambiguous: boolean;
+};
+
+function jurisdictionNamePattern(name: string): string {
+  return name.replace(/\s+/g, '\\s+');
+}
+
+export function requestedLegalJurisdiction(query: string): RequestedLegalJurisdiction | undefined {
+  const stripped = query.replace(/\bnew york life\b/gi, ' ');
+  const found: Array<{ code: string; name: string; verb: 'registered' | 'debarred' }> = [];
+  const verbs: Array<'registered' | 'debarred'> = ['registered', 'debarred'];
+  const jurisdictions = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length);
+  for (const verb of verbs) {
+    for (const place of jurisdictions) {
+      if (place.code === 'VA' && /\bwest\s+virginia\b/i.test(stripped) && !/\b(?<!west\s)virginia\b/i.test(stripped)) {
+        continue;
+      }
+      const nameRe = new RegExp(`\\b${verb}\\s+in\\s+${jurisdictionNamePattern(place.name)}\\b`, 'i');
+      const codeRe = new RegExp(`\\b${verb}\\s+in\\s+${place.code}\\b`, 'i');
+      if (nameRe.test(stripped) || codeRe.test(stripped)) {
+        found.push({ code: place.code, name: place.name, verb });
+        break;
+      }
+    }
+  }
+  if (found.length === 0) return undefined;
+  const unique = [...new Set(found.map((row) => row.code))];
+  if (unique.length > 1) {
+    return { code: unique.join('|'), name: found.map((row) => row.name).join(' / '), verb: found[0]!.verb, ambiguous: true };
+  }
+  const match = found.find((row) => row.code === unique[0])!;
+  return { ...match, ambiguous: false };
 }
 
 export function classifyNyHub(query: string): SpecialistHubId | undefined {
@@ -204,18 +385,11 @@ export function classifyNyHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeNyAsk(query: string): NyRoute | undefined {
-  if (/\bdebarred in florida\b/i.test(query)) return undefined;
   if (newYorkLifeOnly(query)) return undefined;
-  if (earlierStateNamed(query, /\bnew\s+jersey\b/i)) return undefined;
-  if (earlierStateNamed(query, /\bwest\s+virginia\b/i)) return undefined;
-  if (earlierStateNamed(query, /\bcalifornia\b|\bcalif\b/i)) return undefined;
-  if (earlierStateNamed(query, /\btexas\b|\btexan\b/i)) return undefined;
-  if (earlierStateNamed(query, /\bflorida\b/i) && !/\bregistered in new york\b/i.test(query)) return undefined;
-  if (earlierStateNamed(query, /\bwashington\b/i)) return undefined;
-  if (earlierStateNamed(query, /\barizona\b/i)) return undefined;
-  if (earlierStateNamed(query, /\bcolorado\b/i)) return undefined;
-  if (earlierStateNamed(query, /\bvirginia\b/i) && !/\bva mortgage\b/i.test(query)) return undefined;
-  if (!queryLooksLikeNewYork(query)) return undefined;
+  const requested = requestedLegalJurisdiction(query);
+  if (requested?.ambiguous) return undefined;
+  if (requested && requested.code !== 'NY') return undefined;
+  if (!queryLooksLikeNewYork(query) && requested?.code !== 'NY') return undefined;
   const hubId = classifyNyHub(query);
   if (!hubId) return undefined;
   return {
@@ -238,8 +412,7 @@ AskTrustHub /new-york is the network gateway. Specialist /new-york pages own det
 New York research is STATE LEVEL. NYC, borough, and county names stay on specialist /new-york with statewide limitations. Do not invent NYC Ask routes. Local NYC acquisition is approved after statewide closeout and is NOT STARTED.
 Hub intent remains primary. Do not route every New York question to Contractor.
 Live NY specialist pages: ${live.map((h) => h.hub_id).join(', ') || 'none'}.
-Six-hub release gate passed: ${gate ? 'yes' : 'no'}. Blocker: ${NY_PUBLICATION_MANIFEST.release_gate.blocker ?? 'none'}.
-Ask status is ASK_PREVIEW_READY, not Production-closed.
+Six-hub specialist publication gate: ${gate ? 'passed' : 'failed'}. Blocker: ${NY_PUBLICATION_MANIFEST.release_gate.blocker ?? 'none'}.
 Do not invent New York license, roster, or count facts. Route to the specialist page.
 Do not copy Virginia or other-state metrics into New York.
 Do not answer “how many movers?” as 108 or 103.
@@ -257,5 +430,5 @@ Guardrails:
 - ${NY_SEMANTIC_GUARDRAILS.lender_dated_ne_current}
 - ${NY_SEMANTIC_GUARDRAILS.investor_1297_ne_office_ne_notice}
 - ${NY_SEMANTIC_GUARDRAILS.insurance_1054_ne_authorized}
-- Missing, restricted, and search-only evidence is unknown, not zero. No Trust Score. No paid ranking. NYC phase not started.`;
+- Missing, restricted, and search-only evidence is unknown, not zero. No Trust Score. No paid ranking. NYC local routes are not started.`;
 }

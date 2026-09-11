@@ -143,10 +143,19 @@ export function moveGeographyMeaning(q: string): string {
   if (/\bserv(e|es|ing)\b|\bservice (area|territory|coverage)\b/i.test(q)) {
     return 'Headquarters and Florida IM registration are not service territory. Ask does not infer county coverage from a Florida address.';
   }
-  if (/\b(fdacs|intrastate mover|im registration)\b/i.test(q)) {
+  if (/\bnysdot\b/i.test(q) && /\bcomplaint/i.test(q)) {
+    return 'NYSDOT complaint corpus is a New York state evidence family. Federal complaint observations are not a substitute.';
+  }
+  if ((/\bintrastate movers?\b/i.test(q) || /\bnysdot\b|\bcarcert\b/i.test(q)) && /\bnew york\b|\bin ny\b|\bnysdot\b/i.test(q) && !/\bfdacs\b/i.test(q)) {
+    return 'NYSDOT intrastate household-goods authority — not FMCSA interstate authority, not Florida IM registration, not a known current roster count.';
+  }
+  if (/\b(fdacs|intrastate mover|im registration)\b/i.test(q) && !/\bnew york\b|\bin ny\b|\bnysdot\b/i.test(q)) {
     return 'Florida Intrastate Mover registration — not FMCSA interstate authority, not headquarters, not service territory.';
   }
-  if (/\bheadquarter|recorded (company )?address|based in\b/i.test(q) || /\bflorida\b/i.test(q)) {
+  if (/\bheadquarter|recorded (company )?address|based in\b/i.test(q)) {
+    return 'Recorded company address / headquarters state — not service territory and not NYSDOT authority.';
+  }
+  if (/\bflorida\b/i.test(q) && !/\bnew york\b|\bin ny\b/i.test(q)) {
     return 'Recorded company address / headquarters state — not service territory.';
   }
   return 'Not rewritten as service territory. Interstate authority is not Florida coverage.';
@@ -183,6 +192,16 @@ export function moveFailClosedReason(q: string): string | undefined {
   }
   if (/\bhow many moving companies\b|\btotal movers\b/i.test(q)) {
     return 'Counts require a regulatory grain. Carrier, broker, dual-role, and Florida IM registrations are not added into one “moving companies” total.';
+  }
+  if (/\bnysdot\b/i.test(q) && /\bcomplaint/i.test(q)) {
+    return 'NYSDOT complaint corpus is not acquired. Federal complaint observations are not a substitute. Missing evidence is not a clean record.';
+  }
+  if (
+    /\bintrastate movers?\b/i.test(q) &&
+    (/\bnew york\b/i.test(q) || /\bin ny\b/i.test(q) || /\bnysdot\b/i.test(q) || /\bcarcert\b/i.test(q)) &&
+    !/\bfdacs\b/i.test(q)
+  ) {
+    return 'Current NYSDOT household-goods roster is not acquired. Search-only is not zero. Florida IM registration is not a substitute. Zero returned rows are not a known zero population.';
   }
   return undefined;
 }
