@@ -1,26 +1,29 @@
 {
-  "verified_at": "2026-09-11T19:55:00.696Z",
+  "verified_at": "2026-09-11T21:39:31.981Z",
   "release_gate_passed": true,
   "required_hubs": [
     "contractor",
     "move",
     "senior",
     "lender",
-    "investor",
-    "insurance"
+    "insurance",
+    "investor"
   ],
   "missing": [],
   "blocker": null,
+  "fingerprint_method": "Accepted specialist snapshot artifact at certified repository SHA. Not recomputed from public HTML.",
   "hubs": [
     {
       "hub_id": "contractor",
       "url": "https://www.contractortrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
+      "verified_at": "2026-09-11T21:39:31.981Z",
       "http_status": 200,
+      "expected_url": "https://www.contractortrusthub.com/new-york",
       "final_url": "https://www.contractortrusthub.com/new-york",
       "ok": true,
       "canonical": "https://www.contractortrusthub.com/new-york",
       "robots": "index, follow",
+      "x_robots_tag": null,
       "title": "New York Public-Work Contractor Registration Intelligence | ContractorTrustHub · Contractor Trust Hub",
       "headline": "New York Public-Work Contractor Registration Intelligence",
       "intended_intelligence_page": true,
@@ -28,17 +31,19 @@
       "not_noindex": true,
       "selfCanonical": true,
       "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
     },
     {
       "hub_id": "move",
       "url": "https://www.movetrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
+      "verified_at": "2026-09-11T21:39:31.981Z",
       "http_status": 200,
+      "expected_url": "https://www.movetrusthub.com/new-york",
       "final_url": "https://www.movetrusthub.com/new-york",
       "ok": true,
       "canonical": "https://www.movetrusthub.com/new-york",
       "robots": "index, follow",
+      "x_robots_tag": null,
       "title": "New York Household-Goods Mover Authority &amp; NYSDOT Intelligence | Move Trust Hub",
       "headline": "New York Household-Goods Moving Intelligence",
       "intended_intelligence_page": true,
@@ -46,17 +51,19 @@
       "not_noindex": true,
       "selfCanonical": true,
       "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
     },
     {
       "hub_id": "senior",
       "url": "https://www.seniortrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
+      "verified_at": "2026-09-11T21:39:31.981Z",
       "http_status": 200,
+      "expected_url": "https://www.seniortrusthub.com/new-york",
       "final_url": "https://www.seniortrusthub.com/new-york",
       "ok": true,
       "canonical": "https://www.seniortrusthub.com/new-york",
       "robots": "index, follow",
+      "x_robots_tag": null,
       "title": "New York Senior Care Research — Adult Care, Nursing Homes, CMS | SeniorTrustHub",
       "headline": "New York Senior Care Research",
       "intended_intelligence_page": true,
@@ -64,17 +71,19 @@
       "not_noindex": true,
       "selfCanonical": true,
       "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
     },
     {
       "hub_id": "lender",
       "url": "https://www.lendertrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
+      "verified_at": "2026-09-11T21:39:31.981Z",
       "http_status": 200,
+      "expected_url": "https://www.lendertrusthub.com/new-york",
       "final_url": "https://www.lendertrusthub.com/new-york",
       "ok": true,
       "canonical": "https://www.lendertrusthub.com/new-york",
       "robots": "index, follow",
+      "x_robots_tag": null,
       "title": "New York Mortgage Licensing &amp; Lending Intelligence | LenderTrustHub | Lender Trust Hub",
       "headline": "New York Mortgage Licensing &amp; Lending Intelligence",
       "intended_intelligence_page": true,
@@ -82,35 +91,19 @@
       "not_noindex": true,
       "selfCanonical": true,
       "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
-    },
-    {
-      "hub_id": "investor",
-      "url": "https://www.investortrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
-      "http_status": 200,
-      "final_url": "https://www.investortrusthub.com/new-york",
-      "ok": true,
-      "canonical": "https://www.investortrusthub.com/new-york",
-      "robots": "index, follow",
-      "title": "New York Investment Adviser Intelligence · InvestorTrustHub",
-      "headline": "New York Investment Adviser Intelligence",
-      "intended_intelligence_page": true,
-      "headline_ok": true,
-      "not_noindex": true,
-      "selfCanonical": true,
-      "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
     },
     {
       "hub_id": "insurance",
       "url": "https://www.insurancetrusthub.com/new-york",
-      "verified_at": "2026-09-11T19:55:00.696Z",
+      "verified_at": "2026-09-11T21:39:31.981Z",
       "http_status": 200,
+      "expected_url": "https://www.insurancetrusthub.com/new-york",
       "final_url": "https://www.insurancetrusthub.com/new-york",
       "ok": true,
       "canonical": "https://www.insurancetrusthub.com/new-york",
       "robots": "index, follow",
+      "x_robots_tag": null,
       "title": "New York Insurance Market &amp; Regulatory Intelligence | InsuranceTrustHub | InsuranceTrustHub",
       "headline": "New York Insurance Market &amp; Regulatory Intelligence",
       "intended_intelligence_page": true,
@@ -118,7 +111,28 @@
       "not_noindex": true,
       "selfCanonical": true,
       "sso": false,
-      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact, not recomputed from HTML."
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
+    },
+    {
+      "hub_id": "investor",
+      "url": "https://www.investortrusthub.com/new-york",
+      "verified_at": "2026-09-11T21:39:31.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.investortrusthub.com/new-york",
+      "final_url": "https://www.investortrusthub.com/new-york",
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/new-york",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "title": "New York Investment Adviser Intelligence · InvestorTrustHub",
+      "headline": "New York Investment Adviser Intelligence",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "fingerprint_method": "Public HTML confirms intended state-page identity. Snapshot fingerprint is taken from the accepted specialist repository artifact at the certified release SHA, not recomputed from HTML."
     }
-  ]
+  ],
+  "manifest_version": "ath-ny-network-release-v1"
 }

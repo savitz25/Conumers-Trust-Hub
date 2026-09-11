@@ -66,8 +66,23 @@ test('release gate validates verification evidence, not an unexplained constant'
   }
   assert.equal(NY_PUBLICATION_MANIFEST.status, 'ASK_PREVIEW_READY');
   assert.equal(NY_PUBLICATION_MANIFEST.ask_production, null);
-  assert.equal(closeout.status, 'ASK_PREVIEW_READY');
-  assert.equal(closeout.ask_production, null);
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(closeout.ask_production.merge_sha, '744d5ea142a340c941038cd6e440311b52a024c9');
+  assert.equal(closeout.ask_production.deployment_id, 6402322095);
+  assert.equal(closeout.ask_production.live_route, 'https://www.asktrusthub.com/new-york');
+  assert.equal(closeout.ask_production.http_status, 200);
+  assert.equal(closeout.ask_production.canonical, 'https://www.asktrusthub.com/new-york');
+  assert.equal(closeout.ask_production.robots, 'index, follow');
+  assert.equal(closeout.ask_production.sso, false);
+});
+
+test('state closeout is Production verified after Ask /new-york certification', () => {
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(release.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(closeout.ask_production.deployed_sha, '744d5ea142a340c941038cd6e440311b52a024c9');
+  assert.equal(closeout.ask_production.environment, 'Production');
+  assert.equal(NY_PUBLICATION_FINGERPRINT, '486ab780e92eb5008d3bd58aab68ec43c745e37de536f3cd087e7f4729d5ba3b');
+  assert.equal(closeout.new_york_local_phase_status, 'NOT_STARTED');
 });
 
 test('Ask /new-york canonical, indexability follows gate, no NYC routes', () => {
