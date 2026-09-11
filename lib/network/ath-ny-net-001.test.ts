@@ -249,6 +249,9 @@ test('requested registration and debarment jurisdiction wins through the final p
   assert.equal(parseNetworkAsk('New York Life').geography?.stateCode, undefined);
   assert.equal(parseNetworkAsk('West Virginia contractor').geography?.stateCode, 'WV');
   assert.equal(parseNetworkAsk('Is this mover licensed in New Jersey?').geography?.stateCode, 'NJ');
+  assert.equal(requestedLegalJurisdiction('adviser registered in or near New York'), undefined);
+  assert.equal(parseNetworkAsk('adviser registered in or near New York').geography?.stateCode, 'NY');
+  assert.equal(buildNetworkAskPlan('adviser registered in or near New York').parsed.geography?.stateCode, 'NY');
 });
 
 test('NYC names stay statewide and do not invent local routes', () => {

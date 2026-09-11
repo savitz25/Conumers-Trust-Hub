@@ -330,7 +330,9 @@ export function requestedLegalJurisdiction(query: string): RequestedLegalJurisdi
         continue;
       }
       const nameRe = new RegExp(`\\b${verb}\\s+in\\s+${jurisdictionNamePattern(place.name)}\\b`, 'i');
-      const codeRe = new RegExp(`\\b${verb}\\s+in\\s+${place.code}\\b`, 'i');
+      // Two-letter codes must appear as the official uppercase abbreviation.
+      // Case-insensitive matching would treat "registered in or near New York" as Oregon.
+      const codeRe = new RegExp(`\\b${verb}\\s+in\\s+${place.code}\\b`);
       if (nameRe.test(stripped) || codeRe.test(stripped)) {
         found.push({ code: place.code, name: place.name, verb });
         break;

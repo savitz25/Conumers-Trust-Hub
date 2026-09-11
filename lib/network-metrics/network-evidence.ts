@@ -163,14 +163,20 @@ export const ASK_NETWORK_STATES = [
 const ADAPTER_PATHS: Partial<Record<SpecialistHubId, string[]>> = {
   contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
   senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
+  move: ['/new-york'],
+  lender: ['/new-york'],
+  insurance: ['/new-york'],
+  investor: ['/new-york'],
 };
 
 function specialistPaths(contract: LoadedSpecialistContract): string[] {
   const raw = contract.raw;
   const network = raw.network && typeof raw.network === 'object' ? raw.network as Record<string, unknown> : {};
   const publication = raw.publication && typeof raw.publication === 'object' ? raw.publication as Record<string, unknown> : {};
-  const paths = network.publishedStateIntelligencePaths ?? raw.publishedStateIntelligencePaths ?? publication.publishedStateIntelligencePaths ?? ADAPTER_PATHS[contract.hub];
-  return Array.isArray(paths) ? paths.map(String) : [];
+  const fromContract = network.publishedStateIntelligencePaths ?? raw.publishedStateIntelligencePaths ?? publication.publishedStateIntelligencePaths;
+  const extras = ADAPTER_PATHS[contract.hub] ?? [];
+  const paths = Array.isArray(fromContract) ? fromContract.map(String) : [];
+  return [...new Set([...paths, ...extras])];
 }
 
 export type StateCoverageMode = 'SPECIALIST_PUBLISHED' | 'NATIONAL_ONLY' | 'NO_COMPARABLE_STATE_UNIVERSE';

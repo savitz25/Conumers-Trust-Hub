@@ -50,6 +50,7 @@ test('seven-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'WA')?.hubs.find((hub) => hub.hub === 'move')?.mode, 'SPECIALIST_PUBLISHED');
   assert.equal(states.find((state) => state.code === 'CO')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.equal(states.find((state) => state.code === 'VA')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
+  assert.equal(states.find((state) => state.code === 'NY')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
     const accepted = coverageArtifact.jurisdictions[`US-${state.code}` as keyof typeof coverageArtifact.jurisdictions];
