@@ -22,6 +22,7 @@ import {
 import { MOVE_ASK_ROUTE } from './move-ask.ts';
 import { parseNetworkAsk } from './ask-parse.ts';
 import { buildNetworkAskPlan } from './ask-plan.ts';
+import { buildAskResearchRoute } from './ask-research-route.ts';
 import { SPECIALIST_HUB_IDS } from './registry.ts';
 import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 import { listPlaceLensIndex } from './place-lens.ts';
@@ -284,6 +285,12 @@ test('multiple requested registration states clarify instead of collapsing', () 
   const officeOnly = buildNetworkAskPlan('Florida adviser registered in New York');
   assert.equal(officeOnly.parsed.geography?.stateCode, 'NY');
   assert.notEqual(officeOnly.hubs[0]?.mode, 'fail_closed');
+  for (const query of queries) {
+    const route = buildAskResearchRoute(query);
+    assert.equal(route.canExecute, false, query);
+    assert.match(route.status, /detail before I search|clarif/i, query);
+    assert.match(`${route.explanation} ${route.requestedScope ?? ''} ${route.executionScope ?? ''}`, /New York|Florida|geography/i, query);
+  }
 });
 
 test('NYC names stay statewide and do not invent local routes', () => {
