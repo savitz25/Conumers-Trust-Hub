@@ -124,6 +124,14 @@ function requestedGeography(query: string, parsed: ReturnType<typeof parseNetwor
   if(flMatch){const mapped=resolveFloridaMunicipality(flMatch)!;return {raw:flMatch,display:`${mapped.city}, Florida`,kind:'city',resolution:'RESOLVED',stateCode:'FL',stateName:'Florida',city:mapped.city,county:mapped.county};}
   if (parsed.geography) {
     const geo = parsed.geography;
+    if (!geo.stateName && !geo.stateCode && !geo.countyName && !geo.city) {
+      return {
+        raw: geo.meaning,
+        display: geo.meaning,
+        kind: 'place',
+        resolution: 'UNRESOLVED',
+      };
+    }
     const match = query.match(/\b(?:in|near|around|within)\s+([a-z][a-z .'-]*?(?:county)?(?:\s*,?\s*(?:florida|texas|california|new\s+jersey|fl|tx|ca|nj))?)\b(?=\s+(?:for|and|with|that|which)\b|[?.!,]|$)/i);
     const raw = match?.[1]?.trim() ?? geo.countyName ?? geo.city ?? geo.stateName ?? geo.stateCode!;
     const display = geo.countyName ? `${geo.countyName}, ${geo.stateName}` : geo.city ? `${geo.city}, ${geo.stateName}` : geo.stateName!;
@@ -204,7 +212,7 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   if (overrides.proposedIntent) intent = overrides.proposedIntent;
 
   const genericName = name && (entity && new RegExp(`^${entity.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i').test(name) || /^(?:moving\s+company|mover|lender|insurance\s+agent|home\s+health\s+agency|nursing\s+home|contractor|roofer|financial\s+advis(?:er|or)|investment\s+advis(?:er|or))$/i.test(name));
-  const geographyWords = geography?.display.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter((word) => word.length > 2) ?? [];
+  const geographyWords = geography?.display?.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter((word) => word.length > 2) ?? [];
   const geographicName = name && geographyWords.some((word) => new RegExp(`\\b${word}\\b`, 'i').test(name!));
   if (intent === 'ENTITY_LOOKUP' && (genericName || geographicName || !name)) {
     if (geographicName) reasons.push('IDENTITY_CONTRADICTS_GEOGRAPHY');
