@@ -33,6 +33,7 @@ import { detectWaCity, queryLooksLikeWashington } from './wa-network.ts';
 import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
+import { detectNyCity, queryLooksLikeNewYork } from './ny-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -97,6 +98,9 @@ function geography(q: string): ParsedGeography | undefined {
   const azNamedEarly = queryLooksLikeArizona(q);
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
+  const nyNamedEarly = queryLooksLikeNewYork(q);
+  const registeredInNewYork = /\bregistered in new york\b/i.test(q);
+  const vaMortgageProduct = /\bva mortgage\b/i.test(q);
   const californiaNamedFirst = (() => {
     const ca = q.search(/\bcalifornia\b|\bcalif\b/i);
     const tx = q.search(/\btexas\b|\btexan\b/i);
@@ -256,7 +260,7 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: 'Palm Beach County, Florida. County meaning differs by hub.',
     };
   }
-  if (florida) {
+  if (florida && !registeredInNewYork) {
     return {
       stateCode: 'FL',
       stateName: 'Florida',
@@ -352,7 +356,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (vaNamedEarly && !westVirginiaNamedBeforeVirginia) {
+  if (vaNamedEarly && !westVirginiaNamedBeforeVirginia && !(nyNamedEarly && vaMortgageProduct)) {
     const vaCity = detectVaCity(q);
     return {
       stateCode: 'VA',
@@ -364,8 +368,23 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (nyNamedEarly || registeredInNewYork) {
+    const nyCity = detectNyCity(q);
+    return {
+      stateCode: 'NY',
+      stateName: 'New York',
+      city: nyCity,
+      meaning: registeredInNewYork
+        ? 'New York registration jurisdiction. Principal office is a different grain from state registration.'
+        : nyCity
+          ? `${nyCity}, New York. New York research is statewide; NYC/borough/county names are not local Ask routes. Local NYC datasets are not started.`
+          : 'New York. State licensing is not physical location; specialist geography meaning differs by hub. NYC local Ask pages are not published.',
+    };
+  }
+
   const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
     if (j.code === 'WA' && /\bwashington\s*,?\s*d\.?c\.?\b|\bwashington\s+dc\b/i.test(q)) return false;
+    if (j.code === 'NY' && !queryLooksLikeNewYork(q)) return false;
     const nameRe = new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i');
     return nameRe.test(q);
   });
@@ -580,7 +599,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
         ? 'Household-goods broker research'
         : moveRegulatoryRole === 'carrier_broker'
           ? 'Carrier / broker research'
-          : /\b(fdacs|intrastate mover|im registration)\b/i.test(query)
+          : /\b(fdacs|intrastate mover|im registration)\b/i.test(query) && !queryLooksLikeNewYork(query)
             ? 'Florida Intrastate Mover registration research'
             : 'Household-goods motor carrier research';
   } else if (insurance) {

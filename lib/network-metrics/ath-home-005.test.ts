@@ -41,7 +41,7 @@ test('network inventory is publication gated and retains source-native grains', 
 
 test('seven-state model preserves asymmetric specialist coverage', () => {
   const states = buildAskStateCoverage(contracts);
-  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia']);
+  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york']);
   const az = states.find((state) => state.code === 'AZ')!;
   assert.equal(az.hubs.find((hub) => hub.hub === 'move')?.mode, 'NO_COMPARABLE_STATE_UNIVERSE');
   assert.equal(az.hubs.find((hub) => hub.hub === 'insurance')?.mode, 'NATIONAL_ONLY');

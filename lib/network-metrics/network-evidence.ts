@@ -157,11 +157,12 @@ export const ASK_NETWORK_STATES = [
   { code: 'AZ', slug: 'arizona', name: 'Arizona' },
   { code: 'CO', slug: 'colorado', name: 'Colorado' },
   { code: 'VA', slug: 'virginia', name: 'Virginia' },
+  { code: 'NY', slug: 'new-york', name: 'New York' },
 ] as const;
 
 const ADAPTER_PATHS: Partial<Record<SpecialistHubId, string[]>> = {
-  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia'],
-  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia'],
+  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
+  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
 };
 
 function specialistPaths(contract: LoadedSpecialistContract): string[] {

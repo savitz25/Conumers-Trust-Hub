@@ -65,6 +65,7 @@ import { waCaveatForHub, waSpecialistUrl, routeWaAsk } from './wa-network.ts';
 import { azCaveatForHub, azSpecialistUrl, routeAzAsk } from './az-network.ts';
 import { coCaveatForHub, coSpecialistUrl, routeCoAsk } from './co-network.ts';
 import { vaCaveatForHub, vaSpecialistUrl, routeVaAsk } from './va-network.ts';
+import { nyCaveatForHub, nySpecialistUrl, routeNyAsk } from './ny-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -191,6 +192,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'AZ') return '/arizona';
   if (parsed.geography?.stateCode === 'CO') return '/colorado';
   if (parsed.geography?.stateCode === 'VA') return '/virginia';
+  if (parsed.geography?.stateCode === 'NY') return '/new-york';
   return undefined;
 }
 
@@ -1011,6 +1013,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
               destination: vaSpecialistUrl(primary),
               geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
               reason: `${h.reason} ${vaCaveatForHub(primary)}`,
+            }
+          : h,
+      );
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'NY') {
+    const nyRoute = routeNyAsk(parsed.query);
+    if (nyRoute) {
+      const already = hubs.some((h) => h.hubId === nyRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: nyRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[nyRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: nyRoute.destination,
+            reason: nyRoute.caveat,
+            whatItCanAnswer: `New York research on ${NETWORK_PUBLIC_NAMES[nyRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'New York',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) =>
+          h.hubId === nyRoute.hubId
+            ? {
+                ...h,
+                destination: nyRoute.destination,
+                geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+                reason: `${h.reason} ${nyRoute.caveat}`,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === nyRoute.hubId), ...hubs.filter((h) => h.hubId !== nyRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) =>
+        h.hubId === primary
+          ? {
+              ...h,
+              destination: nySpecialistUrl(primary),
+              geographyCapability: parsed.geography?.meaning ?? h.geographyCapability,
+              reason: `${h.reason} ${nyCaveatForHub(primary)}`,
             }
           : h,
       );
