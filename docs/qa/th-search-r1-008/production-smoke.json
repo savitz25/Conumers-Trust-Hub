@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-12T04:38:28.156Z",
+  "base": "https://www.asktrusthub.com",
+  "cases": [
+    {
+      "question": "senior homes in Austin Texas",
+      "ms": 347,
+      "hub": "senior",
+      "phase": "CLARIFY",
+      "geography": {
+        "type": "city",
+        "value": "Austin",
+        "city": "Austin",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "meaning": "Recorded provider/office location; not service area."
+      },
+      "missingFields": [
+        "providerClass"
+      ],
+      "specialistCalls": 0
+    },
+    {
+      "question": "home health agencies in Houston",
+      "ms": 75,
+      "hub": "senior",
+      "phase": "COLLECT",
+      "geography": {
+        "type": "city",
+        "value": "Houston",
+        "city": "Houston",
+        "meaning": "Recorded provider/office location; not service area."
+      },
+      "missingFields": [
+        "geography"
+      ],
+      "specialistCalls": 0
+    },
+    {
+      "path": "/?",
+      "status": 200,
+      "finalPath": "/"
+    },
+    {
+      "path": "/ask",
+      "status": 200,
+      "finalPath": "/ask"
+    },
+    {
+      "path": "/admin",
+      "status": 200,
+      "finalPath": "/admin/login"
+    },
+    {
+      "path": "/my",
+      "status": 200,
+      "finalPath": "/my"
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "finalPath": "/robots.txt"
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "finalPath": "/sitemap.xml"
+    },
+    {
+      "id": "oversized-input-rejected",
+      "status": 400
+    }
+  ],
+  "writeBoundary": "Public search may emit existing approved telemetry; no account, regulatory, schema or configuration writes.",
+  "passed": true
+}
