@@ -20,10 +20,12 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
   const [value,setValue]=useState('');
   const headingRef=useRef<HTMLHeadingElement>(null);
   const requestRef=useRef<{revision:number;controller?:AbortController}>({revision:0});
+  const retryRef=useRef<{action:GuidedAction;session:GuidedResearchSession|null}|null>(null);
 
   const send=useCallback(async(action:GuidedAction,current?:GuidedResearchSession|null)=>{
     requestRef.current.controller?.abort();
     const revision=++requestRef.current.revision,controller=new AbortController();requestRef.current.controller=controller;
+    retryRef.current={action,session:current??session};
     const timeout=setTimeout(()=>controller.abort(),12000);
     const started=performance.now();if(action.type==='EXECUTE')trackEvent(ANALYTICS_EVENTS.ASK_SPECIALIST_EXECUTION_STARTED,{hub:(current??session)?.hub??'unknown'});
     setBusy(true);setResult(null);setError('');setResumeRecovery(false);
@@ -38,7 +40,7 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
       if(missingRestoredResult){setError('The specialist explanation could not be restored. Retry the public-source research.');setResumeRecovery(true);}
       try{sessionStorage.setItem(storageKey(query),JSON.stringify(body.session));}catch{/* Current in-memory research remains usable when tab storage is unavailable. */}
       requestAnimationFrame(()=>headingRef.current?.focus());
-    }catch(reason){if(revision!==requestRef.current.revision)return;trackEvent(ANALYTICS_EVENTS.SEARCH_TERMINAL_OUTCOME,{schema_version:'product_event.v1',hub:(current??session)?.hub??'unknown',intent:(current??session)?.researchPlan.intent??'unknown',terminal_outcome:'ERROR',failure_reason:'GUIDED_REQUEST_FAILED',next_action_type:'RETRY',result_count_bucket:'0',duration_bucket:bucketLatency(performance.now()-started),route_family:'/ask',surface:'GUIDED'});setError(reason instanceof Error?reason.message:'Guided Research could not continue.');}
+    }catch(reason){if(revision!==requestRef.current.revision)return;trackEvent(ANALYTICS_EVENTS.SEARCH_TERMINAL_OUTCOME,{schema_version:'product_event.v1',hub:(current??session)?.hub??'unknown',intent:(current??session)?.researchPlan.intent??'unknown',terminal_outcome:'ERROR',failure_reason:controller.signal.aborted?'GUIDED_REQUEST_TIMEOUT':'GUIDED_REQUEST_FAILED',next_action_type:'RETRY',result_count_bucket:'0',duration_bucket:bucketLatency(performance.now()-started),route_family:'/ask',surface:'GUIDED'});setError(controller.signal.aborted?'The research request timed out. Try again or edit your question.':reason instanceof Error?reason.message:'Guided Research could not continue.');}
     finally{clearTimeout(timeout);if(revision===requestRef.current.revision)setBusy(false);}
   },[query,session]);
 
@@ -70,6 +72,7 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
       </div>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Route confirmed — researching {specialistName} public records…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
+      {error&&!resumeRecovery?<button type="button" disabled={busy} onClick={()=>{const retry=retryRef.current;if(retry)void send(retry.action,retry.session);}} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry request</button>:null}
       {resumeRecovery?<button type="button" disabled={busy} onClick={()=>void send({type:'RESUME'})} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry specialist explanation</button>:null}
       {!busy&&session?.availableChoices.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">{session.availableChoices.map((choice)=><li key={choice.id}><button type="button" onClick={()=>void send({type:'SELECT_CHOICE',value:choice.value})} className="min-h-12 w-full rounded-xl border p-3 text-left font-semibold focus-visible:outline-none focus-visible:ring-2" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.navy}}>{choice.label}{choice.description?<span className="mt-1 block text-xs font-normal leading-relaxed" style={{color:ASK_BRAND.ink}}>{choice.description}</span>:null}</button></li>)}</ul>:null}
       {!busy&&session&&(session.phase==='COLLECT'||session.nextActions.some(action=>action.type==='ENTER_ENTITY_NAME'||action.type==='ENTER_IDENTIFIER'))?<form onSubmit={submit} className="mt-4">

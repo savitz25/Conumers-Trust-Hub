@@ -18,8 +18,7 @@
     "local-browser.json",
     "local-fixture-browser.json"
   ],
-  "review": "separate self-review and automated checks; no independent human review",
-  "productionWrites": false,
+  "review": "Separate self-review, automated behavioral/browser checks, and Vercel Agent Review. One timeout UX finding reproduced and fixed; no independent human review.",
   "remaining": [
     "Final CI/preview and protected merge",
     "Production browser/deployment receipt",
@@ -31,5 +30,11 @@
     "state": "READY",
     "interactive": "Blocked by Vercel login; protection unchanged",
     "checkedAt": "2026-09-12T04:18:12.605530+00:00"
+  },
+  "writeBoundary": "No regulatory/account/schema/configuration writes. Normal approved search telemetry may be emitted by public smoke requests.",
+  "reviewFix": {
+    "before": "timeout-red.json",
+    "after": "timeout-green.json",
+    "candidate": "record after commit exists"
   }
 }
