@@ -1,0 +1,155 @@
+{
+  "ticket": "ATH-IL-001",
+  "version": "ath-il-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/illinois",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_chicago_routes": false,
+  "hardcoded_cook_routes": false,
+  "illinois_local_phase": "NO",
+  "illinois_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "release_gate_passed": true,
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "contractor-il-state-intel-v1",
+      "fingerprint": "a9f63e7625d25fd64e4fe95b15f558a49fc719376154be481fdd062042dd0235",
+      "certified_release_sha": "11fd0b6fd8f6a1fe5e40e48a34f6a578b67334f4",
+      "coverage_state": "ACQUIRED",
+      "headline_grain": "4,675 active Illinois roofing business credential IDs",
+      "supporting_grains": ["33,290 distinct roofing credential IDs", "12,042 qualifying-party person IDs", "1,393 discipline rows"],
+      "limitations": "Roofing credential ≠ unique company. Qualifying party ≠ contractor business. Discipline ≠ conviction. Not a universal contractor census.",
+      "source_clock": "Specialist-accepted contractor-il-state-intel-v1 IDFPR roofing slice. Ask does not invent a retrieval instant."
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "move-il-state-intel-v1",
+      "fingerprint": "b484ba81488f813b43698ccb8a034afc645809be03662f101a951020839c388d",
+      "certified_release_sha": "65e03580bfa95337726b83ce2926e81f3ae8a6d6",
+      "coverage_state": "OPEN_SEARCH_ONLY",
+      "headline_grain": "Illinois HHG authority — Search only",
+      "supporting_grains": ["rows null", "active authority IDs null", "exact state→USDOT 0", "exact state→MC 0"],
+      "limitations": "Do not display 0 licensed movers. ILCC HHG ≠ USDOT ≠ MC ≠ FMCSA interstate authority.",
+      "source_clock": "Current ILCC HHG roster remains OPEN_SEARCH_ONLY."
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "senior-il-state-intel-v1",
+      "fingerprint": "20e48b6f8a24c2f3acb0ea208961a93e5c10a3c858d5f42f81454059dea85bac",
+      "certified_release_sha": "72c1ddb01a3d4f126fb9692b350f091a8eb60d72",
+      "coverage_state": "ACQUIRED",
+      "headline_grain": "666 CMS Nursing Homes",
+      "supporting_grains": ["595 IDPH Home Health licenses", "169 HFS Supportive Living sites"],
+      "limitations": "Never combine CMS, IDPH, and HFS classes. Assisted living OPEN_SEARCH_ONLY. Exact IL-state → CMS bridges: 0.",
+      "source_clock": "Specialist-accepted senior-il-state-intel-v1."
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "lender-il-state-intel-v1",
+      "fingerprint": "06c7f10b4756076b57da54c64306fb50fc9666a379855d1e262591652a9f70a4",
+      "certified_release_sha": "dd0f908ee67c0faf0c2795deb09071e41cd1ae9f",
+      "coverage_state": "ACQUIRED",
+      "headline_grain": "394,488 HMDA applications in Illinois in 2025",
+      "supporting_grains": ["231,788 originations", "66,742 denials", "102 county rows", "387 FDIC overlay"],
+      "limitations": "HMDA applications are not lenders. 16.92% is denials as % of total applications, not a decision-based denial rate. Current company roster SEARCH_ONLY / NOT_ACQUIRED.",
+      "source_clock": "HMDA 2025 Illinois-property applications."
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "insurance-il-state-intel-v1",
+      "fingerprint": "3085ccfe7ec30c038fafcfb3e70a11609eeba91a9918c9efe14ceb7f0ef634aa",
+      "certified_release_sha": "8051be7d5169929e42155cab81effa94178e8aad",
+      "coverage_state": "PARTIAL",
+      "headline_grain": "2,896 IDOI Director’s Order observations",
+      "supporting_grains": ["2,896 distinct order IDs", "company/agency/producer current universes OPEN_SEARCH_ONLY"],
+      "limitations": "Not 2,896 insurers. Exact company and producer associations 0. Order ≠ conviction. Order ≠ complaint. Name-only unsafe.",
+      "source_clock": "Specialist-accepted insurance-il-state-intel-v1 IDOI Director’s Orders."
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/illinois",
+      "publication_status": "live",
+      "snapshot_version": "investor-il-state-intel-v1",
+      "fingerprint": "997728ec50c9a913a64283b7a10810440c1e0b88e7fae03a91df58df3997534d",
+      "certified_release_sha": "7dc6c318ce1792b115ae416cffeb48268cc32841",
+      "coverage_state": "ACQUIRED",
+      "headline_grain": "855 Illinois state-registered IA CRDs",
+      "supporting_grains": ["55 state ERA", "3,560 federal notice", "793 principal-office overlay"],
+      "limitations": "Do not sum IA + ERA + notice. Notice ≠ state registration. ERA ≠ RIA. Principal office ≠ registration. SOS enforcement UNKNOWN, not zero.",
+      "source_clock": "Accepted IAPD compilation as of 2026-08-27. Principal-office overlay is pre-existing, not new enrichment."
+    }
+  ],
+  "verification_hubs": [
+    {
+      "hub_id": "contractor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/illinois",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "move",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/illinois",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "senior",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/illinois",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "lender",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/illinois",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "insurance",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/illinois",
+      "robots": "index, follow"
+    },
+    {
+      "hub_id": "investor",
+      "http_status": 200,
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/illinois",
+      "robots": "index, follow"
+    }
+  ],
+  "network_findings": [
+    "Contractor: IDFPR roofing credentials are a trade-license slice, not a universal Illinois contractor census.",
+    "Move: Current ILCC household-goods roster is search-only. Licensed-mover count is unknown, not zero.",
+    "Senior: CMS, IDPH, and HFS care classes stay separate. Assisted living remains search-only.",
+    "Lender: 394,488 HMDA 2025 applications are a market grain, not a lender census.",
+    "Insurance: 2,896 Director’s Order observations are not currently authorized insurers.",
+    "Investor: State IA, ERA, notice filings, and principal-office overlay cannot collapse into one adviser census."
+  ],
+  "conceptual_statement": "Illinois’s strongest Trust Hub evidence is an IDFPR roofing-credential slice that is not a universal contractor census, a search-only Illinois Commerce Commission household-goods roster that must not display zero licensed movers, CMS and IDPH/HFS senior-care classes that must not be added, 2025 HMDA applications that are not lenders, IDOI Director’s Order observations that are not current insurers, and IAPD state-IA/ERA/notice/office lenses that cannot collapse into one adviser census. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "local_work_decision": "NOT_STARTED",
+  "fingerprint": "4a4acef7fe77c7da655d28d06c7113305d9c14f654249bc08b5e26f1bec5f42f",
+  "generated_at": "2026-09-12T18:30:00.000Z",
+  "snapshot": "ath-il-network-release-v1",
+  "ask_fingerprint": "4a4acef7fe77c7da655d28d06c7113305d9c14f654249bc08b5e26f1bec5f42f",
+  "release_certification_timestamp": "2026-09-12T18:30:00.000Z"
+}
