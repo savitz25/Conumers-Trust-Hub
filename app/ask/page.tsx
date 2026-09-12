@@ -1,3 +1,4 @@
+import {AskQueryForm} from '@/components/ask-query-form';
 import { NetworkAskResult } from '@/components/network-ask-result';
 import { PageHeader } from '@/components/page-header';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
@@ -11,7 +12,7 @@ import {observeAskRoute} from '@/lib/network/ask-intel-observability';
 import {recordSearchObservation} from '@/lib/control-plane/product-events';
 import {after} from 'next/server';
 import {decideAskExecution} from '@/lib/network/execution-decision';
-import {validateAskQuestion,ASK_QUESTION_MAX_LENGTH} from '@/lib/network/ask-request';
+import {validateAskQuestion} from '@/lib/network/ask-request';
 
 export const revalidate = 3600;
 
@@ -38,30 +39,7 @@ export default async function AskPage({
         description="One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts."
       />
       <div className="container-page py-10 sm:py-14">
-        <form action="/ask" method="get" className="mb-10 max-w-2xl" role="search" aria-label="Ask the TrustHub Network">
-          <label htmlFor="ask-q" className="sr-only">
-            What do you want to know?
-          </label>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <input
-              key={query}
-              id="ask-q"
-              name="q"
-              maxLength={ASK_QUESTION_MAX_LENGTH}
-              defaultValue={query}
-              placeholder="What do you want to know?"
-              className="min-h-12 min-w-0 flex-1 rounded-xl border px-4"
-              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
-            />
-            <button
-              type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white"
-              style={{ backgroundColor: ASK_BRAND.indigo }}
-            >
-              Ask
-            </button>
-          </div>
-        </form>
+        <AskQueryForm query={query}/>
         {inputError?<p role="alert" className="mb-6 rounded-xl border p-4">{inputError}</p>:null}
         {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
         {query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
