@@ -34,8 +34,8 @@ const matrix: Expected[] = [
   {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
   {query:'mover serving Miami Florida',hub:'move',requested:'Miami, Florida',state:'CAPABILITY_UNSUPPORTED',meaning:'SERVICE_TERRITORY',allowed:false},
   {query:"I'm moving from Chicago to Denver, who can move me?",hub:'move',requested:'Chicago to Denver',state:'CAPABILITY_UNSUPPORTED',meaning:'ORIGIN_DESTINATION',allowed:false},
-  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton, Florida',executed:'Boca Raton, Florida',state:'EXACT',meaning:'RECORDED_OFFICE_LOCATION',allowed:true},
-  {query:'nursing homes within 25 miles of Boca Raton',hub:'senior',requested:'Boca Raton, Florida',state:'CLARIFICATION_REQUIRED',allowed:false},
+  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
+  {query:'nursing homes within 25 miles of Boca Raton',hub:'senior',requested:'25 miles of Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
 ];
 
 test('permanent requested-versus-executed scope matrix',()=>{
@@ -123,7 +123,7 @@ test('specialist request bodies receive only resolved execution geography',async
     const lender=await orchestrateGuidedResearch({action:{type:'START',question:'mortgage lenders in West Palm Beach Florida'}});
     assert.equal(lender.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).county,'Palm Beach');assert.equal((seen.at(-1)?.geography as Record<string,unknown>).countyFips,'12099');
     const senior=await orchestrateGuidedResearch({action:{type:'START',question:'nursing homes in Boca Raton Florida'}});
-    assert.equal(senior.diagnostics.specialistCalls,1);assert.deepEqual(seen.at(-1)?.geography,{type:'city',value:'Boca Raton'});
+    assert.equal(senior.diagnostics.specialistCalls,1);assert.deepEqual(seen.at(-1)?.geography,{type:'city',value:'Boca Raton',state:'FL'});
     const investor=await orchestrateGuidedResearch({action:{type:'START',question:'registered investment advisers in West Palm Beach Florida'}});
     assert.equal(investor.diagnostics.specialistCalls,0);assert.equal(seen.length,2);
     const approved=await orchestrateGuidedResearch({session:investor.session,action:{type:'SELECT_CHOICE',value:'scope_state:FL'}});

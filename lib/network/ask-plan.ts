@@ -1,4 +1,5 @@
 import { capabilityFor } from './capability-registry.ts';
+import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
 import { compareBrowardPalmBeach } from './place-comparison.ts';
 import { browardPlaceLens, floridaPlaceLens, palmBeachPlaceLens, type PlaceLens } from './place-lens.ts';
@@ -1666,6 +1667,10 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   const overallStarted = Date.now();
   let resolverLatencyMs = 0;
   let answer = assembleNetworkAnswer(query);
+  const permission=decideAskExecution(query);
+  if(permission.mode==='PLACE_LENS')return answer;
+  if(!permission.executionAllowed)return {...answer,resultClass:'UNSUPPORTED_QUERY',diagnostics:{...answer.diagnostics,selectedHubs:[],capabilityUsed:[],sourceContract:[],resultCount:0,fallbackPath:'unsupported',resultClass:'UNSUPPORTED_QUERY'},options:[],traces:[],hubCountLabel:'',judgmentNote:undefined,followUp:undefined,plan:{...answer.plan,hubs:[]},noResult:{headline:'Clarify the research request',understood:permission.plan.clarificationReason??'No specialist search ran.',actions:['Edit the question or complete the research choices above.']}};
+  answer={...answer,plan:{...answer.plan,hubs:answer.plan.hubs.filter(h=>permission.allowedHubs.includes(h.hubId))},options:answer.options?.filter(o=>permission.allowedHubs.includes(o.hubId))};
   const live = (hubId: SpecialistHubId) => {
     const hub = answer.plan.hubs.find((h) => h.hubId === hubId && h.capabilityStatus === 'execute');
     if (!hub || hub.failKind === 'hard') return undefined;

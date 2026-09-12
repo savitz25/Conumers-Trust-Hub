@@ -1,3 +1,4 @@
+import {careTask} from './care-task.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { RESEARCH_DESTINATIONS, type ResearchDestination } from './research-destinations.ts';
 import type { AskResearchPlan, AskRequestedGeography } from './research-planner.ts';
@@ -13,6 +14,7 @@ function destinations(hub:SpecialistHubId, geography?:AskRequestedGeography):Res
 function make(step:number,hub:SpecialistHubId,goal:string,why:string,required:boolean,geo?:AskRequestedGeography):AskJourneyStep{return {step,hub,goal,why,required,scope:geo?.display,limitation:hub==='move'?'Recorded location and federal authority do not prove route service.':hub==='lender'?'HMDA property geography is not headquarters, licensing, or service availability.':hub==='contractor'?'Credential status and geography do not prove service territory or good standing.':hub==='insurance'?'Published credential evidence is not a quote, endorsement, or promise of coverage.':hub==='senior'?'Provider office geography does not prove patient service availability.':'Registration does not mean recommended.',destinations:destinations(hub,geo)};}
 
 export function planAskMultiHubJourney(plan:AskResearchPlan):AskMultiHubJourney|null{
+  if(careTask(plan.originalQuestion)?.kind==='move_context')return null;
   const q=plan.originalQuestion.toLowerCase();const geo=plan.requestedGeography;
   const moving=/\b(?:mov(?:e|ing|er)|relocat)/.test(q),buying=/\b(buy|buying|purchase|purchasing)\b/.test(q),renting=/\b(rent|renting)\b/.test(q),roof=/\broof/.test(q),senior=/\b(mother|father|parent|senior|nursing home|hospice|care)\b/.test(q);
   const explicit=[['lender','lender|mortgage'],['insurance','insurance|insurer|coverage'],['contractor','contractor|roofer'],['move','move|moving|mover|relocation'],['senior','senior|nursing|home health|hospice|parent|mother|father']] as const;
@@ -30,5 +32,12 @@ export function planAskMultiHubJourney(plan:AskResearchPlan):AskMultiHubJourney|
   const why:Record<SpecialistHubId,string>={move:'Check the moving company before booking.',lender:'Review financing evidence before committing.',insurance:'Understand the regulated entity and official evidence.',contractor:'Verify source credentials before hiring.',senior:'Compare source-native provider evidence.',investor:'Review registration and Form ADV evidence.'};
   const steps=core.map((h,i)=>make(i+1,h,goals[h],why[h],true,geo));
   const optionalSteps=optional.map((h,i)=>make(steps.length+i+1,h,goals[h],`Optional if ${h==='move'?'relocation':'work on the property'} becomes relevant.`,false,geo));
+  if(type==='SENIOR_AND_MOVE'&&careTask(plan.originalQuestion)?.kind==='care_and_move'){
+    const careQuestion=plan.originalQuestion.split(/\bthen\b|,?\s+also\b|\band\b(?=[^.!?]*\b(?:move|moving|relocation)\b)/i)[0].trim().replace(/[, ]+$/,'');
+    const target=RESEARCH_DESTINATIONS.find(d=>d.id==='senior.ask')!;
+    steps[0].destinations=[{...target,label:'Choose a care setting and research this location',href:`https://www.asktrusthub.com/ask?${new URLSearchParams({q:careQuestion})}`}];
+    const move=RESEARCH_DESTINATIONS.find(d=>d.id==='move.ask')!;
+    optionalSteps[0].destinations=[{...move,href:`${move.href}?${new URLSearchParams({q:`How do I check a mover before relocating${geo?` to ${geo.display}`:''}?`})}`}];
+  }
   return {version:'ask-multi-hub-journey-v1',originalQuestion:plan.originalQuestion,journeyType:type,requestedGeography:geo,steps,optionalSteps,clarificationNeeded,orderedHubs:[...core,...optional]};
 }

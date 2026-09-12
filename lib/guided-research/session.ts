@@ -1,4 +1,6 @@
+import {initialCareRatingFilters} from '../network/care-task.ts';
 import { randomUUID } from 'node:crypto';
+import {careTask,planCareResearch,type CareSetting} from '../network/care-task.ts';
 import { parseNetworkAsk } from '../network/ask-parse.ts';
 import { planAskResearch, planRequiresImmediateClarification, validateAskResearchPlan, type AskResearchPlan } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
@@ -6,7 +8,8 @@ import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_
 
 const CARE_CHOICES: GuidedChoice[] = [
   { id: 'nursing-home', label: 'Nursing home / skilled nursing', action: 'SELECT_CHOICE', value: 'nursing_home', description: 'Facility-based skilled nursing and long-term care records.' },
-  { id: 'home-health', label: 'Care at home', action: 'SELECT_CHOICE', value: 'home_health', description: 'Care through a home-health agency; office location is not service area.' },
+  { id: 'home-health', label: 'Home health agencies', action: 'SELECT_CHOICE', value: 'home_health', description: 'CMS home-health agency records, not every form of personal care. Office location is not service area.' },
+  { id: 'assisted-living', label: 'Assisted living', action: 'SELECT_CHOICE', value: 'assisted_living', description: 'State-specific research; not a CMS nursing-home directory.' },
   { id: 'hospice', label: 'Hospice care', action: 'SELECT_CHOICE', value: 'hospice', description: 'Hospice provider records; office geography is not service availability.' },
   { id: 'care-explain', label: "I'm not sure — explain the differences", action: 'SELECT_CHOICE', value: 'explain_care' },
 ];
@@ -125,6 +128,11 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   const parsed = parseNetworkAsk(q);
   const plan = validateAskResearchPlan(planAskResearch(q));
   const session = base(q, plan);
+  if(plan.reasonCodes.includes('CARE_TASK')){
+    session.selectedFilters=initialCareRatingFilters(q,plan.careSetting);
+    const next=refreshCareSession({...session,hub:'senior'},plan.careSetting);
+    return next;
+  }
   const financialGeography=geographyFromParsed(parsed);
   const labeledIdentifier=q.match(/\b(CRD|NPN|NAIC|NMLS|LEI)\s*#?\s*([A-Z0-9-]+)\b/i);
   if(labeledIdentifier)session.identifier={type:labeledIdentifier[1].toUpperCase(),value:labeledIdentifier[2].toUpperCase()};
@@ -183,7 +191,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     const geography=geographyFromParsed(parsed);
     return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
   }
-  const grandma = /\b(?:grandma|grandmother|grandpa|grandfather|senior|elderly parent)\b/i.test(q) && /\b(?:home|care|facility|help|place)\b/i.test(q);
+  const grandma = careTask(q)?.kind==='care' && /\b(?:grandma|grandmother|grandpa|grandfather|senior|elderly parent)\b/i.test(q) && /\b(?:home|care|facility|help|place)\b/i.test(q);
   if (grandma) return { ...session, hub: 'senior', phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
 
   let parsedGeography=geographyFromParsed(parsed);
@@ -193,7 +201,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   }
   const njTrade=newJerseyTrade(q,parsedGeography?.stateCode);
   const parsedHub = parsed.suggestedHubs.length === 1 && GUIDED_PILOT_HUBS.includes(parsed.suggestedHubs[0] as never) ? parsed.suggestedHubs[0] as GuidedResearchSession['hub'] : undefined;
-  const hub = parsedHub ?? (njTrade?'contractor':undefined);
+  const hub = plan.primaryHub ?? parsedHub ?? (njTrade?'contractor':undefined);
   if (!hub) return null;
   session.hub = hub;
   session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
@@ -239,6 +247,7 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  if(session.researchPlan.reasonCodes.includes('CARE_TASK'))return session;
   if(!session.researchPlan.primaryHub&&session.hub)session.executionScope=resolveResearchScope({...session.researchPlan,primaryHub:session.hub,entityClass:session.entityClass?{id:session.entityClass,label:session.entityClass.replaceAll('_',' ')}:session.researchPlan.entityClass});
   const scope=session.executionScope;
   const executable=guidedGeographyFromExecution(scope);
@@ -264,6 +273,18 @@ export function createGuidedSession(question:string):GuidedResearchSession|null{
   return {...session,geography:undefined,phase:'CLARIFY',missingFields:scope.resolutionState==='CLARIFICATION_REQUIRED'&&!choices.length?['geography']:[],availableChoices:choices,nextAction:scope.disclosure??'The requested local scope is not executable by this specialist.'};
 }
 
+export function refreshCareSession(session:GuidedResearchSession,setting:CareSetting|undefined=session.researchPlan.careSetting,selectedGeography?:GuidedGeography):GuidedResearchSession {
+  const basePlan=planAskResearch(session.originalQuestion);
+  const original=basePlan.requestedGeography;
+  const geography=selectedGeography?{raw:original?.raw??selectedGeography.value,display:selectedGeography.city?`${selectedGeography.city}${selectedGeography.stateName?`, ${selectedGeography.stateName}`:''}`:selectedGeography.value,kind:selectedGeography.type,resolution:selectedGeography.stateCode?'RESOLVED' as const:'UNRESOLVED' as const,stateCode:selectedGeography.stateCode,stateName:selectedGeography.stateName,city:selectedGeography.city,county:selectedGeography.county}:original;
+  if(geography?.kind==='county'&&geography.county)geography.display=`${geography.county} County${geography.stateName?`, ${geography.stateName}`:''}`;
+  const plan=planCareResearch(basePlan,setting,geography),scope=resolveResearchScope(plan);
+  const geo:GuidedGeography|undefined=geography&&['city','state','county','zip'].includes(geography.kind)?{type:geography.kind as GuidedGeography['type'],value:geography.city??geography.county??geography.stateCode??geography.display,city:geography.city,county:geography.county,stateCode:geography.stateCode,stateName:geography.stateName,meaning:'Recorded provider/office location; not service area.'}:undefined;
+  const providerClass=setting&&['nursing_home','home_health','hospice'].includes(setting)?setting as GuidedResearchSession['providerClass']:undefined;
+  const availableRefinements=Object.keys(session.selectedFilters).map(id=>({id,label:'Requested CMS rating',values:[1,2,3,4,5].map(n=>({value:String(n),label:String(n)}))}));
+  return {...session,availableRefinements:session.availableRefinements.length?session.availableRefinements:availableRefinements,hub:'senior',researchPlan:plan,executionScope:scope,geography:geo,providerClass,entityClass:setting,phase:plan.executionAllowed&&scope.executionAllowed?'EXECUTE':!setting?'CLARIFY':plan.missingSlots.includes('geography')?'COLLECT':'CLARIFY',missingFields:plan.missingSlots,availableChoices:!setting&&!plan.identifier?structuredClone(CARE_CHOICES):[],nextAction:plan.executionAllowed&&scope.executionAllowed?'execute':plan.clarificationReason??scope.disclosure};
+}
+
 export function isGuidedResearchCandidate(question: string): boolean {
   return createGuidedSession(question) !== null;
 }
@@ -276,9 +297,9 @@ export function restorePrevious(session: GuidedResearchSession): GuidedResearchS
   const previous = session.history.at(-1);
   if (!previous) return session;
   return {
+    ...structuredClone(previous),
     version:session.version,sessionId:session.sessionId,originalQuestion:session.originalQuestion,
     createdAt:session.createdAt,updatedAt:new Date().toISOString(),history:session.history.slice(0,-1),
-    ...structuredClone(previous),
   };
 }
 

@@ -114,7 +114,7 @@ const senior = group('senior', [
   c('What is the difference between hospice and home health?','EXPLAINER','senior',['explainer']),
   c('nursing homes in Boca Raton Florida','COHORT_BROWSE','senior',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedExecutionScope:'Boca Raton, Florida'}),
   c('hospice providers in Palm Beach County Florida','COHORT_BROWSE','senior',['cohort','geography'],{expectedExecutionScope:'Palm Beach County, Florida'}),
-  c('home health agency in Boca Raton','COHORT_BROWSE','senior',['cohort','geography'],{expectedExecutionScope:'Boca Raton, Florida'}),
+  c('home health agency in Boca Raton','COHORT_BROWSE','senior',['cohort','geography'],{expectedRequestedScope:'Boca Raton',expectedScopeState:'CLARIFICATION_REQUIRED',expectedExecutionAllowed:false}),
   c('nursing homes within 25 miles of Boca Raton','COHORT_BROWSE','senior',['geography','limitation'],{expectedScopeState:'CLARIFICATION_REQUIRED',expectedExecutionAllowed:false}),
   c('nursing homes near Boca Raton Florida','COHORT_BROWSE','senior',['cohort','geography']),
   c('nursing home dad boca','COHORT_BROWSE','senior',['cohort','colloquial','geography']),
@@ -125,7 +125,7 @@ const senior = group('senior', [
   c('Does no match mean the nursing home is uncertified?','EXPLAINER','senior',['status','explainer']),
   c('CCN 10550','ENTITY_LOOKUP_MISSING_IDENTITY','senior',['identifier','malformed'],{expectedExecutionAllowed:false}),
   c('CCN 1055029','ENTITY_LOOKUP_MISSING_IDENTITY','senior',['identifier','malformed'],{expectedExecutionAllowed:false}),
-  c('senior care close to Phoenix Arizona','ENTITY_LOOKUP_MISSING_IDENTITY','senior',['geography','limitation']),
+  c('senior care close to Phoenix Arizona','COHORT_BROWSE','senior',['geography','limitation']),
 ]);
 
 const contractor = group('contractor', [
