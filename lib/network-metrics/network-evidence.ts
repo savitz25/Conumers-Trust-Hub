@@ -158,15 +158,16 @@ export const ASK_NETWORK_STATES = [
   { code: 'CO', slug: 'colorado', name: 'Colorado' },
   { code: 'VA', slug: 'virginia', name: 'Virginia' },
   { code: 'NY', slug: 'new-york', name: 'New York' },
+  { code: 'IL', slug: 'illinois', name: 'Illinois' },
 ] as const;
 
 const ADAPTER_PATHS: Partial<Record<SpecialistHubId, string[]>> = {
-  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
-  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york'],
-  move: ['/new-york'],
-  lender: ['/new-york'],
-  insurance: ['/new-york'],
-  investor: ['/new-york'],
+  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois'],
+  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois'],
+  move: ['/new-york', '/illinois'],
+  lender: ['/new-york', '/illinois'],
+  insurance: ['/new-york', '/illinois'],
+  investor: ['/new-york', '/illinois'],
 };
 
 function specialistPaths(contract: LoadedSpecialistContract): string[] {

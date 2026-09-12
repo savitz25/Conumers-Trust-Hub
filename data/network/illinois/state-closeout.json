@@ -1,0 +1,89 @@
+{
+  "state": "IL",
+  "status": "ASK_PREVIEW_READY",
+  "note": "Illinois specialist 6/6 Production pages are live. Ask /illinois is the statewide network gateway. Chicago/Cook local phase is NO / NOT_STARTED. Ask Production certification is recorded after Git-triggered Production.",
+  "ask_route": "/illinois",
+  "ask_canonical": "https://www.asktrusthub.com/illinois",
+  "ask_production": null,
+  "network_contract": "ath-il-network-release-v1",
+  "publication_manifest_fingerprint": "4a4acef7fe77c7da655d28d06c7113305d9c14f654249bc08b5e26f1bec5f42f",
+  "local_work_decision": "NOT_STARTED",
+  "illinois_local_phase": "NO",
+  "illinois_local_phase_status": "NOT_STARTED",
+  "hardcoded_county_routes": false,
+  "hardcoded_chicago_routes": false,
+  "hardcoded_cook_routes": false,
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-12T18:30:00.000Z"
+  },
+  "six_hubs": [
+    {
+      "hub": "contractor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.contractortrusthub.com/illinois",
+      "snapshot_version": "contractor-il-state-intel-v1",
+      "fingerprint": "a9f63e7625d25fd64e4fe95b15f558a49fc719376154be481fdd062042dd0235",
+      "certified_release_sha": "11fd0b6fd8f6a1fe5e40e48a34f6a578b67334f4",
+      "headline_grain": "4,675 active Illinois roofing business credential IDs",
+      "source_clock": "Specialist-accepted contractor-il-state-intel-v1 IDFPR roofing slice.",
+      "limitations": "Roofing credential is not a unique company. Qualifying party is not the contractor business. Discipline is not a conviction. Not a universal contractor census."
+    },
+    {
+      "hub": "move",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.movetrusthub.com/illinois",
+      "snapshot_version": "move-il-state-intel-v1",
+      "fingerprint": "b484ba81488f813b43698ccb8a034afc645809be03662f101a951020839c388d",
+      "certified_release_sha": "65e03580bfa95337726b83ce2926e81f3ae8a6d6",
+      "headline_grain": "Illinois HHG authority — Search only",
+      "source_clock": "Current ILCC HHG roster remains OPEN_SEARCH_ONLY.",
+      "limitations": "Do not display 0 licensed movers. ILCC HHG is not USDOT, not MC, and not FMCSA interstate authority."
+    },
+    {
+      "hub": "senior",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.seniortrusthub.com/illinois",
+      "snapshot_version": "senior-il-state-intel-v1",
+      "fingerprint": "20e48b6f8a24c2f3acb0ea208961a93e5c10a3c858d5f42f81454059dea85bac",
+      "certified_release_sha": "72c1ddb01a3d4f126fb9692b350f091a8eb60d72",
+      "headline_grain": "666 CMS Nursing Homes",
+      "source_clock": "Specialist-accepted senior-il-state-intel-v1.",
+      "limitations": "Do not combine CMS, IDPH, and HFS classes. Assisted living remains OPEN_SEARCH_ONLY. Exact IL-state → CMS bridges: 0."
+    },
+    {
+      "hub": "lender",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.lendertrusthub.com/illinois",
+      "snapshot_version": "lender-il-state-intel-v1",
+      "fingerprint": "06c7f10b4756076b57da54c64306fb50fc9666a379855d1e262591652a9f70a4",
+      "certified_release_sha": "dd0f908ee67c0faf0c2795deb09071e41cd1ae9f",
+      "headline_grain": "394,488 HMDA applications in Illinois in 2025",
+      "source_clock": "HMDA 2025 Illinois-property applications.",
+      "limitations": "HMDA applications are not lenders. 16.92% is denials as a percent of total applications, not a decision-based denial rate. Current IDFPR/NMLS roster SEARCH_ONLY / NOT_ACQUIRED."
+    },
+    {
+      "hub": "insurance",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.insurancetrusthub.com/illinois",
+      "snapshot_version": "insurance-il-state-intel-v1",
+      "fingerprint": "3085ccfe7ec30c038fafcfb3e70a11609eeba91a9918c9efe14ceb7f0ef634aa",
+      "certified_release_sha": "8051be7d5169929e42155cab81effa94178e8aad",
+      "headline_grain": "2,896 IDOI Director’s Order observations",
+      "source_clock": "Specialist-accepted insurance-il-state-intel-v1 IDOI Director’s Orders.",
+      "limitations": "Not 2,896 insurers. Company/agency/producer current universes OPEN_SEARCH_ONLY. Exact associations 0. Order is not a conviction or complaint."
+    },
+    {
+      "hub": "investor",
+      "specialist_status": "CLOSED — PRODUCTION VERIFIED",
+      "production_url": "https://www.investortrusthub.com/illinois",
+      "snapshot_version": "investor-il-state-intel-v1",
+      "fingerprint": "997728ec50c9a913a64283b7a10810440c1e0b88e7fae03a91df58df3997534d",
+      "certified_release_sha": "7dc6c318ce1792b115ae416cffeb48268cc32841",
+      "headline_grain": "855 Illinois state-registered IA CRDs",
+      "source_clock": "Accepted IAPD compilation as of 2026-08-27.",
+      "limitations": "Do not sum IA + ERA + notice. Notice filing is not state registration. ERA is not an RIA. Principal office is not registration. SOS enforcement UNKNOWN, not zero."
+    }
+  ]
+}

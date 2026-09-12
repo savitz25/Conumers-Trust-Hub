@@ -48,6 +48,8 @@ export default function PlacesIndexPage() {
                               ? 'Open Virginia network research'
                             : item.href === '/new-york'
                               ? 'Open New York network research'
+                            : item.href === '/illinois'
+                              ? 'Open Illinois network research'
                         : 'Open Place Lens'}
               </Link>
             </li>

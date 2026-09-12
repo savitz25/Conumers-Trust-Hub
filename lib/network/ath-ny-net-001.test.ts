@@ -344,7 +344,7 @@ test('claim eligibility surfaces are unchanged', () => {
 
 test('state page inventory adds New York once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'NY').length, 1);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'new-york');
+  assert.equal(ASK_NETWORK_STATES.some((state) => state.slug === 'new-york'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/new-york'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/new-york/manhattan'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New York network gateway/);

@@ -41,7 +41,7 @@ test('network inventory is publication gated and retains source-native grains', 
 
 test('seven-state model preserves asymmetric specialist coverage', () => {
   const states = buildAskStateCoverage(contracts);
-  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york']);
+  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois']);
   const az = states.find((state) => state.code === 'AZ')!;
   assert.equal(az.hubs.find((hub) => hub.hub === 'move')?.mode, 'NO_COMPARABLE_STATE_UNIVERSE');
   assert.equal(az.hubs.find((hub) => hub.hub === 'insurance')?.mode, 'NATIONAL_ONLY');
@@ -51,6 +51,7 @@ test('seven-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'CO')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.equal(states.find((state) => state.code === 'VA')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.equal(states.find((state) => state.code === 'NY')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
+  assert.equal(states.find((state) => state.code === 'IL')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
     const accepted = coverageArtifact.jurisdictions[`US-${state.code}` as keyof typeof coverageArtifact.jurisdictions];

@@ -34,6 +34,7 @@ import { detectAzCity, queryLooksLikeArizona } from './az-network.ts';
 import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
 import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
+import { detectIlCity, queryLooksLikeIllinois } from './il-network.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -99,6 +100,7 @@ function geography(q: string): ParsedGeography | undefined {
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
+  const ilNamedEarly = queryLooksLikeIllinois(q);
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -403,6 +405,18 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (ilNamedEarly) {
+    const ilCity = detectIlCity(q);
+    return {
+      stateCode: 'IL',
+      stateName: 'Illinois',
+      city: ilCity,
+      meaning: ilCity
+        ? `${ilCity}, Illinois. Illinois research is statewide; a city or county name is not a local Ask route. Chicago and Cook County Ask pages are not published.`
+        : 'Illinois. State licensing is not physical location; specialist geography meaning differs by hub. Illinois city and county Ask pages are not published.',
+    };
+  }
+
   const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
     if (j.code === 'WA' && /\bwashington\s*,?\s*d\.?c\.?\b|\bwashington\s+dc\b/i.test(q)) return false;
     if (j.code === 'NY' && !queryLooksLikeNewYork(q)) return false;
@@ -420,7 +434,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?)\b/i);
+  const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?|I\.?L\.?)\b/i);
   if (postal) {
     const raw = postal[0].replace(/\./g, '').toUpperCase();
     const j = US_JURISDICTIONS.find((row) => row.code === raw);
