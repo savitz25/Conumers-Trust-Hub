@@ -1,0 +1,129 @@
+
+> ask-trust-hub@2.1.0 check:ath-search-002
+> node --experimental-strip-types --test lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts
+
+(node:20096) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ath-search-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ result and identity contracts are exhaustive and unique (1.3629ms)
+✔ failed company match cannot downgrade to a state cohort (31.208ms)
+✔ Move public-name inputs route but do not auto-select without canonical resolver contract (16.4181ms)
+✔ exact identifiers preserve exact identity classification (6.3317ms)
+✔ research, place, journey, ranking, malformed and unsupported queries fail safely (5.6646ms)
+✔ all six typed capability contracts preserve ownership and geography semantics (0.3778ms)
+✔ golden copy has no raw template leaks and zero-result UI is explicit (1.6653ms)
+✔ FALSE_CONFIDENT_ANSWERS = 0 across critical no-match fixtures (0.8231ms)
+(node:17480) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ath-search-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move exact identifier maps to exact identity without rewriting specialist facts (71.3645ms)
+✔ Move ambiguity and fuzzy candidates remain uncertain and unranked (14.0008ms)
+✔ Move no-match, outage, timeout, invalid input, and contract mismatch fail closed distinctly (37.5676ms)
+✔ identity failure never becomes a Move market cohort (1.8944ms)
+✔ other hub, structured, place, life-event, ranking, and universal-score routing remain separated (7.5877ms)
+✔ Concierge Markdown supports safe links and rejects executable protocols and raw HTML (0.9787ms)
+✔ golden acceptance metrics remain absolute zero (1.6927ms)
+(node:25412) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/consumer-ux.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 1. best mover in tampa bay florida: Move execute, soft-fail, no fail_closed stop (51.1156ms)
+✔ 2. top investment companies with best performance: Investor execute, no invented returns (13.7506ms)
+✔ 3. grandmother in New Jersey: Senior execute, no Network research routing (3.9104ms)
+✔ 4. most trustworthy insurance agencies in miami: Insurance execute, decline ranking (2.1325ms)
+✔ 5. best mortgage lender in florida: Lender execute, no best-lender claim (1.6308ms)
+✔ 6. good roofing contractor in broward: Contractor execute, no endorsement (1.9512ms)
+✔ hard fail remains for rates tomorrow and hire recommendations (5.4972ms)
+✔ option mappers return real identity fields, not rankings (24.1528ms)
+✔ contractor public Ask HTML parser extracts names and credentials (5.0598ms)
+✔ stripJudgmentModifiers leaves the supported search intact (0.5474ms)
+✔ hard safety rules still stop the search (8.5483ms)
+✔ applyConsumerPresentation does not invent a ranking (2.3945ms)
+(node:40864) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/entity-destination.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unpublished Investor research identity never invents a public /firm profile (2.2539ms)
+✔ published specialist href is used as canonical profile and not rewritten from the display name (0.6233ms)
+✔ unpublished note wins over a supplied profile-looking href (0.3226ms)
+✔ Move published company profile is canonical (0.6971ms)
+✔ Insurance unpublished agency uses NPN Ask handoff, never a fake profile (0.4698ms)
+✔ Lender public_profile uses specialist href; unpublished identity does not invent /lender/slug (13.339ms)
+✔ Contractor canonical /contractors/ profile from specialist Ask HTML (1.2944ms)
+✔ Senior unpublished CCN routes to specialist search, not a fabricated /facility slug (0.5285ms)
+✔ highest returns query still fails closed on performance and still yields navigable Investor identities (41.3235ms)
+✔ bare digits remain fail-closed; unsupported stock picking remains unsupported (1.9259ms)
+(node:41684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/insurance-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Insurance execute: Florida agencies, count, Texas, NPN, NAIC (42.1808ms)
+✔ Insurance P&C is execute with a data limitation, not unsupported (1.1721ms)
+✔ Insurance fail-closed: ranking, quotes, clean record, class sum, domicile, serving, appointment, county, persons (7.6328ms)
+✔ Insurance identifiers: bare digits fail closed; unknown NPN is still execute lookup (1.0296ms)
+✔ Insurance execute does not change contractor / senior / investor / lender / move states (9.4087ms)
+(node:39080) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/lender-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Lender registry is live execute with lender-ask-v1 and no identifier mode (2.581ms)
+✔ FHA Florida most originations executes Lender with HMDA property geography (26.9626ms)
+✔ Broward applications execute Lender as county property geography, not Place Lens metrics (1.6954ms)
+✔ Broward vs Palm Beach mortgage applications route Lender only, not Place Lens comparison (7.2441ms)
+✔ Lender fail-closed: best, safest, cheapest, lowest rate, discrimination, denial reasons, service territory (8.6396ms)
+✔ complaints are not wrongdoing; denial is not discrimination; most is not a rate (0.5853ms)
+✔ NMLS stays labeled handoff; bare digits stay ambiguous; no invented identifier mode (1.5258ms)
+✔ cross-domain broker and carrier collisions (12.8197ms)
+✔ geography semantics stay source-specific across hubs (4.5224ms)
+✔ entity-grain regression: no mega-count, no cross-hub sum, no Trust Score (2.8497ms)
+✔ network fail-closed: no ranking, no universal score, contractor hire is not a ranking (2.1001ms)
+✔ Trace / provenance: one execute example per hub (2.3754ms)
+✔ publication and paid-status regression: Ask is not publication or paid ranking (0.7319ms)
+✔ unsupported questions fail closed instead of picking a specialist (0.4178ms)
+✔ six hubs remain execute for their owned domains; no remaining structured-Ask handoff (0.2171ms)
+(node:39856) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/move-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move registry is live execute with move-ask-v1 (6.0555ms)
+✔ Find USDOT 3244649 in New York keeps the Move Ask destination (31.7397ms)
+✔ Find USDOT 3244649 executes Move, not Insurance (15.2603ms)
+✔ Find MC 1019808 executes Move (4.9159ms)
+✔ household-goods carriers headquartered in Florida execute Move, not Insurance (8.7761ms)
+✔ household-goods brokers headquartered in Florida execute Move (3.1187ms)
+✔ Florida IM registrations execute Move as FDACS grain (0.8546ms)
+✔ carrier vs broker definition executes Move (0.8743ms)
+✔ broker-as-transporter and safest remain fail_closed on Move execute (4.6559ms)
+✔ carrier disambiguation: moving vs insurance vs ambiguous (6.0692ms)
+✔ bare digits remain ambiguous across the network (0.8371ms)
+✔ Move execute does not change contractor / senior / investor / insurance / lender (4.4763ms)
+(node:24168) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/prompt-2.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capability registry: all six specialist Asks are live execute (1.1312ms)
+✔ Broward roofers route to contractor execute (13.3422ms)
+✔ FHA Florida executes Lender Ask without inventing origination facts (6.5419ms)
+✔ identifier routing (12.6162ms)
+✔ Senior execute: Florida / Palm Beach / 5-star NH / CCN / Florida HH / Florida hospice (2.9423ms)
+✔ Senior fail-closed: HH county, 5-star hospice, safest NH, combined count (3.0003ms)
+✔ Senior execute does not change contractor / lender / move / insurance / investor states (2.9386ms)
+✔ Investor execute: Florida RIA/ERA, RAUM, compensation, counts, CRD (3.3698ms)
+✔ Investor fail-closed: ranking, fees, stocks, bare digits, serving ≠ client geography (1.691ms)
+✔ buying a home in Broward is multi-hub (1.4043ms)
+✔ place question opens Broward lens (0.3798ms)
+✔ name check never confirms identity (0.2758ms)
+✔ coverage atlas: 6 hubs × 51 jurisdictions, categorical only (2.3275ms)
+✔ place lens Florida / Broward / Palm Beach differences (0.6175ms)
+✔ evidence atlas pricing/ownership honest (0.2138ms)
+✔ integrity: no SCORE step, no mega-count in answers (0.8342ms)
+ℹ tests 85
+ℹ suites 0
+ℹ pass 85
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1030.9426

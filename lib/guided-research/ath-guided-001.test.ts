@@ -15,9 +15,10 @@ const contractorMeta={contract:'trusthub-specialist-execution-v2',contractVersio
 globalThis.fetch=async(input,init)=>{
   const url=String(input);const body=JSON.parse(String(init?.body??'{}'));
   if(url.includes('seniortrusthub')){
-    if(body.providerClass==='home_health'&&body.geography?.type==='county')return json({contract:'trusthub-specialist-execution-v2',status:'unsupported_capability',errorCode:'unsupported_home_health_county_geography',message:'Home Health county execution is unsupported.',limitation:'Office location is not service area.'},422);
+    if(body.providerClass==='home_health'&&body.geography?.type==='county')return json({contract:'trusthub-specialist-execution-v2',hub:'senior',status:'unsupported_capability',errorCode:'unsupported_home_health_county_geography',message:'Home Health county execution is unsupported.',limitation:'Office location is not service area.'},422);
     const noMatch=body.identifier==='105502';
-    return json({contract:'trusthub-specialist-execution-v2',status:'ok',rows:noMatch?[]:[{providerClass:body.providerClass??'nursing_home',name:'CMS Research Facility',cmsCcn:body.identifier??'105411',recordedLocation:{city:'Boca Raton',state:'FL',zip:'33432'},status:'Current CMS record',evidence:{overall_rating:4,staffing_rating:3},canonicalProfileUrl:'https://www.seniortrusthub.com/providers/105411'}],total:noMatch?0:body.geography?.type==='county'?54:694,pagination:{page:1,pageSize:24,hasMore:true},provenance:{sourceFamily:'CMS Care Compare'},limitations:['Recorded location is not service area.']});
+    // Released R1-007 contract: separate structured location, hub and query evidence; real profile route shape.
+    return json({contract:'trusthub-specialist-execution-v2',hub:'senior',status:'ok',queryInterpretation:{providerClass:body.providerClass??null,geography:body.geography??null},rows:noMatch?[]:[{providerClass:body.providerClass??'nursing_home',name:'CMS Research Facility',cmsCcn:body.identifier??'105411',recordedLocationFields:{city:'Boca Raton',county:'Palm Beach',state:'FL',zip:'33432'},status:'Current CMS record',evidence:[{label:'Overall',value:'4/5'}],canonicalProfileUrl:'https://www.seniortrusthub.com/facility/cms/105411/fixture'}],total:noMatch?0:body.geography?.type==='county'?54:694,pagination:{page:1,pageSize:20,hasMore:true},provenance:{sourceFamily:'CMS Care Compare'},limitations:['Recorded location is not service area.']});
   }
   if(url.includes('contractortrusthub')){
     lastContractorBody=body;
@@ -62,7 +63,7 @@ test('Back restores complete clarification and collection states without unneces
   const grandma=await orchestrateGuidedResearch({action:{type:'START',question:'need help finding a home for my grandma'}});
   const nursing=await orchestrateGuidedResearch({session:grandma.session,action:{type:'SELECT_CHOICE',value:'nursing_home'}});
   const backCare=await orchestrateGuidedResearch({session:nursing.session,action:{type:'BACK'}});
-  assert.equal(backCare.session.phase,'CLARIFY');assert.equal(backCare.session.providerClass,undefined);assert.deepEqual(backCare.session.missingFields,['providerClass']);assert.equal(backCare.session.nextAction,'What kind of care are you looking for?');assert.equal(backCare.session.availableChoices.length,4);assert.equal(backCare.diagnostics.specialistCalls,0);assert.equal(backCare.result,undefined);
+  assert.equal(backCare.session.phase,'CLARIFY');assert.equal(backCare.session.providerClass,undefined);assert.deepEqual(backCare.session.missingFields,['providerClass']);assert.equal(backCare.session.nextAction,'What kind of care are you looking for?');assert.equal(backCare.session.availableChoices.length,5);assert.equal(backCare.diagnostics.specialistCalls,0);assert.equal(backCare.result,undefined);
   const florida=await orchestrateGuidedResearch({session:nursing.session,action:{type:'SET_GEOGRAPHY',value:'Florida'}});
   const backGeography=await orchestrateGuidedResearch({session:florida.session,action:{type:'BACK'}});
   assert.equal(backGeography.session.phase,'COLLECT');assert.equal(backGeography.session.providerClass,'nursing_home');assert.deepEqual(backGeography.session.missingFields,['geography']);assert.equal(backGeography.session.nextAction,'Where does she need care?');assert.equal(backGeography.diagnostics.specialistCalls,0);assert.equal(backGeography.result,undefined);

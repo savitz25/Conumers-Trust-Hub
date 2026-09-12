@@ -1,0 +1,19 @@
+
+> ask-trust-hub@2.1.0 lint
+> eslint
+
+
+C:\Users\makei\th-search-r1-008-base\components\trust-standards-section.tsx
+  6:3  warning  'ASK_SHADOW' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\makei\th-search-r1-008-base\lib\customer\ath-launch-001a.test.ts
+  21:27  warning  '_namespace' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\makei\th-search-r1-008-base\lib\orchestration\journey-metadata.ts
+  396:9  warning  'ctx' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\makei\th-search-r1-008-base\scripts\assert-network-v2.mjs
+  34:7  warning  'contractorHub' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 4 problems (0 errors, 4 warnings)
+

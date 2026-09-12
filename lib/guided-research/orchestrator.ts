@@ -1,6 +1,9 @@
-import type { GuidedAction, GuidedApiResponse, GuidedResearchSession } from './contract.ts';
-import { createGuidedSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
-import { executeGuidedSpecialist } from './specialists.ts';
+import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult } from './contract.ts';
+import { createGuidedSession, refreshCareSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import {careLocation,initialCareRatingFilters,type CareSetting} from '../network/care-task.ts';
+import {planAskResearch} from '../network/research-planner.ts';
+import {validateAskQuestion} from '../network/ask-request.ts';
+import { executeGuidedSpecialist, isGuidedExecutionAuthorized } from './specialists.ts';
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
@@ -57,6 +60,11 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
   }
   if(value==='scope_other')return touch({...next,availableChoices:[],missingFields:['geography'],phase:'COLLECT',nextAction:'Enter another city or county in the requested area.'});
   if (session.hub === 'senior') {
+    if(session.researchPlan.reasonCodes.includes('CARE_TASK')){
+      if(!session.availableChoices.some(c=>c.value===value))throw new Error('stale_or_invalid_choice');
+      if(value==='explain_care')return touch({...next,nextAction:'Nursing homes provide facility-based records; Home Health and Hospice have separate CMS agency records. Assisted living uses state-specific sources. Choose a setting to continue.',phase:'CLARIFY'});
+      return touch(refreshCareSession({...clearExecutionState(next),selectedFilters:initialCareRatingFilters(session.originalQuestion,value as CareSetting),identifier:undefined,identityName:undefined},value as CareSetting,session.geography));
+    }
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
     return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
@@ -142,6 +150,10 @@ function collectValue(session: GuidedResearchSession, value: string): GuidedRese
 }
 
 export async function orchestrateGuidedResearch(input: { session?: unknown; action: GuidedAction }): Promise<GuidedApiResponse> {
+  if(!input||!input.action||!['START','SELECT_CHOICE','SET_GEOGRAPHY','SET_FILTER','CLEAR_FILTER','CLEAR_ALL_FILTERS','BACK','RESET','RESUME','EXECUTE'].includes(input.action.type))throw new Error('invalid_guided_action');
+  if('value' in input.action&&(typeof input.action.value!=='string'||input.action.value.length>160))throw new Error('invalid_action_value');
+  if(input.action.type==='START')validateAskQuestion(input.action.question);
+  else validateAskQuestion((input.session as GuidedResearchSession|undefined)?.originalQuestion);
   const started=performance.now(); const requestId=crypto.randomUUID();
   let session: GuidedResearchSession;
   let specialistCalls=0;
@@ -158,15 +170,37 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       if (!reset) throw new Error('not_guided_query');
       session=reset;
     } else session=valid;
+    const canonical=planAskResearch(session.originalQuestion);
+    if(canonical.primaryHub&&session.hub!==canonical.primaryHub)throw new Error('session_domain_mismatch');
+    if(canonical.reasonCodes.includes('CARE_TASK')){
+      if(session.researchPlan.careSetting&&!['nursing_home','home_health','hospice','assisted_living','memory_care','independent_living'].includes(session.researchPlan.careSetting))throw new Error('invalid_care_setting');
+      if(session.providerClass&&session.providerClass!==session.researchPlan.careSetting)throw new Error('session_class_mismatch');
+      if(canonical.careSetting&&session.researchPlan.careSetting!==canonical.careSetting)throw new Error('session_class_mismatch');
+      const original=canonical.requestedGeography,geo=session.geography;
+      if(original?.city&&geo?.city?.toLowerCase()!==original.city.toLowerCase())throw new Error('session_city_mismatch');
+      if(original?.stateCode&&geo?.stateCode!==original.stateCode)throw new Error('session_state_mismatch');
+      session=refreshCareSession(session,session.researchPlan.careSetting,geo);
+    }
     if (input.action.type==='SELECT_CHOICE') session=afterChoice(session,input.action.value);
-    else if (input.action.type==='SET_GEOGRAPHY') session=collectValue(session,input.action.value);
+    else if (input.action.type==='SET_GEOGRAPHY') {
+      if(session.researchPlan.reasonCodes.includes('CARE_TASK')){
+        const requested=session.researchPlan.requestedGeography;
+        const value=input.action.value.trim();
+        let geo=careLocation(`providers in ${value}`);
+        if(geo?.kind==='state'&&requested?.city)geo={...geo,kind:'city',city:requested.city,display:`${requested.city}, ${geo.stateName}`};
+        if(!geo||geo.resolution!=='RESOLVED'||!['city','state','county'].includes(geo.kind))throw new Error('invalid_care_location');
+        if(requested?.stateCode&&geo.stateCode!==requested.stateCode)throw new Error('conflicting_care_state');
+        if(requested?.city&&geo.city?.toLowerCase()!==requested.city.toLowerCase())throw new Error('conflicting_care_city');
+        session=refreshCareSession(pushHistory(session),session.researchPlan.careSetting,{type:geo.kind as 'city'|'state'|'county',value:geo.city??geo.county??geo.stateCode!,city:geo.city,county:geo.county,stateCode:geo.stateCode,stateName:geo.stateName});
+      }else session=collectValue(session,input.action.value);
+    }
     else if (input.action.type==='SET_FILTER') { validateFilter(session,input.action.field,input.action.value);session=touch({ ...pushHistory(session),selectedFilters:{...session.selectedFilters,[input.action.field]:input.action.value},phase:'EXECUTE',nextAction:'execute' }); }
     else if (input.action.type==='CLEAR_FILTER') { if (!(input.action.field in session.selectedFilters)) throw new Error('invalid_filter_field');const filters={...session.selectedFilters};delete filters[input.action.field];session=touch({...pushHistory(session),selectedFilters:filters,phase:'EXECUTE',nextAction:'execute'}); }
     else if (input.action.type==='CLEAR_ALL_FILTERS') { if (!Object.keys(session.selectedFilters).length) throw new Error('no_active_filters');session=touch({...pushHistory(session),selectedFilters:{},phase:'EXECUTE',nextAction:'execute'}); }
     else if (input.action.type==='BACK') session=restorePrevious(session);
     else if (input.action.type==='RESET') session=createGuidedSession(session.originalQuestion)!;
   }
-  let result;
+  let result:GuidedExecutionResult|undefined;
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;
   if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {
@@ -180,14 +214,29 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     session=touch({...session,phase:'CLARIFY',nextAction:session.researchPlan.clarificationReason??'Clarify the research request before specialist execution.'});
   } else if (executionRequested) {
     validateSelectedFilters(session);
+    if(!isGuidedExecutionAuthorized(session))throw new Error('execution_not_authorized');
     specialistCalls=1;
-    result=await executeGuidedSpecialist(session);
+    result={...await executeGuidedSpecialist(session),executionOccurred:true};
     const hasChoices=Boolean(result.choices?.length);
     const phase=result.resultState==='BACKEND_UNAVAILABLE'||result.resultState==='TIMEOUT'?'ERROR_RECOVERY':hasChoices?'CLARIFY':'REFINE';
     const choicePrompt=result.error?.code==='new_jersey_credential_class_required'?'What kind of credential or work do you want to research?':result.error?.code==='summit_is_city_in_union_county'?'Choose the corrected New Jersey geography.':result.error?.code==='statewide_fallback_confirmation_required'?'Would you like to broaden this to statewide New Jersey credential records?':'Choose a source-backed research option.';
     session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,lastExecution:{source:'specialist',resultState:result.resultState,errorCode:result.error?.code,resultBearing:true,choicesBearing:hasChoices,executedAt:new Date().toISOString()},resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
   }
-  const nextActions=resolveGuidedNextActions({plan:session.researchPlan,scope:session.executionScope,resultState:result?.resultState});
+  if(!result&&session.researchPlan.reasonCodes.includes('CARE_TASK')&&session.researchPlan.careSetting&&!session.missingFields.length&&(!session.researchPlan.executionAllowed||!session.executionScope.executionAllowed)){
+    result={specialist:'senior',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'This care setting or scope needs a different source',consumerMessage:session.researchPlan.clarificationReason??session.executionScope.disclosure??'This combination is not supported by the accepted source.',interpretation:[{label:'Requested care setting',value:session.entityClass??'Not selected'},{label:'Requested location',value:session.researchPlan.requestedGeography?.display??'Not selected'},{label:'Execution',value:'No provider retrieval ran.'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['No nursing-home or other provider cohort was substituted.'],destinations:[],error:{code:'care_capability_unavailable',retryable:false},latencyMs:0,firstUsefulResult:true};
+  }
+  let nextActions=resolveGuidedNextActions({plan:session.researchPlan,scope:session.executionScope,resultState:result?.resultState});
+  if(session.researchPlan.reasonCodes.includes('CARE_TASK')&&session.researchPlan.executionAllowed&&session.providerClass&&session.geography){
+    const filters=Object.entries(session.selectedFilters);
+    if(filters.length>1){nextActions=nextActions.filter(a=>a.id!=='senior.search');if(result)result.limitations.push('Combined rating filters are preserved in this inline research. Open an individual profile or edit the filters before continuing a native search.');}
+    else {
+      const names={nursing_home:'Nursing homes',home_health:'Home health agencies',hospice:'Hospice providers'};
+      const metricNames:Record<string,string>={overallStars:'overall',staffingStars:'staffing',inspectionStars:'inspection',qpcStars:'Quality of Patient Care'};
+      const rating=filters.length?` with ${filters[0][1]}-star ${metricNames[filters[0][0]]} rating`:'';
+      const q=`${names[session.providerClass]} in ${session.researchPlan.requestedGeography!.display}${rating}`;
+      nextActions=nextActions.map(a=>a.id==='senior.search'?{...a,href:`https://www.seniortrusthub.com/ask?${new URLSearchParams({q,class:session.providerClass!,state:session.geography!.stateCode!})}`}:a);
+    }
+  }
   session=touch({...session,nextActions});
   if(session.hub==='insurance'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='insurance_producer')session=touch({...session,nextAction:'InsuranceTrustHub does not publish mass individual-producer profiles. Verify the producer through the applicable official state licensing source.'});
   if(result)result={...result,nextActions};

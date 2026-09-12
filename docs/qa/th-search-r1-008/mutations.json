@@ -1,0 +1,21 @@
+{
+  "time": "2026-09-12T04:08:25.494Z",
+  "results": [
+    {
+      "mutation": "execute-despite-clarification",
+      "exit": 1,
+      "detected": true
+    },
+    {
+      "mutation": "drop-city-on-choice",
+      "exit": 1,
+      "detected": true
+    },
+    {
+      "mutation": "accept-wrong-hub",
+      "exit": 1,
+      "detected": true
+    }
+  ],
+  "restored": true
+}

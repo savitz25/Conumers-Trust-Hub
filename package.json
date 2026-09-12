@@ -102,7 +102,8 @@
     "check:ath-claim-publish-001": "node --experimental-strip-types --test lib/customer/ath-claim-publish-001.test.ts lib/customer/business-profile.test.ts lib/customer/business-replies.test.ts",
     "migrate:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-migrate.ts",
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
-    "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts"
+    "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts",
+    "check:th-search-r1-008": "node --experimental-strip-types --test lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.0",

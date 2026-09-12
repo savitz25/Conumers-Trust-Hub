@@ -1,0 +1,130 @@
+
+> ask-trust-hub@2.1.0 check:ath-guided-001
+> node --experimental-strip-types --test lib/guided-research/ath-guided-001.test.ts
+
+(node:27156) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (35.7019ms)
+✖ Back restores complete clarification and collection states without unnecessary execution (3.7501ms)
+✖ Back re-executes restored result filters and preserves sequential history (45.8417ms)
+✖ filters are visible, clearable, and server validated against current refinements (5.2316ms)
+✖ changing earlier choices invalidates dependent class, trade, and Move state (3.6201ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (10.6982ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (12.2603ms)
+✖ Senior life situation asks class then geography and executes class-separated evidence (2.032ms)
+✖ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (1.2609ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (4.9178ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (2.9599ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (7.785ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (1.6184ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (4.5012ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (3.0664ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (13.2227ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (1.9022ms)
+✔ result-bearing clarification survives deterministic reload and resume (14.1828ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (9.943ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (1.6225ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (3.2115ms)
+✔ Contractor service-territory requests fail closed without address substitution (1.8969ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (4.3464ms)
+✔ Move service-territory and route availability fail closed usefully (1.7991ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (7.7077ms)
+✔ absolute metrics remain zero by construction (0.6614ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 20
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 577.1267
+
+✖ failing tests:
+
+test at lib\guided-research\ath-guided-001.test.ts:61:1
+✖ Back restores complete clarification and collection states without unnecessary execution (3.7501ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  5 !== 4
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:65:262)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 4,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\guided-research\ath-guided-001.test.ts:78:1
+✖ Back re-executes restored result filters and preserves sequential history (45.8417ms)
+  Error: stale_filter_value
+      at validateFilter (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:37:69)
+      at orchestrateGuidedResearch (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:190:50)
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:80:19)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at lib\guided-research\ath-guided-001.test.ts:89:1
+✖ filters are visible, clearable, and server validated against current refinements (5.2316ms)
+  Error: stale_filter_value
+      at validateFilter (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:37:69)
+      at orchestrateGuidedResearch (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:190:50)
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:91:24)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at lib\guided-research\ath-guided-001.test.ts:109:1
+✖ changing earlier choices invalidates dependent class, trade, and Move state (3.6201ms)
+  Error: stale_filter_value
+      at validateFilter (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:37:69)
+      at orchestrateGuidedResearch (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/orchestrator.ts:190:50)
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:113:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at lib\guided-research\ath-guided-001.test.ts:155:1
+✖ Senior life situation asks class then geography and executes class-separated evidence (2.032ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BACKEND_UNAVAILABLE'
+  - 'SUPPORTED_RESULTS'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:162:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BACKEND_UNAVAILABLE',
+    expected: 'SUPPORTED_RESULTS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\guided-research\ath-guided-001.test.ts:169:1
+✖ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (1.2609ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 54
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts:170:124)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 54,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

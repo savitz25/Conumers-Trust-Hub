@@ -1,0 +1,42 @@
+
+> ask-trust-hub@2.1.0 check:ath-guided-001
+> node --experimental-strip-types --test lib/guided-research/ath-guided-001.test.ts
+
+(node:41508) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (32.707ms)
+✔ Back restores complete clarification and collection states without unnecessary execution (38.4513ms)
+✔ Back re-executes restored result filters and preserves sequential history (4.0994ms)
+✔ filters are visible, clearable, and server validated against current refinements (6.2314ms)
+✔ changing earlier choices invalidates dependent class, trade, and Move state (4.4452ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (2.0335ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (11.0849ms)
+✔ Senior life situation asks class then geography and executes class-separated evidence (1.45ms)
+✔ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (2.4537ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (3.4182ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (2.2535ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (4.1159ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (1.1044ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (2.1546ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (1.4714ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (8.3098ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (1.4368ms)
+✔ result-bearing clarification survives deterministic reload and resume (6.8129ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (7.1712ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (1.7194ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (2.746ms)
+✔ Contractor service-territory requests fail closed without address substitution (1.6206ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (2.5491ms)
+✔ Move service-territory and route availability fail closed usefully (1.0417ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (3.7227ms)
+✔ absolute metrics remain zero by construction (0.3949ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 456.0364

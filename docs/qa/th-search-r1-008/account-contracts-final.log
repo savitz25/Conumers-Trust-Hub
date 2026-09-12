@@ -1,0 +1,14 @@
+
+> ask-trust-hub@2.1.0 check:my-trusthub-p11-p19
+> node scripts/assert-p11-foundation.mjs && node scripts/assert-p12-foundation.mjs && node scripts/assert-p13-foundation.mjs && node scripts/test-p13-contract.mjs && node scripts/assert-p14-foundation.mjs && node scripts/assert-p15-foundation.mjs && node scripts/assert-p16-foundation.mjs && node scripts/assert-p17-foundation.mjs && node scripts/assert-p18-foundation.mjs && node scripts/assert-p19-foundation.mjs
+
+P11 foundation static contract: PASS
+P12 foundation static contract: PASS
+P13 foundation static contract: PASS
+P13 cross-hub executable contract: PASS
+P14 foundation static contract: PASS
+P15 foundation static contract: PASS
+P16 foundation static contract: PASS
+P17 foundation static contract: PASS
+P18 foundation static contract: PASS
+P19 foundation static contract: PASS

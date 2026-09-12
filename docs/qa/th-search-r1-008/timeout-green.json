@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-12T04:34:24.196Z",
+  "phase": "green",
+  "method": "Local browser-only delayed transport; no production disruption",
+  "ms": 12783,
+  "message": "The research request timed out. Try again or edit your question.",
+  "retrySucceeded": true,
+  "passed": true
+}

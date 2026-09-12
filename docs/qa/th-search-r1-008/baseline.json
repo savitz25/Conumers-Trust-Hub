@@ -1,0 +1,625 @@
+{
+  "at": "2026-09-12T03:15:57.557Z",
+  "baseline": "e7be3e540fd905a3e3e8b0fe0e347adb2dfbd6e0",
+  "method": "Actual baseline page selection plus actual legacy dispatcher; instrumented fetch returns503, no real outbound data writes",
+  "observations": [
+    {
+      "q": "senior homes in Austin Texas",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "senior homes in Austin Texas",
+        "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+        "candidateHubs": [
+          "contractor",
+          "lender",
+          "insurance",
+          "move"
+        ],
+        "requestedGeography": {
+          "raw": "Austin Texas",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin",
+          "meaning": "Austin, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [
+          "entityName"
+        ],
+        "executionAllowed": false,
+        "executionMode": "CLARIFY",
+        "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs.",
+        "reasonCodes": [
+          "IDENTITY_EVIDENCE_INSUFFICIENT",
+          "SPECIALIST_EXECUTION_BLOCKED"
+        ],
+        "legacyQueryType": "MISSING_SLOTS"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Austin Texas",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Austin, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": false,
+        "reasonCodes": [
+          "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+        ],
+        "resolutionState": "CAPABILITY_UNSUPPORTED",
+        "executionAllowed": false
+      },
+      "canExecute": false,
+      "journey": false,
+      "guided": null,
+      "calls": [
+        "https://www.insurancetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas",
+        "https://www.movetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas",
+        "https://www.lendertrusthub.com/api/ask?q=senior+homes+in+Austin+Texas",
+        "https://www.contractortrusthub.com/ask?q=senior+homes+in+Austin+Texas"
+      ],
+      "legacyHubs": [
+        {
+          "hub": "contractor",
+          "capability": "execute"
+        },
+        {
+          "hub": "lender",
+          "capability": "execute"
+        },
+        {
+          "hub": "insurance",
+          "capability": "execute"
+        },
+        {
+          "hub": "move",
+          "capability": "execute"
+        }
+      ],
+      "resultClass": "MARKET_OR_PLACE_RESEARCH"
+    },
+    {
+      "q": "nursing homes in Austin Texas",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "nursing homes in Austin Texas",
+        "intent": "COHORT_BROWSE",
+        "primaryHub": "senior",
+        "candidateHubs": [
+          "senior"
+        ],
+        "entityClass": {
+          "id": "nursing_home",
+          "label": "Nursing Home"
+        },
+        "requestedGeography": {
+          "raw": "Austin Texas",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin",
+          "meaning": "Austin, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [],
+        "executionAllowed": true,
+        "executionMode": "COHORT",
+        "reasonCodes": [
+          "ENTITY_CLASS_BROWSE"
+        ],
+        "legacyQueryType": "COHORT"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Austin Texas",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Austin, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "requestedGeographyMeaning": "RECORDED_PROVIDER_LOCATION",
+        "executionGeographyMeaning": "RECORDED_PROVIDER_LOCATION",
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": true,
+        "reasonCodes": [
+          "REQUESTED_SCOPE_EXECUTABLE"
+        ],
+        "executionGeography": {
+          "kind": "city",
+          "display": "Austin, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "resolutionState": "EXACT",
+        "executionAllowed": true,
+        "disclosure": "Recorded provider location is not a radius search or verified service area."
+      },
+      "canExecute": true,
+      "journey": false,
+      "guided": {
+        "hub": "senior",
+        "phase": "EXECUTE",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin",
+          "meaning": "RECORDED_PROVIDER_LOCATION"
+        },
+        "providerClass": "nursing_home",
+        "choices": [],
+        "missing": []
+      },
+      "calls": []
+    },
+    {
+      "q": "home health agencies in Houston Texas",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "home health agencies in Houston Texas",
+        "intent": "COHORT_BROWSE",
+        "primaryHub": "senior",
+        "candidateHubs": [
+          "senior"
+        ],
+        "entityClass": {
+          "id": "home_health",
+          "label": "Home Health"
+        },
+        "requestedGeography": {
+          "raw": "Houston Texas",
+          "display": "Houston, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston",
+          "meaning": "Houston, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [],
+        "executionAllowed": true,
+        "executionMode": "COHORT",
+        "reasonCodes": [
+          "ENTITY_CLASS_BROWSE"
+        ],
+        "legacyQueryType": "COHORT"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Houston Texas",
+          "display": "Houston, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Houston, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "requestedGeographyMeaning": "RECORDED_OFFICE_LOCATION",
+        "executionGeographyMeaning": "RECORDED_OFFICE_LOCATION",
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": true,
+        "reasonCodes": [
+          "REQUESTED_SCOPE_EXECUTABLE"
+        ],
+        "executionGeography": {
+          "kind": "city",
+          "display": "Houston, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "resolutionState": "EXACT",
+        "executionAllowed": true,
+        "disclosure": "Home Health office geography is not patient service availability."
+      },
+      "canExecute": true,
+      "journey": false,
+      "guided": {
+        "hub": "senior",
+        "phase": "EXECUTE",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston",
+          "meaning": "RECORDED_OFFICE_LOCATION"
+        },
+        "providerClass": "home_health",
+        "choices": [],
+        "missing": []
+      },
+      "calls": []
+    },
+    {
+      "q": "Home health agencies in Houston",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "Home health agencies in Houston",
+        "intent": "COHORT_BROWSE",
+        "primaryHub": "senior",
+        "candidateHubs": [
+          "senior"
+        ],
+        "entityClass": {
+          "id": "home_health",
+          "label": "Home Health"
+        },
+        "requestedGeography": {
+          "raw": "Houston",
+          "display": "Houston, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston",
+          "meaning": "Houston, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [],
+        "executionAllowed": true,
+        "executionMode": "COHORT",
+        "reasonCodes": [
+          "ENTITY_CLASS_BROWSE"
+        ],
+        "legacyQueryType": "COHORT"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Houston",
+          "display": "Houston, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Houston, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "requestedGeographyMeaning": "RECORDED_OFFICE_LOCATION",
+        "executionGeographyMeaning": "RECORDED_OFFICE_LOCATION",
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": true,
+        "reasonCodes": [
+          "REQUESTED_SCOPE_EXECUTABLE"
+        ],
+        "executionGeography": {
+          "kind": "city",
+          "display": "Houston, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston"
+        },
+        "resolutionState": "EXACT",
+        "executionAllowed": true,
+        "disclosure": "Home Health office geography is not patient service availability."
+      },
+      "canExecute": true,
+      "journey": false,
+      "guided": {
+        "hub": "senior",
+        "phase": "EXECUTE",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Houston",
+          "meaning": "RECORDED_OFFICE_LOCATION"
+        },
+        "providerClass": "home_health",
+        "choices": [],
+        "missing": []
+      },
+      "calls": []
+    },
+    {
+      "q": "I need a mover to move my mother's belongings into assisted living in Austin",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "I need a mover to move my mother's belongings into assisted living in Austin",
+        "intent": "MULTI_HUB_JOURNEY",
+        "candidateHubs": [
+          "senior",
+          "move"
+        ],
+        "entityClass": {
+          "id": "mover",
+          "label": "Moving company"
+        },
+        "requestedGeography": {
+          "raw": "Austin",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin",
+          "meaning": "Austin, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [],
+        "executionAllowed": false,
+        "executionMode": "CLARIFY",
+        "clarificationReason": "This question needs explanation or scope clarification before specialist research can run.",
+        "reasonCodes": [
+          "MULTIPLE_SPECIALIST_HUBS",
+          "SPECIALIST_EXECUTION_BLOCKED"
+        ],
+        "legacyQueryType": "LIFE_SITUATION"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Austin",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Austin, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": false,
+        "reasonCodes": [
+          "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+        ],
+        "resolutionState": "CAPABILITY_UNSUPPORTED",
+        "executionAllowed": false
+      },
+      "canExecute": false,
+      "journey": true,
+      "guided": {
+        "phase": "CLARIFY",
+        "choices": [],
+        "missing": []
+      },
+      "calls": []
+    },
+    {
+      "q": "Find senior homes in Austin, then help me plan the move",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "Find senior homes in Austin, then help me plan the move",
+        "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+        "primaryHub": "move",
+        "candidateHubs": [
+          "move"
+        ],
+        "requestedGeography": {
+          "raw": "Austin",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedGeography": {
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin",
+          "meaning": "Austin, Texas. Texas research is state-level; a city or county name is not a Texas county Ask route."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [
+          "entityName"
+        ],
+        "executionAllowed": false,
+        "executionMode": "CLARIFY",
+        "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs.",
+        "reasonCodes": [
+          "IDENTITY_EVIDENCE_INSUFFICIENT",
+          "SPECIALIST_EXECUTION_BLOCKED"
+        ],
+        "legacyQueryType": "MISSING_SLOTS"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Austin",
+          "display": "Austin, Texas",
+          "kind": "city",
+          "resolution": "RESOLVED",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "city",
+          "display": "Austin, Texas",
+          "stateCode": "TX",
+          "stateName": "Texas",
+          "city": "Austin"
+        },
+        "requestedGeographyMeaning": "RECORDED_HEADQUARTERS",
+        "executionGeographyMeaning": "RECORDED_HEADQUARTERS",
+        "transformation": "CITY_TO_STATE",
+        "consentRequired": true,
+        "disclosureRequired": true,
+        "reasonCodes": [
+          "LOCAL_SCOPE_UNSUPPORTED",
+          "STATE_BROADENING_REQUIRES_CONSENT"
+        ],
+        "resolutionState": "BROADENING_REQUIRES_CONSENT",
+        "executionAllowed": false,
+        "disclosure": "Local filtering for Austin, Texas is not supported by the current specialist contract. The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability."
+      },
+      "canExecute": false,
+      "journey": true,
+      "guided": {
+        "hub": "senior",
+        "phase": "CLARIFY",
+        "choices": [
+          {
+            "id": "scope-statewide",
+            "label": "Research Texas instead",
+            "action": "SELECT_CHOICE",
+            "value": "scope_state:TX",
+            "description": "This is broader than the place you requested and will be recorded as your explicit choice."
+          }
+        ],
+        "missing": []
+      },
+      "calls": []
+    },
+    {
+      "q": "What does TrustHub know about Broward?",
+      "plan": {
+        "version": "ask-research-plan-v1",
+        "originalQuestion": "What does TrustHub know about Broward?",
+        "intent": "EXPLAINER",
+        "candidateHubs": [
+          "contractor",
+          "lender",
+          "insurance",
+          "move",
+          "senior",
+          "investor"
+        ],
+        "requestedGeography": {
+          "raw": "Broward",
+          "display": "Broward County, Florida",
+          "kind": "county",
+          "resolution": "RESOLVED",
+          "stateCode": "FL",
+          "stateName": "Florida",
+          "county": "Broward"
+        },
+        "normalizedGeography": {
+          "stateCode": "FL",
+          "stateName": "Florida",
+          "countySlug": "broward",
+          "countyName": "Broward County",
+          "meaning": "Broward County, Florida. County meaning differs by hub (mailing county ≠ service territory; HMDA property county ≠ HQ)."
+        },
+        "requestedEvidence": [],
+        "missingSlots": [],
+        "executionAllowed": false,
+        "executionMode": "CLARIFY",
+        "clarificationReason": "This question needs explanation or scope clarification before specialist research can run.",
+        "reasonCodes": [
+          "EXPLAINER_LANGUAGE",
+          "SPECIALIST_EXECUTION_BLOCKED"
+        ],
+        "legacyQueryType": "DEFINITION"
+      },
+      "scope": {
+        "version": "ask-execution-scope-v1",
+        "requestedGeography": {
+          "raw": "Broward",
+          "display": "Broward County, Florida",
+          "kind": "county",
+          "resolution": "RESOLVED",
+          "stateCode": "FL",
+          "stateName": "Florida",
+          "county": "Broward"
+        },
+        "normalizedRequestedGeography": {
+          "kind": "county",
+          "display": "Broward County, Florida",
+          "stateCode": "FL",
+          "stateName": "Florida",
+          "county": "Broward"
+        },
+        "transformation": "NONE",
+        "consentRequired": false,
+        "disclosureRequired": false,
+        "reasonCodes": [
+          "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+        ],
+        "resolutionState": "CAPABILITY_UNSUPPORTED",
+        "executionAllowed": false
+      },
+      "canExecute": false,
+      "journey": false,
+      "guided": {
+        "phase": "CLARIFY",
+        "choices": [],
+        "missing": []
+      },
+      "calls": []
+    }
+  ]
+}

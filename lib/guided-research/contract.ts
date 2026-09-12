@@ -3,7 +3,7 @@ import type { AskResearchPlan } from '../network/research-planner.ts';
 import type { AskExecutionScope } from '../network/research-scope.ts';
 import type { GuidedNextAction } from '../network/guided-next-actions.ts';
 
-export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v4' as const;
+export const GUIDED_SESSION_VERSION = 'ask-guided-research-session-v5' as const;
 export const GUIDED_SESSION_TTL_MS = 30 * 60 * 1000;
 export const GUIDED_PILOT_HUBS = ['senior', 'contractor', 'move', 'investor', 'insurance', 'lender'] as const;
 export type GuidedPilotHub = (typeof GUIDED_PILOT_HUBS)[number];
@@ -104,6 +104,8 @@ export type GuidedResultRow = {
 };
 
 export type GuidedExecutionResult = {
+  executionOccurred?: boolean;
+  dispatch?:{hub:'senior';endpoint:string;providerClass?:string;geography?:{type:string;value:string;state?:string}};
   specialist: GuidedPilotHub;
   resultState: GuidedResultState;
   consumerHeading: string;

@@ -1,4 +1,7 @@
 import type { GuidedExecutionResult, GuidedRefinement, GuidedResearchSession, GuidedResultRow, GuidedResultState } from './contract.ts';
+import {US_JURISDICTIONS} from '../network/us-jurisdictions.ts';
+import {planAskResearch} from '../network/research-planner.ts';
+import {createGuidedSession,refreshCareSession} from './session.ts';
 
 const ENDPOINTS = {
   move: process.env.MOVE_SPECIALIST_EXECUTION_URL ?? 'https://www.movetrusthub.com/api/specialist-execution/v2',
@@ -169,12 +172,19 @@ async function executeSenior(session: GuidedResearchSession): Promise<GuidedExec
   const filters: Record<string, number[]> = {};
   for (const [key, value] of Object.entries(session.selectedFilters)) if (/Stars$/.test(key)) filters[key] = [Number(value)];
   const body = session.identifier ? { identifier: session.identifier.value, page: 1 } : {
-    providerClass: session.providerClass, geography: session.geography ? { type: session.geography.type, value: session.geography.value } : undefined,
+    providerClass: session.providerClass, geography: session.geography ? { type: session.geography.type, value: session.geography.value, ...(session.geography.stateCode?{state:session.geography.stateCode}:{}) } : undefined,
     filters: Object.keys(filters).length ? filters : undefined, page: 1,
   };
+  const result=await executeSeniorRequest(session,body);
+  const endpoint=new URL(ENDPOINTS.senior);
+  return {...result,dispatch:{hub:'senior',endpoint:`${endpoint.origin}${endpoint.pathname}`,providerClass:session.providerClass,geography:session.geography?{type:session.geography.type,value:session.geography.value,state:session.geography.stateCode}:undefined}};
+}
+
+async function executeSeniorRequest(session:GuidedResearchSession,body:Record<string,unknown>):Promise<GuidedExecutionResult>{
   const outcome = await specialistFetch('senior', body);
   if ('error' in outcome) return failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
   const payload = outcome.body;
+  if (session.hub==='senior'&&payload.hub!=='senior')return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'wrong_specialist_envelope');
   if (text(payload.contract) !== SPECIALIST_EXECUTION_CONTRACT) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'contract_mismatch');
   if (outcome.status === 422 || text(payload.status) === 'unsupported_capability') {
     const result = failure(session, 'UNSUPPORTED_CAPABILITY', outcome.latencyMs, text(payload.errorCode) ?? 'unsupported_capability', text(payload.message));
@@ -183,14 +193,31 @@ async function executeSenior(session: GuidedResearchSession): Promise<GuidedExec
   }
   if (outcome.status >= 500) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, text(payload.errorCode) ?? 'execution_unavailable');
   if (outcome.status >= 400) return failure(session, 'INVALID_QUERY', outcome.latencyMs, text(payload.errorCode) ?? 'invalid_query', text(payload.message));
+  const sourceQuery=record(payload.queryInterpretation),sourceGeo=record(sourceQuery.geography);
+  const rawRows=records(payload.rows);
+  if(payload.status!=='ok'||!Array.isArray(payload.rows)||rawRows.length!==payload.rows.length||!Number.isSafeInteger(payload.total)||Number(payload.total)<rawRows.length||rawRows.length>20)return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'invalid_senior_result_contract');
+  if(!session.identifier&&(sourceQuery.providerClass!==session.providerClass||sourceGeo.type!==session.geography?.type||String(sourceGeo.value).trim().toLowerCase()!==session.geography?.value.trim().toLowerCase()||(session.geography?.type==='city'&&sourceGeo.state!==session.geography.stateCode)))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'senior_scope_mismatch');
+  const validProfile=(value:unknown,cls:unknown,ccn:unknown)=>{try{const u=new URL(String(value));return u.origin==='https://www.seniortrusthub.com'&&!u.search&&!u.hash&&u.pathname.startsWith(`/${cls==='nursing_home'?'facility':cls==='home_health'?'home-health':'hospice'}/cms/${ccn}/`);}catch{return false;}};
+  for(const row of rawRows){
+    const location=record(row.recordedLocationFields);
+    if(session.identifier&&String(row.cmsCcn)!==session.identifier.value)return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'senior_identifier_mismatch');
+    const expectedClass=session.providerClass??text(sourceQuery.providerClass);
+    if(!text(row.name)||!/^\d{6}$/.test(String(row.cmsCcn))||!validProfile(row.canonicalProfileUrl,row.providerClass,row.cmsCcn)||!['nursing_home','home_health','hospice'].includes(String(row.providerClass))||(expectedClass&&row.providerClass!==expectedClass))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'invalid_senior_identity');
+    if(session.geography?.stateCode&&location.state!==session.geography.stateCode)return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'senior_record_state_mismatch');
+    if(session.geography?.type==='city'&&String(location.city).trim().toLowerCase()!==session.geography.value.trim().toLowerCase())return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'senior_record_city_mismatch');
+    if(session.geography?.type==='county'&&String(location.county).replace(/\s+county$/i,'').trim().toLowerCase()!==session.geography.value.replace(/\s+county$/i,'').trim().toLowerCase())return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'senior_record_county_mismatch');
+  }
   const rows = records(payload.rows).map((row): GuidedResultRow => {
-    const location = record(row.recordedLocation); const evidence = record(row.evidence); const ccn = text(row.cmsCcn);
-    const facts = Object.entries(evidence).filter(([,v]) => typeof v === 'string' || typeof v === 'number').slice(0, 3).map(([k,v]) => ({ label: k.replaceAll('_',' '), value: String(v) }));
+    const location = record(row.recordedLocationFields); const ccn = text(row.cmsCcn);
+    const facts = records(row.evidence).filter(e=>text(e.label)&&text(e.value)).slice(0,3).map(e=>({label:text(e.label)!,value:text(e.value)!}));
+    const provenance=record(payload.provenance);
+    if(text(provenance.officialAsOf))facts.push({label:'Source as of',value:text(provenance.officialAsOf)!});
+    if(text(provenance.retrievedAt))facts.push({label:'Source retrieved',value:text(provenance.retrievedAt)!});
     return {
       name: text(row.name) ?? 'Published SeniorTrustHub identity', hub: 'senior',
       identifier: ccn ? { label: 'CMS CCN', value: ccn } : undefined, classLabel: text(row.providerClass),
       recordedLocation: [text(location.city), text(location.state), text(location.zip)].filter(Boolean).join(', '),
-      status: text(row.status), whyShown: 'Matched the selected CMS provider class and recorded geography.',
+      status: text(row.status), whyShown: `The returned ${text(row.providerClass)?.replaceAll('_',' ')} record lists ${[text(location.city),text(location.state)].filter(Boolean).join(', ')}. Recorded location is not service availability.`,
       destination: { type: 'PROFILE', href: text(row.canonicalProfileUrl)!, label: 'Open SeniorTrustHub profile' }, facts,
     };
   }).filter((row) => Boolean(row.destination?.href));
@@ -465,7 +492,22 @@ function supported(session: GuidedResearchSession, payload: Record<string, unkno
   };
 }
 
+export function isGuidedExecutionAuthorized(session:GuidedResearchSession):boolean {
+  const canonical=planAskResearch(session.originalQuestion);
+  const authorizedHub=canonical.primaryHub??createGuidedSession(session.originalQuestion)?.hub;
+  if(authorizedHub!==session.hub||!session.researchPlan.executionAllowed||(!session.executionScope.executionAllowed&&!(session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY')))return false;
+  if(canonical.reasonCodes.includes('CARE_TASK')){
+    const original=canonical.requestedGeography,geo=session.geography;
+    if(!session.providerClass||(canonical.careSetting&&canonical.careSetting!==session.providerClass)||(original?.city&&original.city.toLowerCase()!==geo?.city?.toLowerCase())||(original?.stateCode&&original.stateCode!==geo?.stateCode))return false;
+    if(!geo||!US_JURISDICTIONS.some(s=>s.code===geo.stateCode))return false;
+    const effective=refreshCareSession(session,session.providerClass,geo);
+    if(!effective.researchPlan.executionAllowed||!effective.executionScope.executionAllowed||effective.geography?.type!==geo.type||effective.geography?.value!==geo.value)return false;
+  }
+  return true;
+}
+
 export async function executeGuidedSpecialist(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
+  if(!isGuidedExecutionAuthorized(session))return failure(session,'INVALID_QUERY',0,'execution_not_authorized','Complete the current research choices before a specialist search can run.');
   if (session.hub === 'move') return executeMove(session);
   if (session.hub === 'senior') return executeSenior(session);
   if (session.hub === 'contractor') return executeContractor(session);

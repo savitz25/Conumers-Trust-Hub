@@ -1,0 +1,5 @@
+
+> ask-trust-hub@2.1.0 typecheck
+> tsc --noEmit
+
+lib/network/ask-plan.ts(1672,136): error TS2353: Object literal may only specify known properties, and 'summary' does not exist in type 'NetworkAskAnswer'.

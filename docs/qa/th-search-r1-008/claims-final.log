@@ -1,0 +1,93 @@
+
+> ask-trust-hub@2.1.0 check:ath-claim-governance-001
+> node --experimental-strip-types --test lib/customer/ath-claim-governance-001.test.ts lib/customer/platform.test.ts
+
+(node:4464) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/customer/ath-claim-governance-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 35 realistic human claim scenarios follow the Contractor V1 rubric (2.5695ms)
+✔ domain, credential, and public facts cannot approve alone or together (0.1611ms)
+✔ evidence catalog is stable and explicitly classifies weak/conflict signals (0.0936ms)
+✔ free email is escalation rather than rejection (0.1243ms)
+✔ response warnings identify PII, secrets, HTML, threats, and external links (0.7204ms)
+✔ real review surface separates governance fields and revocation stays staff-only (2.3179ms)
+✔ revocation preserves history and active access queries exclude revoked grants (0.5814ms)
+✔ abuse caps cover front-door, correction, response, invitation, and review actions (0.612ms)
+✔ required operational governance documents are checked in (4.3756ms)
+✔ governance adds no identity-bearing client analytics (1.0196ms)
+(node:17808) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/customer/platform.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"src":"ath-customer","event":"handoff_rejected","level":"warn","code":"reused_nonce","ts":"2026-09-12T03:52:01.276Z"}
+✔ reused nonce rejected (1466.8818ms)
+{"src":"ath-customer","event":"handoff_adapter_rejected","level":"warn","code":"thin_profile","ts":"2026-09-12T03:52:02.743Z"}
+✔ thin profile rejected at accept (1464.921ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:04.245Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"9c3a038b-ce14-49ab-b8d8-14391a00584b","ts":"2026-09-12T03:52:04.251Z"}
+✔ expired magic link rejected and consumed link cannot be reused (1510.0168ms)
+✔ session required for claim submit (1185.1131ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:06.992Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"4940eb83-5f9d-4a6a-8385-8c50e7b02015","ts":"2026-09-12T03:52:07.003Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"9957eea2-3c88-43e8-b922-7ec5e4ffe409","competing":false,"freeEmail":false,"ts":"2026-09-12T03:52:07.028Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:07.050Z"}
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:07.063Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"c7cb4a6a-b417-4865-8559-ea82f1d5b5e8","ts":"2026-09-12T03:52:07.077Z"}
+{"src":"ath-customer","event":"grant_created","level":"info","grantId":"2058d1e8-a878-4db2-ac7e-0aee40b48d75","claimId":"9957eea2-3c88-43e8-b922-7ec5e4ffe409","ts":"2026-09-12T03:52:07.104Z"}
+{"src":"ath-customer","event":"staff_decision","level":"info","decision":"approve","claimId":"9957eea2-3c88-43e8-b922-7ec5e4ffe409","ts":"2026-09-12T03:52:07.105Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_APPROVED","ts":"2026-09-12T03:52:07.110Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"FIRST_CLAIM_ONBOARDING","ts":"2026-09-12T03:52:07.113Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"ACCESS_REMOVED","ts":"2026-09-12T03:52:07.133Z"}
+{"src":"ath-customer","event":"grant_revoked","level":"info","grantId":"2058d1e8-a878-4db2-ac7e-0aee40b48d75","ts":"2026-09-12T03:52:07.133Z"}
+✔ happy path: confirm ≠ grant; approval creates one active grant (1700.1427ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:08.710Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"acf15cdb-b48f-4d58-a2be-4abd1de49d79","ts":"2026-09-12T03:52:08.724Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"63917463-cc97-4350-9bd8-36a0239974df","competing":false,"freeEmail":false,"ts":"2026-09-12T03:52:08.761Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:08.772Z"}
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:08.784Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"deae7381-d0b3-412c-a5d1-81930f8dc732","ts":"2026-09-12T03:52:08.794Z"}
+✔ user cannot read another organization claim (1682.962ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:10.447Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"b507db3f-dd44-4398-9a51-fb5582939794","ts":"2026-09-12T03:52:10.453Z"}
+✔ non-staff cannot access review actions (1636.5719ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:11.721Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"80712425-8ce3-4793-8c2e-833b956970fb","ts":"2026-09-12T03:52:11.725Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"c51986f4-2b7e-4a5d-883a-23261d65edf1","competing":false,"freeEmail":false,"ts":"2026-09-12T03:52:11.741Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:11.747Z"}
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:11.751Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"654c92ba-93b0-4e99-8782-6444d316159c","ts":"2026-09-12T03:52:11.754Z"}
+{"src":"ath-customer","event":"staff_decision","level":"info","decision":"reject","claimId":"c51986f4-2b7e-4a5d-883a-23261d65edf1","ts":"2026-09-12T03:52:11.764Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_NOT_APPROVED","ts":"2026-09-12T03:52:11.768Z"}
+✔ rejected claim cannot grant access (1313.9081ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:13.197Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"1c25c361-ade6-462a-a55b-51992b8c94d2","ts":"2026-09-12T03:52:13.202Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"52841e74-3541-4638-838d-9114eebd5208","competing":false,"freeEmail":false,"ts":"2026-09-12T03:52:13.215Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:13.219Z"}
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:13.222Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"be0af92e-5cf5-4a5e-a006-9c00c40b35ae","ts":"2026-09-12T03:52:13.226Z"}
+{"src":"ath-customer","event":"grant_created","level":"info","grantId":"6fc87294-f6b1-45c5-8f63-c7804874f933","claimId":"52841e74-3541-4638-838d-9114eebd5208","ts":"2026-09-12T03:52:13.247Z"}
+{"src":"ath-customer","event":"staff_decision","level":"info","decision":"approve","claimId":"52841e74-3541-4638-838d-9114eebd5208","ts":"2026-09-12T03:52:13.247Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_APPROVED","ts":"2026-09-12T03:52:13.252Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"FIRST_CLAIM_ONBOARDING","ts":"2026-09-12T03:52:13.255Z"}
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:13.260Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"b1a8bbdc-d594-409a-b4e3-59a07d636722","ts":"2026-09-12T03:52:13.264Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"87edb43b-700f-476a-9ddc-ba371430235e","competing":true,"freeEmail":true,"ts":"2026-09-12T03:52:13.274Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:13.278Z"}
+✔ competing claim cannot steal the active grant (1517.0207ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:14.463Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"1245a08f-f972-4563-ba57-6d5dabf0124f","ts":"2026-09-12T03:52:14.471Z"}
+✔ client cannot self-create an active grant through the platform API (1189.2156ms)
+{"src":"ath-customer","event":"auth_challenge_created","level":"info","purpose":"login","ts":"2026-09-12T03:52:15.823Z"}
+{"src":"ath-customer","event":"auth_login_confirmed","level":"info","userId":"28724451-97b9-4ab6-b2d2-96f6f667e3bc","ts":"2026-09-12T03:52:15.827Z"}
+{"src":"ath-customer","event":"claim_submitted","level":"info","claimId":"ba39a55d-70e5-406b-bdd4-f50ec8ad89f2","competing":false,"freeEmail":true,"ts":"2026-09-12T03:52:15.842Z"}
+{"src":"ath-customer","event":"customer_email_failed","level":"error","emailType":"CLAIM_STARTED","ts":"2026-09-12T03:52:15.846Z"}
+✔ free-email is reviewable not rejected (1370.1818ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16834.7224

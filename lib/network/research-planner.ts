@@ -1,4 +1,5 @@
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
+import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import type { SpecialistHubId } from './registry.ts';
 import type { UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
@@ -25,6 +26,7 @@ export type AskRequestedGeography = {
 };
 
 export type AskResearchPlan = {
+  careSetting?: CareSetting;
   version: 'ask-research-plan-v1';
   originalQuestion: string;
   intent: AskResearchIntent;
@@ -55,6 +57,11 @@ const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|
 function dedupe<T>(values: T[]): T[] { return [...new Set(values)]; }
 
 function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): SpecialistHubId[] {
+  if(/\bMedicare\s+insurance\b/i.test(query))return ['insurance'];
+  const care=careTask(query);
+  if(care?.kind==='move_context')return ['move'];
+  if(care?.kind==='care_and_move')return ['senior','move'];
+  if(care?.kind==='care')return ['senior'];
   const hubs = [...parsed.suggestedHubs];
   const explicit: SpecialistHubId[] = [];
   const patterns: Array<[SpecialistHubId, RegExp]> = [
@@ -232,7 +239,7 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
     : intent === 'ENTITY_LOOKUP_MISSING_IDENTITY' ? 'Provide the entity name or a recognized source identifier before specialist research runs.'
       : !executable ? 'This question needs explanation or scope clarification before specialist research can run.' : undefined;
 
-  return {
+  const plan:AskResearchPlan = {
     version: 'ask-research-plan-v1', originalQuestion, intent, primaryHub, candidateHubs,
     entityClass: entity, identifier, entityName: intent === 'ENTITY_LOOKUP' ? name : undefined,
     requestedGeography: geography,
@@ -240,6 +247,10 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
     requestedEvidence: requestedEvidence(originalQuestion), missingSlots, executionAllowed: executable,
     executionMode, clarificationReason, reasonCodes: dedupe(reasons), legacyQueryType: legacyType(intent),
   };
+  const care=careTask(originalQuestion);
+  if(care?.kind==='care'&&!plan.entityName&&!/\b(?:CMS\s+)?CCN\s*#?\s*\d{6}\b/i.test(originalQuestion))return planCareResearch(plan,care.setting,careLocation(originalQuestion));
+  if(care?.kind==='care_and_move')return {...plan,intent:'MULTI_HUB_JOURNEY',primaryHub:undefined,candidateHubs:['senior','move'],requestedGeography:careLocation(originalQuestion),executionAllowed:false,executionMode:'CLARIFY'};
+  return plan;
 }
 
 export function validateAskResearchPlan(plan: AskResearchPlan): AskResearchPlan {

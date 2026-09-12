@@ -1,0 +1,204 @@
+
+> ask-trust-hub@2.1.0 build
+> next build
+
+▲ Next.js 16.3.3 (Turbopack)
+✓ Running next.config.ts took 65ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 19.5s
+  Running TypeScript ...
+  Finished TypeScript in 13.4s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/92) ...
+  Generating static pages using 7 workers (23/92) 
+  Generating static pages using 7 workers (46/92) 
+  Generating static pages using 7 workers (69/92) 
+✓ Generating static pages using 7 workers (92/92) in 1491ms
+  Finalizing page optimization ...
+
+Route (app)                                                          Revalidate  Expire
+┌ ○ /                                                                        1h      1y
+├ ○ /_not-found
+├ ○ /about
+├ ○ /academic
+├ ƒ /admin
+├ ƒ /admin/audit
+├ ƒ /admin/bootstrap
+├ ƒ /admin/controls
+├ ƒ /admin/data
+├ ƒ /admin/data/capabilities/[capabilityKey]
+├ ƒ /admin/growth/campaigns
+├ ƒ /admin/growth/campaigns/[campaignId]
+├ ƒ /admin/identity
+├ ƒ /admin/identity/[reviewId]
+├ ƒ /admin/legacy
+├ ○ /admin/login
+├ ƒ /admin/operations/business-responses
+├ ƒ /admin/operations/business-responses/[id]
+├ ƒ /admin/operations/businesses
+├ ƒ /admin/operations/businesses/[orgId]
+├ ƒ /admin/operations/claims
+├ ƒ /admin/operations/claims/[claimId]
+├ ƒ /admin/operations/corrections
+├ ƒ /admin/operations/corrections/[id]
+├ ƒ /admin/search
+├ ƒ /admin/security
+├ ƒ /api/admin/audit
+├ ƒ /api/admin/bootstrap
+├ ƒ /api/admin/commands
+├ ƒ /api/admin/controls
+├ ƒ /api/admin/data/incidents/[incidentId]
+├ ƒ /api/admin/growth/campaigns
+├ ƒ /api/admin/growth/campaigns/[campaignId]
+├ ƒ /api/admin/growth/campaigns/[campaignId]/targets
+├ ƒ /api/admin/identity/[reviewId]
+├ ƒ /api/admin/identity/detect
+├ ƒ /api/admin/operations/business-responses/[id]
+├ ƒ /api/admin/operations/claims/[claimId]
+├ ƒ /api/admin/operations/claims/[claimId]/revoke
+├ ƒ /api/admin/operations/corrections/[id]
+├ ƒ /api/admin/search/run
+├ ƒ /api/admin/staff
+├ ƒ /api/admin/staff/[staffId]
+├ ƒ /api/chat
+├ ƒ /api/cron/my-trusthub-dbpr
+├ ƒ /api/cron/my-trusthub-email-canary
+├ ƒ /api/cron/my-trusthub-lifecycle
+├ ƒ /api/cron/my-trusthub-notifications
+├ ƒ /api/cron/regulatory-monitoring
+├ ƒ /api/cron/search-canaries
+├ ƒ /api/customer/auth/logout
+├ ƒ /api/customer/auth/me
+├ ƒ /api/customer/auth/request-link
+├ ƒ /api/customer/auth/verify
+├ ƒ /api/customer/claim/accept
+├ ƒ /api/customer/claim/submit
+├ ƒ /api/customer/manage/[profileId]
+├ ƒ /api/customer/manage/[profileId]/business-replies
+├ ƒ /api/customer/manage/[profileId]/business-replies/[replyId]
+├ ƒ /api/customer/manage/[profileId]/monitoring
+├ ƒ /api/customer/manage/[profileId]/notifications/[notificationId]
+├ ƒ /api/customer/manage/[profileId]/reconfirm
+├ ƒ /api/customer/manage/[profileId]/record-issues
+├ ƒ /api/customer/manage/[profileId]/record-issues/[issueId]
+├ ƒ /api/customer/organizations/[orgId]/invitations
+├ ƒ /api/customer/organizations/[orgId]/invitations/[invitationId]
+├ ƒ /api/customer/organizations/[orgId]/members/[membershipId]
+├ ƒ /api/customer/organizations/invitations/accept
+├ ƒ /api/guided-research
+├ ƒ /api/internal/ath-launch-001b-r2
+├ ƒ /api/internal/business-replies/[id]
+├ ƒ /api/internal/customer-email-qa
+├ ƒ /api/internal/handoff/mint
+├ ƒ /api/internal/record-issues/[id]
+├ ƒ /api/internal/review/[id]
+├ ƒ /api/internal/review/[id]/revoke
+├ ƒ /api/my-trusthub/export/[exportRef]
+├ ƒ /api/my-trusthub/handoff/issue
+├ ƒ /api/network/coverage-notify
+├ ○ /api/network/sources                                                     1h      1y
+├ ƒ /api/product-events
+├ ƒ /api/public/contractor-profiles/[profileId]
+├ ƒ /api/public/contractor-profiles/[profileId]/replies
+├ ƒ /api/public/profiles/[hubId]/[profileId]
+├ ƒ /api/public/profiles/[hubId]/[profileId]/replies
+├ ○ /arizona
+├ ƒ /ask
+├ ƒ /auth/callback
+├ ○ /california
+├ ƒ /claim/continue
+├ ƒ /claim/help
+├ ƒ /claim/status/[id]
+├ ○ /claim/what-claiming-means
+├ ○ /colorado
+├ ○ /contact
+├ ○ /corrections
+├ ƒ /data-sources
+├ ○ /editorial-standards
+├ ƒ /go/claim/[token]
+├ ƒ /go/unsubscribe/[token]
+├ ○ /guides
+├   /guides/[slug]
+│ ├ ● /guides/verify-usdot-number
+│ ├ ● /guides/operating-authority-explained
+│ ├ ● /guides/binding-vs-non-binding-estimates
+│ └ ● [+7 more paths]
+├ ƒ /guides/[slug]/share-og
+├ ○ /how-we-make-money
+├ ○ /internal/business-replies
+├ ƒ /internal/business-replies/[id]
+├ ƒ /internal/customer-email-previews
+├ ƒ /internal/customer-email-qa
+├ ƒ /internal/customer-experience-fixtures
+├ ƒ /internal/customer-foundation-fixtures
+├ ƒ /internal/handoff
+├ ƒ /internal/insurance-customer-foundation-fixtures
+├ ƒ /internal/investor-customer-foundation-fixtures
+├ ○ /internal/launch-ops
+├ ○ /internal/record-issues
+├ ƒ /internal/record-issues/[id]
+├ ○ /internal/review
+├ ƒ /internal/review/[id]
+├ ƒ /internal/senior-customer-foundation-fixtures
+├ ○ /journeys
+├   /journeys/[slug]
+│ ├ ● /journeys/buying-a-home
+│ ├ ● /journeys/moving-to-another-state
+│ ├ ● /journeys/relocating-for-work
+│ └ ● [+3 more paths]
+├ ƒ /journeys/[slug]/share-og
+├ ƒ /manage
+├ ƒ /manage/[profileId]
+├ ƒ /manage/invitations/accept
+├ ƒ /manage/notifications
+├ ƒ /manage/organization/[orgId]
+├ ○ /methodology
+├ ○ /my
+├ ○ /my-trust-journey
+├ ƒ /my/alerts
+├ ƒ /my/alerts/[alertId]
+├ ƒ /my/handoff/arrive
+├ ƒ /my/handoff/finish
+├ ƒ /my/handoff/prepare
+├ ƒ /my/handoff/start
+├ ○ /my/projects
+├ ƒ /my/projects/[projectId]
+├ ○ /my/saved
+├ ƒ /my/sessions/[sessionId]
+├ ƒ /my/sign-in
+├ ƒ /my/watches
+├ ○ /my/you
+├ ○ /network
+├ ƒ /network/coverage
+├ ƒ /network/evidence
+├ ƒ /network/share-og
+├ ○ /new-jersey
+├ ○ /new-jersey/middlesex-county
+├ ○ /new-jersey/monmouth-county
+├ ○ /new-jersey/somerset-county
+├ ○ /new-jersey/union-county
+├ ○ /new-york
+├ ○ /places                                                                  1h      1y
+├ ○ /places/florida                                                          1h      1y
+├ ○ /places/florida/broward                                                  1h      1y
+├ ○ /places/florida/palm-beach                                               1h      1y
+├ ○ /privacy
+├ ○ /promise
+├ ○ /robots.txt
+├ ƒ /search
+├ ○ /sitemap.xml
+├ ○ /terms
+├ ○ /texas
+├ ○ /trust
+├ ○ /virginia
+├ ○ /washington
+└ ○ /who-we-are
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

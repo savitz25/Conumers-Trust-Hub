@@ -1,3 +1,4 @@
+import {AskQueryForm} from '@/components/ask-query-form';
 import { NetworkAskResult } from '@/components/network-ask-result';
 import { PageHeader } from '@/components/page-header';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
@@ -10,22 +11,26 @@ import {AskRouteAnalytics} from '@/components/ask-route-analytics';
 import {observeAskRoute} from '@/lib/network/ask-intel-observability';
 import {recordSearchObservation} from '@/lib/control-plane/product-events';
 import {after} from 'next/server';
+import {decideAskExecution} from '@/lib/network/execution-decision';
+import {validateAskQuestion} from '@/lib/network/ask-request';
 
 export const revalidate = 3600;
 
-export async function generateMetadata({searchParams}:{searchParams:Promise<{q?:string}>}):Promise<Metadata>{const {q}=await searchParams;const clean=(q??'').replace(/[<>\u0000-\u001f]/g,' ').trim().slice(0,90);return {title:{absolute:clean?`Research: ${clean} | Ask Trust Hub`:'Ask the TrustHub Network'},description:clean?`Source-backed specialist research route for: ${clean}`:'Research the TrustHub specialist network.',robots:{index:false,follow:true}}}
+export async function generateMetadata({searchParams}:{searchParams:Promise<{q?:string|string[]}>}):Promise<Metadata>{const {q}=await searchParams;const clean=(typeof q==='string'?q:'').replace(/[<>\u0000-\u001f]/g,' ').trim().slice(0,90);return {title:{absolute:clean?`Research: ${clean} | Ask Trust Hub`:'Ask the TrustHub Network'},description:clean?`Source-backed specialist research route for: ${clean}`:'Research the TrustHub specialist network.',robots:{index:false,follow:true}}}
 
 export default async function AskPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string|string[] }>;
 }) {
   const { q } = await searchParams;
-  const query = (q ?? '').trim();
+  let query='',inputError='';
+  if(q!==undefined){try{query=validateAskQuestion(q);}catch{inputError='Enter one question of up to 500 characters, then try again.';}}
   const route=query?buildAskResearchRoute(query):null;
-  const guided=query&&!route?.journey?createGuidedSession(query):null;
+  const decision=query?decideAskExecution(query,route!.plan):null;
+  const guided=query&&!route?.journey&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
   const observation=route?observeAskRoute(route):null;
-  if(observation && (route?.journey || !guided)) after(()=>recordSearchObservation(observation));
+  if(observation && (route?.journey || (!guided&&!route?.canExecute))) after(()=>recordSearchObservation(observation));
   return (
     <>
       <PageHeader
@@ -34,30 +39,10 @@ export default async function AskPage({
         description="One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts."
       />
       <div className="container-page py-10 sm:py-14">
-        <form action="/ask" method="get" className="mb-10 max-w-2xl" role="search" aria-label="Ask the TrustHub Network">
-          <label htmlFor="ask-q" className="sr-only">
-            What do you want to know?
-          </label>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <input
-              id="ask-q"
-              name="q"
-              defaultValue={query}
-              placeholder="What do you want to know?"
-              className="min-h-12 flex-1 rounded-xl border px-4"
-              style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
-            />
-            <button
-              type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white"
-              style={{ backgroundColor: ASK_BRAND.indigo }}
-            >
-              Ask
-            </button>
-          </div>
-        </form>
-        {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||!guided)}/><ResearchRouteCard route={route}/></>:null}
-        {query ? (route?.journey ? null : guided ? <GuidedResearch query={query} initialSession={guided} routeDestinationHrefs={route?.destinations.map(row=>row.href)??[]} /> : <NetworkAskResult query={query} hideInterpretation />) : (
+        <AskQueryForm query={query}/>
+        {inputError?<p role="alert" className="mb-6 rounded-xl border p-4">{inputError}</p>:null}
+        {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
+        {query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',

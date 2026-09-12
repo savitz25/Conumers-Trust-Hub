@@ -1,0 +1,614 @@
+
+> ask-trust-hub@2.1.0 test
+> npm run check:ask-home-001 && node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs && npm run check:ath-nj-001 && npm run check:ath-nj-county-002 && npm run check:ath-nj-county-003 && npm run check:ath-ca-001 && npm run check:ath-ca-002 && npm run check:ath-tx-001 && npm run check:ath-tx-002 && npm run check:ath-wa-001 && npm run check:ath-wa-002 && npm run check:ath-az-001 && npm run check:ath-az-final && npm run check:ath-co-001 && npm run check:ath-va-net-001 && npm run check:ath-ny-net-001 && npm run check:ath-metrics-001c && npm run check:ath-metrics-type-001 && npm run check:ath-metrics-004b && npm run check:ath-metrics-004c
+
+
+> ask-trust-hub@2.1.0 check:ask-home-001
+> node --experimental-strip-types --test lib/network-intelligence/ask-home-001.test.ts
+
+(node:30284) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-intelligence/ask-home-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ exactly six known, traceable hub manifests validate (3.5791ms)
+✔ entity and publication grains remain distinct (0.4714ms)
+✔ semantic firewalls are explicit (0.3761ms)
+✔ no universal score, paid ordering, or unsupported provider mega-total (0.1292ms)
+✔ nine-state routing metadata preserves asymmetric specialist coverage (0.3573ms)
+✔ source ledger, coverage, and network fingerprints are deterministic (17.873ms)
+✔ search and customer contract source files are unchanged by this contract (0.9226ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.289
+Network V2 assertions passed (6 specialists, canonicals, ownership, router, schema).
+SHARE-002 Ask assertions passed (host, 1200×630 PNG, twitter large, no localhost, no stale og-default).
+SHARE-003 Ask assertions passed.
+VISUAL-002 Ask reference-shell assertions passed.
+
+> ask-trust-hub@2.1.0 check:ath-nj-001
+> node --experimental-strip-types --test lib/network/ath-nj-001.test.ts
+
+(node:16148) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-nj-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 1-6 gateway route, indexable after gate, canonical, sitemap, six cards, no duplicate (1.8966ms)
+✔ 7-10 manifest unique hubs and URLs (0.8033ms)
+✔ 11-18 NJ routing (20.9172ms)
+✔ 12-question NJ consumer routing (0.5909ms)
+✔ 19-27 semantic guardrails (0.2667ms)
+✔ 28-31 six URL definitions; Move or any specialist failure blocks complete (1.0475ms)
+✔ 32-40 Florida and network regression surfaces (3.3108ms)
+✔ accessibility of NJ cards and starters (0.1922ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 391.2292
+
+> ask-trust-hub@2.1.0 check:ath-nj-county-002
+> node --experimental-strip-types --test lib/network/ath-nj-county-002.test.ts
+
+(node:35760) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-nj-county-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ four Ask county routes, FIPS, sitemap, no extra NJ counties (3.6412ms)
+✔ contractor and lender county handoffs; insurance/move/investor stay state (1.9514ms)
+✔ senior county links live after gate; hub intent stays primary (0.2397ms)
+✔ semantics, JSON-LD, concierge, Florida and customer surfaces (0.9787ms)
+✔ federated Ask county detection and place hrefs (21.9295ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 433.7377
+
+> ask-trust-hub@2.1.0 check:ath-nj-county-003
+> node --experimental-strip-types --test lib/network/ath-nj-county-003.test.ts
+
+(node:9884) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-nj-county-003.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ATH-NJ-COUNTY-003 senior release gate is flipped (0.8193ms)
+✔ ATH-NJ-COUNTY-003 12-question NJ county stress test (18.3181ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 286.7378
+
+> ask-trust-hub@2.1.0 check:ath-ca-001
+> node --experimental-strip-types --test lib/network/ath-ca-001.test.ts
+
+(node:37880) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-ca-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ATH-CA-001 research artifacts remain; public gateway is ATH-CA-002 state-level only (1.5451ms)
+✔ no Trust Score, paid ranking, or best/worst providers (0.2809ms)
+✔ CSLB is the contractor universe; vendor and PWCR are not licenses (0.2967ms)
+✔ classification fixture matches the official published codes (0.467ms)
+✔ Senior ELMS fixture keeps official IDs and omits administrator names (0.2585ms)
+✔ required California network files exist (1.2605ms)
+✔ NJ and Florida public surfaces are unchanged by this ticket (1.4053ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 289.5246
+
+> ask-trust-hub@2.1.0 check:ath-ca-002
+> node --experimental-strip-types --test lib/network/ath-ca-002.test.ts
+
+(node:34708) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-ca-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ gateway route exists, indexable after gate, canonical, sitemap gated, six cards, no counties (2.7197ms)
+✔ manifest unique hubs and specialist /california URLs (0.7375ms)
+✔ California routing keeps hub intent primary and never uses county destinations (12.8185ms)
+✔ 12-question California consumer routing (0.3953ms)
+✔ semantic guardrails, structured data, no ratings (0.3557ms)
+✔ six URL definitions; Move or any specialist failure blocks complete (0.4095ms)
+✔ homepage, footer, places, concierge, and discovery retain canonical California routing (2.3955ms)
+✔ NJ and Florida public surfaces remain additive and unchanged (7.8124ms)
+✔ customer / claim identity is not rewritten (0.5554ms)
+✔ accessibility of CA cards and starters (0.2064ms)
+✔ queryLooksLikeCalifornia does not steal New Jersey or generic questions (0.1503ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 416.3918
+
+> ask-trust-hub@2.1.0 check:ath-tx-001
+> node --experimental-strip-types --test lib/network/ath-tx-001.test.ts
+
+(node:39220) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-tx-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ATH-TX-001 is state-level research only: ATH-TX-002 publishes Ask /texas, still no counties (1.5529ms)
+✔ no Trust Score, paid ranking, or people publication (0.1234ms)
+✔ Texas has no statewide general-contractor license; vendor is not a license (0.196ms)
+✔ TDI appointment graph counts are live and people stay unpublished (0.1494ms)
+✔ TSBPE RMP fixture keeps license IDs and omits person names (0.1763ms)
+✔ SML fixture only attaches on NMLS ID (0.1141ms)
+✔ build sequence is evidence-based: Insurance then Contractor, not Senior first (0.1933ms)
+✔ required Texas network files exist (1.5205ms)
+✔ NJ, Florida, and California public surfaces are unchanged by this ticket (0.9732ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 232.6259
+
+> ask-trust-hub@2.1.0 check:ath-tx-002
+> node --experimental-strip-types --test lib/network/ath-tx-002.test.ts
+
+(node:38700) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-tx-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ gateway route exists, indexable after gate, canonical, sitemap gated, six cards, no counties (3.7322ms)
+✔ manifest unique hubs and specialist /texas URLs (1.0967ms)
+✔ Texas routing keeps hub intent primary and never uses county destinations (20.7517ms)
+✔ 12-question Texas consumer routing (0.4804ms)
+✔ semantic guardrails, structured data, no ratings (0.3837ms)
+✔ six URL definitions; Move or any specialist failure blocks complete (0.4381ms)
+✔ homepage, footer, places, concierge, and discovery are gated on the six-hub flag (3.2763ms)
+✔ NJ, Florida, and California public surfaces remain additive and unchanged (10.6627ms)
+✔ customer / claim identity is not rewritten (0.6198ms)
+✔ accessibility of TX cards and starters (0.2407ms)
+✔ queryLooksLikeTexas does not steal New Jersey, Florida, or California-origin questions (0.1404ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 470.107
+
+> ask-trust-hub@2.1.0 check:ath-wa-001
+> node --experimental-strip-types --test lib/network/ath-wa-001.test.ts
+
+(node:9176) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-wa-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ATH-WA-001 is state-level research only: ATH-WA-002 publishes Ask /washington, still no counties (1.543ms)
+✔ no Trust Score, paid ranking, or people publication (0.147ms)
+✔ L&I general, bond, and insurance counts are the live CSV ingest (0.1391ms)
+✔ three-layer join is exact on ContractorLicenseNumber and keeps orphans visible (0.1419ms)
+✔ fixtures keep license IDs and omit principal / WAOIC person fields (0.2165ms)
+✔ OIC individual producer lists are restricted; lookup is search-only (0.1691ms)
+✔ Senior GIS current AFH/ALF counts are official; DSHS is not CMS (0.1351ms)
+✔ build sequence is evidence-based: Contractor first, not a Texas mirror (0.115ms)
+✔ UTC household goods is documented, not scraped; lender has no fake denominator (0.2284ms)
+✔ required Washington network files exist (1.1393ms)
+✔ NJ, Florida, California, and Texas public surfaces are unchanged by this ticket (0.5422ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 150.5315
+
+> ask-trust-hub@2.1.0 check:ath-wa-002
+> node --experimental-strip-types --test lib/network/ath-wa-002.test.ts
+
+(node:26124) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-wa-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ gateway route exists, indexable after gate, canonical, sitemap gated, six cards, no counties (1.9384ms)
+✔ manifest unique hubs and specialist /washington URLs (0.5674ms)
+✔ Washington routing keeps hub intent primary and never uses county destinations (13.2941ms)
+✔ 12-question Washington consumer routing (0.4131ms)
+✔ semantic guardrails, structured data, no ratings, expansion ledger (0.3949ms)
+✔ six URL definitions; any specialist failure blocks complete (0.369ms)
+✔ homepage, footer, places, concierge, and discovery are gated on the six-hub flag (3.1482ms)
+✔ NJ, Florida, California, and Texas public surfaces remain additive and unchanged (6.7299ms)
+✔ customer / claim identity is not rewritten (0.5014ms)
+✔ accessibility of WA cards and starters (0.5295ms)
+✔ queryLooksLikeWashington does not steal other states or DC (0.2033ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 311.3524
+
+> ask-trust-hub@2.1.0 check:ath-az-001
+> node --experimental-strip-types --test lib/network/ath-az-001.test.ts
+
+(node:27404) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-az-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ATH-AZ-001 is state-level research only: ATH-AZ-FINAL publishes Ask /arizona, still no counties (2.2492ms)
+✔ no Trust Score, paid ranking, or people publication (0.1804ms)
+✔ Arizona has no statewide mover license; 0 is proven absence, not a missing scrape (0.2139ms)
+✔ FMCSA AZ census is all motor carriers, not movers, and is not ingested (0.1317ms)
+✔ SBS Report Generator is paid at $0.03/row $30 minimum and was not purchased (0.1756ms)
+✔ HMDA Arizona is already acquired market observation, not lender companies (0.1519ms)
+✔ IARD overlay is existing firms; ACC lists are by request and were not pulled (0.1225ms)
+✔ ACC eCorp is search-only; bulk is PRA and was not requested (0.1335ms)
+✔ ROC and Senior are pointers; this ticket did not re-acquire them (0.1709ms)
+✔ nothing bulk was acquired; UNKNOWN is not coerced to zero (0.2306ms)
+✔ build sequence finishes Arizona with intelligence pages, not paid or local work (0.14ms)
+✔ required Arizona network files exist (1.3066ms)
+✔ Washington, Texas, California, NJ, and Florida public surfaces are unchanged (0.6488ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 213.4481
+
+> ask-trust-hub@2.1.0 check:ath-az-final
+> node --experimental-strip-types --test lib/network/ath-az-final.test.ts
+
+(node:25188) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-az-final.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ gateway route exists, indexable after gate, canonical, sitemap gated, six cards, no counties (1.8733ms)
+✔ four live specialist Arizona URLs; insurance and move are research paths not 404 pages (0.522ms)
+✔ contractor, senior, lender, investor accepted metrics and no fake insurance/move denominators (0.4715ms)
+✔ Ask lender fallback now consumes specialist-owned Arizona HMDA (0.1264ms)
+✔ expansion ledger does not treat HMDA or 213 overlay as new companies (0.1555ms)
+✔ 12-question Arizona routing stress test (1.5465ms)
+✔ no Trust Score, ratings schema, or local Arizona routes (0.1668ms)
+✔ homepage, footer, places, concierge, and discovery are gated on the Arizona flag (0.7521ms)
+✔ WA, TX, CA, NJ, Florida public surfaces remain additive (14.0879ms)
+✔ queryLooksLikeArizona does not steal other states (0.3344ms)
+✔ customer / claim identity is not rewritten (0.3202ms)
+✔ release artifact exists (0.1134ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 294.3235
+
+> ask-trust-hub@2.1.0 check:ath-co-001
+> node --experimental-strip-types --test lib/network/ath-co-001.test.ts
+
+(node:18764) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-co-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ six required specialist Colorado pages, unique hub IDs, canonical URLs (2.4257ms)
+✔ all required production verification statuses present (1.1899ms)
+✔ Ask /colorado canonical, indexable, no denver route, no Trust Score, no paid ranking (0.9244ms)
+✔ no cross-hub record total (0.3938ms)
+✔ contractor 7,936 is EC/PC credentials, not all contractors, no GC universe (0.3165ms)
+✔ Move 203 is state HHG permit grain; PUC != FMCSA (0.2368ms)
+✔ Senior provider classes stay separate and are not summed (0.2186ms)
+✔ Lender MLO != company and HMDA != license (0.1457ms)
+✔ Investor 740 != 589 != 3673 != 209 as grains, not because numbers differ; six-CRD overlap allowed (0.3293ms)
+✔ Insurance 1,839 != current authorized; surplus 259 != admitted; ratio != TrustHub score (0.4437ms)
+✔ missing/search-only != zero (0.2795ms)
+✔ state closeout is Production verified after Ask /colorado certification (0.1913ms)
+✔ 12-question Colorado stress is 12/12 PASS and routes correctly (34.7115ms)
+✔ Search V3 Colorado routes do not steal other states (1.4334ms)
+✔ authorized-insurer and state-RIA questions reject the wrong grains (0.1987ms)
+✔ claim eligibility surfaces are unchanged (0.5886ms)
+✔ state page count increments exactly once and places/concierge stay gated (0.8789ms)
+✔ source clocks remain source-native (0.1215ms)
+✔ NJ, CA, TX, WA, AZ public surfaces remain additive (0.2647ms)
+✔ gap register uses required classes (0.1022ms)
+✔ release contract name (0.0583ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 487.6621
+
+> ask-trust-hub@2.1.0 check:ath-va-net-001
+> node --experimental-strip-types --test lib/network/ath-va-net-001.test.ts
+
+(node:35220) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-va-net-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ six required specialist Virginia pages, unique hub IDs, canonical URLs (2.0803ms)
+✔ release gate passes only 6/6 live specialist pages (0.7051ms)
+✔ Ask /virginia canonical, indexability follows gate, no local routes (0.5367ms)
+✔ cross-hub total rejected; public research surfaces are a page grain of 7 (0.1825ms)
+✔ contractor grain: 53840 license numbers are not unique companies (0.178ms)
+✔ move grain: HHG is not Property, Property is not a mover census, 30-mile rule, DMV is not FMCSA (0.2273ms)
+✔ senior grain: ALF is not NH; capacity is not occupancy; no combined senior total (0.1771ms)
+✔ lender grain: dated 2025 roster is not current 2026; MLO is not a company; HMDA is not a lender (0.1601ms)
+✔ insurance grain: 2025 observation is not current authorization; 1727 is not unique insurers (0.1502ms)
+✔ investor grain: 697 is not office, ERA, notice, or 4481 firms (0.1888ms)
+✔ ATH-VA-NET-001A2: source-native expansion ledgers and identity namespaces (0.4446ms)
+✔ unknown and search-only are not zero; no Trust Score or ranking (0.0924ms)
+✔ Virginia routing: two queries per hub plus city intent (1.6929ms)
+✔ other-state wording does not hijack Virginia; no invented local route (24.2885ms)
+✔ West Virginia is not Virginia (3.4072ms)
+✔ claim eligibility surfaces are unchanged (0.6914ms)
+✔ state page count increments exactly once and places/concierge stay gated (1.7262ms)
+✔ state closeout is Production verified after Ask /virginia certification (0.217ms)
+✔ queryLooksLikeVirginia recognizes cities without inventing local routes (0.2732ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 334.444
+
+> ask-trust-hub@2.1.0 check:ath-ny-net-001
+> node --experimental-strip-types --test lib/network/ath-ny-net-001.test.ts
+
+(node:364) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network/ath-ny-net-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ six required specialist New York pages, unique hub IDs, canonical URLs (2.0169ms)
+✔ release gate validates verification evidence, not an unexplained constant (2.25ms)
+✔ state closeout is Production verified after Ask /new-york certification (0.2841ms)
+✔ Ask /new-york canonical, indexability follows gate, no NYC routes (1.0268ms)
+✔ cross-hub total rejected; public research surfaces are a page grain of 7 (0.2793ms)
+✔ source-native expansion ledgers are not a common NET_NEW_STATE_IDENTITIES field (0.3519ms)
+✔ semantic fingerprint excludes volatile clocks and changes on nested grain mutation (5.3106ms)
+✔ New York routing: two queries per hub plus cross-boundary cases (5.971ms)
+✔ exact USDOT identity keeps the structured Ask destination (20.9673ms)
+✔ federal NY headquarters research keeps structured Ask execution (19.0131ms)
+✔ NYSDOT intrastate roster stays fail-closed and does not become Florida IM (13.6368ms)
+✔ complaint evidence keeps source scope through the final plan (3.8307ms)
+✔ requested registration and debarment jurisdiction wins through the final plan (29.8821ms)
+✔ multiple requested registration states clarify instead of collapsing (24.0895ms)
+✔ NYC names stay statewide and do not invent local routes (0.372ms)
+✔ ranking and malformed identifiers do not become counts (2.5162ms)
+✔ claim eligibility surfaces are unchanged (0.8332ms)
+✔ state page inventory adds New York once (0.9957ms)
+✔ release gate fails on modified fixtures (2.005ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 491.8873
+
+> ask-trust-hub@2.1.0 check:ath-metrics-001c
+> node --experimental-strip-types --test lib/network-metrics/ath-metrics-001c.test.ts lib/network-intelligence/ask-home-002.test.ts
+
+(node:37132) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-intelligence/ask-home-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ accepted network fingerprint remains the homepage input (26.1987ms)
+✔ six cards use traceable metric IDs and preserve entity grains (1.1878ms)
+✔ no unsafe aggregate, stale source claim, or ambiguous Lender profile claim (0.4485ms)
+✔ nine-state routing metadata preserves asymmetric specialist coverage (0.1809ms)
+✔ consumer semantic firewalls and limitations are visible (0.2775ms)
+✔ current Intelligent Search is the hero and Concierge stays distinct (0.1649ms)
+✔ Trace, clocks, source ledger, methodology, and reconciled contracts are real (0.2055ms)
+✔ one H1, factual metadata, and no ranking structured data (0.2945ms)
+✔ snapshot rendering and homepage fingerprint are deterministic (1.3025ms)
+✔ customer status never participates in homepage ranking (0.5211ms)
+(node:36716) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-001c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ contractor and senior schemas validate and match accepted fingerprints (1.5572ms)
+✔ contractor adapter keeps credentials distinct from NJ construction source records (17.8037ms)
+✔ senior adapter keeps three universes separate and rejects combined headlines (1.1155ms)
+✔ upstream fixture change propagates without homepage constant edits (22.3391ms)
+✔ timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (2.5173ms)
+✔ presentation files do not hardcode production counts (0.3792ms)
+✔ homepage consumes all six specialist contracts and retains legacy manifests only for non-metric metadata (0.152ms)
+✔ trace and freshness preserve specialist clocks (0.2545ms)
+✔ public State of the Network copy uses consumer entity labels without changing grain (5.3058ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 266.6767
+
+> ask-trust-hub@2.1.0 check:ath-metrics-type-001
+> node --experimental-strip-types --test lib/design/metric-value.test.ts lib/network-metrics/ath-metrics-001c.test.ts
+
+(node:33788) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/design/metric-value.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ digit buckets follow 6 / 7 / 8+ steps and keep full comma-separated values (17.2226ms)
+✔ shared class names stay size-based, not value-specific (0.2142ms)
+✔ cards use the shared metric value treatment and do not wrap or abbreviate (4.2324ms)
+(node:27812) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-001c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ contractor and senior schemas validate and match accepted fingerprints (1.1444ms)
+✔ contractor adapter keeps credentials distinct from NJ construction source records (16.6328ms)
+✔ senior adapter keeps three universes separate and rejects combined headlines (1.6466ms)
+✔ upstream fixture change propagates without homepage constant edits (31.2952ms)
+✔ timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (3.7178ms)
+✔ presentation files do not hardcode production counts (0.5693ms)
+✔ homepage consumes all six specialist contracts and retains legacy manifests only for non-metric metadata (0.2255ms)
+✔ trace and freshness preserve specialist clocks (0.3737ms)
+✔ public State of the Network copy uses consumer entity labels without changing grain (7.4516ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 329.5462
+
+> ask-trust-hub@2.1.0 check:ath-metrics-004b
+> node --experimental-strip-types --test lib/network-metrics/ath-metrics-004b.test.ts lib/network-metrics/ath-metrics-001c.test.ts lib/design/metric-value.test.ts lib/network-intelligence/ask-home-002.test.ts
+
+(node:4148) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/design/metric-value.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ digit buckets follow 6 / 7 / 8+ steps and keep full comma-separated values (31.9702ms)
+✔ shared class names stay size-based, not value-specific (0.3133ms)
+✔ cards use the shared metric value treatment and do not wrap or abbreviate (4.3984ms)
+(node:34240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-intelligence/ask-home-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ accepted network fingerprint remains the homepage input (41.439ms)
+✔ six cards use traceable metric IDs and preserve entity grains (1.6188ms)
+✔ no unsafe aggregate, stale source claim, or ambiguous Lender profile claim (0.5084ms)
+✔ nine-state routing metadata preserves asymmetric specialist coverage (0.3071ms)
+✔ consumer semantic firewalls and limitations are visible (0.3949ms)
+✔ current Intelligent Search is the hero and Concierge stays distinct (0.2802ms)
+✔ Trace, clocks, source ledger, methodology, and reconciled contracts are real (0.3103ms)
+✔ one H1, factual metadata, and no ranking structured data (0.303ms)
+✔ snapshot rendering and homepage fingerprint are deterministic (1.4993ms)
+✔ customer status never participates in homepage ranking (0.4967ms)
+(node:25424) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-001c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ contractor and senior schemas validate and match accepted fingerprints (1.85ms)
+✔ contractor adapter keeps credentials distinct from NJ construction source records (25.5179ms)
+✔ senior adapter keeps three universes separate and rejects combined headlines (1.6297ms)
+✔ upstream fixture change propagates without homepage constant edits (23.0662ms)
+✔ timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (3.059ms)
+✔ presentation files do not hardcode production counts (0.5584ms)
+✔ homepage consumes all six specialist contracts and retains legacy manifests only for non-metric metadata (0.2293ms)
+✔ trace and freshness preserve specialist clocks (0.3901ms)
+✔ public State of the Network copy uses consumer entity labels without changing grain (5.3119ms)
+(node:24540) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-004b.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ move, lender, and insurance schemas validate against accepted fingerprints (2.6677ms)
+✔ move adapter keeps federal directory distinct from Florida FDACS and does not zero missing universes (1.205ms)
+✔ lender adapter keeps applications, originations, and institutions distinct (0.8528ms)
+✔ insurance adapter keeps agency, producer, insurer, appointment, and CMS grains separate (0.8779ms)
+✔ Move/Lender/Insurance upstream fixture changes propagate without homepage constant edits (49.938ms)
+✔ Move/Lender/Insurance timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (4.3116ms)
+✔ presentation files do not hardcode Move/Lender/Insurance production counts and keep MetricValue (0.685ms)
+✔ Contractor and Senior selections do not regress (1.301ms)
+✔ missing Move/Lender/Insurance universes fail closed instead of becoming zero (0.999ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 313.1825
+
+> ask-trust-hub@2.1.0 check:ath-metrics-004c
+> node --experimental-strip-types --test lib/network-metrics/ath-metrics-004c.test.ts lib/network-metrics/ath-metrics-004b.test.ts lib/network-metrics/ath-metrics-001c.test.ts lib/design/metric-value.test.ts lib/network-intelligence/ask-home-002.test.ts
+
+(node:23832) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/design/metric-value.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ digit buckets follow 6 / 7 / 8+ steps and keep full comma-separated values (30.476ms)
+✔ shared class names stay size-based, not value-specific (0.4628ms)
+✔ cards use the shared metric value treatment and do not wrap or abbreviate (3.8984ms)
+(node:9820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-intelligence/ask-home-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ accepted network fingerprint remains the homepage input (64.6027ms)
+✔ six cards use traceable metric IDs and preserve entity grains (1.6031ms)
+✔ no unsafe aggregate, stale source claim, or ambiguous Lender profile claim (0.5057ms)
+✔ nine-state routing metadata preserves asymmetric specialist coverage (0.2886ms)
+✔ consumer semantic firewalls and limitations are visible (0.3759ms)
+✔ current Intelligent Search is the hero and Concierge stays distinct (0.242ms)
+✔ Trace, clocks, source ledger, methodology, and reconciled contracts are real (0.285ms)
+✔ one H1, factual metadata, and no ranking structured data (0.2954ms)
+✔ snapshot rendering and homepage fingerprint are deterministic (3.0481ms)
+✔ customer status never participates in homepage ranking (0.698ms)
+(node:28304) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-001c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ contractor and senior schemas validate and match accepted fingerprints (1.8889ms)
+✔ contractor adapter keeps credentials distinct from NJ construction source records (28.668ms)
+✔ senior adapter keeps three universes separate and rejects combined headlines (3.7303ms)
+✔ upstream fixture change propagates without homepage constant edits (34.2249ms)
+✔ timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (3.7288ms)
+✔ presentation files do not hardcode production counts (0.4312ms)
+✔ homepage consumes all six specialist contracts and retains legacy manifests only for non-metric metadata (0.1495ms)
+✔ trace and freshness preserve specialist clocks (0.3209ms)
+✔ public State of the Network copy uses consumer entity labels without changing grain (5.9422ms)
+(node:32020) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-004b.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ move, lender, and insurance schemas validate against accepted fingerprints (3.0084ms)
+✔ move adapter keeps federal directory distinct from Florida FDACS and does not zero missing universes (1.8218ms)
+✔ lender adapter keeps applications, originations, and institutions distinct (0.6632ms)
+✔ insurance adapter keeps agency, producer, insurer, appointment, and CMS grains separate (0.5325ms)
+✔ Move/Lender/Insurance upstream fixture changes propagate without homepage constant edits (60.0713ms)
+✔ Move/Lender/Insurance timeout, 500, invalid JSON, wrong schema, missing metric, and negative value use fallback not zero (5.4136ms)
+✔ presentation files do not hardcode Move/Lender/Insurance production counts and keep MetricValue (0.4909ms)
+✔ Contractor and Senior selections do not regress (1.3643ms)
+✔ missing Move/Lender/Insurance universes fail closed instead of becoming zero (0.9081ms)
+(node:6828) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-base/lib/network-metrics/ath-metrics-004c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-base\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ investor schema validates against accepted fingerprint and RIA XOR ERA partition (1.6677ms)
+✔ investor adapter uses consumer labels and Form ADV observations are not firms (1.5239ms)
+✔ Investor upstream fixture changes propagate without homepage constant edits (56.7845ms)
+✔ Investor timeout, 500, invalid JSON, wrong schema, missing metric, negative, and broken partition use fallback (5.2069ms)
+✔ presentation files do not hardcode Investor production counts (0.2946ms)
+✔ healthy load of all six hubs is specialist-owned (2.575ms)
+✔ NJ/CA missing state-RIA universes fail closed instead of becoming zero (0.6481ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 400.4795

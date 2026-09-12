@@ -1,0 +1,135 @@
+(node:3432) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ R1-008 ambiguous Senior discovery retains task and class choices (28.4661ms)
+✖ R1-008 blocked legacy execution calls no specialist (30.1015ms)
+✖ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (7.9301ms)
+✖ R1-008 city-only Houston does not invent a state or execute nationally (4.1534ms)
+✖ R1-008 moving belongings to care remains a Move task (3.1787ms)
+✔ R1-008 explicit care plus move has separate ordered steps (1.8184ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 1
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 397.379
+
+✖ failing tests:
+
+test at lib\network\th-search-r1-008.test.ts:8:1
+✖ R1-008 ambiguous Senior discovery retains task and class choices (28.4661ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'senior'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:11:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'senior',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\th-search-r1-008.test.ts:16:1
+✖ R1-008 blocked legacy execution calls no specialist (30.1015ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   'https://www.insurancetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas',
+  +   'https://www.movetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas',
+  +   'https://www.lendertrusthub.com/api/ask?q=senior+homes+in+Austin+Texas',
+  +   'https://www.contractortrusthub.com/ask?q=senior+homes+in+Austin+Texas'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:20:87)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'https://www.insurancetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas', 'https://www.movetrusthub.com/api/ask?q=senior+homes+in+Austin+Texas', 'https://www.lendertrusthub.com/api/ask?q=senior+homes+in+Austin+Texas', 'https://www.contractortrusthub.com/ask?q=senior+homes+in+Austin+Texas' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\th-search-r1-008.test.ts:22:1
+✖ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (7.9301ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert(s)
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:25:66)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at lib\network\th-search-r1-008.test.ts:27:1
+✖ R1-008 city-only Houston does not invent a state or execute nationally (4.1534ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'TX' !== undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:27:221)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TX',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\th-search-r1-008.test.ts:28:1
+✖ R1-008 moving belongings to care remains a Move task (3.1787ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'move'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:28:183)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'move',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
