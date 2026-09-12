@@ -1,0 +1,261 @@
+{
+  "at": "2026-09-12T04:15:09.515Z",
+  "base": "http://localhost:3108",
+  "phase": "local",
+  "cases": [
+    {
+      "id": "homepage-clarification",
+      "at": "2026-09-12T04:15:10.276Z",
+      "ms": 182,
+      "overflow": {
+        "viewport": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "id": "selected-austin",
+      "at": "2026-09-12T04:15:11.070Z",
+      "ms": 706,
+      "specialistMs": 529,
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "nursing_home",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "state": "TX"
+        }
+      },
+      "total": 25,
+      "displayed": 20,
+      "identities": [
+        "455799",
+        "675862"
+      ],
+      "provenance": {
+        "providerClass": "Nursing Homes",
+        "sourceFamily": "Nursing Home Provider Information (4pq5-n9py)",
+        "officialAsOf": "2026-08-01T00:00:00.000Z",
+        "geographyMeaning": "provider recorded city in the current CMS directory; not service area or availability.",
+        "queryGrain": "Current CMS nursing-home directory identities",
+        "identifierMethod": "Not an identifier query",
+        "sourceRelease": "2026-08-01",
+        "sourceFingerprint": "a5808fcded1ca73a629fde88fc23dcba3b6ff8ed75199883062a262e14ef8fe0",
+        "retrievedAt": "2026-08-26T20:24:52.158Z"
+      },
+      "overflow": {
+        "viewport": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "id": "source-profile-action",
+      "href": "https://www.seniortrusthub.com/facility/cms/455799/austin-wellness-and-rehabilitation",
+      "status": 200,
+      "ms": 956
+    },
+    {
+      "id": "refresh",
+      "at": "2026-09-12T04:15:12.475Z",
+      "ms": 297,
+      "overflow": {
+        "viewport": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "id": "houston-home-health",
+      "at": "2026-09-12T04:15:13.019Z",
+      "ms": 381,
+      "specialistMs": 165,
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "home_health",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "state": "TX"
+        }
+      },
+      "total": 260,
+      "displayed": 20,
+      "identities": [
+        "679422",
+        "747123"
+      ],
+      "provenance": {
+        "providerClass": "Home Health Agencies",
+        "sourceFamily": "Home Health Care Agencies (Centers for Medicare & Medicaid Services (CMS))",
+        "officialAsOf": "2026-05-27T00:00:00.000Z",
+        "geographyMeaning": "office recorded city in the current CMS directory; not service area or availability.",
+        "queryGrain": "entity",
+        "identifierMethod": "Not an identifier query",
+        "datasetKey": "home-health-care-agencies",
+        "sourceRelease": "2026-05-27",
+        "sourceFingerprint": "b8532b139af24d6ade7873c38e778c0ca7b3dec097d55ca600e379d7c7b3eef9",
+        "retrievedAt": "2026-08-26T21:08:16.274Z"
+      },
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "houston-state-choice",
+      "at": "2026-09-12T04:15:13.569Z",
+      "ms": 262,
+      "specialistMs": 163,
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "home_health",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "state": "TX"
+        }
+      },
+      "total": 260,
+      "displayed": 20,
+      "identities": [
+        "679422",
+        "747123"
+      ],
+      "provenance": {
+        "providerClass": "Home Health Agencies",
+        "sourceFamily": "Home Health Care Agencies (Centers for Medicare & Medicaid Services (CMS))",
+        "officialAsOf": "2026-05-27T00:00:00.000Z",
+        "geographyMeaning": "office recorded city in the current CMS directory; not service area or availability.",
+        "queryGrain": "entity",
+        "identifierMethod": "Not an identifier query",
+        "datasetKey": "home-health-care-agencies",
+        "sourceRelease": "2026-05-27",
+        "sourceFingerprint": "b8532b139af24d6ade7873c38e778c0ca7b3dec097d55ca600e379d7c7b3eef9",
+        "retrievedAt": "2026-08-26T21:08:16.274Z"
+      },
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "direct-austin",
+      "at": "2026-09-12T04:15:13.956Z",
+      "ms": 266,
+      "specialistMs": 125,
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "nursing_home",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "state": "TX"
+        }
+      },
+      "total": 25,
+      "displayed": 20,
+      "identities": [
+        "455799",
+        "675862"
+      ],
+      "provenance": {
+        "providerClass": "Nursing Homes",
+        "sourceFamily": "Nursing Home Provider Information (4pq5-n9py)",
+        "officialAsOf": "2026-08-01T00:00:00.000Z",
+        "geographyMeaning": "provider recorded city in the current CMS directory; not service area or availability.",
+        "queryGrain": "Current CMS nursing-home directory identities",
+        "identifierMethod": "Not an identifier query",
+        "sourceRelease": "2026-08-01",
+        "sourceFingerprint": "a5808fcded1ca73a629fde88fc23dcba3b6ff8ed75199883062a262e14ef8fe0",
+        "retrievedAt": "2026-08-26T20:24:52.158Z"
+      },
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "trace",
+      "at": "2026-09-12T04:15:14.167Z",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "320-overflow",
+      "at": "2026-09-12T04:15:14.284Z",
+      "overflow": {
+        "viewport": 320,
+        "scroll": 320
+      }
+    },
+    {
+      "id": "assisted-limitation",
+      "at": "2026-09-12T04:15:14.594Z",
+      "ms": 162,
+      "dispatchCount": 0,
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "moving-context",
+      "at": "2026-09-12T04:15:14.847Z",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "separate-steps",
+      "at": "2026-09-12T04:15:15.098Z",
+      "careHref": "https://www.asktrusthub.com/ask?q=Find+senior+homes+in+Austin+Texas",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "journey-choice-completed",
+      "at": "2026-09-12T04:15:15.599Z",
+      "ms": 245,
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "place-lens",
+      "at": "2026-09-12T04:15:15.836Z",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "ccn-control",
+      "at": "2026-09-12T04:15:16.135Z",
+      "ms": 194,
+      "resultState": "SUPPORTED_RESULTS",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "id": "history-session-restore",
+      "at": "2026-09-12T04:15:16.587Z",
+      "overflow": {
+        "viewport": 1280,
+        "scroll": 1280
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "passed": true
+}

@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-12T04:00:00.606345+00:00",
+  "results": [
+    {
+      "log": "red-before.log",
+      "tests": 6,
+      "pass": 1,
+      "fail": 5,
+      "skipped": 0
+    },
+    {
+      "log": "focused-final.log",
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "intel-final.log",
+      "tests": 170,
+      "pass": 170,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "regression-final.log",
+      "tests": 266,
+      "pass": 266,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "claims-final.log",
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "baseline-claims.log",
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "baseline-guided.log",
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "baseline-tests.log",
+      "tests": 266,
+      "pass": 266,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "log": "adapters-first.log",
+      "tests": 85,
+      "pass": 85,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "baseline": "e7be3e540fd905a3e3e8b0fe0e347adb2dfbd6e0",
+  "model": "GPT-6 Astra / High: USER-CONFIRMED",
+  "reviewMethod": "Separate self-review and automated behavioral/browser checks; no independent human review",
+  "candidate": "b384651ce650b7faa52848efc454c6779a9e73e4"
+}

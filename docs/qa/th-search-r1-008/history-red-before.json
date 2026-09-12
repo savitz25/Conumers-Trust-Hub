@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-12T04:10:02.622Z",
+  "method": "Local browser uses responses from actual orchestrator with instrumented fixture source; no synthetic production writes",
+  "cases": [
+    {
+      "id": "stale-query-response-excluded",
+      "pass": true
+    },
+    {
+      "id": "source-outage-retry-distinct-from-empty",
+      "pass": true
+    },
+    {
+      "id": "result-focus",
+      "pass": true
+    }
+  ],
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'nursing homes in Seattle Washington'\n- 'home health agencies in Houston Texas'\n"
+}

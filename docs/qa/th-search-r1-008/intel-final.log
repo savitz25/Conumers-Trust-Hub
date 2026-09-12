@@ -1,0 +1,377 @@
+
+> ask-trust-hub@2.1.0 check:ask-intel-v3
+> npm run check:ask-intel-001a && npm run check:ask-intel-001b && npm run check:ask-intel-001c && npm run check:ask-intel-001d && npm run check:ask-intel-001e && npm run check:ath-guided-001 && npm run check:ath-guided-003 && npm run check:ath-search-002 && npm run check:ask-entity-link && npm run check:journey-v21
+
+
+> ask-trust-hub@2.1.0 check:ask-intel-001a
+> node --experimental-strip-types --test lib/network/ask-intel-001a.test.ts
+
+(node:40228) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ask-intel-001a.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ASK-INTEL-001A golden query corpus produces safe structured plans (39.8691ms)
+✔ Tampa Bay remains requested region scope and never becomes identity evidence (1.7325ms)
+✔ adversarial lowercase and short-form variants do not manufacture names (1.8625ms)
+✔ planner validation repairs contradictory geographic identity plans (0.8423ms)
+✔ Guided Research execution gate blocks unsafe planner outcomes (6.005ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 319.9756
+
+> ask-trust-hub@2.1.0 check:ask-intel-001b
+> node --experimental-strip-types --test lib/network/ask-intel-001b.test.ts
+
+(node:34316) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ask-intel-001b.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ permanent requested-versus-executed scope matrix (40.3243ms)
+✔ partial Florida crosswalk covers the published journey municipalities (2.734ms)
+✔ scope invariants require consent and retain the original request (0.9521ms)
+✔ START blocks unsupported scopes before specialist execution (7.8714ms)
+✔ Fort Lauderdale contractor executes Broward while local-only failures never masquerade as zero rows (29.7689ms)
+✔ variants preserve local scope rather than manufacturing statewide execution (6.7867ms)
+✔ specialist request bodies receive only resolved execution geography (7.9542ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 361.4298
+
+> ask-trust-hub@2.1.0 check:ask-intel-001c
+> node --experimental-strip-types --test lib/network/ask-intel-001c.test.ts
+
+(node:25556) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ask-intel-001c.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ registry is deterministic, canonical, unique, public, and never owns entity profile patterns (1.89ms)
+✔ precise tools beat homepages for Move and Loan Estimate (30.212ms)
+✔ missing identity states give collection plus official actions (10.1561ms)
+✔ insurance producer restriction never emits a TrustHub person profile (3.1396ms)
+✔ Broward execution gets exact county destination and 001B scope (2.6553ms)
+✔ scope failures retain useful safe actions without pretending zero results (21.183ms)
+✔ true zero policy differs from unsupported scope (1.3786ms)
+✔ concierge context is an allowlisted concise route ticket (1.6659ms)
+✔ static Concierge prompt contains policy, never drifting URL inventory (0.6571ms)
+✔ status semantics remain non-endorsement (0.8422ms)
+✔ 24-query destination and failure-mode corpus remains structured and fail closed (26.9192ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 504.836
+
+> ask-trust-hub@2.1.0 check:ask-intel-001d
+> node --experimental-strip-types --test lib/network/ask-intel-001d.test.ts
+
+(node:29968) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ask-intel-001d.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ server-safe route model covers the mandatory SSR matrix (28.998ms)
+✔ Guided START is constructed on the server and clarification cannot execute (4.3078ms)
+✔ multi-hub journeys are ordered tickets using verified destinations (4.6629ms)
+✔ single-hub situations remain single hub (0.9879ms)
+✔ ambiguous housing asks one question and broad explicit journeys keep relevant hubs (1.3753ms)
+✔ interstate journey scope stops before the housing clause (0.4527ms)
+✔ journeys never contain execution payloads or six-hub fanout (0.6376ms)
+✔ Concierge URLs require an explicit per-response allowlist (0.3912ms)
+✔ route metadata inputs remain bounded consumer text (0.6513ms)
+✔ Concierge aborts stale work, has a deadline, and keeps newer input usable (0.6233ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 412.4056
+
+> ask-trust-hub@2.1.0 check:ask-intel-001e
+> node --experimental-strip-types --test lib/network/ask-intel-001e.test.ts
+
+(node:14840) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ask-intel-001e.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ASK-INTEL-V3 scorecard {
+  move: { pass: 22, total: 22 },
+  network: { pass: 25, total: 25 },
+  lender: { pass: 24, total: 24 },
+  insurance: { pass: 22, total: 22 },
+  senior: { pass: 22, total: 22 },
+  contractor: { pass: 24, total: 24 },
+  investor: { pass: 23, total: 23 }
+}
+✔ V3 corpus is permanent, balanced, colloquial, and covers all nine intents (1.978ms)
+✔ all golden cases satisfy semantic routing and hard safety invariants (173.806ms)
+✔ identifier families reject ambiguous digits and certify labeled sentence variants (3.2282ms)
+✔ deterministic mutations do not break representative intent and Hub routing (11.0553ms)
+✔ observability is typed, bucketed, bounded, and contains no sensitive raw fields (1.4053ms)
+✔ result-state families remain distinct and receive state-specific next actions (0.6458ms)
+✔ unsupported local scope causes zero specialist calls and never becomes true zero (9.9021ms)
+✔ large-cohort rendering is bounded, neutral, and never labels source order as ranking (3.3019ms)
+✔ response-specific URL firewall rejects protocol, origin, encoding, and user-content attacks (0.487ms)
+✔ consumer-visible V3 code contains explicit non-inference language and no positive prohibited claims (2.2305ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 601.0568
+
+> ask-trust-hub@2.1.0 check:ath-guided-001
+> node --experimental-strip-types --test lib/guided-research/ath-guided-001.test.ts
+
+(node:37120) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (35.3151ms)
+✔ Back restores complete clarification and collection states without unnecessary execution (44.4913ms)
+✔ Back re-executes restored result filters and preserves sequential history (23.0428ms)
+✔ filters are visible, clearable, and server validated against current refinements (22.6555ms)
+✔ changing earlier choices invalidates dependent class, trade, and Move state (12.5642ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (6.2681ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (25.6254ms)
+✔ Senior life situation asks class then geography and executes class-separated evidence (4.3546ms)
+✔ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (11.2023ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (9.5003ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (6.0012ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (9.0991ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (2.3991ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (5.5546ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (4.5536ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (18.4055ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (1.5625ms)
+✔ result-bearing clarification survives deterministic reload and resume (19.46ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (14.3294ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (1.4694ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (3.1663ms)
+✔ Contractor service-territory requests fail closed without address substitution (3.143ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (4.4669ms)
+✔ Move service-territory and route availability fail closed usefully (1.5344ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (5.0643ms)
+✔ absolute metrics remain zero by construction (0.3622ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 607.1564
+
+> ask-trust-hub@2.1.0 check:ath-guided-003
+> node --experimental-strip-types --test lib/guided-research/ath-guided-003.test.ts
+
+(node:39748) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-003.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FALSE_CONFIDENT_ANSWERS = 0
+SUPPORTED_INTENT_DEAD_ENDS = 0
+PUBLICATION_LEAKAGE = 0
+PRIVATE_PERSON_LEAKAGE = 0
+PROFILE_MINTING = 0
+PAID_ORDER_SIGNALS = 0
+UNIVERSAL_SCORES = 0
+SERVICE_TERRITORY_INFERENCES = 0
+RAUM_AS_PERFORMANCE = 0
+COMPLAINT_AS_WRONGDOING = 0
+HMDA_AS_HEADQUARTERS = 0
+ENTITY_CLASS_COLLAPSES = 0
+MISSING_RESULT_EXPLANATIONS_AFTER_RESUME = 0
+BROKEN_BACK_TRANSITIONS = 0
+HIDDEN_ACTIVE_FILTERS = 0
+UNCLEARABLE_ACTIVE_FILTERS = 0
+SIX_HUB_FANOUTS = 0
+✔ specialist locks are independent and exact (1.6267ms)
+✔ generic financial needs are local action clarifications with zero fan-out (31.867ms)
+✔ audited financial direct goldens preserve hub and result states (82.1024ms)
+✔ requests preserve source semantics and publication firewalls (5.3839ms)
+✔ result-bearing financial states resume, while local clarification does not call specialists (3.7489ms)
+✔ consumer UI includes all hubs and no profile minting or unsafe ranking controls (1.5963ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 420.4398
+
+> ask-trust-hub@2.1.0 check:ath-search-002
+> node --experimental-strip-types --test lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/network/prompt-2.test.ts lib/network/consumer-ux.test.ts lib/network/move-execute.test.ts lib/network/lender-execute.test.ts lib/network/insurance-execute.test.ts lib/network/entity-destination.test.ts
+
+(node:18744) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ath-search-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ result and identity contracts are exhaustive and unique (1.554ms)
+✔ failed company match cannot downgrade to a state cohort (27.3624ms)
+✔ Move public-name inputs route but do not auto-select without canonical resolver contract (17.2235ms)
+✔ exact identifiers preserve exact identity classification (6.5091ms)
+✔ research, place, journey, ranking, malformed and unsupported queries fail safely (14.379ms)
+✔ all six typed capability contracts preserve ownership and geography semantics (0.4681ms)
+✔ golden copy has no raw template leaks and zero-result UI is explicit (11.802ms)
+✔ FALSE_CONFIDENT_ANSWERS = 0 across critical no-match fixtures (1.21ms)
+(node:33492) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/ath-search-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move exact identifier maps to exact identity without rewriting specialist facts (37.8595ms)
+✔ Move ambiguity and fuzzy candidates remain uncertain and unranked (28.3052ms)
+✔ Move no-match, outage, timeout, invalid input, and contract mismatch fail closed distinctly (35.7314ms)
+✔ identity failure never becomes a Move market cohort (2.7461ms)
+✔ other hub, structured, place, life-event, ranking, and universal-score routing remain separated (11.3378ms)
+✔ Concierge Markdown supports safe links and rejects executable protocols and raw HTML (1.0905ms)
+✔ golden acceptance metrics remain absolute zero (1.2867ms)
+(node:30748) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/consumer-ux.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 1. best mover in tampa bay florida: Move execute, soft-fail, no fail_closed stop (34.0507ms)
+✔ 2. top investment companies with best performance: Investor execute, no invented returns (12.9023ms)
+✔ 3. grandmother in New Jersey: Senior execute, no Network research routing (4.8588ms)
+✔ 4. most trustworthy insurance agencies in miami: Insurance execute, decline ranking (2.1222ms)
+✔ 5. best mortgage lender in florida: Lender execute, no best-lender claim (1.7837ms)
+✔ 6. good roofing contractor in broward: Contractor execute, no endorsement (3.4266ms)
+✔ hard fail remains for rates tomorrow and hire recommendations (1.8783ms)
+✔ option mappers return real identity fields, not rankings (23.2849ms)
+✔ contractor public Ask HTML parser extracts names and credentials (5.0291ms)
+✔ stripJudgmentModifiers leaves the supported search intact (0.5873ms)
+✔ hard safety rules still stop the search (4.1644ms)
+✔ applyConsumerPresentation does not invent a ranking (0.957ms)
+(node:41340) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/entity-destination.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unpublished Investor research identity never invents a public /firm profile (3.7798ms)
+✔ published specialist href is used as canonical profile and not rewritten from the display name (0.6869ms)
+✔ unpublished note wins over a supplied profile-looking href (0.8678ms)
+✔ Move published company profile is canonical (0.5309ms)
+✔ Insurance unpublished agency uses NPN Ask handoff, never a fake profile (0.5135ms)
+✔ Lender public_profile uses specialist href; unpublished identity does not invent /lender/slug (14.2408ms)
+✔ Contractor canonical /contractors/ profile from specialist Ask HTML (1.3245ms)
+✔ Senior unpublished CCN routes to specialist search, not a fabricated /facility slug (0.5786ms)
+✔ highest returns query still fails closed on performance and still yields navigable Investor identities (43.6967ms)
+✔ bare digits remain fail-closed; unsupported stock picking remains unsupported (2.2607ms)
+(node:13032) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/insurance-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Insurance execute: Florida agencies, count, Texas, NPN, NAIC (34.9788ms)
+✔ Insurance P&C is execute with a data limitation, not unsupported (1.3521ms)
+✔ Insurance fail-closed: ranking, quotes, clean record, class sum, domicile, serving, appointment, county, persons (11.211ms)
+✔ Insurance identifiers: bare digits fail closed; unknown NPN is still execute lookup (1.1002ms)
+✔ Insurance execute does not change contractor / senior / investor / lender / move states (13.1245ms)
+(node:17388) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/lender-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Lender registry is live execute with lender-ask-v1 and no identifier mode (2.8306ms)
+✔ FHA Florida most originations executes Lender with HMDA property geography (28.7597ms)
+✔ Broward applications execute Lender as county property geography, not Place Lens metrics (5.0281ms)
+✔ Broward vs Palm Beach mortgage applications route Lender only, not Place Lens comparison (4.3575ms)
+✔ Lender fail-closed: best, safest, cheapest, lowest rate, discrimination, denial reasons, service territory (11.6545ms)
+✔ complaints are not wrongdoing; denial is not discrimination; most is not a rate (0.5854ms)
+✔ NMLS stays labeled handoff; bare digits stay ambiguous; no invented identifier mode (1.6968ms)
+✔ cross-domain broker and carrier collisions (7.5973ms)
+✔ geography semantics stay source-specific across hubs (3.5964ms)
+✔ entity-grain regression: no mega-count, no cross-hub sum, no Trust Score (2.5088ms)
+✔ network fail-closed: no ranking, no universal score, contractor hire is not a ranking (5.2545ms)
+✔ Trace / provenance: one execute example per hub (2.5648ms)
+✔ publication and paid-status regression: Ask is not publication or paid ranking (0.7391ms)
+✔ unsupported questions fail closed instead of picking a specialist (0.3342ms)
+✔ six hubs remain execute for their owned domains; no remaining structured-Ask handoff (0.2172ms)
+(node:22616) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/move-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move registry is live execute with move-ask-v1 (1.8582ms)
+✔ Find USDOT 3244649 in New York keeps the Move Ask destination (18.6608ms)
+✔ Find USDOT 3244649 executes Move, not Insurance (13.4491ms)
+✔ Find MC 1019808 executes Move (7.4864ms)
+✔ household-goods carriers headquartered in Florida execute Move, not Insurance (9.7892ms)
+✔ household-goods brokers headquartered in Florida execute Move (3.1167ms)
+✔ Florida IM registrations execute Move as FDACS grain (0.959ms)
+✔ carrier vs broker definition executes Move (0.9829ms)
+✔ broker-as-transporter and safest remain fail_closed on Move execute (4.8503ms)
+✔ carrier disambiguation: moving vs insurance vs ambiguous (6.8666ms)
+✔ bare digits remain ambiguous across the network (0.8732ms)
+✔ Move execute does not change contractor / senior / investor / insurance / lender (5.0993ms)
+(node:3496) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/prompt-2.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capability registry: all six specialist Asks are live execute (0.9508ms)
+✔ Broward roofers route to contractor execute (11.7904ms)
+✔ FHA Florida executes Lender Ask without inventing origination facts (6.6426ms)
+✔ identifier routing (7.7873ms)
+✔ Senior execute: Florida / Palm Beach / 5-star NH / CCN / Florida HH / Florida hospice (3.8816ms)
+✔ Senior fail-closed: HH county, 5-star hospice, safest NH, combined count (3.3385ms)
+✔ Senior execute does not change contractor / lender / move / insurance / investor states (4.4035ms)
+✔ Investor execute: Florida RIA/ERA, RAUM, compensation, counts, CRD (2.6896ms)
+✔ Investor fail-closed: ranking, fees, stocks, bare digits, serving ≠ client geography (1.6143ms)
+✔ buying a home in Broward is multi-hub (1.1887ms)
+✔ place question opens Broward lens (0.3861ms)
+✔ name check never confirms identity (0.2596ms)
+✔ coverage atlas: 6 hubs × 51 jurisdictions, categorical only (1.7872ms)
+✔ place lens Florida / Broward / Palm Beach differences (0.8639ms)
+✔ evidence atlas pricing/ownership honest (0.3401ms)
+✔ integrity: no SCORE step, no mega-count in answers (1.0677ms)
+ℹ tests 85
+ℹ suites 0
+ℹ pass 85
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1126.3031
+
+> ask-trust-hub@2.1.0 check:ask-entity-link
+> node --experimental-strip-types --test lib/network/entity-destination.test.ts
+
+(node:28500) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/entity-destination.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unpublished Investor research identity never invents a public /firm profile (1.3976ms)
+✔ published specialist href is used as canonical profile and not rewritten from the display name (0.4934ms)
+✔ unpublished note wins over a supplied profile-looking href (0.2751ms)
+✔ Move published company profile is canonical (0.5972ms)
+✔ Insurance unpublished agency uses NPN Ask handoff, never a fake profile (0.4888ms)
+✔ Lender public_profile uses specialist href; unpublished identity does not invent /lender/slug (9.747ms)
+✔ Contractor canonical /contractors/ profile from specialist Ask HTML (0.8976ms)
+✔ Senior unpublished CCN routes to specialist search, not a fabricated /facility slug (0.3172ms)
+✔ highest returns query still fails closed on performance and still yields navigable Investor identities (23.3043ms)
+✔ bare digits remain fail-closed; unsupported stock picking remains unsupported (1.3896ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 353.8066
+
+> ask-trust-hub@2.1.0 check:journey-v21
+> node scripts/check-journey-v21.mjs
+
+Ask V2.1 journey checks passed

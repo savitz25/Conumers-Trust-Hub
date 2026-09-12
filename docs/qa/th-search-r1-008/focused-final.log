@@ -1,0 +1,110 @@
+
+> ask-trust-hub@2.1.0 check:th-search-r1-008
+> node --experimental-strip-types --test lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts
+
+(node:13772) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (50.1028ms)
+✔ Back restores complete clarification and collection states without unnecessary execution (54.7798ms)
+✔ Back re-executes restored result filters and preserves sequential history (30.7137ms)
+✔ filters are visible, clearable, and server validated against current refinements (25.3991ms)
+✔ changing earlier choices invalidates dependent class, trade, and Move state (10.5582ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (5.254ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (17.9937ms)
+✔ Senior life situation asks class then geography and executes class-separated evidence (2.8392ms)
+✔ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (5.0038ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (4.92ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (3.2404ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (7.3435ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (1.8091ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (3.3552ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (2.0623ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (15.563ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (1.5021ms)
+✔ result-bearing clarification survives deterministic reload and resume (15.1384ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (8.9256ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (1.1447ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (3.9846ms)
+✔ Contractor service-territory requests fail closed without address substitution (4.944ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (4.9839ms)
+✔ Move service-territory and route availability fail closed usefully (1.3105ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (5.8553ms)
+✔ absolute metrics remain zero by construction (0.5644ms)
+(node:27388) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/guided-research/ath-guided-003.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FALSE_CONFIDENT_ANSWERS = 0
+SUPPORTED_INTENT_DEAD_ENDS = 0
+PUBLICATION_LEAKAGE = 0
+PRIVATE_PERSON_LEAKAGE = 0
+PROFILE_MINTING = 0
+PAID_ORDER_SIGNALS = 0
+UNIVERSAL_SCORES = 0
+SERVICE_TERRITORY_INFERENCES = 0
+RAUM_AS_PERFORMANCE = 0
+COMPLAINT_AS_WRONGDOING = 0
+HMDA_AS_HEADQUARTERS = 0
+ENTITY_CLASS_COLLAPSES = 0
+MISSING_RESULT_EXPLANATIONS_AFTER_RESUME = 0
+BROKEN_BACK_TRANSITIONS = 0
+HIDDEN_ACTIVE_FILTERS = 0
+UNCLEARABLE_ACTIVE_FILTERS = 0
+SIX_HUB_FANOUTS = 0
+✔ specialist locks are independent and exact (2.161ms)
+✔ generic financial needs are local action clarifications with zero fan-out (45.7665ms)
+✔ audited financial direct goldens preserve hub and result states (110.2726ms)
+✔ requests preserve source semantics and publication firewalls (6.0911ms)
+✔ result-bearing financial states resume, while local clarification does not call specialists (4.0119ms)
+✔ consumer UI includes all hubs and no profile minting or unsafe ranking controls (1.8773ms)
+(node:41096) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R1-008 ambiguous Senior discovery retains task and class choices (57.1073ms)
+✔ R1-008 blocked legacy execution calls no specialist (6.9976ms)
+✔ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (36.2153ms)
+✔ R1-008 city-only Houston does not invent a state or execute nationally (2.8997ms)
+✔ R1-008 moving belongings to care remains a Move task (1.8469ms)
+✔ R1-008 explicit care plus move has separate ordered steps (1.2044ms)
+✔ R1-008 original class clarification completes inline source-backed results (12.8143ms)
+✔ R1-008 explicit class nursing_home executes directly (2.7555ms)
+✔ R1-008 explicit class home_health executes directly (2.7094ms)
+✔ R1-008 explicit class hospice executes directly (5.7127ms)
+✔ R1-008 city-only choice completes only after state selection (4.0709ms)
+✔ R1-008 not-sure explains while retaining executable choices and location (6.0983ms)
+✔ R1-008 no CMS substitute: assisted living in Austin Texas (1.752ms)
+✔ R1-008 no CMS substitute: memory care in Austin Texas (0.8247ms)
+✔ R1-008 no CMS substitute: independent living in Austin Texas (0.7971ms)
+✔ R1-008 rejects wrong hub contribution (2.127ms)
+✔ R1-008 rejects wrong class contribution (3.9727ms)
+✔ R1-008 rejects wrong state contribution (2.1933ms)
+✔ R1-008 rejects wrong city contribution (1.887ms)
+✔ R1-008 rejects wrong origin contribution (1.693ms)
+✔ R1-008 legitimate empty cohort stays distinct from unavailable (2.2015ms)
+✔ R1-008 tampered hub cannot authorize dispatch (1.4969ms)
+✔ R1-008 tampered providerClass cannot authorize dispatch (1.1054ms)
+✔ R1-008 tampered city cannot authorize dispatch (1.3795ms)
+✔ R1-008 tampered state cannot authorize dispatch (1.1264ms)
+✔ R1-008 non-care contrasts do not gain a care-setting question (3.7548ms)
+✔ R1-008 explicit place lens retains its separately authorized overview (0.4127ms)
+✔ R1-008 direct dispatcher rejects a forged authorized plan before fetch (1.1369ms)
+✔ R1-008 missing state is never an executed scope (0.3762ms)
+✔ R1-008 malformed and overlong questions cannot become partial execution (0.2752ms)
+✔ R1-008 unsupported evidence and invalid ratings cannot run an unfiltered cohort (3.0647ms)
+✔ R1-008 explicit source-rating filter reaches selected class request (3.1628ms)
+✔ R1-008 profile identity must agree with returned CCN (2.3286ms)
+✔ R1-008 journey care choice retains original local question (0.5872ms)
+✔ R1-008 forged executed city value and unsupported-evidence permission are rejected (2.8659ms)
+✔ R1-008 care choice preserves original rating and executable handoff scope (3.8155ms)
+✔ R1-008 forged history cannot replace the original task during BACK (3.0626ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 69
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.2342

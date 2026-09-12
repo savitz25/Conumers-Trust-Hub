@@ -1,0 +1,40 @@
+(node:32956) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\th-search-r1-008-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (66.8095ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 484.0732
+
+✖ failing tests:
+
+test at lib\network\th-search-r1-008.test.ts:34:1
+✖ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (66.8095ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+      state: 'TX',
+  +   type: 'state',
+  +   value: 'TX'
+  -   type: 'city',
+  -   value: 'Austin'
+    }
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/th-search-r1-008-work/lib/network/th-search-r1-008.test.ts:37:309)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { type: 'state', value: 'TX', state: 'TX' },
+    expected: { type: 'city', value: 'Austin', state: 'TX' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

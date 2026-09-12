@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-12T04:14:15.207Z",
+  "method": "Local browser uses responses from actual orchestrator with instrumented fixture source; no synthetic production writes",
+  "cases": [
+    {
+      "id": "stale-query-response-excluded",
+      "pass": true
+    },
+    {
+      "id": "source-outage-retry-distinct-from-empty",
+      "pass": true
+    },
+    {
+      "id": "result-focus",
+      "pass": true
+    },
+    {
+      "id": "back-forward-coherence",
+      "pass": true
+    }
+  ]
+}

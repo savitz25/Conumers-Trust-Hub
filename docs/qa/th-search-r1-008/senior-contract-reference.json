@@ -1,0 +1,419 @@
+{
+  "at": "2026-09-12T03:23:49.867Z",
+  "upstreamReference": "1d0e33deb30ac0e7ca07c7b9b4056553c0a8681d",
+  "observations": [
+    {
+      "request": {
+        "providerClass": "nursing_home",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "state": "TX"
+        },
+        "page": 1
+      },
+      "status": 200,
+      "ms": 451,
+      "payload": {
+        "contract": "trusthub-specialist-execution-v2",
+        "hub": "senior",
+        "status": "ok",
+        "queryInterpretation": {
+          "providerClass": "nursing_home",
+          "identifier": null,
+          "geography": {
+            "type": "city",
+            "value": "Austin",
+            "state": "TX",
+            "meaning": "provider recorded city in the current CMS directory; not service area or availability."
+          },
+          "locationRequirement": null,
+          "filters": null,
+          "ordering": "neutral_provider_name_then_identifier"
+        },
+        "resultType": "cohort",
+        "rows": [
+          {
+            "providerClass": "nursing_home",
+            "name": "AUSTIN WELLNESS & REHABILITATION",
+            "cmsCcn": "455799",
+            "recordedLocation": "AUSTIN, TX, Travis",
+            "recordedLocationFields": {
+              "city": "AUSTIN",
+              "state": "TX",
+              "county": "Travis"
+            },
+            "status": "Current research cohort (CMS nursing-home directory)",
+            "evidence": [
+              {
+                "label": "CMS overall stars",
+                "value": "Overall: 1/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_overall",
+                  "value": 1
+                }
+              },
+              {
+                "label": "Staffing stars",
+                "value": "Staffing: 2/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_staffing",
+                  "value": 2
+                }
+              },
+              {
+                "label": "Health inspection stars",
+                "value": "Inspection: 1/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_inspection",
+                  "value": 1
+                }
+              },
+              {
+                "label": "Ownership category",
+                "value": "For profit - Corporation"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/facility/cms/455799/austin-wellness-and-rehabilitation"
+          },
+          {
+            "providerClass": "nursing_home",
+            "name": "Avir at Park Bend",
+            "cmsCcn": "675862",
+            "recordedLocation": "Austin, TX, Travis",
+            "recordedLocationFields": {
+              "city": "Austin",
+              "state": "TX",
+              "county": "Travis"
+            },
+            "status": "Current research cohort (CMS nursing-home directory)",
+            "evidence": [
+              {
+                "label": "CMS overall stars",
+                "value": "Overall: 3/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_overall",
+                  "value": 3
+                }
+              },
+              {
+                "label": "Staffing stars",
+                "value": "Staffing: 2/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_staffing",
+                  "value": 2
+                }
+              },
+              {
+                "label": "Health inspection stars",
+                "value": "Inspection: 3/5 CMS-reported",
+                "rating": {
+                  "metric": "nh_inspection",
+                  "value": 3
+                }
+              },
+              {
+                "label": "Ownership category",
+                "value": "Government - Hospital district"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/facility/cms/675862/avir-at-park-bend"
+          }
+        ],
+        "total": 25,
+        "pagination": {
+          "page": 1,
+          "pageSize": 20,
+          "hasMore": true
+        },
+        "availableRefinements": [
+          "providerClass",
+          "geography",
+          "source_native_rating_filters",
+          "page"
+        ],
+        "provenance": {
+          "providerClass": "Nursing Homes",
+          "sourceFamily": "Nursing Home Provider Information (4pq5-n9py)",
+          "officialAsOf": "2026-08-01T00:00:00.000Z",
+          "geographyMeaning": "provider recorded city in the current CMS directory; not service area or availability.",
+          "queryGrain": "Current CMS nursing-home directory identities",
+          "metric": null,
+          "exclusions": [
+            "Do not add nursing homes, home health, and hospice.",
+            "Provider location/address is not service area unless the dataset says so.",
+            "Quality-based sort only when requested."
+          ],
+          "identifierMethod": "Not an identifier query",
+          "sourceRelease": "2026-08-01",
+          "sourceFingerprint": "a5808fcded1ca73a629fde88fc23dcba3b6ff8ed75199883062a262e14ef8fe0",
+          "retrievedAt": "2026-08-26T20:24:52.158Z"
+        },
+        "limitations": [
+          "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+          "Missing source evidence is not zero, clean, or good standing.",
+          "CMS-reported ratings are not TrustHub recommendations."
+        ],
+        "request": {
+          "providerClass": "nursing_home",
+          "geography": {
+            "type": "city",
+            "value": "Austin",
+            "state": "TX"
+          },
+          "page": 1
+        }
+      }
+    },
+    {
+      "request": {
+        "providerClass": "home_health",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "state": "TX"
+        },
+        "page": 1
+      },
+      "status": 200,
+      "ms": 230,
+      "payload": {
+        "contract": "trusthub-specialist-execution-v2",
+        "hub": "senior",
+        "status": "ok",
+        "queryInterpretation": {
+          "providerClass": "home_health",
+          "identifier": null,
+          "geography": {
+            "type": "city",
+            "value": "Houston",
+            "state": "TX",
+            "meaning": "office recorded city in the current CMS directory; not service area or availability."
+          },
+          "locationRequirement": null,
+          "filters": null,
+          "ordering": "neutral_provider_name_then_identifier"
+        },
+        "resultType": "cohort",
+        "rows": [
+          {
+            "providerClass": "home_health",
+            "name": "1 STOP HEALTH CARE SERVICES LLC",
+            "cmsCcn": "679422",
+            "recordedLocation": "HOUSTON, TX, 77099",
+            "recordedLocationFields": {
+              "city": "HOUSTON",
+              "state": "TX"
+            },
+            "status": "Current research cohort (CMS Home Health Agencies directory)",
+            "evidence": [
+              {
+                "label": "Quality of Patient Care stars",
+                "value": "Quality of Patient Care: 4/5 CMS-reported",
+                "rating": {
+                  "metric": "hh_qpc",
+                  "value": 4
+                }
+              },
+              {
+                "label": "HHCAHPS",
+                "value": "Experience measures indexed"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/home-health/cms/679422/1-stop-health-care-services-llc"
+          },
+          {
+            "providerClass": "home_health",
+            "name": "1ST ACCURATE HOME HEALTH SERVICE",
+            "cmsCcn": "747123",
+            "recordedLocation": "HOUSTON, TX, 77080",
+            "recordedLocationFields": {
+              "city": "HOUSTON",
+              "state": "TX"
+            },
+            "status": "Current research cohort (CMS Home Health Agencies directory)",
+            "evidence": [
+              {
+                "label": "Quality of Patient Care stars",
+                "value": "Quality of Patient Care: 4/5 CMS-reported",
+                "rating": {
+                  "metric": "hh_qpc",
+                  "value": 4
+                }
+              },
+              {
+                "label": "HHCAHPS",
+                "value": "Experience measures indexed"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/home-health/cms/747123/1st-accurate-home-health-service"
+          }
+        ],
+        "total": 260,
+        "pagination": {
+          "page": 1,
+          "pageSize": 20,
+          "hasMore": true
+        },
+        "availableRefinements": [
+          "providerClass",
+          "geography",
+          "source_native_rating_filters",
+          "page"
+        ],
+        "provenance": {
+          "providerClass": "Home Health Agencies",
+          "sourceFamily": "Home Health Care Agencies (Centers for Medicare & Medicaid Services (CMS))",
+          "officialAsOf": "2026-05-27T00:00:00.000Z",
+          "geographyMeaning": "office recorded city in the current CMS directory; not service area or availability.",
+          "queryGrain": "entity",
+          "metric": null,
+          "exclusions": [
+            "Do not add nursing homes, home health, and hospice.",
+            "Provider location/address is not service area unless the dataset says so."
+          ],
+          "identifierMethod": "Not an identifier query",
+          "datasetKey": "home-health-care-agencies",
+          "sourceRelease": "2026-05-27",
+          "sourceFingerprint": "b8532b139af24d6ade7873c38e778c0ca7b3dec097d55ca600e379d7c7b3eef9",
+          "retrievedAt": "2026-08-26T21:08:16.274Z"
+        },
+        "limitations": [
+          "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+          "Missing source evidence is not zero, clean, or good standing.",
+          "CMS-reported ratings are not TrustHub recommendations."
+        ],
+        "request": {
+          "providerClass": "home_health",
+          "geography": {
+            "type": "city",
+            "value": "Houston",
+            "state": "TX"
+          },
+          "page": 1
+        }
+      }
+    },
+    {
+      "request": {
+        "providerClass": "hospice",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "state": "TX"
+        },
+        "page": 1
+      },
+      "status": 200,
+      "ms": 272,
+      "payload": {
+        "contract": "trusthub-specialist-execution-v2",
+        "hub": "senior",
+        "status": "ok",
+        "queryInterpretation": {
+          "providerClass": "hospice",
+          "identifier": null,
+          "geography": {
+            "type": "city",
+            "value": "Austin",
+            "state": "TX",
+            "meaning": "office recorded city in the current CMS directory; not service area or availability."
+          },
+          "locationRequirement": null,
+          "filters": null,
+          "ordering": "neutral_provider_name_then_identifier"
+        },
+        "resultType": "cohort",
+        "rows": [
+          {
+            "providerClass": "hospice",
+            "name": "ACCENTCARE HOSPICE & PALLIATIVE CARE - AUSTIN",
+            "cmsCcn": "671554",
+            "recordedLocation": "AUSTIN, TX, 78731",
+            "recordedLocationFields": {
+              "city": "AUSTIN",
+              "state": "TX"
+            },
+            "status": "Current research cohort (CMS Hospice Providers directory)",
+            "evidence": [
+              {
+                "label": "Overall CMS stars",
+                "value": "Not applicable — hospice has no overall CMS star in this directory"
+              },
+              {
+                "label": "CAHPS",
+                "value": "Hospice CAHPS measures indexed"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/hospice/cms/671554/accentcare-hospice-and-palliative-care-austin"
+          },
+          {
+            "providerClass": "hospice",
+            "name": "AMEDISYS HOSPICE",
+            "cmsCcn": "671753",
+            "recordedLocation": "AUSTIN, TX, 78759",
+            "recordedLocationFields": {
+              "city": "AUSTIN",
+              "state": "TX"
+            },
+            "status": "Current research cohort (CMS Hospice Providers directory)",
+            "evidence": [
+              {
+                "label": "Overall CMS stars",
+                "value": "Not applicable — hospice has no overall CMS star in this directory"
+              },
+              {
+                "label": "CAHPS",
+                "value": "Hospice CAHPS measures indexed"
+              }
+            ],
+            "canonicalProfileUrl": "https://www.seniortrusthub.com/hospice/cms/671753/amedisys-hospice"
+          }
+        ],
+        "total": 25,
+        "pagination": {
+          "page": 1,
+          "pageSize": 20,
+          "hasMore": true
+        },
+        "availableRefinements": [
+          "providerClass",
+          "geography",
+          "source_native_rating_filters",
+          "page"
+        ],
+        "provenance": {
+          "providerClass": "Hospice Providers",
+          "sourceFamily": "Hospice - General Information (Centers for Medicare & Medicaid Services (CMS))",
+          "officialAsOf": "2026-08-19T00:00:00.000Z",
+          "geographyMeaning": "office recorded city in the current CMS directory; not service area or availability.",
+          "queryGrain": "entity",
+          "metric": null,
+          "exclusions": [
+            "Do not add nursing homes, home health, and hospice.",
+            "Provider location/address is not service area unless the dataset says so."
+          ],
+          "identifierMethod": "Not an identifier query",
+          "datasetKey": "hospice-general-information",
+          "sourceRelease": "2026-08-19",
+          "sourceFingerprint": "8adb2400ac21b4ee92d90c3bf47e82d9e79bc0f0e13f25cfa9e4458f60877ac9",
+          "retrievedAt": "2026-08-26T22:15:06.243Z"
+        },
+        "limitations": [
+          "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+          "Missing source evidence is not zero, clean, or good standing.",
+          "CMS-reported ratings are not TrustHub recommendations."
+        ],
+        "request": {
+          "providerClass": "hospice",
+          "geography": {
+            "type": "city",
+            "value": "Austin",
+            "state": "TX"
+          },
+          "page": 1
+        }
+      }
+    }
+  ]
+}
