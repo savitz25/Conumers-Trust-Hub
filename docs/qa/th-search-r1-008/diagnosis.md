@@ -42,3 +42,11 @@ The browser outage test exposed missing non-link Retry rendering. The history te
 Final local code candidate: `b384651ce650b7faa52848efc454c6779a9e73e4`. Deterministic focused gate: 69/69. Broader routing/guided gates: 170/170. Root regressions: 266/266. Claims: 21/21 on both base and candidate. Typecheck/build pass; lint has the same four warnings as base. P11-P19 contracts pass. Local complete browser and controlled fixture/browser suites pass; source profile action and Senior native handoff were checked.
 
 Preview build for b384651 is READY. Anonymous preview navigation redirects to Vercel login; no bypass or protection change was attempted. Local optimized-build browser evidence is complete; canonical Production browser proof is required after the reviewed merge.
+
+## Production release
+
+PR #137 merged normally at `01e45ce28c8da8c02f04046da862ffbe22123309` after green CI, Vercel build and automated Vercel review. The review identified raw timeout-abort copy; `c51529a67b1aeecb45ee0db4110997591f98bc1e` fixes it with a same-request retry. The browser reproduced the old failure and verified the repair. No independent human review is claimed.
+
+Canonical `www.asktrusthub.com` resolved to `dpl_5n2dc88v2UfrMRLwjvsPhkRFhbqx`, SHA `01e45ce28c8da8c02f04046da862ffbe22123309`. Full production browser, live API, published profile, in-flight response, Back/Forward, 390/1280/320 layout and first-Enter checks pass. Austin selection completed in 690 ms (183 ms specialist); direct Austin 580 ms; Houston 454 ms; Houston state choice 259 ms. Source totals remain independently checked 25 and 260 for this release window, with 20 displayed rows. Generic care and city-only API requests record zero specialist calls before clarification.
+
+Two error-level runtime entries were PostgreSQL connection-mode warnings on successful requests; the same warning was confirmed on the baseline deployment. No new application failure was observed. Public search may emit existing approved telemetry; no regulatory/account/schema/configuration writes were performed. Preview interactive access remained protected, so preview HTML was not counted as browser proof. These receipts describe the actual runtime merge; the later QA-only merge identifier is reported after it exists.

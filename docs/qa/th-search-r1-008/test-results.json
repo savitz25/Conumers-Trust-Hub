@@ -67,6 +67,12 @@
   ],
   "baseline": "e7be3e540fd905a3e3e8b0fe0e347adb2dfbd6e0",
   "model": "GPT-6 Astra / High: USER-CONFIRMED",
-  "reviewMethod": "Separate self-review and automated behavioral/browser checks; no independent human review",
-  "candidate": "b384651ce650b7faa52848efc454c6779a9e73e4"
+  "reviewMethod": "Separate self-review and automated Vercel review; timeout finding resolved; no independent human review",
+  "candidate": "b384651ce650b7faa52848efc454c6779a9e73e4",
+  "finalRuntimeCandidate": "c51529a67b1aeecb45ee0db4110997591f98bc1e",
+  "finalCandidateCi": "https://github.com/savitz25/Conumers-Trust-Hub/actions/runs/34673388473",
+  "postReviewBrowser": [
+    "review-fix-browser.json",
+    "timeout-green.json"
+  ]
 }

@@ -1,0 +1,61 @@
+{
+  "at": "2026-09-12T04:39:57.214Z",
+  "base": "https://www.asktrusthub.com",
+  "method": "Real production responses; one response delayed only inside the ticket browser to exercise stale-response handling",
+  "cases": [
+    {
+      "id": "real-delayed-response-excluded",
+      "pass": true
+    },
+    {
+      "id": "production-back-coherent",
+      "pass": true
+    },
+    {
+      "id": "production-forward-coherent",
+      "pass": true
+    }
+  ],
+  "dispatches": [
+    {
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "nursing_home",
+        "geography": {
+          "type": "city",
+          "value": "Austin",
+          "state": "TX"
+        }
+      },
+      "resultState": "SUPPORTED_RESULTS"
+    },
+    {
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "home_health",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "state": "TX"
+        }
+      },
+      "resultState": "SUPPORTED_RESULTS"
+    },
+    {
+      "dispatch": {
+        "hub": "senior",
+        "endpoint": "https://www.seniortrusthub.com/api/specialist-execution/v2",
+        "providerClass": "home_health",
+        "geography": {
+          "type": "city",
+          "value": "Houston",
+          "state": "TX"
+        }
+      },
+      "resultState": "SUPPORTED_RESULTS"
+    }
+  ],
+  "passed": true
+}

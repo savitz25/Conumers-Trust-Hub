@@ -1,40 +1,45 @@
 {
   "ticket": "TH-SEARCH-R1-008",
-  "status": "READY_FOR_REVIEW",
-  "at": "2026-09-12T04:16:18.497898+00:00",
+  "status": "RELEASED_AND_VERIFIED",
+  "at": "2026-09-12T04:41:00.179554+00:00",
   "model": "GPT-6 Astra / High",
   "modelConfirmation": "USER-CONFIRMED",
   "baseline": "e7be3e540fd905a3e3e8b0fe0e347adb2dfbd6e0",
   "baselineDeployment": "dpl_8ozyxjXttN4wqoSjpFxB8Qz3Bfp6",
   "implementation": "f0cb22653cc7b0b9e8cd318203c8f6ae4ee359f0",
-  "testedCandidate": "b384651ce650b7faa52848efc454c6779a9e73e4",
-  "runtimeMerge": null,
-  "deployedSha": null,
+  "testedCandidate": "c51529a67b1aeecb45ee0db4110997591f98bc1e",
+  "runtimeMerge": "01e45ce28c8da8c02f04046da862ffbe22123309",
+  "deployedSha": "01e45ce28c8da8c02f04046da862ffbe22123309",
   "upstreamSenior": "1d0e33deb30ac0e7ca07c7b9b4056553c0a8681d",
   "pr": "https://github.com/savitz25/Conumers-Trust-Hub/pull/137",
   "tests": "test-results.json",
   "mutations": "mutations.json",
   "browser": [
     "local-browser.json",
-    "local-fixture-browser.json"
+    "local-fixture-browser.json",
+    "review-fix-browser.json",
+    "production-browser.json",
+    "production-state-browser.json"
   ],
   "review": "Separate self-review, automated behavioral/browser checks, and Vercel Agent Review. One timeout UX finding reproduced and fixed; no independent human review.",
   "remaining": [
-    "Final CI/preview and protected merge",
-    "Production browser/deployment receipt",
-    "Unrelated search issues remain out of scope"
+    "Unrelated search and care workflows remain out of scope",
+    "Move canonical correction remains pending separate approval"
   ],
   "preview": {
-    "id": "dpl_313YpFakJ38i2eJmnaYzDQQ6Xho5",
-    "sha": "b384651ce650b7faa52848efc454c6779a9e73e4",
+    "id": "dpl_FzLPNJFUs4peewqkuZvSLPDV36m7",
+    "sha": "c51529a67b1aeecb45ee0db4110997591f98bc1e",
     "state": "READY",
-    "interactive": "Blocked by Vercel login; protection unchanged",
-    "checkedAt": "2026-09-12T04:18:12.605530+00:00"
+    "interactive": "Anonymous preview protected by Vercel login; local optimized build and canonical Production browser verified"
   },
   "writeBoundary": "No regulatory/account/schema/configuration writes. Normal approved search telemetry may be emitted by public smoke requests.",
   "reviewFix": {
     "before": "timeout-red.json",
     "after": "timeout-green.json",
-    "candidate": "record after commit exists"
-  }
+    "candidate": "c51529a67b1aeecb45ee0db4110997591f98bc1e"
+  },
+  "productionDeployment": "dpl_5n2dc88v2UfrMRLwjvsPhkRFhbqx",
+  "canonicalAlias": "https://www.asktrusthub.com",
+  "releaseReceipt": "release-receipt.json",
+  "evidenceFollowup": "This record describes the verified runtime merge. A subsequent QA-only PR adds these observed receipts; its future merge/deployment SHA is not invented here."
 }

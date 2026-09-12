@@ -1,0 +1,54 @@
+{
+  "ticket": "TH-SEARCH-R1-008",
+  "at": "2026-09-12T04:41:00.179554+00:00",
+  "baseline": "e7be3e540fd905a3e3e8b0fe0e347adb2dfbd6e0",
+  "candidate": "c51529a67b1aeecb45ee0db4110997591f98bc1e",
+  "runtimeMerge": "01e45ce28c8da8c02f04046da862ffbe22123309",
+  "mergedAt": "2026-09-12T04:37:19Z",
+  "runtimeDeployment": "dpl_5n2dc88v2UfrMRLwjvsPhkRFhbqx",
+  "deployedSha": "01e45ce28c8da8c02f04046da862ffbe22123309",
+  "alias": "https://www.asktrusthub.com",
+  "implementationPr": "https://github.com/savitz25/Conumers-Trust-Hub/pull/137",
+  "ci": {
+    "parent-search": "PASS: focused 69, root 266, TypeScript, lint, production build",
+    "url": "https://github.com/savitz25/Conumers-Trust-Hub/actions/runs/34673388473",
+    "Vercel": "PASS",
+    "VercelAgentReview": "PASS; timeout issue fixed and reviewer marked ISSUE_RESOLVED",
+    "SupabasePreview": "SKIPPED: no database branch or schema changes"
+  },
+  "review": "Separate self-review and Vercel automated code review; no independent human review",
+  "productionBrowser": {
+    "file": "production-browser.json",
+    "pass": true,
+    "consoleErrors": 0,
+    "widths": [
+      390,
+      1280,
+      320
+    ],
+    "observedAustinCount": 25,
+    "observedHoustonCount": 260,
+    "displayedPage": 20,
+    "note": "Counts reflect observed upstream releases, not frozen expectations."
+  },
+  "productionStateBrowser": {
+    "file": "production-state-browser.json",
+    "pass": true,
+    "cases": [
+      "real response delayed only in browser cannot contaminate changed query",
+      "Back coherence",
+      "Forward coherence"
+    ]
+  },
+  "productionSmoke": "production-smoke.json",
+  "runtimeLogs": {
+    "window": "2026-09-12T04:28:48Z/2026-09-12T04:38:48Z",
+    "errorLevelEntries": 2,
+    "classification": "Existing pg-connection-string SSL mode deprecation/security warning emitted on two successful HTTP 200 requests",
+    "baselineSameWarningVerified": true,
+    "baselineDeployment": "dpl_8ozyxjXttN4wqoSjpFxB8Qz3Bfp6",
+    "observedApplicationFailures": 0
+  },
+  "writeBoundary": "No regulatory/account/schema/configuration writes. Normal approved search telemetry may be emitted by public smoke requests.",
+  "rollback": "Reviewed Ask-only revert/fix deployment retaining authorization-before-dispatch; no database rollback; never restore unrestricted wrong-hub execution."
+}
