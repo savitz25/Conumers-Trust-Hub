@@ -44,6 +44,7 @@ export default async function AskPage({
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
+              key={query}
               id="ask-q"
               name="q"
               maxLength={ASK_QUESTION_MAX_LENGTH}
