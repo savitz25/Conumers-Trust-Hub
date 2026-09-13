@@ -1,0 +1,531 @@
+{
+  "state_code": "IL",
+  "state_name": "Illinois",
+  "ask_path": "/illinois",
+  "ask_canonical": "https://www.asktrusthub.com/illinois",
+  "version": "ath-il-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_chicago_routes": false,
+  "hardcoded_cook_routes": false,
+  "illinois_local_phase": "NO",
+  "illinois_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "Illinois’s strongest Trust Hub evidence is an IDFPR roofing-credential slice that is not a universal contractor census, a search-only Illinois Commerce Commission household-goods roster that must not display zero licensed movers, CMS and IDPH/HFS senior-care classes that must not be added, 2025 HMDA applications that are not lenders, IDOI Director’s Order observations that are not current insurers, and IAPD state-IA/ERA/notice/office lenses that cannot collapse into one adviser census. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_illinois_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /illinois pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /illinois is indexable. Any one specialist failure fails the gate. Do not weaken the gate. Chicago/Cook/local routes are not published.",
+    "verified_at": "2026-09-12T18:30:00.000Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "4,675 active Illinois roofing business credential IDs",
+      "grain": "Active + business-Y credential IDs in the IDFPR roofing slice. Supporting context: 33,290 distinct roofing credential IDs. Not 4,675 Illinois contractors and not a universal contractor census. Qualifying party is not the contractor business."
+    },
+    {
+      "hub_id": "move",
+      "display": "Illinois HHG authority — Search only",
+      "grain": "Current Illinois Commerce Commission household-goods roster is OPEN_SEARCH_ONLY. Licensed-mover count is unknown, not zero. Do not display 0. ILCC HHG is not USDOT, not MC, and not FMCSA interstate authority."
+    },
+    {
+      "hub_id": "senior",
+      "display": "666 CMS Nursing Homes",
+      "grain": "Supporting: 595 IDPH Home Health licenses and 169 HFS Supportive Living sites. Do not combine CMS, IDPH, and HFS classes. Assisted Living / Shared Housing remains OPEN_SEARCH_ONLY. Exact IL-state → CMS bridges: 0."
+    },
+    {
+      "hub_id": "lender",
+      "display": "394,488 HMDA applications in Illinois in 2025",
+      "grain": "Supporting: 231,788 originations and 66,742 denials. HMDA applications are not lenders. If a percentage is shown it is 66,742 / 394,488 = 16.92% denials as a percent of total applications, not a decision-based denial rate. Current IDFPR/NMLS company roster is SEARCH_ONLY / NOT_ACQUIRED."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "2,896 IDOI Director’s Order observations",
+      "grain": "2,896 distinct order IDs. Company / agency / producer current universes are OPEN_SEARCH_ONLY. Do not imply 2,896 insurers. Exact company and producer enforcement associations: 0. Order is not a conviction and not a complaint."
+    },
+    {
+      "hub_id": "investor",
+      "display": "855 Illinois state-registered IA CRDs",
+      "grain": "IAPD APPROVED state IA. Supporting: 55 state ERA, 3,560 federal notice, 793 principal-office overlay. Do not add these populations. Notice filing is not state registration. ERA is not an RIA. Principal office is not registration."
+    }
+  ],
+  "what_makes_illinois_different": [
+    "Contractor: IDFPR roofing credentials are a trade-license slice, not a universal Illinois contractor census. Qualifying party is not the contractor business. Discipline is not a conviction.",
+    "Move: Current ILCC household-goods authority is search-only. Licensed-mover count is unknown, not zero. ILCC is not USDOT, not MC, and not FMCSA interstate authority.",
+    "Senior: CMS nursing homes, IDPH home-health/home-nursing/home-services/hospice classes, and HFS supportive living stay separate. Assisted living remains search-only. Exact state→CMS bridges are 0.",
+    "Lender: 394,488 HMDA 2025 applications are a market grain, not a lender census. Current IDFPR/NMLS company roster was not acquired.",
+    "Insurance: 2,896 IDOI Director’s Order observations are evidence rows, not currently authorized insurers. Company, agency, and producer current universes remain search-only.",
+    "Investor: State IA, ERA, notice filings, and principal-office overlay are separate IAPD lenses and cannot be collapsed into one adviser census. Illinois SOS enforcement remains a public research path, unknown not zero."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "IDFPR_ROOFING_ROWS": 33891,
+      "DISTINCT_ROOFING_IDS": 33290,
+      "ACTIVE_BUSINESS_Y_ROWS": 4891,
+      "ACTIVE_BUSINESS_IDS": 4675,
+      "ACTIVE_QUALIFYING_PARTY_PERSON_IDS": 12042,
+      "DISCIPLINE_ROWS": 1393,
+      "DISCIPLINE_CREDENTIAL_IDS": 836,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "identity_namespace": "IL-IDFPR-ROOF:{credentialId}",
+      "grain_note": "4,675 active business credential IDs are not unique companies and not a universal contractor census. 12,042 qualifying-party person IDs are not contractor businesses. 1,393 discipline rows are not convictions. Canonical organizations remain zero."
+    },
+    "move": {
+      "currentHhgAuthorityRows": null,
+      "currentHhgAuthorityIds": null,
+      "ILCC_HHG_ROSTER": "OPEN_SEARCH_ONLY",
+      "complaints": "OPEN_SEARCH_ONLY",
+      "enforcement": "OPEN_SEARCH_ONLY",
+      "insuranceOnFile": "SEARCH_ONLY",
+      "EXACT_IL_STATE_TO_USDOT_CROSSWALKS": 0,
+      "EXACT_IL_STATE_TO_MC_CROSSWALKS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "identity_namespace": "ILCC when shown by official lookup",
+      "grain_note": "Current HHG rows/IDs remain null. Search-only is not zero licensed movers. Do not display 0. ILCC HHG ≠ USDOT ≠ MC ≠ FMCSA interstate authority. No exact state-to-federal crosswalks."
+    },
+    "senior": {
+      "CMS_NURSING_HOMES": 666,
+      "CMS_HOME_HEALTH": 530,
+      "CMS_HOSPICE": 149,
+      "IDPH_HOME_HEALTH_LICENSES": 595,
+      "IDPH_HOME_NURSING": 258,
+      "IDPH_HOME_SERVICES": 1029,
+      "IDPH_HOSPICE_PROGRAMS": 178,
+      "IDPH_HOSPICE_RESIDENCES": 10,
+      "HFS_SUPPORTIVE_LIVING_SITES": 169,
+      "HFS_SUPPORTIVE_LIVING_UNITS": 13939,
+      "IDPH_NURSING_HOME_LICENSING_CENSUS": "OPEN_SEARCH_ONLY",
+      "ASSISTED_LIVING_SHARED_HOUSING": "OPEN_SEARCH_ONLY",
+      "EXACT_IL_STATE_TO_CMS_BRIDGES": 0,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "grain_note": "Never combine CMS, IDPH, and HFS classes. 666 CMS nursing homes are not 595 IDPH home-health licenses and not 169 HFS supportive-living sites. Assisted living remains search-only. Exact IL-state → CMS bridges remain 0."
+    },
+    "lender": {
+      "HMDA_2025_IL_PROPERTY_APPLICATIONS": 394488,
+      "HMDA_2025_IL_ORIGINATIONS": 231788,
+      "HMDA_2025_IL_DENIALS": 66742,
+      "HMDA_2025_IL_COUNTY_ROWS": 102,
+      "FDIC_OVERLAY": 387,
+      "IDFPR_NMLS_COMPANY_ROSTER": "SEARCH_ONLY_NOT_ACQUIRED",
+      "CFPB_IL_COMPLAINT_BULK": "NOT_ACQUIRED",
+      "DENIALS_AS_PCT_OF_APPLICATIONS": 16.92,
+      "DENIALS_AS_PCT_LABEL": "denials as % of total applications, NOT decision-based denial rate",
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_LENDER_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "grain_note": "394,488 applications are not lenders. 66,742 / 394,488 = 16.92% is denials as a percent of total applications, not a decision-based denial rate. Current IDFPR/NMLS company roster and CFPB Illinois complaint bulk remain unacquired. Existing FDIC overlay is not new organization enrichment."
+    },
+    "insurance": {
+      "IDOI_DIRECTOR_ORDER_OBSERVATIONS": 2896,
+      "IDOI_DISTINCT_ORDER_IDS": 2896,
+      "COMPANY_NAME_OBSERVATIONS": 782,
+      "PERSON_NAME_OBSERVATIONS": 2321,
+      "BOTH_NAME_OBSERVATIONS": 210,
+      "EXACT_COMPANY_ENFORCEMENT_ASSOCIATIONS": 0,
+      "EXACT_PRODUCER_ENFORCEMENT_ASSOCIATIONS": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "AUTHORIZED_COMPANY_UNIVERSE": null,
+      "SBS_BUSINESS_ENTITY_AGENCY": null,
+      "SBS_INDIVIDUAL_PRODUCER": null,
+      "COMPLAINT_ROWS": null,
+      "NET_NEW_CANONICAL_LEGAL_INSURERS": 0,
+      "NET_NEW_CANONICAL_AGENCIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "2,896 Director’s Order observations are not 2,896 insurers. Current company/agency/producer universes remain OPEN_SEARCH_ONLY / null. Name-only attachment is unsafe. Order is not a conviction and not a complaint."
+    },
+    "investor": {
+      "IL_STATE_IA_APPROVED_CURRENT": 855,
+      "IL_STATE_ERA_IDENTITIES": 55,
+      "NEW_IL_STATE_IDENTITIES": 910,
+      "NOTICE_FILINGS": 3560,
+      "IA_NOTICE_OVERLAP_EXACT_CRDS": 1,
+      "ERA_NOTICE_OVERLAP_EXACT_CRDS": 0,
+      "IA_ERA_OVERLAP_EXACT_CRDS": 0,
+      "PRINCIPAL_OFFICE_OVERLAY": 793,
+      "SOS_ENFORCEMENT_COVERAGE": "PUBLIC_RESEARCH_PATH",
+      "SOS_BOUNDED_ENFORCEMENT_COUNT": null,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "EXISTING_ORGANIZATIONS_ENRICHED": 0,
+      "grain_note": "855 state IA + 55 state ERA = 910 state research identities under the accepted specialist definition—not a combined adviser census. Principal-office overlay 793 is pre-existing, not new enrichment. One exact CRD appears in both state IA and notice. SOS enforcement remains UNKNOWN, not zero."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Roofing credentials, search-only HHG authority, CMS/IDPH/HFS care classes, HMDA applications, Director’s Order observations, and adviser registrations are incompatible grains. Ask does not publish an Illinois-records total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /illinois pages plus Ask /illinois. Page/surface count only — not a business, record, provider, or license count. Ask Production certification is separate from this Preview gateway."
+    }
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "coverage_type": "STATE_IDFPR_ROOFING_SLICE",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/illinois",
+      "snapshot_version": "contractor-il-state-intel-v1",
+      "fingerprint": "a9f63e7625d25fd64e4fe95b15f558a49fc719376154be481fdd062042dd0235",
+      "certified_release_sha": "11fd0b6fd8f6a1fe5e40e48a34f6a578b67334f4",
+      "source_clock": "Specialist-accepted contractor-il-state-intel-v1 IDFPR roofing slice. Ask does not invent a retrieval instant.",
+      "primary_regulator": "IDFPR",
+      "primary_identity": "IL-IDFPR-ROOF:{credentialId}",
+      "topic": "How many active roofing businesses are indexed in Illinois?",
+      "plain_question": "How many active Illinois roofing business credentials are indexed — and is that all Illinois contractors?",
+      "research_topics": [
+        "Active Illinois roofing business credential IDs",
+        "Distinct roofing credential IDs in the source slice",
+        "Qualifying-party person IDs",
+        "Discipline observations"
+      ],
+      "primary_identifiers": [
+        "IL-IDFPR-ROOF:{credentialId}"
+      ],
+      "identifier_types": [
+        "IL-IDFPR-ROOF"
+      ],
+      "source_summary": "IDFPR roofing credentials are a trade-license slice. Roofing credential is not a unique company. Qualifying party is not the contractor business. Illinois does not become a universal contractor census.",
+      "coverage_summary": "4,675 active Illinois roofing business credential IDs, with 33,290 roofing credential IDs in the source slice. Not 4,675 Illinois contractors.",
+      "coverage_limitation": "Discipline is not a conviction. Qualifying-party person IDs are not contractor businesses. Other contractor trades were not acquired as a universal census.",
+      "what_research": "IDFPR roofing credentials and discipline observations",
+      "next_step": "Open ContractorTrustHub Illinois and verify on IDFPR",
+      "semantic_guardrails": [
+        "roofing credential ≠ unique company",
+        "qualifying party ≠ contractor business",
+        "discipline ≠ conviction",
+        "4,675 ≠ Illinois contractors",
+        "canonical organizations remain zero"
+      ],
+      "verified_facts": [
+        "33,891 IDFPR roofing rows; 33,290 distinct roofing IDs.",
+        "4,891 active + business-Y rows; 4,675 active business IDs.",
+        "12,042 active qualifying-party person IDs.",
+        "1,393 discipline rows; 836 discipline credential IDs."
+      ],
+      "routing_intents": [
+        "roofing contractors in Illinois",
+        "How many active roofing businesses are indexed in Illinois?"
+      ],
+      "gap_examples": [
+        "universal Illinois contractor census",
+        "non-roofing trades bulk"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "coverage_type": "STATE_ILCC_HHG_SEARCH_ONLY_PLUS_FEDERAL_OVERLAY",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/illinois",
+      "snapshot_version": "move-il-state-intel-v1",
+      "fingerprint": "b484ba81488f813b43698ccb8a034afc645809be03662f101a951020839c388d",
+      "certified_release_sha": "65e03580bfa95337726b83ce2926e81f3ae8a6d6",
+      "source_clock": "Specialist-accepted move-il-state-intel-v1. Current ILCC HHG roster remains OPEN_SEARCH_ONLY. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Illinois Commerce Commission; FMCSA for interstate",
+      "primary_identity": "ILCC when shown by official lookup",
+      "topic": "How many movers are licensed in Illinois?",
+      "plain_question": "How many movers are licensed in Illinois — and is a licensed-count of zero the same as unknown?",
+      "research_topics": [
+        "Current ILCC household-goods roster (search only)",
+        "Federal interstate geography",
+        "Exact USDOT/MC identity research",
+        "Complaints and insurance-on-file as search-only"
+      ],
+      "primary_identifiers": [
+        "USDOT",
+        "MC",
+        "ILCC"
+      ],
+      "identifier_types": [
+        "USDOT",
+        "MC",
+        "ILCC"
+      ],
+      "source_summary": "Current Illinois Commerce Commission household-goods authority is search-only. Licensed-mover count is unknown, not zero. Interstate research remains FMCSA.",
+      "coverage_summary": "Illinois HHG authority — Search only. Current rows and active authority IDs remain null. Do not display 0 licensed movers.",
+      "coverage_limitation": "ILCC HHG is not USDOT, not MC, and not FMCSA interstate authority. Exact state→USDOT and state→MC crosswalks: 0. Complaints, enforcement, and insurance-on-file remain search-only.",
+      "what_research": "ILCC household-goods search path and FMCSA interstate identity/geography",
+      "next_step": "Open MoveTrustHub Illinois; use a labeled USDOT/MC for federal identity research",
+      "semantic_guardrails": [
+        "search-only ≠ zero licensed movers",
+        "do not display 0",
+        "ILCC HHG ≠ USDOT",
+        "ILCC HHG ≠ MC",
+        "ILCC HHG ≠ FMCSA interstate authority",
+        "exact state→federal crosswalks = 0"
+      ],
+      "verified_facts": [
+        "Current ILCC HHG roster: OPEN_SEARCH_ONLY; rows null; active authority IDs null.",
+        "Exact IL state→USDOT crosswalks: 0. Exact IL state→MC crosswalks: 0.",
+        "Complaints OPEN_SEARCH_ONLY; enforcement OPEN_SEARCH_ONLY; insurance-on-file SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "licensed movers in Illinois",
+        "interstate mover in Illinois"
+      ],
+      "gap_examples": [
+        "current ILCC HHG bulk roster",
+        "complaint bulk",
+        "enforcement bulk"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "coverage_type": "CMS_PLUS_IDPH_HFS_SEPARATE_CLASSES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/illinois",
+      "snapshot_version": "senior-il-state-intel-v1",
+      "fingerprint": "20e48b6f8a24c2f3acb0ea208961a93e5c10a3c858d5f42f81454059dea85bac",
+      "certified_release_sha": "72c1ddb01a3d4f126fb9692b350f091a8eb60d72",
+      "source_clock": "Specialist-accepted senior-il-state-intel-v1. CMS overlay as of the accepted specialist snapshot. Ask does not invent a retrieval instant.",
+      "primary_regulator": "CMS; IDPH; HFS",
+      "primary_identity": "CMS CCN where printed; IDPH license identity on state classes",
+      "topic": "nursing homes in Illinois",
+      "plain_question": "Find nursing homes in Illinois — and is that the same as assisted living or supportive living?",
+      "research_topics": [
+        "CMS Nursing Homes",
+        "IDPH Home Health licenses",
+        "HFS Supportive Living sites",
+        "Assisted living as search-only"
+      ],
+      "primary_identifiers": [
+        "CMS-CCN"
+      ],
+      "identifier_types": [
+        "CMS-CCN"
+      ],
+      "source_summary": "CMS nursing homes, IDPH home-health/home-nursing/home-services/hospice classes, and HFS supportive living remain separate. Assisted Living / Shared Housing is OPEN_SEARCH_ONLY.",
+      "coverage_summary": "666 CMS Nursing Homes. Supporting: 595 IDPH Home Health licenses and 169 HFS Supportive Living sites. Do not combine.",
+      "coverage_limitation": "Current IDPH nursing-home licensing census is OPEN_SEARCH_ONLY. Exact IL-state → CMS bridges: 0. Never combine these care classes.",
+      "what_research": "CMS class overlays, IDPH license classes, and HFS supportive living",
+      "next_step": "Open SeniorTrustHub Illinois and the official CMS, IDPH, or HFS lookup",
+      "semantic_guardrails": [
+        "CMS nursing home ≠ IDPH home health",
+        "IDPH home health ≠ home nursing ≠ home services ≠ hospice",
+        "HFS supportive living ≠ assisted living",
+        "assisted living remains search-only",
+        "exact IL-state → CMS bridges = 0"
+      ],
+      "verified_facts": [
+        "CMS: 666 nursing homes; 530 home health; 149 hospice.",
+        "IDPH: 595 home health licenses; 258 home nursing; 1,029 home services; 178 hospice programs; 10 hospice residences.",
+        "HFS supportive living: 169 sites; 13,939 units.",
+        "Exact IL-state → CMS bridges: 0."
+      ],
+      "routing_intents": [
+        "nursing homes in Illinois",
+        "assisted living in Illinois"
+      ],
+      "gap_examples": [
+        "current IDPH nursing-home licensing census",
+        "assisted living / shared housing bulk"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lenders",
+      "coverage_type": "HMDA_2025_IL_PROPERTY",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/illinois",
+      "snapshot_version": "lender-il-state-intel-v1",
+      "fingerprint": "06c7f10b4756076b57da54c64306fb50fc9666a379855d1e262591652a9f70a4",
+      "certified_release_sha": "dd0f908ee67c0faf0c2795deb09071e41cd1ae9f",
+      "source_clock": "HMDA 2025 Illinois-property applications. Current IDFPR/NMLS company roster remains SEARCH_ONLY / NOT_ACQUIRED.",
+      "primary_regulator": "CFPB HMDA; IDFPR / NMLS for current company search",
+      "primary_identity": "NMLS where already supported; HMDA is an application grain",
+      "topic": "How many mortgage applications were reported in Illinois in 2025?",
+      "plain_question": "How many mortgage applications were reported in Illinois in 2025 — and is that the same as licensed mortgage companies?",
+      "research_topics": [
+        "HMDA 2025 Illinois-property applications",
+        "Originations and denials as activity grains",
+        "County HMDA rows",
+        "Current company roster as search-only"
+      ],
+      "primary_identifiers": [
+        "NMLS:{id}"
+      ],
+      "identifier_types": [
+        "NMLS"
+      ],
+      "source_summary": "HMDA counts applications for Illinois properties. Current IDFPR/NMLS company roster and CFPB Illinois complaint bulk were not acquired.",
+      "coverage_summary": "394,488 HMDA applications in Illinois in 2025. Supporting: 231,788 originations and 66,742 denials. Not 394,488 lenders.",
+      "coverage_limitation": "Do not publish denial rate as an approval-risk score. If a percentage is displayed, 66,742 / 394,488 = 16.92% is denials as a percent of total applications, not a decision-based denial rate.",
+      "what_research": "HMDA Illinois-property activity and search-only current company verification",
+      "next_step": "Open LenderTrustHub Illinois; verify current licensing on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "HMDA application ≠ lender",
+        "do not imply 394,488 lenders",
+        "16.92% = denials as % of total applications, not decision-based denial rate",
+        "current company roster SEARCH_ONLY / NOT_ACQUIRED",
+        "complaint bulk NOT_ACQUIRED"
+      ],
+      "verified_facts": [
+        "394,488 HMDA 2025 Illinois-property applications.",
+        "231,788 originations; 66,742 denials; 102 county rows.",
+        "FDIC overlay 387 is pre-existing geography, not new organizations.",
+        "Current IDFPR/NMLS company roster SEARCH_ONLY / NOT_ACQUIRED; CFPB IL complaint bulk NOT_ACQUIRED."
+      ],
+      "routing_intents": [
+        "mortgage activity in Illinois",
+        "licensed mortgage companies in Illinois"
+      ],
+      "gap_examples": [
+        "current IDFPR/NMLS company roster",
+        "CFPB Illinois mortgage complaint bulk"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "coverage_type": "IDOI_DIRECTOR_ORDERS_PLUS_SEARCH_ONLY_UNIVERSES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/illinois",
+      "snapshot_version": "insurance-il-state-intel-v1",
+      "fingerprint": "3085ccfe7ec30c038fafcfb3e70a11609eeba91a9918c9efe14ceb7f0ef634aa",
+      "certified_release_sha": "8051be7d5169929e42155cab81effa94178e8aad",
+      "source_clock": "Specialist-accepted insurance-il-state-intel-v1 IDOI Director’s Orders. Current authorized-company / agency / producer universes remain OPEN_SEARCH_ONLY.",
+      "primary_regulator": "IDOI",
+      "primary_identity": "NAIC where printed; Director’s Order IDs are evidence observations",
+      "topic": "Director’s Orders in Illinois",
+      "plain_question": "Are Director’s Orders the same as currently authorized Illinois insurers?",
+      "research_topics": [
+        "IDOI Director’s Order observations",
+        "Company-name versus person-name observations",
+        "Current company/agency/producer search-only universes",
+        "No exact enforcement attachments"
+      ],
+      "primary_identifiers": [
+        "NAIC:{code}"
+      ],
+      "identifier_types": [
+        "NAIC"
+      ],
+      "source_summary": "Director’s Order observations are not currently authorized insurers. Company, agency, and producer current universes remain OPEN_SEARCH_ONLY. Name-only attachment is unsafe.",
+      "coverage_summary": "2,896 IDOI Director’s Order observations. Supporting: company / agency / producer current universes are search-only. Do not imply 2,896 insurers.",
+      "coverage_limitation": "Exact company enforcement associations: 0. Exact producer enforcement associations: 0. Profile attachments: 0. Order is not a conviction. Order is not a complaint.",
+      "what_research": "IDOI Director’s Orders as evidence observations and official current-universe search",
+      "next_step": "Open InsuranceTrustHub Illinois and verify on IDOI / SBS",
+      "semantic_guardrails": [
+        "2,896 observations ≠ 2,896 insurers",
+        "company universe ≠ agency universe ≠ producer universe",
+        "order ≠ conviction",
+        "order ≠ complaint",
+        "name-only attachment = unsafe",
+        "exact associations = 0"
+      ],
+      "verified_facts": [
+        "2,896 Director’s Order observations; 2,896 distinct order IDs.",
+        "782 company-name observations; 2,321 person-name observations; 210 both.",
+        "Exact company associations 0; exact producer associations 0; profile attachments 0.",
+        "Authorized-company / SBS agency / SBS producer / complaint rows remain OPEN_SEARCH_ONLY / null."
+      ],
+      "routing_intents": [
+        "insurance companies in Illinois",
+        "Director’s Orders in Illinois"
+      ],
+      "gap_examples": [
+        "current authorized-company universe",
+        "SBS agency bulk",
+        "SBS producer bulk",
+        "complaint bulk"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Advisers",
+      "coverage_type": "IAPD_STATE_IA_ERA_NOTICE",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/illinois",
+      "snapshot_version": "investor-il-state-intel-v1",
+      "fingerprint": "997728ec50c9a913a64283b7a10810440c1e0b88e7fae03a91df58df3997534d",
+      "certified_release_sha": "7dc6c318ce1792b115ae416cffeb48268cc32841",
+      "source_clock": "Accepted IAPD compilation as of 2026-08-27. Principal-office overlay is pre-existing, not new enrichment.",
+      "primary_regulator": "IAPD / SEC; Illinois SOS overlay",
+      "primary_identity": "CRD",
+      "topic": "state registered investment advisers in Illinois",
+      "plain_question": "How many investment advisers are registered in Illinois — and is a principal office the same as state registration?",
+      "research_topics": [
+        "Approved Illinois state-IA CRDs",
+        "State ERA identities",
+        "Federal notice filings",
+        "Principal-office overlay"
+      ],
+      "primary_identifiers": [
+        "CRD:{id}"
+      ],
+      "identifier_types": [
+        "CRD"
+      ],
+      "source_summary": "State IA, ERA, notice, and principal-office overlay are separate IAPD lenses. Registration jurisdiction is not principal office. Illinois SOS enforcement is a public research path.",
+      "coverage_summary": "855 Illinois state-registered IA CRDs. Supporting: 55 state ERA, 3,560 federal notice, 793 principal-office overlay. Do not combine.",
+      "coverage_limitation": "910 state research identities are not a combined adviser census. SOS enforcement remains UNKNOWN, not zero. Office-state discovery may remain 793 where that is Search V1.",
+      "what_research": "IAPD Illinois IA/ERA/notice/office lenses",
+      "next_step": "Open InvestorTrustHub Illinois and verify on IAPD",
+      "semantic_guardrails": [
+        "855 IA ≠ 55 ERA ≠ 3,560 notice ≠ 793 office",
+        "855 + 55 = 910 state research identities, not a census",
+        "principal office ≠ registration jurisdiction",
+        "notice filing ≠ state registration",
+        "ERA ≠ RIA",
+        "IA ∩ notice overlap = 1 exact CRD",
+        "SOS count unknown, not zero"
+      ],
+      "verified_facts": [
+        "855 APPROVED Illinois state-IA CRDs (2026-08-27 compilation).",
+        "55 ACTIVE state ERA; 3,560 FILED notice; 793 principal-office overlay.",
+        "State IA ∩ ERA = 0; IA ∩ notice = 1; ERA ∩ notice = 0.",
+        "NEW_IL_STATE_IDENTITIES=910 under the accepted specialist definition. SOS enforcement PUBLIC_RESEARCH_PATH / UNKNOWN."
+      ],
+      "routing_intents": [
+        "state registered investment advisers in Illinois",
+        "federal advisers filing notice in Illinois"
+      ],
+      "gap_examples": [
+        "Illinois SOS bounded enforcement table",
+        "person/BD histories"
+      ]
+    }
+  ]
+}

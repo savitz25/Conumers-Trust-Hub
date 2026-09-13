@@ -1,0 +1,44 @@
+{
+  "state": "IL",
+  "ACQUIRED": [
+    "IDFPR roofing credential slice and discipline observations",
+    "CMS Illinois nursing-home / home-health / hospice overlays",
+    "IDPH home-health / home-nursing / home-services / hospice license classes",
+    "HFS supportive-living sites and units",
+    "HMDA 2025 Illinois-property applications / originations / denials",
+    "FDIC Illinois overlay (pre-existing)",
+    "IDOI Director’s Order observations",
+    "IAPD Illinois state IA / ERA / notice / principal-office lenses"
+  ],
+  "OPEN_SEARCH_ONLY": [
+    "Current Illinois Commerce Commission household-goods roster",
+    "Current IDFPR / NMLS company licensing roster",
+    "NMLS Consumer Access",
+    "IAPD live lookup",
+    "IDOI / SBS current authorized-company, agency, and producer search",
+    "Current IDPH nursing-home licensing census",
+    "Assisted Living / Shared Housing",
+    "Illinois SOS Administrative Actions library"
+  ],
+  "SOURCE_NOT_ACQUIRED": [
+    "universal Illinois contractor census beyond roofing",
+    "current ILCC HHG authority bulk",
+    "mover complaint bulk",
+    "mover enforcement bulk",
+    "mover insurance-on-file bulk",
+    "CFPB Illinois mortgage complaint bulk",
+    "current insurance authorization bulk",
+    "insurance agency/producer bulk",
+    "insurance complaint bulk",
+    "investor SOS bounded CRD-bearing enforcement table",
+    "investor person/BD histories"
+  ],
+  "SOURCE_AVAILABLE_BY_REQUEST": [],
+  "SOURCE_USE_RESTRICTED": [],
+  "HISTORICAL_STALE": [],
+  "chicago_cook_phase": {
+    "status": "NOT_STARTED",
+    "decision": "NO",
+    "note": "Illinois statewide closeout does not start Chicago, Cook County, or other local Illinois work."
+  }
+}
