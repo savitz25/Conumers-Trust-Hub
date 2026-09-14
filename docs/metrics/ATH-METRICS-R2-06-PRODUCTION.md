@@ -214,8 +214,17 @@ New tests added in `ath-metrics-r2-06.test.ts` (8 tests):
 |---|---|---|---|---|---|---|
 | AskTrustHub (R2-05) | `7a5060d7312bf6f71e926b20d1520d70590b3281` | `ath-metrics-r2-05-ask` | [#140](https://github.com/savitz25/Conumers-Trust-Hub/pull/140) | `092d07e12edaa7404e7848e999767ef979f932cb` | `092d07e1...` | Deployment `6437988057`, success |
 | AskTrustHub (R2-05 report finalize) | `092d07e12edaa7404e7848e999767ef979f932cb` | `ath-metrics-r2-05-finalize` | [#141](https://github.com/savitz25/Conumers-Trust-Hub/pull/141) | `a4fbec9da7eb131582efdd0b76d72867e133311d` | `a4fbec9d...` | Docs-only; no application code changed |
-| AskTrustHub (R2-06) | `a4fbec9da7eb131582efdd0b76d72867e133311d` | `ath-metrics-r2-06-ask` | See PR link in this session's final summary | *(filled after merge)* | *(filled after merge)* | *(filled after merge)* |
+| AskTrustHub (R2-06) | `a4fbec9da7eb131582efdd0b76d72867e133311d` | `ath-metrics-r2-06-ask` | [#142](https://github.com/savitz25/Conumers-Trust-Hub/pull/142) | `0b482269e5e439f0c9aed94e3741388ee95f2ae2` | `0b482269...` | Deployment `6438354292`, success |
 | Contractor / Move / Senior / Lender / Insurance / Investor | n/a | n/a | n/a | n/a | n/a | Not modified - UNCHANGED/REVERIFIED (section D) |
+
+**Automation dry run**: immediately after merge, the new workflow was manually triggered via
+`gh workflow run "Specialist network health"` to prove it works end-to-end rather than only
+locally. Run [34850967638](https://github.com/savitz25/Conumers-Trust-Hub/actions/runs/34850967638)
+completed `success` in ~23 seconds: `metrics:verify-specialists` printed `specialist upstream
+and bundled fallback manifests are schema-compatible`, and `metrics:check-fallback-drift`
+printed `noop: bundled fallback already matches upstream` for all six hubs and `No bundled
+fallback snapshots are behind their live upstream contract.` `gh workflow list` confirms the
+workflow is registered and `active` alongside the pre-existing `Search reliability` workflow.
 
 ## L. Live network QA
 
