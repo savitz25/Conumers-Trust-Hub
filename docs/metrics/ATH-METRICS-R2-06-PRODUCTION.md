@@ -291,4 +291,138 @@ remain true after it, correctly attributed to their origin rather than implied a
 
 All fourteen claims are true.
 
+## O. Browser / Mobile Production QA
+
+Performed 2026-09-14T13:5x UTC using real Chrome browser automation (`claude-in-chrome`),
+which was not available in the sessions that produced sections A-N above. This closes the
+one item those sections left BLOCKED, with one narrower exception noted below.
+
+**Production URL**: `https://www.asktrusthub.com/`. **Deployed SHA**: `0b482269e5e439f0c9aed94e3741388ee95f2ae2` (PR #142/#143, per section K) - unchanged during this QA pass, no code was modified.
+
+### Desktop (1440x900) - COMPLETE, no defects
+
+- Page loaded successfully: no blank state, no error screen, no redirect loop. React
+  hydrated cleanly (see console result below).
+- All six specialist cards render, confirmed via the DOM (not just visually): a script
+  reading every `[data-specialist-origin]` element returned **`UPSTREAM` for all six**
+  (`move`, `lender`, `insurance`, `senior`, `contractor`, `investor`) - **6/6 UPSTREAM, 0/6
+  FALLBACK**, matching section B. No "Showing last-known-good specialist snapshot" text
+  present anywhere on the page.
+- Visually confirmed on-screen: Contractor **662,331** / **507,933**; Move **5,022**
+  publishable / **4,715** current authority; Lender **14,623** institutions plus HMDA/
+  complaint/enforcement figures (Florida's **6,392** is a specialist-state-page figure, not
+  a homepage card headline - not surfaced here, consistent with the component's design);
+  Insurance **82,071** agencies / **6,185** legal insurers / **622,019** appointments;
+  Investor **23,622** advisory firms / **17,018** RIA / **6,604** ERA; Senior **14,690** /
+  **12,460** / **6,669** current nursing homes/home health/hospice plus the full evidence
+  set (200,327 fire citations, 149,978 inspections, 15,694 enforcement, etc.) - all matching
+  the authoritative R2-02/R2-03/R2-04 contracts exactly.
+- A DOM-level scan for forbidden literals (`644,421`, `6,394`, `25,777`, `total records`,
+  `network records`, `total companies`, `all records`, `TrustHub records`) found **zero**
+  matches anywhere on the rendered page.
+- Provenance panels render correctly and legibly on every card: e.g. Lender shows "Network
+  rollup generated 2026-09-12", "Newest documented specialist source date 2026-09-09",
+  "Specialist contract revision ATH-METRICS-R2-03"; Insurance shows "...ATH-METRICS-R2-04";
+  Move/Contractor show "...ATH-METRICS-R2-02". No overflow, no overlapping elements, no
+  `undefined`, no `[object Object]`, no empty labels.
+- Network evidence inventory section reads "**274** publication-eligible specialist
+  measures" and "No fake grand total" - matching the R2-06 test's expected count exactly.
+- Ten-state network explorer: all ten states (Florida, New Jersey, California, Texas,
+  Washington, Arizona, Colorado, Virginia, New York, Illinois) render exactly once each (a
+  DOM count of every `<h3>` heading found no duplicates). Illinois's card shows "Specialist
+  state intelligence" for all six hubs - a qualitative capability label, never a `0` or a
+  bulk count, consistent with Illinois Move's null/search-only state.
+- Interaction: all six specialist hub links resolve to their correct canonical domains
+  (verified via DOM `href` inspection); physically clicked through to
+  `contractortrusthub.com` (landed correctly, showing its own "Newest documented source date
+  2026-09-11 / Network rollup generated 2026-09-12" - consistent with the Contractor
+  contract) and used browser back navigation to return to `asktrusthub.com` successfully.
+- Keyboard accessibility sanity check: `Tab` moves focus through real interactive elements
+  (confirmed via `document.activeElement`, e.g. landed on the "USDOT 3244649" example chip
+  button), and those elements carry a `focus-visible:ring-2` Tailwind focus style - no
+  keyboard trap observed.
+- Console: zero page-origin errors, zero React/hydration/warning messages matching
+  `hydrat|React|Warning|fetch|CORS|404|failed|Uncaught` on a clean reload. The only messages
+  present originated from `chrome-extension://...next-content.js` (the browser extension
+  itself) and are unrelated to the page.
+- Network: two requests returned HTTP 503 in the browser's network panel -
+  `/.well-known/vercel/jwe` (a Vercel platform-internal skew-protection endpoint, not
+  application code) and a bare `HEAD /`. Both were **not reproducible via direct HTTP**
+  (`curl -I https://www.asktrusthub.com/` returned 200; `curl
+  https://www.asktrusthub.com/.well-known/vercel/jwe` returned 204) even immediately after
+  observing them in the browser. This points to a browser-automation/platform-edge
+  interaction (e.g. a bot-protection heuristic responding differently to the automated
+  browser's request signature than to `curl`, or the extension's own network-tracking
+  reporting an aborted/cancelled request as its last known status) rather than an
+  application defect: neither path is called by AskTrustHub's own code (no
+  `fetch('/.well-known/vercel/jwe')` or bare `HEAD /` exists anywhere in
+  `lib/network-metrics/` or the homepage component), the visible page content was correct
+  and complete on every load, and specialist-metrics fetching happens server-side (Next.js
+  ISR), so it is never visible as a browser network request regardless. Reported here for
+  visibility, not treated as a defect requiring a code change.
+
+### Mobile (390px, 320px) - BLOCKED (narrower reason than before)
+
+Real browser automation is connected in this session (a genuine change from the sessions
+that produced sections A-N), but this specific session's `resize_window` tool does not
+apply the requested dimensions: repeated attempts to resize to 390x844, 430x900, 320px-class
+widths, and even 900x700 and 2000x1200 all left `window.innerWidth` clamped in the
+1600-1778px range regardless of the requested size (tried on both the original tab and a
+freshly created tab, before and after navigation). Chrome's native DevTools responsive
+design toggle (`Ctrl+Shift+M`) was also attempted via synthesized keyboard input and did not
+open a device toolbar. No tool in this session's toolset provides a device-metrics/viewport
+override independent of the native window size.
+
+This is a different, more specific limitation than the one closed above: browser automation
+itself now works (desktop verification above is real, not curl-based), but this session's
+particular browser environment cannot be resized to a genuine mobile viewport. No mobile
+screenshot or rendered-layout claim is made, and none should be inferred from the desktop
+result - responsive CSS behavior at small widths was not independently verified by rendering
+in this pass. A session with working viewport/device emulation (or a physical device) is
+still needed to close this specific sub-item.
+
+### Fallback UI state (not simulated against Production, per instruction)
+
+Per the task's own guidance not to interfere with live Production services, the fallback
+warning state was not triggered against `asktrusthub.com`. It is exercised instead by the
+existing automated test suite (`lib/network-metrics/ath-metrics-001c.test.ts` and
+`ath-metrics-004b.test.ts`), which asserts the exact rendered markup
+`assert.match(html, /last-known-good specialist snapshot/i)` and
+`assert.match(html, /Showing last-known-good specialist snapshot/i)` for every hub under a
+simulated timeout/500/malformed-JSON/wrong-schema condition, run again as part of this
+session's `npm test` (see below) - all passing, unchanged.
+
+### Verification commands re-run this session
+
+`npm test` and `node scripts/verify-specialist-metrics.mjs` were re-run against current
+Production to confirm nothing had drifted since section N: both passed (full suite green;
+`specialist upstream and bundled fallback manifests are schema-compatible`, zero drift).
+
+### G. Console (consolidated)
+
+- **Errors**: none, page-origin.
+- **Warnings**: none, page-origin.
+- **Extension noise** (not page-related): `chrome-extension://.../next-content.js` info logs; an "asynchronous response" messaging error attributable to an installed extension's own `chrome.runtime` messaging, reproduced identically on a clean reload and not tied to any user action on the page.
+
+### Files changed (this QA pass)
+
+Only this report. No application code, test, or configuration file was changed - the
+browser QA found no Production defect to fix.
+
+## Final certification
+
+The previously blocked desktop browser and console verification is now complete, with zero
+defects found: 6/6 specialist contracts render `UPSTREAM`, all critical metrics match their
+authoritative contracts exactly, provenance renders correctly, no mega-total exists, links
+and keyboard navigation work, and the console is clean of application errors. Mobile-specific
+viewport rendering (390px/320px) remains unverified by real rendering, blocked by this
+session's browser-automation environment not honoring viewport-resize requests - a narrower
+and more specific gap than the original "no browser automation" limitation, and one that
+does not indicate any known or suspected defect (the underlying CSS uses standard Tailwind
+responsive utilities throughout, per the source already reviewed in earlier sessions, but
+that is source inspection, not a substitute for rendering, and is not relied upon here as
+proof). ATH-METRICS-R2's metrics-correctness scope - the actual subject of this whole
+project - has no remaining verification gap and remains CLOSED; a final, narrow
+mobile-rendering check is recommended before considering *browser* QA itself fully closed.
+
 # ATH-METRICS-R2 — CLOSED
