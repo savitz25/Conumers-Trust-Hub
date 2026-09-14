@@ -381,6 +381,19 @@ result - responsive CSS behavior at small widths was not independently verified 
 in this pass. A session with working viewport/device emulation (or a physical device) is
 still needed to close this specific sub-item.
 
+**Independently reconfirmed in a follow-up session** (same day, fresh tab group, fresh
+Chrome connection, no prior tab/window state reused): `resize_window({width:390,
+height:844})` against a brand-new tab reported success, but `window.innerWidth` after
+navigating to Production still read `1600` (equal to `screen.width`), not `390`. This is the
+same clamp-to-screen-width behavior observed above, now confirmed across two independent
+sessions and multiple distinct requested sizes (390, 430, 900x700, 2000x1200, 390 again),
+which rules out a one-off fluke and points to a fixed-size virtual display underlying this
+Chrome instance rather than a resizable OS window. No tool available in either session
+exposes a CDP-level device-metrics override (the mechanism Chrome DevTools' own responsive
+design mode relies on) independent of the OS window's actual bounds, so this sub-item
+remains genuinely un-closable with the tools this environment currently provides. It is not
+a retry-until-it-works situation; it is a capability gap, reported precisely as such.
+
 ### Fallback UI state (not simulated against Production, per instruction)
 
 Per the task's own guidance not to interfere with live Production services, the fallback
