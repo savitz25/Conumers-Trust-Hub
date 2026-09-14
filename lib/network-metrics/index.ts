@@ -1,4 +1,4 @@
-export { SPECIALIST_SOURCES, SPECIALIST_METRIC_REVALIDATE_SECONDS, ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS } from './sources.ts';
+export { SPECIALIST_SOURCES, SPECIALIST_METRIC_REVALIDATE_SECONDS, FALLBACK_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS } from './sources.ts';
 export type { SpecialistHubId } from './sources.ts';
 export type { NetworkMetric, SpecialistHubPresentation, MetricOrigin } from './types.ts';
 export {

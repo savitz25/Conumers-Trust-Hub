@@ -6,7 +6,7 @@ import moveFallback from '../../data/network-metrics/move-v1-fallback.json' with
 import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' with { type: 'json' };
 import insuranceFallback from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
 import seniorFallback from '../../data/network-metrics/senior-v1-fallback.json' with { type: 'json' };
-import { ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, SPECIALIST_SOURCES } from './sources.ts';
+import { FALLBACK_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, SPECIALIST_SOURCES } from './sources.ts';
 import { adaptInsuranceCard, adaptLenderCard, adaptMoveCard, adaptSeniorCard } from './adapt.ts';
 import { loadSpecialistCard } from './load.ts';
 import { specialistCardMarkup } from './present.ts';
@@ -38,9 +38,9 @@ test('move, lender, and insurance schemas validate against accepted fingerprints
   const move = validateMoveManifest(moveFallback);
   const lender = validateLenderManifest(lenderFallback);
   const insurance = validateInsuranceManifest(insuranceFallback);
-  assert.equal(move.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.move);
-  assert.equal(lender.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.lender);
-  assert.equal(insurance.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.insurance);
+  assert.equal(move.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.move);
+  assert.equal(lender.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.lender);
+  assert.equal(insurance.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.insurance);
   assert.equal(SPECIALIST_SOURCES.move.schemaVersion, 'move-network-metrics-v1');
   assert.equal(SPECIALIST_SOURCES.lender.schemaVersion, 'lender-network-metrics-v1');
   assert.equal(SPECIALIST_SOURCES.insurance.schemaVersion, 'insurance-network-metrics-v1');
@@ -176,7 +176,7 @@ test('Contractor and Senior selections do not regress', () => {
   assert.equal(senior.primary.some((metric) => metric.value === 33819), false);
   const contractor = JSON.parse(readFileSync(join(process.cwd(), 'data/network-metrics/contractor-v1-fallback.json'), 'utf8'));
   const live = (contractor.metrics as Array<{ key: string; value: number }>).find((metric) => metric.key === 'live_credential_records');
-  assert.equal(live?.value, 644421);
+  assert.equal(live?.value, 662331);
 });
 
 test('missing Move/Lender/Insurance universes fail closed instead of becoming zero', () => {

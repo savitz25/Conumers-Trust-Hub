@@ -44,6 +44,7 @@ export type SpecialistHubPresentation = {
   origin: MetricOrigin;
   schemaVersion: string;
   fingerprint: string;
+  contractRevision: string | null;
   generatedAt: string;
   newestSourceAsOf: string | null;
   newestSourceAsOfNote: string;

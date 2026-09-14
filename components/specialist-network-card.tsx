@@ -141,6 +141,10 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
           <span className="font-semibold">Newest documented specialist source date</span>{' '}
           {dateLabel(card.newestSourceAsOf)}
         </p>
+        <p className="mt-1">
+          <span className="font-semibold">Specialist contract revision</span>{' '}
+          {card.contractRevision ?? 'Not supplied'}
+        </p>
         <p className="mt-2">{card.newestSourceAsOfNote}</p>
       </div>
 

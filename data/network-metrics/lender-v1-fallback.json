@@ -1,9 +1,9 @@
 {
   "schemaVersion": "lender-network-metrics-v1",
-  "generatedAt": "2026-09-04T20:16:18.922Z",
-  "newestDocumentedSourceAsOf": "2026-09-04",
+  "generatedAt": "2026-09-12T22:48:10.535Z",
+  "newestDocumentedSourceAsOf": "2026-09-09",
   "newestDocumentedSourceAsOfNote": "Newest documented official source-effective date among metrics that carry a calendar sourceAsOf. Not the as-of date of every identity row, not Git time, and not deploy time.",
-  "sourceFingerprint": "b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6",
+  "sourceFingerprint": "0d6dc909edfec5882b9324b85dd8453ea3d30f9d653c4612cabc91f012a00f05",
   "identity": {
     "institutions": 14623,
     "branches": 6682,
@@ -45,7 +45,7 @@
     "unresolvedSourceCompanyNmls": 3907,
     "stateRegulatoryEvents": 2515,
     "publicProfiles": 130,
-    "ofrSourceAsOf": "2026-08-27"
+    "ofrSourceAsOf": "2026-08-30"
   },
   "newJersey": {
     "hmdaApplications": 318529,
@@ -83,6 +83,37 @@
     "liveRosterCoverage": "SOURCE_NOT_ACQUIRED",
     "liveLicensedCompanyUniverse": null
   },
+  "colorado": {
+    "hmdaApplications": 260212,
+    "hmdaOriginations": 156145,
+    "cfpbMortgageComplaints": 8627,
+    "dreMloRows": 21865,
+    "liveRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "liveLicensedCompanyUniverse": null
+  },
+  "virginia": {
+    "hmdaApplications": 340304,
+    "hmdaOriginations": 202417,
+    "cfpbMortgageComplaints": 14563,
+    "sccDatedCompanyRows": 1257,
+    "liveRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "liveLicensedCompanyUniverse": null
+  },
+  "newYork": {
+    "hmdaApplications": 388207,
+    "hmdaOriginations": 231331,
+    "dfs2024Bankers": 151,
+    "enforcementRows": 198,
+    "liveRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "liveLicensedCompanyUniverse": null
+  },
+  "illinois": {
+    "hmdaApplications": 394488,
+    "hmdaOriginations": 231788,
+    "fdicInstitutions": 387,
+    "liveRosterCoverage": "SOURCE_NOT_ACQUIRED",
+    "liveLicensedCompanyUniverse": null
+  },
   "publication": {
     "nationalRender": 181,
     "nationalIndex": 180,
@@ -91,7 +122,7 @@
     "searchUnionIsNotNationalHeadline": true
   },
   "network": {
-    "publishedStateIntelligencePages": 8,
+    "publishedStateIntelligencePages": 10,
     "publishedStateIntelligencePaths": [
       "/florida",
       "/new-jersey",
@@ -100,14 +131,16 @@
       "/washington",
       "/arizona",
       "/colorado",
-      "/virginia"
+      "/virginia",
+      "/new-york",
+      "/illinois"
     ],
     "njCountyIntelligencePages": 4
   },
   "rejectedTotals": [
     {
       "total": "311 combined public search",
-      "reason": "181 national-searchable plus 130 Florida-public. Not a national lender census."
+      "reason": "Publication-gated national and Florida profiles. Not a national lender census."
     },
     {
       "total": "136763 person_mlo identities",
@@ -123,7 +156,7 @@
     },
     {
       "total": "11648144 state-grain HMDA applications",
-      "reason": "Must not be added to county-grain 11,529,787."
+      "reason": "Must not be added to the national county-by-LEI application total."
     },
     {
       "total": "CA CRMLA live roster = 0",
@@ -138,6 +171,26 @@
       "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero."
     },
     {
+      "total": "CO live mortgage-company roster = 0",
+      "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero."
+    },
+    {
+      "total": "VA live 2026 mortgage-company roster = 0",
+      "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero. Dated SCC 2025 rows are not current licenses."
+    },
+    {
+      "total": "NY live mortgage-company roster = 0",
+      "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero. Dated 2024 DFS class aggregates are not current 2026 licenses."
+    },
+    {
+      "total": "IL live mortgage-company roster = 0",
+      "reason": "SOURCE_NOT_ACQUIRED. Missing is not zero. HMDA applications and FDIC banks are not current Illinois mortgage companies."
+    },
+    {
+      "total": "21865 Colorado MLO person rows",
+      "reason": "Person-grain DRE licenses. Not lenders and not added to national institution totals."
+    },
+    {
       "total": "NJ RMLA roster = 0",
       "reason": "SOURCE_AVAILABLE_BY_REQUEST. Missing is not zero."
     },
@@ -149,8 +202,8 @@
   "homeProjection": {
     "snapshotVersion": "lender-home-intel-snapshot-v2",
     "homepagePublicationVersion": "intel-004-v1",
-    "generated_at": "2026-09-04T20:16:18.922Z",
-    "retrievedAt": "2026-09-04",
+    "generated_at": "2026-09-12T22:48:10.535Z",
+    "retrievedAt": "2026-09-12T22:23:12.376570+00:00",
     "hmdaOfficialAsOf": "2025",
     "hmdaSourceVintage": "HMDA 2025 reporting vintage",
     "hmdaGrain": "county",
@@ -528,10 +581,10 @@
       "identity": "production graph observation",
       "hmda": "2025",
       "cfpb_observed": "2026-08-26",
-      "florida_ofr": "2026-08-27",
+      "florida_ofr": "2026-08-30",
       "publication": "file-backed INTEL-004 / FL-LEND-006+008"
     },
-    "fingerprint": "b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6"
+    "fingerprint": "0d6dc909edfec5882b9324b85dd8453ea3d30f9d653c4612cabc91f012a00f05"
   },
   "metrics": [
     {
@@ -548,17 +601,17 @@
         "lender_national_entities"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "One lender_national_entities row with entity_kind institution.",
-        "doesNotCount": "Not NMLS IDs, not branches, not MLOs, not the 181/180 public cohort, not the 311 search union.",
+        "doesNotCount": "Not NMLS IDs, not branches, not MLOs, not the public render/index cohorts or search union.",
         "contributingSourceSystems": [
           "lender_national_entities"
         ],
         "geographicCoverage": "National identity graph; headquarters is not service territory",
         "sourceDates": "Production graph observation. Not an official NMLS census date, not Git time, not deploy time.",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -576,7 +629,7 @@
         "nmls"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "NMLS_INSTITUTION identifier rows.",
@@ -586,7 +639,7 @@
         ],
         "geographicCoverage": "National",
         "sourceDates": "Production graph observation",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -603,7 +656,7 @@
         "lender_national_entities"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "INTERNAL",
       "trace": {
         "counts": "Branch entity rows.",
@@ -613,7 +666,7 @@
         ],
         "geographicCoverage": "National",
         "sourceDates": "Production graph observation",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -625,12 +678,12 @@
       "grain": "person_mlo_entity",
       "denominator": "lender_national_entities.entity_kind = 'person_mlo'",
       "description": "Internal person_mlo identities. Not a public MLO directory.",
-      "coverage": "National identity graph \u2014 unpublished as people pages",
+      "coverage": "National identity graph — unpublished as people pages",
       "contributingSourceSystems": [
         "lender_national_entities"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "INTERNAL",
       "trace": {
         "counts": "person_mlo entity rows.",
@@ -640,7 +693,7 @@
         ],
         "geographicCoverage": "National",
         "sourceDates": "Production graph observation",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -657,7 +710,7 @@
         "lender_national_entities"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "Must remain zero public person-page candidates.",
@@ -667,7 +720,7 @@
         ],
         "geographicCoverage": "National",
         "sourceDates": "Publication policy",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "currentActiveRule": "person_public_candidate = 0"
       }
     },
@@ -679,13 +732,13 @@
       "valueState": "KNOWN",
       "grain": "national_render_profile",
       "denominator": "File-backed lend-nat-014 national render cohort",
-      "description": "Controlled national publication cohort. Not the 14,623 identity universe.",
+      "description": "Controlled national publication cohort. Not the canonical institution universe.",
       "coverage": "National publication policy",
       "contributingSourceSystems": [
         "lend-nat-014"
       ],
       "sourceAsOf": "2026-08-27",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "Rows in the frozen national render cohort.",
@@ -695,7 +748,7 @@
         ],
         "geographicCoverage": "National publication cohort",
         "sourceDates": "lend-nat-014 added_at 2026-08-27",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -713,7 +766,7 @@
         "lender_hmda_observations"
       ],
       "sourceAsOf": "2025",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "SUM(applications) on 2025 county-grain LEI observations.",
@@ -723,7 +776,7 @@
         ],
         "geographicCoverage": "National county grain; do not add state-grain rows",
         "sourceDates": "HMDA 2025 reporting vintage",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -741,7 +794,7 @@
         "lender_hmda_observations"
       ],
       "sourceAsOf": "2025",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "SUM(originations) on 2025 county-grain rows.",
@@ -751,7 +804,7 @@
         ],
         "geographicCoverage": "National county grain",
         "sourceDates": "HMDA 2025 reporting vintage",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -769,7 +822,7 @@
         "lender_cfpb_complaints"
       ],
       "sourceAsOf": "2026-08-26",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "One stored mortgage complaint observation row.",
@@ -779,7 +832,7 @@
         ],
         "geographicCoverage": "National complaint file as stored on this hub",
         "sourceDates": "max(source_observed_at) 2026-08-26",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -796,7 +849,7 @@
         "lender_federal_enforcement_events"
       ],
       "sourceAsOf": null,
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "One federal enforcement event row.",
@@ -806,7 +859,7 @@
         ],
         "geographicCoverage": "Federal agencies as stored",
         "sourceDates": "Production graph observation; issued_on varies by event",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -823,18 +876,18 @@
         "florida_ofr",
         "lender_state_licenses"
       ],
-      "sourceAsOf": "2026-08-27",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "sourceAsOf": "2026-08-30",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "Approved FL MBR/MLD credential rows.",
-        "doesNotCount": "Not confirmed NMLS identities. Not the 130 Florida public profiles. Not MLOs.",
+        "doesNotCount": "Not confirmed NMLS identities. Not the Florida public profile cohort. Not MLOs.",
         "contributingSourceSystems": [
           "florida_ofr"
         ],
         "geographicCoverage": "Florida OFR Chapter 494 company credentials",
-        "sourceDates": "FL_OFR_CH494 source_as_of 2026-08-27",
-        "generationDate": "2026-09-04"
+        "sourceDates": "Newest Florida ledger source observation 2026-08-30; distinct source clocks in reconciliation.florida.sourceClocks",
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -851,8 +904,8 @@
         "florida_ofr",
         "lender_state_licenses"
       ],
-      "sourceAsOf": "2026-08-27",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "sourceAsOf": "2026-08-30",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "INTERNAL",
       "trace": {
         "counts": "Distinct approved FL company NMLS with a confirmed institution_id.",
@@ -861,8 +914,8 @@
           "florida_ofr"
         ],
         "geographicCoverage": "Florida",
-        "sourceDates": "FL_OFR_CH494 source_as_of 2026-08-27",
-        "generationDate": "2026-09-04"
+        "sourceDates": "Newest Florida ledger source observation 2026-08-30; distinct source clocks in reconciliation.florida.sourceClocks",
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -872,14 +925,14 @@
       "value": null,
       "valueState": "REQUEST_ONLY",
       "grain": "nj_rmla_license_roster",
-      "denominator": "NJ RMLA bulk licensee roster \u2014 SOURCE_AVAILABLE_BY_REQUEST",
+      "denominator": "NJ RMLA bulk licensee roster — SOURCE_AVAILABLE_BY_REQUEST",
       "description": "No bulk RMLA roster was acquired. Statewide NJ licensee count is UNKNOWN, not zero.",
       "coverage": "New Jersey",
       "contributingSourceSystems": [
         "nj_dobi_rmla"
       ],
       "sourceAsOf": "2026-09-02",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_UNKNOWN",
       "trace": {
         "counts": "Nothing numeric is published for the complete NJ RMLA universe.",
@@ -889,7 +942,7 @@
         ],
         "geographicCoverage": "New Jersey",
         "sourceDates": "NJ-LEND snapshot as_of 2026-09-02",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "whyUnknown": "Public RMLA pages are application guidance, not a bulk roster. UNKNOWN must never render as zero."
       }
     },
@@ -902,22 +955,22 @@
       "grain": "nj_dobi_unique_order",
       "denominator": "Acquired NJDOBI enforcement order identifiers in the published NJ snapshot",
       "description": "Acquired unique orders. Later OCF years remain SOURCE_NOT_ACQUIRED and are not zero.",
-      "coverage": "New Jersey \u2014 acquired DOBI years only",
+      "coverage": "New Jersey — acquired DOBI years only",
       "contributingSourceSystems": [
         "nj_dobi"
       ],
       "sourceAsOf": "2026-09-02",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_PARTIAL",
       "trace": {
         "counts": "Unique acquired DOBI order identifiers.",
-        "doesNotCount": "Not the RMLA roster. Not 2023\u20132026 OCF years. Not a statewide lender count.",
+        "doesNotCount": "Not the RMLA roster. Not 2023–2026 OCF years. Not a statewide lender count.",
         "contributingSourceSystems": [
           "nj_dobi"
         ],
         "geographicCoverage": "New Jersey",
         "sourceDates": "NJ DOBI FI list 2026-09-02; later OCF years not acquired",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -927,14 +980,14 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "ca_crmla_live_roster",
-      "denominator": "Live CRMLA roster \u2014 SOURCE_NOT_ACQUIRED",
+      "denominator": "Live CRMLA roster — SOURCE_NOT_ACQUIRED",
       "description": "No bulk live CRMLA roster was acquired. Complete licensed-lender count is UNKNOWN, not zero.",
       "coverage": "California",
       "contributingSourceSystems": [
         "ca_dfpi_crmla"
       ],
       "sourceAsOf": "2026-09-03",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_UNKNOWN",
       "trace": {
         "counts": "Nothing numeric is published for the live CRMLA universe.",
@@ -944,7 +997,7 @@
         ],
         "geographicCoverage": "California",
         "sourceDates": "live_crmla_roster SOURCE_NOT_ACQUIRED",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "whyUnknown": "Live CRMLA roster was not bulk-acquired. CalHFA directory rows are program-participation observations, not the licensed universe."
       }
     },
@@ -962,7 +1015,7 @@
         "calhfa"
       ],
       "sourceAsOf": "2026-09-03",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "HTML directory rows on the official CalHFA approved-lender listing.",
@@ -972,7 +1025,7 @@
         ],
         "geographicCoverage": "California",
         "sourceDates": "CalHFA directory retrieved 2026-09-03",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -982,14 +1035,14 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "tx_sml_live_roster",
-      "denominator": "Live Texas mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Texas mortgage-company roster — SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Texas mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Texas",
       "contributingSourceSystems": [
         "tx_sml_nmls"
       ],
       "sourceAsOf": "2025-10-16",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_UNKNOWN",
       "trace": {
         "counts": "Nothing numeric is published for the live Texas mortgage-company universe.",
@@ -999,7 +1052,7 @@
         ],
         "geographicCoverage": "Texas",
         "sourceDates": "CURRENT_TEXAS_MORTGAGE_COMPANY_BULK_ROSTER SOURCE_NOT_ACQUIRED",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "whyUnknown": "Texas does not currently publish a Florida-OFR-style free complete mortgage-company bulk roster. NMLS Consumer Access was not scraped. Missing is not zero."
       }
     },
@@ -1012,12 +1065,12 @@
       "grain": "tx_sml_order",
       "denominator": "SML enforcement-order CSV rows in the published Texas snapshot",
       "description": "Acquired SML orders. Order count is not quality. Name-only rows are not a live roster.",
-      "coverage": "Texas \u2014 SML orders file",
+      "coverage": "Texas — SML orders file",
       "contributingSourceSystems": [
         "tx_sml"
       ],
       "sourceAsOf": "2025-10-16",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "SML enforcement CSV order rows.",
@@ -1027,7 +1080,7 @@
         ],
         "geographicCoverage": "Texas",
         "sourceDates": "SML orders file 2025-10-16",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -1037,14 +1090,14 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "wa_dfi_live_roster",
-      "denominator": "Live Washington mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Washington mortgage-company roster — SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Washington mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Washington",
       "contributingSourceSystems": [
         "wa_dfi_nmls"
       ],
       "sourceAsOf": "2026-09-04",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_UNKNOWN",
       "trace": {
         "counts": "Nothing numeric is published for the live Washington mortgage-company universe.",
@@ -1054,7 +1107,7 @@
         ],
         "geographicCoverage": "Washington",
         "sourceDates": "WASHINGTON_LIVE_COMPANY_ROSTER SOURCE_NOT_ACQUIRED",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "whyUnknown": "Washington DFI company verification is search-only. NMLS Consumer Access was not scraped. Missing is not zero."
       }
     },
@@ -1067,12 +1120,12 @@
       "grain": "wa_dfi_enforcement_row",
       "denominator": "DFI enforcement HTML table rows in the published Washington snapshot",
       "description": "Acquired DFI table rows. Order count is not quality. Name-only rows are not a live roster.",
-      "coverage": "Washington \u2014 DFI Consumer Services enforcement table",
+      "coverage": "Washington — DFI Consumer Services enforcement table",
       "contributingSourceSystems": [
         "wa_dfi"
       ],
       "sourceAsOf": "2026-09-04",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "DFI Consumer Services bounded HTML table rows.",
@@ -1082,7 +1135,7 @@
         ],
         "geographicCoverage": "Washington",
         "sourceDates": "DFI enforcement table retrieved 2026-09-04",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     },
     {
@@ -1092,14 +1145,14 @@
       "value": null,
       "valueState": "NOT_ACQUIRED",
       "grain": "az_difi_live_roster",
-      "denominator": "Live Arizona mortgage-company roster \u2014 SOURCE_NOT_ACQUIRED",
+      "denominator": "Live Arizona mortgage-company roster — SOURCE_NOT_ACQUIRED",
       "description": "No bulk live Arizona mortgage-company roster was acquired. Complete licensed-company count is UNKNOWN, not zero.",
       "coverage": "Arizona",
       "contributingSourceSystems": [
         "az_difi_nmls"
       ],
       "sourceAsOf": "2026-09-04",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC_UNKNOWN",
       "trace": {
         "counts": "Nothing numeric is published for the live Arizona mortgage-company universe.",
@@ -1109,7 +1162,7 @@
         ],
         "geographicCoverage": "Arizona",
         "sourceDates": "ARIZONA_LIVE_COMPANY_ROSTER SOURCE_NOT_ACQUIRED",
-        "generationDate": "2026-09-04",
+        "generationDate": "2026-09-12",
         "whyUnknown": "Arizona DIFI company verification is search-only. NMLS Consumer Access was not scraped. Missing is not zero."
       }
     },
@@ -1122,12 +1175,12 @@
       "grain": "az_cfpb_mortgage_complaint_row",
       "denominator": "CFPB mortgage product complaints with state = AZ",
       "description": "Statewide CFPB mortgage complaint overlay. A complaint is not a violation and is not a company ranking.",
-      "coverage": "Arizona \u2014 CFPB mortgage product",
+      "coverage": "Arizona — CFPB mortgage product",
       "contributingSourceSystems": [
         "cfpb"
       ],
       "sourceAsOf": "2026-09-04",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
         "counts": "CFPB Consumer Complaint Database API, product Mortgage, state AZ.",
@@ -1137,35 +1190,3135 @@
         ],
         "geographicCoverage": "Arizona",
         "sourceDates": "CFPB overlay retrieved 2026-09-04",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "co_mortgage_company_live_roster",
+      "label": "Colorado live mortgage-company roster",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "co_mortgage_company_live_roster",
+      "denominator": "Live Colorado mortgage-company registration roster — SOURCE_NOT_ACQUIRED",
+      "description": "No bulk live Colorado mortgage-company registration roster was acquired. Complete registered-company count is UNKNOWN, not zero.",
+      "coverage": "Colorado",
+      "contributingSourceSystems": [
+        "co_dre_nmls"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the live Colorado mortgage-company universe.",
+        "doesNotCount": "Not Colorado MLO person rows. Not HMDA applications. Not CFPB complaints.",
+        "contributingSourceSystems": [
+          "co_dre_nmls"
+        ],
+        "geographicCoverage": "Colorado",
+        "sourceDates": "COLORADO_LIVE_COMPANY_ROSTER SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-12",
+        "whyUnknown": "Colorado mortgage companies register through NMLS. Consumer Access was not scraped. Missing is not zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "co_dre_mlo_rows",
+      "label": "Colorado DRE Mortgage Loan Originator license rows",
+      "value": 21865,
+      "valueState": "KNOWN",
+      "grain": "co_dre_mlo_person_row",
+      "denominator": "CIM 4zse-6bnw licenseprefix = MLO",
+      "description": "Person-grain Colorado MLO license rows. Not lenders, not branches, and not added to national institution totals.",
+      "coverage": "Colorado — DRE MLO",
+      "contributingSourceSystems": [
+        "co_dre"
+      ],
+      "sourceAsOf": "2026-09-09",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Colorado Information Marketplace 4zse-6bnw Mortgage Loan Originator rows.",
+        "doesNotCount": "Not mortgage companies. Not HMDA applications. Not a public person directory.",
+        "contributingSourceSystems": [
+          "co_dre"
+        ],
+        "geographicCoverage": "Colorado",
+        "sourceDates": "DRE MLO overlay source as of 2026-09-09",
+        "generationDate": "2026-09-12"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "co_cfpb_mortgage_complaints",
+      "label": "Colorado CFPB mortgage complaint rows (acquired)",
+      "value": 8627,
+      "valueState": "KNOWN",
+      "grain": "co_cfpb_mortgage_complaint_row",
+      "denominator": "CFPB mortgage product complaints with state = CO",
+      "description": "Statewide CFPB mortgage complaint overlay. A complaint is not a violation and is not a DRE complaint.",
+      "coverage": "Colorado — CFPB mortgage product",
+      "contributingSourceSystems": [
+        "cfpb"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "CFPB Consumer Complaint Database API, product Mortgage, state CO.",
+        "doesNotCount": "Not a live licensed-company universe. Not HMDA. Not DRE MLO rows.",
+        "contributingSourceSystems": [
+          "cfpb"
+        ],
+        "geographicCoverage": "Colorado",
+        "sourceDates": "CFPB overlay retrieved; CFPB did not publish an as-of date on this extract",
+        "generationDate": "2026-09-12"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "va_mortgage_company_live_roster",
+      "label": "Virginia current mortgage-company roster (live 2026)",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "va_mortgage_company_live_roster",
+      "denominator": "Live 2026 Virginia mortgage-company roster — SOURCE_NOT_ACQUIRED",
+      "description": "Current 2026 license status is not manufactured from the SCC 2025 annual report. Complete current-company count is UNKNOWN, not zero.",
+      "coverage": "Virginia",
+      "contributingSourceSystems": [
+        "va_scc_nmls"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the live 2026 Virginia mortgage-company universe.",
+        "doesNotCount": "Not the dated 2025-12-31 SCC list. Not HMDA applications. Not CFPB complaints. Not MLOs.",
+        "contributingSourceSystems": [
+          "va_scc_nmls"
+        ],
+        "geographicCoverage": "Virginia",
+        "sourceDates": "VIRGINIA_LIVE_COMPANY_ROSTER SOURCE_NOT_ACQUIRED",
+        "generationDate": "2026-09-12",
+        "whyUnknown": "SCC points current mortgage-license records to NMLS Consumer Access. That search was not scraped. Missing is not zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "va_scc_dated_company_rows",
+      "label": "Virginia SCC 2025 dated mortgage-company list rows",
+      "value": 1257,
+      "valueState": "KNOWN",
+      "grain": "va_scc_dated_company_row",
+      "denominator": "SCC BFI 2025 annual-report Mortgage Companies list as of 2025-12-31",
+      "description": "Dated company-licensee rows. Broker, lender, and lender-broker stay separate. Not current 2026 status and not added to national institution totals.",
+      "coverage": "Virginia — SCC BFI 2025-12-31",
+      "contributingSourceSystems": [
+        "va_scc"
+      ],
+      "sourceAsOf": "2025-12-31",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Official SCC 2025 mortgage-company list rows with exact MC and NMLS identifiers.",
+        "doesNotCount": "Not live 2026 licenses. Not MLOs. Not HMDA applications. Not a combined Virginia-lenders headline.",
+        "contributingSourceSystems": [
+          "va_scc"
+        ],
+        "geographicCoverage": "Virginia",
+        "sourceDates": "SCC roster as of 2025-12-31",
+        "generationDate": "2026-09-12"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "va_cfpb_mortgage_complaints",
+      "label": "Virginia CFPB mortgage complaint rows (acquired)",
+      "value": 14563,
+      "valueState": "KNOWN",
+      "grain": "va_cfpb_mortgage_complaint_row",
+      "denominator": "CFPB mortgage product complaints with state = VA",
+      "description": "Statewide CFPB mortgage complaint overlay. A complaint is not a violation and is not SCC enforcement.",
+      "coverage": "Virginia — CFPB mortgage product",
+      "contributingSourceSystems": [
+        "cfpb"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "CFPB Consumer Complaint Database API, product Mortgage, state VA.",
+        "doesNotCount": "Not a live licensed-company universe. Not HMDA. Not SCC dated roster rows.",
+        "contributingSourceSystems": [
+          "cfpb"
+        ],
+        "geographicCoverage": "Virginia",
+        "sourceDates": "CFPB overlay retrieved; CFPB did not publish an as-of date on this extract",
+        "generationDate": "2026-09-12"
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ny_live_licensed_company_universe",
+      "label": "New York current licensed mortgage-company universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "ny_mortgage_company_live_roster",
+      "denominator": "Complete current NYDFS/NMLS New York mortgage banker, broker, and servicer universe",
+      "description": "Current 2026 license status is not manufactured from the 2024 DFS annual report. Complete current-company count is UNKNOWN, not zero.",
+      "coverage": "New York",
+      "contributingSourceSystems": [
+        "ny_dfs_nmls"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the live 2026 New York mortgage-company universe.",
+        "doesNotCount": "Not the dated 2024 DFS aggregates. Not HMDA applications. Not MLOs.",
+        "contributingSourceSystems": [
+          "ny_dfs_nmls"
+        ],
+        "geographicCoverage": "New York",
+        "sourceDates": "CURRENT_NY_MORTGAGE_COMPANY_ROSTER OPEN_SEARCH_ONLY",
+        "generationDate": "2026-09-12",
+        "whyUnknown": "NYDFS current company search was not bulk-exported. NMLS Consumer Access remains search-only. Missing is not zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "il_live_licensed_company_universe",
+      "label": "Illinois current licensed mortgage-company universe",
+      "value": null,
+      "valueState": "NOT_ACQUIRED",
+      "grain": "il_mortgage_company_live_roster",
+      "denominator": "Complete current IDFPR/NMLS Illinois mortgage-company universe",
+      "description": "Current Illinois mortgage-company licensing is search-only. Missing is not zero and is not HMDA or FDIC.",
+      "coverage": "Illinois",
+      "contributingSourceSystems": [
+        "il_idfpr_nmls"
+      ],
+      "sourceAsOf": null,
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC_UNKNOWN",
+      "trace": {
+        "counts": "Nothing numeric is published for the live Illinois mortgage-company universe.",
+        "doesNotCount": "Not HMDA applications. Not FDIC depositories.",
+        "contributingSourceSystems": [
+          "il_idfpr_nmls"
+        ],
+        "geographicCoverage": "Illinois",
+        "sourceDates": "CURRENT_IL_MORTGAGE_COMPANY_ROSTER OPEN_SEARCH_ONLY",
+        "generationDate": "2026-09-12",
+        "whyUnknown": "IDFPR mortgage-company licensing was not bulk-exported. NMLS Consumer Access remains search-only. Missing is not zero."
+      }
+    },
+    {
+      "unit": "count",
+      "key": "ny_dfs_2024_licensed_mortgage_bankers",
+      "label": "New York DFS 2024 licensed mortgage bankers",
+      "value": 151,
+      "valueState": "KNOWN",
+      "grain": "ny_dfs_2024_mortgage_banker_aggregate",
+      "denominator": "NYDFS 2024 Annual Report mortgage-banking supervision aggregate, end of 2024",
+      "description": "Dated licensed mortgage banker aggregate. Not brokers, servicers, MLOs, or current 2026 status.",
+      "coverage": "New York — DFS 2024 annual report",
+      "contributingSourceSystems": [
+        "ny_dfs"
+      ],
+      "sourceAsOf": "2024-12-31",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
+      "publicationStatus": "PUBLIC",
+      "trace": {
+        "counts": "Official DFS 2024 licensed mortgage banker aggregate.",
+        "doesNotCount": "Not live 2026 licenses. Not broker or MLO class populations. Not HMDA applications.",
+        "contributingSourceSystems": [
+          "ny_dfs"
+        ],
+        "geographicCoverage": "New York",
+        "sourceDates": "DFS annual-report period end of 2024",
+        "generationDate": "2026-09-12"
       }
     },
     {
       "unit": "count",
       "key": "published_state_intelligence_pages",
       "label": "Published state mortgage-intelligence pages",
-      "value": 7,
+      "value": 10,
       "valueState": "KNOWN",
       "grain": "published_state_intelligence_page",
       "denominator": "Indexable specialist state intelligence routes currently published",
-      "description": "Florida, New Jersey, California, Texas, Washington, Arizona, and Colorado state intelligence pages. Not a count of lenders.",
-      "coverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado",
+      "description": "Florida, New Jersey, California, Texas, Washington, Arizona, Colorado, Virginia, New York, and Illinois state intelligence pages. Not a count of lenders.",
+      "coverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado, /virginia, /new-york, /illinois",
       "contributingSourceSystems": [
         "lender-state-intel"
       ],
-      "sourceAsOf": "2026-09-04",
-      "generatedAt": "2026-09-04T20:16:18.922Z",
+      "sourceAsOf": "2026-09-09",
+      "generatedAt": "2026-09-12T22:48:10.535Z",
       "publicationStatus": "PUBLIC",
       "trace": {
-        "counts": "Published /florida, /new-jersey, /california, /texas, /washington, /arizona, and /colorado intelligence routes.",
+        "counts": "Published /florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado, /virginia, /new-york, and /illinois intelligence routes.",
         "doesNotCount": "Not NJ county pages and not national directory rows.",
         "contributingSourceSystems": [
           "lender-state-intel"
         ],
-        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado",
+        "geographicCoverage": "/florida, /new-jersey, /california, /texas, /washington, /arizona, /colorado, /virginia, /new-york, /illinois",
         "sourceDates": "Publication gates in specialist catalogs",
-        "generationDate": "2026-09-04"
+        "generationDate": "2026-09-12"
       }
     }
-  ]
+  ],
+  "contractRevision": "ATH-METRICS-R2-03",
+  "homepage": {
+    "evidenceInventory": [
+      {
+        "key": "national_institutions",
+        "label": "Lending institution entities",
+        "value": 14623,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "canonical institution entity",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "LenderTrustHub identity graph",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Canonical institution entities in the accepted identity graph.",
+        "counts": "Canonical institution entities in the accepted identity graph.",
+        "doesNotCount": "Branches, MLO people, applications, or a census of every licensed company.",
+        "researchDestination": "/lender",
+        "identityRule": null,
+        "display": "14,623",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "varies by contributing source",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "national_nmls_ids",
+        "label": "NMLS institution identifiers",
+        "value": 6641,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "NMLS institution identifier",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "NMLS-derived accepted identity graph",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Distinct institution-level NMLS identifiers in the accepted graph.",
+        "counts": "Distinct institution-level NMLS identifiers in the accepted graph.",
+        "doesNotCount": "Branch NMLS IDs, MLO NMLS IDs, state license rows, or unique corporate organizations.",
+        "researchDestination": "/lender",
+        "identityRule": null,
+        "display": "6,641",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "varies by contributing source",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "hmda_applications",
+        "label": "HMDA applications",
+        "value": 11529787,
+        "family": "MORTGAGE_MARKET_ACTIVITY",
+        "grain": "county-grain HMDA application observation",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "HMDA / FFIEC",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Reported 2025 applications aggregated from the accepted county-grain extract.",
+        "counts": "Reported 2025 applications aggregated from the accepted county-grain extract.",
+        "doesNotCount": "Lenders, approvals, offers, or a quality measure.",
+        "researchDestination": "/mortgage-data",
+        "identityRule": null,
+        "display": "11,529,787",
+        "sourceClockLabel": "Vintage",
+        "sourceClock": "HMDA 2025",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "hmda_originations",
+        "label": "HMDA originations",
+        "value": 6793253,
+        "family": "MORTGAGE_MARKET_ACTIVITY",
+        "grain": "county-grain HMDA origination observation",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "HMDA / FFIEC",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Reported 2025 originations in the accepted county-grain extract.",
+        "counts": "Reported 2025 originations in the accepted county-grain extract.",
+        "doesNotCount": "Unique borrowers, lenders, or evidence that a lender is better.",
+        "researchDestination": "/mortgage-data",
+        "identityRule": null,
+        "display": "6,793,253",
+        "sourceClockLabel": "Vintage",
+        "sourceClock": "HMDA 2025",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "hmda_denials",
+        "label": "HMDA denials",
+        "value": 2008514,
+        "family": "MORTGAGE_MARKET_ACTIVITY",
+        "grain": "county-grain HMDA denial observation",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "HMDA / FFIEC",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Reported 2025 denial observations in the accepted county-grain extract.",
+        "counts": "Reported 2025 denial observations in the accepted county-grain extract.",
+        "doesNotCount": "Misconduct, borrower eligibility, or lender quality.",
+        "researchDestination": "/mortgage-data",
+        "identityRule": null,
+        "display": "2,008,514",
+        "sourceClockLabel": "Vintage",
+        "sourceClock": "HMDA 2025",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "cfpb_complaints",
+        "label": "CFPB mortgage complaints",
+        "value": 458146,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "CFPB Consumer Complaint Database",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Mortgage-scoped consumer complaint observations in the accepted snapshot.",
+        "counts": "Mortgage-scoped consumer complaint observations in the accepted snapshot.",
+        "doesNotCount": "Proven violations, findings, complaint rates, or a risk score.",
+        "researchDestination": "/lender",
+        "identityRule": null,
+        "display": "458,146",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Snapshot observed 2026-08-26",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "federal_enforcement",
+        "label": "Federal enforcement events",
+        "value": 17655,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "federal enforcement event",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "Accepted federal enforcement sources",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Source-native federal enforcement events in the accepted network contract.",
+        "counts": "Source-native federal enforcement events in the accepted network contract.",
+        "doesNotCount": "Criminal convictions, complaints, or proof of present license status.",
+        "researchDestination": "/lender",
+        "identityRule": null,
+        "display": "17,655",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "varies by source event",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "fdic_cert",
+        "label": "FDIC CERT identifiers",
+        "value": 5377,
+        "family": "DEPOSITORY_BANK",
+        "grain": "FDIC CERT identifier",
+        "entityClass": "multi-class mortgage evidence",
+        "geography": "United States and reported jurisdictions",
+        "sourceSystem": "FDIC",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Distinct FDIC CERT identifiers in the accepted identity graph.",
+        "counts": "Distinct FDIC CERT identifiers in the accepted identity graph.",
+        "doesNotCount": "NMLS IDs, all mortgage lenders, branches, or proof of mortgage quality.",
+        "researchDestination": "/fdic-insured-banks",
+        "identityRule": null,
+        "display": "5,377",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "accepted identity snapshot",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "fl_credentials",
+        "label": "Florida approved company credentials",
+        "value": 6392,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "approved MBR/MLD credential row",
+        "entityClass": "Florida Chapter 494 company credential",
+        "geography": "Florida",
+        "sourceSystem": "Florida Office of Financial Regulation",
+        "acceptedArtifact": "data/home/lender-metric-census-r2-03.json",
+        "definition": "Current approved Chapter 494 company credential rows.",
+        "counts": "Approved MBR and MLD credential rows.",
+        "doesNotCount": "Unique companies, branches, MLOs, service areas, or endorsements.",
+        "researchDestination": "/florida",
+        "identityRule": "State credential rows join to institutions only through confirmed NMLS identity.",
+        "display": "6,392",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-08-30",
+        "retrievedAt": null,
+        "generatedAt": "2026-08-30T16:22:07.696760+00:00",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "fl_ofr_observations",
+        "label": "Florida OFR written observations",
+        "value": 2515,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "written regulatory observation",
+        "entityClass": "company, person MLO, branch, or mixed source observation",
+        "geography": "Florida",
+        "sourceSystem": "DOAH FLAIO / Florida OFR",
+        "acceptedArtifact": "lib/florida-intelligence/accepted-snapshot.json",
+        "definition": "Written observations in the accepted FLAIO/OFR corpus.",
+        "counts": "Source observations across explicitly separate respondent grains.",
+        "doesNotCount": "Criminal convictions, current quality, or clean-record determinations.",
+        "researchDestination": "/florida",
+        "identityRule": "Only confirmed identifiers attach adverse evidence; unresolved company observations stay aggregate.",
+        "display": "2,515",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-08-25",
+        "retrievedAt": null,
+        "generatedAt": "2026-08-30T16:22:07.696760+00:00",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "fl_cfpb",
+        "label": "Florida CFPB mortgage complaints",
+        "value": 47961,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Florida",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/florida-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Florida.",
+        "counts": "CFPB complaint observations at state-reporting geography.",
+        "doesNotCount": "Proven violations, findings, rates, or lender quality.",
+        "researchDestination": "/florida",
+        "identityRule": "Unresolved complaint company labels remain unattached.",
+        "display": "47,961",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-08-24",
+        "retrievedAt": "2026-08-26",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "nj_dobi_orders",
+        "label": "New Jersey DOBI unique orders",
+        "value": 453,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "unique DOBI order",
+        "entityClass": "source-native regulatory order",
+        "geography": "New Jersey",
+        "sourceSystem": "New Jersey DOBI",
+        "acceptedArtifact": "lib/new-jersey-intelligence/accepted-snapshot.json",
+        "definition": "Deduplicated orders acquired from bounded DOBI OCF year pages.",
+        "counts": "Unique orders, separately from index occurrences and documents.",
+        "doesNotCount": "Violations, complaints, unique lenders, or later unacquired years.",
+        "researchDestination": "/new-jersey",
+        "identityRule": "Exact official identifiers only for profile attribution; name-only evidence remains withheld.",
+        "display": "453",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "acquired through 2022 OCF year pages; later years SOURCE_NOT_ACQUIRED",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-02T21:10:02Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "nj_financial_institutions",
+        "label": "New Jersey financial-institution list rows",
+        "value": 114,
+        "family": "DEPOSITORY_BANK",
+        "grain": "official institution-list row",
+        "entityClass": "source-native bank, thrift, credit union, or trust class",
+        "geography": "New Jersey",
+        "sourceSystem": "New Jersey DOBI",
+        "acceptedArtifact": "lib/new-jersey-intelligence/accepted-snapshot.json",
+        "definition": "Rows in the accepted DOBI financial-institution list.",
+        "counts": "Official list rows across source-native charter classes.",
+        "doesNotCount": "Mortgage licenses, brokers, NJHMFA participants, or recommendations.",
+        "researchDestination": "/new-jersey",
+        "identityRule": "FDIC and state references remain distinct identifiers.",
+        "display": "114",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-09-02",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-02T21:10:02Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "nj_programs",
+        "label": "New Jersey NJHMFA program families",
+        "value": 6,
+        "family": "HOMEBUYER_PROGRAMS",
+        "grain": "source-native program family",
+        "entityClass": "state housing-finance program",
+        "geography": "New Jersey",
+        "sourceSystem": "NJHMFA",
+        "acceptedArtifact": "lib/new-jersey-intelligence/accepted-snapshot.json",
+        "definition": "Accepted NJHMFA first-mortgage and assistance program families.",
+        "counts": "Distinct documented program families.",
+        "doesNotCount": "Eligible borrowers, approvals, products, or guarantees.",
+        "researchDestination": "/new-jersey",
+        "identityRule": null,
+        "display": "6",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-06-17",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-02T21:10:02Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "ca_calhfa_rows",
+        "label": "California CalHFA directory rows",
+        "value": 1414,
+        "family": "BUSINESS_RELATIONSHIPS",
+        "grain": "CalHFA approved-lender directory location row",
+        "entityClass": "participating lender location",
+        "geography": "California and listed out-of-state locations",
+        "sourceSystem": "California Housing Finance Agency",
+        "acceptedArtifact": "lib/california-intelligence/accepted-snapshot.json",
+        "definition": "Rows in the live official CalHFA approved-lender directory snapshot.",
+        "counts": "Directory location rows with public address/phone evidence where present.",
+        "doesNotCount": "Unique companies, California licenses, endorsements, or NMLS matches.",
+        "researchDestination": "/california",
+        "identityRule": "No name-only NMLS attachment; the source prints no NMLS ID.",
+        "display": "1,414",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-03T18:44:09Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "ca_cfpb",
+        "label": "California CFPB mortgage complaints",
+        "value": 71120,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "California",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/california-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from California.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, findings, complaint rates, or lender quality.",
+        "researchDestination": "/california",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "71,120",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-03T18:44:10Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "ca_programs",
+        "label": "California CalHFA program families",
+        "value": 4,
+        "family": "HOMEBUYER_PROGRAMS",
+        "grain": "source-native program family",
+        "entityClass": "state housing-finance program",
+        "geography": "California",
+        "sourceSystem": "CalHFA",
+        "acceptedArtifact": "lib/california-intelligence/accepted-snapshot.json",
+        "definition": "Accepted CalHFA program families.",
+        "counts": "Documented program families.",
+        "doesNotCount": "Eligible borrowers, approvals, individual products, or guaranteed funds.",
+        "researchDestination": "/california",
+        "identityRule": null,
+        "display": "4",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Official CalHFA pages retrieved 2026-09-03; Dream For All update 2026-05-20; income limits 2026-06-30",
+        "retrievedAt": "2026-09-03T18:44:09Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "tx_sml_orders",
+        "label": "Texas SML order rows",
+        "value": 3981,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "source-native SML order row",
+        "entityClass": "Texas SML regulatory order",
+        "geography": "Texas",
+        "sourceSystem": "Texas Department of Savings and Mortgage Lending",
+        "acceptedArtifact": "lib/texas-intelligence/accepted-snapshot.json",
+        "definition": "Rows in the accepted SML order dataset.",
+        "counts": "Order rows with source-native titles.",
+        "doesNotCount": "Complaints, unique lenders, criminal convictions, or a quality score.",
+        "researchDestination": "/texas",
+        "identityRule": "2,493 rows print an exact NMLS ID; name-only rows remain statewide evidence.",
+        "display": "3,981",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2025-10-16",
+        "retrievedAt": "2026-09-04T12:59:52Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "tx_programs",
+        "label": "Texas verified program families",
+        "value": 7,
+        "family": "HOMEBUYER_PROGRAMS",
+        "grain": "source-native program family",
+        "entityClass": "state housing-finance program",
+        "geography": "Texas",
+        "sourceSystem": "TDHCA and TSAHC",
+        "acceptedArtifact": "lib/texas-intelligence/accepted-snapshot.json",
+        "definition": "Distinct accepted statewide program families.",
+        "counts": "Documented program families, not individual loan products.",
+        "doesNotCount": "Eligible borrowers, approvals, available funds, or program generosity.",
+        "researchDestination": "/texas",
+        "identityRule": null,
+        "display": "7",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T12:59:58Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "tx_cfpb",
+        "label": "Texas CFPB mortgage complaints",
+        "value": 29013,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Texas",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/texas-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Texas.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, findings, complaint rates, or quality.",
+        "researchDestination": "/texas",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "29,013",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T13:00:17Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "wa_dfi_orders",
+        "label": "Washington DFI enforcement rows",
+        "value": 777,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "enforcement-order row",
+        "entityClass": "DFI Consumer Services enforcement row",
+        "geography": "Washington",
+        "sourceSystem": "Washington DFI",
+        "acceptedArtifact": "lib/washington-intelligence/accepted-snapshot.json",
+        "definition": "Rows in the bounded DFI enforcement-actions HTML table.",
+        "counts": "Source-native enforcement rows.",
+        "doesNotCount": "Unique lenders, complaints, violations, or a complete historical bulk file.",
+        "researchDestination": "/washington",
+        "identityRule": "Exact NMLS is required for adverse attachment; name-only rows stay at event grain.",
+        "display": "777",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T17:15:36Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "wa_exact_nmls_orders",
+        "label": "Washington exact-NMLS enforcement rows",
+        "value": 102,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "enforcement-order row with printed NMLS identifier",
+        "entityClass": "DFI enforcement row",
+        "geography": "Washington",
+        "sourceSystem": "Washington DFI",
+        "acceptedArtifact": "lib/washington-intelligence/accepted-snapshot.json",
+        "definition": "DFI order rows carrying an exact printed NMLS identifier.",
+        "counts": "Rows with exact NMLS evidence.",
+        "doesNotCount": "A sequential funnel stage, unique companies, or proof every printed NMLS is institution-level.",
+        "researchDestination": "/washington",
+        "identityRule": "Source does not type printed NMLS as institution versus person; preserve event grain.",
+        "display": "102",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T17:15:36Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "wa_programs",
+        "label": "Washington verified program families",
+        "value": 7,
+        "family": "HOMEBUYER_PROGRAMS",
+        "grain": "source-native program family",
+        "entityClass": "state housing-finance program",
+        "geography": "Washington",
+        "sourceSystem": "Washington State Housing Finance Commission",
+        "acceptedArtifact": "lib/washington-intelligence/accepted-snapshot.json",
+        "definition": "Accepted WSHFC and Here to Home program families.",
+        "counts": "Documented program families.",
+        "doesNotCount": "Borrower eligibility, approvals, funding guarantees, or rankings.",
+        "researchDestination": "/washington",
+        "identityRule": null,
+        "display": "7",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T17:16:28Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "wa_cfpb",
+        "label": "Washington CFPB mortgage complaints",
+        "value": 10340,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Washington",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/washington-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Washington.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, findings, complaint rates, or quality.",
+        "researchDestination": "/washington",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "10,340",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T17:16:45Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "az_cfpb",
+        "label": "Arizona CFPB mortgage complaints",
+        "value": 10365,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Arizona",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/arizona-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Arizona.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, complaint rates, risk, or lender quality.",
+        "researchDestination": "/arizona",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "10,365",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-09-04T12:00:00-05:00",
+        "retrievedAt": "2026-09-04T20:02:50Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "az_programs",
+        "label": "Arizona statewide program families",
+        "value": 2,
+        "family": "HOMEBUYER_PROGRAMS",
+        "grain": "source-native program family",
+        "entityClass": "statewide housing-finance program",
+        "geography": "Arizona",
+        "sourceSystem": "Arizona IDA / Arizona Department of Housing",
+        "acceptedArtifact": "lib/arizona-intelligence/accepted-snapshot.json",
+        "definition": "Accepted statewide Arizona homebuyer program families.",
+        "counts": "Documented program families.",
+        "doesNotCount": "Eligible borrowers, approvals, local-only programs, or available funding.",
+        "researchDestination": "/arizona",
+        "identityRule": null,
+        "display": "2",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-04T20:01:33Z",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "az_difi_enforcement_unacquired",
+        "label": "Arizona DIFI enforcement harvest",
+        "value": null,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "potential DIFI enforcement order",
+        "entityClass": "mixed-domain DIFI enforcement publication",
+        "geography": "Arizona",
+        "sourceSystem": "Arizona DIFI",
+        "acceptedArtifact": "lib/arizona-intelligence/accepted-snapshot.json",
+        "definition": "The official table is documented, but the accepted automated acquisition was blocked.",
+        "counts": "No numeric evidence total; this is an explicit coverage limitation.",
+        "doesNotCount": "Zero orders, acquired lender actions, or a live license roster.",
+        "publicationStatus": "PUBLIC_LIMITATION",
+        "researchDestination": "/arizona",
+        "identityRule": "Future adverse attachment requires exact NMLS or DIFI license identity.",
+        "display": "Not acquired",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-04T20:01:33Z"
+      },
+      {
+        "key": "co_dre_mlo",
+        "label": "Colorado DRE Mortgage Loan Originator rows",
+        "value": 21865,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "person MLO license row",
+        "entityClass": "Colorado individual mortgage loan originator",
+        "geography": "Colorado",
+        "sourceSystem": "Colorado Division of Real Estate",
+        "acceptedArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "definition": "Person-grain DRE MLO license rows in the accepted CIM extract.",
+        "counts": "MLO license rows, separately from companies, HMDA, and complaints.",
+        "doesNotCount": "Lenders, branches, NMLS Individual IDs, or a public person directory.",
+        "researchDestination": "/colorado",
+        "identityRule": "CO-DORA:MLO:{licenseNumber}. License number is not inferred as NMLS Individual ID.",
+        "display": "21,865",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-09-09",
+        "retrievedAt": "2026-09-09",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "co_cfpb",
+        "label": "Colorado CFPB mortgage complaints",
+        "value": 8627,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Colorado",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Colorado.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, DRE complaints, complaint rates, or lender quality.",
+        "researchDestination": "/colorado",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "8,627",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-09",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "co_company_roster_unacquired",
+        "label": "Colorado mortgage-company registration roster",
+        "value": null,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "potential NMLS company registration",
+        "entityClass": "Colorado mortgage-company registration",
+        "geography": "Colorado",
+        "sourceSystem": "Colorado DRE / NMLS",
+        "acceptedArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "definition": "No current public bulk company-registration roster was acquired.",
+        "counts": "No numeric evidence total; this is an explicit coverage limitation.",
+        "doesNotCount": "Zero companies, MLO people, or a lender census.",
+        "publicationStatus": "PUBLIC_LIMITATION",
+        "researchDestination": "/colorado",
+        "identityRule": "Future company attachment requires exact NMLS Company ID.",
+        "display": "Not acquired",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "SOURCE_NOT_ACQUIRED",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z"
+      },
+      {
+        "key": "va_scc_dated_rows",
+        "label": "Virginia SCC 2025 dated mortgage-company rows",
+        "value": 1257,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "dated SCC company-licensee row",
+        "entityClass": "Virginia mortgage broker, lender, or lender-broker",
+        "geography": "Virginia",
+        "sourceSystem": "Virginia SCC Bureau of Financial Institutions",
+        "acceptedArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "definition": "Dated official company-licensee rows as of 2025-12-31.",
+        "counts": "List rows with exact MC and NMLS identifiers.",
+        "doesNotCount": "Current 2026 licenses, unique consumer lenders, MLOs, or offices.",
+        "researchDestination": "/virginia",
+        "identityRule": "VA-SCC-BFI:{MC} and NMLS:{id} when SCC prints both. Name-only fill is forbidden.",
+        "display": "1,257",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2025-12-31",
+        "retrievedAt": "2026-09-10",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "va_cfpb",
+        "label": "Virginia CFPB mortgage complaints",
+        "value": 14563,
+        "family": "CONSUMER_COMPLAINTS",
+        "grain": "CFPB mortgage complaint observation",
+        "entityClass": "consumer-reported mortgage complaint",
+        "geography": "Virginia",
+        "sourceSystem": "CFPB",
+        "acceptedArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "definition": "Mortgage complaint observations reported from Virginia.",
+        "counts": "CFPB complaint observations.",
+        "doesNotCount": "Proven violations, SCC enforcement, complaint rates, or lender quality.",
+        "researchDestination": "/virginia",
+        "identityRule": "No new fuzzy adverse matching.",
+        "display": "14,563",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "Source date not reported",
+        "retrievedAt": "2026-09-10",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "va_live_roster_unacquired",
+        "label": "Virginia current 2026 mortgage-company roster",
+        "value": null,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "potential current NMLS company registration",
+        "entityClass": "Virginia mortgage-company registration",
+        "geography": "Virginia",
+        "sourceSystem": "NMLS Consumer Access",
+        "acceptedArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "definition": "Current 2026 license status was not bulk-acquired. SCC points current records to NMLS Consumer Access.",
+        "counts": "No numeric evidence total; this is an explicit coverage limitation.",
+        "doesNotCount": "Zero companies or that the 2025 dated list is current.",
+        "publicationStatus": "PUBLIC_LIMITATION",
+        "researchDestination": "/virginia",
+        "identityRule": "Current verification requires an exact NMLS Company ID search.",
+        "display": "Not acquired",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "SOURCE_NOT_ACQUIRED",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-10T16:40:00Z"
+      },
+      {
+        "key": "ny_dfs_2024_bankers",
+        "label": "New York DFS 2024 licensed mortgage bankers",
+        "value": 151,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "dated DFS class aggregate",
+        "entityClass": "New York licensed mortgage banker",
+        "geography": "New York",
+        "sourceSystem": "NYDFS 2024 Annual Report",
+        "acceptedArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "definition": "Dated end-of-2024 licensed mortgage banker aggregate.",
+        "counts": "One DFS class aggregate, not brokers, servicers, or MLOs.",
+        "doesNotCount": "Current 2026 licensees, unique consumer lenders, or 151+439.",
+        "researchDestination": "/new-york",
+        "identityRule": "NMLS Company ID when source-native. Name-only fill is forbidden.",
+        "display": "151",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2024-12-31",
+        "retrievedAt": "2026-09-11",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "ny_enforcement",
+        "label": "New York DFS mortgage enforcement observations",
+        "value": 198,
+        "family": "REGULATORY_ENFORCEMENT",
+        "grain": "enforcement-action observation",
+        "entityClass": "company, person, or mixed subject",
+        "geography": "New York",
+        "sourceSystem": "NYDFS Mortgage Banking Enforcement Actions",
+        "acceptedArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "definition": "Rows in the official Mortgage Banking Enforcement Actions HTML table.",
+        "counts": "Dated action observations.",
+        "doesNotCount": "Unique companies, convictions, or a quality score.",
+        "researchDestination": "/new-york",
+        "identityRule": "No NAIC/NMLS column; name-only adverse attachment is UNSAFE.",
+        "display": "198",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-08-12",
+        "retrievedAt": "2026-09-11",
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "ny_live_roster_unacquired",
+        "label": "New York current 2026 mortgage-company roster",
+        "value": null,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "potential current NMLS company registration",
+        "entityClass": "New York mortgage banker, broker, or servicer",
+        "geography": "New York",
+        "sourceSystem": "NYDFS / NMLS Consumer Access",
+        "acceptedArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "definition": "No clean official bulk current company roster was acquired.",
+        "counts": "No numeric evidence total; this is an explicit coverage limitation.",
+        "doesNotCount": "Zero companies or that the 2024 aggregates are current.",
+        "publicationStatus": "PUBLIC_LIMITATION",
+        "researchDestination": "/new-york",
+        "identityRule": "Current verification requires NYDFS + NMLS Consumer Access.",
+        "display": "Not acquired",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "SOURCE_NOT_ACQUIRED",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z"
+      },
+      {
+        "key": "il_hmda_apps",
+        "label": "Illinois HMDA 2025 applications",
+        "value": 394488,
+        "family": "MORTGAGE_MARKET_ACTIVITY",
+        "grain": "county-grain HMDA application observation",
+        "entityClass": "mortgage application",
+        "geography": "Illinois property location",
+        "sourceSystem": "CFPB HMDA",
+        "acceptedArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "definition": "Applications for properties in Illinois.",
+        "counts": "HMDA applications, not lenders.",
+        "doesNotCount": "Illinois mortgage companies, FDIC banks, or current licenses.",
+        "researchDestination": "/illinois",
+        "identityRule": "Property geography is not headquarters or license jurisdiction.",
+        "display": "394,488",
+        "sourceClockLabel": "Vintage",
+        "sourceClock": "2025",
+        "retrievedAt": null,
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "il_fdic",
+        "label": "Illinois FDIC depository institutions",
+        "value": 387,
+        "family": "DEPOSITORY_BANK",
+        "grain": "FDIC-insured depository overlay row",
+        "entityClass": "depository institution",
+        "geography": "Illinois",
+        "sourceSystem": "FDIC",
+        "acceptedArtifact": "lib/fdic/data/illinois.json",
+        "definition": "Existing FDIC Illinois overlay.",
+        "counts": "Depository institutions in the overlay.",
+        "doesNotCount": "IDFPR mortgage bankers or HMDA lenders.",
+        "researchDestination": "/illinois",
+        "identityRule": "FDIC CERT is not an IDFPR mortgage license.",
+        "display": "387",
+        "sourceClockLabel": "Source as of",
+        "sourceClock": "2026-06-26",
+        "retrievedAt": null,
+        "generatedAt": null,
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "il_live_roster_unacquired",
+        "label": "Illinois current mortgage-company roster",
+        "value": null,
+        "family": "INSTITUTION_IDENTITY_LICENSING",
+        "grain": "potential current NMLS company registration",
+        "entityClass": "Illinois mortgage company",
+        "geography": "Illinois",
+        "sourceSystem": "IDFPR / NMLS Consumer Access",
+        "acceptedArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "definition": "No bulk current Illinois mortgage-company roster was acquired.",
+        "counts": "No numeric evidence total; this is an explicit coverage limitation.",
+        "doesNotCount": "Zero companies or that HMDA/FDIC counts are that census.",
+        "publicationStatus": "PUBLIC_LIMITATION",
+        "researchDestination": "/illinois",
+        "identityRule": "Current verification requires IDFPR + NMLS Consumer Access.",
+        "display": "Not acquired",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "SOURCE_NOT_ACQUIRED",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z"
+      },
+      {
+        "key": "state_pages",
+        "label": "Published state intelligence pages",
+        "value": 10,
+        "family": "PUBLIC_RESEARCH_SURFACES",
+        "grain": "published state intelligence page",
+        "entityClass": "public research surface",
+        "geography": "FL, NJ, CA, TX, WA, AZ, CO, VA, NY, IL",
+        "sourceSystem": "Accepted state publication contracts",
+        "acceptedArtifact": "LENDER_HOMEPAGE_STATE_CARDS",
+        "definition": "Live state intelligence destinations in the homepage state model.",
+        "counts": "Published state pages derived from the same model rendered below.",
+        "doesNotCount": "States with only national search results or a rating of research depth.",
+        "researchDestination": "#states",
+        "identityRule": null,
+        "display": "10",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "varies by state and evidence family",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      },
+      {
+        "key": "nj_county_pages",
+        "label": "Published New Jersey county intelligence pages",
+        "value": 4,
+        "family": "PUBLIC_RESEARCH_SURFACES",
+        "grain": "published county intelligence page",
+        "entityClass": "public local research surface",
+        "geography": "New Jersey",
+        "sourceSystem": "Accepted network publication contract",
+        "acceptedArtifact": "data/home/lender-network-metrics-v1.json",
+        "definition": "Published New Jersey county research surfaces in the accepted network contract.",
+        "counts": "County intelligence pages.",
+        "doesNotCount": "County license systems, lenders, applications, or statewide coverage.",
+        "researchDestination": "/new-jersey",
+        "identityRule": null,
+        "display": "4",
+        "sourceClockLabel": "Source clock",
+        "sourceClock": "varies by county evidence module",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "publicationStatus": "PUBLIC"
+      }
+    ],
+    "stateCards": [
+      {
+        "code": "FL",
+        "name": "Florida",
+        "href": "/florida",
+        "regulators": "Florida OFR · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "Florida OFR roster",
+            "sourceAsOf": "2026-08-30",
+            "retrievedAt": null
+          },
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "CFPB complaints through",
+            "sourceAsOf": "2026-08-24",
+            "retrievedAt": "2026-08-26"
+          }
+        ],
+        "evidence": [
+          "Chapter 494 company credentials",
+          "HMDA market activity",
+          "OFR final-agency-action observations",
+          "CFPB mortgage complaints"
+        ],
+        "identityNote": "6,265 exact confirmed NMLS identities; credential rows remain distinct from companies.",
+        "limitation": "An approved credential is not an endorsement. Unresolved OFR observations are not attached to current profiles.",
+        "highlights": [
+          {
+            "label": "Approved company credentials",
+            "value": "6,392",
+            "grain": "credential rows"
+          },
+          {
+            "label": "OFR written observations",
+            "value": "2,515",
+            "grain": "regulatory observations"
+          },
+          {
+            "label": "Mortgage complaints reported from FL",
+            "value": "47,961",
+            "grain": "CFPB complaint observations"
+          }
+        ]
+      },
+      {
+        "code": "NJ",
+        "name": "New Jersey",
+        "href": "/new-jersey",
+        "regulators": "NJ DOBI · NJHMFA · HMDA/FFIEC",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "DOBI financial-institution list",
+            "sourceAsOf": "2026-09-02",
+            "retrievedAt": null
+          },
+          {
+            "label": "DOBI enforcement corpus",
+            "sourceAsOf": null,
+            "sourceClock": "acquired through 2022 OCF year pages; later years SOURCE_NOT_ACQUIRED",
+            "retrievedAt": null
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "DOBI orders",
+          "financial-institution classes",
+          "NJHMFA program and participating-lender research"
+        ],
+        "identityNote": "35 exact NMLS-institution references and 17 exact FDIC references in the accepted order corpus.",
+        "limitation": "The statewide RMLA roster is available by request, not acquired. Name-only adverse evidence stays off profiles.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "318,529",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "DOBI unique orders",
+            "value": "453",
+            "grain": "unique orders, acquired through 2022 pages"
+          },
+          {
+            "label": "NJHMFA program families",
+            "value": "6",
+            "grain": "source-native program families"
+          }
+        ]
+      },
+      {
+        "code": "CA",
+        "name": "California",
+        "href": "/california",
+        "regulators": "DFPI · DRE · CalHFA · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "CalHFA directory",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-03T18:44:09Z"
+          },
+          {
+            "label": "CFPB complaints",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-03T18:44:10Z"
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "CalHFA directory and programs",
+          "dated CRMLA regulatory report",
+          "CFPB mortgage complaints"
+        ],
+        "identityNote": "CalHFA directory rows, CRMLA licensees, branches, NMLS IDs, and HMDA LEIs are separate identity grains.",
+        "limitation": "The current CRMLA bulk roster was not acquired. CalHFA participation is not a license or TrustHub endorsement.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "1,014,489",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "CalHFA directory rows",
+            "value": "1,414",
+            "grain": "approved-lender location rows"
+          },
+          {
+            "label": "CFPB mortgage complaints",
+            "value": "71,120",
+            "grain": "complaint observations"
+          }
+        ]
+      },
+      {
+        "code": "TX",
+        "name": "Texas",
+        "href": "/texas",
+        "regulators": "Texas SML · TDHCA · TSAHC · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "SML orders",
+            "sourceAsOf": "2025-10-16",
+            "retrievedAt": "2026-09-04T12:59:52Z"
+          },
+          {
+            "label": "CFPB complaints",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-04T13:00:17Z"
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "SML order corpus",
+          "dated regulator entity classes",
+          "state program families",
+          "CFPB complaints"
+        ],
+        "identityNote": "2,493 order rows print an exact NMLS identifier; 1,488 name-only rows remain state-level evidence.",
+        "limitation": "Texas regulators and license classes are not collapsed into one lender universe; the live bulk company roster was not acquired.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "954,534",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "SML order rows",
+            "value": "3,981",
+            "grain": "source-native order rows"
+          },
+          {
+            "label": "Verified program families",
+            "value": "7",
+            "grain": "program families"
+          }
+        ]
+      },
+      {
+        "code": "WA",
+        "name": "Washington",
+        "href": "/washington",
+        "regulators": "Washington DFI · WSHFC · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "DFI enforcement table",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-04T17:15:36Z"
+          },
+          {
+            "label": "CFPB complaints",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-04T17:16:45Z"
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "DFI enforcement rows",
+          "exact NMLS event attribution",
+          "WSHFC programs",
+          "CFPB and FDIC context"
+        ],
+        "identityNote": "777 DFI source rows and 102 exact-NMLS rows are different measures, not a funnel.",
+        "limitation": "The current live company roster was not acquired. Name-only enforcement rows are not attached to profiles.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "286,871",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "DFI enforcement rows",
+            "value": "777",
+            "grain": "enforcement-order rows"
+          },
+          {
+            "label": "Exact-NMLS order rows",
+            "value": "102",
+            "grain": "order rows with printed NMLS ID"
+          }
+        ]
+      },
+      {
+        "code": "AZ",
+        "name": "Arizona",
+        "href": "/arizona",
+        "regulators": "Arizona DIFI · Arizona IDA · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "CFPB API last updated",
+            "sourceAsOf": "2026-09-04T12:00:00-05:00",
+            "retrievedAt": "2026-09-04T20:02:50Z"
+          },
+          {
+            "label": "DIFI enforcement",
+            "sourceAsOf": null,
+            "retrievedAt": null
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "CFPB complaint observations",
+          "statewide program families",
+          "FDIC depository overlay",
+          "DIFI access limitations"
+        ],
+        "identityNote": "953 HMDA LEI state rows; no current DIFI/NMLS company denominator was acquired.",
+        "limitation": "DIFI roster and enforcement harvests were blocked or search-only. Their counts remain unknown, not zero.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "308,338",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "CFPB mortgage complaints",
+            "value": "10,365",
+            "grain": "complaint observations"
+          },
+          {
+            "label": "Statewide program families",
+            "value": "2",
+            "grain": "program families"
+          }
+        ]
+      },
+      {
+        "code": "CO",
+        "name": "Colorado",
+        "href": "/colorado",
+        "regulators": "Colorado DRE · NMLS · CHFA · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "DRE MLO extract",
+            "sourceAsOf": "2026-09-09",
+            "retrievedAt": "2026-09-09"
+          },
+          {
+            "label": "CFPB complaints",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-09"
+          }
+        ],
+        "evidence": [
+          "HMDA market activity",
+          "DRE MLO person licenses",
+          "NMLS company-registration search path",
+          "CHFA program resources",
+          "CFPB complaints"
+        ],
+        "identityNote": "21,865 DRE MLO person rows; no current mortgage-company bulk roster was acquired.",
+        "limitation": "MLO rows are people, not lenders. Company registration remains search-only. CHFA participation is not licensure or endorsement.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "260,212",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "DRE MLO license rows",
+            "value": "21,865",
+            "grain": "person license rows"
+          },
+          {
+            "label": "CFPB mortgage complaints",
+            "value": "8,627",
+            "grain": "complaint observations"
+          }
+        ]
+      },
+      {
+        "code": "VA",
+        "name": "Virginia",
+        "href": "/virginia",
+        "regulators": "Virginia SCC BFI · NMLS · Virginia Housing · HMDA/FFIEC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "SCC dated roster",
+            "sourceAsOf": "2025-12-31",
+            "retrievedAt": "2026-09-10"
+          },
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "CFPB complaints",
+            "sourceAsOf": null,
+            "retrievedAt": "2026-09-10"
+          }
+        ],
+        "evidence": [
+          "SCC 2025 dated mortgage-company list",
+          "exact MC/NMLS crosswalks",
+          "HMDA market activity",
+          "CFPB complaints",
+          "Virginia Housing programs"
+        ],
+        "identityNote": "1,257 exact VA-MC to NMLS crosswalks; dated 2025-12-31 rows are not current 2026 licenses.",
+        "limitation": "Broker, lender, and lender-broker stay separate. The live 2026 roster is search-only. MLOs are people, not companies.",
+        "highlights": [
+          {
+            "label": "SCC brokers as of 2025-12-31",
+            "value": "713",
+            "grain": "dated company licensees"
+          },
+          {
+            "label": "HMDA applications",
+            "value": "340,304",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "CFPB mortgage complaints",
+            "value": "14,563",
+            "grain": "complaint observations"
+          }
+        ]
+      },
+      {
+        "code": "NY",
+        "name": "New York",
+        "href": "/new-york",
+        "regulators": "NYDFS · NMLS · HMDA/FFIEC · CFPB · FDIC",
+        "sourceClocks": [
+          {
+            "label": "DFS annual aggregates",
+            "sourceAsOf": "2024-12-31",
+            "retrievedAt": "2026-09-11"
+          },
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "Enforcement table",
+            "sourceAsOf": "2026-08-12",
+            "retrievedAt": "2026-09-11"
+          }
+        ],
+        "evidence": [
+          "DFS 2024 dated class aggregates",
+          "2026 Weekly Bulletin activity",
+          "Mortgage enforcement actions",
+          "HMDA market activity",
+          "FDIC depository overlay"
+        ],
+        "identityNote": "Current NYDFS/NMLS company roster is search-only. 2024 aggregates are not current 2026 licenses.",
+        "limitation": "Banker, broker, servicer, and MLO stay separate. Do not add banker and broker classes. MLOs are people, not companies.",
+        "highlights": [
+          {
+            "label": "DFS bankers end of 2024",
+            "value": "151",
+            "grain": "dated class aggregate"
+          },
+          {
+            "label": "HMDA applications",
+            "value": "388,207",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "DFS enforcement observations",
+            "value": "198",
+            "grain": "action observations"
+          }
+        ]
+      },
+      {
+        "code": "IL",
+        "name": "Illinois",
+        "href": "/illinois",
+        "regulators": "IDFPR · NMLS · HMDA/FFIEC · FDIC · CFPB",
+        "sourceClocks": [
+          {
+            "label": "HMDA vintage",
+            "sourceAsOf": "2025",
+            "retrievedAt": null
+          },
+          {
+            "label": "FDIC overlay",
+            "sourceAsOf": "2026-06-26",
+            "retrievedAt": null
+          },
+          {
+            "label": "Current mortgage-company roster",
+            "sourceAsOf": null,
+            "retrievedAt": null
+          }
+        ],
+        "evidence": [
+          "HMDA 2025 Illinois market activity",
+          "FDIC depository overlay",
+          "IDFPR/NMLS search-only current licensing"
+        ],
+        "identityNote": "Current IDFPR/NMLS company roster is search-only. HMDA applications are not lenders. FDIC banks are not IDFPR mortgage bankers.",
+        "limitation": "No Chicago/Cook intelligence routes. Missing roster is not zero companies.",
+        "highlights": [
+          {
+            "label": "HMDA applications",
+            "value": "394,488",
+            "grain": "2025 applications"
+          },
+          {
+            "label": "HMDA originations",
+            "value": "231,788",
+            "grain": "2025 originations"
+          },
+          {
+            "label": "FDIC depositories",
+            "value": "387",
+            "grain": "existing overlay institutions"
+          }
+        ]
+      }
+    ]
+  },
+  "reconciliation": {
+    "acceptedSources": [
+      {
+        "path": "data/home/lender-metric-census-r2-03.json",
+        "sha256": "142151655ec10be48f7aedc8dc7c2d2f122df5d2820791bfe94e24a50f92e24f"
+      },
+      {
+        "path": "lib/florida-intelligence/accepted-snapshot.json",
+        "sha256": "a624c78426f1ffb35ce9bfbf48b06e185ebec0fea22bdc8bb0f7505c6ec4aa3a"
+      },
+      {
+        "path": "lib/new-jersey-intelligence/accepted-snapshot.json",
+        "sha256": "4294b70970cae97460b5c9ba61a1526a9913fb5fd3dad78a514ad6b3f3efdaad"
+      },
+      {
+        "path": "lib/california-intelligence/accepted-snapshot.json",
+        "sha256": "771c95caa88351e5b7d096fe1431926a3baa4a4772f596bf7b8daed3fa4c138f"
+      },
+      {
+        "path": "lib/texas-intelligence/accepted-snapshot.json",
+        "sha256": "fa8cf54e6ad4b9eb5f6998a3c8003e9965c716d03d92ee68c54f232b2051dde6"
+      },
+      {
+        "path": "lib/washington-intelligence/accepted-snapshot.json",
+        "sha256": "e0b619fd5ff7bb54dc094e2cbc4a50e02d7d1a5419f9238e2ed36289466ef5a0"
+      },
+      {
+        "path": "lib/arizona-intelligence/accepted-snapshot.json",
+        "sha256": "736ecac6c7070e6621bb1cb6407f25da0bacfba8494eeb39b0c25ef73012978b"
+      },
+      {
+        "path": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sha256": "e2684d20285b2684a0f517bf4470c84c70787772ef3caed391b360e730811ea9"
+      },
+      {
+        "path": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sha256": "0e42d94a449da4e68ffb90d756941d53c35e90dd222d6b8656e7da97229ff324"
+      },
+      {
+        "path": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sha256": "1c59d356cfe211ecd4a59e275a47bd9dba390a7359505e7970035fdbbf416c9a"
+      },
+      {
+        "path": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sha256": "5bd59a6105215a41b2088c3f5f9e06f64379fe23e2b26d9f5e06121208470cc6"
+      }
+    ],
+    "stateMetrics": [
+      {
+        "key": "co.hmda.applications",
+        "state": "CO",
+        "value": 260212,
+        "grain": "HMDA application observations",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.applications",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.hmda.originations",
+        "state": "CO",
+        "value": 156145,
+        "grain": "HMDA origination observations",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.originations",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.hmda.denials",
+        "state": "CO",
+        "value": 40435,
+        "grain": "HMDA denial observations",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.denials",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.hmda.county_count",
+        "state": "CO",
+        "value": 64,
+        "grain": "county summary rows",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.county_count",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.hmda.applications",
+        "state": "VA",
+        "value": 340304,
+        "grain": "HMDA application observations",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.applications",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.hmda.originations",
+        "state": "VA",
+        "value": 202417,
+        "grain": "HMDA origination observations",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.originations",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.hmda.denials",
+        "state": "VA",
+        "value": 53970,
+        "grain": "HMDA denial observations",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.denials",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.hmda.county_count",
+        "state": "VA",
+        "value": 133,
+        "grain": "county summary rows",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.county_count",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.hmda.applications",
+        "state": "NY",
+        "value": 388207,
+        "grain": "HMDA application observations",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.applications",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.hmda.originations",
+        "state": "NY",
+        "value": 231331,
+        "grain": "HMDA origination observations",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.originations",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.hmda.denials",
+        "state": "NY",
+        "value": 76045,
+        "grain": "HMDA denial observations",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.denials",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.hmda.county_count",
+        "state": "NY",
+        "value": 62,
+        "grain": "county summary rows",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.county_count",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.hmda.applications",
+        "state": "IL",
+        "value": 394488,
+        "grain": "HMDA application observations",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.applications",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.hmda.originations",
+        "state": "IL",
+        "value": 231788,
+        "grain": "HMDA origination observations",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.originations",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.hmda.denials",
+        "state": "IL",
+        "value": 66742,
+        "grain": "HMDA denial observations",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.denials",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.hmda.county_count",
+        "state": "IL",
+        "value": 102,
+        "grain": "county summary rows",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "hmda.county_count",
+        "sourceAsOf": "HMDA 2025",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.mlo_roster.rows",
+        "state": "CO",
+        "value": 21865,
+        "grain": "Colorado DRE MLO person-license rows",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "mlo_roster.rows",
+        "sourceAsOf": "2026-09-09",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-09",
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.mlo_roster.active",
+        "state": "CO",
+        "value": 21584,
+        "grain": "Active Colorado DRE MLO person-license rows",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "mlo_roster.active",
+        "sourceAsOf": "2026-09-09",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-09",
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.mlo_roster.unique_license_numbers",
+        "state": "CO",
+        "value": 21859,
+        "grain": "Distinct Colorado DRE MLO person-license numbers",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "mlo_roster.unique_license_numbers",
+        "sourceAsOf": "2026-09-09",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-09",
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.cfpb.mortgage_complaint_rows",
+        "state": "CO",
+        "value": 8627,
+        "grain": "CFPB mortgage complaint observations",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "cfpb.mortgage_complaint_rows",
+        "sourceAsOf": null,
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-09",
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "co.depository.fdic_cert_rows",
+        "state": "CO",
+        "value": 64,
+        "grain": "FDIC CERT overlay rows",
+        "sourceArtifact": "lib/colorado-intelligence/accepted-snapshot.json",
+        "sourceField": "depository.fdic_cert_rows",
+        "sourceAsOf": null,
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-09T17:49:51Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.scc_roster.rows",
+        "state": "VA",
+        "value": 1257,
+        "grain": "Dated 2025-12-31 SCC rows license-list rows",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "scc_roster.rows",
+        "sourceAsOf": "2025-12-31",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-10",
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.scc_roster.brokers",
+        "state": "VA",
+        "value": 713,
+        "grain": "Dated 2025-12-31 SCC brokers license-list rows",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "scc_roster.brokers",
+        "sourceAsOf": "2025-12-31",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-10",
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.scc_roster.lenders",
+        "state": "VA",
+        "value": 178,
+        "grain": "Dated 2025-12-31 SCC lenders license-list rows",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "scc_roster.lenders",
+        "sourceAsOf": "2025-12-31",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-10",
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.scc_roster.lender_brokers",
+        "state": "VA",
+        "value": 366,
+        "grain": "Dated 2025-12-31 SCC lender_brokers license-list rows",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "scc_roster.lender_brokers",
+        "sourceAsOf": "2025-12-31",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-10",
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "va.scc_roster.exact_va_to_nmls_crosswalks",
+        "state": "VA",
+        "value": 1257,
+        "grain": "Exact printed VA MC to NMLS bridges",
+        "sourceArtifact": "lib/virginia-intelligence/accepted-snapshot.json",
+        "sourceField": "scc_roster.exact_va_to_nmls_crosswalks",
+        "sourceAsOf": "2025-12-31",
+        "snapshotAsOf": null,
+        "retrievedAt": "2026-09-10",
+        "generatedAt": "2026-09-10T16:40:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.dfs_2024_aggregates.licensed_mortgage_bankers",
+        "state": "NY",
+        "value": 151,
+        "grain": "Dated mortgage banker class aggregate",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "dfs_2024_aggregates.licensed_mortgage_bankers",
+        "sourceAsOf": "2024-12-31",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.dfs_2024_aggregates.registered_mortgage_brokers",
+        "state": "NY",
+        "value": 439,
+        "grain": "Dated mortgage broker class aggregate",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "dfs_2024_aggregates.registered_mortgage_brokers",
+        "sourceAsOf": "2024-12-31",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.dfs_2024_aggregates.registered_mortgage_loan_servicers",
+        "state": "NY",
+        "value": 36,
+        "grain": "Dated mortgage servicer class aggregate",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "dfs_2024_aggregates.registered_mortgage_loan_servicers",
+        "sourceAsOf": "2024-12-31",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.dfs_2024_aggregates.licensed_mortgage_loan_originators",
+        "state": "NY",
+        "value": 9769,
+        "grain": "Dated MLO person class aggregate",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "dfs_2024_aggregates.licensed_mortgage_loan_originators",
+        "sourceAsOf": "2024-12-31",
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.weekly_bulletins.bulletin_count",
+        "state": "NY",
+        "value": 37,
+        "grain": "NYDFS bulletin issues",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "weekly_bulletins.bulletin_count",
+        "sourceAsOf": null,
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.weekly_bulletins.NY_DFS_2026_MORTGAGE_BULLETIN_EVENTS",
+        "state": "NY",
+        "value": 2318,
+        "grain": "NYDFS mortgage-activity observations",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "weekly_bulletins.NY_DFS_2026_MORTGAGE_BULLETIN_EVENTS",
+        "sourceAsOf": null,
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.enforcement.observation_rows",
+        "state": "NY",
+        "value": 198,
+        "grain": "NYDFS enforcement observations; no name-only NMLS attachment",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "enforcement.observation_rows",
+        "sourceAsOf": null,
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "STATE_SOURCE_LIVE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.fdic.institution_rows",
+        "state": "NY",
+        "value": 118,
+        "grain": "FDIC bank overlay observations",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "fdic.institution_rows",
+        "sourceAsOf": null,
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "ny.current_roster.count",
+        "state": "NY",
+        "value": null,
+        "grain": "Current state mortgage-company bulk roster",
+        "sourceArtifact": "lib/new-york-intelligence/accepted-snapshot.json",
+        "sourceField": "current_roster.count",
+        "sourceAsOf": null,
+        "snapshotAsOf": "2026-09-11",
+        "retrievedAt": null,
+        "generatedAt": "2026-09-11T18:00:00Z",
+        "capabilityStatus": "SEARCH_ONLY",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.fdic.institution_rows",
+        "state": "IL",
+        "value": 387,
+        "grain": "FDIC bank overlay observations",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "fdic.institution_rows",
+        "sourceAsOf": "2026-06-26",
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "FEDERAL_BASELINE",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      },
+      {
+        "key": "il.current_roster.count",
+        "state": "IL",
+        "value": null,
+        "grain": "Current state mortgage-company bulk roster",
+        "sourceArtifact": "lib/illinois-intelligence/accepted-snapshot.json",
+        "sourceField": "current_roster.count",
+        "sourceAsOf": null,
+        "snapshotAsOf": null,
+        "retrievedAt": null,
+        "generatedAt": "2026-09-12T13:37:08Z",
+        "capabilityStatus": "SEARCH_ONLY",
+        "aggregation": "SEPARATE_SOURCE_POPULATION_DO_NOT_ADD_TO_NATIONAL"
+      }
+    ],
+    "stateCapabilities": [
+      {
+        "state": "AK",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "AL",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "AR",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "AZ",
+        "route": "/arizona",
+        "routeExists": true,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "CA",
+        "route": "/california",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "CO",
+        "route": "/colorado",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": [
+          "co.hmda.applications",
+          "co.hmda.originations",
+          "co.hmda.denials",
+          "co.hmda.county_count",
+          "co.mlo_roster.rows",
+          "co.mlo_roster.active",
+          "co.mlo_roster.unique_license_numbers",
+          "co.cfpb.mortgage_complaint_rows",
+          "co.depository.fdic_cert_rows"
+        ]
+      },
+      {
+        "state": "CT",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "DC",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "DE",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "FL",
+        "route": "/florida",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Exact Approved MBR/MLD company-credential rows; not unique organizations",
+          "status": "STATE_SOURCE_LIVE",
+          "count": 6392
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "GA",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "GU",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "HI",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "IA",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "ID",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "IL",
+        "route": "/illinois",
+        "routeExists": true,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": [
+          "il.hmda.applications",
+          "il.hmda.originations",
+          "il.hmda.denials",
+          "il.hmda.county_count",
+          "il.fdic.institution_rows",
+          "il.current_roster.count"
+        ]
+      },
+      {
+        "state": "IN",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "KS",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "KY",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "LA",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MA",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MD",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "ME",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MI",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MN",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MO",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MS",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "MT",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NC",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "ND",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NE",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NH",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NJ",
+        "route": "/new-jersey",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "REQUEST_ONLY",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NM",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NV",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "NY",
+        "route": "/new-york",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": [
+          "ny.hmda.applications",
+          "ny.hmda.originations",
+          "ny.hmda.denials",
+          "ny.hmda.county_count",
+          "ny.dfs_2024_aggregates.licensed_mortgage_bankers",
+          "ny.dfs_2024_aggregates.registered_mortgage_brokers",
+          "ny.dfs_2024_aggregates.registered_mortgage_loan_servicers",
+          "ny.dfs_2024_aggregates.licensed_mortgage_loan_originators",
+          "ny.weekly_bulletins.bulletin_count",
+          "ny.weekly_bulletins.NY_DFS_2026_MORTGAGE_BULLETIN_EVENTS",
+          "ny.enforcement.observation_rows",
+          "ny.fdic.institution_rows",
+          "ny.current_roster.count"
+        ]
+      },
+      {
+        "state": "OH",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "OK",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "OR",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "PA",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "PR",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "RI",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "SC",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "SD",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "TN",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "TX",
+        "route": "/texas",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "UT",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "VA",
+        "route": "/virginia",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": [
+          "va.hmda.applications",
+          "va.hmda.originations",
+          "va.hmda.denials",
+          "va.hmda.county_count",
+          "va.scc_roster.rows",
+          "va.scc_roster.brokers",
+          "va.scc_roster.lenders",
+          "va.scc_roster.lender_brokers",
+          "va.scc_roster.exact_va_to_nmls_crosswalks"
+        ]
+      },
+      {
+        "state": "VI",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "VT",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "WA",
+        "route": "/washington",
+        "routeExists": true,
+        "stateSourceAcquired": true,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "SEARCH_ONLY",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "WI",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "WV",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      },
+      {
+        "state": "WY",
+        "route": null,
+        "routeExists": false,
+        "stateSourceAcquired": false,
+        "specialistComplete": null,
+        "currentCompanyRoster": {
+          "grain": "Current state mortgage-company bulk roster",
+          "status": "UNKNOWN",
+          "count": null
+        },
+        "metricKeys": []
+      }
+    ],
+    "stateSourceAcquiredDefinition": "Acquired state licensing/regulatory evidence; excludes federal geography and housing-program context.",
+    "servicerEvidence": {
+      "value": 10,
+      "tableAcquired": true,
+      "grain": "servicer role evidence row",
+      "publicationStatus": "INTERNAL"
+    },
+    "florida": {
+      "sameGrain": true,
+      "historicalApproved": 6394,
+      "currentApproved": 6392,
+      "removedFromExactApproved": 2,
+      "addedToExactApproved": 0,
+      "unexplainedDelta": 0,
+      "predicate": "jurisdiction='FL' AND license_class IN ('MBR','MLD') AND ofr_status='Approved'",
+      "sourceRows": 7287,
+      "approvedRows": 6392,
+      "explicitOtherStatusRows": 895,
+      "transitions": [
+        {
+          "license_number": "MBR6248",
+          "nmls_id": "2269467",
+          "previous_dataset": "FL_OFR_NMLS_PRR_141420",
+          "previous_record_id": "FL|NMLS|MBR|MBR6248",
+          "previous_status": "Approved",
+          "previous_source_observed_on": "2026-08-27",
+          "current_dataset": "FL_OFR_NMLS_PRR_141437",
+          "current_record_id": "FL|PRR141437|MORTGAGE_BUSINESSES|5369|fc811217cf3e854b",
+          "current_status": "Approved - Surrender/Cancellation Requested",
+          "current_source_observed_on": "2026-08-30",
+          "ledger_updated_at": "2026-08-31T23:31:49.142314+00:00"
+        },
+        {
+          "license_number": "MBR7249",
+          "nmls_id": "2597154",
+          "previous_dataset": "FL_OFR_NMLS_PRR_141420",
+          "previous_record_id": "FL|NMLS|MBR|MBR7249",
+          "previous_status": "Approved",
+          "previous_source_observed_on": "2026-08-27",
+          "current_dataset": "FL_OFR_NMLS_PRR_141437",
+          "current_record_id": "FL|PRR141437|MORTGAGE_BUSINESSES|968|a80be1dd098d5f00",
+          "current_status": "Approved - Surrender/Cancellation Requested",
+          "current_source_observed_on": "2026-08-30",
+          "ledger_updated_at": "2026-08-31T23:31:49.142314+00:00"
+        }
+      ],
+      "statusPartition": [
+        {
+          "license_class": "MBR",
+          "ofr_status": "Approved",
+          "rows": 5011
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Approved - Surrender/Cancellation Requested",
+          "rows": 32
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Denied Tech",
+          "rows": 2
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Expired",
+          "rows": 286
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Revoked",
+          "rows": 2
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Terminated",
+          "rows": 197
+        },
+        {
+          "license_class": "MBR",
+          "ofr_status": "Terminated - Failed to Renew",
+          "rows": 8
+        },
+        {
+          "license_class": "MLD",
+          "ofr_status": "Approved",
+          "rows": 1381
+        },
+        {
+          "license_class": "MLD",
+          "ofr_status": "Approved - Surrender/Cancellation Requested",
+          "rows": 3
+        },
+        {
+          "license_class": "MLD",
+          "ofr_status": "Denied Tech",
+          "rows": 1
+        },
+        {
+          "license_class": "MLD",
+          "ofr_status": "Expired",
+          "rows": 152
+        },
+        {
+          "license_class": "MLD",
+          "ofr_status": "Terminated",
+          "rows": 212
+        }
+      ],
+      "sourceClocks": [
+        {
+          "source_dataset": "FL_OFR_CH494",
+          "source_clock": null,
+          "source_observed_on": "2026-08-27",
+          "ledgerupdatedat": "2026-08-27T19:57:37.060837+00:00",
+          "credentialrows": 23
+        },
+        {
+          "source_dataset": "FL_OFR_MONTHLY_CH494",
+          "source_clock": "monthly_full",
+          "source_observed_on": "2026-08-28",
+          "ledgerupdatedat": "2026-08-30T15:23:04.574537+00:00",
+          "credentialrows": 852
+        },
+        {
+          "source_dataset": "FL_OFR_NMLS_PRR_141420",
+          "source_clock": "nmls_active",
+          "source_observed_on": "2026-08-27",
+          "ledgerupdatedat": "2026-08-30T15:23:08.726505+00:00",
+          "credentialrows": 1
+        },
+        {
+          "source_dataset": "FL_OFR_NMLS_PRR_141437",
+          "source_clock": "nmls_active",
+          "source_observed_on": "2026-08-30",
+          "ledgerupdatedat": "2026-08-31T23:31:49.142314+00:00",
+          "credentialrows": 6411
+        }
+      ]
+    },
+    "nationalCensus": {
+      "path": "data/home/lender-metric-census-r2-03.json",
+      "retrievedAt": "2026-09-12T22:23:12.376570+00:00",
+      "sourceAsOf": null
+    },
+    "hmdaPopulationRule": "National totals use lender_hmda_observations county-by-LEI rows. Accepted state intelligence uses committed county market summaries; these inputs differ (including CO applications/denials). Preserve both; never add state summaries to national totals or silently replace either input."
+  }
 }

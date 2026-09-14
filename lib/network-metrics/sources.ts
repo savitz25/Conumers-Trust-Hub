@@ -66,13 +66,26 @@ export const SPECIALIST_SOURCES: Record<SpecialistHubId, SpecialistSourceConfig>
   },
 };
 
-export const ACCEPTED_SPECIALIST_FINGERPRINTS = {
-  move: '5876b0168efa67a09d7f367d2983db7e7769e0b5d5ebf4a071839376e1e2ea3c',
-  lender: 'b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6',
-  insurance: '21a2895e9e7f55170b9056fa3b8054faedcb160e8b0ed4d5dab2cbf16494a4f2',
-  contractor: '0a99e8a1cf53590d01506d57072f4a320aa6c0060476a779193d8af1dd8034b3',
-  senior: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',
-  investor: '2f74128e140c692272e178c4039b94e32a0064e33e3bc723633635e89f3dfe3c',
+/**
+ * Fingerprint of the bundled last-known-good fallback artifact for each hub.
+ *
+ * This is PROVENANCE metadata for the fallback snapshot only. It is intentionally
+ * NOT used to gate acceptance of upstream contracts: a specialist hub is free to
+ * publish a new compatible contractRevision (and therefore a new sourceFingerprint)
+ * at any time without requiring an AskTrustHub code change or deployment. Upstream
+ * acceptance is decided by schema-family/version and structural validation in
+ * `validate.ts`, not by fingerprint equality. See `load.ts`.
+ *
+ * Update this constant only when `data/network-metrics/<hub>-v1-fallback.json` is
+ * refreshed, so the two stay self-consistent (enforced by tests).
+ */
+export const FALLBACK_SPECIALIST_FINGERPRINTS = {
+  move: 'c219dd772556d4097cd90d2762f979b3d40d5c0c7c84643557aa9657547e100c',
+  lender: '0d6dc909edfec5882b9324b85dd8453ea3d30f9d653c4612cabc91f012a00f05',
+  insurance: 'f479e78d730ec190a9011169cb0ec024d99e895b1b82951845919c4dc878bf21',
+  contractor: '22c4ccf3f53d78c37ad6f19f9303af2676c69bf1fe8c45d9fad3f06c6b3502cb',
+  senior: 'fa3c792ace29445aad6d2cc66ee16bcd2cf25da31af2355c9a80d5408cc3ca5c',
+  investor: 'e68140f4bd33cb115e0950accc2b229e975c55039f89894ca57d4b2636bf9f5d',
 } as const;
 
 export const SPECIALIST_OWNED_HUBS: SpecialistHubId[] = [
