@@ -184,7 +184,20 @@ Verified live in a real Chrome browser (`claude-in-chrome`) against a local prod
 Only `Conumers-Trust-Hub` files were edited: `lib/network/identifiers.ts`,
 `lib/network/capability-registry.ts`, `lib/network/research-planner.ts`,
 `lib/network/research-scope.ts`, `lib/network/ask-plan.ts` (Fix #2, already present on disk before
-this session's continuation), `lib/network/prompt-2.test.ts`, `lib/network/lender-execute.test.ts`,
-`package.json`, plus the new `lib/network/th-search-r1-016.test.ts` and this evidence directory. No
-specialist repository, schema, or canonical data was touched. The explicitly-unauthorized Move
-JK/MC canonical-data correction was not attempted.
+this session's continuation), `lib/guided-research/session.ts` (Fix 3), `lib/network/prompt-2.test.ts`,
+`lib/network/lender-execute.test.ts`, `package.json`, plus the new
+`lib/network/th-search-r1-016.test.ts` and this evidence directory. No specialist repository,
+schema, or canonical data was touched. The explicitly-unauthorized Move JK/MC canonical-data
+correction was not attempted.
+
+## Release
+
+- Branch `th-search-r1-016-identifier-continuity-agreement`, PR
+  [#146](https://github.com/savitz25/Conumers-Trust-Hub/pull/146).
+- CI (`Search reliability` / `parent-search` workflow) — **SUCCESS**.
+- Merged to `main` via merge commit `2202242553bf96f3e9697446669374b25e47cb4c`.
+- Production verified live at `www.asktrusthub.com` after deployment (not merely deployed —
+  actually queried): `/ask?q=JK+Moving+Services` returns the same 34 real records with "Exact
+  company-name match" as local; `/ask?q=Can+JK+Moving+handle+my+move+from+Virginia+to+Florida%3F`
+  returns the same 70 real records with "JK Moving Services" top-ranked and the route disclosure
+  shown as context. No console errors on either production page.
