@@ -1,0 +1,36 @@
+name: Specialist network health
+on:
+  schedule:
+    # Daily. This is a metrics-health visibility check, not a release gate --
+    # it does not run on every push/PR and must not couple Ask's normal CI to
+    # the uptime of six external repositories/domains.
+    - cron: '17 13 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  six-hub-upstream-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # Fails the job (loud, visible in the Actions tab, and GitHub emails
+      # watchers on a scheduled-workflow failure by default) only on a real
+      # problem: an unreachable/incompatible upstream, a missing required
+      # metric, or a bundled fallback that itself no longer validates. A
+      # specialist publishing a new compatible contractRevision/fingerprint
+      # is healthy and must never fail this job -- see
+      # scripts/verify-specialist-metrics.mjs.
+      - name: Verify all six specialist contracts are schema-compatible
+        run: npm run metrics:verify-specialists
+      # Visibility only -- never fails the job. Reports which bundled
+      # fallback snapshots are behind their live upstream contract so a
+      # human can run `npm run metrics:refresh-fallbacks` and open a normal
+      # reviewed PR. See scripts/refresh-specialist-fallbacks.mjs.
+      - name: Report bundled fallback drift (informational, does not fail)
+        run: npm run metrics:check-fallback-drift
