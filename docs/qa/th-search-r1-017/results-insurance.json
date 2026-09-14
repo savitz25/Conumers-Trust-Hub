@@ -1,0 +1,201 @@
+[
+  {
+    "id": "CROSS-NAME-MULTI-HUB", "surface": "ask", "hub": "insurance", "query": "National Trust Insurance Group",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["exact/specific company name resolution"],
+    "appliedConditions": ["planner correctly recognized ENTITY_LOOKUP, primaryHub=insurance"],
+    "unresolvedConditions": ["entity name never threaded into the actual specialist request"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "SUPPORTED_RESULTS", "resultCount": 82071,
+    "sourceFamily": "specialist-execution/v2 (insurancetrusthub.com)", "sourceAsOf": "not disclosed",
+    "limitations": ["Person, agency, and legal insurer stay separate classes.", "(11 total limitations, none disclosing that the name filter was dropped)"],
+    "nextActions": ["browse 10 displayed candidates"],
+    "evidencePointer": "raw-ask-results.json#CROSS-NAME-MULTI-HUB",
+    "notes": "BLOCKER-INSURANCE-01. A specific company-name search returns 82,071 total matching agency records -- essentially the entire agency population -- with zero of the top 3 displayed candidates ((HORN) HOUSE OF INSURANCE & BONDS LLC, (MIA) MULTIPLE INSURANCE ASSOCIATE CORPORATION, &PARTNERS LLC) bearing any relation to 'National Trust Insurance Group'. Root cause confirmed by direct code inspection: lib/guided-research/session.ts's insuranceIntent block (createUnscopedGuidedSession) unconditionally sets session.insuranceResearchMode='cohort' whenever session.identifier is unset -- there is NO identity-name extraction path for insurance at all (unlike lender/investor, which at least attempt a 'named X' regex, and unlike move, fixed in R1-016 to use plan.entityName). Direct-call confirmation: createGuidedSession('National Trust Insurance Group') returns {hub:'insurance', insuranceResearchMode:'cohort', entityClass:'agency'} with identityName undefined."
+  },
+  {
+    "id": "INSURANCE-ZIP-33441", "surface": "ask", "hub": "insurance", "query": "insurance agencies in ZIP 33441",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["ZIP-33441-scoped agency directory"],
+    "appliedConditions": ["hub correctly routed to insurance"],
+    "unresolvedConditions": ["ZIP 33441 constraint never applied to the actual specialist request"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "SUPPORTED_RESULTS", "resultCount": 82071,
+    "sourceFamily": "specialist-execution/v2", "sourceAsOf": "not disclosed",
+    "limitations": ["82,071 public-safe agency records match. (no disclosure that the ZIP filter was silently dropped)"],
+    "nextActions": ["browse 10 displayed candidates"],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-ZIP-33441",
+    "notes": "Same root cause as BLOCKER-INSURANCE-01 (CROSS-NAME-MULTI-HUB), confirmed to be broader than an entity-name-only defect: createGuidedSession('insurance agencies in ZIP 33441') returns session.geography=undefined -- the ZIP is never captured at all -- versus the direct specialist (insurance-ask-v1), which correctly parses this exact phrasing into {mode:'directory', directoryZip:'33441', coverageState:'PARTIAL'}. The Ask parent silently discards the geography constraint entirely and falls back to an unscoped nationwide agency cohort. This confirms BLOCKER-INSURANCE-01 is a systemic gap in lib/guided-research/session.ts's insurance-intent block: it extracts neither entity name NOR geography for the vast majority of natural phrasings, defaulting to a full unconstrained 'agency' cohort browse whenever none of its few hardcoded CLARIFY-trigger regexes match."
+  },
+  {
+    "id": "ID-NAIC-POS", "surface": "ask", "hub": "insurance", "query": "NAIC code 10064",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["exact NAIC identifier resolution"],
+    "appliedConditions": ["planner correctly parsed identifier type=naic_company_code, value=10064 (plan.identifier is correct)"],
+    "unresolvedConditions": ["the correct value is lost again downstream before the specialist call"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "INVALID_QUERY", "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["NAIC Company Code must contain 3–5 digits. (this is Ask's own validation incorrectly rejecting a valid, specialist-confirmed-resolvable code)"],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NAIC-POS",
+    "notes": "BLOCKER-CROSS-02. Direct insurance-ask-v1 resolves NAIC 10064 correctly to 'CITIZENS PROP INS CORP' (terminalState=RESULTS). Ask parent rejects the identical, specialist-confirmed-valid code as invalid. Root cause confirmed by direct regex testing: lib/guided-research/session.ts's labeledIdentifier regex (`/\\b(CRD|NPN|NAIC|NMLS|LEI)\\s*#?\\s*([A-Z0-9-]+)\\b/i`) greedily captures the word immediately after the label instead of skipping filler words -- 'NAIC code 10064'.match(...) yields {type:'NAIC', value:'code'}, silently substituting the literal word 'code' for the real value '10064' before any specialist call is made. This is a request-corruption bug, not a specialist limitation. CONFIRMED TO GENERALIZE beyond NAIC: the same regex produces {type:'NPN',value:'number'} for 'NPN number 20000635', {type:'CRD',value:'number'} for 'CRD number 166089', and {type:'NMLS',value:'number'} for 'NMLS number 3030' -- i.e. this defect structurally affects every identifier family whenever a natural filler word ('number', 'code') appears between the label and the digits, not just NAIC. Only the NAIC case was verified end-to-end against a live specialist in this sweep; the others are confirmed at the regex-parsing level but not re-verified against live specialist responses."
+  },
+  {
+    "id": "ID-NAIC-POS", "surface": "direct", "hub": "insurance", "query": "NAIC code 10064", "grade": "PASS",
+    "requestedConditions": ["exact NAIC identifier"], "appliedConditions": ["exact match"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "RESULTS", "resultCount": 1, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NAIC-POS", "notes": "Direct specialist resolves this exact NAIC code correctly, proving the Ask-parent failure above is a parent-side request-corruption bug, not a data gap."
+  },
+  {
+    "id": "ID-NPN-POS", "surface": "ask", "hub": "insurance", "query": "NPN 20000635", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact NPN identifier"], "appliedConditions": ["exact identifier parsed and passed through correctly (unlike the NAIC case, no filler word present)"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_CONFIDENT_MATCH", "resultCount": 0, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["Person, agency, and legal insurer stay separate classes."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NPN-POS",
+    "notes": "Corpus curation note, not a defect: this NPN was carried forward from an earlier ticket's baseline list under the assumption it was a positive/hit case, but it currently returns NO_MATCH on the direct specialist too (terminalState=NO_MATCH) -- both surfaces agree honestly, so there is no parent/specialist disagreement here, just a stale corpus label. Re-labeled as a miss case for future tickets."
+  },
+  {
+    "id": "ID-NPN-POS", "surface": "direct", "hub": "insurance", "query": "NPN 20000635", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact NPN identifier"], "appliedConditions": ["honest no-match"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NPN-POS", "notes": "Consistent honest no-match, agrees with ask surface."
+  },
+  {
+    "id": "ID-NPN-MISS", "surface": "ask", "hub": "insurance", "query": "NPN 88887777", "grade": "PASS",
+    "requestedConditions": ["exact-miss identifier"], "appliedConditions": ["honest no-confident-match"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_CONFIDENT_MATCH", "resultCount": 0, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["Person, agency, and legal insurer stay separate classes."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NPN-MISS", "notes": "Correct exact-miss handling, matches direct."
+  },
+  {
+    "id": "ID-NPN-MISS", "surface": "direct", "hub": "insurance", "query": "NPN 88887777", "grade": "PASS",
+    "requestedConditions": ["exact-miss identifier"], "appliedConditions": ["honest no-match"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NPN-MISS", "notes": "Correct."
+  },
+  {
+    "id": "ID-NAIC-BAREDIGITS", "surface": "ask", "hub": "insurance", "query": "10064", "grade": "PASS",
+    "requestedConditions": ["ambiguous bare-digit identifier handling"], "appliedConditions": ["correctly treated as ambiguous, not auto-assigned to any hub/identifier family"], "unresolvedConditions": ["which identifier family the digits represent"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": ["provide entity name or a labeled identifier"],
+    "evidencePointer": "raw-ask-results.json#ID-NAIC-BAREDIGITS", "notes": "Correctly preserves ambiguity across NAIC/USDOT/NMLS/CCN/CRD/NPN per the collidingBareDigitsNote design; zero unauthorized dispatch."
+  },
+  {
+    "id": "INSURANCE-AGENCY-NEARME", "surface": "ask", "hub": "insurance", "query": "insurance agency near me", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["service-territory/proximity search"], "appliedConditions": ["correctly disclosed as unsupported"], "unresolvedConditions": ["service territory genuinely unsupported"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "UNSUPPORTED_CAPABILITY", "resultCount": 0, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["Service territory and product availability are not supported by credential geography."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-AGENCY-NEARME", "notes": "Correct fail-closed, matches direct's fail_closed. No fake ZIP guess."
+  },
+  {
+    "id": "INSURANCE-AGENCY-NEARME", "surface": "direct", "hub": "insurance", "query": "insurance agency near me", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["service-territory/proximity search"], "appliedConditions": ["fail-closed"], "unresolvedConditions": ["service territory genuinely unsupported"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "fail_closed", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-AGENCY-NEARME", "notes": "Consistent with ask surface."
+  },
+  {
+    "id": "INSURANCE-ZIP-33441", "surface": "direct", "hub": "insurance", "query": "insurance agencies in ZIP 33441", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["ZIP-scoped directory"], "appliedConditions": ["correctly parsed ZIP=33441, directory handoff mode"], "unresolvedConditions": ["zero results in this specific ZIP (data limitation, not a false zero -- coverageState=PARTIAL discloses this honestly)"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "DIRECTORY_HANDOFF", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-ZIP-33441", "notes": "Direct specialist correctly parses and applies the ZIP constraint -- proves the Ask-parent failure above is parent-side, not a specialist gap."
+  },
+  {
+    "id": "INSURANCE-BOCA-NOZIP", "surface": "direct", "hub": "insurance", "query": "insurance agencies in Boca Raton", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["city-named directory search without ZIP"], "appliedConditions": ["fail-closed rather than guessing a ZIP"], "unresolvedConditions": ["directory requires ZIP grain"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "fail_closed", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INSURANCE-BOCA-NOZIP",
+    "notes": "Correctly declines rather than silently guessing/mapping a city to an arbitrary ZIP."
+  },
+  {
+    "id": "INSURANCE-PRODUCT-ZIP", "surface": "direct", "hub": "insurance", "query": "life insurance agents in ZIP 33441", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["ZIP directory with product/LOA context"], "appliedConditions": ["directory handoff mode, ZIP applied"], "unresolvedConditions": ["product-specific (life) filtering within the ZIP directory not confirmed populated"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "DIRECTORY_HANDOFF", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INSURANCE-PRODUCT-ZIP",
+    "notes": "Same directory-handoff pattern as the plain ZIP case; no evidence of product-context being fabricated or misapplied."
+  },
+  {
+    "id": "INSURANCE-NAMED-AGENCY", "surface": "direct", "hub": "insurance", "query": "State Farm agency in Boca Raton", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["named-agency + city search"], "appliedConditions": ["fail-closed rather than a false match"], "unresolvedConditions": ["city-grain agency search unsupported"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "fail_closed", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INSURANCE-NAMED-AGENCY",
+    "notes": "No false positive fabricated for an unsupported city-grain named search."
+  },
+  {
+    "id": "INSURANCE-NAMED-INSURER", "surface": "direct", "hub": "insurance", "query": "Progressive Insurance Company", "grade": "PASS",
+    "requestedConditions": ["exact legal-insurer name resolution"], "appliedConditions": ["honest no-match, entity class correctly set to insurer"], "unresolvedConditions": [],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Agency graph names and published Wave-1 legal-insurer names are searched separately."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-NAMED-INSURER", "notes": "Direct specialist correctly scopes this to the insurer class and returns an honest miss rather than a cross-class fabrication."
+  },
+  {
+    "id": "INSURANCE-CREDENTIALED-FL", "surface": "direct", "hub": "insurance", "query": "insurance agents credentialed in Florida", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["credential-jurisdiction geography"], "appliedConditions": ["correctly disclosed as a capability limitation, distinct disclosure text from office/domicile"], "unresolvedConditions": ["credential jurisdiction cohort browse unsupported at this grain"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "CAPABILITY_LIMITATION", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Credential jurisdiction is not office location or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-CREDENTIALED-FL",
+    "notes": "Part of the credential/location/domicile trio -- graded together, see INSURANCE-LOCATED-FL and INSURANCE-DOMICILED-FL notes."
+  },
+  {
+    "id": "INSURANCE-LOCATED-FL", "surface": "direct", "hub": "insurance", "query": "insurance agents located in Florida", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["office-location geography"], "appliedConditions": ["correctly disclosed as unsupported, same disclosure text as credential-jurisdiction case"], "unresolvedConditions": ["office-location grain unsupported"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "CAPABILITY_LIMITATION", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Credential jurisdiction is not office location or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-LOCATED-FL",
+    "notes": "All three of CREDENTIALED-FL/LOCATED-FL/DOMICILED-FL return the identical CAPABILITY_LIMITATION disclosure text distinguishing credential jurisdiction from office location, domicile, and service territory -- the specialist honestly declines all three rather than conflating them or fabricating a false equivalence. This is the correct behavior: none of the three grains are silently substituted for another; the product simply cannot execute any of them at cohort-browse grain and says so identically and accurately for each. Not a blocker."
+  },
+  {
+    "id": "INSURANCE-DOMICILED-FL", "surface": "direct", "hub": "insurance", "query": "insurers domiciled in Florida", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["legal-domicile geography"], "appliedConditions": ["correctly disclosed as unsupported"], "unresolvedConditions": ["domicile grain unsupported"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "CAPABILITY_LIMITATION", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Credential jurisdiction is not office location or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-DOMICILED-FL", "notes": "See INSURANCE-LOCATED-FL notes -- part of the same correctly-non-conflated trio."
+  },
+  {
+    "id": "INSURANCE-LOA", "surface": "direct", "hub": "insurance", "query": "what lines of authority does NPN 20000635 have", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["LOA evidence for a specific NPN"], "appliedConditions": ["honest no-match (this NPN doesn't resolve at all, per ID-NPN-POS)"], "unresolvedConditions": ["LOA data for this identifier"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Line of authority is not carrier appointment."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-LOA", "notes": "Cannot fully evaluate the LOA!=appointment invariant against real data since this NPN doesn't resolve; the disclosure text itself correctly states the distinction. Recommend re-running against a confirmed-resolvable NPN in a future ticket."
+  },
+  {
+    "id": "INSURANCE-APPOINTMENT", "surface": "direct", "hub": "insurance", "query": "is NPN 20000635 appointed with any carrier", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["appointment evidence for a specific NPN"], "appliedConditions": ["honest no-match"], "unresolvedConditions": ["appointment data for this identifier"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Line of authority is not carrier appointment."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-APPOINTMENT", "notes": "Same limitation as INSURANCE-LOA -- same non-resolvable test NPN. Not a false claim of appointment status either way."
+  },
+  {
+    "id": "INSURANCE-SERVICE-TERRITORY-WORDING", "surface": "direct", "hub": "insurance", "query": "which agents serve my ZIP code 33441", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["service-territory phrased as a ZIP directory request"], "appliedConditions": ["treated as a directory handoff, not a false service-territory claim"], "unresolvedConditions": ["service-territory itself remains unestablished"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "DIRECTORY_HANDOFF", "resultCount": 0, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INSURANCE-SERVICE-TERRITORY-WORDING",
+    "notes": "'Serve' language did not get treated as proof of service-territory coverage -- correctly downgraded to a plain ZIP directory lookup."
+  },
+  {
+    "id": "INSURANCE-NOTACQUIRED-STATE", "surface": "direct", "hub": "insurance", "query": "official P&C line-of-authority for Florida agencies", "grade": "PARTIAL",
+    "requestedConditions": ["explicit disclosure that official Florida P&C LOA rows are NOT_ACQUIRED (per prior-ticket capability notes)"], "appliedConditions": ["returned a generic 20-row Florida agency entity search instead"], "unresolvedConditions": ["whether P&C-LOA-specific data is genuinely acquired or not was not clearly disclosed either way"],
+    "selectedHubs": ["insurance"], "actualCalls": 1, "resultClass": "RESULTS", "resultCount": 20, "sourceFamily": "insurance-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Person, agency, and legal insurer stay separate classes."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-NOTACQUIRED-STATE",
+    "notes": "Not misleading (no false zero, no false P&C claim visible in the sampled limitations/headline), but this test was designed to probe the NOT_ACQUIRED-vs-zero invariant specifically and the response doesn't clearly confirm or deny whether P&C LOA is now acquired for Florida agencies -- inconclusive rather than a confirmed pass or fail. Recommend a follow-up with a query more explicitly targeting P&C LOA evidence (not just entity search) in a future ticket."
+  },
+  {
+    "id": "INSURANCE-APPOINTMENT-PARAPHRASE", "surface": "ask", "hub": "insurance", "query": "Does this insurance agent have an appointment with State Farm or just a life license?", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["deictic reference to an unnamed agent"], "appliedConditions": ["correctly recognized as missing identity, zero unauthorized dispatch"], "unresolvedConditions": ["which specific agent is being asked about"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": ["provide the agent's name or NPN"],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-APPOINTMENT-PARAPHRASE",
+    "notes": "'This insurance agent' with no prior identity established correctly triggers ENTITY_LOOKUP_MISSING_IDENTITY -- R1-008's deictic-reference gate held, zero specialist calls."
+  },
+  {
+    "id": "INSURANCE-ZIP-PARAPHRASE", "surface": "ask", "hub": "insurance", "query": "I need an agency around 33441, but don't tell me they serve my address unless the source proves it.", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["ZIP-scoped agency search with an explicit anti-fabrication instruction"], "appliedConditions": ["correctly recognized as an unsupported service-territory/product-availability request and blocked before dispatch"], "unresolvedConditions": ["ZIP-scoped listing itself was not executed either (see BLOCKER-INSURANCE-01 -- ZIP constraints are not applied even when execution IS allowed, so this being blocked outright is arguably the safer of two bad outcomes)"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "UNSUPPORTED_CAPABILITY", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": ["Service territory and product availability are not supported by credential geography."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-ZIP-PARAPHRASE",
+    "notes": "The user's explicit request ('don't tell me they serve my address unless proven') is honored by construction -- the system never claims service-territory coverage. Graded PASS_SAFE_LIMITATION rather than BLOCKER_FAIL because this specific phrasing happened to route through the CLARIFY path rather than the cohort-execute path that triggers BLOCKER-INSURANCE-01; but see INSURANCE-ZIP-33441 above for a phrasing of the same underlying request that DOES hit the unscoped-cohort blocker."
+  }
+]

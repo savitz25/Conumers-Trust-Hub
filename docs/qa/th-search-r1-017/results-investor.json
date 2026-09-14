@@ -1,0 +1,136 @@
+[
+  {
+    "id": "ID-CRD-POS", "surface": "ask", "hub": "investor", "query": "CRD 166089", "grade": "PASS",
+    "requestedConditions": ["exact CRD identifier"], "appliedConditions": ["exact match"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "EXACT_IDENTITY", "resultCount": 1, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["Principal-office geography is not client geography or service territory."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-CRD-POS", "notes": "Exact match to HOOD RIVER CAPITAL MANAGEMENT LLC, consistent with direct."
+  },
+  {
+    "id": "ID-CRD-POS", "surface": "direct", "hub": "investor", "query": "CRD 166089", "grade": "PASS",
+    "requestedConditions": ["exact CRD identifier"], "appliedConditions": ["exact match"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#ID-CRD-POS", "notes": "Agrees with ask surface."
+  },
+  {
+    "id": "ID-CRD-MISS", "surface": "ask", "hub": "investor", "query": "CRD 999999999", "grade": "PASS",
+    "requestedConditions": ["exact-miss identifier"], "appliedConditions": ["honest no-confident-match"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "NO_CONFIDENT_MATCH", "resultCount": 0, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-ask-results.json#ID-CRD-MISS", "notes": "Correct, agrees with direct's NO_MATCH."
+  },
+  {
+    "id": "ID-CRD-MISS", "surface": "direct", "hub": "investor", "query": "CRD 999999999", "grade": "PASS",
+    "requestedConditions": ["exact-miss identifier"], "appliedConditions": ["honest no-match"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#ID-CRD-MISS", "notes": "Correct."
+  },
+  {
+    "id": "INVESTOR-WY-STATE-REG", "surface": "ask", "hub": "investor", "query": "state-registered investment advisers in Wyoming", "grade": "PASS",
+    "requestedConditions": ["Wyoming state-registered RIA cohort"], "appliedConditions": ["25 real Wyoming-principal-office RIA firms returned, correctly disclosed as principal-office not client geography"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "SUPPORTED_RESULTS", "resultCount": 25, "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["Principal-office geography is not client geography or service territory; source order is not a ranking."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-WY-STATE-REG",
+    "notes": "Genuinely useful, non-misleading, accurate result -- all 3 sampled firms (AFINITIV LLC/Sheridan WY, CANNELL CAPITAL LLC/Alta WY, COPPERLINE WEALTH MANAGEMENT/Cody WY) are real Wyoming firms. No widening defect of the Move/Insurance kind observed here."
+  },
+  {
+    "id": "INVESTOR-WY-STATE-REG", "surface": "direct", "hub": "investor", "query": "state-registered investment advisers in Wyoming", "grade": "PARTIAL",
+    "requestedConditions": ["Wyoming state-registered RIA cohort"], "appliedConditions": ["none -- specialist's own bare contract fails closed on this exact phrasing"], "unresolvedConditions": ["cohort browse for this phrasing on the direct contract"],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-WY-STATE-REG",
+    "notes": "Not misleading (fails closed rather than fabricating), but materially less capable than the Ask-parent path for the identical phrasing -- a real differential (section 16) worth recording, not a blocker: the direct public contract under-serves this natural phrasing while Ask's guided path (specialist-execution/v2) correctly handles it. Same pattern observed for Lender ('lenders in New Jersey' mode divergence) and Move ('local mover in New Jersey')."
+  },
+  {
+    "id": "INVESTOR-AUSTIN", "surface": "ask", "hub": "investor", "query": "investment advisers in Austin Texas", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["Austin/Texas adviser cohort"], "appliedConditions": ["correctly consent-gated (state-only capability, no Texas county/city data published)"], "unresolvedConditions": ["city-to-state broadening requires consent"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (blocked pre-dispatch)", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-AUSTIN", "notes": "Confirmed still correct, deliberate, R1-016-certified behavior (ask-intel-v3-corpus.ts:169). Not a blocker."
+  },
+  {
+    "id": "INVESTOR-AUSTIN", "surface": "direct", "hub": "investor", "query": "investment advisers in Austin Texas", "grade": "PASS",
+    "requestedConditions": ["Austin/Texas adviser entity search"], "appliedConditions": ["correct principal-office-city grain with accurate disclosure"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 20, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Recorded principal office, not client geography, registration jurisdiction or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-AUSTIN",
+    "notes": "Direct specialist correctly executes this as a principal-office-city entity search with the grain distinction explicitly disclosed. Confirms the Ask-parent consent-gate above is a parent-side scope-authorization policy choice, not a specialist capability gap."
+  },
+  {
+    "id": "INVESTOR-NAMED-FIRM", "surface": "direct", "hub": "investor", "query": "Vanguard Advisers Inc", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact/near-exact firm name resolution"], "appliedConditions": ["clarification requested rather than a false auto-pick"], "unresolvedConditions": ["which specific Vanguard entity is meant"],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "NEEDS_CLARIFICATION", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-NAMED-FIRM",
+    "notes": "No false single-pick; asks for disambiguation instead, matching the same conservative pattern as Move's certified R1-005 identity resolution."
+  },
+  {
+    "id": "INVESTOR-AMBIGUOUS-FIRM", "surface": "direct", "hub": "investor", "query": "tell me about Fidelity", "grade": "PASS",
+    "requestedConditions": ["ambiguous name handling"], "appliedConditions": ["correctly requires clarification for a name that maps to many possible entities"], "unresolvedConditions": ["which Fidelity entity"],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "NEEDS_CLARIFICATION", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-AMBIGUOUS-FIRM", "notes": "Correct ambiguity handling, no false single answer."
+  },
+  {
+    "id": "INVESTOR-MANAGE-PORTFOLIO", "surface": "direct", "hub": "investor", "query": "manage my portfolio", "grade": "PASS",
+    "requestedConditions": ["out-of-scope request must not be misrouted as a firm-name search"], "appliedConditions": ["correctly fails closed as UNSUPPORTED, not treated as an entity/firm name"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-MANAGE-PORTFOLIO",
+    "notes": "Directly confirms the 'ordinary research talk != firm name' invariant: vague portfolio-management chatter is not misrouted into a bogus firm-name search."
+  },
+  {
+    "id": "INVESTOR-WHAT-IS-ADV", "surface": "direct", "hub": "investor", "query": "what is Form ADV", "grade": "PASS",
+    "requestedConditions": ["definitional explainer, not a firm search"], "appliedConditions": ["correctly classified as definition mode"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-WHAT-IS-ADV", "notes": "Correctly answered as an explainer, not misrouted to a firm search."
+  },
+  {
+    "id": "INVESTOR-FIRM-ADV", "surface": "direct", "hub": "investor", "query": "Form ADV for CRD 166089", "grade": "PASS",
+    "requestedConditions": ["exact identity", "Form ADV evidence"], "appliedConditions": ["exact identity resolved, evidence mode correctly applied"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-FIRM-ADV", "notes": "Correct exact resolution with evidence-mode framing."
+  },
+  {
+    "id": "INVESTOR-DISCLOSURE", "surface": "direct", "hub": "investor", "query": "does CRD 166089 have any disclosures", "grade": "PASS",
+    "requestedConditions": ["exact identity", "disclosure evidence, without implying wrongdoing"], "appliedConditions": ["exact identity resolved, evidence mode applied"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-DISCLOSURE", "notes": "Correct exact resolution; no observed claim conflating disclosure presence/absence with wrongdoing/clean record."
+  },
+  {
+    "id": "INVESTOR-PRINCIPAL-OFFICE-WY", "surface": "direct", "hub": "investor", "query": "advisers with principal office in Wyoming", "grade": "PASS",
+    "requestedConditions": ["principal-office-state cohort"], "appliedConditions": ["correct geography grain with accurate disclosure"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 20, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Recorded principal office, not client geography, registration jurisdiction or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-PRINCIPAL-OFFICE-WY", "notes": "Office-location grain correctly distinguished from registration jurisdiction."
+  },
+  {
+    "id": "INVESTOR-NY-REG-FL-OFFICE", "surface": "direct", "hub": "investor", "query": "advisers registered in New York with an office in Florida", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["both conditions preserved: NY registration AND FL office"], "appliedConditions": ["correctly fails closed rather than silently dropping one condition"], "unresolvedConditions": ["multi-condition cross-query genuinely unsupported"],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-NY-REG-FL-OFFICE",
+    "notes": "Important positive contrast with the cross-network BLOCKER-CROSS-01 finding (mover+lender query): when this specialist cannot honor BOTH conditions in a multi-condition request, it fails closed entirely rather than silently applying only one condition and dropping the other. This is the correct, safe behavior the two-domain cross-network case should have followed."
+  },
+  {
+    "id": "INVESTOR-RIA-VS-ERA", "surface": "direct", "hub": "investor", "query": "is this firm an RIA or an ERA, CRD 166089", "grade": "PASS",
+    "requestedConditions": ["exact identity", "RIA vs ERA distinction"], "appliedConditions": ["exact identity resolved"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-RIA-VS-ERA", "notes": "Correct exact resolution; RIA/ERA is a disclosed classification field on the resolved firm, not conflated."
+  },
+  {
+    "id": "INVESTOR-NOTICE-FILER", "surface": "direct", "hub": "investor", "query": "is CRD 166089 a notice filer in Texas", "grade": "PASS",
+    "requestedConditions": ["exact identity", "notice-filing vs state-registration distinction"], "appliedConditions": ["exact identity resolved, TX correctly labeled as principal-office geography not registration jurisdiction"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": ["Recorded principal office, not client geography, registration jurisdiction or service territory."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-NOTICE-FILER", "notes": "Notice-filing question correctly kept distinct from registration-jurisdiction/office-location grains."
+  },
+  {
+    "id": "INVESTOR-RAUM", "surface": "direct", "hub": "investor", "query": "regulatory assets under management for CRD 166089", "grade": "PASS",
+    "requestedConditions": ["exact identity", "RAUM evidence"], "appliedConditions": ["exact identity resolved"], "unresolvedConditions": [],
+    "selectedHubs": ["investor"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1, "sourceFamily": "investor-ask-v1", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#INVESTOR-RAUM", "notes": "Correct exact resolution."
+  },
+  {
+    "id": "INVESTOR-AUSTIN-PARAPHRASE", "surface": "ask", "hub": "investor", "query": "I'm in Austin — find advisers registered with Texas, not just firms headquartered there.", "grade": "PARTIAL",
+    "requestedConditions": ["Texas state-registration cohort, explicitly distinct from a headquarters/office-location search"], "appliedConditions": ["none -- classified as missing-identity, no engagement with the registration-vs-headquarters distinction the user explicitly requested"], "unresolvedConditions": ["the nuanced distinction the user asked for"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (blocked pre-dispatch)", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": ["provide entity name or identifier"],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-AUSTIN-PARAPHRASE",
+    "notes": "Not misleading (fails safe, no wrong answer, no unauthorized dispatch), but the response doesn't engage with the specific, well-formed registration-vs-headquarters distinction the user explicitly called out -- a materially less useful outcome than INVESTOR-AUSTIN's plain-language equivalent, which is at least correctly consent-gated with an explanation. Graded PARTIAL, not a blocker: a reasonable non-blocking improvement candidate for future NLU work, not hidden correctness debt."
+  }
+]

@@ -1,0 +1,3849 @@
+[
+  {
+    "id": "MOVE-JK-BARE",
+    "surface": "ask",
+    "hub": "move",
+    "query": "JK Moving Services",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "exact/specific company name research"
+    ],
+    "appliedConditions": [
+      "entity lookup executed"
+    ],
+    "unresolvedConditions": [
+      "candidate set materially wider than specialist's own certified name-match boundary"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "POST https://www.movetrusthub.com/api/specialist-execution/v2 (queryType:identity)"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 34,
+    "sourceFamily": "Published MoveTrustHub directory identities / stored FMCSA evidence",
+    "sourceAsOf": "2026-08-20 to 2026-08-23 (per row sourceLastChecked)",
+    "limitations": [
+      "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability."
+    ],
+    "nextActions": [
+      "Open MoveTrustHub profile"
+    ],
+    "evidencePointer": "raw-ask-results.json#MOVE-JK-BARE vs raw-direct-results.json#MOVE-JK-BARE",
+    "notes": "BLOCKER-MOVE-01. Direct move-ask-v1 (the same specialist's own certified public contract) returns exactly 5 candidates, all containing 'JK' as a distinctive token (JK Moving Services, JK MOVING SERVICES, JK BROKERAGE SERVICES, JK FORWARDERS INC, JK VAN LINES INC; terminalState=NEEDS_CLARIFICATION, candidateLimit=10). Ask parent's real execution path (specialist-execution/v2) instead reports total=34 and surfaces companies with zero textual relation to 'JK' (Ab Moving Services, Jp Moving Services, Km Moving Services, Kings Moving Services, Bb&D Moving Services, H&L Moving Services). This is the exact R1-005-forbidden failure mode (a named-company search degrading toward a generic directory cohort) reappearing through a second, parent-facing execution contract the R1-005 hardening never covered."
+  },
+  {
+    "id": "MOVE-JK-BARE",
+    "surface": "direct",
+    "hub": "move",
+    "query": "JK Moving Services",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact/specific company name research"
+    ],
+    "appliedConditions": [
+      "tight name-anchored candidate match, NEEDS_CLARIFICATION rather than a false auto-pick"
+    ],
+    "unresolvedConditions": [
+      "which of 2 near-duplicate 'JK Moving Services' records is intended"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET https://www.movetrusthub.com/api/ask?q=JK+Moving+Services"
+    ],
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": 5,
+    "sourceFamily": "Published MoveTrustHub directory identities / stored FMCSA evidence",
+    "sourceAsOf": "2026-08-20 to 2026-08-23",
+    "limitations": [
+      "Name relevance is not identifier equality, proof of affiliation, license approval or a live regulator check."
+    ],
+    "nextActions": [
+      "select a candidate"
+    ],
+    "evidencePointer": "raw-direct-results.json#MOVE-JK-BARE",
+    "notes": "This is the certified R1-005 design working correctly: candidateLimit=10, all 5 returned candidates share the distinctive 'JK' token, terminalState NEEDS_CLARIFICATION rather than false-resolving to one."
+  },
+  {
+    "id": "MOVE-JK-JOURNEY",
+    "surface": "ask",
+    "hub": "move",
+    "query": "Can JK Moving handle my move from Virginia to Florida?",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "exact/specific company name research",
+      "route context (Virginia to Florida) as informational disclosure only"
+    ],
+    "appliedConditions": [
+      "entity lookup executed",
+      "route disclosure attached (this part is correct, per R1-016 Fix 3)"
+    ],
+    "unresolvedConditions": [
+      "candidate set materially wider than specialist's own certified name-match boundary"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "POST https://www.movetrusthub.com/api/specialist-execution/v2 (queryType:identity, identityName:'JK Moving')"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 70,
+    "sourceFamily": "Published MoveTrustHub directory identities / stored FMCSA evidence",
+    "sourceAsOf": "2026-08-20 to 2026-08-23",
+    "limitations": [
+      "Route or service-territory capability is not verified from this source."
+    ],
+    "nextActions": [
+      "Open MoveTrustHub profile"
+    ],
+    "evidencePointer": "raw-ask-results.json#MOVE-JK-JOURNEY vs raw-direct-results.json#MOVE-JK-JOURNEY",
+    "notes": "Same BLOCKER-MOVE-01 pattern as MOVE-JK-BARE, worse in magnitude (70 vs 34): direct move-ask-v1 still returns only the same 5 JK-anchored candidates for the identical company name; Ask parent surfaces entirely generic movers with no 'JK' relation (24 Moving, A1 Moving, A Plus Moving, A&J Moving CO, A & B Moving LLC). The R1-016 Fix 3 route-disclosure work is functioning correctly here (the disclosure text is accurate and non-blocking) -- the defect is isolated to candidate-set breadth, not to the route-handling fix."
+  },
+  {
+    "id": "MOVE-JK-JOURNEY",
+    "surface": "direct",
+    "hub": "move",
+    "query": "Can JK Moving handle my move from Virginia to Florida?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact/specific company name + route capability question"
+    ],
+    "appliedConditions": [
+      "tight name-anchored candidate match"
+    ],
+    "unresolvedConditions": [
+      "route/service-territory capability, correctly left unresolved rather than fabricated"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET https://www.movetrusthub.com/api/ask?q=Can+JK+Moving+handle..."
+    ],
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": 5,
+    "sourceFamily": "Published MoveTrustHub directory identities / stored FMCSA evidence",
+    "sourceAsOf": "2026-08-20 to 2026-08-23",
+    "limitations": [
+      "Confirm pickup, delivery, route service and availability directly."
+    ],
+    "nextActions": [
+      "select a candidate"
+    ],
+    "evidencePointer": "raw-direct-results.json#MOVE-JK-JOURNEY",
+    "notes": "Same tight, correct 5-candidate JK-anchored set as the bare-name case; the free-text route/journey language did not degrade the name-match quality on the direct contract."
+  },
+  {
+    "id": "MOVE-SHORT-TOKEN-DIFFERENTIAL-AAA",
+    "surface": "ask+direct",
+    "hub": "move",
+    "query": "AAA Moving",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact/specific company-name-prefix research"
+    ],
+    "appliedConditions": [
+      "both surfaces stayed within the 'AAA'-prefixed candidate family"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET .../api/ask?q=AAA+Moving",
+      "POST .../api/specialist-execution/v2 identityName:'AAA Moving'"
+    ],
+    "resultClass": "mixed (NEEDS_CLARIFICATION direct / SUPPORTED_RESULTS ask)",
+    "resultCount": "direct: 10 candidates, all AAA-prefixed; ask: total 66, all 8 displayed rows AAA-prefixed",
+    "sourceFamily": "Published MoveTrustHub directory identities / stored FMCSA evidence",
+    "sourceAsOf": "n/a (not captured per-row for this ad hoc control case)",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "ad hoc (not in raw-*.json; run directly during grading, see notes)",
+    "notes": "IMPORTANT REFINEMENT to BLOCKER-MOVE-01's root-cause hypothesis: this was run as an extra differential specifically to test whether 'short/low-distinctiveness token' is the right characterization. It is NOT. 'AAA' is a short token too, yet ask parent's total=66 is plausible (there really are many real AAA-prefixed movers) and every one of the 8 displayed rows stays strictly AAA-prefixed/token-matched -- no unrelated company names leaked in, unlike the JK case. The more precise characterization: specialist-execution/v2 appears to fall back to a broad 'any company in this entity class' cohort match specifically when the strict name-match population for the requested name is SPARSE (few or no real candidates), rather than honestly reporting a small/empty candidate set the way move-ask-v1 does for the same sparse case. 'JK' triggers this because genuinely few companies contain that token; 'AAA' does not trigger it because genuinely many companies contain that token, so the broadening (if any occurs) is invisible in the top results. This should be handed to R1-018/Move-trust-Hub owners as the refined reproduction signal, not the original 'short token' framing."
+  },
+  {
+    "id": "ID-USDOT-POS",
+    "surface": "ask",
+    "hub": "move",
+    "query": "USDOT 3244649",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact USDOT identifier"
+    ],
+    "appliedConditions": [
+      "exact stored identifier equality"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "POST specialist-execution/v2 queryType:identifier"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 1,
+    "sourceFamily": "Published MoveTrustHub directory / stored FMCSA evidence",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+      "A broker may arrange transportation without physically hauling the shipment."
+    ],
+    "nextActions": [
+      "Open MoveTrustHub profile"
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-USDOT-POS",
+    "notes": "Exact 1-row identifier match, correct disclosures present."
+  },
+  {
+    "id": "ID-USDOT-POS",
+    "surface": "direct",
+    "hub": "move",
+    "query": "USDOT 3244649",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact USDOT identifier"
+    ],
+    "appliedConditions": [
+      "exact stored identifier equality; no prefix or approximate fallback (explicitly stated in response)"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=USDOT+3244649"
+    ],
+    "resultClass": "FOUND",
+    "resultCount": 1,
+    "sourceFamily": "Published MoveTrustHub directory / stored FMCSA evidence",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-USDOT-POS",
+    "notes": "Matches ask surface. Exact equality confirmed."
+  },
+  {
+    "id": "ID-MC-CONFLICT",
+    "surface": "ask",
+    "hub": "move",
+    "query": "MC225850",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact MC identifier"
+    ],
+    "appliedConditions": [
+      "conflict disclosed as zero confident match rather than false-resolved to JK Moving Services"
+    ],
+    "unresolvedConditions": [
+      "which single carrier MC225850 currently belongs to"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "POST specialist-execution/v2 queryType:identifier"
+    ],
+    "resultClass": "ZERO_MATCHING_ROWS",
+    "resultCount": 0,
+    "sourceFamily": "Stored FMCSA MC association (under review)",
+    "sourceAsOf": "observedAt 2026-08-23 / officialObservedAt 2026-09-12 (per JK record's identifierIntegrity)",
+    "limitations": [
+      "Only identities already eligible for the public MoveTrustHub directory are returned."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-MC-CONFLICT vs raw-direct-results.json#ID-MC-CONFLICT",
+    "notes": "This is pre-existing, already-disclosed R1-005/R1-006-era data-integrity context (the JK Moving Services record's identifierIntegrity field explicitly states the MC225850 association is 'under review', not a confirmed finding, and gives the corroborated USDOT + officially-observed MC 196957 instead). Both direct (terminalState SOURCE_CONFLICT) and ask (ZERO_MATCHING_ROWS, not a false JK match) keep this conflict honestly contained rather than silently resolving or hiding it. Grading PASS_SAFE_LIMITATION, not BLOCKER_FAIL, because the disclosure is accurate and the conflict is NOT silently hidden or misrepresented as resolved."
+  },
+  {
+    "id": "ID-MC-CONFLICT",
+    "surface": "direct",
+    "hub": "move",
+    "query": "MC225850",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact MC identifier"
+    ],
+    "appliedConditions": [
+      "SOURCE_CONFLICT correctly surfaced rather than a confident answer"
+    ],
+    "unresolvedConditions": [
+      "which carrier MC225850 belongs to"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=MC225850"
+    ],
+    "resultClass": "SOURCE_CONFLICT",
+    "resultCount": 0,
+    "sourceFamily": "Stored FMCSA MC association (under review)",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Stored identifier association requires review"
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-MC-CONFLICT",
+    "notes": "Consistent with ask surface."
+  },
+  {
+    "id": "ID-MC-196957",
+    "surface": "direct",
+    "hub": "move",
+    "query": "MC196957",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact MC identifier"
+    ],
+    "appliedConditions": [
+      "honest NO_MATCH rather than a guessed/approximate association"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=MC196957"
+    ],
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "Stored FMCSA MC association",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-MC-196957",
+    "notes": "This is the officially-observed MC referenced in JK's identifierIntegrity disclosure, but is not itself indexed as a resolvable MC->carrier association in the public directory; the specialist correctly returns NO_MATCH rather than fabricating a link to JK Moving Services."
+  },
+  {
+    "id": "MOVE-ROUTE-ONLY",
+    "surface": "ask",
+    "hub": "move",
+    "query": "moving from Miami Florida to New York City",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "route service capability, no named company"
+    ],
+    "appliedConditions": [
+      "request preserved, disclosed as CAPABILITY_UNSUPPORTED with an accurate reason, not a fake zero"
+    ],
+    "unresolvedConditions": [
+      "route/service-territory capability, genuinely unanswerable from this source"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [],
+    "resultClass": "UNSUPPORTED_CAPABILITY",
+    "resultCount": 0,
+    "sourceFamily": "n/a (blocked before dispatch)",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Service territory and route availability are not source-backed by recorded location or regulatory authority."
+    ],
+    "nextActions": [
+      "Verify a USDOT or MC",
+      "Research recorded headquarters"
+    ],
+    "evidencePointer": "raw-ask-results.json#MOVE-ROUTE-ONLY",
+    "notes": "Confirmed R1-016-certified-correct behavior (already documented as not-a-bug in the R1-016 report): Move's data is recorded-headquarters, not service-territory, so a pure route/browse request with no named company correctly stays a disclosed clarification with useful next actions rather than a blank refusal."
+  },
+  {
+    "id": "MOVE-NO-NAMED",
+    "surface": "direct",
+    "hub": "move",
+    "query": "who can move me from Texas to Ohio",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "route service capability, no named company"
+    ],
+    "appliedConditions": [
+      "journey origin/destination parsed exactly, availability explicitly marked NOT_ESTABLISHED"
+    ],
+    "unresolvedConditions": [
+      "route availability"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=who+can+move+me..."
+    ],
+    "resultClass": "FOUND (definitional/checklist response, zero company rows)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Confirm pickup, delivery, route service and availability directly. Headquarters or recorded address does not establish service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-NO-NAMED",
+    "notes": "The public move-ask-v1 contract does not attempt cohort listing for this shape at all -- it returns an accurate journey interpretation (Texas->Ohio, EXACT, household_goods, federal_interstate_research) plus a checklist, with availability explicitly NOT_ESTABLISHED. Honest, no fabrication."
+  },
+  {
+    "id": "MOVE-LOCAL-NJ",
+    "surface": "ask",
+    "hub": "move",
+    "query": "local mover in New Jersey",
+    "grade": "PASS",
+    "requestedConditions": [
+      "NJ geography cohort browse"
+    ],
+    "appliedConditions": [
+      "real NJ-headquartered movers returned with accurate HQ-not-service-territory disclosure per row"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "POST specialist-execution/v2 queryType:cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 267,
+    "sourceFamily": "Published MoveTrustHub directory identities",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Only identities already eligible for the public MoveTrustHub directory are returned.",
+      "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#MOVE-LOCAL-NJ",
+    "notes": "Verified actual displayed rows (1 St Moving CORP, 101 Movers CORP, A-1 Steedle, all genuinely NJ-recorded) -- this is a legitimate state-level cohort browse, correctly distinct from the JK entity-lookup defect: this query never claimed to be about ONE specific company, so a large real cohort here is expected and correct, not a widening defect."
+  },
+  {
+    "id": "MOVE-LOCAL-NJ",
+    "surface": "direct",
+    "hub": "move",
+    "query": "local mover in New Jersey",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "NJ geography cohort browse"
+    ],
+    "appliedConditions": [
+      "accurate intrastate/federal distinction, honest that this lighter public contract does not enumerate a cohort"
+    ],
+    "unresolvedConditions": [
+      "actual list of NJ movers -- not served by this endpoint shape"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=local+mover+in+New+Jersey"
+    ],
+    "resultClass": "FOUND (definitional/checklist response, zero company rows)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Search-only or request-only coverage is not zero movers; FMCSA is not state intrastate permission."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-LOCAL-NJ",
+    "notes": "The public move-ask-v1 GET contract appears scoped to identifier/entity-name/journey-interpretation responses, not full cohort enumeration; that capability difference from specialist-execution/v2 is an architecture choice, not a correctness defect, since it never fabricates a cohort or a zero -- it explicitly says search-only coverage is not zero movers."
+  },
+  {
+    "id": "MOVE-IMPOSSIBLE-CO",
+    "surface": "direct",
+    "hub": "move",
+    "query": "Zzyzx Interstate Moving Company",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact company name that does not exist"
+    ],
+    "appliedConditions": [
+      "honest NO_MATCH, zero candidates fabricated"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=Zzyzx..."
+    ],
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "Published MoveTrustHub directory identities",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-IMPOSSIBLE-CO",
+    "notes": "No candidates invented for a company that plausibly does not exist in FMCSA data."
+  },
+  {
+    "id": "MOVE-ANOTHER-EXACT",
+    "surface": "direct",
+    "hub": "move",
+    "query": "Allied Van Lines",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact well-known company name"
+    ],
+    "appliedConditions": [
+      "single exact match, dual carrier/broker role disclosed as one company, not double-counted"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=Allied+Van+Lines"
+    ],
+    "resultClass": "FOUND",
+    "resultCount": 1,
+    "sourceFamily": "Published MoveTrustHub directory identities",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-ANOTHER-EXACT",
+    "notes": "Exact, clean single match with role 'Carrier / Broker' shown as one disclosed dual role, matching the R1-016-era invariant that dual role is disclosed, not double-counted as two companies. Note: this same query fails to route at all via the Ask parent guided-research layer ('not_guided_query', since 'Allied Van Lines' contains no move-hub trigger keyword like 'moving'/'mover') -- a separate, narrower routing gap worth noting as a non-blocking enhancement (see notes on CROSS-NAME-MULTI-HUB pattern), not tested here as a graded ask-surface case since it was outside this fork's assigned corpus rows."
+  },
+  {
+    "id": "MOVE-CARRIER-VS-BROKER",
+    "surface": "direct",
+    "hub": "move",
+    "query": "is this company a carrier or a broker, USDOT 3244649",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact identifier",
+      "carrier-vs-broker role determination"
+    ],
+    "appliedConditions": [
+      "exact identifier resolved; role explicitly marked CONFLICT rather than guessed"
+    ],
+    "unresolvedConditions": [
+      "definitive carrier-or-broker role for this USDOT"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=is+this+company..."
+    ],
+    "resultClass": "FOUND (identifier resolved, role unresolved)",
+    "resultCount": 1,
+    "sourceFamily": "Stored FMCSA evidence",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "The exact identity was resolved, but its stored evidence does not establish this criterion."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-CARRIER-VS-BROKER",
+    "notes": "Correctly separates 'exact stored identifier equality; no prefix or approximate fallback' (APPLIED) from the role question (CONFLICT, honestly unresolved) -- exactly the carrier != broker invariant, applied even when the evidence itself is ambiguous."
+  },
+  {
+    "id": "MOVE-AUTO-TRANSPORT",
+    "surface": "direct",
+    "hub": "move",
+    "query": "ship my car from California to Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "auto transport, not household goods"
+    ],
+    "appliedConditions": [
+      "moveType correctly classified auto_transport, distinct from household_goods"
+    ],
+    "unresolvedConditions": [
+      "route availability (correctly NOT_ESTABLISHED)"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=ship+my+car..."
+    ],
+    "resultClass": "FOUND (journey interpretation, zero rows)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "household-goods status is not vehicle-shipping evidence"
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-AUTO-TRANSPORT",
+    "notes": "household goods != auto transport invariant explicitly upheld in the response's own checklist text."
+  },
+  {
+    "id": "MOVE-NEAR-ME",
+    "surface": "direct",
+    "hub": "move",
+    "query": "movers near me",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "service-territory / radius search"
+    ],
+    "appliedConditions": [
+      "explicitly marked UNSUPPORTED, locality retained as unresolved rather than guessed"
+    ],
+    "unresolvedConditions": [
+      "'near me' location, correctly never resolved to a guessed place"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=movers+near+me"
+    ],
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "This search cannot establish local service or availability."
+    ],
+    "nextActions": [
+      "choose recorded-state identity research instead"
+    ],
+    "evidencePointer": "raw-direct-results.json#MOVE-NEAR-ME",
+    "notes": "coverageState UNSUPPORTED, terminalState UNSUPPORTED -- no fabricated ZIP/city guess, no fake zero, correctly distinguishes 'not supported' from 'no results'."
+  },
+  {
+    "id": "MOVE-BOOKING",
+    "surface": "direct",
+    "hub": "move",
+    "query": "book JK Moving Services for next month",
+    "grade": "PASS",
+    "requestedConditions": [
+      "booking a specific mover"
+    ],
+    "appliedConditions": [
+      "booking correctly refused with an explicit statement that MoveTrustHub does not book/dispatch/confirm availability"
+    ],
+    "unresolvedConditions": [
+      "mover cohort correctly left unselected pending clarification"
+    ],
+    "selectedHubs": [
+      "move"
+    ],
+    "actualCalls": [
+      "GET /api/ask?q=book+JK+Moving..."
+    ],
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "MoveTrustHub does not book, dispatch, or confirm mover availability."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#MOVE-BOOKING",
+    "notes": "Booking boundary invariant explicitly and clearly upheld: 'No mover cohort has been selected.'"
+  },
+  {
+    "id": "MOVE-JK-PICKUP-PARAPHRASE",
+    "surface": "ask",
+    "hub": "move",
+    "query": "Can JK pick me up in Virginia and move me to Florida?",
+    "grade": "PARTIAL",
+    "requestedConditions": [
+      "exact/specific company name ('JK') + route context"
+    ],
+    "appliedConditions": [
+      "blocked as ENTITY_LOOKUP_MISSING_IDENTITY, no specialist call made (safe, R1-008 gate held)"
+    ],
+    "unresolvedConditions": [
+      "entity-name extraction failed for this exact phrasing, unlike 'Can JK Moving handle...'"
+    ],
+    "selectedHubs": [],
+    "actualCalls": [],
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#MOVE-JK-PICKUP-PARAPHRASE",
+    "notes": "Not misleading (R1-008's zero-unauthorized-dispatch rule correctly held: executionAllowed=false, no fetch), but materially less useful than it should be: 'Can JK pick me up...' fails to extract 'JK' as an entity name the way 'Can JK Moving handle...' does, because research-planner.ts's explicitEntityName() proper-noun-run heuristic (added in R1-016 Fix for Bug #3) apparently requires a 2+ word capitalized run and 'JK' alone (1 word, lowercase 'pick me up' around it) doesn't qualify. This is a narrower miss than a full regression -- the company name here is genuinely just 'JK' with no second capitalized word to anchor a 2-word run -- and is graded PARTIAL, not BLOCKER_FAIL, since it fails safe (a clarification, not a wrong answer) and is a reasonable post-R1 enhancement candidate rather than hidden correctness debt."
+  },
+  {
+    "id": "ID-NMLS-POS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "NMLS 3030",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NMLS institution identity"
+    ],
+    "appliedConditions": [
+      "identifier=NMLS 3030",
+      "hub=lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 identifier"
+    ],
+    "resultClass": "EXACT_IDENTITY",
+    "resultCount": 1,
+    "sourceFamily": "NMLS institution registry (via lender specialist)",
+    "sourceAsOf": null,
+    "limitations": [
+      "Exact identity is regulatory research, not a recommendation."
+    ],
+    "nextActions": [
+      "Open LenderTrustHub research"
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-NMLS-POS",
+    "notes": "Exact NMLS resolves to Rocket Mortgage with correct identity-only framing. R1-016 Bug #1 fix holding."
+  },
+  {
+    "id": "ID-NMLS-POS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "NMLS 3030",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NMLS institution identity"
+    ],
+    "appliedConditions": [
+      "identifier=NMLS 3030"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask entity mode"
+    ],
+    "resultClass": "FOUND",
+    "resultCount": 1,
+    "sourceFamily": "lender-ask-v1 published institution index",
+    "sourceAsOf": null,
+    "limitations": [
+      "Identifier equality establishes identity only. It does not establish current licensing, service territory, or lender quality."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NMLS-POS",
+    "notes": "Direct specialist matches ask surface exactly. No differential concern."
+  },
+  {
+    "id": "ID-NMLS-SPACED",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "NMLS   3030",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NMLS with irregular internal whitespace"
+    ],
+    "appliedConditions": [
+      "identifier normalized to NMLS 3030"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 identifier"
+    ],
+    "resultClass": "EXACT_IDENTITY",
+    "resultCount": 1,
+    "sourceFamily": "NMLS institution registry (via lender specialist)",
+    "sourceAsOf": null,
+    "limitations": [
+      "Exact identity is regulatory research, not a recommendation."
+    ],
+    "nextActions": [
+      "Open LenderTrustHub research"
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-NMLS-SPACED",
+    "notes": "Multiple internal spaces normalized correctly; identical result to the single-space case, confirming robustness to input formatting."
+  },
+  {
+    "id": "ID-NMLS-MISS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "NMLS 9999999",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NMLS institution identity"
+    ],
+    "appliedConditions": [
+      "identifier=NMLS 9999999"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 identifier"
+    ],
+    "resultClass": "NO_CONFIDENT_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "NMLS institution registry (via lender specialist)",
+    "sourceAsOf": null,
+    "limitations": [
+      "No exact NMLS identity match was found. This is not a fuzzy name result."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NMLS-MISS",
+    "notes": "Genuine miss correctly rendered as NO_CONFIDENT_MATCH, not a false EXACT_IDENTITY hit and not a fabricated zero. R1-016 Bug #2 fix holding."
+  },
+  {
+    "id": "ID-NMLS-MISS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "NMLS 9999999",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NMLS institution identity"
+    ],
+    "appliedConditions": [
+      "identifier=NMLS 9999999"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask entity mode"
+    ],
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "lender-ask-v1 published institution index",
+    "sourceAsOf": null,
+    "limitations": [
+      "The full identifier was searched exactly and is absent from this published institution corpus. Its real-world class and license status remain unknown."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NMLS-MISS",
+    "notes": "Direct specialist agrees with ask surface: honest absence, not a false negative about real-world license status."
+  },
+  {
+    "id": "ID-LEI",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "LEI 5493001KJTIIGC8Y1R12",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact LEI legal-entity identity"
+    ],
+    "appliedConditions": [
+      "identifier=LEI 5493001KJTIIGC8Y1R12"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 identifier"
+    ],
+    "resultClass": "NO_CONFIDENT_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "LEI registry (via lender specialist)",
+    "sourceAsOf": null,
+    "limitations": [
+      "No exact LEI identity match was found. This is not a fuzzy name result."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-LEI",
+    "notes": "This LEI is a fictional/test value; both surfaces correctly report a genuine absence rather than fabricating a match."
+  },
+  {
+    "id": "ID-LEI",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "LEI 5493001KJTIIGC8Y1R12",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact LEI legal-entity identity"
+    ],
+    "appliedConditions": [
+      "identifier=LEI 5493001KJTIIGC8Y1R12"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask entity mode"
+    ],
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "lender-ask-v1 published institution index",
+    "sourceAsOf": null,
+    "limitations": [
+      "The full identifier was searched exactly and is absent from this published institution corpus."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-LEI",
+    "notes": "Consistent with ask surface."
+  },
+  {
+    "id": "LENDER-NJ-LENDERS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "lenders in New Jersey",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey",
+      "entity class=mortgage lender"
+    ],
+    "appliedConditions": [
+      "geography=NJ (state, HMDA property grain)",
+      "entityClass=mortgage_lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "Most is a raw count, not best, safest, or recommended.",
+      "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-NJ-LENDERS",
+    "notes": "R1-015 fix holding: NJ no longer hits the RMLA refusal gate. NOTE FOR DIFFERENTIAL (section M): the direct lender-ask-v1 contract classifies this identical phrasing as mode=count (a single origination-count answer), while the ask-parent's specialist-execution/v2 classifies it as a cohort listing of 776 named institutions. Both individually are correct and non-misleading interpretations of a genuinely ambiguous phrase ('lenders in NJ' could mean 'how many' or 'which ones'), and neither invents a value the other doesn't support, so this is NOT graded a blocker -- it's a real parent/specialist query-mode divergence worth recording as a differential finding, not a defect."
+  },
+  {
+    "id": "LENDER-NJ-LENDERS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "lenders in New Jersey",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey"
+    ],
+    "appliedConditions": [
+      "geography=NJ (state, HMDA property grain)",
+      "mode=count"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask count mode"
+    ],
+    "resultClass": "count",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 property-geography",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA geography is the property/census location tied to the application — not lender headquarters, branch location, or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-NJ-LENDERS",
+    "notes": "Correct, disclosed origination-count answer for NJ. See differential note on the ask-surface entry above."
+  },
+  {
+    "id": "LENDER-NJ-SINGULAR",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "lender in new jersey",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey (singular/lowercase phrasing)"
+    ],
+    "appliedConditions": [
+      "geography=NJ (state)",
+      "entityClass=mortgage_lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-NJ-SINGULAR",
+    "notes": "Singular/all-lowercase phrasing produces the identical correct result as the plural form. R1-015 fix confirmed phrasing-robust."
+  },
+  {
+    "id": "LENDER-FL-MORTGAGE-COS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "mortgage companies in Florida",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=Florida",
+      "entity class=mortgage lender (via 'companies' synonym)"
+    ],
+    "appliedConditions": [
+      "geography=FL",
+      "entityClass=mortgage_lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 1794,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-FL-MORTGAGE-COS",
+    "notes": "R1-015 'mortgage companies' synonym fix holding."
+  },
+  {
+    "id": "LENDER-FL-MORTGAGE-COS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "mortgage companies in Florida",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=Florida"
+    ],
+    "appliedConditions": [
+      "geography=FL",
+      "mode=count"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask count mode"
+    ],
+    "resultClass": "count",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 property-geography",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "Not lenders headquartered here and not licensing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-FL-MORTGAGE-COS",
+    "notes": "Consistent with the NJ count/cohort divergence pattern noted above; correct and disclosed."
+  },
+  {
+    "id": "LENDER-TX-LENDERS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "mortgage lenders in Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=Texas"
+    ],
+    "appliedConditions": [
+      "geography=TX",
+      "entityClass=mortgage_lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 1376,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-TX-LENDERS",
+    "notes": "Correct."
+  },
+  {
+    "id": "LENDER-TX-LENDERS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "mortgage lenders in Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=Texas"
+    ],
+    "appliedConditions": [
+      "geography=TX",
+      "mode=count"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask count mode"
+    ],
+    "resultClass": "count",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 property-geography",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "Not lenders headquartered here and not licensing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-TX-LENDERS",
+    "notes": "Correct, disclosed."
+  },
+  {
+    "id": "LENDER-NJ-ORIGINATIONS",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "how many mortgage originations in New Jersey?",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey",
+      "metric=originations count"
+    ],
+    "appliedConditions": [
+      "geography=NJ",
+      "entityClass=hmda_reporting_institution"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "Most is a raw count, not best, safest, or recommended.",
+      "HMDA is a 2025 reporting vintage, not current 2026 lending."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-NJ-ORIGINATIONS",
+    "notes": "776 is presented as a per-institution row count on this surface (list of 776 reporting institutions), not literally 'total origination count' -- consistent with the entityClass=hmda_reporting_institution framing, not misleading."
+  },
+  {
+    "id": "LENDER-NJ-ORIGINATIONS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "how many mortgage originations in New Jersey?",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey",
+      "metric=originations count"
+    ],
+    "appliedConditions": [
+      "geography=NJ",
+      "mode=count"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask count mode"
+    ],
+    "resultClass": "count",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 property-geography",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA geography is the property/census location tied to the application — not lender headquarters, branch location, or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-NJ-ORIGINATIONS",
+    "notes": "Correctly answers the literal count question."
+  },
+  {
+    "id": "LENDER-FL-DENIALS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "institution-level denials in Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "state=Florida",
+      "action=denial",
+      "grain=institution-level"
+    ],
+    "appliedConditions": [
+      "geography=FL",
+      "actionTaken=denial"
+    ],
+    "unresolvedConditions": [
+      "institution-level denial count grain not directly supported"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask count mode"
+    ],
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 denials",
+    "sourceAsOf": "unavailable (reporting year unresolved for this grain)",
+    "limitations": [
+      "Some requested geography or count conditions are not supported by this source. Edit the request or select a supported state/action; no broader count was substituted."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-FL-DENIALS",
+    "notes": "Correctly disclosed as needing clarification rather than fabricating a count or silently substituting a different grain. No false zero."
+  },
+  {
+    "id": "LENDER-NJ-DENIALS",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "which institutions had denials in New Jersey",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "state=New Jersey",
+      "action=denial",
+      "ranked by institution"
+    ],
+    "appliedConditions": [
+      "geography=NJ",
+      "actionTaken=denial",
+      "requestedMetric=most"
+    ],
+    "unresolvedConditions": [
+      "ranked institution-level denial listing not directly available"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask entity mode"
+    ],
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 denials",
+    "sourceAsOf": "not selected",
+    "limitations": [
+      "Some requested geography or count conditions are not supported by this source."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-NJ-DENIALS",
+    "notes": "Same pattern as LENDER-FL-DENIALS: honest clarification, no fabricated ranking."
+  },
+  {
+    "id": "LENDER-BROWARD-PB-COMPARE",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "compare mortgage originations in Broward and Palm Beach",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "county=Broward",
+      "county=Palm Beach",
+      "comparison"
+    ],
+    "appliedConditions": [
+      "geography=Broward County, Florida only (single-valued)"
+    ],
+    "unresolvedConditions": [
+      "two-county comparison not executed at the parent"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [],
+    "resultClass": "CLARIFICATION",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [
+      "This question needs explanation or scope clarification before specialist research can run."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-BROWARD-PB-COMPARE",
+    "notes": "R1-016 confirmed this is DELIBERATE, golden-tested behavior (ask-intel-v3-corpus.ts:193, forbiddenBehaviors:['SPECIALIST_EXECUTION']) -- Ask parent's geography is single-valued and cannot safely represent a two-county comparison, so blocking with disclosure is correct, not a regression. Confirmed still holding, not a blocker. Worth noting as a non-blocking enhancement opportunity given the direct specialist (see below) handles true two-county comparisons natively and correctly."
+  },
+  {
+    "id": "LENDER-BROWARD-PB-COMPARE",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "compare mortgage originations in Broward and Palm Beach",
+    "grade": "PASS",
+    "requestedConditions": [
+      "county=Broward",
+      "county=Palm Beach",
+      "comparison"
+    ],
+    "appliedConditions": [
+      "geography.county=Broward",
+      "geography.compareCounty=Palm Beach",
+      "mode=comparison"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask comparison mode"
+    ],
+    "resultClass": "comparison",
+    "resultCount": null,
+    "sourceFamily": "HMDA 2025 county-grain property geography",
+    "sourceAsOf": "HMDA 2025",
+    "limitations": [
+      "Same vintage and county grain. This is not which county is better. Volume reflects reporting and housing activity, not lender quality."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-BROWARD-PB-COMPARE",
+    "notes": "The specialist genuinely supports true simultaneous two-county comparison with correct disclosures. This confirms the Ask-parent-side limitation above is a parent capability gap (single-valued geography field), not a specialist limitation -- consistent with capability-registry.ts's comparison:'live' claim for lender."
+  },
+  {
+    "id": "LENDER-VERIFY",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "how do I verify a mortgage lender is licensed?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "how-to guidance on verifying licensing"
+    ],
+    "appliedConditions": [],
+    "unresolvedConditions": [
+      "not a supported deterministic Ask query"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask fail_closed"
+    ],
+    "resultClass": "fail_closed",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [
+      "That question is not a supported deterministic Ask query. Try a count, Florida or county property geography, an origination ranking, complaint coverage, or a definition."
+    ],
+    "nextActions": [
+      "Try a count, geography, ranking, complaint coverage, or definition query"
+    ],
+    "evidencePointer": "raw-direct-results.json#LENDER-VERIFY",
+    "notes": "Fail-closed with genuinely useful redirect guidance, not a dead-end blank refusal."
+  },
+  {
+    "id": "LENDER-MLO-BRANCH",
+    "surface": "direct",
+    "hub": "lender",
+    "query": "mortgage loan officer branch near me",
+    "grade": "PASS",
+    "requestedConditions": [
+      "MLO/branch-level lookup"
+    ],
+    "appliedConditions": [],
+    "unresolvedConditions": [
+      "MLO/branch is a separate, unsupported identity grain"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender-ask-v1 GET /api/ask fail_closed"
+    ],
+    "resultClass": "fail_closed",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [
+      "This public research experience covers lender institutions. NMLS person/MLO and branch identifiers are separate identity grains and are not silently treated as institutions."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#LENDER-MLO-BRANCH",
+    "notes": "Exactly matches the required invariant: MLO/branch is never silently treated as an institution."
+  },
+  {
+    "id": "LENDER-ROCKET-LICENSED",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "Is Rocket actually licensed in Florida or am I only seeing HMDA activity?",
+    "grade": "PASS",
+    "requestedConditions": [
+      "distinguish licensing status from HMDA activity for Rocket in Florida"
+    ],
+    "appliedConditions": [
+      "geography=FL extracted despite trailing clause",
+      "entityClass=hmda_reporting_institution"
+    ],
+    "unresolvedConditions": [
+      "licensing status itself is not answered -- correctly, since it's out of grain"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 1794,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-ROCKET-LICENSED",
+    "notes": "Grain-confusion probe handled correctly: the geography parser strips the trailing clause down to 'Florida', and the response explicitly reiterates the HMDA-is-not-licensing disclosure, directly answering the user's real underlying concern without claiming licensing status it can't establish."
+  },
+  {
+    "id": "LENDER-NJ-PARAPHRASE",
+    "surface": "ask",
+    "hub": "lender",
+    "query": "Which NJ mortgage companies show up in your current lending data?",
+    "grade": "PASS",
+    "requestedConditions": [
+      "state=New Jersey",
+      "entity class=mortgage lender",
+      "casual paraphrase"
+    ],
+    "appliedConditions": [
+      "geography=NJ (extracted from 'your current lending data' fallback path)",
+      "entityClass=mortgage_lender"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": [
+      "lender specialist-execution/v2 cohort"
+    ],
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "HMDA 2025 property-geography (via lender specialist)",
+    "sourceAsOf": "HMDA 2025 reporting vintage",
+    "limitations": [
+      "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#LENDER-NJ-PARAPHRASE",
+    "notes": "Fresh paraphrase without regulator terminology still correctly resolves to the same NJ cohort as the canonical phrasing."
+  },
+  {
+    "id": "CROSS-NAME-MULTI-HUB",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "National Trust Insurance Group",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "exact/specific company name resolution"
+    ],
+    "appliedConditions": [
+      "planner correctly recognized ENTITY_LOOKUP, primaryHub=insurance"
+    ],
+    "unresolvedConditions": [
+      "entity name never threaded into the actual specialist request"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 82071,
+    "sourceFamily": "specialist-execution/v2 (insurancetrusthub.com)",
+    "sourceAsOf": "not disclosed",
+    "limitations": [
+      "Person, agency, and legal insurer stay separate classes.",
+      "(11 total limitations, none disclosing that the name filter was dropped)"
+    ],
+    "nextActions": [
+      "browse 10 displayed candidates"
+    ],
+    "evidencePointer": "raw-ask-results.json#CROSS-NAME-MULTI-HUB",
+    "notes": "BLOCKER-INSURANCE-01. A specific company-name search returns 82,071 total matching agency records -- essentially the entire agency population -- with zero of the top 3 displayed candidates ((HORN) HOUSE OF INSURANCE & BONDS LLC, (MIA) MULTIPLE INSURANCE ASSOCIATE CORPORATION, &PARTNERS LLC) bearing any relation to 'National Trust Insurance Group'. Root cause confirmed by direct code inspection: lib/guided-research/session.ts's insuranceIntent block (createUnscopedGuidedSession) unconditionally sets session.insuranceResearchMode='cohort' whenever session.identifier is unset -- there is NO identity-name extraction path for insurance at all (unlike lender/investor, which at least attempt a 'named X' regex, and unlike move, fixed in R1-016 to use plan.entityName). Direct-call confirmation: createGuidedSession('National Trust Insurance Group') returns {hub:'insurance', insuranceResearchMode:'cohort', entityClass:'agency'} with identityName undefined."
+  },
+  {
+    "id": "INSURANCE-ZIP-33441",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "insurance agencies in ZIP 33441",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "ZIP-33441-scoped agency directory"
+    ],
+    "appliedConditions": [
+      "hub correctly routed to insurance"
+    ],
+    "unresolvedConditions": [
+      "ZIP 33441 constraint never applied to the actual specialist request"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 82071,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "not disclosed",
+    "limitations": [
+      "82,071 public-safe agency records match. (no disclosure that the ZIP filter was silently dropped)"
+    ],
+    "nextActions": [
+      "browse 10 displayed candidates"
+    ],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-ZIP-33441",
+    "notes": "Same root cause as BLOCKER-INSURANCE-01 (CROSS-NAME-MULTI-HUB), confirmed to be broader than an entity-name-only defect: createGuidedSession('insurance agencies in ZIP 33441') returns session.geography=undefined -- the ZIP is never captured at all -- versus the direct specialist (insurance-ask-v1), which correctly parses this exact phrasing into {mode:'directory', directoryZip:'33441', coverageState:'PARTIAL'}. The Ask parent silently discards the geography constraint entirely and falls back to an unscoped nationwide agency cohort. This confirms BLOCKER-INSURANCE-01 is a systemic gap in lib/guided-research/session.ts's insurance-intent block: it extracts neither entity name NOR geography for the vast majority of natural phrasings, defaulting to a full unconstrained 'agency' cohort browse whenever none of its few hardcoded CLARIFY-trigger regexes match."
+  },
+  {
+    "id": "ID-NAIC-POS",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "NAIC code 10064",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "exact NAIC identifier resolution"
+    ],
+    "appliedConditions": [
+      "planner correctly parsed identifier type=naic_company_code, value=10064 (plan.identifier is correct)"
+    ],
+    "unresolvedConditions": [
+      "the correct value is lost again downstream before the specialist call"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "INVALID_QUERY",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "NAIC Company Code must contain 3–5 digits. (this is Ask's own validation incorrectly rejecting a valid, specialist-confirmed-resolvable code)"
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NAIC-POS",
+    "notes": "BLOCKER-CROSS-02. Direct insurance-ask-v1 resolves NAIC 10064 correctly to 'CITIZENS PROP INS CORP' (terminalState=RESULTS). Ask parent rejects the identical, specialist-confirmed-valid code as invalid. Root cause confirmed by direct regex testing: lib/guided-research/session.ts's labeledIdentifier regex (`/\\b(CRD|NPN|NAIC|NMLS|LEI)\\s*#?\\s*([A-Z0-9-]+)\\b/i`) greedily captures the word immediately after the label instead of skipping filler words -- 'NAIC code 10064'.match(...) yields {type:'NAIC', value:'code'}, silently substituting the literal word 'code' for the real value '10064' before any specialist call is made. This is a request-corruption bug, not a specialist limitation. CONFIRMED TO GENERALIZE beyond NAIC: the same regex produces {type:'NPN',value:'number'} for 'NPN number 20000635', {type:'CRD',value:'number'} for 'CRD number 166089', and {type:'NMLS',value:'number'} for 'NMLS number 3030' -- i.e. this defect structurally affects every identifier family whenever a natural filler word ('number', 'code') appears between the label and the digits, not just NAIC. Only the NAIC case was verified end-to-end against a live specialist in this sweep; the others are confirmed at the regex-parsing level but not re-verified against live specialist responses."
+  },
+  {
+    "id": "ID-NAIC-POS",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "NAIC code 10064",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact NAIC identifier"
+    ],
+    "appliedConditions": [
+      "exact match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "RESULTS",
+    "resultCount": 1,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NAIC-POS",
+    "notes": "Direct specialist resolves this exact NAIC code correctly, proving the Ask-parent failure above is a parent-side request-corruption bug, not a data gap."
+  },
+  {
+    "id": "ID-NPN-POS",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "NPN 20000635",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact NPN identifier"
+    ],
+    "appliedConditions": [
+      "exact identifier parsed and passed through correctly (unlike the NAIC case, no filler word present)"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_CONFIDENT_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Person, agency, and legal insurer stay separate classes."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NPN-POS",
+    "notes": "Corpus curation note, not a defect: this NPN was carried forward from an earlier ticket's baseline list under the assumption it was a positive/hit case, but it currently returns NO_MATCH on the direct specialist too (terminalState=NO_MATCH) -- both surfaces agree honestly, so there is no parent/specialist disagreement here, just a stale corpus label. Re-labeled as a miss case for future tickets."
+  },
+  {
+    "id": "ID-NPN-POS",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "NPN 20000635",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact NPN identifier"
+    ],
+    "appliedConditions": [
+      "honest no-match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NPN-POS",
+    "notes": "Consistent honest no-match, agrees with ask surface."
+  },
+  {
+    "id": "ID-NPN-MISS",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "NPN 88887777",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact-miss identifier"
+    ],
+    "appliedConditions": [
+      "honest no-confident-match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_CONFIDENT_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Person, agency, and legal insurer stay separate classes."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-NPN-MISS",
+    "notes": "Correct exact-miss handling, matches direct."
+  },
+  {
+    "id": "ID-NPN-MISS",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "NPN 88887777",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact-miss identifier"
+    ],
+    "appliedConditions": [
+      "honest no-match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-NPN-MISS",
+    "notes": "Correct."
+  },
+  {
+    "id": "ID-NAIC-BAREDIGITS",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "10064",
+    "grade": "PASS",
+    "requestedConditions": [
+      "ambiguous bare-digit identifier handling"
+    ],
+    "appliedConditions": [
+      "correctly treated as ambiguous, not auto-assigned to any hub/identifier family"
+    ],
+    "unresolvedConditions": [
+      "which identifier family the digits represent"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [
+      "provide entity name or a labeled identifier"
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-NAIC-BAREDIGITS",
+    "notes": "Correctly preserves ambiguity across NAIC/USDOT/NMLS/CCN/CRD/NPN per the collidingBareDigitsNote design; zero unauthorized dispatch."
+  },
+  {
+    "id": "INSURANCE-AGENCY-NEARME",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "insurance agency near me",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "service-territory/proximity search"
+    ],
+    "appliedConditions": [
+      "correctly disclosed as unsupported"
+    ],
+    "unresolvedConditions": [
+      "service territory genuinely unsupported"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED_CAPABILITY",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Service territory and product availability are not supported by credential geography."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-AGENCY-NEARME",
+    "notes": "Correct fail-closed, matches direct's fail_closed. No fake ZIP guess."
+  },
+  {
+    "id": "INSURANCE-AGENCY-NEARME",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurance agency near me",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "service-territory/proximity search"
+    ],
+    "appliedConditions": [
+      "fail-closed"
+    ],
+    "unresolvedConditions": [
+      "service territory genuinely unsupported"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "fail_closed",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-AGENCY-NEARME",
+    "notes": "Consistent with ask surface."
+  },
+  {
+    "id": "INSURANCE-ZIP-33441",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurance agencies in ZIP 33441",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "ZIP-scoped directory"
+    ],
+    "appliedConditions": [
+      "correctly parsed ZIP=33441, directory handoff mode"
+    ],
+    "unresolvedConditions": [
+      "zero results in this specific ZIP (data limitation, not a false zero -- coverageState=PARTIAL discloses this honestly)"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "DIRECTORY_HANDOFF",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-ZIP-33441",
+    "notes": "Direct specialist correctly parses and applies the ZIP constraint -- proves the Ask-parent failure above is parent-side, not a specialist gap."
+  },
+  {
+    "id": "INSURANCE-BOCA-NOZIP",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurance agencies in Boca Raton",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "city-named directory search without ZIP"
+    ],
+    "appliedConditions": [
+      "fail-closed rather than guessing a ZIP"
+    ],
+    "unresolvedConditions": [
+      "directory requires ZIP grain"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "fail_closed",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-BOCA-NOZIP",
+    "notes": "Correctly declines rather than silently guessing/mapping a city to an arbitrary ZIP."
+  },
+  {
+    "id": "INSURANCE-PRODUCT-ZIP",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "life insurance agents in ZIP 33441",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "ZIP directory with product/LOA context"
+    ],
+    "appliedConditions": [
+      "directory handoff mode, ZIP applied"
+    ],
+    "unresolvedConditions": [
+      "product-specific (life) filtering within the ZIP directory not confirmed populated"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "DIRECTORY_HANDOFF",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-PRODUCT-ZIP",
+    "notes": "Same directory-handoff pattern as the plain ZIP case; no evidence of product-context being fabricated or misapplied."
+  },
+  {
+    "id": "INSURANCE-NAMED-AGENCY",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "State Farm agency in Boca Raton",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "named-agency + city search"
+    ],
+    "appliedConditions": [
+      "fail-closed rather than a false match"
+    ],
+    "unresolvedConditions": [
+      "city-grain agency search unsupported"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "fail_closed",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-NAMED-AGENCY",
+    "notes": "No false positive fabricated for an unsupported city-grain named search."
+  },
+  {
+    "id": "INSURANCE-NAMED-INSURER",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "Progressive Insurance Company",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact legal-insurer name resolution"
+    ],
+    "appliedConditions": [
+      "honest no-match, entity class correctly set to insurer"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Agency graph names and published Wave-1 legal-insurer names are searched separately."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-NAMED-INSURER",
+    "notes": "Direct specialist correctly scopes this to the insurer class and returns an honest miss rather than a cross-class fabrication."
+  },
+  {
+    "id": "INSURANCE-CREDENTIALED-FL",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurance agents credentialed in Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "credential-jurisdiction geography"
+    ],
+    "appliedConditions": [
+      "correctly disclosed as a capability limitation, distinct disclosure text from office/domicile"
+    ],
+    "unresolvedConditions": [
+      "credential jurisdiction cohort browse unsupported at this grain"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "CAPABILITY_LIMITATION",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Credential jurisdiction is not office location or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-CREDENTIALED-FL",
+    "notes": "Part of the credential/location/domicile trio -- graded together, see INSURANCE-LOCATED-FL and INSURANCE-DOMICILED-FL notes."
+  },
+  {
+    "id": "INSURANCE-LOCATED-FL",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurance agents located in Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "office-location geography"
+    ],
+    "appliedConditions": [
+      "correctly disclosed as unsupported, same disclosure text as credential-jurisdiction case"
+    ],
+    "unresolvedConditions": [
+      "office-location grain unsupported"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "CAPABILITY_LIMITATION",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Credential jurisdiction is not office location or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-LOCATED-FL",
+    "notes": "All three of CREDENTIALED-FL/LOCATED-FL/DOMICILED-FL return the identical CAPABILITY_LIMITATION disclosure text distinguishing credential jurisdiction from office location, domicile, and service territory -- the specialist honestly declines all three rather than conflating them or fabricating a false equivalence. This is the correct behavior: none of the three grains are silently substituted for another; the product simply cannot execute any of them at cohort-browse grain and says so identically and accurately for each. Not a blocker."
+  },
+  {
+    "id": "INSURANCE-DOMICILED-FL",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "insurers domiciled in Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "legal-domicile geography"
+    ],
+    "appliedConditions": [
+      "correctly disclosed as unsupported"
+    ],
+    "unresolvedConditions": [
+      "domicile grain unsupported"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "CAPABILITY_LIMITATION",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Credential jurisdiction is not office location or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-DOMICILED-FL",
+    "notes": "See INSURANCE-LOCATED-FL notes -- part of the same correctly-non-conflated trio."
+  },
+  {
+    "id": "INSURANCE-LOA",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "what lines of authority does NPN 20000635 have",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "LOA evidence for a specific NPN"
+    ],
+    "appliedConditions": [
+      "honest no-match (this NPN doesn't resolve at all, per ID-NPN-POS)"
+    ],
+    "unresolvedConditions": [
+      "LOA data for this identifier"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Line of authority is not carrier appointment."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-LOA",
+    "notes": "Cannot fully evaluate the LOA!=appointment invariant against real data since this NPN doesn't resolve; the disclosure text itself correctly states the distinction. Recommend re-running against a confirmed-resolvable NPN in a future ticket."
+  },
+  {
+    "id": "INSURANCE-APPOINTMENT",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "is NPN 20000635 appointed with any carrier",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "appointment evidence for a specific NPN"
+    ],
+    "appliedConditions": [
+      "honest no-match"
+    ],
+    "unresolvedConditions": [
+      "appointment data for this identifier"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Line of authority is not carrier appointment."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-APPOINTMENT",
+    "notes": "Same limitation as INSURANCE-LOA -- same non-resolvable test NPN. Not a false claim of appointment status either way."
+  },
+  {
+    "id": "INSURANCE-SERVICE-TERRITORY-WORDING",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "which agents serve my ZIP code 33441",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "service-territory phrased as a ZIP directory request"
+    ],
+    "appliedConditions": [
+      "treated as a directory handoff, not a false service-territory claim"
+    ],
+    "unresolvedConditions": [
+      "service-territory itself remains unestablished"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "DIRECTORY_HANDOFF",
+    "resultCount": 0,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-SERVICE-TERRITORY-WORDING",
+    "notes": "'Serve' language did not get treated as proof of service-territory coverage -- correctly downgraded to a plain ZIP directory lookup."
+  },
+  {
+    "id": "INSURANCE-NOTACQUIRED-STATE",
+    "surface": "direct",
+    "hub": "insurance",
+    "query": "official P&C line-of-authority for Florida agencies",
+    "grade": "PARTIAL",
+    "requestedConditions": [
+      "explicit disclosure that official Florida P&C LOA rows are NOT_ACQUIRED (per prior-ticket capability notes)"
+    ],
+    "appliedConditions": [
+      "returned a generic 20-row Florida agency entity search instead"
+    ],
+    "unresolvedConditions": [
+      "whether P&C-LOA-specific data is genuinely acquired or not was not clearly disclosed either way"
+    ],
+    "selectedHubs": [
+      "insurance"
+    ],
+    "actualCalls": 1,
+    "resultClass": "RESULTS",
+    "resultCount": 20,
+    "sourceFamily": "insurance-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Person, agency, and legal insurer stay separate classes."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INSURANCE-NOTACQUIRED-STATE",
+    "notes": "Not misleading (no false zero, no false P&C claim visible in the sampled limitations/headline), but this test was designed to probe the NOT_ACQUIRED-vs-zero invariant specifically and the response doesn't clearly confirm or deny whether P&C LOA is now acquired for Florida agencies -- inconclusive rather than a confirmed pass or fail. Recommend a follow-up with a query more explicitly targeting P&C LOA evidence (not just entity search) in a future ticket."
+  },
+  {
+    "id": "INSURANCE-APPOINTMENT-PARAPHRASE",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "Does this insurance agent have an appointment with State Farm or just a life license?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "deictic reference to an unnamed agent"
+    ],
+    "appliedConditions": [
+      "correctly recognized as missing identity, zero unauthorized dispatch"
+    ],
+    "unresolvedConditions": [
+      "which specific agent is being asked about"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [
+      "provide the agent's name or NPN"
+    ],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-APPOINTMENT-PARAPHRASE",
+    "notes": "'This insurance agent' with no prior identity established correctly triggers ENTITY_LOOKUP_MISSING_IDENTITY -- R1-008's deictic-reference gate held, zero specialist calls."
+  },
+  {
+    "id": "INSURANCE-ZIP-PARAPHRASE",
+    "surface": "ask",
+    "hub": "insurance",
+    "query": "I need an agency around 33441, but don't tell me they serve my address unless the source proves it.",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "ZIP-scoped agency search with an explicit anti-fabrication instruction"
+    ],
+    "appliedConditions": [
+      "correctly recognized as an unsupported service-territory/product-availability request and blocked before dispatch"
+    ],
+    "unresolvedConditions": [
+      "ZIP-scoped listing itself was not executed either (see BLOCKER-INSURANCE-01 -- ZIP constraints are not applied even when execution IS allowed, so this being blocked outright is arguably the safer of two bad outcomes)"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "UNSUPPORTED_CAPABILITY",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Service territory and product availability are not supported by credential geography."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INSURANCE-ZIP-PARAPHRASE",
+    "notes": "The user's explicit request ('don't tell me they serve my address unless proven') is honored by construction -- the system never claims service-territory coverage. Graded PASS_SAFE_LIMITATION rather than BLOCKER_FAIL because this specific phrasing happened to route through the CLARIFY path rather than the cohort-execute path that triggers BLOCKER-INSURANCE-01; but see INSURANCE-ZIP-33441 above for a phrasing of the same underlying request that DOES hit the unscoped-cohort blocker."
+  },
+  {
+    "id": "ID-CCN-POS",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "CMS CCN 455799",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CCN identity"
+    ],
+    "appliedConditions": [
+      "identifier=cms_ccn:455799"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "EXACT_IDENTITY",
+    "resultCount": 1,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing.",
+      "CMS-reported ratings are not TrustHub recommendations."
+    ],
+    "nextActions": [
+      "Open SeniorTrustHub profile"
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-CCN-POS",
+    "notes": "Exact identity, correct facility (AUSTIN WELLNESS & REHABILITATION), no fabrication, proper limitations attached."
+  },
+  {
+    "id": "ID-CCN-POS",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "CMS CCN 455799",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CCN identity"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:455799"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "identifier",
+    "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": "2026-08-01",
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CCN-POS",
+    "notes": "Direct specialist matches Ask parent exactly (same facility, same CCN)."
+  },
+  {
+    "id": "ID-CCN-MISS",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "CMS CCN 000000",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CCN identity"
+    ],
+    "appliedConditions": [
+      "identifier=cms_ccn:000000"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "ZERO_MATCHING_ROWS",
+    "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "No current indexed provider matched this CCN. That is not proof the number is unused elsewhere."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-CCN-MISS",
+    "notes": "Genuine miss correctly rendered as ZERO_MATCHING_ROWS with an honest disclaimer, not a false hit and not an unqualified zero."
+  },
+  {
+    "id": "ID-CCN-MISS",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "CMS CCN 000000",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CCN identity"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:000000"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CCN-MISS",
+    "notes": "Matches Ask parent (both correctly report no match, terminalState NO_MATCH)."
+  },
+  {
+    "id": "ID-CCN-BARE6",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "455799",
+    "grade": "PASS",
+    "requestedConditions": [
+      "identify by bare digits"
+    ],
+    "appliedConditions": [],
+    "unresolvedConditions": [
+      "entityName or recognized identifier"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "ENTITY_LOOKUP_MISSING_IDENTITY",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [
+      "Provide the entity name or a recognized source identifier before specialist research runs."
+    ],
+    "evidencePointer": "raw-ask-results.json#ID-CCN-BARE6",
+    "notes": "Bare 6-digit string correctly stays ambiguous / fail-closed rather than being guessed as a CCN. Zero specialist calls, matching R1-008's bare-digits collision invariant."
+  },
+  {
+    "id": "SENIOR-AUSTIN-GENERIC",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "senior homes in Austin Texas",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "geography=Austin,TX"
+    ],
+    "appliedConditions": [
+      "geography preserved in clarification"
+    ],
+    "unresolvedConditions": [
+      "providerClass"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 0,
+    "resultClass": "CLARIFICATION_REQUIRED",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [
+      "Which care setting would you like to research?"
+    ],
+    "evidencePointer": "raw-ask-results.json#SENIOR-AUSTIN-GENERIC",
+    "notes": "Deliberate, certified ambiguous-class clarification per R1-008 (nursing home vs home health vs hospice). Geography (Austin, Texas) is correctly retained in the plan for the follow-up. Not a blocker per spec section 0."
+  },
+  {
+    "id": "SENIOR-AUSTIN-NURSING",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "nursing homes in Austin Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "providerClass=nursing_home",
+      "geography=Austin,TX"
+    ],
+    "appliedConditions": [
+      "providerClass=nursing_home",
+      "geography=Austin,TX"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "RESEARCH_COHORT",
+    "resultCount": 25,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Recorded provider location is not a radius search or verified service area."
+    ],
+    "nextActions": [
+      "Open SeniorTrustHub profile (x20 shown)"
+    ],
+    "evidencePointer": "raw-ask-results.json#SENIOR-AUSTIN-NURSING",
+    "notes": "Both class and geography correctly preserved and applied; correct disclosure that recorded location != service area."
+  },
+  {
+    "id": "SENIOR-AUSTIN-NURSING",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "nursing homes in Austin Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "providerClass=nursing_home",
+      "geography=Austin,TX"
+    ],
+    "appliedConditions": [
+      "providerClass=nursing_home",
+      "geography=Austin,TX"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 20,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-AUSTIN-NURSING",
+    "notes": "Direct specialist and Ask parent counts are close (20 shown page 1 direct vs 25 total / 20 shown via Ask) -- consistent, no material widening."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-UNSPEC",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "Who owns this nursing home?",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "resolve deictic 'this nursing home' to a specific facility before answering ownership"
+    ],
+    "appliedConditions": [
+      "entire question text used as a literal company-name search"
+    ],
+    "unresolvedConditions": [
+      "facility identity was never actually resolved"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "RESEARCH_COHORT (mislabeled as an identity match)",
+    "resultCount": 25,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "None surfaced explaining that no specific facility was identified"
+    ],
+    "nextActions": [
+      "none offered to clarify which facility is meant"
+    ],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNERSHIP-UNSPEC; live re-run: START then SET_GEOGRAPHY 'Austin, Texas' -> resultState SUPPORTED_RESULTS, consumerHeading 'Multiple published identities', total 25",
+    "notes": "REPRODUCED LIVE, NOT JUST FROM THE HARNESS DUMP. 'this nursing home' is a deictic reference (DEICTIC_ENTITY in research-planner.ts lists 'facility' but not the literal phrase 'nursing home', so it slips through). The literal sentence 'Who owns this nursing home' becomes plan.entityName and session.identityName verbatim. After supplying geography it does NOT ask which facility is meant and does NOT surface any ownership data (the original request) -- it silently falls back to a generic 25-facility Austin cohort browse, framed as 'Multiple published identities' matching a nonsense query string. This silently drops both the deictic-identity requirement and the ownership evidence request. Confirmed identical behavior for SENIOR-OWNS-PARAPHRASE. Likely code boundary: lib/network/research-planner.ts DEICTIC_ENTITY regex (missing 'nursing home' keyword) and/or lib/guided-research/session.ts's identityName assignment not validating that the extracted 'name' is plausible before treating it as a literal entity search."
+  },
+  {
+    "id": "SENIOR-OWNS-PARAPHRASE",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "Can you tell me who owns this nursing home?",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "resolve deictic 'this nursing home' to a specific facility before answering ownership"
+    ],
+    "appliedConditions": [
+      "entire question text used as a literal company-name search"
+    ],
+    "unresolvedConditions": [
+      "facility identity was never actually resolved"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 0,
+    "resultClass": "COLLECT (identityName set to the whole sentence)",
+    "resultCount": 0,
+    "sourceFamily": null,
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNS-PARAPHRASE",
+    "notes": "Same defect as SENIOR-OWNERSHIP-UNSPEC (identityName = 'Can you tell me who owns this nursing home' verbatim); paraphrase confirms this is a real DEICTIC_ENTITY regex gap, not a one-off string fluke. See SENIOR-OWNERSHIP-UNSPEC for the full reproduction and code-boundary note."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-EXACT",
+    "surface": "ask",
+    "hub": "senior",
+    "query": "Who owns the nursing home with CMS CCN 455799?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact CCN identity",
+      "ownership evidence"
+    ],
+    "appliedConditions": [
+      "identifier=cms_ccn:455799"
+    ],
+    "unresolvedConditions": [
+      "ownership-specific evidence beyond CMS star ratings"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "EXACT_IDENTITY",
+    "resultCount": 1,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing.",
+      "CCN match is canonical identity for that class directory."
+    ],
+    "nextActions": [
+      "overallStars/staffingStars/inspectionStars refinements",
+      "Open SeniorTrustHub profile"
+    ],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNERSHIP-EXACT",
+    "notes": "When the facility IS unambiguously identified via a real CCN, the system behaves correctly -- exact identity resolved, no fabricated ownership claim. Contrast with SENIOR-OWNERSHIP-UNSPEC's deictic-without-identifier failure: this confirms the defect is specifically the deictic-resolution gap, not identifier handling generally."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-EXACT",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "Who owns the nursing home with CMS CCN 455799?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact CCN identity",
+      "ownership evidence"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:455799",
+      "facilityEvidence=ownership"
+    ],
+    "unresolvedConditions": [
+      "no ownership-specific field in the evidence payload"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": "2026-08-01",
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-OWNERSHIP-EXACT",
+    "notes": "Specialist echoes facilityEvidence:'ownership' in the query but the evidence array returned is generic CMS star ratings, not an ownership record. coverageState:'PARTIAL' plus the standard 'missing evidence is not clean' limitation is an honest signal this data isn't available rather than a fabricated answer -- acceptable safe limitation, not a blocker."
+  },
+  {
+    "id": "SENIOR-HOUSTON-HH",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "home health agencies in Houston Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "providerClass=home_health",
+      "geography=Houston,TX"
+    ],
+    "appliedConditions": [
+      "providerClass=home_health",
+      "geography=Houston,TX"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 20,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-HOUSTON-HH",
+    "notes": "Correct class and geography applied, page 1 of 20 shown."
+  },
+  {
+    "id": "SENIOR-TAMPA-NH",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "nursing homes in Tampa Florida",
+    "grade": "PASS",
+    "requestedConditions": [
+      "providerClass=nursing_home",
+      "geography=Tampa,FL"
+    ],
+    "appliedConditions": [
+      "providerClass=nursing_home",
+      "geography=Tampa,FL"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 18,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-TAMPA-NH",
+    "notes": "Correct class and geography applied."
+  },
+  {
+    "id": "SENIOR-CHOW",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "has this nursing home changed ownership recently, CCN 455799",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact CCN identity",
+      "CHOW/change-of-ownership evidence"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:455799",
+      "facilityEvidence=ownership"
+    ],
+    "unresolvedConditions": [
+      "no explicit CHOW-dated field returned"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": null,
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-CHOW",
+    "notes": "No CHOW-specific data field is returned, only generic star ratings; the standing 'missing evidence is not clean' disclosure prevents this from being read as 'never changed ownership'. Honest limitation, not a blocker."
+  },
+  {
+    "id": "SENIOR-FINE",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "has CCN 455799 ever been fined",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact CCN identity",
+      "penalty/enforcement evidence"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:455799",
+      "facilityEvidence=penalty"
+    ],
+    "unresolvedConditions": [
+      "no explicit penalty-history field returned"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": null,
+    "limitations": [
+      "Missing source evidence is not zero, clean, or good standing."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-FINE",
+    "notes": "Same pattern as SENIOR-CHOW -- no penalty-specific data returned, but disclosure prevents a false 'never fined' reading. Not a blocker."
+  },
+  {
+    "id": "SENIOR-AMBIGUOUS-PROVIDER",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "tell me about Golden Living",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "identify 'Golden Living'"
+    ],
+    "appliedConditions": [
+      "entity search on raw phrase"
+    ],
+    "unresolvedConditions": [
+      "no facility resolved"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Name matches are candidates within their displayed class; no fuzzy identity merge across classes."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-AMBIGUOUS-PROVIDER",
+    "notes": "This is a raw colloquial phrase sent directly to the specialist's own API (fair test of what its own search box would show for the identical string) -- specialist correctly reports no match rather than fabricating a facility. Entity extraction from colloquial phrasing is the PARENT's job (research-planner.ts), not expected of the raw specialist contract."
+  },
+  {
+    "id": "SENIOR-ASSISTED-VA",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "assisted living facilities in Richmond Virginia",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "providerClass=assisted_living",
+      "geography=Richmond,VA"
+    ],
+    "appliedConditions": [
+      "geography=Richmond,VA"
+    ],
+    "unresolvedConditions": [
+      "providerClass=assisted_living is not a supported class"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Virginia assisted living is a DSS license class, not a CMS nursing-home directory. A complaint-related inspection is not a substantiated complaint."
+    ],
+    "nextActions": [
+      "Open the Virginia research page"
+    ],
+    "evidencePointer": "raw-direct-results.json#SENIOR-ASSISTED-VA",
+    "notes": "Correctly fail-closed (terminalState UNSUPPORTED) with an accurate explanation of why -- does NOT silently substitute Nursing Home data for the unsupported Assisted Living class. Exactly the safe behavior required."
+  },
+  {
+    "id": "SENIOR-ASSISTED-NY",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "assisted living in Buffalo New York",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "providerClass=assisted_living",
+      "geography=Buffalo,NY"
+    ],
+    "appliedConditions": [
+      "geography=Buffalo,NY"
+    ],
+    "unresolvedConditions": [
+      "providerClass=assisted_living is not a supported class"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Assisted living is not a CMS-certified class covered by this specialist."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-ASSISTED-NY",
+    "notes": "Same correct fail-closed pattern as SENIOR-ASSISTED-VA, no Nursing Home substitution."
+  },
+  {
+    "id": "SENIOR-MEMORYCARE-FL",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "memory care facilities in Orlando Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "providerClass=memory_care",
+      "geography=Orlando,FL"
+    ],
+    "appliedConditions": [
+      "geography=Orlando,FL"
+    ],
+    "unresolvedConditions": [
+      "providerClass=memory_care is not a supported class"
+    ],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub",
+    "sourceAsOf": null,
+    "limitations": [
+      "Memory care is not a CMS-certified class covered by this specialist."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-MEMORYCARE-FL",
+    "notes": "Same correct fail-closed pattern, no Nursing Home substitution."
+  },
+  {
+    "id": "SENIOR-RATINGS-VALID",
+    "surface": "direct",
+    "hub": "senior",
+    "query": "what is the star rating for CCN 455799",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CCN identity",
+      "star rating"
+    ],
+    "appliedConditions": [
+      "identifier=ccn:455799"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "senior"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)",
+    "sourceAsOf": "2026-08-01",
+    "limitations": [
+      "CMS-reported ratings are not TrustHub recommendations."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-RATINGS-VALID",
+    "notes": "Real numeric ratings returned (overall 1/5, staffing 2/5, inspection 1/5) -- integers in valid 1-5 range, no NaN, no suspicious literal '5' pattern across all three metrics (they differ, which is itself evidence against a hardcoded/stubbed value)."
+  },
+  {
+    "id": "CONTRACTOR-BROWARD-ROOFERS",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "roofers in Broward County",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "Broward County roofer cohort browse"
+    ],
+    "appliedConditions": [
+      "planner correctly recognized roofing_contractor + Broward geography (matches R1-016-era certified behavior)"
+    ],
+    "unresolvedConditions": [
+      "specialist response is rejected outright before any data is read"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "BACKEND_UNAVAILABLE",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2 (contractortrusthub.com)",
+    "sourceAsOf": "n/a (response discarded)",
+    "limitations": [
+      "ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWARD-ROOFERS; live re-run confirms error.code=contract_version_mismatch",
+    "notes": "BLOCKER-CONTRACTOR-01. A certified, previously-working query (Broward roofers was already validated in R1-008/R1-016-era testing) now fails completely on the real /ask execution path with error.code='contract_version_mismatch'. Root cause confirmed by direct code inspection: lib/guided-research/specialists.ts hardcodes CONTRACTOR_CONTRACT_VERSION='2.1.0', CONTRACTOR_SCHEMA_FINGERPRINT, and CONTRACTOR_CONTRACT_FINGERPRINT as literal constants (lines 15-17), and line 252 rejects the entire specialist response with BACKEND_UNAVAILABLE unless the live ContractorTrustHub response echoes back an EXACT match on all three. The Contractor specialist (savitz25/contractor-trust-hub, main SHA f... at 2026-09-12) has evidently since changed its contract/schema, so every real cohort-browse request through this path is now unconditionally refused, regardless of whether the underlying data is fine. This is a complete functional outage for Contractor cohort-browse execution via the real production /ask page, not a partial degradation. Confirmed this is Contractor-specific and NOT a systemic FINANCIAL_SPECIALIST_LOCKS problem: live-checked Investor ('state-registered investment advisers in Wyoming') and Lender ('lenders in New Jersey') both still return SUPPORTED_RESULTS with no version-mismatch error, so Investor/Insurance/Lender's separate FINANCIAL_SPECIALIST_LOCKS constants are still current."
+  },
+  {
+    "id": "CONTRACTOR-TXGC-PARAPHRASE",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "Who regulates a general contractor in Texas if there isn't a statewide GC license?",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "how-to/policy guidance for Texas GC regulation"
+    ],
+    "appliedConditions": [
+      "planner routed to contractor/general_contractor"
+    ],
+    "unresolvedConditions": [
+      "specialist response rejected outright"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "BACKEND_UNAVAILABLE",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-TXGC-PARAPHRASE",
+    "notes": "Same BLOCKER-CONTRACTOR-01 root cause as CONTRACTOR-BROWARD-ROOFERS -- every Contractor query that reaches actual dispatch through this path currently fails the same way."
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-PARAPHRASE",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "Show me Broward roofers — I typed Browrd before.",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "Broward County roofer cohort browse"
+    ],
+    "appliedConditions": [
+      "planner correctly routed"
+    ],
+    "unresolvedConditions": [
+      "specialist response rejected outright"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "BACKEND_UNAVAILABLE",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWRD-PARAPHRASE",
+    "notes": "Third confirmed instance of BLOCKER-CONTRACTOR-01 -- every dispatch-reaching Contractor ask-surface case in this corpus hits the same version-lock failure."
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-TYPO",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "roofers in Browrd County",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "typo correction requires explicit acceptance before executing"
+    ],
+    "appliedConditions": [
+      "correctly blocked pre-dispatch pending confirmation"
+    ],
+    "unresolvedConditions": [
+      "would still hit BLOCKER-CONTRACTOR-01 if the user confirmed, since it never reaches that far in this run"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [
+      "confirm Broward correction"
+    ],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWRD-TYPO",
+    "notes": "This case never reaches dispatch (executionAllowed=false, correction-confirmation required first), so it does not itself hit BLOCKER-CONTRACTOR-01, but a confirmed correction almost certainly would (see CONTRACTOR-BROWARD-ROOFERS). Graded on its own narrow merits: the typo-acceptance gate itself is working correctly."
+  },
+  {
+    "id": "CONTRACTOR-HVAC-AUSTIN",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "HVAC contractors in Austin Texas",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "Austin/Texas HVAC cohort browse"
+    ],
+    "appliedConditions": [
+      "correctly consent-gated (city-to-state broadening, matches R1-016-certified Texas behavior)"
+    ],
+    "unresolvedConditions": [
+      "would also hit BLOCKER-CONTRACTOR-01 if consent were given, untested here"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-HVAC-AUSTIN",
+    "notes": "Blocked before dispatch on the same deliberate Texas consent-gate confirmed correct in R1-016 (no published county-level Texas data). Does not itself exercise BLOCKER-CONTRACTOR-01."
+  },
+  {
+    "id": "CONTRACTOR-FL-VERIFY-HOWTO",
+    "surface": "ask",
+    "hub": "contractor",
+    "query": "how do I verify a contractor license in Florida?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "how-to guidance, not a directory listing"
+    ],
+    "appliedConditions": [
+      "correctly classified HOW_TO, no specialist dispatch attempted"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (guidance path, not cohort dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-FL-VERIFY-HOWTO",
+    "notes": "Re-confirmed still correct per R1-016: HOW_TO intent does not attempt specialist dispatch at all, so it is unaffected by BLOCKER-CONTRACTOR-01. Live-fetched the HTML page directly (buildAskResearchRoute path, not guided-research) and it still renders real destinations (contractor.verify/contractor.ask/contractor.home)."
+  },
+  {
+    "id": "ID-CONTRACTOR-EXACT",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "Check contractor license CCC1332036.",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact credential resolution"
+    ],
+    "appliedConditions": [
+      "page rendered, no server error"
+    ],
+    "unresolvedConditions": [
+      "could not confirm exact-match content from static HTML fetch alone (JS-rendered)"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a (HTML-only, not independently confirmed)",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CONTRACTOR-EXACT",
+    "notes": "Contractor has no public JSON API; the direct-surface check here is a static HTML fetch which does not execute client-side JS, so the actual rendered specialist result could not be independently confirmed by this harness (a real browser render would be needed). Page returned HTTP 200 with no error text. Not graded PASS outright due to this test-coverage limitation."
+  },
+  {
+    "id": "CONTRACTOR-HVAC-DALLAS",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "HVAC contractors in Dallas Texas",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "Dallas/Texas HVAC cohort"
+    ],
+    "appliedConditions": [
+      "page rendered, no server error"
+    ],
+    "unresolvedConditions": [
+      "actual result content not independently confirmed (static HTML fetch, JS-rendered app)"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-HVAC-DALLAS",
+    "notes": "Same static-HTML-fetch limitation as ID-CONTRACTOR-EXACT."
+  },
+  {
+    "id": "CONTRACTOR-NJ-PLUMBERS",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "plumbers in New Jersey",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "NJ plumber cohort"
+    ],
+    "appliedConditions": [
+      "page rendered, no server error"
+    ],
+    "unresolvedConditions": [
+      "actual result content not independently confirmed"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-NJ-PLUMBERS",
+    "notes": "Same static-HTML-fetch limitation."
+  },
+  {
+    "id": "CONTRACTOR-TX-GC-POLICY",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "who regulates a general contractor in Texas if there isn't a statewide GC license?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "how-to/policy guidance, not a directory"
+    ],
+    "appliedConditions": [
+      "page rendered ('What do you want to find out?' guidance framing observed in static HTML)"
+    ],
+    "unresolvedConditions": [
+      "full guidance content not independently confirmed"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-TX-GC-POLICY",
+    "notes": "Static HTML shows a guidance-framed page shell, consistent with how-to handling rather than a directory dump, but full confirmation needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-BOOK-TOMORROW",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "book a roofer for tomorrow in Broward County",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "booking boundary preserved -- no fake reservation"
+    ],
+    "appliedConditions": [
+      "page rendered, no server error, no evidence of a fabricated booking confirmation"
+    ],
+    "unresolvedConditions": [
+      "full content not independently confirmed"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-BOOK-TOMORROW",
+    "notes": "No evidence of a fabricated booking capability in the static shell; full confirmation needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-CA-RECOVERY",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "contractor recovery fund in California",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "California-specific recovery-fund jurisdiction info"
+    ],
+    "appliedConditions": [
+      "page rendered with recovery-fund content"
+    ],
+    "unresolvedConditions": [
+      "exact jurisdiction-correctness of the content not independently confirmed beyond keyword presence"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-CA-RECOVERY",
+    "notes": "Page text contains 'Recovery Fund' content specific to the query; full jurisdiction-accuracy verification needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-AK-RECOVERY",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "contractor recovery fund in Alaska",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "honest disclosure if Alaska recovery-fund data is unsupported/unacquired"
+    ],
+    "appliedConditions": [
+      "page text contains both 'Recovery Fund' and 'UNSUPPORTED', suggesting an honest unsupported-state disclosure rather than fabricated Alaska-specific rules"
+    ],
+    "unresolvedConditions": [
+      "exact disclosure wording not fully confirmed beyond keyword presence"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-AK-RECOVERY",
+    "notes": "'UNSUPPORTED' keyword present alongside 'Recovery Fund' text is a positive signal that Alaska is honestly flagged as unsupported rather than answered with wrong/fabricated rules, but full content was not independently confirmed via a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-PLACE-IN-NAME",
+    "surface": "direct",
+    "hub": "contractor",
+    "query": "Broward Elite Roofing LLC",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "treat as an entity-name search, not a Broward-geography filter, despite 'Broward' appearing inside the company name"
+    ],
+    "appliedConditions": [
+      "page text contains both the full company name and 'Geography'/'no match' language, suggesting an entity-name search path was taken and returned no match rather than silently returning unrelated Broward County roofers"
+    ],
+    "unresolvedConditions": [
+      "not fully confirmed whether geography was ALSO incorrectly applied alongside the name search"
+    ],
+    "selectedHubs": [
+      "contractor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "n/a (auto-extraction flagged mentionsNoMatch=true)",
+    "resultCount": null,
+    "sourceFamily": "contractor's own /ask page",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#CONTRACTOR-PLACE-IN-NAME",
+    "notes": "Auto-extraction flagged 'no match' language on the page along with the full company name and 'Broward County' text -- consistent with the specialist correctly attempting an entity-name search for the whole LLC name (returning honest no-match for a likely-nonexistent company) rather than silently degrading to a plain Broward-geography cohort. Not fully confirmed via structured data (HTML-only hub); recommend a real-browser follow-up in a future ticket for higher confidence."
+  },
+  {
+    "id": "ID-CRD-POS",
+    "surface": "ask",
+    "hub": "investor",
+    "query": "CRD 166089",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CRD identifier"
+    ],
+    "appliedConditions": [
+      "exact match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "EXACT_IDENTITY",
+    "resultCount": 1,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Principal-office geography is not client geography or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-CRD-POS",
+    "notes": "Exact match to HOOD RIVER CAPITAL MANAGEMENT LLC, consistent with direct."
+  },
+  {
+    "id": "ID-CRD-POS",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "CRD 166089",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact CRD identifier"
+    ],
+    "appliedConditions": [
+      "exact match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CRD-POS",
+    "notes": "Agrees with ask surface."
+  },
+  {
+    "id": "ID-CRD-MISS",
+    "surface": "ask",
+    "hub": "investor",
+    "query": "CRD 999999999",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact-miss identifier"
+    ],
+    "appliedConditions": [
+      "honest no-confident-match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_CONFIDENT_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#ID-CRD-MISS",
+    "notes": "Correct, agrees with direct's NO_MATCH."
+  },
+  {
+    "id": "ID-CRD-MISS",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "CRD 999999999",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact-miss identifier"
+    ],
+    "appliedConditions": [
+      "honest no-match"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NO_MATCH",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CRD-MISS",
+    "notes": "Correct."
+  },
+  {
+    "id": "INVESTOR-WY-STATE-REG",
+    "surface": "ask",
+    "hub": "investor",
+    "query": "state-registered investment advisers in Wyoming",
+    "grade": "PASS",
+    "requestedConditions": [
+      "Wyoming state-registered RIA cohort"
+    ],
+    "appliedConditions": [
+      "25 real Wyoming-principal-office RIA firms returned, correctly disclosed as principal-office not client geography"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 25,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Principal-office geography is not client geography or service territory; source order is not a ranking."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-WY-STATE-REG",
+    "notes": "Genuinely useful, non-misleading, accurate result -- all 3 sampled firms (AFINITIV LLC/Sheridan WY, CANNELL CAPITAL LLC/Alta WY, COPPERLINE WEALTH MANAGEMENT/Cody WY) are real Wyoming firms. No widening defect of the Move/Insurance kind observed here."
+  },
+  {
+    "id": "INVESTOR-WY-STATE-REG",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "state-registered investment advisers in Wyoming",
+    "grade": "PARTIAL",
+    "requestedConditions": [
+      "Wyoming state-registered RIA cohort"
+    ],
+    "appliedConditions": [
+      "none -- specialist's own bare contract fails closed on this exact phrasing"
+    ],
+    "unresolvedConditions": [
+      "cohort browse for this phrasing on the direct contract"
+    ],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-WY-STATE-REG",
+    "notes": "Not misleading (fails closed rather than fabricating), but materially less capable than the Ask-parent path for the identical phrasing -- a real differential (section 16) worth recording, not a blocker: the direct public contract under-serves this natural phrasing while Ask's guided path (specialist-execution/v2) correctly handles it. Same pattern observed for Lender ('lenders in New Jersey' mode divergence) and Move ('local mover in New Jersey')."
+  },
+  {
+    "id": "INVESTOR-AUSTIN",
+    "surface": "ask",
+    "hub": "investor",
+    "query": "investment advisers in Austin Texas",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "Austin/Texas adviser cohort"
+    ],
+    "appliedConditions": [
+      "correctly consent-gated (state-only capability, no Texas county/city data published)"
+    ],
+    "unresolvedConditions": [
+      "city-to-state broadening requires consent"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-AUSTIN",
+    "notes": "Confirmed still correct, deliberate, R1-016-certified behavior (ask-intel-v3-corpus.ts:169). Not a blocker."
+  },
+  {
+    "id": "INVESTOR-AUSTIN",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "investment advisers in Austin Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "Austin/Texas adviser entity search"
+    ],
+    "appliedConditions": [
+      "correct principal-office-city grain with accurate disclosure"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 20,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Recorded principal office, not client geography, registration jurisdiction or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-AUSTIN",
+    "notes": "Direct specialist correctly executes this as a principal-office-city entity search with the grain distinction explicitly disclosed. Confirms the Ask-parent consent-gate above is a parent-side scope-authorization policy choice, not a specialist capability gap."
+  },
+  {
+    "id": "INVESTOR-NAMED-FIRM",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "Vanguard Advisers Inc",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "exact/near-exact firm name resolution"
+    ],
+    "appliedConditions": [
+      "clarification requested rather than a false auto-pick"
+    ],
+    "unresolvedConditions": [
+      "which specific Vanguard entity is meant"
+    ],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-NAMED-FIRM",
+    "notes": "No false single-pick; asks for disambiguation instead, matching the same conservative pattern as Move's certified R1-005 identity resolution."
+  },
+  {
+    "id": "INVESTOR-AMBIGUOUS-FIRM",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "tell me about Fidelity",
+    "grade": "PASS",
+    "requestedConditions": [
+      "ambiguous name handling"
+    ],
+    "appliedConditions": [
+      "correctly requires clarification for a name that maps to many possible entities"
+    ],
+    "unresolvedConditions": [
+      "which Fidelity entity"
+    ],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "NEEDS_CLARIFICATION",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-AMBIGUOUS-FIRM",
+    "notes": "Correct ambiguity handling, no false single answer."
+  },
+  {
+    "id": "INVESTOR-MANAGE-PORTFOLIO",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "manage my portfolio",
+    "grade": "PASS",
+    "requestedConditions": [
+      "out-of-scope request must not be misrouted as a firm-name search"
+    ],
+    "appliedConditions": [
+      "correctly fails closed as UNSUPPORTED, not treated as an entity/firm name"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-MANAGE-PORTFOLIO",
+    "notes": "Directly confirms the 'ordinary research talk != firm name' invariant: vague portfolio-management chatter is not misrouted into a bogus firm-name search."
+  },
+  {
+    "id": "INVESTOR-WHAT-IS-ADV",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "what is Form ADV",
+    "grade": "PASS",
+    "requestedConditions": [
+      "definitional explainer, not a firm search"
+    ],
+    "appliedConditions": [
+      "correctly classified as definition mode"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-WHAT-IS-ADV",
+    "notes": "Correctly answered as an explainer, not misrouted to a firm search."
+  },
+  {
+    "id": "INVESTOR-FIRM-ADV",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "Form ADV for CRD 166089",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact identity",
+      "Form ADV evidence"
+    ],
+    "appliedConditions": [
+      "exact identity resolved, evidence mode correctly applied"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-FIRM-ADV",
+    "notes": "Correct exact resolution with evidence-mode framing."
+  },
+  {
+    "id": "INVESTOR-DISCLOSURE",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "does CRD 166089 have any disclosures",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact identity",
+      "disclosure evidence, without implying wrongdoing"
+    ],
+    "appliedConditions": [
+      "exact identity resolved, evidence mode applied"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-DISCLOSURE",
+    "notes": "Correct exact resolution; no observed claim conflating disclosure presence/absence with wrongdoing/clean record."
+  },
+  {
+    "id": "INVESTOR-PRINCIPAL-OFFICE-WY",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "advisers with principal office in Wyoming",
+    "grade": "PASS",
+    "requestedConditions": [
+      "principal-office-state cohort"
+    ],
+    "appliedConditions": [
+      "correct geography grain with accurate disclosure"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 20,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Recorded principal office, not client geography, registration jurisdiction or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-PRINCIPAL-OFFICE-WY",
+    "notes": "Office-location grain correctly distinguished from registration jurisdiction."
+  },
+  {
+    "id": "INVESTOR-NY-REG-FL-OFFICE",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "advisers registered in New York with an office in Florida",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "both conditions preserved: NY registration AND FL office"
+    ],
+    "appliedConditions": [
+      "correctly fails closed rather than silently dropping one condition"
+    ],
+    "unresolvedConditions": [
+      "multi-condition cross-query genuinely unsupported"
+    ],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "UNSUPPORTED",
+    "resultCount": 0,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-NY-REG-FL-OFFICE",
+    "notes": "Important positive contrast with the cross-network BLOCKER-CROSS-01 finding (mover+lender query): when this specialist cannot honor BOTH conditions in a multi-condition request, it fails closed entirely rather than silently applying only one condition and dropping the other. This is the correct, safe behavior the two-domain cross-network case should have followed."
+  },
+  {
+    "id": "INVESTOR-RIA-VS-ERA",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "is this firm an RIA or an ERA, CRD 166089",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact identity",
+      "RIA vs ERA distinction"
+    ],
+    "appliedConditions": [
+      "exact identity resolved"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-RIA-VS-ERA",
+    "notes": "Correct exact resolution; RIA/ERA is a disclosed classification field on the resolved firm, not conflated."
+  },
+  {
+    "id": "INVESTOR-NOTICE-FILER",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "is CRD 166089 a notice filer in Texas",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact identity",
+      "notice-filing vs state-registration distinction"
+    ],
+    "appliedConditions": [
+      "exact identity resolved, TX correctly labeled as principal-office geography not registration jurisdiction"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "Recorded principal office, not client geography, registration jurisdiction or service territory."
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-NOTICE-FILER",
+    "notes": "Notice-filing question correctly kept distinct from registration-jurisdiction/office-location grains."
+  },
+  {
+    "id": "INVESTOR-RAUM",
+    "surface": "direct",
+    "hub": "investor",
+    "query": "regulatory assets under management for CRD 166089",
+    "grade": "PASS",
+    "requestedConditions": [
+      "exact identity",
+      "RAUM evidence"
+    ],
+    "appliedConditions": [
+      "exact identity resolved"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "investor"
+    ],
+    "actualCalls": 1,
+    "resultClass": "COMPLETE",
+    "resultCount": 1,
+    "sourceFamily": "investor-ask-v1",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#INVESTOR-RAUM",
+    "notes": "Correct exact resolution."
+  },
+  {
+    "id": "INVESTOR-AUSTIN-PARAPHRASE",
+    "surface": "ask",
+    "hub": "investor",
+    "query": "I'm in Austin — find advisers registered with Texas, not just firms headquartered there.",
+    "grade": "PARTIAL",
+    "requestedConditions": [
+      "Texas state-registration cohort, explicitly distinct from a headquarters/office-location search"
+    ],
+    "appliedConditions": [
+      "none -- classified as missing-identity, no engagement with the registration-vs-headquarters distinction the user explicitly requested"
+    ],
+    "unresolvedConditions": [
+      "the nuanced distinction the user asked for"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [
+      "provide entity name or identifier"
+    ],
+    "evidencePointer": "raw-ask-results.json#INVESTOR-AUSTIN-PARAPHRASE",
+    "notes": "Not misleading (fails safe, no wrong answer, no unauthorized dispatch), but the response doesn't engage with the specific, well-formed registration-vs-headquarters distinction the user explicitly called out -- a materially less useful outcome than INVESTOR-AUSTIN's plain-language equivalent, which is at least correctly consent-gated with an explanation. Graded PARTIAL, not a blocker: a reasonable non-blocking improvement candidate for future NLU work, not hidden correctness debt."
+  },
+  {
+    "id": "CROSS-BROWARD-KNOWLEDGE",
+    "surface": "ask",
+    "hub": "cross",
+    "query": "What does TrustHub know about Broward?",
+    "grade": "PARTIAL",
+    "requestedConditions": [
+      "published Place Lens overview for Broward"
+    ],
+    "appliedConditions": [
+      "planner correctly routed mode=PLACE_LENS"
+    ],
+    "unresolvedConditions": [
+      "this harness's guided-research orchestrator call does not render Place Lens content -- it is a separate component (lib/network/place-lens.ts) not exercised by createGuidedSession/orchestrateGuidedResearch"
+    ],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "PLACE_LENS (per decideAskExecution.mode)",
+    "resultCount": null,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-BROWARD-KNOWLEDGE",
+    "notes": "Test-methodology limitation, not a confirmed product defect: decideAskExecution correctly classifies this as PLACE_LENS, but this harness only exercised the guided-research session/orchestrator path, which returns an empty execResult for PLACE_LENS-mode queries because Place Lens rendering lives in a separate component. R1-008's own test suite already covers 'explicit place lens retains its separately authorized overview' and passed as part of the full regression suite run for this ticket. Graded PARTIAL to flag that this specific corpus entry was not fully exercised end-to-end by this sweep's harness, not because incorrect behavior was observed."
+  },
+  {
+    "id": "CROSS-BUYING-HOME-BROWARD",
+    "surface": "ask",
+    "hub": "cross",
+    "query": "I'm buying a home in Broward County. What should I research?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": [
+      "ordered multi-hub research journey, no direct specialist execution"
+    ],
+    "appliedConditions": [
+      "correctly classified MULTI_HUB_JOURNEY, mode=JOURNEY, zero specialist calls"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "JOURNEY (per decideAskExecution.mode)",
+    "resultCount": null,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-BUYING-HOME-BROWARD",
+    "notes": "Confirmed still correct per R1-016 (ask-intel-v3-corpus.ts:182-183, forbiddenBehaviors:['SPECIALIST_EXECUTION']): MULTI_HUB_JOURNEY intent hands off to an ordered research menu rather than auto-executing. This harness's guided-research call doesn't render the journey menu itself (that's ask-research-route.ts's `journey` field, a separate structure), but the safety property (zero unauthorized dispatch) is confirmed."
+  },
+  {
+    "id": "CROSS-UNIVERSAL-SCORE",
+    "surface": "ask",
+    "hub": "cross",
+    "query": "What is the one universal Trust score for this company?",
+    "grade": "PASS",
+    "requestedConditions": [
+      "refuse an unsupported concept (a single universal cross-network score)"
+    ],
+    "appliedConditions": [
+      "correctly refused, zero specialist calls"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [],
+    "actualCalls": 0,
+    "resultClass": "n/a (blocked pre-dispatch)",
+    "resultCount": 0,
+    "sourceFamily": "n/a",
+    "sourceAsOf": "n/a",
+    "limitations": [],
+    "nextActions": [
+      "provide entity name"
+    ],
+    "evidencePointer": "raw-ask-results.json#CROSS-UNIVERSAL-SCORE",
+    "notes": "Correct, deliberate refusal of a concept the network does not and should not support (no cross-hub composite score exists); confirmed still working."
+  },
+  {
+    "id": "CROSS-TWO-DOMAIN",
+    "surface": "ask",
+    "hub": "cross",
+    "query": "I need a mover and a mortgage lender in New Jersey",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": [
+      "both requested domains (mover AND mortgage lender) preserved, via either a multi-hub journey or an explicit clarification"
+    ],
+    "appliedConditions": [
+      "only the lender domain was executed"
+    ],
+    "unresolvedConditions": [
+      "the mover request was silently dropped entirely, with no disclosure, clarification, or follow-up offered"
+    ],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": 1,
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "specialist-execution/v2 (lender)",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "standard HMDA disclosures, none acknowledging the dropped mover request"
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-TWO-DOMAIN; also checked via lib/network/ask-research-route.ts buildAskResearchRoute, which independently reports canExecute=false ('I need one detail before I search') for the same query -- a direct contradiction between the two parent-side authorization layers",
+    "notes": "BLOCKER-CROSS-01. Root cause confirmed: research-planner.ts's MULTI_HUB_JOURNEY detection regex requires the verb forms 'move'/'moving' (`mov(?:e|ing)`), which does NOT match the noun 'mover' -- so a 2-candidate-hub query using 'a mover' instead of 'moving' never triggers MULTI_HUB_JOURNEY and falls through to plain COHORT_BROWSE with primaryHub left undefined at the planner layer. Separately, lib/guided-research/session.ts's createUnscopedGuidedSession evaluates hub-intent regexes in an early-return chain (investor -> insurance -> lender -> generic move/senior/contractor fallback); 'mortgage lender' matches the lenderIntent regex FIRST and returns an EXECUTE session immediately, before any check for whether the query also needs a second hub. The result: the user's explicit request for a mover is completely and silently discarded, with a real 776-row lender-only cohort returned as if it were a complete answer to the whole question. Independently, ask-research-route.ts's buildAskResearchRoute (a different authorization surface) says this exact query canExecute=false and needs clarification -- so the two parent-side layers actively disagree about whether this query should execute at all, and the one that actually renders to a live user (guided-research) chose to execute a partial, silently-incomplete answer rather than the other layer's (arguably safer) clarification request."
+  },
+  {
+    "id": "CROSS-OVERLONG-NJ",
+    "surface": "ask",
+    "hub": "cross",
+    "query": "lender in new jersey [150 x's] New Jersey",
+    "grade": "PASS",
+    "requestedConditions": [
+      "input validation: overlong/garbage-suffixed input should not break or corrupt the genuine request"
+    ],
+    "appliedConditions": [
+      "correctly executed the genuine NJ lender request, ignoring the garbage suffix"
+    ],
+    "unresolvedConditions": [],
+    "selectedHubs": [
+      "lender"
+    ],
+    "actualCalls": 1,
+    "resultClass": "SUPPORTED_RESULTS",
+    "resultCount": 776,
+    "sourceFamily": "specialist-execution/v2",
+    "sourceAsOf": "n/a",
+    "limitations": [
+      "standard HMDA disclosures"
+    ],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-OVERLONG-NJ",
+    "notes": "Confirmed still correct per R1-015-era input-validation work: an overlong, garbage-padded input still resolves to the same correct 776-record NJ lender cohort as the clean phrasing, with no truncation-related corruption or crash."
+  }
+]

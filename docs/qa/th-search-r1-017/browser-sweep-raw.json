@@ -1,0 +1,558 @@
+[
+  {
+    "id": "ASK-FIRST-SUBMIT",
+    "check": "first submit + exact identity/candidate display",
+    "url": "https://www.asktrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 7092,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-EXACT-MISS",
+    "check": "exact miss",
+    "url": "https://www.asktrusthub.com/ask?q=NMLS+9999999",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3626,
+    "horizontalOverflow": false,
+    "title": "Research: NMLS 9999999 | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-CLARIFICATION",
+    "check": "clarification (ambiguous care class)",
+    "url": "https://www.asktrusthub.com/ask?q=senior+homes+in+Austin+Texas",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3063,
+    "horizontalOverflow": false,
+    "title": "Research: senior homes in Austin Texas | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-JOURNEY",
+    "check": "multi-hub journey menu",
+    "url": "https://www.asktrusthub.com/ask?q=I'm+buying+a+home+in+Broward+County.+What+should+I+research%3F",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 2968,
+    "horizontalOverflow": false,
+    "title": "Research: I'm buying a home in Broward County. What should I research? | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-UNSUPPORTED-DISCLOSED",
+    "check": "disclosed unsupported capability, not blank",
+    "url": "https://www.asktrusthub.com/ask?q=moving+from+Miami+Florida+to+New+York+City",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3272,
+    "horizontalOverflow": false,
+    "title": "Research: moving from Miami Florida to New York City | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-COMPARISON-BLOCKED",
+    "check": "comparison correctly non-executing",
+    "url": "https://www.asktrusthub.com/ask?q=compare+mortgage+originations+in+Broward+and+Palm+Beach",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3135,
+    "horizontalOverflow": false,
+    "title": "Research: compare mortgage originations in Broward and Palm Beach | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-COHORT-NJ",
+    "check": "cohort browse with Trace/provenance",
+    "url": "https://www.asktrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3327,
+    "horizontalOverflow": false,
+    "title": "Research: lenders in New Jersey | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-IDENTIFIER-TYPO",
+    "check": "typo correction prompt",
+    "url": "https://www.asktrusthub.com/ask?q=roofers+in+Browrd+County",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 2949,
+    "horizontalOverflow": false,
+    "title": "Research: roofers in Browrd County | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-UNIVERSAL-SCORE-REFUSAL",
+    "check": "refusal of unsupported concept",
+    "url": "https://www.asktrusthub.com/ask?q=What+is+the+one+universal+Trust+score+for+this+company%3F",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3148,
+    "horizontalOverflow": false,
+    "title": "Research: What is the one universal Trust score for this company? | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-CROSS-TWO-DOMAIN",
+    "check": "BLOCKER-CROSS-01 visual confirmation",
+    "url": "https://www.asktrusthub.com/ask?q=I+need+a+mover+and+a+mortgage+lender+in+New+Jersey",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3098,
+    "horizontalOverflow": false,
+    "title": "Research: I need a mover and a mortgage lender in New Jersey | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB Ask Path My Journey Journeys Guides Network Coverage Standard Trust AI Concierge Switch Hub ASK Ask the TrustHub Network One question, routed to the specialist systems that own the eviden",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-FIRST-SUBMIT",
+    "check": "first submit + exact identity/candidate display",
+    "url": "https://www.asktrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "tablet",
+    "viewportSize": {
+      "width": 768,
+      "height": 1024
+    },
+    "httpStatus": 200,
+    "latencyMs": 4913,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-FIRST-SUBMIT",
+    "check": "first submit + exact identity/candidate display",
+    "url": "https://www.asktrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": 200,
+    "latencyMs": 4085,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-FIRST-SUBMIT",
+    "check": "first submit + exact identity/candidate display",
+    "url": "https://www.asktrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "small",
+    "viewportSize": {
+      "width": 320,
+      "height": 568
+    },
+    "httpStatus": 200,
+    "latencyMs": 3916,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-CLARIFICATION",
+    "check": "clarification (ambiguous care class)",
+    "url": "https://www.asktrusthub.com/ask?q=senior+homes+in+Austin+Texas",
+    "viewport": "tablet",
+    "viewportSize": {
+      "width": 768,
+      "height": 1024
+    },
+    "httpStatus": 200,
+    "latencyMs": 2961,
+    "horizontalOverflow": false,
+    "title": "Research: senior homes in Austin Texas | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-CLARIFICATION",
+    "check": "clarification (ambiguous care class)",
+    "url": "https://www.asktrusthub.com/ask?q=senior+homes+in+Austin+Texas",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": 200,
+    "latencyMs": 2532,
+    "horizontalOverflow": false,
+    "title": "Research: senior homes in Austin Texas | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-CLARIFICATION",
+    "check": "clarification (ambiguous care class)",
+    "url": "https://www.asktrusthub.com/ask?q=senior+homes+in+Austin+Texas",
+    "viewport": "small",
+    "viewportSize": {
+      "width": 320,
+      "height": 568
+    },
+    "httpStatus": 200,
+    "latencyMs": 2625,
+    "horizontalOverflow": false,
+    "title": "Research: senior homes in Austin Texas | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-COHORT-NJ",
+    "check": "cohort browse with Trace/provenance",
+    "url": "https://www.asktrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "tablet",
+    "viewportSize": {
+      "width": 768,
+      "height": 1024
+    },
+    "httpStatus": 200,
+    "latencyMs": 2975,
+    "horizontalOverflow": false,
+    "title": "Research: lenders in New Jersey | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-COHORT-NJ",
+    "check": "cohort browse with Trace/provenance",
+    "url": "https://www.asktrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": 200,
+    "latencyMs": 2764,
+    "horizontalOverflow": false,
+    "title": "Research: lenders in New Jersey | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "ASK-COHORT-NJ",
+    "check": "cohort browse with Trace/provenance",
+    "url": "https://www.asktrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "small",
+    "viewportSize": {
+      "width": 320,
+      "height": 568
+    },
+    "httpStatus": 200,
+    "latencyMs": 3250,
+    "horizontalOverflow": false,
+    "title": "Research: lenders in New Jersey | Ask Trust Hub",
+    "bodyTextSnippet": "Skip to content ASK TRUST HUB ASK Ask the TrustHub Network One question, routed to the specialist systems that own the evidence. Ask does not invent regulatory facts. What do you want to know? Ask SOURCE-BACKED RESE",
+    "consoleErrors": []
+  },
+  {
+    "id": "MOVE-EXACT",
+    "check": "exact identity",
+    "url": "https://www.movetrusthub.com/ask?q=USDOT+3244649",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3340,
+    "horizontalOverflow": false,
+    "title": "Research: USDOT 3244649 | Move Trust Hub",
+    "bodyTextSnippet": "Skip to content MOVE TRUST HUB Find Movers By State Compare Movers Verify DOT My Move Switch Hub Coach says: Start with cubic footage — it keeps estimates honest and protects you from lowball bids. Next: Size your move",
+    "consoleErrors": []
+  },
+  {
+    "id": "MOVE-CANDIDATES",
+    "check": "candidate selection",
+    "url": "https://www.movetrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 4353,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Move Trust Hub",
+    "bodyTextSnippet": "Skip to content MOVE TRUST HUB Find Movers By State Compare Movers Verify DOT My Move Switch Hub Coach says: Start with cubic footage — it keeps estimates honest and protects you from lowball bids. Next: Size your move",
+    "consoleErrors": []
+  },
+  {
+    "id": "LENDER-COHORT",
+    "check": "cohort + Trace",
+    "url": "https://www.lendertrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 6873,
+    "horizontalOverflow": false,
+    "title": "Ask LenderTrustHub",
+    "bodyTextSnippet": "Skip to content LENDER TRUST HUB Directories Local Lenders Compare rates Calculators Methodology Trust My Lending Switch Hub LENDERTRUSTHUB SPECIALIST RESEARCH Research lenders and mortgage-market evidence Natural lan",
+    "consoleErrors": []
+  },
+  {
+    "id": "LENDER-MISS",
+    "check": "exact miss",
+    "url": "https://www.lendertrusthub.com/ask?q=NMLS+9999999",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 4191,
+    "horizontalOverflow": false,
+    "title": "Ask LenderTrustHub",
+    "bodyTextSnippet": "Skip to content LENDER TRUST HUB Directories Local Lenders Compare rates Calculators Methodology Trust My Lending Switch Hub LENDERTRUSTHUB SPECIALIST RESEARCH Research lenders and mortgage-market evidence Natural lan",
+    "consoleErrors": []
+  },
+  {
+    "id": "INSURANCE-EXACT",
+    "check": "exact identity (also the BLOCKER-IDENTIFIER-FILLER-WORD-01 direct-side control)",
+    "url": "https://www.insurancetrusthub.com/ask?q=NAIC+code+10064",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 2808,
+    "horizontalOverflow": false,
+    "title": "Ask: NAIC code 10064 | InsuranceTrustHub",
+    "bodyTextSnippet": "Skip to content INSURANCE TRUST HUB Ask Research Marketplace Medicare Directory More My Insurance Switch Hub INSURANCETRUSTHUB SPECIALIST RESEARCH Research insurance identities and regulatory evidence Ask interprets t",
+    "consoleErrors": []
+  },
+  {
+    "id": "INSURANCE-ZIP",
+    "check": "ZIP directory",
+    "url": "https://www.insurancetrusthub.com/ask?q=insurance+agencies+in+ZIP+33441",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 2641,
+    "horizontalOverflow": false,
+    "title": "Ask: insurance agencies in ZIP 33441 | InsuranceTrustHub",
+    "bodyTextSnippet": "Skip to content INSURANCE TRUST HUB Ask Research Marketplace Medicare Directory More My Insurance Switch Hub INSURANCETRUSTHUB SPECIALIST RESEARCH Research insurance identities and regulatory evidence Ask interprets t",
+    "consoleErrors": []
+  },
+  {
+    "id": "SENIOR-COHORT",
+    "check": "cohort + geography",
+    "url": "https://www.seniortrusthub.com/ask?q=nursing+homes+in+Austin+Texas",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": null,
+    "latencyMs": 20014,
+    "horizontalOverflow": null,
+    "title": null,
+    "bodyTextSnippet": null,
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "Refused to execute script from 'https://www.seniortrusthub.com/810cda1967b7fab3/script.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+      "navigation_error: TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.seniortrusthub.com/ask?q=nursing+homes+in+Austin+Texas\", waiting until \"networkidle\"\u001b[22m\n"
+    ]
+  },
+  {
+    "id": "SENIOR-EXACT",
+    "check": "exact identity",
+    "url": "https://www.seniortrusthub.com/ask?q=CMS+CCN+455799",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": null,
+    "latencyMs": 20017,
+    "horizontalOverflow": null,
+    "title": null,
+    "bodyTextSnippet": null,
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "Refused to execute script from 'https://www.seniortrusthub.com/810cda1967b7fab3/script.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+      "navigation_error: TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.seniortrusthub.com/ask?q=CMS+CCN+455799\", waiting until \"networkidle\"\u001b[22m\n"
+    ]
+  },
+  {
+    "id": "CONTRACTOR-COHORT",
+    "check": "cohort (direct contract, unaffected by BLOCKER-CONTRACTOR-01 which is Ask-parent-side only)",
+    "url": "https://www.contractortrusthub.com/ask?q=roofers+in+Broward+County",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3359,
+    "horizontalOverflow": false,
+    "title": "Ask: roofers in Broward County · Contractor Trust Hub",
+    "bodyTextSnippet": "Skip to content Explore Plan Tools Guides Verify Switch Hub RESEARCH CONTRACTORS What do you want to find out? Ask in normal language or enter a company or credential. Get indexed research, verification guidance, or a",
+    "consoleErrors": []
+  },
+  {
+    "id": "CONTRACTOR-TYPO",
+    "check": "typo correction",
+    "url": "https://www.contractortrusthub.com/ask?q=roofers+in+Browrd+County",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3635,
+    "horizontalOverflow": false,
+    "title": "Find and research contractors · Contractor Trust Hub",
+    "bodyTextSnippet": "Skip to content Explore Plan Tools Guides Verify Switch Hub FIND / RESEARCH CONTRACTORS Contractor discovery research Search source-backed credential records by trade and supported recorded geography. Results are neut",
+    "consoleErrors": []
+  },
+  {
+    "id": "INVESTOR-EXACT",
+    "check": "exact identity",
+    "url": "https://www.investortrusthub.com/ask?q=CRD+166089",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 3746,
+    "horizontalOverflow": false,
+    "title": "Ask: CRD 166089 · InvestorTrustHub",
+    "bodyTextSnippet": "Skip to content INVESTOR TRUST HUB Ask Firms Research Tools Methodology Sources About Switch Hub InvestorTrustHub specialist search RESEARCH INVESTMENT ADVISERS What do you want to find out? Question, adviser firm, CRD",
+    "consoleErrors": []
+  },
+  {
+    "id": "INVESTOR-COHORT",
+    "check": "cohort",
+    "url": "https://www.investortrusthub.com/ask?q=state-registered+investment+advisers+in+Wyoming",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 900
+    },
+    "httpStatus": 200,
+    "latencyMs": 2570,
+    "horizontalOverflow": false,
+    "title": "Ask: state-registered investment advisers in Wyoming · InvestorTrustHub",
+    "bodyTextSnippet": "Skip to content INVESTOR TRUST HUB Ask Firms Research Tools Methodology Sources About Switch Hub InvestorTrustHub specialist search RESEARCH INVESTMENT ADVISERS What do you want to find out? Question, adviser firm, CRD",
+    "consoleErrors": []
+  },
+  {
+    "id": "MOVE-CANDIDATES",
+    "check": "candidate selection",
+    "url": "https://www.movetrusthub.com/ask?q=JK+Moving+Services",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": 200,
+    "latencyMs": 3239,
+    "horizontalOverflow": false,
+    "title": "Research: JK Moving Services | Move Trust Hub",
+    "bodyTextSnippet": "Skip to content MOVE TRUST HUB Coach says: Start with cubic footage — it keeps estimates honest and protects you from lowball bids. Next: Size your move MoveTrustHub specialist research Ask interprets the question. Pu",
+    "consoleErrors": []
+  },
+  {
+    "id": "LENDER-COHORT",
+    "check": "cohort + Trace",
+    "url": "https://www.lendertrusthub.com/ask?q=lenders+in+New+Jersey",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": 200,
+    "latencyMs": 5437,
+    "horizontalOverflow": false,
+    "title": "Ask LenderTrustHub",
+    "bodyTextSnippet": "Skip to content LENDER TRUST HUB LENDERTRUSTHUB SPECIALIST RESEARCH Research lenders and mortgage-market evidence Natural language is mapped to a structured query plan. Facts come from committed HMDA observations and ",
+    "consoleErrors": []
+  },
+  {
+    "id": "SENIOR-COHORT",
+    "check": "cohort + geography",
+    "url": "https://www.seniortrusthub.com/ask?q=nursing+homes+in+Austin+Texas",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "httpStatus": null,
+    "latencyMs": 20011,
+    "horizontalOverflow": null,
+    "title": null,
+    "bodyTextSnippet": null,
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "Refused to execute script from 'https://www.seniortrusthub.com/810cda1967b7fab3/script.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+      "navigation_error: TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.seniortrusthub.com/ask?q=nursing+homes+in+Austin+Texas\", waiting until \"networkidle\"\u001b[22m\n"
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "methodology": "Latencies captured directly from live production calls made during this sweep (not synthetic/simulated): askPlannerPlusRouting/askSpecialistExecution from the guided-research harness's own timing wrappers, directSpecialistFetch from the direct-harness's fetch timing, fullBrowserPageLoad from the Playwright browser-acceptance sweep's page.goto timing.",
+  "askPlannerPlusRouting": { "count": 53, "min": 3, "max": 3353, "meanMs": 416, "p50Ms": 255, "p95Ms": 1454 },
+  "askSpecialistExecution": { "count": 51, "min": 1, "max": 3350, "meanMs": 425, "p50Ms": 252, "p95Ms": 1452 },
+  "directSpecialistFetch": { "count": 81, "min": 96, "max": 5643, "meanMs": 389, "p50Ms": 158, "p95Ms": 1358 },
+  "fullBrowserPageLoad": { "count": 34, "min": 2532, "max": 20017, "meanMs": 5057, "p50Ms": 3327, "p95Ms": 20014, "note": "max/p95 driven by the 3 SeniorTrustHub 'networkidle' wait-strategy timeouts (20000ms) described in browser-evidence.json -- these are Playwright wait-strategy artifacts, not real page-load slowness (re-tested with 'domcontentloaded' and both affected pages returned real content in under 3.5s)." },
+  "flagged": {
+    "timeouts": 0,
+    "indefiniteStates": 0,
+    "timeoutsRenderedAsNoMatch": 0,
+    "severeReliabilityRegressions": 0
+  },
+  "slowerRequestsObservedNotFlagged": [
+    { "id": "ID-NMLS-SPACED", "surface": "ask", "ms": 2682, "note": "completed successfully with a real result; not a timeout" },
+    { "id": "INSURANCE-ZIP-33441", "surface": "ask", "ms": 3350, "note": "completed successfully (with the BLOCKER-INSURANCE-01 result, not a timeout-caused defect)" },
+    { "id": "ID-CONTRACTOR-EXACT", "surface": "direct", "ms": 3393, "note": "HTML page render, completed successfully" },
+    { "id": "CONTRACTOR-PLACE-IN-NAME", "surface": "direct", "ms": 5643, "note": "HTML page render, completed successfully; Contractor's HTML surface is consistently the slowest of the six specialists in this sweep, expected given it renders a full page rather than JSON" }
+  ],
+  "note": "No optimization was performed per spec section 20's explicit instruction not to optimize harmless latency during this ticket. All figures are reported for visibility only."
+}

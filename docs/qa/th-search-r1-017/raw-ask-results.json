@@ -1,0 +1,4775 @@
+[
+  {
+    "id": "ID-USDOT-POS",
+    "hub": "move",
+    "query": "USDOT 3244649",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "identifier": {
+        "type": "usdot",
+        "value": "3244649",
+        "raw": "USDOT 3244649"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "move"
+      ]
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 1257,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "Shifl INC",
+          "identifier": {
+            "label": "USDOT",
+            "value": "3244649"
+          },
+          "recordedLocation": "AIRMONT, NY",
+          "whyShown": "Exact USDOT match"
+        }
+      ],
+      "limitations": [
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/shifl-inc",
+          "label": "Open MoveTrustHub profile"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "MoveTrustHub"
+        },
+        {
+          "label": "Research class",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 1344
+  },
+  {
+    "id": "ID-MC-CONFLICT",
+    "hub": "move",
+    "query": "MC225850",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "identifier": {
+        "type": "mc",
+        "value": "225850",
+        "raw": "MC 225850"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "move"
+      ]
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 597,
+      "phase": "REFINE",
+      "resultState": "ZERO_MATCHING_ROWS",
+      "consumerHeading": "No records match these exact filters",
+      "consumerMessage": "Only identities already eligible for the public MoveTrustHub directory are returned.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering."
+      ],
+      "destinations": [
+        {
+          "type": "DIRECTORY",
+          "href": "https://www.movetrusthub.com/companies",
+          "label": "Research recorded headquarters"
+        },
+        {
+          "type": "VERIFY",
+          "href": "https://www.movetrusthub.com/verify-dot",
+          "label": "Verify USDOT or MC"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "MoveTrustHub"
+        },
+        {
+          "label": "Research class",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 608
+  },
+  {
+    "id": "ID-NMLS-POS",
+    "hub": "lender",
+    "query": "NMLS 3030",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "identifier": {
+        "type": "nmls",
+        "value": "3030",
+        "raw": "NMLS 3030"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 1217,
+      "phase": "REFINE",
+      "resultState": "EXACT_IDENTITY",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Exact identity is regulatory research, not a recommendation.",
+        "The destination already existed under the accepted publication gate."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Lender research",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 1225
+  },
+  {
+    "id": "ID-NMLS-SPACED",
+    "hub": "lender",
+    "query": "NMLS   3030",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "identifier": {
+        "type": "nmls",
+        "value": "3030",
+        "raw": "NMLS 3030"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2682,
+      "phase": "REFINE",
+      "resultState": "EXACT_IDENTITY",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Exact identity is regulatory research, not a recommendation.",
+        "The destination already existed under the accepted publication gate."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Lender research",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 2685
+  },
+  {
+    "id": "ID-NMLS-MISS",
+    "hub": "lender",
+    "query": "NMLS 9999999",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "identifier": {
+        "type": "nmls",
+        "value": "9999999",
+        "raw": "NMLS 9999999"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 219,
+      "phase": "REFINE",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "consumerHeading": "No confident identity match",
+      "consumerMessage": "No exact NMLS identity match was found. This is not a fuzzy name result.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "No exact NMLS identity match was found. This is not a fuzzy name result."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Lender research",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 223
+  },
+  {
+    "id": "ID-LEI",
+    "hub": "lender",
+    "query": "LEI 5493001KJTIIGC8Y1R12",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "identifier": {
+        "type": "lei",
+        "value": "5493001KJTIIGC8Y1R12",
+        "raw": "LEI 5493001KJTIIGC8Y1R12"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 191,
+      "phase": "REFINE",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "consumerHeading": "No confident identity match",
+      "consumerMessage": "No exact LEI identity match was found. This is not a fuzzy name result.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "No exact LEI identity match was found. This is not a fuzzy name result."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Lender research",
+          "value": "identifier"
+        }
+      ]
+    },
+    "elapsedMs": 194
+  },
+  {
+    "id": "ID-NPN-POS",
+    "hub": "insurance",
+    "query": "NPN 20000635",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "identifier": {
+        "type": "npn",
+        "value": "20000635",
+        "raw": "NPN 20000635"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 903,
+      "phase": "REFINE",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "consumerHeading": "No confident identity match",
+      "consumerMessage": "Person, agency, and legal insurer stay separate classes.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Person, agency, and legal insurer stay separate classes.",
+        "Credential jurisdiction is not office location or service territory.",
+        "Line of authority is not carrier appointment.",
+        "Marketplace evidence is not a state license and not certification.",
+        "Missing evidence is not a clean record.",
+        "Public people pages = 0. Public graph-agency profiles = 0.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 909
+  },
+  {
+    "id": "ID-NPN-MISS",
+    "hub": "insurance",
+    "query": "NPN 88887777",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "identifier": {
+        "type": "npn",
+        "value": "88887777",
+        "raw": "NPN 88887777"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 315,
+      "phase": "REFINE",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "consumerHeading": "No confident identity match",
+      "consumerMessage": "Person, agency, and legal insurer stay separate classes.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Person, agency, and legal insurer stay separate classes.",
+        "Credential jurisdiction is not office location or service territory.",
+        "Line of authority is not carrier appointment.",
+        "Marketplace evidence is not a state license and not certification.",
+        "Missing evidence is not a clean record.",
+        "Public people pages = 0. Public graph-agency profiles = 0.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 318
+  },
+  {
+    "id": "ID-NAIC-POS",
+    "hub": "insurance",
+    "query": "NAIC code 10064",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "identifier": {
+        "type": "naic_company_code",
+        "value": "10064",
+        "raw": "NAIC 10064"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 147,
+      "phase": "REFINE",
+      "resultState": "INVALID_QUERY",
+      "consumerHeading": "We need to correct part of this request",
+      "consumerMessage": "NAIC Company Code must contain 3–5 digits.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 149
+  },
+  {
+    "id": "ID-NAIC-BAREDIGITS",
+    "hub": "insurance",
+    "query": "10064",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "candidateHubs": [],
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": null,
+    "execResult": null,
+    "elapsedMs": 13
+  },
+  {
+    "id": "ID-CCN-POS",
+    "hub": "senior",
+    "query": "CMS CCN 455799",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "identifier": {
+        "type": "cms_ccn",
+        "value": "455799",
+        "raw": "CCN 455799"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 356,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "AUSTIN WELLNESS & REHABILITATION",
+          "identifier": {
+            "label": "CMS CCN",
+            "value": "455799"
+          },
+          "recordedLocation": "AUSTIN, TX",
+          "whyShown": "The returned nursing home record lists AUSTIN, TX. Recorded location is not service availability."
+        }
+      ],
+      "limitations": [
+        "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+        "Missing source evidence is not zero, clean, or good standing.",
+        "CMS-reported ratings are not TrustHub recommendations.",
+        "CCN match is canonical identity for that class directory."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455799/austin-wellness-and-rehabilitation",
+          "label": "Open SeniorTrustHub profile"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "SeniorTrustHub"
+        }
+      ]
+    },
+    "elapsedMs": 358
+  },
+  {
+    "id": "ID-CCN-MISS",
+    "hub": "senior",
+    "query": "CMS CCN 000000",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "identifier": {
+        "type": "cms_ccn",
+        "value": "000000",
+        "raw": "CCN 000000"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 388,
+      "phase": "REFINE",
+      "resultState": "ZERO_MATCHING_ROWS",
+      "consumerHeading": "No public records match these exact filters",
+      "consumerMessage": "The specialist executed the supported filters and returned zero matching public records.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+        "Missing source evidence is not zero, clean, or good standing.",
+        "CMS-reported ratings are not TrustHub recommendations.",
+        "No current indexed provider matched this CCN. That is not proof the number is unused elsewhere."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "SeniorTrustHub"
+        }
+      ]
+    },
+    "elapsedMs": 393
+  },
+  {
+    "id": "ID-CCN-BARE6",
+    "hub": "senior",
+    "query": "455799",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "candidateHubs": [],
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": null,
+    "execResult": null,
+    "elapsedMs": 3
+  },
+  {
+    "id": "ID-CRD-POS",
+    "hub": "investor",
+    "query": "CRD 166089",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "investor",
+      "candidateHubs": [
+        "investor"
+      ],
+      "identifier": {
+        "type": "crd",
+        "value": "166089",
+        "raw": "CRD 166089"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "investor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "investor",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 461,
+      "phase": "REFINE",
+      "resultState": "EXACT_IDENTITY",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "HOOD RIVER CAPITAL MANAGEMENT LLC",
+          "identifier": {
+            "label": "CRD",
+            "value": "166089"
+          },
+          "recordedLocation": "PALM BEACH GARDENS, FL, 33410",
+          "whyShown": "This firm matches because its organization CRD is 166089."
+        }
+      ],
+      "limitations": [
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used."
+      ],
+      "destinations": [
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/166089",
+          "label": "Verify with the official source"
+        }
+      ],
+      "refinements": [
+        "firmClass",
+        "compensationMethods"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InvestorTrustHub"
+        },
+        {
+          "label": "Firm class",
+          "value": "RIA_AND_ERA"
+        }
+      ]
+    },
+    "elapsedMs": 465
+  },
+  {
+    "id": "ID-CRD-MISS",
+    "hub": "investor",
+    "query": "CRD 999999999",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "investor",
+      "candidateHubs": [
+        "investor"
+      ],
+      "identifier": {
+        "type": "crd",
+        "value": "999999999",
+        "raw": "CRD 999999999"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "investor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "investor",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 158,
+      "phase": "REFINE",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "consumerHeading": "No confident identity match",
+      "consumerMessage": "No exact current firm identity matched the supplied source identifier or name evidence.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used."
+      ],
+      "destinations": [
+        {
+          "type": "RESEARCH_IDENTITY",
+          "href": "https://www.investortrusthub.com/ask",
+          "label": "Open InvestorTrustHub research"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/",
+          "label": "Verify with the official source"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InvestorTrustHub"
+        },
+        {
+          "label": "Firm class",
+          "value": "RIA_AND_ERA"
+        }
+      ]
+    },
+    "elapsedMs": 160
+  },
+  {
+    "id": "ID-CONTRACTOR-EXACT",
+    "hub": "contractor",
+    "query": "Check contractor license CCC1332036.",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityName": "contractor license CCC1332036",
+      "entityClass": {
+        "id": "contractor",
+        "label": "Contractor"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "contractor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "CLARIFY",
+      "missingFields": [
+        "trade"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 15
+  },
+  {
+    "id": "SENIOR-AUSTIN-GENERIC",
+    "hub": "senior",
+    "query": "senior homes in Austin Texas",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "requestedGeography": {
+        "raw": "Austin Texas",
+        "display": "Austin, Texas",
+        "kind": "city",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "city": "Austin"
+      },
+      "missingSlots": [
+        "providerClass"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Which care setting would you like to research?"
+    },
+    "scope": {
+      "resolutionState": "CAPABILITY_UNSUPPORTED",
+      "executionAllowed": false,
+      "reasonCodes": [
+        "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "CLARIFY",
+      "missingFields": [
+        "providerClass"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 4,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 34
+  },
+  {
+    "id": "SENIOR-AUSTIN-NURSING",
+    "hub": "senior",
+    "query": "nursing homes in Austin Texas",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "entityClass": {
+        "id": "nursing_home",
+        "label": "nursing home"
+      },
+      "requestedGeography": {
+        "raw": "Austin Texas",
+        "display": "Austin, Texas",
+        "kind": "city",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "city": "Austin"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Recorded provider location is not a radius search or verified service area.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 180,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Nursing Home research results",
+      "consumerMessage": "25 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 25,
+      "rowsCount": 20,
+      "firstRows": [
+        {
+          "name": "AUSTIN WELLNESS & REHABILITATION",
+          "identifier": {
+            "label": "CMS CCN",
+            "value": "455799"
+          },
+          "recordedLocation": "AUSTIN, TX",
+          "whyShown": "The returned nursing home record lists AUSTIN, TX. Recorded location is not service availability."
+        },
+        {
+          "name": "Avir at Park Bend",
+          "identifier": {
+            "label": "CMS CCN",
+            "value": "675862"
+          },
+          "recordedLocation": "Austin, TX",
+          "whyShown": "The returned nursing home record lists Austin, TX. Recorded location is not service availability."
+        },
+        {
+          "name": "Barton Valley Rehabilitation and Healthcare Center",
+          "identifier": {
+            "label": "CMS CCN",
+            "value": "675596"
+          },
+          "recordedLocation": "Austin, TX",
+          "whyShown": "The returned nursing home record lists Austin, TX. Recorded location is not service availability."
+        }
+      ],
+      "limitations": [
+        "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+        "Missing source evidence is not zero, clean, or good standing.",
+        "CMS-reported ratings are not TrustHub recommendations."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455799/austin-wellness-and-rehabilitation",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675862/avir-at-park-bend",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675596/barton-valley-rehabilitation-and-healthcare-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676267/brodie-ranch-nursing-and-rehabilitation-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455866/brookdale-westlake-hills",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675118/brush-country-nursing-and-rehabilitation",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455862/coral-rehabilitation-and-nursing-of-austin",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675914/gracy-woods-ii-living-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675918/gracy-woods-nursing-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455599/heritage-park-rehabilitation-and-skilled-nursing-c",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676440/ignite-medical-resort-round-rock-llc",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676238/legend-oaks-healthcare-and-rehabilitation-north",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676266/longhorn-village",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676291/oakcrest-nursing-and-rehabilitation-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676271/onion-creek-nursing-and-rehabilitation-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676198/querencia-at-barton-creek",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676246/riverside-nursing-and-rehabilitation-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/675533/sage-park-austin",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676459/sedona-trace-health-and-wellness-center",
+          "label": "Open SeniorTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/676299/southpark-meadows-nursing-and-rehabilitation-cente",
+          "label": "Open SeniorTrustHub profile"
+        }
+      ],
+      "refinements": [
+        "overallStars",
+        "staffingStars",
+        "inspectionStars"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "SeniorTrustHub"
+        },
+        {
+          "label": "Provider class",
+          "value": "nursing home"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "Austin"
+        },
+        {
+          "label": "You asked",
+          "value": "Austin, Texas"
+        },
+        {
+          "label": "Research executed",
+          "value": "Austin, Texas"
+        }
+      ]
+    },
+    "elapsedMs": 186
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-UNSPEC",
+    "hub": "senior",
+    "query": "Who owns this nursing home?",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "entityName": "Who owns this nursing home",
+      "entityClass": {
+        "id": "nursing_home",
+        "label": "Nursing Home"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "COLLECT",
+      "identityName": "Who owns this nursing home",
+      "missingFields": [
+        "geography"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "COLLECT",
+      "firstRows": []
+    },
+    "elapsedMs": 8
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-EXACT",
+    "hub": "senior",
+    "query": "Who owns the nursing home with CMS CCN 455799?",
+    "surface": "ask",
+    "plan": {
+      "intent": "IDENTIFIER_LOOKUP",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "entityClass": {
+        "id": "nursing_home",
+        "label": "nursing home"
+      },
+      "identifier": {
+        "type": "cms_ccn",
+        "value": "455799",
+        "raw": "CCN 455799"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTIFIER"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 140,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Exact regulatory identity",
+      "consumerMessage": "1 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 1,
+      "rowsCount": 1,
+      "firstRows": [
+        {
+          "name": "AUSTIN WELLNESS & REHABILITATION",
+          "identifier": {
+            "label": "CMS CCN",
+            "value": "455799"
+          },
+          "recordedLocation": "AUSTIN, TX",
+          "whyShown": "The returned nursing home record lists AUSTIN, TX. Recorded location is not service availability."
+        }
+      ],
+      "limitations": [
+        "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+        "Missing source evidence is not zero, clean, or good standing.",
+        "CMS-reported ratings are not TrustHub recommendations.",
+        "CCN match is canonical identity for that class directory."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.seniortrusthub.com/facility/cms/455799/austin-wellness-and-rehabilitation",
+          "label": "Open SeniorTrustHub profile"
+        }
+      ],
+      "refinements": [
+        "overallStars",
+        "staffingStars",
+        "inspectionStars"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "SeniorTrustHub"
+        },
+        {
+          "label": "Provider class",
+          "value": "nursing home"
+        }
+      ]
+    },
+    "elapsedMs": 143
+  },
+  {
+    "id": "SENIOR-OWNS-PARAPHRASE",
+    "hub": "senior",
+    "query": "Can you tell me who owns this nursing home?",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "senior",
+      "candidateHubs": [
+        "senior"
+      ],
+      "entityName": "Can you tell me who owns this nursing home",
+      "entityClass": {
+        "id": "nursing_home",
+        "label": "Nursing Home"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "senior"
+      ]
+    },
+    "guidedSession": {
+      "hub": "senior",
+      "phase": "COLLECT",
+      "identityName": "Can you tell me who owns this nursing home",
+      "missingFields": [
+        "geography"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 3,
+      "phase": "COLLECT",
+      "firstRows": []
+    },
+    "elapsedMs": 5
+  },
+  {
+    "id": "MOVE-JK-BARE",
+    "hub": "move",
+    "query": "JK Moving Services",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "entityName": "JK Moving Services",
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "move"
+      ]
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "REFINE",
+      "identityName": "JK Moving Services",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 860,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Multiple published identities",
+      "consumerMessage": "34 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 34,
+      "rowsCount": 8,
+      "firstRows": [
+        {
+          "name": "JK Moving Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "1065394"
+          },
+          "recordedLocation": "Sterling, VA",
+          "whyShown": "Exact company-name match"
+        },
+        {
+          "name": "Jk Moving Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "1300300"
+          },
+          "recordedLocation": "GAITHERSBURG, MD",
+          "whyShown": "Exact company-name match"
+        },
+        {
+          "name": "Ab Moving Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "4094266"
+          },
+          "recordedLocation": "CHERRY HILL, NJ",
+          "whyShown": "Similar company name"
+        }
+      ],
+      "limitations": [
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jk-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jk-moving-services-usdot-1300300",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/ab-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jp-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/km-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/kings-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/bb-d-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/h-l-moving-services",
+          "label": "Open MoveTrustHub profile"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "MoveTrustHub"
+        },
+        {
+          "label": "Research class",
+          "value": "identity name"
+        }
+      ]
+    },
+    "elapsedMs": 863
+  },
+  {
+    "id": "MOVE-JK-JOURNEY",
+    "hub": "move",
+    "query": "Can JK Moving handle my move from Virginia to Florida?",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "entityName": "JK Moving",
+      "requestedGeography": {
+        "raw": "from Virginia to Florida",
+        "display": "Virginia to Florida",
+        "kind": "route",
+        "resolution": "RESOLVED",
+        "origin": "Virginia",
+        "destination": "Florida"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Route or service-territory capability is not verified from this source. The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.",
+      "reasonCodes": [
+        "IDENTITY_LOOKUP_ROUTE_CONTEXT_ONLY"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "move"
+      ]
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "REFINE",
+      "identityName": "JK Moving",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 1092,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Multiple published identities",
+      "consumerMessage": "70 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 70,
+      "rowsCount": 8,
+      "firstRows": [
+        {
+          "name": "JK Moving Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "1065394"
+          },
+          "recordedLocation": "Sterling, VA",
+          "whyShown": "Company-name prefix"
+        },
+        {
+          "name": "Jk Moving Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "1300300"
+          },
+          "recordedLocation": "GAITHERSBURG, MD",
+          "whyShown": "Company-name prefix"
+        },
+        {
+          "name": "Jk Brokerage Services",
+          "identifier": {
+            "label": "USDOT",
+            "value": "2222803"
+          },
+          "recordedLocation": "STERLING, VA",
+          "whyShown": "Legal-name prefix"
+        }
+      ],
+      "limitations": [
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jk-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jk-moving-services-usdot-1300300",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/jk-brokerage-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/24-moving",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a1-moving",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-plus-moving",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-j-moving-co",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-b-moving-llc",
+          "label": "Open MoveTrustHub profile"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "MoveTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "FL"
+        },
+        {
+          "label": "You asked",
+          "value": "Virginia to Florida"
+        }
+      ]
+    },
+    "elapsedMs": 1099
+  },
+  {
+    "id": "MOVE-ROUTE-ONLY",
+    "hub": "move",
+    "query": "moving from Miami Florida to New York City",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "entityClass": {
+        "id": "mover",
+        "label": "Moving company"
+      },
+      "requestedGeography": {
+        "raw": "from Miami Florida to New York City",
+        "display": "Miami Florida to New York City",
+        "kind": "route",
+        "resolution": "RESOLVED",
+        "origin": "Miami Florida",
+        "destination": "New York City"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "CAPABILITY_UNSUPPORTED",
+      "executionAllowed": false,
+      "disclosure": "The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.",
+      "reasonCodes": [
+        "SERVICE_SCOPE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 3,
+      "phase": "CLARIFY",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "consumerHeading": "Requested scope is not executable",
+      "consumerMessage": "The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Service territory and route availability are not source-backed by recorded location or regulatory authority."
+      ],
+      "destinations": [
+        {
+          "type": "VERIFY",
+          "href": "https://www.movetrusthub.com/verify-dot",
+          "label": "Verify a USDOT or MC"
+        },
+        {
+          "type": "DIRECTORY",
+          "href": "https://www.movetrusthub.com/companies",
+          "label": "Research recorded headquarters"
+        }
+      ],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Requested geography",
+          "value": "Miami Florida to New York City"
+        }
+      ]
+    },
+    "elapsedMs": 6
+  },
+  {
+    "id": "MOVE-LOCAL-NJ",
+    "hub": "move",
+    "query": "local mover in New Jersey",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "entityClass": {
+        "id": "mover",
+        "label": "Moving company"
+      },
+      "requestedGeography": {
+        "raw": "New Jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "move"
+      ]
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 813,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Mover research results",
+      "consumerMessage": "267 public records match these source-owned filters. Source order only — not a ranking.",
+      "total": 267,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "1 St Moving CORP",
+          "identifier": {
+            "label": "USDOT",
+            "value": "1618672"
+          },
+          "recordedLocation": "HOWELL, NJ",
+          "whyShown": "The published directory identity records NJ as the company's headquarters/address state. This is not service-territory evidence or a recommendation."
+        },
+        {
+          "name": "101 Movers CORP",
+          "identifier": {
+            "label": "USDOT",
+            "value": "4024556"
+          },
+          "recordedLocation": "WALLINGTON, NJ",
+          "whyShown": "The published directory identity records NJ as the company's headquarters/address state. This is not service-territory evidence or a recommendation."
+        },
+        {
+          "name": "A-1 Steedle",
+          "recordedLocation": "1152 Crown Point Rd, West Deptford, NJ 08093",
+          "whyShown": "The published directory identity records NJ as the company's headquarters/address state. This is not service-territory evidence or a recommendation."
+        }
+      ],
+      "limitations": [
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/1-st-moving-corp",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/101-movers-corp",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-1-steedle",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-fazio-moving-storage-inc",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-pensa-modern-movers",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/a-santini-moving-storage-co",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/ab-moving-services",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/accessible-movers-moving-storage-inc",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/acosta-shipping-inc",
+          "label": "Open MoveTrustHub profile"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.movetrusthub.com/companies/adam-moving-and-storage-llc",
+          "label": "Open MoveTrustHub profile"
+        }
+      ],
+      "refinements": [
+        "role"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "MoveTrustHub"
+        },
+        {
+          "label": "Research class",
+          "value": "mover"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        }
+      ]
+    },
+    "elapsedMs": 818
+  },
+  {
+    "id": "MOVE-JK-PICKUP-PARAPHRASE",
+    "hub": "move",
+    "query": "Can JK pick me up in Virginia and move me to Florida?",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "primaryHub": "move",
+      "candidateHubs": [
+        "move"
+      ],
+      "requestedGeography": {
+        "raw": "Virginia",
+        "display": "Florida",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida"
+      },
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": false,
+      "disclosure": "The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "move",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 4
+  },
+  {
+    "id": "LENDER-NJ-LENDERS",
+    "hub": "lender",
+    "query": "lenders in New Jersey",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "New Jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 496,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 500
+  },
+  {
+    "id": "LENDER-NJ-SINGULAR",
+    "hub": "lender",
+    "query": "lender in new jersey",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "new jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 299,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 302
+  },
+  {
+    "id": "LENDER-FL-MORTGAGE-COS",
+    "hub": "lender",
+    "query": "mortgage companies in Florida",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "Florida",
+        "display": "Florida",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 262,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "1,794 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 1794,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "United Wholesale Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3038"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/navy-federal-credit-union",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/suncoast-credit-union",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "FL"
+        },
+        {
+          "label": "You asked",
+          "value": "Florida"
+        },
+        {
+          "label": "Research executed",
+          "value": "Florida"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 265
+  },
+  {
+    "id": "LENDER-TX-LENDERS",
+    "hub": "lender",
+    "query": "mortgage lenders in Texas",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "Texas",
+        "display": "Texas",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 329,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "1,376 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 1376,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "United Wholesale Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3038"
+          },
+          "recordedLocation": "TX",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "TX",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "CrossCountry Mortgage, LLC",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3029"
+          },
+          "recordedLocation": "TX",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/randolph-brooks",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "TX"
+        },
+        {
+          "label": "You asked",
+          "value": "Texas"
+        },
+        {
+          "label": "Research executed",
+          "value": "Texas"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 332
+  },
+  {
+    "id": "LENDER-NJ-ORIGINATIONS",
+    "hub": "lender",
+    "query": "how many mortgage originations in New Jersey?",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "hmda_reporting_institution",
+        "label": "HMDA reporting institution"
+      },
+      "requestedGeography": {
+        "raw": "New Jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 276,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 281
+  },
+  {
+    "id": "LENDER-BROWARD-PB-COMPARE",
+    "hub": "lender",
+    "query": "compare mortgage originations in Broward and Palm Beach",
+    "surface": "ask",
+    "plan": {
+      "intent": "COMPARE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "hmda_reporting_institution",
+        "label": "HMDA reporting institution"
+      },
+      "requestedGeography": {
+        "raw": "Broward",
+        "display": "Broward County, Florida",
+        "kind": "county",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida",
+        "county": "Broward"
+      },
+      "missingSlots": [],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "This question needs explanation or scope clarification before specialist research can run."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": false,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 6
+  },
+  {
+    "id": "LENDER-ROCKET-LICENSED",
+    "hub": "lender",
+    "query": "Is Rocket actually licensed in Florida or am I only seeing HMDA activity?",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "hmda_reporting_institution",
+        "label": "HMDA reporting institution"
+      },
+      "requestedGeography": {
+        "raw": "Florida or am I only seeing HMDA activity",
+        "display": "Florida",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 268,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "1,794 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 1794,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "United Wholesale Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3038"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/navy-federal-credit-union",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/suncoast-credit-union",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "FL"
+        },
+        {
+          "label": "You asked",
+          "value": "Florida"
+        },
+        {
+          "label": "Research executed",
+          "value": "Florida"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 270
+  },
+  {
+    "id": "LENDER-NJ-PARAPHRASE",
+    "hub": "lender",
+    "query": "Which NJ mortgage companies show up in your current lending data?",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "your current lending data",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 280,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 284
+  },
+  {
+    "id": "INSURANCE-AGENCY-NEARME",
+    "hub": "insurance",
+    "query": "insurance agency near me",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "entityClass": {
+        "id": "insurance_agency",
+        "label": "Insurance agency"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 251,
+      "phase": "REFINE",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "consumerHeading": "This source does not currently support that research",
+      "consumerMessage": "Service territory and product availability are not supported by credential geography.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 255
+  },
+  {
+    "id": "INSURANCE-ZIP-33441",
+    "hub": "insurance",
+    "query": "insurance agencies in ZIP 33441",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "entityClass": {
+        "id": "insurance_agency",
+        "label": "Insurance agency"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 3350,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Insurance agency research results",
+      "consumerMessage": "82,071 public-safe agency records match. Credential jurisdiction is not office, domicile, service territory, or product availability.",
+      "total": 82071,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "(HORN) HOUSE OF INSURANCE & BONDS LLC",
+          "identifier": {
+            "label": "NPN",
+            "value": "20061156"
+          },
+          "recordedLocation": "OH",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 20061156, it is linked to a OH credential (credential jurisdiction, not service territory)."
+        },
+        {
+          "name": "(MIA) MULTIPLE INSURANCE ASSOCIATE CORPORATION",
+          "identifier": {
+            "label": "NPN",
+            "value": "10391484"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 10391484, it is linked to a FL credential (credential jurisdiction, not service territory)."
+        },
+        {
+          "name": "&PARTNERS, LLC",
+          "identifier": {
+            "label": "NPN",
+            "value": "7077117"
+          },
+          "recordedLocation": "MA",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 7077117, it is linked to a MA credential (credential jurisdiction, not service territory)."
+        }
+      ],
+      "limitations": [
+        "Person, agency, and legal insurer stay separate classes.",
+        "Credential jurisdiction is not office location or service territory.",
+        "Line of authority is not carrier appointment.",
+        "Marketplace evidence is not a state license and not certification.",
+        "Missing evidence is not a clean record.",
+        "Public people pages = 0. Public graph-agency profiles = 0.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [
+        "credentialJurisdiction",
+        "lineOfAuthority"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 3353
+  },
+  {
+    "id": "INSURANCE-APPOINTMENT-PARAPHRASE",
+    "hub": "insurance",
+    "query": "Does this insurance agent have an appointment with State Farm or just a life license?",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "entityClass": {
+        "id": "insurance_producer",
+        "label": "Insurance producer"
+      },
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "CLARIFY",
+      "missingFields": [
+        "entityName"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 7
+  },
+  {
+    "id": "INSURANCE-ZIP-PARAPHRASE",
+    "hub": "insurance",
+    "query": "I need an agency around 33441, but don't tell me they serve my address unless the source proves it.",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 108,
+      "phase": "REFINE",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "consumerHeading": "This source does not currently support that research",
+      "consumerMessage": "Service territory and product availability are not supported by credential geography.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Research class",
+          "value": "mover"
+        }
+      ]
+    },
+    "elapsedMs": 113
+  },
+  {
+    "id": "CONTRACTOR-BROWARD-ROOFERS",
+    "hub": "contractor",
+    "query": "roofers in Broward County",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "roofing_contractor",
+        "label": "Roofing contractor"
+      },
+      "requestedGeography": {
+        "raw": "Broward County",
+        "display": "Broward County, Florida",
+        "kind": "county",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida",
+        "county": "Broward"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "contractor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "ERROR_RECOVERY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 1452,
+      "phase": "ERROR_RECOVERY",
+      "resultState": "BACKEND_UNAVAILABLE",
+      "consumerHeading": "This specialist research system is temporarily unavailable",
+      "consumerMessage": "ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "ContractorTrustHub"
+        },
+        {
+          "label": "Trade",
+          "value": "roofing"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "Broward"
+        },
+        {
+          "label": "You asked",
+          "value": "Broward County, Florida"
+        },
+        {
+          "label": "Research executed",
+          "value": "Broward County, Florida"
+        }
+      ]
+    },
+    "elapsedMs": 1454
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-TYPO",
+    "hub": "contractor",
+    "query": "roofers in Browrd County",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "roofing_contractor",
+        "label": "Roofing contractor"
+      },
+      "requestedGeography": {
+        "raw": "Browrd County",
+        "display": "Browrd County",
+        "kind": "place",
+        "resolution": "UNRESOLVED"
+      },
+      "missingSlots": [
+        "geography"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Confirm or narrow the requested geography (Browrd County) before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "CLARIFICATION_REQUIRED",
+      "executionAllowed": false,
+      "disclosure": "Choose a city or county inside the requested region before research runs.",
+      "reasonCodes": [
+        "REGION_COMPONENT_SELECTION_REQUIRED"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "CLARIFY",
+      "missingFields": [
+        "geography"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 6
+  },
+  {
+    "id": "CONTRACTOR-HVAC-AUSTIN",
+    "hub": "contractor",
+    "query": "HVAC contractors in Austin Texas",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "hvac_contractor",
+        "label": "HVAC contractor"
+      },
+      "requestedGeography": {
+        "raw": "Austin Texas",
+        "display": "Austin, Texas",
+        "kind": "city",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "city": "Austin"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "BROADENING_REQUIRES_CONSENT",
+      "executionAllowed": false,
+      "disclosure": "Local filtering for Austin, Texas is not supported by the current specialist contract. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+      "reasonCodes": [
+        "LOCAL_SCOPE_UNSUPPORTED",
+        "STATE_BROADENING_REQUIRES_CONSENT"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 4,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 7
+  },
+  {
+    "id": "CONTRACTOR-FL-VERIFY-HOWTO",
+    "hub": "contractor",
+    "query": "how do I verify a contractor license in Florida?",
+    "surface": "ask",
+    "plan": {
+      "intent": "HOW_TO",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "contractor",
+        "label": "Contractor"
+      },
+      "requestedGeography": {
+        "raw": "Florida",
+        "display": "Florida",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida"
+      },
+      "missingSlots": [],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "This question needs explanation or scope clarification before specialist research can run."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": false,
+      "disclosure": "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 1,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 3
+  },
+  {
+    "id": "CONTRACTOR-TXGC-PARAPHRASE",
+    "hub": "contractor",
+    "query": "Who regulates a general contractor in Texas if there isn't a statewide GC license?",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "general_contractor",
+        "label": "General contractor"
+      },
+      "requestedGeography": {
+        "raw": "Texas if there isn't a statewide GC license",
+        "display": "Texas",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "contractor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "ERROR_RECOVERY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 100,
+      "phase": "ERROR_RECOVERY",
+      "resultState": "BACKEND_UNAVAILABLE",
+      "consumerHeading": "This specialist research system is temporarily unavailable",
+      "consumerMessage": "ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "ContractorTrustHub"
+        },
+        {
+          "label": "Trade",
+          "value": "general"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "TX"
+        },
+        {
+          "label": "You asked",
+          "value": "Texas"
+        },
+        {
+          "label": "Research executed",
+          "value": "Texas"
+        }
+      ]
+    },
+    "elapsedMs": 104
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-PARAPHRASE",
+    "hub": "contractor",
+    "query": "Show me Broward roofers — I typed Browrd before.",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "contractor",
+      "candidateHubs": [
+        "contractor"
+      ],
+      "entityClass": {
+        "id": "roofing_contractor",
+        "label": "Roofing contractor"
+      },
+      "requestedGeography": {
+        "raw": "Broward",
+        "display": "Broward County, Florida",
+        "kind": "county",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida",
+        "county": "Broward"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "contractor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "contractor",
+      "phase": "ERROR_RECOVERY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 440,
+      "phase": "ERROR_RECOVERY",
+      "resultState": "BACKEND_UNAVAILABLE",
+      "consumerHeading": "This specialist research system is temporarily unavailable",
+      "consumerMessage": "ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.",
+      "total": 0,
+      "rowsCount": 0,
+      "firstRows": [],
+      "limitations": [],
+      "destinations": [],
+      "refinements": [],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "ContractorTrustHub"
+        },
+        {
+          "label": "Trade",
+          "value": "roofing"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "Broward"
+        },
+        {
+          "label": "You asked",
+          "value": "Broward County, Florida"
+        },
+        {
+          "label": "Research executed",
+          "value": "Broward County, Florida"
+        }
+      ]
+    },
+    "elapsedMs": 462
+  },
+  {
+    "id": "INVESTOR-WY-STATE-REG",
+    "hub": "investor",
+    "query": "state-registered investment advisers in Wyoming",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "investor",
+      "candidateHubs": [
+        "investor"
+      ],
+      "entityClass": {
+        "id": "ria",
+        "label": "RIA firm"
+      },
+      "requestedGeography": {
+        "raw": "Wyoming",
+        "display": "Wyoming",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "WY",
+        "stateName": "Wyoming"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "Principal-office geography does not establish client geography or service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "investor"
+      ]
+    },
+    "guidedSession": {
+      "hub": "investor",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 454,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "RIA research results",
+      "consumerMessage": "25 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+      "total": 25,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "AFINITIV LLC",
+          "identifier": {
+            "label": "CRD",
+            "value": "305672"
+          },
+          "recordedLocation": "SHERIDAN, WY, 82801",
+          "whyShown": "This firm matches because it is classified as an RIA in the current SEC/IARD roster, it reports its principal office in Wyoming."
+        },
+        {
+          "name": "CANNELL CAPITAL LLC",
+          "identifier": {
+            "label": "CRD",
+            "value": "158371"
+          },
+          "recordedLocation": "ALTA, WY, 83414",
+          "whyShown": "This firm matches because it is classified as an RIA in the current SEC/IARD roster, it reports its principal office in Wyoming."
+        },
+        {
+          "name": "COPPERLINE WEALTH MANAGEMENT & PLANNING",
+          "identifier": {
+            "label": "CRD",
+            "value": "335796"
+          },
+          "recordedLocation": "CODY, WY, 82414",
+          "whyShown": "This firm matches because it is classified as an RIA in the current SEC/IARD roster, it reports its principal office in Wyoming."
+        }
+      ],
+      "limitations": [
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used."
+      ],
+      "destinations": [
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/305672",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/158371",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/335796",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/130401",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/336710",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/340618",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/291593",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/288551",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "OFFICIAL_SOURCE",
+          "href": "https://adviserinfo.sec.gov/firm/summary/282022",
+          "label": "Verify with the official source"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.investortrusthub.com/firm/sec-crd-109910",
+          "label": "Open InvestorTrustHub research"
+        }
+      ],
+      "refinements": [
+        "firmClass",
+        "compensationMethods"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InvestorTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "WY"
+        },
+        {
+          "label": "You asked",
+          "value": "Wyoming"
+        },
+        {
+          "label": "Research executed",
+          "value": "Wyoming"
+        },
+        {
+          "label": "Firm class",
+          "value": "RIA"
+        }
+      ]
+    },
+    "elapsedMs": 458
+  },
+  {
+    "id": "INVESTOR-AUSTIN",
+    "hub": "investor",
+    "query": "investment advisers in Austin Texas",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "investor",
+      "candidateHubs": [
+        "investor"
+      ],
+      "entityClass": {
+        "id": "investment_adviser",
+        "label": "Investment-adviser firm"
+      },
+      "requestedGeography": {
+        "raw": "Austin Texas",
+        "display": "Austin, Texas",
+        "kind": "city",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "city": "Austin"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "BROADENING_REQUIRES_CONSENT",
+      "executionAllowed": false,
+      "disclosure": "Local filtering for Austin, Texas is not supported by the current specialist contract. Principal-office geography does not establish client geography or service territory.",
+      "reasonCodes": [
+        "LOCAL_SCOPE_UNSUPPORTED",
+        "STATE_BROADENING_REQUIRES_CONSENT"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "investor",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 3,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 6
+  },
+  {
+    "id": "INVESTOR-AUSTIN-PARAPHRASE",
+    "hub": "investor",
+    "query": "I'm in Austin — find advisers registered with Texas, not just firms headquartered there.",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+      "primaryHub": "investor",
+      "candidateHubs": [
+        "investor"
+      ],
+      "requestedGeography": {
+        "raw": "Austin",
+        "display": "Austin, Texas",
+        "kind": "city",
+        "resolution": "RESOLVED",
+        "stateCode": "TX",
+        "stateName": "Texas",
+        "city": "Austin"
+      },
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs."
+    },
+    "scope": {
+      "resolutionState": "BROADENING_REQUIRES_CONSENT",
+      "executionAllowed": false,
+      "disclosure": "Local filtering for Austin, Texas is not supported by the current specialist contract. Principal-office geography does not establish client geography or service territory.",
+      "reasonCodes": [
+        "LOCAL_SCOPE_UNSUPPORTED",
+        "STATE_BROADENING_REQUIRES_CONSENT"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "investor",
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 12
+  },
+  {
+    "id": "CROSS-BROWARD-KNOWLEDGE",
+    "hub": "cross",
+    "query": "What does TrustHub know about Broward?",
+    "surface": "ask",
+    "plan": {
+      "intent": "EXPLAINER",
+      "candidateHubs": [
+        "contractor",
+        "lender",
+        "insurance",
+        "move",
+        "senior",
+        "investor"
+      ],
+      "requestedGeography": {
+        "raw": "Broward",
+        "display": "Broward County, Florida",
+        "kind": "county",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida",
+        "county": "Broward"
+      },
+      "missingSlots": [],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "This question needs explanation or scope clarification before specialist research can run."
+    },
+    "scope": {
+      "resolutionState": "CAPABILITY_UNSUPPORTED",
+      "executionAllowed": false,
+      "reasonCodes": [
+        "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+      ]
+    },
+    "executionDecision": {
+      "mode": "PLACE_LENS",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 6
+  },
+  {
+    "id": "CROSS-BUYING-HOME-BROWARD",
+    "hub": "cross",
+    "query": "I'm buying a home in Broward County. What should I research?",
+    "surface": "ask",
+    "plan": {
+      "intent": "MULTI_HUB_JOURNEY",
+      "candidateHubs": [
+        "lender",
+        "insurance",
+        "contractor",
+        "move"
+      ],
+      "requestedGeography": {
+        "raw": "Broward County",
+        "display": "Broward County, Florida",
+        "kind": "county",
+        "resolution": "RESOLVED",
+        "stateCode": "FL",
+        "stateName": "Florida",
+        "county": "Broward"
+      },
+      "missingSlots": [],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "This question needs explanation or scope clarification before specialist research can run."
+    },
+    "scope": {
+      "resolutionState": "CAPABILITY_UNSUPPORTED",
+      "executionAllowed": false,
+      "reasonCodes": [
+        "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+      ]
+    },
+    "executionDecision": {
+      "mode": "JOURNEY",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "phase": "CLARIFY",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 3
+  },
+  {
+    "id": "CROSS-UNIVERSAL-SCORE",
+    "hub": "cross",
+    "query": "What is the one universal Trust score for this company?",
+    "surface": "ask",
+    "plan": {
+      "intent": "EXPLAINER",
+      "candidateHubs": [],
+      "missingSlots": [
+        "entityName"
+      ],
+      "executionAllowed": false,
+      "executionMode": "CLARIFY",
+      "clarificationReason": "This question needs explanation or scope clarification before specialist research can run."
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "phase": "CLARIFY",
+      "missingFields": [
+        "entityName"
+      ]
+    },
+    "execResult": {
+      "latencyMs": 2,
+      "phase": "CLARIFY",
+      "firstRows": []
+    },
+    "elapsedMs": 5
+  },
+  {
+    "id": "CROSS-NAME-MULTI-HUB",
+    "hub": "cross",
+    "query": "National Trust Insurance Group",
+    "surface": "ask",
+    "plan": {
+      "intent": "ENTITY_LOOKUP",
+      "primaryHub": "insurance",
+      "candidateHubs": [
+        "insurance"
+      ],
+      "entityName": "National Trust Insurance Group",
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "IDENTITY"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "reasonCodes": []
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "insurance"
+      ]
+    },
+    "guidedSession": {
+      "hub": "insurance",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 624,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "Insurance agency research results",
+      "consumerMessage": "82,071 public-safe agency records match. Credential jurisdiction is not office, domicile, service territory, or product availability.",
+      "total": 82071,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "(HORN) HOUSE OF INSURANCE & BONDS LLC",
+          "identifier": {
+            "label": "NPN",
+            "value": "20061156"
+          },
+          "recordedLocation": "OH",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 20061156, it is linked to a OH credential (credential jurisdiction, not service territory)."
+        },
+        {
+          "name": "(MIA) MULTIPLE INSURANCE ASSOCIATE CORPORATION",
+          "identifier": {
+            "label": "NPN",
+            "value": "10391484"
+          },
+          "recordedLocation": "FL",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 10391484, it is linked to a FL credential (credential jurisdiction, not service territory)."
+        },
+        {
+          "name": "&PARTNERS, LLC",
+          "identifier": {
+            "label": "NPN",
+            "value": "7077117"
+          },
+          "recordedLocation": "MA",
+          "whyShown": "This agency matches because it is classified as an agency, its organization NPN is 7077117, it is linked to a MA credential (credential jurisdiction, not service territory)."
+        }
+      ],
+      "limitations": [
+        "Person, agency, and legal insurer stay separate classes.",
+        "Credential jurisdiction is not office location or service territory.",
+        "Line of authority is not carrier appointment.",
+        "Marketplace evidence is not a state license and not certification.",
+        "Missing evidence is not a clean record.",
+        "Public people pages = 0. Public graph-agency profiles = 0.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering."
+      ],
+      "destinations": [],
+      "refinements": [
+        "credentialJurisdiction",
+        "lineOfAuthority"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "InsuranceTrustHub"
+        },
+        {
+          "label": "Insurance class",
+          "value": "agency"
+        }
+      ]
+    },
+    "elapsedMs": 625
+  },
+  {
+    "id": "CROSS-TWO-DOMAIN",
+    "hub": "cross",
+    "query": "I need a mover and a mortgage lender in New Jersey",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "candidateHubs": [
+        "lender",
+        "move"
+      ],
+      "entityClass": {
+        "id": "mover",
+        "label": "Moving company"
+      },
+      "requestedGeography": {
+        "raw": "New Jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "CAPABILITY_UNSUPPORTED",
+      "executionAllowed": false,
+      "reasonCodes": [
+        "NO_SPECIALIST_GEOGRAPHY_CAPABILITY"
+      ]
+    },
+    "executionDecision": {
+      "mode": "CLARIFICATION",
+      "executionAllowed": false,
+      "allowedHubs": []
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 417,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 420
+  },
+  {
+    "id": "CROSS-OVERLONG-NJ",
+    "hub": "cross",
+    "query": "lender in new jersey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx New Jersey",
+    "surface": "ask",
+    "plan": {
+      "intent": "COHORT_BROWSE",
+      "primaryHub": "lender",
+      "candidateHubs": [
+        "lender"
+      ],
+      "entityClass": {
+        "id": "mortgage_lender",
+        "label": "Mortgage lender"
+      },
+      "requestedGeography": {
+        "raw": "new jersey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx New Jersey",
+        "display": "New Jersey",
+        "kind": "state",
+        "resolution": "RESOLVED",
+        "stateCode": "NJ",
+        "stateName": "New Jersey"
+      },
+      "missingSlots": [],
+      "executionAllowed": true,
+      "executionMode": "COHORT"
+    },
+    "scope": {
+      "resolutionState": "EXACT",
+      "executionAllowed": true,
+      "disclosure": "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+      "reasonCodes": [
+        "REQUESTED_SCOPE_EXECUTABLE"
+      ]
+    },
+    "executionDecision": {
+      "mode": "SINGLE_SPECIALIST",
+      "executionAllowed": true,
+      "allowedHubs": [
+        "lender"
+      ]
+    },
+    "guidedSession": {
+      "hub": "lender",
+      "phase": "REFINE",
+      "missingFields": []
+    },
+    "execResult": {
+      "latencyMs": 252,
+      "phase": "REFINE",
+      "resultState": "SUPPORTED_RESULTS",
+      "consumerHeading": "HMDA property-market research results",
+      "consumerMessage": "776 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+      "total": 776,
+      "rowsCount": 10,
+      "firstRows": [
+        {
+          "name": "Rocket Mortgage",
+          "identifier": {
+            "label": "NMLS",
+            "value": "3030"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Freedom Mortgage Corporation",
+          "identifier": {
+            "label": "NMLS",
+            "value": "2767"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        },
+        {
+          "name": "Citizens Bank",
+          "identifier": {
+            "label": "NMLS",
+            "value": "433960"
+          },
+          "recordedLocation": "NJ",
+          "whyShown": "Matched the selected source-owned lender evidence filters."
+        }
+      ],
+      "limitations": [
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability."
+      ],
+      "destinations": [
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/rocket-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/citizens-bank-nmls-433960",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/td-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/pnc-bank",
+          "label": "Open LenderTrustHub research"
+        },
+        {
+          "type": "PROFILE",
+          "href": "https://www.lendertrusthub.com/lender/jpmorgan-chase-bank",
+          "label": "Open LenderTrustHub research"
+        }
+      ],
+      "refinements": [
+        "action",
+        "loanType"
+      ],
+      "interpretation": [
+        {
+          "label": "Specialist",
+          "value": "LenderTrustHub"
+        },
+        {
+          "label": "Recorded geography",
+          "value": "NJ"
+        },
+        {
+          "label": "You asked",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Research executed",
+          "value": "New Jersey"
+        },
+        {
+          "label": "Lender research",
+          "value": "property market"
+        }
+      ]
+    },
+    "elapsedMs": 256
+  }
+]

@@ -1,0 +1,82 @@
+{
+  "testedAtUtc": "2026-09-14T20:00:40Z",
+  "note": "Deployment SHAs are not exposed via Vercel response headers for these apps (only an opaque X-Vercel-Id request trace ID is exposed, not a build SHA). Baseline confidence therefore comes from (a) fetched GitHub main SHA at test time, (b) production reachability, and (c) the fact that every case in this sweep queries the live production endpoint directly, not a cached/stale snapshot -- so the behavior graded IS the currently-deployed behavior, even though a numeric deployment revision could not be independently confirmed.",
+  "repos": [
+    {
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "role": "Ask parent (primary coordination repo, local checkout used)",
+      "mainSha": "add6526eaf663a51b05bdeda1459823e790c88eb",
+      "mainCommitDateUtc": "2026-09-14T19:50:33Z",
+      "canonicalAlias": "https://www.asktrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [
+        {"number": 5, "title": "docs(visual): VISUAL-001 TrustHub Network Visual Standard v1", "branch": "visual-001-network-design-contract", "relevantToR1017": false}
+      ],
+      "deploymentRevision": "not discoverable via public response headers; live query behavior confirmed to reflect R1-016 fixes (merge commits 2202242, add6526) during this sweep"
+    },
+    {
+      "repo": "savitz25/Move-trust-Hub",
+      "role": "Move specialist (tested read-only via live production API/site)",
+      "mainSha": "f3dbd22a12ffbe099853441d875d8e87b5b174e6",
+      "mainCommitDateUtc": "2026-09-12T23:39:26Z",
+      "canonicalAlias": "https://www.movetrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [
+        {"number": 3, "title": "Repair Task 014C mobile launch blockers", "branch": "task-014c1-mobile-repair", "relevantToR1017": false},
+        {"number": 2, "title": "Task 014B launch blocker repairs", "branch": "task-014-launch", "relevantToR1017": false},
+        {"number": 1, "title": "MoveTrustHub 2.0 foundation and provider identity architecture", "branch": "move-2.0", "relevantToR1017": false}
+      ],
+      "deploymentRevision": "not discoverable via public response headers; not merged to main as of testedAtUtc, so production is assumed to run current main"
+    },
+    {
+      "repo": "savitz25/Lender-Trust-Hub",
+      "role": "Lender specialist (tested read-only via live production API/site)",
+      "mainSha": "c2a3d44012e7e03ecf263993dce87fe16e943226",
+      "mainCommitDateUtc": "2026-09-14T18:38:39Z",
+      "canonicalAlias": "https://www.lendertrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [],
+      "deploymentRevision": "not discoverable via public response headers; this is the TH-SEARCH-R1-015 merge commit"
+    },
+    {
+      "repo": "savitz25/Insurance-trust-hub",
+      "role": "Insurance specialist (tested read-only via live production API/site)",
+      "mainSha": "e1033c5cc5a0f0a8e9e157ae5766665c89491000",
+      "mainCommitDateUtc": "2026-09-13T15:59:38Z",
+      "canonicalAlias": "https://www.insurancetrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [],
+      "deploymentRevision": "not discoverable via public response headers"
+    },
+    {
+      "repo": "savitz25/care-trust-hub",
+      "role": "Senior specialist (tested read-only via live production API/site)",
+      "mainSha": "2fcf540560295b756fafc6400f404ec66a49b176",
+      "mainCommitDateUtc": "2026-09-12T23:11:03Z",
+      "canonicalAlias": "https://www.seniortrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [],
+      "deploymentRevision": "not discoverable via public response headers"
+    },
+    {
+      "repo": "savitz25/contractor-trust-hub",
+      "role": "Contractor specialist (tested read-only via live production API/site)",
+      "mainSha": "df726ac4831bf9af797e8c8be07ea727264958c4",
+      "mainCommitDateUtc": "2026-09-12T22:02:06Z",
+      "canonicalAlias": "https://www.contractortrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [],
+      "deploymentRevision": "not discoverable via public response headers"
+    },
+    {
+      "repo": "savitz25/investor-trust-hub",
+      "role": "Investor specialist (tested read-only via live production API/site)",
+      "mainSha": "07753f058efa86a52aa057819aba9eb58c9027c9",
+      "mainCommitDateUtc": "2026-09-13T15:59:05Z",
+      "canonicalAlias": "https://www.investortrusthub.com",
+      "productionHttpStatus": 200,
+      "openPRs": [],
+      "deploymentRevision": "not discoverable via public response headers"
+    }
+  ]
+}

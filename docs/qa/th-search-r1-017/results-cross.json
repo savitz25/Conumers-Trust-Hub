@@ -1,0 +1,58 @@
+[
+  {
+    "id": "CROSS-BROWARD-KNOWLEDGE", "surface": "ask", "hub": "cross", "query": "What does TrustHub know about Broward?",
+    "grade": "PARTIAL",
+    "requestedConditions": ["published Place Lens overview for Broward"],
+    "appliedConditions": ["planner correctly routed mode=PLACE_LENS"],
+    "unresolvedConditions": ["this harness's guided-research orchestrator call does not render Place Lens content -- it is a separate component (lib/network/place-lens.ts) not exercised by createGuidedSession/orchestrateGuidedResearch"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "PLACE_LENS (per decideAskExecution.mode)", "resultCount": null,
+    "sourceFamily": "n/a", "sourceAsOf": "n/a", "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-BROWARD-KNOWLEDGE",
+    "notes": "Test-methodology limitation, not a confirmed product defect: decideAskExecution correctly classifies this as PLACE_LENS, but this harness only exercised the guided-research session/orchestrator path, which returns an empty execResult for PLACE_LENS-mode queries because Place Lens rendering lives in a separate component. R1-008's own test suite already covers 'explicit place lens retains its separately authorized overview' and passed as part of the full regression suite run for this ticket. Graded PARTIAL to flag that this specific corpus entry was not fully exercised end-to-end by this sweep's harness, not because incorrect behavior was observed."
+  },
+  {
+    "id": "CROSS-BUYING-HOME-BROWARD", "surface": "ask", "hub": "cross", "query": "I'm buying a home in Broward County. What should I research?",
+    "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["ordered multi-hub research journey, no direct specialist execution"],
+    "appliedConditions": ["correctly classified MULTI_HUB_JOURNEY, mode=JOURNEY, zero specialist calls"],
+    "unresolvedConditions": [],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "JOURNEY (per decideAskExecution.mode)", "resultCount": null,
+    "sourceFamily": "n/a", "sourceAsOf": "n/a", "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-BUYING-HOME-BROWARD",
+    "notes": "Confirmed still correct per R1-016 (ask-intel-v3-corpus.ts:182-183, forbiddenBehaviors:['SPECIALIST_EXECUTION']): MULTI_HUB_JOURNEY intent hands off to an ordered research menu rather than auto-executing. This harness's guided-research call doesn't render the journey menu itself (that's ask-research-route.ts's `journey` field, a separate structure), but the safety property (zero unauthorized dispatch) is confirmed."
+  },
+  {
+    "id": "CROSS-UNIVERSAL-SCORE", "surface": "ask", "hub": "cross", "query": "What is the one universal Trust score for this company?",
+    "grade": "PASS",
+    "requestedConditions": ["refuse an unsupported concept (a single universal cross-network score)"],
+    "appliedConditions": ["correctly refused, zero specialist calls"], "unresolvedConditions": [],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (blocked pre-dispatch)", "resultCount": 0,
+    "sourceFamily": "n/a", "sourceAsOf": "n/a", "limitations": [], "nextActions": ["provide entity name"],
+    "evidencePointer": "raw-ask-results.json#CROSS-UNIVERSAL-SCORE",
+    "notes": "Correct, deliberate refusal of a concept the network does not and should not support (no cross-hub composite score exists); confirmed still working."
+  },
+  {
+    "id": "CROSS-TWO-DOMAIN", "surface": "ask", "hub": "cross", "query": "I need a mover and a mortgage lender in New Jersey",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["both requested domains (mover AND mortgage lender) preserved, via either a multi-hub journey or an explicit clarification"],
+    "appliedConditions": ["only the lender domain was executed"],
+    "unresolvedConditions": ["the mover request was silently dropped entirely, with no disclosure, clarification, or follow-up offered"],
+    "selectedHubs": ["lender"], "actualCalls": 1, "resultClass": "SUPPORTED_RESULTS", "resultCount": 776,
+    "sourceFamily": "specialist-execution/v2 (lender)", "sourceAsOf": "n/a",
+    "limitations": ["standard HMDA disclosures, none acknowledging the dropped mover request"],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-TWO-DOMAIN; also checked via lib/network/ask-research-route.ts buildAskResearchRoute, which independently reports canExecute=false ('I need one detail before I search') for the same query -- a direct contradiction between the two parent-side authorization layers",
+    "notes": "BLOCKER-CROSS-01. Root cause confirmed: research-planner.ts's MULTI_HUB_JOURNEY detection regex requires the verb forms 'move'/'moving' (`mov(?:e|ing)`), which does NOT match the noun 'mover' -- so a 2-candidate-hub query using 'a mover' instead of 'moving' never triggers MULTI_HUB_JOURNEY and falls through to plain COHORT_BROWSE with primaryHub left undefined at the planner layer. Separately, lib/guided-research/session.ts's createUnscopedGuidedSession evaluates hub-intent regexes in an early-return chain (investor -> insurance -> lender -> generic move/senior/contractor fallback); 'mortgage lender' matches the lenderIntent regex FIRST and returns an EXECUTE session immediately, before any check for whether the query also needs a second hub. The result: the user's explicit request for a mover is completely and silently discarded, with a real 776-row lender-only cohort returned as if it were a complete answer to the whole question. Independently, ask-research-route.ts's buildAskResearchRoute (a different authorization surface) says this exact query canExecute=false and needs clarification -- so the two parent-side layers actively disagree about whether this query should execute at all, and the one that actually renders to a live user (guided-research) chose to execute a partial, silently-incomplete answer rather than the other layer's (arguably safer) clarification request."
+  },
+  {
+    "id": "CROSS-OVERLONG-NJ", "surface": "ask", "hub": "cross", "query": "lender in new jersey [150 x's] New Jersey",
+    "grade": "PASS",
+    "requestedConditions": ["input validation: overlong/garbage-suffixed input should not break or corrupt the genuine request"],
+    "appliedConditions": ["correctly executed the genuine NJ lender request, ignoring the garbage suffix"], "unresolvedConditions": [],
+    "selectedHubs": ["lender"], "actualCalls": 1, "resultClass": "SUPPORTED_RESULTS", "resultCount": 776,
+    "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["standard HMDA disclosures"], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CROSS-OVERLONG-NJ",
+    "notes": "Confirmed still correct per R1-015-era input-validation work: an overlong, garbage-padded input still resolves to the same correct 776-record NJ lender cohort as the clean phrasing, with no truncation-related corruption or crash."
+  }
+]

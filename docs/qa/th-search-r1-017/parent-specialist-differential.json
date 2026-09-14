@@ -1,0 +1,52 @@
+{
+  "methodology": "For every corpus entry marked testSurfaces:['ask','direct'] (31 differential pairs), the identical query text was run against (a) the specialist's own public contract directly and (b) Ask parent's real production execution path (guided-research), and the two were compared on intent/class, identifier, geography meaning, result count, first identities, coverage/fail state, limitations, and next action, per spec section 16.",
+  "materialMismatches": [
+    {
+      "pair": "MOVE-JK-BARE / MOVE-JK-JOURNEY",
+      "severity": "BLOCKER_FAIL (see blockers.json#BLOCKER-MOVE-01)",
+      "summary": "Direct move-ask-v1 returns 5 tightly 'JK'-anchored candidates; Ask parent (specialist-execution/v2) reports 34-70 total with candidates bearing no relation to 'JK'."
+    },
+    {
+      "pair": "CROSS-NAME-MULTI-HUB / INSURANCE-ZIP-33441",
+      "severity": "BLOCKER_FAIL (see blockers.json#BLOCKER-INSURANCE-01)",
+      "summary": "Direct insurance-ask-v1 correctly scopes by name or ZIP; Ask parent silently drops both constraints and returns the entire ~82,000-row agency population for either."
+    },
+    {
+      "pair": "ID-NAIC-POS",
+      "severity": "BLOCKER_FAIL (see blockers.json#BLOCKER-IDENTIFIER-FILLER-WORD-01)",
+      "summary": "Direct insurance-ask-v1 resolves 'NAIC code 10064' correctly; Ask parent corrupts the value to the literal word 'code' before dispatch and rejects it as invalid."
+    },
+    {
+      "pair": "CONTRACTOR-BROWARD-ROOFERS",
+      "severity": "BLOCKER_FAIL (see blockers.json#BLOCKER-CONTRACTOR-01)",
+      "summary": "Ask parent's guided-research path rejects the entire Contractor specialist response due to a stale hardcoded contract-version lock; the direct specialist itself was not independently confirmed broken (HTML-only, static fetch could not fully verify, but no server error was returned)."
+    }
+  ],
+  "benignDifferences": [
+    {
+      "pair": "LENDER-NJ-LENDERS (and its FL/TX variants)",
+      "summary": "Direct lender-ask-v1 classifies 'lenders in New Jersey' as mode=count (a single origination number); Ask parent's specialist-execution/v2 classifies the identical phrase as a cohort listing of 776 named institutions. Both are individually correct, disclosed, non-misleading answers to a genuinely ambiguous phrase -- recorded as a real differential, not a defect (found by the Lender grading pass)."
+    },
+    {
+      "pair": "MOVE-LOCAL-NJ",
+      "summary": "Direct move-ask-v1's bare GET contract does not attempt cohort enumeration for 'local mover in New Jersey' (returns a definitional/checklist response with 0 rows); Ask parent's guided path correctly executes a real 267-row NJ cohort with accurate HQ-not-service-territory disclosure. Ask parent is MORE capable here, not less -- the direct public contract under-serves this natural phrasing. Non-blocking capability gap in the specialist's own bare API, not a parent-side defect."
+    },
+    {
+      "pair": "INVESTOR-WY-STATE-REG",
+      "summary": "Same pattern as MOVE-LOCAL-NJ: direct investor-ask-v1 fails closed (UNSUPPORTED) on 'state-registered investment advisers in Wyoming'; Ask parent correctly executes and returns 25 real Wyoming RIA firms with accurate disclosure. Non-blocking; Ask parent's NLU handles this phrasing better than the bare specialist API."
+    },
+    {
+      "pair": "LENDER-BROWARD-PB-COMPARE",
+      "summary": "Direct lender-ask-v1 genuinely supports simultaneous two-county comparison (its own mode=comparison with a correct compareCounty field); Ask parent deliberately does not execute this shape at all (R1-016-confirmed, geography is single-valued at the parent). This proves the parent's non-execution here is a parent-side capability gap relative to what the specialist can actually do, not a specialist limitation -- a legitimate non-blocking future-enhancement candidate (raised by the Lender grading pass), not correctness debt for R1 closure."
+    },
+    {
+      "pair": "SENIOR-AUSTIN-NURSING / SENIOR-HOUSTON-HH / SENIOR-TAMPA-NH",
+      "summary": "Direct and Ask parent agree closely (Ask's total vs. direct's page-capped row count differ only by pagination, not by scope) -- Senior's guided-session path (via the more mature careTask/planCareResearch mechanism) shows no material widening or condition loss, unlike Move/Insurance."
+    },
+    {
+      "pair": "ID-USDOT-POS / ID-CRD-POS / ID-CCN-POS / ID-NPN-MISS / ID-CRD-MISS / ID-CCN-MISS",
+      "summary": "All exact-identifier hit/miss pairs across Move, Investor, and Senior agree exactly between direct and Ask parent -- confirms the widening/condition-loss defects found elsewhere are specific to name/geography-based cohort and entity queries, not identifier-path queries generally."
+    }
+  ],
+  "crossCuttingObservation": "Every confirmed BLOCKER_FAIL in this sweep (6 distinct root causes) was found specifically at the boundary between the Ask parent's PLANNING layer (which in every single case correctly understood the query -- correct hub, correct intent, correct entity/geography extraction at the plan.* level) and its EXECUTION layer (guided-research's session.ts/specialists.ts, which either lost the extracted condition before building the specialist request, or received a specialist response broader than the specialist's own certified contract). This matches the R1-016 lesson precisely: the planner and the actual execution path can and do disagree, and only end-to-end testing against the REAL execution path (not just the planner) surfaces these defects."
+}
