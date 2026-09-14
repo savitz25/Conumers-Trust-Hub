@@ -1,0 +1,113 @@
+[
+  {
+    "id": "CONTRACTOR-BROWARD-ROOFERS", "surface": "ask", "hub": "contractor", "query": "roofers in Broward County",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["Broward County roofer cohort browse"],
+    "appliedConditions": ["planner correctly recognized roofing_contractor + Broward geography (matches R1-016-era certified behavior)"],
+    "unresolvedConditions": ["specialist response is rejected outright before any data is read"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "BACKEND_UNAVAILABLE", "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2 (contractortrusthub.com)", "sourceAsOf": "n/a (response discarded)",
+    "limitations": ["ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."],
+    "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWARD-ROOFERS; live re-run confirms error.code=contract_version_mismatch",
+    "notes": "BLOCKER-CONTRACTOR-01. A certified, previously-working query (Broward roofers was already validated in R1-008/R1-016-era testing) now fails completely on the real /ask execution path with error.code='contract_version_mismatch'. Root cause confirmed by direct code inspection: lib/guided-research/specialists.ts hardcodes CONTRACTOR_CONTRACT_VERSION='2.1.0', CONTRACTOR_SCHEMA_FINGERPRINT, and CONTRACTOR_CONTRACT_FINGERPRINT as literal constants (lines 15-17), and line 252 rejects the entire specialist response with BACKEND_UNAVAILABLE unless the live ContractorTrustHub response echoes back an EXACT match on all three. The Contractor specialist (savitz25/contractor-trust-hub, main SHA f... at 2026-09-12) has evidently since changed its contract/schema, so every real cohort-browse request through this path is now unconditionally refused, regardless of whether the underlying data is fine. This is a complete functional outage for Contractor cohort-browse execution via the real production /ask page, not a partial degradation. Confirmed this is Contractor-specific and NOT a systemic FINANCIAL_SPECIALIST_LOCKS problem: live-checked Investor ('state-registered investment advisers in Wyoming') and Lender ('lenders in New Jersey') both still return SUPPORTED_RESULTS with no version-mismatch error, so Investor/Insurance/Lender's separate FINANCIAL_SPECIALIST_LOCKS constants are still current."
+  },
+  {
+    "id": "CONTRACTOR-TXGC-PARAPHRASE", "surface": "ask", "hub": "contractor", "query": "Who regulates a general contractor in Texas if there isn't a statewide GC license?",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["how-to/policy guidance for Texas GC regulation"], "appliedConditions": ["planner routed to contractor/general_contractor"], "unresolvedConditions": ["specialist response rejected outright"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "BACKEND_UNAVAILABLE", "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-TXGC-PARAPHRASE",
+    "notes": "Same BLOCKER-CONTRACTOR-01 root cause as CONTRACTOR-BROWARD-ROOFERS -- every Contractor query that reaches actual dispatch through this path currently fails the same way."
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-PARAPHRASE", "surface": "ask", "hub": "contractor", "query": "Show me Broward roofers — I typed Browrd before.",
+    "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["Broward County roofer cohort browse"], "appliedConditions": ["planner correctly routed"], "unresolvedConditions": ["specialist response rejected outright"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "BACKEND_UNAVAILABLE", "resultCount": 0,
+    "sourceFamily": "specialist-execution/v2", "sourceAsOf": "n/a",
+    "limitations": ["ContractorTrustHub's structured research contract is temporarily unavailable because its version lock changed."], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWRD-PARAPHRASE",
+    "notes": "Third confirmed instance of BLOCKER-CONTRACTOR-01 -- every dispatch-reaching Contractor ask-surface case in this corpus hits the same version-lock failure."
+  },
+  {
+    "id": "CONTRACTOR-BROWRD-TYPO", "surface": "ask", "hub": "contractor", "query": "roofers in Browrd County", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["typo correction requires explicit acceptance before executing"], "appliedConditions": ["correctly blocked pre-dispatch pending confirmation"], "unresolvedConditions": ["would still hit BLOCKER-CONTRACTOR-01 if the user confirmed, since it never reaches that far in this run"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (blocked pre-dispatch)", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": ["confirm Broward correction"],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-BROWRD-TYPO",
+    "notes": "This case never reaches dispatch (executionAllowed=false, correction-confirmation required first), so it does not itself hit BLOCKER-CONTRACTOR-01, but a confirmed correction almost certainly would (see CONTRACTOR-BROWARD-ROOFERS). Graded on its own narrow merits: the typo-acceptance gate itself is working correctly."
+  },
+  {
+    "id": "CONTRACTOR-HVAC-AUSTIN", "surface": "ask", "hub": "contractor", "query": "HVAC contractors in Austin Texas", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["Austin/Texas HVAC cohort browse"], "appliedConditions": ["correctly consent-gated (city-to-state broadening, matches R1-016-certified Texas behavior)"], "unresolvedConditions": ["would also hit BLOCKER-CONTRACTOR-01 if consent were given, untested here"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (blocked pre-dispatch)", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-HVAC-AUSTIN",
+    "notes": "Blocked before dispatch on the same deliberate Texas consent-gate confirmed correct in R1-016 (no published county-level Texas data). Does not itself exercise BLOCKER-CONTRACTOR-01."
+  },
+  {
+    "id": "CONTRACTOR-FL-VERIFY-HOWTO", "surface": "ask", "hub": "contractor", "query": "how do I verify a contractor license in Florida?", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["how-to guidance, not a directory listing"], "appliedConditions": ["correctly classified HOW_TO, no specialist dispatch attempted"], "unresolvedConditions": [],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "n/a (guidance path, not cohort dispatch)", "resultCount": 0, "sourceFamily": "n/a", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#CONTRACTOR-FL-VERIFY-HOWTO",
+    "notes": "Re-confirmed still correct per R1-016: HOW_TO intent does not attempt specialist dispatch at all, so it is unaffected by BLOCKER-CONTRACTOR-01. Live-fetched the HTML page directly (buildAskResearchRoute path, not guided-research) and it still renders real destinations (contractor.verify/contractor.ask/contractor.home)."
+  },
+  {
+    "id": "ID-CONTRACTOR-EXACT", "surface": "direct", "hub": "contractor", "query": "Check contractor license CCC1332036.", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact credential resolution"], "appliedConditions": ["page rendered, no server error"], "unresolvedConditions": ["could not confirm exact-match content from static HTML fetch alone (JS-rendered)"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a (HTML-only, not independently confirmed)", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CONTRACTOR-EXACT",
+    "notes": "Contractor has no public JSON API; the direct-surface check here is a static HTML fetch which does not execute client-side JS, so the actual rendered specialist result could not be independently confirmed by this harness (a real browser render would be needed). Page returned HTTP 200 with no error text. Not graded PASS outright due to this test-coverage limitation."
+  },
+  {
+    "id": "CONTRACTOR-HVAC-DALLAS", "surface": "direct", "hub": "contractor", "query": "HVAC contractors in Dallas Texas", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["Dallas/Texas HVAC cohort"], "appliedConditions": ["page rendered, no server error"], "unresolvedConditions": ["actual result content not independently confirmed (static HTML fetch, JS-rendered app)"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-HVAC-DALLAS",
+    "notes": "Same static-HTML-fetch limitation as ID-CONTRACTOR-EXACT."
+  },
+  {
+    "id": "CONTRACTOR-NJ-PLUMBERS", "surface": "direct", "hub": "contractor", "query": "plumbers in New Jersey", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["NJ plumber cohort"], "appliedConditions": ["page rendered, no server error"], "unresolvedConditions": ["actual result content not independently confirmed"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-NJ-PLUMBERS", "notes": "Same static-HTML-fetch limitation."
+  },
+  {
+    "id": "CONTRACTOR-TX-GC-POLICY", "surface": "direct", "hub": "contractor", "query": "who regulates a general contractor in Texas if there isn't a statewide GC license?", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["how-to/policy guidance, not a directory"], "appliedConditions": ["page rendered ('What do you want to find out?' guidance framing observed in static HTML)"], "unresolvedConditions": ["full guidance content not independently confirmed"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-TX-GC-POLICY",
+    "notes": "Static HTML shows a guidance-framed page shell, consistent with how-to handling rather than a directory dump, but full confirmation needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-BOOK-TOMORROW", "surface": "direct", "hub": "contractor", "query": "book a roofer for tomorrow in Broward County", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["booking boundary preserved -- no fake reservation"], "appliedConditions": ["page rendered, no server error, no evidence of a fabricated booking confirmation"], "unresolvedConditions": ["full content not independently confirmed"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-BOOK-TOMORROW", "notes": "No evidence of a fabricated booking capability in the static shell; full confirmation needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-CA-RECOVERY", "surface": "direct", "hub": "contractor", "query": "contractor recovery fund in California", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["California-specific recovery-fund jurisdiction info"], "appliedConditions": ["page rendered with recovery-fund content"], "unresolvedConditions": ["exact jurisdiction-correctness of the content not independently confirmed beyond keyword presence"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-CA-RECOVERY", "notes": "Page text contains 'Recovery Fund' content specific to the query; full jurisdiction-accuracy verification needs a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-AK-RECOVERY", "surface": "direct", "hub": "contractor", "query": "contractor recovery fund in Alaska", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["honest disclosure if Alaska recovery-fund data is unsupported/unacquired"], "appliedConditions": ["page text contains both 'Recovery Fund' and 'UNSUPPORTED', suggesting an honest unsupported-state disclosure rather than fabricated Alaska-specific rules"], "unresolvedConditions": ["exact disclosure wording not fully confirmed beyond keyword presence"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-AK-RECOVERY",
+    "notes": "'UNSUPPORTED' keyword present alongside 'Recovery Fund' text is a positive signal that Alaska is honestly flagged as unsupported rather than answered with wrong/fabricated rules, but full content was not independently confirmed via a real browser render."
+  },
+  {
+    "id": "CONTRACTOR-PLACE-IN-NAME", "surface": "direct", "hub": "contractor", "query": "Broward Elite Roofing LLC", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["treat as an entity-name search, not a Broward-geography filter, despite 'Broward' appearing inside the company name"], "appliedConditions": ["page text contains both the full company name and 'Geography'/'no match' language, suggesting an entity-name search path was taken and returned no match rather than silently returning unrelated Broward County roofers"], "unresolvedConditions": ["not fully confirmed whether geography was ALSO incorrectly applied alongside the name search"],
+    "selectedHubs": ["contractor"], "actualCalls": 1, "resultClass": "n/a (auto-extraction flagged mentionsNoMatch=true)", "resultCount": null, "sourceFamily": "contractor's own /ask page", "sourceAsOf": "n/a",
+    "limitations": [], "nextActions": [], "evidencePointer": "raw-direct-results.json#CONTRACTOR-PLACE-IN-NAME",
+    "notes": "Auto-extraction flagged 'no match' language on the page along with the full company name and 'Broward County' text -- consistent with the specialist correctly attempting an entity-name search for the whole LLC name (returning honest no-match for a likely-nonexistent company) rather than silently degrading to a plain Broward-geography cohort. Not fully confirmed via structured data (HTML-only hub); recommend a real-browser follow-up in a future ticket for higher confidence."
+  }
+]

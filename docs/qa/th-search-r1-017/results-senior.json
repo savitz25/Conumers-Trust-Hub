@@ -1,0 +1,181 @@
+[
+  {
+    "id": "ID-CCN-POS", "surface": "ask", "hub": "senior", "query": "CMS CCN 455799", "grade": "PASS",
+    "requestedConditions": ["exact CCN identity"], "appliedConditions": ["identifier=cms_ccn:455799"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "EXACT_IDENTITY", "resultCount": 1,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["Missing source evidence is not zero, clean, or good standing.", "CMS-reported ratings are not TrustHub recommendations."],
+    "nextActions": ["Open SeniorTrustHub profile"], "evidencePointer": "raw-ask-results.json#ID-CCN-POS",
+    "notes": "Exact identity, correct facility (AUSTIN WELLNESS & REHABILITATION), no fabrication, proper limitations attached."
+  },
+  {
+    "id": "ID-CCN-POS", "surface": "direct", "hub": "senior", "query": "CMS CCN 455799", "grade": "PASS",
+    "requestedConditions": ["exact CCN identity"], "appliedConditions": ["identifier=ccn:455799"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "identifier", "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": "2026-08-01",
+    "limitations": ["Missing source evidence is not zero, clean, or good standing."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CCN-POS", "notes": "Direct specialist matches Ask parent exactly (same facility, same CCN)."
+  },
+  {
+    "id": "ID-CCN-MISS", "surface": "ask", "hub": "senior", "query": "CMS CCN 000000", "grade": "PASS",
+    "requestedConditions": ["exact CCN identity"], "appliedConditions": ["identifier=cms_ccn:000000"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "ZERO_MATCHING_ROWS", "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["No current indexed provider matched this CCN. That is not proof the number is unused elsewhere."],
+    "nextActions": [], "evidencePointer": "raw-ask-results.json#ID-CCN-MISS",
+    "notes": "Genuine miss correctly rendered as ZERO_MATCHING_ROWS with an honest disclaimer, not a false hit and not an unqualified zero."
+  },
+  {
+    "id": "ID-CCN-MISS", "surface": "direct", "hub": "senior", "query": "CMS CCN 000000", "grade": "PASS",
+    "requestedConditions": ["exact CCN identity"], "appliedConditions": ["identifier=ccn:000000"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": null, "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#ID-CCN-MISS", "notes": "Matches Ask parent (both correctly report no match, terminalState NO_MATCH)."
+  },
+  {
+    "id": "ID-CCN-BARE6", "surface": "ask", "hub": "senior", "query": "455799", "grade": "PASS",
+    "requestedConditions": ["identify by bare digits"], "appliedConditions": [], "unresolvedConditions": ["entityName or recognized identifier"],
+    "selectedHubs": [], "actualCalls": 0, "resultClass": "ENTITY_LOOKUP_MISSING_IDENTITY", "resultCount": 0,
+    "sourceFamily": null, "sourceAsOf": null, "limitations": [],
+    "nextActions": ["Provide the entity name or a recognized source identifier before specialist research runs."],
+    "evidencePointer": "raw-ask-results.json#ID-CCN-BARE6",
+    "notes": "Bare 6-digit string correctly stays ambiguous / fail-closed rather than being guessed as a CCN. Zero specialist calls, matching R1-008's bare-digits collision invariant."
+  },
+  {
+    "id": "SENIOR-AUSTIN-GENERIC", "surface": "ask", "hub": "senior", "query": "senior homes in Austin Texas", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["geography=Austin,TX"], "appliedConditions": ["geography preserved in clarification"], "unresolvedConditions": ["providerClass"],
+    "selectedHubs": ["senior"], "actualCalls": 0, "resultClass": "CLARIFICATION_REQUIRED", "resultCount": 0,
+    "sourceFamily": null, "sourceAsOf": null, "limitations": [],
+    "nextActions": ["Which care setting would you like to research?"], "evidencePointer": "raw-ask-results.json#SENIOR-AUSTIN-GENERIC",
+    "notes": "Deliberate, certified ambiguous-class clarification per R1-008 (nursing home vs home health vs hospice). Geography (Austin, Texas) is correctly retained in the plan for the follow-up. Not a blocker per spec section 0."
+  },
+  {
+    "id": "SENIOR-AUSTIN-NURSING", "surface": "ask", "hub": "senior", "query": "nursing homes in Austin Texas", "grade": "PASS",
+    "requestedConditions": ["providerClass=nursing_home", "geography=Austin,TX"], "appliedConditions": ["providerClass=nursing_home", "geography=Austin,TX"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "RESEARCH_COHORT", "resultCount": 25,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["Recorded provider location is not a radius search or verified service area."],
+    "nextActions": ["Open SeniorTrustHub profile (x20 shown)"], "evidencePointer": "raw-ask-results.json#SENIOR-AUSTIN-NURSING",
+    "notes": "Both class and geography correctly preserved and applied; correct disclosure that recorded location != service area."
+  },
+  {
+    "id": "SENIOR-AUSTIN-NURSING", "surface": "direct", "hub": "senior", "query": "nursing homes in Austin Texas", "grade": "PASS",
+    "requestedConditions": ["providerClass=nursing_home", "geography=Austin,TX"], "appliedConditions": ["providerClass=nursing_home", "geography=Austin,TX"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 20,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null, "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-AUSTIN-NURSING",
+    "notes": "Direct specialist and Ask parent counts are close (20 shown page 1 direct vs 25 total / 20 shown via Ask) -- consistent, no material widening."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-UNSPEC", "surface": "ask", "hub": "senior", "query": "Who owns this nursing home?", "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["resolve deictic 'this nursing home' to a specific facility before answering ownership"],
+    "appliedConditions": ["entire question text used as a literal company-name search"], "unresolvedConditions": ["facility identity was never actually resolved"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "RESEARCH_COHORT (mislabeled as an identity match)", "resultCount": 25,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["None surfaced explaining that no specific facility was identified"],
+    "nextActions": ["none offered to clarify which facility is meant"],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNERSHIP-UNSPEC; live re-run: START then SET_GEOGRAPHY 'Austin, Texas' -> resultState SUPPORTED_RESULTS, consumerHeading 'Multiple published identities', total 25",
+    "notes": "REPRODUCED LIVE, NOT JUST FROM THE HARNESS DUMP. 'this nursing home' is a deictic reference (DEICTIC_ENTITY in research-planner.ts lists 'facility' but not the literal phrase 'nursing home', so it slips through). The literal sentence 'Who owns this nursing home' becomes plan.entityName and session.identityName verbatim. After supplying geography it does NOT ask which facility is meant and does NOT surface any ownership data (the original request) -- it silently falls back to a generic 25-facility Austin cohort browse, framed as 'Multiple published identities' matching a nonsense query string. This silently drops both the deictic-identity requirement and the ownership evidence request. Confirmed identical behavior for SENIOR-OWNS-PARAPHRASE. Likely code boundary: lib/network/research-planner.ts DEICTIC_ENTITY regex (missing 'nursing home' keyword) and/or lib/guided-research/session.ts's identityName assignment not validating that the extracted 'name' is plausible before treating it as a literal entity search."
+  },
+  {
+    "id": "SENIOR-OWNS-PARAPHRASE", "surface": "ask", "hub": "senior", "query": "Can you tell me who owns this nursing home?", "grade": "BLOCKER_FAIL",
+    "requestedConditions": ["resolve deictic 'this nursing home' to a specific facility before answering ownership"],
+    "appliedConditions": ["entire question text used as a literal company-name search"], "unresolvedConditions": ["facility identity was never actually resolved"],
+    "selectedHubs": ["senior"], "actualCalls": 0, "resultClass": "COLLECT (identityName set to the whole sentence)", "resultCount": 0,
+    "sourceFamily": null, "sourceAsOf": null, "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNS-PARAPHRASE",
+    "notes": "Same defect as SENIOR-OWNERSHIP-UNSPEC (identityName = 'Can you tell me who owns this nursing home' verbatim); paraphrase confirms this is a real DEICTIC_ENTITY regex gap, not a one-off string fluke. See SENIOR-OWNERSHIP-UNSPEC for the full reproduction and code-boundary note."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-EXACT", "surface": "ask", "hub": "senior", "query": "Who owns the nursing home with CMS CCN 455799?", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact CCN identity", "ownership evidence"], "appliedConditions": ["identifier=cms_ccn:455799"], "unresolvedConditions": ["ownership-specific evidence beyond CMS star ratings"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "EXACT_IDENTITY", "resultCount": 1,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["Missing source evidence is not zero, clean, or good standing.", "CCN match is canonical identity for that class directory."],
+    "nextActions": ["overallStars/staffingStars/inspectionStars refinements", "Open SeniorTrustHub profile"],
+    "evidencePointer": "raw-ask-results.json#SENIOR-OWNERSHIP-EXACT",
+    "notes": "When the facility IS unambiguously identified via a real CCN, the system behaves correctly -- exact identity resolved, no fabricated ownership claim. Contrast with SENIOR-OWNERSHIP-UNSPEC's deictic-without-identifier failure: this confirms the defect is specifically the deictic-resolution gap, not identifier handling generally."
+  },
+  {
+    "id": "SENIOR-OWNERSHIP-EXACT", "surface": "direct", "hub": "senior", "query": "Who owns the nursing home with CMS CCN 455799?", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact CCN identity", "ownership evidence"], "appliedConditions": ["identifier=ccn:455799", "facilityEvidence=ownership"], "unresolvedConditions": ["no ownership-specific field in the evidence payload"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": "2026-08-01",
+    "limitations": ["Missing source evidence is not zero, clean, or good standing."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-OWNERSHIP-EXACT",
+    "notes": "Specialist echoes facilityEvidence:'ownership' in the query but the evidence array returned is generic CMS star ratings, not an ownership record. coverageState:'PARTIAL' plus the standard 'missing evidence is not clean' limitation is an honest signal this data isn't available rather than a fabricated answer -- acceptable safe limitation, not a blocker."
+  },
+  {
+    "id": "SENIOR-HOUSTON-HH", "surface": "direct", "hub": "senior", "query": "home health agencies in Houston Texas", "grade": "PASS",
+    "requestedConditions": ["providerClass=home_health", "geography=Houston,TX"], "appliedConditions": ["providerClass=home_health", "geography=Houston,TX"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 20,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null, "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-HOUSTON-HH", "notes": "Correct class and geography applied, page 1 of 20 shown."
+  },
+  {
+    "id": "SENIOR-TAMPA-NH", "surface": "direct", "hub": "senior", "query": "nursing homes in Tampa Florida", "grade": "PASS",
+    "requestedConditions": ["providerClass=nursing_home", "geography=Tampa,FL"], "appliedConditions": ["providerClass=nursing_home", "geography=Tampa,FL"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 18,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null, "limitations": [], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-TAMPA-NH", "notes": "Correct class and geography applied."
+  },
+  {
+    "id": "SENIOR-CHOW", "surface": "direct", "hub": "senior", "query": "has this nursing home changed ownership recently, CCN 455799", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact CCN identity", "CHOW/change-of-ownership evidence"], "appliedConditions": ["identifier=ccn:455799", "facilityEvidence=ownership"], "unresolvedConditions": ["no explicit CHOW-dated field returned"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": null,
+    "limitations": ["Missing source evidence is not zero, clean, or good standing."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-CHOW",
+    "notes": "No CHOW-specific data field is returned, only generic star ratings; the standing 'missing evidence is not clean' disclosure prevents this from being read as 'never changed ownership'. Honest limitation, not a blocker."
+  },
+  {
+    "id": "SENIOR-FINE", "surface": "direct", "hub": "senior", "query": "has CCN 455799 ever been fined", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["exact CCN identity", "penalty/enforcement evidence"], "appliedConditions": ["identifier=ccn:455799", "facilityEvidence=penalty"], "unresolvedConditions": ["no explicit penalty-history field returned"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": null,
+    "limitations": ["Missing source evidence is not zero, clean, or good standing."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-FINE",
+    "notes": "Same pattern as SENIOR-CHOW -- no penalty-specific data returned, but disclosure prevents a false 'never fined' reading. Not a blocker."
+  },
+  {
+    "id": "SENIOR-AMBIGUOUS-PROVIDER", "surface": "direct", "hub": "senior", "query": "tell me about Golden Living", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["identify 'Golden Living'"], "appliedConditions": ["entity search on raw phrase"], "unresolvedConditions": ["no facility resolved"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "NO_MATCH", "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["Name matches are candidates within their displayed class; no fuzzy identity merge across classes."],
+    "nextActions": [], "evidencePointer": "raw-direct-results.json#SENIOR-AMBIGUOUS-PROVIDER",
+    "notes": "This is a raw colloquial phrase sent directly to the specialist's own API (fair test of what its own search box would show for the identical string) -- specialist correctly reports no match rather than fabricating a facility. Entity extraction from colloquial phrasing is the PARENT's job (research-planner.ts), not expected of the raw specialist contract."
+  },
+  {
+    "id": "SENIOR-ASSISTED-VA", "surface": "direct", "hub": "senior", "query": "assisted living facilities in Richmond Virginia", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["providerClass=assisted_living", "geography=Richmond,VA"], "appliedConditions": ["geography=Richmond,VA"], "unresolvedConditions": ["providerClass=assisted_living is not a supported class"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null,
+    "limitations": ["Virginia assisted living is a DSS license class, not a CMS nursing-home directory. A complaint-related inspection is not a substantiated complaint."],
+    "nextActions": ["Open the Virginia research page"], "evidencePointer": "raw-direct-results.json#SENIOR-ASSISTED-VA",
+    "notes": "Correctly fail-closed (terminalState UNSUPPORTED) with an accurate explanation of why -- does NOT silently substitute Nursing Home data for the unsupported Assisted Living class. Exactly the safe behavior required."
+  },
+  {
+    "id": "SENIOR-ASSISTED-NY", "surface": "direct", "hub": "senior", "query": "assisted living in Buffalo New York", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["providerClass=assisted_living", "geography=Buffalo,NY"], "appliedConditions": ["geography=Buffalo,NY"], "unresolvedConditions": ["providerClass=assisted_living is not a supported class"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null, "limitations": ["Assisted living is not a CMS-certified class covered by this specialist."],
+    "nextActions": [], "evidencePointer": "raw-direct-results.json#SENIOR-ASSISTED-NY", "notes": "Same correct fail-closed pattern as SENIOR-ASSISTED-VA, no Nursing Home substitution."
+  },
+  {
+    "id": "SENIOR-MEMORYCARE-FL", "surface": "direct", "hub": "senior", "query": "memory care facilities in Orlando Florida", "grade": "PASS_SAFE_LIMITATION",
+    "requestedConditions": ["providerClass=memory_care", "geography=Orlando,FL"], "appliedConditions": ["geography=Orlando,FL"], "unresolvedConditions": ["providerClass=memory_care is not a supported class"],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "UNSUPPORTED", "resultCount": 0,
+    "sourceFamily": "CMS Care Compare / SeniorTrustHub", "sourceAsOf": null, "limitations": ["Memory care is not a CMS-certified class covered by this specialist."],
+    "nextActions": [], "evidencePointer": "raw-direct-results.json#SENIOR-MEMORYCARE-FL", "notes": "Same correct fail-closed pattern, no Nursing Home substitution."
+  },
+  {
+    "id": "SENIOR-RATINGS-VALID", "surface": "direct", "hub": "senior", "query": "what is the star rating for CCN 455799", "grade": "PASS",
+    "requestedConditions": ["exact CCN identity", "star rating"], "appliedConditions": ["identifier=ccn:455799"], "unresolvedConditions": [],
+    "selectedHubs": ["senior"], "actualCalls": 1, "resultClass": "COMPLETE", "resultCount": 1,
+    "sourceFamily": "Provider Information (CMS)", "sourceAsOf": "2026-08-01",
+    "limitations": ["CMS-reported ratings are not TrustHub recommendations."], "nextActions": [],
+    "evidencePointer": "raw-direct-results.json#SENIOR-RATINGS-VALID",
+    "notes": "Real numeric ratings returned (overall 1/5, staffing 2/5, inspection 1/5) -- integers in valid 1-5 range, no NaN, no suspicious literal '5' pattern across all three metrics (they differ, which is itself evidence against a hardcoded/stubbed value)."
+  }
+]
