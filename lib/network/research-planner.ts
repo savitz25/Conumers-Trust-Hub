@@ -149,6 +149,28 @@ function requestedGeography(query: string, parsed: ReturnType<typeof parseNetwor
   return undefined;
 }
 
+const ENTITY_NAME_LEADING_STOPWORDS = /^(?:Can|Is|Does|Will|Would|Could|Should|What|Who|Where|When|Why|How|Do|My|The|A|An|Please|I)$/;
+// Identifier-family label tokens (identifiers.ts): a capitalized run led by one of these is a
+// probable malformed/attempted identifier ("NAIC ABCD"), not a company name, so must not be
+// reinterpreted as an entity name.
+const IDENTIFIER_LABEL_TOKEN = /^(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)$/i;
+
+function properNounCandidate(query: string, geography: AskRequestedGeography | undefined): string | undefined {
+  const runs = query.match(/\b[A-Z][a-zA-Z0-9'&.-]*(?:\s+[A-Z][a-zA-Z0-9'&.-]*)*\b/g) ?? [];
+  for (const run of runs) {
+    const words = run.split(/\s+/);
+    let start = 0;
+    while (start < words.length && ENTITY_NAME_LEADING_STOPWORDS.test(words[start])) start++;
+    const kept = words.slice(start);
+    if (kept.length < 2 || IDENTIFIER_LABEL_TOKEN.test(kept[0])) continue;
+    const candidate = kept.join(' ');
+    if (geography?.origin && candidate.toLowerCase().includes(geography.origin.toLowerCase())) continue;
+    if (geography?.destination && candidate.toLowerCase().includes(geography.destination.toLowerCase())) continue;
+    return candidate;
+  }
+  return undefined;
+}
+
 function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'], geography: AskRequestedGeography | undefined): string | undefined {
   const quoted = query.match(/["“]([^"”]{2,160})["”]/)?.[1]?.trim();
   if (quoted) return quoted;
@@ -161,6 +183,22 @@ function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'
   if (entity && !geography && !/\b(?:in|near|nearby|around|within|how|which|what|is\s+this|is\s+my|show|find|need|serving|headquartered)\b/i.test(query)) {
     const residue = query.replace(new RegExp(entity.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), ' ').replace(/\b(?:moving\s+company|movers?|contractors?|lenders?|nursing\s+homes?)\b/gi, ' ').replace(/[^a-z0-9&]+/gi, ' ').trim();
     if (residue.split(/\s+/).length >= 2) return query.replace(/[?.!]+$/g, '').trim();
+  }
+  // Bare multi-word proper-noun company name as the whole query (e.g. "JK Moving Services"):
+  // require the entire trimmed query to be title-case words, not a scan for a substring inside
+  // an arbitrary sentence, so unrelated capitalized phrases in longer sentences can't match here.
+  if (!entity && !geography) {
+    const trimmed = query.replace(/[?.!]+$/g, '').trim();
+    const words = trimmed.split(/\s+/);
+    if (words.length >= 2 && words.length <= 6 && words.every((w) => /^[A-Z][a-zA-Z0-9'&.-]*$/.test(w)) && !IDENTIFIER_LABEL_TOKEN.test(words[0])) {
+      return trimmed;
+    }
+  }
+  // Company name embedded alongside origin/destination route language
+  // (e.g. "Can JK Moving handle my move from Virginia to Florida?").
+  if (geography?.kind === 'route') {
+    const candidate = properNounCandidate(query, geography);
+    if (candidate) return candidate;
   }
   return undefined;
 }

@@ -1,0 +1,214 @@
+
+> ask-trust-hub@2.1.0 check:th-search-r1-016
+> node --experimental-strip-types --test lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/network/prompt-2.test.ts lib/network/lender-execute.test.ts lib/network/move-execute.test.ts lib/network/insurance-execute.test.ts lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts
+
+(node:11356) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (79.2319ms)
+✔ Back restores complete clarification and collection states without unnecessary execution (87.0141ms)
+✔ Back re-executes restored result filters and preserves sequential history (46.5402ms)
+✔ filters are visible, clearable, and server validated against current refinements (31.8503ms)
+✔ changing earlier choices invalidates dependent class, trade, and Move state (13.02ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (6.3369ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (26.0205ms)
+✔ Senior life situation asks class then geography and executes class-separated evidence (5.9276ms)
+✔ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (12.8436ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (13.3468ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (6.8507ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (10.8975ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (5.1258ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (7.818ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (7.7892ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (41.167ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (2.3764ms)
+✔ result-bearing clarification survives deterministic reload and resume (50.1574ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (15.8385ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (1.8951ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (6.2406ms)
+✔ Contractor service-territory requests fail closed without address substitution (4.1401ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (5.9544ms)
+✔ Move service-territory and route availability fail closed usefully (4.0088ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (7.9653ms)
+✔ absolute metrics remain zero by construction (0.6365ms)
+(node:16192) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/guided-research/ath-guided-003.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FALSE_CONFIDENT_ANSWERS = 0
+SUPPORTED_INTENT_DEAD_ENDS = 0
+PUBLICATION_LEAKAGE = 0
+PRIVATE_PERSON_LEAKAGE = 0
+PROFILE_MINTING = 0
+PAID_ORDER_SIGNALS = 0
+UNIVERSAL_SCORES = 0
+SERVICE_TERRITORY_INFERENCES = 0
+RAUM_AS_PERFORMANCE = 0
+COMPLAINT_AS_WRONGDOING = 0
+HMDA_AS_HEADQUARTERS = 0
+ENTITY_CLASS_COLLAPSES = 0
+MISSING_RESULT_EXPLANATIONS_AFTER_RESUME = 0
+BROKEN_BACK_TRANSITIONS = 0
+HIDDEN_ACTIVE_FILTERS = 0
+UNCLEARABLE_ACTIVE_FILTERS = 0
+SIX_HUB_FANOUTS = 0
+✔ specialist locks are independent and exact (2.5808ms)
+✔ generic financial needs are local action clarifications with zero fan-out (63.002ms)
+✔ audited financial direct goldens preserve hub and result states (170.1941ms)
+✔ requests preserve source semantics and publication firewalls (6.5804ms)
+✔ result-bearing financial states resume, while local clarification does not call specialists (4.438ms)
+✔ consumer UI includes all hubs and no profile minting or unsafe ranking controls (1.2092ms)
+(node:41456) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/ath-search-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ result and identity contracts are exhaustive and unique (1.8785ms)
+✔ failed company match cannot downgrade to a state cohort (29.6753ms)
+✔ Move public-name inputs route but do not auto-select without canonical resolver contract (23.7988ms)
+✔ exact identifiers preserve exact identity classification (8.1353ms)
+✔ research, place, journey, ranking, malformed and unsupported queries fail safely (7.8207ms)
+✔ all six typed capability contracts preserve ownership and geography semantics (0.4662ms)
+✔ golden copy has no raw template leaks and zero-result UI is explicit (1.6538ms)
+✔ FALSE_CONFIDENT_ANSWERS = 0 across critical no-match fixtures (1.1529ms)
+(node:43040) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/ath-search-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move exact identifier maps to exact identity without rewriting specialist facts (44.433ms)
+✔ Move ambiguity and fuzzy candidates remain uncertain and unranked (16.7905ms)
+✔ Move no-match, outage, timeout, invalid input, and contract mismatch fail closed distinctly (36.8008ms)
+✔ identity failure never becomes a Move market cohort (2.5765ms)
+✔ other hub, structured, place, life-event, ranking, and universal-score routing remain separated (10.9379ms)
+✔ Concierge Markdown supports safe links and rejects executable protocols and raw HTML (2.5761ms)
+✔ golden acceptance metrics remain absolute zero (1.9906ms)
+(node:33716) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/insurance-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Insurance execute: Florida agencies, count, Texas, NPN, NAIC (43.2272ms)
+✔ Insurance P&C is execute with a data limitation, not unsupported (1.5254ms)
+✔ Insurance fail-closed: ranking, quotes, clean record, class sum, domicile, serving, appointment, county, persons (16.0629ms)
+✔ Insurance identifiers: bare digits fail closed; unknown NPN is still execute lookup (2.9471ms)
+✔ Insurance execute does not change contractor / senior / investor / lender / move states (8.1076ms)
+(node:11320) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/lender-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Lender registry is live execute with lender-ask-v1 and no identifier mode (5.8687ms)
+✔ FHA Florida most originations executes Lender with HMDA property geography (32.1244ms)
+✔ Broward applications execute Lender as county property geography, not Place Lens metrics (5.9593ms)
+✔ Broward vs Palm Beach mortgage applications route Lender only, not Place Lens comparison (6.0529ms)
+✔ Lender fail-closed: best, safest, cheapest, lowest rate, discrimination, denial reasons, service territory (10.645ms)
+✔ complaints are not wrongdoing; denial is not discrimination; most is not a rate (1.2488ms)
+✔ NMLS executes live on lender-ask-v1 (TH-SEARCH-R1-016); bare digits stay ambiguous (2.2842ms)
+✔ cross-domain broker and carrier collisions (9.118ms)
+✔ geography semantics stay source-specific across hubs (5.9757ms)
+✔ entity-grain regression: no mega-count, no cross-hub sum, no Trust Score (3.739ms)
+✔ network fail-closed: no ranking, no universal score, contractor hire is not a ranking (2.8592ms)
+✔ Trace / provenance: one execute example per hub (3.5839ms)
+✔ publication and paid-status regression: Ask is not publication or paid ranking (0.7842ms)
+✔ unsupported questions fail closed instead of picking a specialist (0.3899ms)
+✔ six hubs remain execute for their owned domains; no remaining structured-Ask handoff (0.2079ms)
+(node:19512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/move-execute.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move registry is live execute with move-ask-v1 (1.4247ms)
+✔ Find USDOT 3244649 in New York keeps the Move Ask destination (21.238ms)
+✔ Find USDOT 3244649 executes Move, not Insurance (16.032ms)
+✔ Find MC 1019808 executes Move (2.9125ms)
+✔ household-goods carriers headquartered in Florida execute Move, not Insurance (7.6084ms)
+✔ household-goods brokers headquartered in Florida execute Move (7.4661ms)
+✔ Florida IM registrations execute Move as FDACS grain (1.0902ms)
+✔ carrier vs broker definition executes Move (0.8356ms)
+✔ broker-as-transporter and safest remain fail_closed on Move execute (5.9372ms)
+✔ carrier disambiguation: moving vs insurance vs ambiguous (10.792ms)
+✔ bare digits remain ambiguous across the network (3.5574ms)
+✔ Move execute does not change contractor / senior / investor / insurance / lender (6.333ms)
+(node:18740) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/prompt-2.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capability registry: all six specialist Asks are live execute (1.1136ms)
+✔ Broward roofers route to contractor execute (18.4386ms)
+✔ FHA Florida executes Lender Ask without inventing origination facts (10.7047ms)
+✔ identifier routing (9.5638ms)
+✔ Senior execute: Florida / Palm Beach / 5-star NH / CCN / Florida HH / Florida hospice (4.428ms)
+✔ Senior fail-closed: HH county, 5-star hospice, safest NH, combined count (2.4099ms)
+✔ Senior execute does not change contractor / lender / move / insurance / investor states (1.8599ms)
+✔ Investor execute: Florida RIA/ERA, RAUM, compensation, counts, CRD (2.2377ms)
+✔ Investor fail-closed: ranking, fees, stocks, bare digits, serving ≠ client geography (3.102ms)
+✔ buying a home in Broward is multi-hub (2.2116ms)
+✔ place question opens Broward lens (0.439ms)
+✔ name check never confirms identity (0.2657ms)
+✔ coverage atlas: 6 hubs × 51 jurisdictions, categorical only (1.4977ms)
+✔ place lens Florida / Broward / Palm Beach differences (1.1291ms)
+✔ evidence atlas pricing/ownership honest (0.3329ms)
+✔ integrity: no SCORE step, no mega-count in answers (1.1343ms)
+(node:3864) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/th-search-r1-008.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R1-008 ambiguous Senior discovery retains task and class choices (47.5036ms)
+✔ R1-008 blocked legacy execution calls no specialist (6.3757ms)
+✔ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (30.6031ms)
+✔ R1-008 city-only Houston does not invent a state or execute nationally (2.7259ms)
+✔ R1-008 moving belongings to care remains a Move task (1.7049ms)
+✔ R1-008 explicit care plus move has separate ordered steps (2.0029ms)
+✔ R1-008 original class clarification completes inline source-backed results (15.9084ms)
+✔ R1-008 explicit class nursing_home executes directly (5.3337ms)
+✔ R1-008 explicit class home_health executes directly (6.2473ms)
+✔ R1-008 explicit class hospice executes directly (8.8192ms)
+✔ R1-008 city-only choice completes only after state selection (9.6534ms)
+✔ R1-008 not-sure explains while retaining executable choices and location (9.3651ms)
+✔ R1-008 no CMS substitute: assisted living in Austin Texas (3.1284ms)
+✔ R1-008 no CMS substitute: memory care in Austin Texas (2.7785ms)
+✔ R1-008 no CMS substitute: independent living in Austin Texas (2.6375ms)
+✔ R1-008 rejects wrong hub contribution (5.9153ms)
+✔ R1-008 rejects wrong class contribution (7.8417ms)
+✔ R1-008 rejects wrong state contribution (7.8281ms)
+✔ R1-008 rejects wrong city contribution (6.6309ms)
+✔ R1-008 rejects wrong origin contribution (4.4145ms)
+✔ R1-008 legitimate empty cohort stays distinct from unavailable (5.3335ms)
+✔ R1-008 tampered hub cannot authorize dispatch (2.5546ms)
+✔ R1-008 tampered providerClass cannot authorize dispatch (2.1955ms)
+✔ R1-008 tampered city cannot authorize dispatch (2.7997ms)
+✔ R1-008 tampered state cannot authorize dispatch (1.3049ms)
+✔ R1-008 non-care contrasts do not gain a care-setting question (5.1742ms)
+✔ R1-008 explicit place lens retains its separately authorized overview (0.5391ms)
+✔ R1-008 direct dispatcher rejects a forged authorized plan before fetch (1.1082ms)
+✔ R1-008 missing state is never an executed scope (0.3684ms)
+✔ R1-008 malformed and overlong questions cannot become partial execution (0.3137ms)
+✔ R1-008 unsupported evidence and invalid ratings cannot run an unfiltered cohort (2.7437ms)
+✔ R1-008 explicit source-rating filter reaches selected class request (2.6614ms)
+✔ R1-008 profile identity must agree with returned CCN (2.7972ms)
+✔ R1-008 journey care choice retains original local question (0.7673ms)
+✔ R1-008 forged executed city value and unsupported-evidence permission are rejected (4.9421ms)
+✔ R1-008 care choice preserves original rating and executable handoff scope (7.6126ms)
+✔ R1-008 forged history cannot replace the original task during BACK (8.2598ms)
+(node:30524) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/consumers-trust-hub/lib/network/th-search-r1-016.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\consumers-trust-hub\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R1-016 Bug #1: NMLS and LEI are registered live on lender-ask-v1 (0.8662ms)
+✔ R1-016 Bug #1: NMLS identifier query routes to a live lender-ask-v1 execute call (15.989ms)
+✔ R1-016 Bug #2: Lender NMLS miss downgrades EXACT_IDENTITY to NO_CONFIDENT_MATCH (33.928ms)
+✔ R1-016 Bug #2: a real Lender NMLS hit is not downgraded (no false negative) (9.7533ms)
+✔ R1-016 Bug #3: a bare multi-word company name is recognized as an entity lookup (4.9683ms)
+✔ R1-016 Bug #3: a company name embedded in a route/journey sentence still executes an identity lookup (3.0674ms)
+✔ R1-016 Bug #3: a pure route/service-territory cohort question (no named company) stays a disclosed clarification, not silently blocked (0.6419ms)
+✔ R1-016 Bug #3 (guided session): a company name embedded in a route sentence reaches EXECUTE with the identity preserved (5.0403ms)
+✔ R1-016 Bug #3 (guided session): a bare company name still reaches EXECUTE with the identity preserved (1.1272ms)
+✔ R1-016 Bug #3 (guided session): a pure route/service query with no named company still executes a cohort search, not an identity lookup (0.8555ms)
+✔ R1-016 regression: malformed identifier-shaped input stays a blocked missing-identity clarification (1.2005ms)
+✔ R1-016 regression: an instruction to fabricate a value is not treated as a real entity lookup (0.356ms)
+✔ R1-016 regression: previously-working cohort and identifier queries are unaffected (5.688ms)
+ℹ tests 145
+ℹ suites 0
+ℹ pass 145
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1540.7233

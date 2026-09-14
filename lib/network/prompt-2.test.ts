@@ -73,7 +73,7 @@ test('identifier routing', () => {
   assert.equal(buildNetworkAskPlan('USDOT 3244649').hubs[0].hubId, 'move');
   assert.equal(parseNetworkAsk('CRD 123456').identifier?.family.id, 'crd');
   assert.equal(buildNetworkAskPlan('CRD 123456').hubs[0].hubId, 'investor');
-  assert.equal(parseNetworkAsk('NMLS 123456').identifier?.family.live, false);
+  assert.equal(parseNetworkAsk('NMLS 123456').identifier?.family.live, true);
   assert.equal(parseNetworkAsk('NPN 1234567').identifier?.family.live, true);
   assert.equal(parseNetworkAsk('NPN 1234567').identifier?.family.id, 'npn');
   assert.equal(parseNetworkAsk('CBC015082').identifier?.family.id, 'state_contractor_license');

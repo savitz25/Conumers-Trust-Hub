@@ -205,7 +205,11 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   if (!hub) return null;
   session.hub = hub;
   session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
-  session.identityName = parsed.queryClassification.type === 'IDENTITY_NAME' ? q : undefined;
+  // TH-SEARCH-R1-016: prefer research-planner's entity-name extraction (recognizes a
+  // company name embedded alongside route/journey language, e.g. "Can JK Moving handle
+  // my move from Virginia to Florida?") over the legacy whole-question fallback below,
+  // which only ever matches when the query is nothing but a bare identity name.
+  session.identityName = plan.entityName ?? (parsed.queryClassification.type === 'IDENTITY_NAME' ? q : undefined);
   if (parsed.geography) session.geography = parsedGeography;
 
   if (hub === 'senior') {
@@ -234,7 +238,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   }
   session.moveMode = parsed.moveResearchCategory === 'auto_transport' ? 'auto_transport' : parsed.identifier ? 'identifier' : parsed.queryClassification.type === 'IDENTITY_NAME' ? 'identity_name' : parsed.queryClassification.type === 'COHORT' ? 'mover' : undefined;
   session.entityClass = session.moveMode;
-  if (/\bserv(?:e|es|ing)|from .+ to|near me\b/i.test(q)) return { ...session, identityName: undefined, moveMode: session.moveMode ?? 'mover', phase: 'EXECUTE', nextAction: 'execute' };
+  if (!plan.entityName && /\bserv(?:e|es|ing)|from .+ to|near me\b/i.test(q)) return { ...session, identityName: undefined, moveMode: session.moveMode ?? 'mover', phase: 'EXECUTE', nextAction: 'execute' };
   if (/\bship (?:my|a) (?:car|vehicle)|transport my (?:car|vehicle)\b/i.test(q)) return { ...session, identityName: undefined, moveMode: 'auto_transport', entityClass: 'auto_transport', phase: 'EXECUTE', nextAction: 'execute' };
   if (session.identifier || session.identityName || session.moveMode && (session.geography || session.moveMode === 'auto_transport')) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
   return { ...session, phase: 'CLARIFY', missingFields: ['moveMode'], availableChoices: MOVE_CHOICES, nextAction: 'What are you moving?' };

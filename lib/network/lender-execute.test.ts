@@ -17,7 +17,7 @@ test('Lender registry is live execute with lender-ask-v1 and no identifier mode'
   assert.ok(!LENDER_SUPPORTED_MODES.includes('identifier' as never));
   assert.equal(
     IDENTIFIER_FAMILIES.find((f) => f.id === 'nmls')?.live,
-    false,
+    true,
   );
 });
 
@@ -102,16 +102,15 @@ test('complaints are not wrongdoing; denial is not discrimination; most is not a
   assert.match(rate.hubs[0].whatItCanAnswer, /denominator/i);
 });
 
-test('NMLS stays labeled handoff; bare digits stay ambiguous; no invented identifier mode', () => {
+test('NMLS executes live on lender-ask-v1 (TH-SEARCH-R1-016); bare digits stay ambiguous', () => {
   const nmls = buildNetworkAskPlan('NMLS 123456');
   assert.equal(nmls.parsed.identifier?.family.id, 'nmls');
-  assert.equal(nmls.parsed.identifier?.family.live, false);
+  assert.equal(nmls.parsed.identifier?.family.live, true);
   assert.equal(nmls.hubs[0].hubId, 'lender');
-  assert.equal(nmls.hubs[0].capabilityStatus, 'handoff');
-  assert.match(nmls.hubs[0].destination ?? '', /nmlsconsumeraccess/i);
-  assert.doesNotMatch(nmls.hubs[0].destination ?? '', /lendertrusthub.com\/ask/);
+  assert.equal(nmls.hubs[0].capabilityStatus, 'execute');
+  assert.match(nmls.hubs[0].destination ?? '', /lendertrusthub.com\/ask/);
   const nmlsAnswer = assembleNetworkAnswer(nmls.query);
-  assert.notEqual(nmlsAnswer.traces[0]?.contract, LENDER_ASK_CONTRACT);
+  assert.equal(nmlsAnswer.traces[0]?.contract, LENDER_ASK_CONTRACT);
 
   const bare = buildNetworkAskPlan('123456');
   assert.equal(bare.parsed.identifier?.ambiguous, true);
