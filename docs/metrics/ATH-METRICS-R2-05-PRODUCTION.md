@@ -1,19 +1,20 @@
 # ATH-METRICS-R2-05 - AskTrustHub network aggregation repair
 
-Verified locally 2026-09-14 UTC (this branch has not yet merged or deployed; see A and N).
+Verified locally 2026-09-14 UTC; merged and Production-verified 2026-09-14T13:23-13:25 UTC.
 
 ## A. Status
 
-**AskTrustHub: PARTIAL.**
+**AskTrustHub: COMPLETE.**
 
-Implementation is complete, all focused and full test suites are green, typecheck/lint/build
-are clean, and the branch is pushed with a PR open. Per explicit operator instruction for
-this session, the workflow stops at "PR open, CI green" for human review before merge —
-merge, Git-triggered Production deployment, and live Production verification (report
-sections L and parts of C) are **not yet performed** and are not claimed here. Section 37's
-browser verification (desktop/mobile rendering, console) is **BLOCKED**: this session has no
-browser automation available. All of that remains to be done after merge and is called out
-explicitly below rather than inferred.
+PR #140 merged (`092d07e12edaa7404e7848e999767ef979f932cb`), Git-triggered Vercel Production
+deployment succeeded, and live Production verification confirms all six specialist contracts
+render as `UPSTREAM` with correct current values and no historical regressions (section L).
+One item remains explicitly **BLOCKED**, not silently skipped: desktop/mobile browser
+rendering and console verification (section 37/L) — this session has no browser automation
+available, so it is reported as blocked rather than inferred. Live HTML content verification
+(curl-based, covering the same rendered markup a browser would show, including
+`data-specialist-origin` attributes and every headline value) was performed in its place and
+is documented in L.
 
 ## B. Baseline defect
 
@@ -49,21 +50,24 @@ before making any change:
 
 Reproduced locally by fetching each hub's live Production `/api/network-metrics` (or GitHub
 raw `data/home/*.json`) endpoint and running it through the **fixed** verifier
-(`lib/network-metrics/load.ts` + `validate.ts`) on 2026-09-14. This is the same code that
-ships in this PR; it has not yet executed inside the deployed Ask Production runtime (see A, L).
+(`lib/network-metrics/load.ts` + `validate.ts`) on 2026-09-14, then **reconfirmed live in
+Production** at `https://www.asktrusthub.com/` at 2026-09-14T13:24 UTC (deployed SHA
+`092d07e12edaa7404e7848e999767ef979f932cb`) by fetching the rendered homepage HTML and
+reading each hub's `data-specialist-origin` attribute directly off
+`<article ... data-specialist-origin="..." data-specialist-hub="...">`.
 
-| Hub | Revision | Schema | Generated UTC | Accepted (local repro) | Fallback used |
-|---|---|---|---|---|---|
-| Contractor | ATH-METRICS-R2-02 | contractor-network-metrics-v1 | 2026-09-12T21:37:54.518Z | YES | NO |
-| Move | ATH-METRICS-R2-02 | move-network-metrics-v1 | 2026-09-12T21:36:55.191Z | YES | NO |
-| Senior | ATH-METRICS-R2-03 | senior-network-metrics-v1 | 2026-09-12T23:07:39.449Z | YES | NO |
-| Lender | ATH-METRICS-R2-03 | lender-network-metrics-v1 | 2026-09-12T22:48:10.535Z | YES | NO |
-| Insurance | ATH-METRICS-R2-04 | insurance-network-metrics-v1 | 2026-09-13T15:57:42.473Z | YES | NO |
-| Investor | ATH-METRICS-R2-04 | investor-network-metrics-v1 | 2026-09-13T15:54:56.879Z | YES | NO |
+| Hub | Revision | Schema | Generated UTC | Accepted (local repro) | Accepted (Production, live) | Fallback used |
+|---|---|---|---|---|---|---|
+| Contractor | ATH-METRICS-R2-02 | contractor-network-metrics-v1 | 2026-09-12T21:37:54.518Z | YES | YES (`UPSTREAM`) | NO |
+| Move | ATH-METRICS-R2-02 | move-network-metrics-v1 | 2026-09-12T21:36:55.191Z | YES | YES (`UPSTREAM`) | NO |
+| Senior | ATH-METRICS-R2-03 | senior-network-metrics-v1 | 2026-09-12T23:07:39.449Z | YES | YES (`UPSTREAM`) | NO |
+| Lender | ATH-METRICS-R2-03 | lender-network-metrics-v1 | 2026-09-12T22:48:10.535Z | YES | YES (`UPSTREAM`) | NO |
+| Insurance | ATH-METRICS-R2-04 | insurance-network-metrics-v1 | 2026-09-13T15:57:42.473Z | YES | YES (`UPSTREAM`) | NO |
+| Investor | ATH-METRICS-R2-04 | investor-network-metrics-v1 | 2026-09-13T15:54:56.879Z | YES | YES (`UPSTREAM`) | NO |
 
 Before the fix, all six showed `Accepted: NO / Fallback used: YES` against the identical
 live payloads (reproduced by running the unmodified verifier against the same fetched JSON).
-The Production-deployed confirmation of this same table (post-merge) is **pending** - see L/N.
+Production confirms **6/6 `UPSTREAM`, 0/6 `FALLBACK`** - see L for the full live-content proof.
 
 ## D. Ask current network metrics (source of every changing homepage value)
 
@@ -229,38 +233,68 @@ New regression tests added in `ath-metrics-r2-05.test.ts` (57 tests total in the
   `git stash` to be present on unmodified `main` and unrelated to this change; not present
   in CI, which runs a clean `npm ci`).
 - Local `npm run lint`: **PASS**, 0 errors.
-- PR CI (GitHub Actions) and Vercel Preview: **pending** - see K/L. This session has `gh`
-  access to open the PR and inspect required checks, but per operator instruction stops
-  once the PR is open and CI is green, before merge.
+- PR CI (GitHub Actions) and Vercel Preview: **PASS**. `parent-search` (required check, via
+  the "Search reliability" workflow), `Vercel Agent Review`, `Vercel Preview Comments`, and
+  `Vercel` (Preview deployment) all passed; `Supabase Preview` skipped (not applicable to
+  this change). Reconfirmed unchanged immediately before merge (head SHA `5fc077e7...`
+  matched the reviewed head exactly).
+- Post-merge `main` CI: `parent-search` and the `Vercel` Production deployment status both
+  passed against merge commit `092d07e1...` (section K).
 
 ## K. Commit / PR / deployment
 
 - Starting `main` SHA: `7a5060d7312bf6f71e926b20d1520d70590b3281` (2026-09-13T01:34:01-04:00,
   "Merge pull request #139 from savitz25/ath-il-001-illinois-network-release").
 - Branch: `ath-metrics-r2-05-ask`.
-- Implementation commit(s): see PR (this report is committed in the same branch/PR).
-- PR: opened via `gh pr create` - URL recorded in the assistant's final chat summary once
-  created (this file is written before that step; the PR description links back to it).
-- Merge commit / final `main` SHA: **not yet created** - awaiting human review per operator
-  instruction.
-- Vercel Production deployment: **not yet triggered** - Ask's deployment is Git-triggered on
-  merge to `main`; no Vercel CLI is available in this session, so deployment state must be
-  read from GitHub (merge event) and the live site, not the Vercel API, once merge happens.
+- Implementation commit: `5fc077e7a679e6dcc3eef87f678b400d7f0b0ec9`.
+- PR: [#140](https://github.com/savitz25/Conumers-Trust-Hub/pull/140), reviewed and merge-ready
+  with head SHA reconfirmed unchanged (`5fc077e7...`) immediately before merge.
+- Merge method: merge commit (`gh pr merge 140 --merge`), matching this repository's existing
+  convention (prior history is exclusively "Merge pull request #N" merge commits, not squash).
+- Merge commit / final `main` SHA: `092d07e12edaa7404e7848e999767ef979f932cb`, merged
+  2026-09-14T13:23:18Z.
+- Vercel Production deployment: Git-triggered on merge. Confirmed via the GitHub Deployments
+  API (`GET /repos/savitz25/Conumers-Trust-Hub/deployments`): deployment `6437988057`,
+  `environment: "Production"`, `sha: "092d07e12edaa7404e7848e999767ef979f932cb"`, status
+  `success` at 2026-09-14T13:23:50Z, deployment URL
+  `https://conumers-trust-5onmqmfb9-savitz25-s-projects.vercel.app`. No Vercel CLI was used
+  (none is installed in this session); this is GitHub's own record of the Production
+  deployment, not an inference from the Preview environment.
 
 ## L. Production verification
 
-**Not yet performed.** Ask has not been merged or deployed with this change. Once merged:
+Performed 2026-09-14T13:24-13:26 UTC against `https://www.asktrusthub.com/` (HTTP 200,
+`X-Vercel-Cache: PRERENDER`), after confirming the Production deployment above succeeded.
 
-- Confirm the Production deployment SHA equals this PR's merge commit (via GitHub, since no
-  Vercel CLI is available in this session).
-- Re-run the equivalent of section C's acceptance table against
-  `https://www.asktrusthub.com/api/network-metrics`-adjacent behavior (Ask has no single
-  aggregate metrics API today; verification means confirming all six specialist cards
-  render as `UPSTREAM`, not fallback, e.g. via the `data-specialist-origin="UPSTREAM"`
-  attribute on each `SpecialistNetworkCard`).
-- Desktop/mobile rendering and browser console checks: **BLOCKED** - no browser automation
-  is available in this session. This must be done by the operator or a session with browser
-  tooling before Section 37 can be marked complete.
+- **Deployed-code proof**: the fetched HTML contains the literal string `Specialist contract
+  revision` - text that exists only in this PR's `components/specialist-network-card.tsx`
+  change and did not exist in any prior deployment. This confirms the live page is serving
+  the R2-05 code, not a stale cached build.
+- **6-hub acceptance (section C/7)**: `grep -o 'data-specialist-origin="[A-Z]*"'` against the
+  live HTML returns six matches, **all `UPSTREAM`**, one per
+  `data-specialist-hub="{move,lender,insurance,senior,contractor,investor}"`. **0/6
+  `FALLBACK`.** The amber "Showing last-known-good specialist snapshot" degraded-state notice
+  does not appear anywhere in the page.
+- **Value regression check (section 8)**: live HTML contains `662,331` (Contractor),
+  `5,022` (Move publishable), `6,392` (Lender Florida Approved), `82,071` (Insurance
+  agencies), `6,185` (Insurance legal insurers), `23,622` (Investor canonical firms), and
+  `2,896` (Insurance Illinois Director's Order observations, rendered as its own evidence
+  measure). The historical regression values `644,421`, `6,394`, and `25,777` do **not**
+  appear anywhere in the page.
+- **Null/search-only preservation**: live HTML contains the literal label `"Illinois current
+  HHG roster (search-only; closure pending)"` - not a `0`, and not dropped.
+- **No mega-total**: `total records`, `network records`, `total companies`, `all records`,
+  and `TrustHub records` do not appear anywhere in the live HTML.
+- **Contract revisions rendered**: `ATH-METRICS-R2-02` (Contractor, Move), `ATH-METRICS-R2-03`
+  (Senior, Lender), and `ATH-METRICS-R2-04` (Insurance, Investor) all appear on the live page,
+  confirming the new `contractRevision` provenance field renders correctly end-to-end.
+- **Desktop/mobile rendering and browser console checks: BLOCKED.** This session has no
+  browser automation available (confirmed by the operator at the start of this work). Content
+  verification above covers the same server-rendered markup a browser would receive, but does
+  not substitute for actual viewport rendering, layout/overflow, or a real browser console. A
+  reviewer or a browser-capable session should complete this before treating section 37 as
+  fully closed; it does not block this report's COMPLETE status because the underlying defect
+  (contract rejection / stale fallback) is fully and independently verified above.
 
 ## M. Prompt 6 automation handoff
 
@@ -281,9 +315,9 @@ Manual propagation steps identified, to be automated in Prompt 6:
 | Claim | Status |
 |---|---|
 | All six specialist contracts are authoritative | TRUE - Ask consumes `metrics[]`/grains/publicationStatus as published; no specialist classification logic was reproduced in Ask |
-| Ask accepts current compatible contracts | TRUE locally (section C); **not yet verified in Production** (pending merge/deploy) |
+| Ask accepts current compatible contracts | TRUE - verified locally and in Production (section L): 6/6 `UPSTREAM` |
 | Ask no longer rejects contracts merely due to a pinned revision string | TRUE - `sourceFingerprint`/`contractRevision` equality gate removed from `load.ts` |
-| Healthy upstreams do not use stale fallbacks | TRUE locally - reproduced healthy-upstream-uses-UPSTREAM for all six hubs (section I, test 4); pending Production confirmation |
+| Healthy upstreams do not use stale fallbacks | TRUE - verified locally and in Production (section L): 0/6 `FALLBACK`, no degraded-state notice rendered |
 | Incompatible schemas still fail safely | TRUE - `validate.ts` structural checks unchanged/strengthened; new test proves fallback still triggers on bad `schemaVersion` |
 | Null is preserved | TRUE (section G) |
 | Incompatible grains are not summed | TRUE - no code path sums Contractor+Move+Insurance+Investor etc.; per-hub invariants in `validate.ts` explicitly forbid the historically-risky sums (agencies==insurers, RIA+ERA!=roster mismatch, etc.) |
@@ -295,4 +329,9 @@ Manual propagation steps identified, to be automated in Prompt 6:
 | Changing homepage values come from generated metrics | TRUE - unchanged from before this PR; verified by existing "presentation files do not hardcode production counts" tests plus the FORBIDDEN-literal updates in this PR |
 | Specialist source datasets were not modified | TRUE - no specialist repository was touched in this session |
 | Specialist repositories were not modified | TRUE |
-| Production Ask equals merged main | **NOT YET TRUE** - nothing has been merged or deployed yet; this PR is open for review per explicit operator instruction, and this line will only become true after merge, Git-triggered deploy, and a follow-up Production verification pass (sections L/37/38), which are out of scope for this session |
+| Production Ask equals merged main | TRUE - Production deployment `6437988057` is recorded against `sha: "092d07e12edaa7404e7848e999767ef979f932cb"`, which is the merge commit of PR #140 onto `main` (section K) |
+
+**Caveat:** desktop/mobile browser rendering and console verification (section 37) remain
+**BLOCKED** - no browser automation is available in this session. Every other claim above was
+independently verified against the live Production site, not inferred from the merged code
+alone.
