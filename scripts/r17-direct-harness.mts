@@ -5,8 +5,9 @@
 // its direct cases are fetched as HTML and lightly parsed for headline/table presence.
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const corpus = JSON.parse(readFileSync('docs/qa/th-search-r1-017/question-corpus.json', 'utf8'));
-const entries = corpus.entries.filter((e: any) => e.testSurfaces.includes('direct'));
+type CorpusEntry = { id: string; hub: string; query: string; testSurfaces: string[] };
+const corpus = JSON.parse(readFileSync('docs/qa/th-search-r1-017/question-corpus.json', 'utf8')) as { entries: CorpusEntry[] };
+const entries = corpus.entries.filter((e) => e.testSurfaces.includes('direct'));
 
 const API: Record<string, string> = {
   move: 'https://www.movetrusthub.com/api/ask',
@@ -59,11 +60,11 @@ for (const entry of entries) {
         approxResultCount: (h.match(/data-result-row|result-card/gi) ?? []).length,
       };
     }
-    out.push({ id: entry.id, hub: entry.hub, query: entry.query, surface: 'direct', url, httpStatus: (result as any).status, error: (result as any).error, latencyMs: result.latencyMs, extracted, htmlByteLength: 'html' in result ? result.html.length : undefined });
+    out.push({ id: entry.id, hub: entry.hub, query: entry.query, surface: 'direct', url, httpStatus: 'status' in result ? result.status : undefined, error: 'error' in result ? result.error : undefined, latencyMs: result.latencyMs, extracted, htmlByteLength: 'html' in result ? result.html.length : undefined });
   } else {
     const url = `${API[entry.hub]}?q=${encodeURIComponent(entry.query)}`;
     const result = await fetchJson(url);
-    out.push({ id: entry.id, hub: entry.hub, query: entry.query, surface: 'direct', url, httpStatus: (result as any).status, error: (result as any).error, latencyMs: result.latencyMs, body: (result as any).body });
+    out.push({ id: entry.id, hub: entry.hub, query: entry.query, surface: 'direct', url, httpStatus: 'status' in result ? result.status : undefined, error: 'error' in result ? result.error : undefined, latencyMs: result.latencyMs, body: 'body' in result ? result.body : undefined });
   }
   process.stderr.write(`done: ${entry.id}\n`);
 }

@@ -8,8 +8,9 @@ import { createGuidedSession } from '../lib/guided-research/session.ts';
 import { orchestrateGuidedResearch } from '../lib/guided-research/orchestrator.ts';
 import { decideAskExecution } from '../lib/network/execution-decision.ts';
 
-const corpus = JSON.parse(readFileSync('docs/qa/th-search-r1-017/question-corpus.json', 'utf8'));
-const entries = corpus.entries.filter((e: any) => e.testSurfaces.includes('ask'));
+type CorpusEntry = { id: string; hub: string; query: string; testSurfaces: string[] };
+const corpus = JSON.parse(readFileSync('docs/qa/th-search-r1-017/question-corpus.json', 'utf8')) as { entries: CorpusEntry[] };
+const entries = corpus.entries.filter((e) => e.testSurfaces.includes('ask'));
 
 const out: Record<string, unknown>[] = [];
 for (const entry of entries) {
@@ -17,7 +18,7 @@ for (const entry of entries) {
   try {
     const decision = decideAskExecution(entry.query);
     const session = createGuidedSession(entry.query);
-    let execResult: any = null;
+    let execResult: Record<string, unknown> | null = null;
     let orchestratorPhase: string | undefined;
     let orchestratorHub: string | undefined;
     let identityName: string | undefined;
@@ -32,10 +33,10 @@ for (const entry of entries) {
         consumerMessage: r.result?.consumerMessage,
         total: r.result?.total,
         rowsCount: r.result?.rows?.length,
-        firstRows: (r.result?.rows ?? []).slice(0, 3).map((row: any) => ({ name: row.name, identifier: row.identifier, recordedLocation: row.recordedLocation, whyShown: row.whyShown })),
+        firstRows: (r.result?.rows ?? []).slice(0, 3).map((row) => ({ name: row.name, identifier: row.identifier, recordedLocation: row.recordedLocation, whyShown: row.whyShown })),
         limitations: r.result?.limitations,
         destinations: r.result?.destinations,
-        refinements: r.result?.refinements?.map((x: any) => x.id),
+        refinements: r.result?.refinements?.map((x) => x.id),
         interpretation: r.result?.interpretation,
       };
       orchestratorPhase = r.session?.phase;
