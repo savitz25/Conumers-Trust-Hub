@@ -1729,20 +1729,30 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
     try { return await operation(); } finally { resolverLatencyMs += Date.now() - started; }
   };
 
+  // TH-SEARCH-R1-016: track whether a labeled-identifier hub's live specialist fetch
+  // actually returned (as opposed to null/timeout/unavailable). Result class must come
+  // from the FINAL effective outcome, not merely from having parsed an identifier --
+  // Move's own fetchMoveNetworkIdentity path already recomputes resultClass from the
+  // real resolutionClass; the four apply*Payload functions below do not, so a genuine
+  // exact-identifier miss on Lender/Insurance/Senior/Investor was rendering as
+  // EXACT_IDENTITY with zero results instead of an honest no-match. A payload that never
+  // arrived (network failure) must not be folded into the same "no match" claim.
+  let identifierPayloadArrived = false;
+
   const senior = live('senior');
   if (senior) {
     const payload = await timed(() => fetchSeniorAsk(qFor(senior)));
-    if (payload) answer = applySeniorPayload(answer, payload);
+    if (payload) { answer = applySeniorPayload(answer, payload); identifierPayloadArrived = true; }
   }
   const investor = live('investor');
   if (investor) {
     const payload = await timed(() => fetchInvestorAsk(qFor(investor)));
-    if (payload) answer = applyInvestorPayload(answer, payload);
+    if (payload) { answer = applyInvestorPayload(answer, payload); identifierPayloadArrived = true; }
   }
   const insurance = live('insurance');
   if (insurance) {
     const payload = await timed(() => fetchInsuranceAsk(qFor(insurance)));
-    if (payload) answer = applyInsurancePayload(answer, payload);
+    if (payload) { answer = applyInsurancePayload(answer, payload); identifierPayloadArrived = true; }
   }
   const move = live('move');
   if (move) {
@@ -1757,7 +1767,7 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
   const lender = live('lender');
   if (lender) {
     const payload = await timed(() => fetchLenderAsk(qFor(lender)));
-    if (payload) answer = applyLenderPayload(answer, payload);
+    if (payload) { answer = applyLenderPayload(answer, payload); identifierPayloadArrived = true; }
   }
   const contractor = live('contractor');
   if (contractor) {
@@ -1767,5 +1777,36 @@ export async function assembleNetworkAnswerWithSpecialist(query: string): Promis
       answer = consumerOverlay(answer);
     }
   }
+
+  if (
+    identifierPayloadArrived &&
+    answer.plan.parsed.intent === 'identifier' &&
+    answer.resultClass === 'EXACT_IDENTITY' &&
+    !(answer.options?.length) &&
+    !answer.plan.hubs.some((h) => h.options?.length)
+  ) {
+    const idFamily = answer.plan.parsed.identifier?.family;
+    // parsed.identifier.raw already carries its own label token (e.g. "NMLS 9999999",
+    // "CRD 999999999") -- do not prefix idFamily.label too, or the family's longer
+    // display label ("CRD / SEC firm identifier") duplicates/doubles it.
+    const idLabel = answer.plan.parsed.identifier?.raw ?? 'that identifier';
+    const hubName = answer.plan.hubs[0]?.name ?? 'the specialist';
+    answer = {
+      ...answer,
+      resultClass: 'NO_CONFIDENT_MATCH',
+      identityResolutionClass: 'NO_CONFIDENT_MATCH',
+      noResult: {
+        headline: `We couldn't find a confident published identity matching “${idLabel}.”`,
+        understood: `Ask understood this as an exact ${idFamily?.label ?? 'identifier'} lookup on ${hubName}, not a market list.`,
+        actions: [`Confirm the ${idFamily?.label ?? 'identifier'} value`, `Continue on ${hubName}`],
+      },
+      diagnostics: {
+        ...answer.diagnostics,
+        resultClass: 'NO_CONFIDENT_MATCH',
+        identityResolutionClass: 'NO_CONFIDENT_MATCH',
+      },
+    };
+  }
+
   return { ...answer, diagnostics: { ...answer.diagnostics, resolverLatencyMs, overallLatencyMs: Date.now() - overallStarted } };
 }

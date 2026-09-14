@@ -75,7 +75,7 @@ export const HUB_CAPABILITY_REGISTRY: Record<SpecialistHubId, HubCapabilityRecor
     askContract: 'lender-ask-v1',
     supportedAskModes: ['entity', 'count', 'aggregate', 'comparison', 'evidence', 'definition', 'fail_closed'],
     entityQuery: 'live',
-    identifierLookup: 'partial',
+    identifierLookup: 'live',
     marketAggregate: 'live',
     stateCoverage: 'live',
     countyCoverage: 'partial',
@@ -87,7 +87,7 @@ export const HUB_CAPABILITY_REGISTRY: Record<SpecialistHubId, HubCapabilityRecor
     notes: [
       'Production structured Ask is live at /ask (lender-ask-v1). Public JSON: GET /api/ask?q=. Parent constructs the Ask URL and may read that public contract; it does not query the Lender database.',
       'HMDA geography is mortgaged-property location — not lender headquarters, branch county, or service territory. Most is a raw volume count, not a recommendation or rate.',
-      'lender-ask-v1 has no identifier mode. Labeled NMLS is a handoff to NMLS Consumer Access, not a live federated graph query. Bare digits fail closed.',
+      'Labeled NMLS and LEI execute live on lender-ask-v1 (TH-SEARCH-R1-016; identifier resolution shipped in TH-SEARCH-R1-002 -- lender-ask-v1 returns mode "entity" with a populated identifier field for an exact hit, not a distinct "identifier" mode string). Bare digits fail closed.',
       'County Place Lens pages are not published. Ask can still execute county HMDA property-geography queries. Research identity may exist without a public profile. Ask is not publication authorization.',
       'Complaints are not wrongdoing. Denials are not discrimination. Paid status never changes evidence, ranking, or conclusions.',
     ],
