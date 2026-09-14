@@ -5,7 +5,7 @@ import test from 'node:test';
 import contractorFallback from '../../data/network-metrics/contractor-v1-fallback.json' with { type: 'json' };
 import seniorFallback from '../../data/network-metrics/senior-v1-fallback.json' with { type: 'json' };
 import { loadHubManifests, readArtifact } from '../network-intelligence/contract.ts';
-import { ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_SOURCES } from './sources.ts';
+import { FALLBACK_SPECIALIST_FINGERPRINTS, SPECIALIST_SOURCES } from './sources.ts';
 import { adaptContractorCard, adaptSeniorCard } from './adapt.ts';
 import {
   CONSUMER_METRIC_LABELS,
@@ -21,8 +21,8 @@ const home = readFileSync(join(process.cwd(), 'components/network-intelligence-h
 const cardSource = readFileSync(join(process.cwd(), 'components/specialist-network-card.tsx'), 'utf8');
 const loadSource = readFileSync(join(process.cwd(), 'lib/network-metrics/load.ts'), 'utf8');
 const FORBIDDEN_LITERALS = [
-  '644421', '499997', '14690', '12460', '6669', '1248650', '2678341',
-  '644,421', '14,690', '1,248,650', '2,678,341',
+  '662331', '499997', '14690', '12460', '6669', '1248650', '2678341',
+  '662,331', '14,690', '1,248,650', '2,678,341',
 ];
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -36,8 +36,8 @@ function clone<T>(value: T): T {
 test('contractor and senior schemas validate and match accepted fingerprints', () => {
   const contractor = validateContractorManifest(contractorFallback);
   const senior = validateSeniorManifest(seniorFallback);
-  assert.equal(contractor.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.contractor);
-  assert.equal(senior.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.senior);
+  assert.equal(contractor.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.contractor);
+  assert.equal(senior.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.senior);
   assert.equal(SPECIALIST_SOURCES.contractor.schemaVersion, 'contractor-network-metrics-v1');
   assert.equal(SPECIALIST_SOURCES.senior.schemaVersion, 'senior-network-metrics-v1');
 });
@@ -47,7 +47,7 @@ test('contractor adapter keeps credentials distinct from NJ construction source 
   const live = card.primary.find((metric) => metric.key === 'live_credential_records');
   const nj = card.primary.find((metric) => metric.key === 'nj_construction_source_records');
   const ca = card.caveats.join(' ');
-  assert.equal(live?.value, 644421);
+  assert.equal(live?.value, 662331);
   assert.equal(live?.grain, 'license_credential_record');
   assert.equal(live?.label, 'Contractor license records');
   assert.doesNotMatch(live?.label ?? '', /contracting companies/i);
@@ -56,7 +56,7 @@ test('contractor adapter keeps credentials distinct from NJ construction source 
   assert.notEqual(live?.value, nj?.value);
   assert.match(ca, /not live California credentials/i);
   assert.doesNotMatch(ca, /75,572 California credentials/);
-  assert.equal(card.newestSourceAsOf, '2026-09-02');
+  assert.equal(card.newestSourceAsOf, '2026-09-11');
   assert.match(card.newestSourceAsOfNote, /Not the live-credential board extract date/i);
 });
 
@@ -120,12 +120,12 @@ test('timeout, 500, invalid JSON, wrong schema, missing metric, and negative val
     const card = await loadSpecialistCard('contractor', { fetchImpl });
     assert.equal(card.origin, 'FALLBACK');
     const live = card.primary.find((metric) => metric.key === 'live_credential_records');
-    assert.equal(live?.value, 644421);
+    assert.equal(live?.value, 662331);
     assert.notEqual(live?.value, 0);
     const html = specialistCardMarkup(card);
     assert.match(html, /last-known-good specialist snapshot/i);
     assert.doesNotMatch(html, /^0 /m);
-    assert.match(html, /644,421 Contractor license records/);
+    assert.match(html, /662,331 Contractor license records/);
   }
 });
 
@@ -155,7 +155,7 @@ test('trace and freshness preserve specialist clocks', () => {
   const seniorHtml = specialistCardMarkup(senior);
   assert.match(contractorHtml, /Trace this number/);
   assert.match(contractorHtml, /Newest documented specialist source date/);
-  assert.match(contractorHtml, /2026-09-02/);
+  assert.match(contractorHtml, /2026-09-11/);
   assert.match(seniorHtml, /2026-08-01/);
   assert.match(seniorHtml, /2026-05-27/);
   assert.match(seniorHtml, /2026-08-19/);

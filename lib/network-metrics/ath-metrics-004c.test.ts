@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import investorFallback from '../../data/network-metrics/investor-v1-fallback.json' with { type: 'json' };
-import { ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, SPECIALIST_SOURCES } from './sources.ts';
+import { FALLBACK_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, SPECIALIST_SOURCES } from './sources.ts';
 import { adaptInvestorCard } from './adapt.ts';
 import { loadSpecialistCard, loadSpecialistNetworkCards } from './load.ts';
 import { specialistCardMarkup } from './present.ts';
@@ -27,7 +27,7 @@ function clone<T>(value: T): T {
 
 test('investor schema validates against accepted fingerprint and RIA XOR ERA partition', () => {
   const investor = validateInvestorManifest(investorFallback);
-  assert.equal(investor.sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS.investor);
+  assert.equal(investor.sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS.investor);
   assert.equal(SPECIALIST_SOURCES.investor.schemaVersion, 'investor-network-metrics-v1');
   assert.equal(SPECIALIST_OWNED_HUBS.includes('investor'), true);
   assert.equal(SPECIALIST_OWNED_HUBS.length, 6);
@@ -61,7 +61,10 @@ test('investor adapter uses consumer labels and Form ADV observations are not fi
   assert.match(card.caveats.join(' '), /ERA is not an RIA/);
   assert.match(card.caveats.join(' '), /not advisers, firms, filings/);
   assert.match(card.caveats.join(' '), /RAUM is not investment performance/);
-  assert.match(card.newestSourceAsOfNote, /Not the SEC roster date|Not the as-of date of every filing/i);
+  assert.match(
+    card.newestSourceAsOfNote,
+    /Not the SEC roster date|Not the as-of date of every filing|Not a network-wide freshness guarantee/i,
+  );
 });
 
 test('Investor upstream fixture changes propagate without homepage constant edits', async () => {

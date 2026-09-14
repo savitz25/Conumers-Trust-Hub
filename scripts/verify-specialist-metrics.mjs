@@ -7,7 +7,6 @@ const SOURCES = [
     schemaVersion: 'move-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Move-trust-Hub/main/data/home/move-network-metrics-v1.json',
     fallback: 'data/network-metrics/move-v1-fallback.json',
-    fingerprint: '5876b0168efa67a09d7f367d2983db7e7769e0b5d5ebf4a071839376e1e2ea3c',
     required: ['federal_publishable_directory_profiles', 'florida_fdacs_im_active_registrations'],
   },
   {
@@ -15,7 +14,6 @@ const SOURCES = [
     schemaVersion: 'lender-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Lender-Trust-Hub/main/data/home/lender-network-metrics-v1.json',
     fallback: 'data/network-metrics/lender-v1-fallback.json',
-    fingerprint: 'b4515f8807fbe86f2cc541c58cb0d84ac81aee892ca652cde2f1888524d5caf6',
     required: ['lenders_lending_institutions', 'hmda_2025_county_applications'],
   },
   {
@@ -23,7 +21,6 @@ const SOURCES = [
     schemaVersion: 'insurance-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/Insurance-trust-hub/main/data/home/insurance-network-metrics-v1.json',
     fallback: 'data/network-metrics/insurance-v1-fallback.json',
-    fingerprint: '21a2895e9e7f55170b9056fa3b8054faedcb160e8b0ed4d5dab2cbf16494a4f2',
     required: ['insurance_agencies', 'cms_marketplace_evidence_observations'],
   },
   {
@@ -31,7 +28,6 @@ const SOURCES = [
     schemaVersion: 'contractor-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/contractor-trust-hub/main/data/home/contractor-network-metrics-v1.json',
     fallback: 'data/network-metrics/contractor-v1-fallback.json',
-    fingerprint: '0a99e8a1cf53590d01506d57072f4a320aa6c0060476a779193d8af1dd8034b3',
     required: ['live_credential_records', 'nj_construction_source_records'],
   },
   {
@@ -39,7 +35,6 @@ const SOURCES = [
     schemaVersion: 'senior-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/care-trust-hub/main/apps/web/src/data/senior-network-metrics-v1.json',
     fallback: 'data/network-metrics/senior-v1-fallback.json',
-    fingerprint: '36a042ec89322dd9b7d91440221928a4f617f9761f275bae22491f97d476a84e',
     required: ['current_nursing_homes', 'mds_observations'],
   },
   {
@@ -47,7 +42,6 @@ const SOURCES = [
     schemaVersion: 'investor-network-metrics-v1',
     url: 'https://raw.githubusercontent.com/savitz25/investor-trust-hub/main/data/home/investor-network-metrics-v1.json',
     fallback: 'data/network-metrics/investor-v1-fallback.json',
-    fingerprint: '2f74128e140c692272e178c4039b94e32a0064e33e3bc723633635e89f3dfe3c',
     required: ['investment_advisory_firms', 'form_adv_attribute_observations'],
   },
 ];
@@ -56,7 +50,16 @@ function metricKeys(raw) {
   return new Set((raw.metrics ?? []).map((item) => item.key));
 }
 
+// This check is a schema/staleness safety net, not a revision pin. A new upstream
+// sourceFingerprint/contractRevision is expected and healthy whenever a specialist
+// ships a compatible metrics update; it must never fail this check by itself. What
+// DOES fail closed: the upstream no longer matching its documented schema family,
+// or dropping a required field AskTrustHub depends on. Fingerprint drift between
+// upstream and our bundled fallback is logged as an informational reminder to
+// refresh the fallback snapshot (data/network-metrics/<hub>-v1-fallback.json),
+// which keeps fallback data from going stale over many specialist releases.
 const errors = [];
+const notices = [];
 for (const source of SOURCES) {
   const fallback = JSON.parse(readFileSync(join(process.cwd(), source.fallback), 'utf8'));
   const response = await fetch(source.url, { signal: AbortSignal.timeout(10000) });
@@ -65,18 +68,26 @@ for (const source of SOURCES) {
     continue;
   }
   const upstream = await response.json();
-  if (upstream.schemaVersion !== source.schemaVersion || fallback.schemaVersion !== source.schemaVersion) {
-    errors.push(`${source.hub}: schemaVersion mismatch`);
+  if (upstream.schemaVersion !== source.schemaVersion) {
+    errors.push(`${source.hub}: upstream schemaVersion mismatch (${upstream.schemaVersion})`);
   }
-  if (upstream.sourceFingerprint !== source.fingerprint) {
-    errors.push(`${source.hub}: upstream fingerprint ${upstream.sourceFingerprint} != accepted ${source.fingerprint}`);
-  }
-  if (fallback.sourceFingerprint !== source.fingerprint) {
-    errors.push(`${source.hub}: fallback fingerprint ${fallback.sourceFingerprint} != accepted ${source.fingerprint}`);
+  if (fallback.schemaVersion !== source.schemaVersion) {
+    errors.push(`${source.hub}: bundled fallback schemaVersion mismatch (${fallback.schemaVersion})`);
   }
   const keys = metricKeys(upstream);
   for (const key of source.required) {
-    if (!keys.has(key)) errors.push(`${source.hub}: missing ${key}`);
+    if (!keys.has(key)) errors.push(`${source.hub}: upstream missing required metric ${key}`);
+  }
+  const fallbackKeys = metricKeys(fallback);
+  for (const key of source.required) {
+    if (!fallbackKeys.has(key)) errors.push(`${source.hub}: bundled fallback missing required metric ${key}`);
+  }
+  if (upstream.sourceFingerprint !== fallback.sourceFingerprint) {
+    notices.push(
+      `${source.hub}: upstream contractRevision ${upstream.contractRevision ?? 'unknown'} (fingerprint ${upstream.sourceFingerprint}) ` +
+      `differs from bundled fallback contractRevision ${fallback.contractRevision ?? 'unknown'} (fingerprint ${fallback.sourceFingerprint}). ` +
+      'This is expected when a specialist ships a new compatible release; consider refreshing the bundled fallback.',
+    );
   }
 }
 
@@ -84,4 +95,5 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('specialist fallback fingerprints match accepted upstream manifests');
+if (notices.length) console.log(notices.join('\n'));
+console.log('specialist upstream and bundled fallback manifests are schema-compatible');

@@ -11,7 +11,7 @@ import investor from '../../data/network-metrics/investor-v1-fallback.json' with
 import coverageArtifact from '../../data/network-intelligence/network-coverage-v1.json' with { type: 'json' };
 import { adaptContractorCard, adaptInsuranceCard, adaptInvestorCard, adaptLenderCard, adaptMoveCard, adaptSeniorCard } from './adapt.ts';
 import { buildAskNetworkEvidenceInventory, buildAskStateCoverage, NETWORK_EVIDENCE_FAMILY_LABELS } from './network-evidence.ts';
-import { ACCEPTED_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, type SpecialistHubId } from './sources.ts';
+import { FALLBACK_SPECIALIST_FINGERPRINTS, SPECIALIST_OWNED_HUBS, type SpecialistHubId } from './sources.ts';
 import type { LoadedSpecialistContract } from './types.ts';
 
 const raws = { move, lender, insurance, contractor, senior, investor } as unknown as Record<SpecialistHubId, Record<string, unknown>>;
@@ -22,14 +22,14 @@ const seoSchemas = readFileSync(join(process.cwd(), 'lib', 'seo', 'schemas.ts'),
 
 test('six accepted specialist fallbacks and fingerprints are current', () => {
   assert.equal(SPECIALIST_OWNED_HUBS.length, 6);
-  for (const hub of SPECIALIST_OWNED_HUBS) assert.equal(raws[hub].sourceFingerprint, ACCEPTED_SPECIALIST_FINGERPRINTS[hub]);
+  for (const hub of SPECIALIST_OWNED_HUBS) assert.equal(raws[hub].sourceFingerprint, FALLBACK_SPECIALIST_FINGERPRINTS[hub]);
 });
 
 test('network inventory is publication gated and retains source-native grains', () => {
   const inventory = buildAskNetworkEvidenceInventory(contracts);
-  assert.equal(inventory.length, 119);
+  assert.equal(inventory.length, 274);
   assert.deepEqual(Object.fromEntries(SPECIALIST_OWNED_HUBS.map((hub) => [hub, inventory.filter((metric) => metric.hub === hub).length])), {
-    move: 28, lender: 20, insurance: 27, contractor: 13, senior: 16, investor: 15,
+    move: 40, lender: 29, insurance: 75, contractor: 95, senior: 16, investor: 19,
   });
   assert.equal(inventory.some((metric) => ['INTERNAL', 'REJECTED', 'UNSUPPORTED'].includes(metric.publicationStatus)), false);
   assert.equal(inventory.every((metric) => metric.hub && metric.grain && metric.specialistFingerprint && metric.origin), true);
@@ -62,12 +62,20 @@ test('seven-state model preserves asymmetric specialist coverage', () => {
   }
 });
 
-test('Move five-state and missing-universe semantics remain intact', () => {
-  const paths = (move.network as { publishedStateIntelligencePaths: string[] }).publishedStateIntelligencePaths;
-  assert.deepEqual(paths, ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado', '/virginia']);
+test('Move nine-state and missing-universe semantics remain intact', () => {
+  const network = move.network as { publishedStateIntelligencePages: number; publishedStateIntelligencePaths: string[] };
+  // Move's accepted path count grew from 7 to 9 (added New York and Illinois) between
+  // R2-01 and R2-02; Ask's validator must accept this compatible growth, not pin the
+  // old count. Every previously accepted path must still be present.
+  assert.deepEqual(network.publishedStateIntelligencePaths, [
+    '/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado', '/virginia', '/new-york', '/illinois',
+  ]);
+  assert.equal(network.publishedStateIntelligencePages, network.publishedStateIntelligencePaths.length);
   const metrics = move.metrics as Array<{ key: string; value: number | null; grain: string }>;
   assert.equal(metrics.find((metric) => metric.key === 'tx_txdmv_household_goods_mover_universe')?.value, null);
   assert.equal(metrics.find((metric) => metric.key === 'wa_utc_active_household_goods_directory_results')?.value, 284);
+  assert.equal(metrics.find((metric) => metric.key === 'il_current_hhg_roster')?.value, null);
+  assert.equal(metrics.find((metric) => metric.key === 'ny_current_hhg_roster')?.value, null);
 });
 
 test('homepage removes stale geography and preserves semantic firewalls', () => {

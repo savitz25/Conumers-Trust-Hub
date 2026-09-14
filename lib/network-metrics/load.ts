@@ -5,7 +5,6 @@ import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' 
 import insuranceFallback from '../../data/network-metrics/insurance-v1-fallback.json' with { type: 'json' };
 import investorFallback from '../../data/network-metrics/investor-v1-fallback.json' with { type: 'json' };
 import {
-  ACCEPTED_SPECIALIST_FINGERPRINTS,
   SPECIALIST_METRIC_REVALIDATE_SECONDS,
   SPECIALIST_OWNED_HUBS,
   SPECIALIST_SOURCES,
@@ -76,17 +75,25 @@ function present(hub: SpecialistHubId, raw: unknown, origin: 'UPSTREAM' | 'FALLB
   return adaptInvestorCard(validateInvestorManifest(raw), origin);
 }
 
+/**
+ * Accept any upstream contract that is schema-compatible and structurally valid.
+ *
+ * Acceptance is a function of schema family/version and structural invariants
+ * (required fields, grains, publication rules, and per-hub reconciliation
+ * invariants enforced in `validate.ts`) — never of `sourceFingerprint` or
+ * `contractRevision` equality against a hard-coded string. A specialist hub
+ * publishing a new compatible revision (e.g. ATH-METRICS-R2-02 -> R2-03) must
+ * be accepted without an AskTrustHub code change. A genuinely incompatible
+ * schema (wrong schemaVersion, missing required fields, broken invariants)
+ * still throws here and the caller falls back to the last-known-good snapshot.
+ */
 function validated(hub: SpecialistHubId, raw: unknown): Record<string, unknown> {
-  const value = hub === 'contractor' ? validateContractorManifest(raw)
+  return hub === 'contractor' ? validateContractorManifest(raw)
     : hub === 'senior' ? validateSeniorManifest(raw)
       : hub === 'move' ? validateMoveManifest(raw)
         : hub === 'lender' ? validateLenderManifest(raw)
           : hub === 'insurance' ? validateInsuranceManifest(raw)
             : validateInvestorManifest(raw);
-  if (value.sourceFingerprint !== ACCEPTED_SPECIALIST_FINGERPRINTS[hub]) {
-    throw new Error(`${hub}: specialist fingerprint is not accepted by AskTrustHub`);
-  }
-  return value;
 }
 
 export async function loadSpecialistContract(

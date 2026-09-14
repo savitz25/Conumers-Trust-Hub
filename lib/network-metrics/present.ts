@@ -16,6 +16,7 @@ export function specialistCardMarkup(card: SpecialistHubPresentation): string {
     card.origin === 'FALLBACK' ? 'Showing last-known-good specialist snapshot' : 'UPSTREAM',
     numbers,
     `Newest documented specialist source date ${card.newestSourceAsOf ?? ''}`,
+    `Specialist contract revision ${card.contractRevision ?? 'Not supplied'}`,
     card.newestSourceAsOfNote,
     card.caveats.join(' '),
     'Trace this number',

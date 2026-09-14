@@ -131,6 +131,7 @@ export function adaptContractorCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
     newestSourceAsOfNote:
@@ -184,6 +185,7 @@ export function adaptSeniorCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof newest.value === 'string' ? newest.value : null,
     newestSourceAsOfNote:
@@ -233,6 +235,7 @@ export function adaptMoveCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
     newestSourceAsOfNote:
@@ -283,6 +286,7 @@ export function adaptLenderCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
     newestSourceAsOfNote:
@@ -328,6 +332,7 @@ export function adaptInsuranceCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
     newestSourceAsOfNote:
@@ -378,6 +383,7 @@ export function adaptInvestorCard(
     origin,
     schemaVersion: schema,
     fingerprint,
+    contractRevision: typeof raw.contractRevision === 'string' ? raw.contractRevision : null,
     generatedAt: String(raw.generatedAt),
     newestSourceAsOf: typeof raw.newestDocumentedSourceAsOf === 'string' ? raw.newestDocumentedSourceAsOf : null,
     newestSourceAsOfNote:

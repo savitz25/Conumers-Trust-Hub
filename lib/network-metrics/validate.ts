@@ -211,8 +211,21 @@ export function validateMoveManifest(raw: unknown): Record<string, unknown> {
   const paths = Array.isArray(network.publishedStateIntelligencePaths)
     ? network.publishedStateIntelligencePaths.map(String)
     : [];
-  if (network.publishedStateIntelligencePages !== 7 || !['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado', '/virginia'].every((path) => paths.includes(path))) {
-    throw new Error('Move specialist contract must expose exactly seven accepted state-intelligence paths');
+  const pageCount = network.publishedStateIntelligencePages;
+  // Structural check, not a pinned revision: the count must match the array, the
+  // array must be duplicate-free, and every previously accepted state page must
+  // still be present. A specialist adding new state pages (e.g. NY, IL) is a
+  // compatible expansion and must not require an Ask code change; a specialist
+  // silently dropping a previously accepted page is a real regression and fails closed.
+  const PREVIOUSLY_ACCEPTED_MOVE_STATE_PATHS = ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/colorado', '/virginia'];
+  if (typeof pageCount !== 'number' || pageCount !== paths.length || paths.length < PREVIOUSLY_ACCEPTED_MOVE_STATE_PATHS.length) {
+    throw new Error('Move specialist contract publishedStateIntelligencePages must match its published path count');
+  }
+  if (new Set(paths).size !== paths.length) {
+    throw new Error('Move specialist contract published state-intelligence paths must be unique');
+  }
+  if (!PREVIOUSLY_ACCEPTED_MOVE_STATE_PATHS.every((path) => paths.includes(path))) {
+    throw new Error('Move specialist contract must retain previously accepted state-intelligence paths');
   }
   const wa = map.get('wa_utc_active_household_goods_directory_results');
   if (!wa || wa.value !== 284 || wa.grain !== 'utc_active_household_goods_directory_result') {
