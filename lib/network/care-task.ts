@@ -1,5 +1,6 @@
 import {US_JURISDICTIONS} from './us-jurisdictions.ts';
 import type {AskResearchPlan,AskRequestedGeography} from './research-planner.ts';
+import {detectFloridaCity} from './florida-municipality-crosswalk.ts';
 
 export type CareSetting='nursing_home'|'home_health'|'hospice'|'assisted_living'|'memory_care'|'independent_living';
 export function careTask(question:string):{kind:'care'|'move_context'|'care_and_move';setting?:CareSetting}|null {
@@ -32,7 +33,15 @@ export function careLocation(question:string):AskRequestedGeography|undefined {
  if(ambiguous||conflict||!/^[a-z .'-]+$/i.test(place||state?.name||''))return {raw,display:raw,kind:'place',resolution:'UNRESOLVED'};
  const county=/\bcounty$/i.test(place);if(county)place=place.replace(/\s+county$/i,'');
  const kind=!place?'state':county?'county':'city';
- return {raw,display:place?`${place}${county?' County':''}${state?`, ${state.name}`:''}`:state!.name,kind,resolution:state?'RESOLVED':'UNRESOLVED',stateCode:state?.code,stateName:state?.name,city:kind==='city'?place:undefined,county:kind==='county'?place:undefined};
+ // TH-DISCOVERY-RESET-001: a bare city with no explicit state text in the question (e.g. "hospice
+ // near Tampa") previously stayed UNRESOLVED and dead-ended asking the consumer to name a state,
+ // even though the same florida-municipality-crosswalk.ts every other hub's shared geography
+ // parser already uses recognizes it. Resolve it here too instead of duplicating a third parser.
+ const flCity=!state&&kind==='city'?detectFloridaCity(place):undefined;
+ const resolvedStateCode=state?.code??(flCity?'FL':undefined);
+ const resolvedStateName=state?.name??(flCity?'Florida':undefined);
+ const resolvedCity=flCity?flCity.city:place;
+ return {raw,display:place?`${flCity?flCity.city:place}${county?' County':''}${resolvedStateName?`, ${resolvedStateName}`:''}`:state!.name,kind,resolution:resolvedStateCode?'RESOLVED':'UNRESOLVED',stateCode:resolvedStateCode,stateName:resolvedStateName,city:kind==='city'?resolvedCity:undefined,county:kind==='county'?place:undefined};
 }
 export function planCareResearch(base:AskResearchPlan,setting:CareSetting|undefined,geography=base.requestedGeography):AskResearchPlan {
  const cms=setting&&['nursing_home','home_health','hospice'].includes(setting);

@@ -124,7 +124,12 @@ const senior = group('senior', [
   c('What is the difference between hospice and home health?','EXPLAINER','senior',['explainer']),
   c('nursing homes in Boca Raton Florida','COHORT_BROWSE','senior',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedExecutionScope:'Boca Raton, Florida'}),
   c('hospice providers in Palm Beach County Florida','COHORT_BROWSE','senior',['cohort','geography'],{expectedExecutionScope:'Palm Beach County, Florida'}),
-  c('home health agency in Boca Raton','COHORT_BROWSE','senior',['cohort','geography'],{expectedRequestedScope:'Boca Raton',expectedScopeState:'CLARIFICATION_REQUIRED',expectedExecutionAllowed:false}),
+  // TH-DISCOVERY-RESET-001: Boca Raton has no real-world same-name collision in another state
+  // (verified against SeniorTrustHub's live corpus with an explicit state on several other real
+  // US cities of that name) -- RESULTS FIRST resolves this bare city directly instead of a
+  // jurisdiction dead-end on a technicality. See care-task.ts's ESTABLISHED_FL_CITIES-equivalent
+  // fix (careLocation's detectFloridaCity fallback) and SeniorTrustHub's own senior-location.ts.
+  c('home health agency in Boca Raton','COHORT_BROWSE','senior',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedScopeState:'EXACT',expectedExecutionAllowed:true}),
   c('nursing homes within 25 miles of Boca Raton','COHORT_BROWSE','senior',['geography','limitation'],{expectedScopeState:'CLARIFICATION_REQUIRED',expectedExecutionAllowed:false}),
   c('nursing homes near Boca Raton Florida','COHORT_BROWSE','senior',['cohort','geography']),
   c('nursing home dad boca','COHORT_BROWSE','senior',['cohort','colloquial','geography']),

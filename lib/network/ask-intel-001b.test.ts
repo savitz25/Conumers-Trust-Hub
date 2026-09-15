@@ -56,7 +56,13 @@ const matrix: Expected[] = [
   {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',executed:'Miami, Florida',state:'EXACT',meaning:'RECORDED_HEADQUARTERS',allowed:true},
   {query:'mover serving Miami Florida',hub:'move',requested:'Miami, Florida',state:'CAPABILITY_UNSUPPORTED',meaning:'SERVICE_TERRITORY',allowed:false},
   {query:"I'm moving from Chicago to Denver, who can move me?",hub:'move',requested:'Chicago to Denver',state:'CAPABILITY_UNSUPPORTED',meaning:'ORIGIN_DESTINATION',allowed:false},
-  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
+  // TH-DISCOVERY-RESET-001: Boca Raton has no real-world same-name collision in another state
+  // (verified against SeniorTrustHub's live corpus), so care-task.ts's careLocation resolves this
+  // bare city directly (RESULTS FIRST) instead of a jurisdiction dead-end on a technicality. This
+  // resolution happens in care-task.ts itself (used directly by research-planner.ts for any
+  // care-classified query), not the generic consent-gated broadening layer, so it is identical
+  // whether read from the raw plan (here) or a live session.
+  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton, Florida',executed:'Boca Raton, Florida',state:'EXACT',meaning:'RECORDED_OFFICE_LOCATION',allowed:true},
   {query:'nursing homes within 25 miles of Boca Raton',hub:'senior',requested:'25 miles of Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
 ];
 
