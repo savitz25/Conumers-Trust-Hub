@@ -1,4 +1,4 @@
-import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, type IdentifierFamily } from './identifiers.ts';
+import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, IDENTIFIER_FILLER_SOURCE, type IdentifierFamily } from './identifiers.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
 import { detectInvestorFirmType, isInvestorClassQuery, type InvestorFirmType } from './investor-ask.ts';
@@ -452,58 +452,68 @@ function geography(q: string): ParsedGeography | undefined {
   return undefined;
 }
 
+// TH-ARCH-P0-001: bounded digit capture that accepts both a plain contiguous run ("3244649") and
+// one people space out when spoken/typed ("1 234 567"), by allowing each digit after the first to
+// carry an optional single space/hyphen separator. Matches 3-10 digit characters total (bounded so
+// it cannot run away across a later, unrelated number in the sentence); the caller re-validates the
+// stripped digit count against the family's real length bounds, so this stays a formatting
+// normalization, never a loosening of which digit strings count as a match.
+const SPACED_DIGITS = String.raw`\d(?:[ -]?\d){2,9}`;
+
 function matchIdentifier(q: string): ParsedIdentifier | undefined {
   const trimmed = q.trim();
-  const nmlsInSentence = trimmed.match(/\bnmls\s*#?\s*(\d{4,12})\b/i);
+  const nmlsInSentence = trimmed.match(new RegExp(String.raw`\bnmls\b${IDENTIFIER_FILLER_SOURCE}(\d{4,12})\b`, 'i'));
   if (nmlsInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'nmls');
     if (family) return { family, raw: `NMLS ${nmlsInSentence[1]}`, ambiguous: false, note: family.note };
   }
-  const leiInSentence = trimmed.match(/\blei\s*#?\s*([A-Z0-9]{20})\b/i);
+  const leiInSentence = trimmed.match(new RegExp(String.raw`\blei\b${IDENTIFIER_FILLER_SOURCE}([A-Z0-9]{20})\b`, 'i'));
   if (leiInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'lei');
     if (family) return { family, raw: `LEI ${leiInSentence[1].toUpperCase()}`, ambiguous: false, note: family.note };
   }
-  const ccnInSentence = trimmed.match(/\b(?:cms\s+)?ccn\s*#?\s*(\d{6})\b/i);
+  const ccnInSentence = trimmed.match(new RegExp(String.raw`\b(?:cms\s+)?ccn\b${IDENTIFIER_FILLER_SOURCE}(\d{6})\b`, 'i'));
   if (ccnInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'cms_ccn');
     if (family) {
       return { family, raw: `CCN ${ccnInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
-  const crdInSentence = trimmed.match(/\bcrd\s*#?\s*(\d{4,10})\b/i);
+  const crdInSentence = trimmed.match(new RegExp(String.raw`\bcrd\b${IDENTIFIER_FILLER_SOURCE}(\d{4,10})\b`, 'i'));
   if (crdInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'crd');
     if (family) {
       return { family, raw: `CRD ${crdInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
-  const npnInSentence = trimmed.match(/\bnpn\s*#?\s*(\d{4,12})\b/i);
+  const npnInSentence = trimmed.match(new RegExp(String.raw`\bnpn\b${IDENTIFIER_FILLER_SOURCE}(\d{4,12})\b`, 'i'));
   if (npnInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'npn');
     if (family) {
       return { family, raw: `NPN ${npnInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
-  const naicInSentence = trimmed.match(/\bnaic(?:\s+company)?(?:\s+code)?\s*#?\s*(\d{3,6})\b/i);
+  const naicInSentence = trimmed.match(new RegExp(String.raw`\bnaic\b${IDENTIFIER_FILLER_SOURCE}(\d{3,6})\b`, 'i'));
   if (naicInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'naic_company_code');
     if (family) {
       return { family, raw: `NAIC ${naicInSentence[1]}`, ambiguous: false, note: family.note };
     }
   }
-  const usdotInSentence = trimmed.match(/\b(?:usdot|dot)\s*#?\s*(\d{3,8})\b/i);
+  const usdotInSentence = trimmed.match(new RegExp(String.raw`\b(?:usdot|dot)\b${IDENTIFIER_FILLER_SOURCE}(${SPACED_DIGITS})\b`, 'i'));
   if (usdotInSentence) {
+    const digits = usdotInSentence[1].replace(/[^0-9]/g, '');
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'usdot');
-    if (family) {
-      return { family, raw: `USDOT ${usdotInSentence[1]}`, ambiguous: false, note: family.note };
+    if (family && digits.length >= 3 && digits.length <= 8) {
+      return { family, raw: `USDOT ${digits}`, ambiguous: false, note: family.note };
     }
   }
-  const mcInSentence = trimmed.match(/\bmc\s*#?-?\s*(\d{3,8})\b/i);
+  const mcInSentence = trimmed.match(new RegExp(String.raw`\bmc\b${IDENTIFIER_FILLER_SOURCE}(${SPACED_DIGITS})\b`, 'i'));
   if (mcInSentence) {
+    const digits = mcInSentence[1].replace(/[^0-9]/g, '');
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'mc');
-    if (family) {
-      return { family, raw: `MC ${mcInSentence[1]}`, ambiguous: false, note: family.note };
+    if (family && digits.length >= 3 && digits.length <= 8) {
+      return { family, raw: `MC ${digits}`, ambiguous: false, note: family.note };
     }
   }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));

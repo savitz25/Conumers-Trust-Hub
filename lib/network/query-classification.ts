@@ -34,6 +34,11 @@ const ENTITY_CLASSES: ClassDefinition[] = [
   { id: 'auto_transport', hubId: 'move', label: 'Auto transport company', pattern: /\b(?:auto|vehicle|car)\s+(?:transport(?:er)?|shipping)\s*(?:compan(?:y|ies)|carriers?|brokers?|transporters?)?\b/i },
   { id: 'household_goods_carrier', hubId: 'move', label: 'Household-goods carrier', pattern: /\bhousehold[- ]goods\s+(?:motor\s+)?carriers?\b/i },
   { id: 'mover', hubId: 'move', label: 'Moving company', pattern: /\b(?:moving\s+compan(?:y|ies)|movers?)\b/i },
+  // TH-ARCH-P0-001: "mortgage broker" must classify as a lender-hub provider category (DISCOVERY),
+  // scoped strictly to the "mortgage"-qualified phrase -- bare "broker" alone stays deliberately
+  // unclassified here so isAmbiguousBrokerQuery's household-goods/mortgage/insurance/broker-dealer
+  // disambiguation in ask-parse.ts is unaffected.
+  { id: 'mortgage_broker', hubId: 'lender', label: 'Mortgage broker', pattern: /\bmortgage\s+brokers?\b/i },
   { id: 'mortgage_lender', hubId: 'lender', label: 'Mortgage lender', pattern: /\b(?:mortgage\s+(?:lenders?|compan(?:y|ies))|lenders?)\b/i },
   { id: 'insurance_agency', hubId: 'insurance', label: 'Insurance agency', pattern: /\binsurance\s+agenc(?:y|ies)\b/i },
   { id: 'legal_insurer', hubId: 'insurance', label: 'Legal insurer', pattern: /\b(?:legal\s+insurers?|insurance\s+(?:compan(?:y|ies)|carriers?)|insurers?)\b/i },
