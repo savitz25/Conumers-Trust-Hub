@@ -16,6 +16,21 @@ import test from 'node:test';
 import { orchestrateGuidedResearch } from './orchestrator.ts';
 import { planAskResearch } from '../network/research-planner.ts';
 
+// TH-DISCOVERY-002B: the Boca Raton flagship now hits live production's real local-directory
+// backend, which has a rare, genuine transient-outage rate (correctly surfaced as
+// BACKEND_UNAVAILABLE, not a false zero). Retry a few times so that already-correctly-handled
+// transience doesn't flake this permanent regression file; still requires genuine
+// SUPPORTED_RESULTS to pass.
+async function orchestrateUntilSupported(question: string, attempts = 6) {
+  let last: Awaited<ReturnType<typeof orchestrateGuidedResearch>> | undefined;
+  for (let i = 0; i < attempts; i++) {
+    last = await orchestrateGuidedResearch({ action: { type: 'START', question } });
+    if (last.result?.resultState === 'SUPPORTED_RESULTS') return last;
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  return last!;
+}
+
 // ============================================================================
 // LENDER
 // ============================================================================
@@ -93,23 +108,27 @@ test('LIVE RATE HONESTY: a geography-scoped rate mention still reaches real prop
 // INSURANCE
 // ============================================================================
 
-test('BOCA RATON FLAGSHIP: "insurance company in boca raton fl" has a real path to providers, not a bare dead end', async () => {
-  const step1 = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance company in boca raton fl' } });
-  assert.notEqual(step1.result?.resultState, 'ZERO_MATCHING_ROWS', 'an unsupported local grain is a different claim from "we searched and found zero"');
-  const broaden = step1.result?.choices?.find((c) => c.value.startsWith('scope_state:'));
-  assert.ok(broaden, 'a path to broader Florida results must be offered alongside the ZIP-directory handoff');
-  const step2 = await orchestrateGuidedResearch({ session: step1.session, action: { type: 'SELECT_CHOICE', value: broaden!.value } });
-  assert.equal(step2.result?.resultState, 'SUPPORTED_RESULTS');
-  assert.ok((step2.result?.total ?? 0) > 0);
-  assert.doesNotMatch(step2.result?.consumerMessage ?? '', /boca raton (?:office|service)/i, 'must never claim local Boca Raton presence from statewide evidence');
+// TH-DISCOVERY-002B superseded these two cases: InsuranceTrustHub's real local-directory query is
+// now wired into specialist-execution/v2 (OFFICE_LOCATION geography intent, live-verified via
+// /api/specialist-execution/v2 returning real Boca-area agencies for both ZIP 33431 and Palm Beach
+// county). Boca Raton no longer needs the statewide-broadening detour -- it gets real local
+// evidence directly. The state-broadening consent path remains available as a fallback (still
+// covered by th-search-r1-018.test.ts for a geography the local directory doesn't recognize) but
+// is no longer the expected outcome for a supported FL launch county.
+test('BOCA RATON FLAGSHIP: "insurance company in boca raton fl" reaches real local-directory evidence, not a statewide detour', async () => {
+  const r = await orchestrateUntilSupported('insurance company in boca raton fl');
+  assert.equal(r.result?.resultState, 'SUPPORTED_RESULTS');
+  assert.ok((r.result?.total ?? 0) > 0);
+  assert.ok((r.result?.rows.length ?? 0) <= 10, 'shown rows must be bounded regardless of total');
+  assert.match(r.result?.consumerMessage ?? '', /Palm Beach County/i, 'the recorded local grain must be disclosed');
+  assert.doesNotMatch(r.result?.consumerMessage ?? '', /every customer|countywide service/i, 'a directory record must never be inflated into a service-territory claim');
+  assert.ok(r.result?.rows[0]?.destination?.href, 'a canonical profile destination must be present');
 });
 
-test('BOCA RATON FLAGSHIP: "insurance agency in boca raton fl" (unambiguous agency wording) reaches the same real path to providers', async () => {
-  const step1 = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance agency in boca raton fl' } });
-  const broaden = step1.result?.choices?.find((c) => c.value.startsWith('scope_state:'));
-  assert.ok(broaden);
-  const step2 = await orchestrateGuidedResearch({ session: step1.session, action: { type: 'SELECT_CHOICE', value: broaden!.value } });
-  assert.equal(step2.result?.resultState, 'SUPPORTED_RESULTS');
+test('BOCA RATON FLAGSHIP: "insurance agency in boca raton fl" (unambiguous agency wording) reaches the same real local-directory evidence', async () => {
+  const r = await orchestrateUntilSupported('insurance agency in boca raton fl');
+  assert.equal(r.result?.resultState, 'SUPPORTED_RESULTS');
+  assert.ok((r.result?.total ?? 0) > 0);
 });
 
 test('HOMEOWNERS FLAGSHIP: "homeowners insurance agencies in Florida" discloses the product-specialization gap instead of silently ignoring "homeowners"', async () => {

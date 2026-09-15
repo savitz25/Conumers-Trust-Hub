@@ -431,6 +431,20 @@ async function executeInvestor(session:GuidedResearchSession):Promise<GuidedExec
   return result;
 }
 
+// TH-DISCOVERY-002B: shared row mapper for InsuranceTrustHub's v2 payload, reused by both the
+// legacy credential-graph cohort path and the new local-directory path below. Destination type is
+// now driven by the specialist's own publicationState (PUBLIC_PROFILE vs RESEARCH_ROW_ONLY) rather
+// than hardcoded to entityClass -- local-directory agency rows carry a real published profile
+// (/providers/[slug]) and must not be understated as a bare "research identity" link.
+function mapInsuranceRows(payload:Record<string,unknown>):GuidedResultRow[]{
+  return records(payload.rows).map((row):GuidedResultRow=>{
+    const entityClass=text(row.entityClass);const npn=text(row.npn);const naic=text(row.naicCode);
+    const isPublicProfile=text(row.publicationState)==='PUBLIC_PROFILE';
+    const destination=safeFinancialDestination('insurance',{type:isPublicProfile?'PUBLIC_PROFILE':'RESEARCH_IDENTITY',url:text(row.destination)});
+    return {name:text(row.name)??'Insurance research identity',hub:'insurance',identifier:naic?{label:'NAIC Company Code',value:naic}:npn?{label:'NPN',value:npn}:undefined,classLabel:entityClass?.replaceAll('_',' '),recordedLocation:text(row.credentialJurisdiction),status:text(row.credentialStatus),sourceDate:text(row.sourceObservedAt),whyShown:text(row.whyMatched)??'Matched the selected public-safe insurance filters.',destination,facts:[text(row.licenseNumber)?{label:'Credential',value:text(row.licenseNumber)!}:null,text(row.licenseClass)?{label:'Credential class',value:text(row.licenseClass)!}:null,text(row.publicationState)?{label:'Publication state',value:text(row.publicationState)!}:null].filter(Boolean) as Array<{label:string;value:string}>};
+  });
+}
+
 async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExecutionResult>{
   const service=/\bserv(?:e|es|ing)|near me\b/i.test(session.originalQuestion);const ranking=/\b(?:best|top)\b/i.test(session.originalQuestion);
   // TH-DISCOVERY-002: a requested product/line-of-authority word ("homeowners", "life", ...) must
@@ -447,23 +461,80 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   // geography but has no insurance-specific knowledge to also clear insuranceResearchMode, so
   // without this check the broadened request would loop straight back into the same handoff.
   if(session.insuranceResearchMode==='local_directory_handoff'&&(session.geography?.type==='zip'||session.geography?.type==='city')){
-    // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: specialist-execution/v2 has no ZIP/local-directory
-    // query type -- confirmed live, it silently ignores geography.zip/zipCode fields and returns
-    // the entire unscoped agency population. Hand off to InsuranceTrustHub's own certified
-    // ZIP-directory /ask flow (insurance-ask-v1) rather than execute that unscoped cohort here.
-    const message='InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering yet. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does.';
+    // TH-DISCOVERY-002B: InsuranceTrustHub's real, already-live public-directory query
+    // (getProviders/searchProviders, the same source that backs its own /directory page -- proven
+    // live for ZIP 33431) is now wired into specialist-execution/v2 under the OFFICE_LOCATION
+    // geography intent. Attempt real local evidence FIRST -- state broadening below is now a
+    // fallback for when local evidence is genuinely unavailable, not the default outcome. Only
+    // 'agency' is a local-directory entity class; producer/legal_insurer keep their own,
+    // separately scoped and unaffected capability gaps and fall straight through to the
+    // broadening offer below.
+    const zip=session.geography.type==='zip'?session.geography.value:undefined;
+    // A bare city request never carries county on session.geography itself (only Summit, NJ is
+    // hardcoded there) -- session.executionScope.normalizedRequestedGeography already resolved a
+    // FL city to its county via the existing florida-municipality-crosswalk.ts (unconditional on
+    // Insurance's capability list), so reuse that instead of duplicating a city resolver here.
+    const county=!zip?session.executionScope.normalizedRequestedGeography?.county:undefined;
+    if(session.insuranceEntityClass==='agency'&&(zip||county)){
+      const localBody={contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:'agency',geography:{zip,county,stateCode:session.geography.stateCode,intent:'OFFICE_LOCATION'},page:1,limit:10};
+      const localOutcome=await specialistFetch('insurance',localBody);
+      if(!('error'in localOutcome)){
+        const localPayload=localOutcome.body;
+        // TH-DISCOVERY-002B safety guard: resultState alone is not enough to trust this as real
+        // local evidence -- a stale/unpatched specialist could still answer SUPPORTED_RESULTS with
+        // the full unscoped agency population under this new geography intent. The new
+        // local-directory branch always stamps queryInterpretation.geographyGrain to
+        // RECORDED_ZIP/RECORDED_COUNTY; no other v2 code path does. Require that exact signal
+        // before treating a response as genuine local (not unscoped-cohort) evidence.
+        const geographyGrain=text(record(localPayload.queryInterpretation).geographyGrain);
+        const isGenuineLocalGrain=geographyGrain==='RECORDED_ZIP'||geographyGrain==='RECORDED_COUNTY';
+        if(isGenuineLocalGrain&&validateFinancialContract('insurance',localPayload)){
+          const localState=financialState(localPayload,localOutcome.status);
+          const place=zip?`ZIP ${zip}`:`${county} County, Florida`;
+          if(localState==='SUPPORTED_RESULTS'){
+            const rows=mapInsuranceRows(localPayload);
+            const result=supported(session,localPayload,rows,localOutcome.latencyMs,normalizeRefinements(localPayload.availableRefinements));
+            result.resultState=localState;
+            result.consumerHeading='Local insurance agency directory results';
+            result.consumerMessage=`${result.total.toLocaleString('en-US')} verified public-directory agency record(s) have a recorded address in ${place}. This is a recorded directory address, not a confirmed service area -- a county directory record does not mean an agency serves customers throughout the county.`;
+            if(ranking&&result.total>0)result.limitations=['InsuranceTrustHub does not rank insurance agencies as "best" or "top." Source order is not a quality or safety judgment.', ...result.limitations];
+            if(session.insuranceLineOfAuthority){
+              result.limitations=[`"${session.insuranceLineOfAuthority}" product/line-of-authority specialization is not established by this directory source. These are recorded local-directory agency addresses matching the entity class and geography filters only.`, ...result.limitations];
+              result.consumerMessage=`${result.consumerMessage} "${session.insuranceLineOfAuthority}" specialization is not established by this source.`;
+            }
+            return result;
+          }
+          // A genuine local ZERO_MATCHING_ROWS still falls through to the broadening offer below,
+          // but with an honest local-search-ran message instead of the generic capability-gap one.
+          if(localState==='ZERO_MATCHING_ROWS'){
+            const broader=session.executionScope.resolutionState==='BROADENING_REQUIRES_CONSENT'?session.executionScope.normalizedRequestedGeography:undefined;
+            const message=`No verified public-directory agency records have a recorded address in ${place}.`;
+            const result=failure(session,'ZERO_MATCHING_ROWS',localOutcome.latencyMs,'local_directory_zero_match',message);
+            result.limitations=[message,'Directory listing is not a regulatory identity confirmation.'];
+            result.firstUsefulResult=true;
+            if(broader?.stateCode){
+              result.choices=[{id:'scope-statewide',label:`Research ${broader.stateName??broader.stateCode} instead`,action:'SELECT_CHOICE',value:`scope_state:${broader.stateCode}`,description:'This is broader than the place you requested and will be recorded as your explicit choice.'}];
+              result.consumerMessage=`${message} Or research ${broader.stateName??broader.stateCode} agencies broadly instead -- this does not establish a ${session.executionScope.requestedGeography?.display ?? 'local'} office or service area.`;
+            }
+            return result;
+          }
+        }
+      }
+      // Local execution itself was unavailable/unsupported/errored (contract mismatch, backend
+      // failure, or a ZIP/county the directory doesn't recognize) -- fall through to the
+      // broadening offer below rather than surfacing the raw specialist failure.
+    }
+    const message='InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering for this request. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does.';
     const result=failure(session,'UNSUPPORTED_CAPABILITY',0,'zip_directory_not_supported',message);
     result.limitations=[message,'Directory listing is not a regulatory identity confirmation.'];
     result.destinations=[{type:'DIRECTORY',href:`https://www.insurancetrusthub.com/ask?q=${encodeURIComponent(session.originalQuestion)}`,label:'Continue on InsuranceTrustHub'}];
     result.firstUsefulResult=true;
     // TH-DISCOVERY-002: this must not be a bare dead end (ticket section 46, the Boca Raton
     // flagship case). session.executionScope already independently resolved a state-broadening
-    // consent path for this same geography (Insurance's capability is state-only, so
-    // resolveResearchScope's existing city/county/zip-to-state broadening already applies here --
-    // it was simply never surfaced because this branch short-circuits straight to EXECUTE). Offer
-    // it as a real choice alongside the ZIP handoff instead of leaving zero providers with no path
-    // forward; selecting it reuses the exact same scope_state: consent mechanism TH-DISCOVERY-001
-    // established for region geography, already fully wired in orchestrator.ts.
+    // consent path for this same geography. Offer it as a real choice alongside the handoff
+    // instead of leaving zero providers with no path forward; selecting it reuses the exact same
+    // scope_state: consent mechanism TH-DISCOVERY-001 established for region geography, already
+    // fully wired in orchestrator.ts.
     const broader=session.executionScope.resolutionState==='BROADENING_REQUIRES_CONSENT'?session.executionScope.normalizedRequestedGeography:undefined;
     if(broader?.stateCode){
       const choices:GuidedChoice[]=[{id:'scope-statewide',label:`Research ${broader.stateName??broader.stateCode} instead`,action:'SELECT_CHOICE',value:`scope_state:${broader.stateCode}`,description:'This is broader than the place you requested and will be recorded as your explicit choice.'}];
@@ -489,18 +560,24 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   const outcome=await specialistFetch('insurance',body);if('error'in outcome)return failure(session,outcome.error,outcome.latencyMs,outcome.error.toLowerCase());
   const payload=outcome.body;if(!validateFinancialContract('insurance',payload))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_mismatch','InsuranceTrustHub’s structured contract lock changed.');
   const state=financialState(payload,outcome.status);if(!['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','EXACT_IDENTITY'].includes(state))return financialFailure(session,payload,state,outcome.latencyMs);
-  const rows=records(payload.rows).map((row):GuidedResultRow=>{
-    const entityClass=text(row.entityClass);const npn=text(row.npn);const naic=text(row.naicCode);const destination=safeFinancialDestination('insurance',{type:entityClass==='legal_insurer'?'PUBLIC_PROFILE':'RESEARCH_IDENTITY',url:text(row.destination)});
-    return {name:text(row.name)??'Insurance research identity',hub:'insurance',identifier:naic?{label:'NAIC Company Code',value:naic}:npn?{label:'NPN',value:npn}:undefined,classLabel:entityClass?.replaceAll('_',' '),recordedLocation:text(row.credentialJurisdiction),status:text(row.credentialStatus),sourceDate:text(row.sourceObservedAt),whyShown:text(row.whyMatched)??'Matched the selected public-safe insurance filters.',destination,facts:[text(row.licenseNumber)?{label:'Credential',value:text(row.licenseNumber)!}:null,text(row.licenseClass)?{label:'Credential class',value:text(row.licenseClass)!}:null,text(row.publicationState)?{label:'Publication state',value:text(row.publicationState)!}:null].filter(Boolean) as Array<{label:string;value:string}>};
-  });
+  const rows=mapInsuranceRows(payload);
   const refinements=normalizeRefinements(payload.availableRefinements).filter((row)=>session.insuranceEntityClass==='agency'&&['credentialJurisdiction','lineOfAuthority'].includes(row.id));
   const result=supported(session,payload,rows,outcome.latencyMs,refinements);result.resultState=state;
   result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':session.insuranceEntityClass==='legal_insurer'?'Public legal-insurer research results':'Insurance agency research results';
-  result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public-safe insurance records match these exact filters.':`${result.total.toLocaleString('en-US')} public-safe ${session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency'} records match. Credential jurisdiction is not office, domicile, service territory, or product availability.`;
+  const classLabel=session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency';
+  result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public-safe insurance records match these exact filters.':`${result.total.toLocaleString('en-US')} public-safe ${classLabel} records match. Credential jurisdiction is not office, domicile, service territory, or product availability.`;
   if(ranking&&result.total>0)result.limitations=['InsuranceTrustHub does not rank insurance agencies or insurers as "best" or "top." Source order is not a quality or safety judgment.', ...result.limitations];
+  // TH-DISCOVERY-002B: match-truth hardening. The base consumerMessage above already never labels
+  // this total as "homeowners insurance agencies" -- it is always "N public-safe agency records"
+  // -- but the disclosure must go further and explicitly separate the two distinct claims so a
+  // reader cannot conflate them: the REQUESTED match (product/LOA-specific) is NOT ESTABLISHED at
+  // this entity grain, while the count shown is a BROADER alternative (the entity-class+geography
+  // cohort only). Smallest safe mechanism: relabel the existing message into two explicit clauses
+  // rather than adding new architecture.
   if(session.insuranceLineOfAuthority&&result.total>0){
-    result.limitations=[`"${session.insuranceLineOfAuthority}" product/line-of-authority specialization is not established at this entity grain by this source. These are ${session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency'} records matching the entity class and geography filters only.`, ...result.limitations];
-    result.consumerMessage=`${result.consumerMessage} "${session.insuranceLineOfAuthority}" specialization is not established by this source.`;
+    const requested=session.insuranceLineOfAuthority;
+    result.limitations=[`Requested match ("${requested}" ${classLabel === 'legal-insurer' ? 'legal insurers' : 'agencies'}): NOT ESTABLISHED -- not acquired at this entity grain by this source.`,`Broader alternatives: ${result.total.toLocaleString('en-US')} ${session.executionScope.executionGeography?.stateName??session.geography?.stateName??''} ${classLabel} records (unfiltered by "${requested}").`.replace(/\s+/g,' ').trim(), ...result.limitations];
+    result.consumerMessage=`Requested match: "${requested}" specialization is NOT ESTABLISHED at this entity grain by this source. Broader alternatives: ${result.consumerMessage}`;
   }
   return result;
 }
