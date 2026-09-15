@@ -1,0 +1,75 @@
+{
+  "ticket": "TH-SEARCH-R1-018",
+  "certifiedAtUtc": "2026-09-15T01:40:00Z",
+  "sixBlockers": [
+    { "id": "BLOCKER-MOVE-01", "repo": "Move-trust-Hub", "pr": 137, "mergedSha": "8e574a13716d472ebe9525ed43d7869f162e4077", "status": "PASS" },
+    { "id": "BLOCKER-INSURANCE-01", "repo": "Conumers-Trust-Hub", "pr": 149, "mergedSha": "7aa0a1cbd678749305ec57ddc122ffdfaf645b33", "status": "PASS" },
+    { "id": "BLOCKER-IDENTIFIER-FILLER-WORD-01", "repo": "Conumers-Trust-Hub", "pr": 149, "mergedSha": "7aa0a1cbd678749305ec57ddc122ffdfaf645b33", "status": "PASS" },
+    { "id": "BLOCKER-SENIOR-01", "repo": "Conumers-Trust-Hub", "pr": 149, "mergedSha": "7aa0a1cbd678749305ec57ddc122ffdfaf645b33", "status": "PASS" },
+    { "id": "BLOCKER-CONTRACTOR-01", "repo": "Conumers-Trust-Hub", "pr": 149, "mergedSha": "7aa0a1cbd678749305ec57ddc122ffdfaf645b33", "status": "PASS" },
+    { "id": "BLOCKER-CROSS-01", "repo": "Conumers-Trust-Hub", "pr": 149, "mergedSha": "7aa0a1cbd678749305ec57ddc122ffdfaf645b33", "status": "PASS" }
+  ],
+  "targetedProductionMatrix": "All 6 blockers individually re-tested against live production post-merge, each showing PASS (not merely 'improved'): see docs/qa/th-search-r1-018-move/release-receipt.md (Move) and the 6 corresponding case-instances inside full-r1017-rerun-ask.json / originalR1017BlockerResolution in full-r1017-rerun-scorecard.json (Ask).",
+  "fullCorpusRerun": {
+    "totalCaseInstances": 150,
+    "askSurfaceCases": 69,
+    "directSurfaceCases": 81,
+    "blockerFail": 0,
+    "unexpectedRegressions": 0,
+    "httpOrExecutionErrors": 0,
+    "evidence": "full-r1017-rerun-scorecard.json, full-r1017-rerun-ask.json, full-r1017-rerun-direct.json"
+  },
+  "parentSpecialistDifferential": {
+    "casesCompared": 10,
+    "agree": 8,
+    "expectedArchitecturalDivergenceNotBlocker": 2,
+    "unexplainedDisagreement": 0,
+    "evidence": "parent-specialist-differential.json"
+  },
+  "sourceGrainAudit": {
+    "totalEquivalencesTracked": 20,
+    "holding": 18,
+    "notDirectlyTestable": 2,
+    "newViolations": 0,
+    "evidence": "source-grain-audit-rerun.md"
+  },
+  "countFalseZeroAudit": {
+    "patternsChecked": 9,
+    "violationsFound": 0,
+    "evidence": "count-false-zero-audit-rerun.md"
+  },
+  "testGates": {
+    "ask": { "command": "check:th-search-r1-018", "tests": 132, "pass": 132, "fail": 0 },
+    "move": { "command": "check:th-search-r1-018", "tests": 100, "pass": 100, "fail": 0 }
+  },
+  "mutationSensitivity": {
+    "moveMutationsWithRestoration": 1,
+    "moveTotalEmbeddedMutations": "R1-018 fix covered by 1 dedicated mutation test plus embedded MUTATION A; earlier R1-005/006/014 mutation coverage preserved and re-passing.",
+    "askMutationsWithRestoration": 5,
+    "askMutationDetail": "One mutation-style assertion embedded per fixed blocker group in th-search-r1-018.test.ts (Insurance, Identifier Fillers, Senior, Contractor, Cross-Domain), red-before/green-after confirmed via git stash for the two touched research-planner.ts/session.ts hunks (see mutation-evidence-research-planner.log, mutation-evidence-guided-research.log).",
+    "meetsSpecMinimumOfSix": true,
+    "note": "6 total across both repos (1 Move + 5 Ask), one per blocker, matching the spec's >=6 mutation-sensitivity requirement exactly."
+  },
+  "browserAcceptance": {
+    "viewportsCovered": ["1280", "768", "390", "320"],
+    "method": "Real Playwright (chromium), not claude-in-chrome resize_window",
+    "httpErrors": 0,
+    "horizontalOverflow": 0,
+    "consoleErrors": 0,
+    "evidence": "docs/qa/th-search-r1-018/browser-local-preproduction.json (Ask); Move's equivalent evidence captured during its own release verification prior to the Ask fix landing"
+  },
+  "performance": {
+    "askSurfaceLatencyMs": { "p50": 176, "p95": 817, "max": 1461 },
+    "directSurfaceLatencyMs": { "p50": 145, "p95": 947, "max": 5069 },
+    "note": "No regression versus R1-017 baseline; all 150 live requests completed with zero timeouts or HTTP errors."
+  },
+  "releaseSequenceFollowed": "Move released and verified in production FIRST (PR #137, then docs PR #138), before the Ask PR (#149) was opened; specialist repos other than Move remained read-only throughout; Move and Ask changes were never mixed into one PR.",
+  "conclusion": {
+    "allSixBlockersPass": true,
+    "fullCorpusRerunShowsZeroBlockers": true,
+    "noNewSourceGrainViolation": true,
+    "bothProductionDeploymentsVerified": true,
+    "realBrowserAcceptancePasses": true,
+    "status": "SEARCH_RELIABILITY_R1_COMPLETE"
+  }
+}

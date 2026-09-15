@@ -1,0 +1,22 @@
+{
+  "version": "th-search-r1-018-additional-corpus-v1",
+  "notes": "Blocker-specific paraphrases introduced by TH-SEARCH-R1-018 for the required full-corpus rerun (spec section 19), appended to (not replacing) the 103-entry TH-SEARCH-R1-017 corpus. All ask-surface, all fresh.",
+  "entries": [
+    {"id":"R18-NAIC-COMPANY-CODE","hub":"insurance","query":"NAIC company code 10064","categories":["identifier-filler"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-NPN-NUMBER","hub":"insurance","query":"NPN number 20000635","categories":["identifier-filler"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CRD-NUMBER","hub":"investor","query":"CRD number 166089","categories":["identifier-filler"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-NMLS-NUMBER","hub":"lender","query":"NMLS number 3030","categories":["identifier-filler"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-SENIOR-DEICTIC-PARAPHRASE","hub":"senior","query":"Can you tell me who owns this nursing home?","categories":["deictic"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-SENIOR-FINED","hub":"senior","query":"Has this nursing home been fined?","categories":["deictic"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-SENIOR-CHANGED-OWNERS","hub":"senior","query":"Did this nursing home change owners?","categories":["deictic"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-SENIOR-ASSISTED-LIVING-DEICTIC","hub":"senior","query":"Who owns this assisted living facility?","categories":["deictic"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-SENIOR-HOSPICE-DEICTIC","hub":"senior","query":"What happened at this hospice?","categories":["deictic"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CROSS-MOVER-LENDER","hub":"cross","query":"I need a mover and a mortgage lender in New Jersey","categories":["cross-domain"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CROSS-CONTRACTOR-LENDER","hub":"cross","query":"I need a contractor and a lender for my home purchase","categories":["cross-domain"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CROSS-INSURANCE-LENDER","hub":"cross","query":"I need an insurance agent and a mortgage lender","categories":["cross-domain"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CROSS-MOVE-SENIOR","hub":"cross","query":"Research a mover and a nursing home for my mother's relocation","categories":["cross-domain"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CONTROL-ROCKET-MORTGAGE","hub":"lender","query":"Rocket Mortgage","categories":["false-positive-control"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CONTROL-SENIOR-MOVING-LLC","hub":"move","query":"Senior Moving Services LLC","categories":["false-positive-control"],"testSurfaces":["ask"],"fresh":true},
+    {"id":"R18-CONTROL-STATE-FARM","hub":"insurance","query":"State Farm insurance company","categories":["false-positive-control"],"testSurfaces":["ask"],"fresh":true}
+  ]
+}
