@@ -92,7 +92,13 @@ export function detectInsuranceEntityClass(q: string): InsuranceEntityClass | un
   ) {
     return 'insurer';
   }
-  if (/\b(producers?|individual|persons?|agents?)\b/i.test(q) && !/\bagenc/i.test(q)) return 'person';
+  // TH-ARCH-P0-001: "individual"/"person(s)"/"agent(s)" are generic English words other
+  // verticals use too (e.g. an investor-hub "individual adviser representative"), so on their
+  // own they must not classify a query as insurance -- only "producer(s)" is insurance-specific
+  // enough to stand alone; the rest require an actual insurance/insurer anchor elsewhere in the
+  // query. Found via TH-ARCH-P0-001's multi-hub guard surfacing a cross-vertical misclassification.
+  if (/\bproducers?\b/i.test(q) && !/\bagenc/i.test(q)) return 'person';
+  if (/\b(?:individual|persons?|agents?)\b/i.test(q) && /\binsur(?:ance|er)\b/i.test(q) && !/\bagenc/i.test(q)) return 'person';
   if (/\bagenc(y|ies)\b/i.test(q)) return 'agency';
   return undefined;
 }

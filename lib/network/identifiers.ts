@@ -111,3 +111,12 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
 export function collidingBareDigitsNote(): string {
   return 'Bare digits can mean USDOT, NMLS, CCN, CRD, NPN, or NAIC company code. Ask must preserve ambiguity and not auto-select a hub from digits alone.';
 }
+
+/**
+ * TH-ARCH-P0-001: shared filler-word source for "<label> [company] [code|number|no.] [#] <value>"
+ * phrasings ("NAIC code 10064", "NPN number 20000635"). Single authority for ask-parse.ts's
+ * canonical `matchIdentifier` and guided-research/session.ts's `parseLabeledIdentifier` (still
+ * used there for anchored single-field follow-up input, which never re-parses a canonical plan).
+ * Originated as TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
+ */
+export const IDENTIFIER_FILLER_SOURCE = String.raw`(?:\s+company)?(?:\s+(?:code|number|no\.?))?\s*#?-?\s*`;

@@ -74,7 +74,11 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
     ['lender', /\b(?:lender|mortgage|refinance|refinancing|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
     ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare|star\s+ratings?)\b/i],
-    ['contractor', /\b(?:contractor|roofer|roof(?:ing)?(?:\s+guy)?|HVAC|electrician|plumber|locksmith|hearth|telecom|mechanical|CBC|CGC|CCC)\b/i],
+    // TH-ARCH-P0-001: plural forms ("locksmiths", "electricians") previously fell outside these
+    // \b-bounded singular patterns, which starved the intent==='place'&&explicit.length narrowing
+    // below of a match and let the generic multi-hub geography fallback leak in as a false
+    // multi-domain signal for an ordinary single-vertical trade query.
+    ['contractor', /\b(?:contractors?|roofers?|roof(?:ing)?(?:\s+guy)?|HVAC|electricians?|plumbers?|locksmiths?|hearth|telecom|mechanical|CBC|CGC|CCC)\b/i],
     ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|(?:Form\s+)?ADV|IARD|principal\s+office)\b/i],
   ];
   for (const [hub, pattern] of patterns) if (pattern.test(query)) explicit.push(hub);

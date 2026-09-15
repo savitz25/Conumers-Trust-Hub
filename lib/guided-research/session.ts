@@ -5,6 +5,8 @@ import { parseNetworkAsk } from '../network/ask-parse.ts';
 import { planAskResearch, planRequiresImmediateClarification, validateAskResearchPlan, type AskResearchPlan } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
+import { NETWORK_PUBLIC_NAMES } from '../network/registry.ts';
+import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
 
 /**
  * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
@@ -18,7 +20,11 @@ import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_
  * text embedded in a longer sentence.
  */
 export type LabeledIdentifierMatch = { type: string; value: string };
-const IDENTIFIER_FILLER_SOURCE = String.raw`(?:\s+company)?(?:\s+(?:code|number|no\.?))?\s*#?-?\s*`;
+// TH-ARCH-P0-001: maps research-planner.ts's lowercase identifier family ids (from
+// identifiers.ts's IDENTIFIER_FAMILIES) to the uppercase display codes this session layer has
+// always exposed on GuidedResearchSession.identifier. Scoped to the financial families the
+// investor/insurance/lender fast paths below actually consult.
+const FINANCIAL_IDENTIFIER_LABELS = { crd: 'CRD', npn: 'NPN', naic_company_code: 'NAIC', nmls: 'NMLS', lei: 'LEI' } as const;
 export function parseLabeledIdentifier(text: string, digitLabels: readonly string[], options: { anchored?: boolean; leiSupported?: boolean } = {}): LabeledIdentifierMatch | null {
   const { anchored = false, leiSupported = false } = options;
   const start = anchored ? '^' : '\\b';
@@ -163,8 +169,15 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     return next;
   }
   const financialGeography=geographyFromParsed(parsed);
-  const labeledIdentifier=parseLabeledIdentifier(q,['CRD','NPN','NAIC','NMLS'],{leiSupported:true});
-  if(labeledIdentifier)session.identifier=labeledIdentifier;
+  // TH-ARCH-P0-001: consume the canonical planner's identifier extraction (ask-parse.ts's
+  // matchIdentifier, now filler-word-hardened -- see IDENTIFIER_FILLER_SOURCE) instead of
+  // independently re-parsing the raw query with a second implementation. Scoped to the same
+  // financial identifier families the prior duplicate parser covered (CRD/NPN/NAIC/NMLS/LEI);
+  // USDOT/MC/CCN/state-license identifiers are handled by the generic hub-resolution path below,
+  // which already reads parsed.identifier directly.
+  if (plan.identifier && plan.identifier.type in FINANCIAL_IDENTIFIER_LABELS) {
+    session.identifier = { type: FINANCIAL_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof FINANCIAL_IDENTIFIER_LABELS], value: plan.identifier.value };
+  }
 
   if (planRequiresImmediateClarification(plan)) {
     session.hub = plan.primaryHub as GuidedResearchSession['hub'];
@@ -173,6 +186,31 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     session.missingFields = [...plan.missingSlots];
     if (plan.normalizedGeography) session.geography = geographyFromParsed(parsed);
     return { ...session, phase: 'CLARIFY', nextAction: plan.clarificationReason ?? 'Clarify the research request before specialist execution.' };
+  }
+
+  // TH-ARCH-P0-001: the canonical planner (research-planner.ts) already decided how many
+  // specialist verticals this question spans, in plan.candidateHubs. None of the hub-specific
+  // fast paths below may claim a query the planner recognized as multi-hub -- that is exactly
+  // the first-match-wins semantic-competition failure this ticket closes. This backstops (does
+  // not replace) the planner's own MULTI_HUB_JOURNEY detection: it fires whenever candidateHubs
+  // has 2+ entries, regardless of which structural pattern (explicit conjunction, verb phrasing,
+  // or none) the planner used to get there.
+  if (plan.candidateHubs.length > 1) {
+    return {
+      ...session,
+      hub: undefined,
+      entityClass: plan.entityClass?.id,
+      requestedEvidence: plan.requestedEvidence,
+      phase: 'CLARIFY',
+      missingFields: ['hub'],
+      availableChoices: plan.candidateHubs.map((hubId) => ({
+        id: `hub-${hubId}`,
+        label: NETWORK_PUBLIC_NAMES[hubId],
+        action: 'SELECT_CHOICE' as const,
+        value: `hub:${hubId}`,
+      })),
+      nextAction: 'This question touches more than one specialist area. Which would you like to research first?',
+    };
   }
 
   const investorIntent=/\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
