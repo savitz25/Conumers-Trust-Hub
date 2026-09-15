@@ -66,6 +66,16 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
   if(normalized.kind==='city'&&normalized.stateCode==='FL'&&normalized.county&&capability.supportedKinds.includes('county')){
     const supported=!capability.supportedFloridaCounties||capability.supportedFloridaCounties.includes(normalized.county);
     if(supported){const execution={kind:'county' as const,display:`${normalized.county} County, Florida`,county:normalized.county,stateCode:'FL',stateName:'Florida'};return {...base,executionGeography:execution,resolutionState:'DETERMINISTIC_EQUIVALENT',transformation:'CITY_TO_COUNTY',executionAllowed:true,disclosureRequired:true,disclosure:`You asked for ${normalized.display}. Research is executed using ${execution.display} because the accepted source operates at county grain. ${capability.disclosure}`,reasonCodes:['AUTHORITATIVE_CITY_COUNTY_MAPPING','SOURCE_COUNTY_GRAIN']};}
+    // TH-DISCOVERY-002: a city mapping to a known-but-unpublished FL county (e.g. Miami ->
+    // Miami-Dade, which Lender's contract doesn't publish) used to dead-end here with no path to
+    // any result -- unlike an ordinary unsupported city, which already falls through to the
+    // state-broadening consent path below. Offer that same path here too when the specialist
+    // supports state grain, instead of only when the *first* geography check happens to miss.
+    if(capability.supportedKinds.includes('state')&&normalized.stateCode){
+      const state={kind:'state' as const,display:normalized.stateName??normalized.stateCode,stateCode:normalized.stateCode,stateName:normalized.stateName};
+      if(consent.approvedBroaderGeography?.kind==='state'&&consent.approvedBroaderGeography.stateCode===normalized.stateCode)return {...base,executionGeography:state,resolutionState:'BROADENING_REQUIRES_CONSENT',transformation:'CITY_TO_STATE',executionAllowed:true,consentRequired:true,disclosureRequired:true,disclosure:`You asked for ${normalized.display}, which maps to ${normalized.county} County -- a county this source does not publish. You approved broader ${state.display} research instead. ${capability.disclosure}`,reasonCodes:['KNOWN_CITY_COUNTY','EXPLICIT_BROADENING_CONSENT'],userConsent:{approved:true,requestedDisplay:normalized.display,approvedExecutionDisplay:state.display}};
+      return {...base,resolutionState:'BROADENING_REQUIRES_CONSENT',transformation:'CITY_TO_STATE',executionAllowed:false,consentRequired:true,disclosureRequired:true,disclosure:`${normalized.display} maps to ${normalized.county} County, but this specialist contract does not publish that county cohort. Research ${state.display} more broadly instead. ${capability.disclosure}`,reasonCodes:['KNOWN_CITY_COUNTY','COUNTY_CAPABILITY_NOT_PUBLISHED','STATE_BROADENING_REQUIRES_CONSENT']};
+    }
     return {...base,resolutionState:'CAPABILITY_UNSUPPORTED',executionAllowed:false,disclosureRequired:true,disclosure:`${normalized.display} maps to ${normalized.county} County, but this specialist contract does not publish that county cohort. ${capability.disclosure}`,reasonCodes:['KNOWN_CITY_COUNTY','COUNTY_CAPABILITY_NOT_PUBLISHED']};
   }
   if(['city','county','zip'].includes(normalized.kind)&&capability.supportedKinds.includes('state')&&normalized.stateCode){

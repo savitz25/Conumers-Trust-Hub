@@ -144,7 +144,11 @@ const contractor = group('contractor', [
   c('Does Current mean good standing? contractor','EXPLAINER','contractor',['status','explainer']),
   c('licensed roofer in Fort Lauderdale Florida','COHORT_BROWSE','contractor',['cohort','geography'],{expectedRequestedScope:'Fort Lauderdale, Florida',expectedExecutionScope:'Broward County, Florida',expectedScopeState:'DETERMINISTIC_EQUIVALENT',expectedDestinationIds:['contractor.broward']}),
   c('Show active roofing contractors in Broward County Florida','COHORT_BROWSE','contractor',['cohort','geography'],{expectedExecutionScope:'Broward County, Florida',expectedDestinationIds:['contractor.broward']}),
-  c('roofers in Tampa Florida','COHORT_BROWSE','contractor',['cohort','geography'],{expectedScopeState:'CAPABILITY_UNSUPPORTED',expectedExecutionAllowed:false}),
+  // TH-DISCOVERY-002: see ask-intel-001b.test.ts's matching entry -- a shared research-scope.ts fix
+  // made for Lender's Miami/Miami-Dade case now also offers state-broadening consent here instead
+  // of an unconditional dead end. Not forbidden as STATE_BROADENING since that check only flags
+  // *silent* unconsented execution at state grain, not offering the consent choice itself.
+  c('roofers in Tampa Florida','COHORT_BROWSE','contractor',['cohort','geography'],{expectedScopeState:'BROADENING_REQUIRES_CONSENT',expectedExecutionAllowed:false}),
   c('roofer in Phoenix Arizona','COHORT_BROWSE','contractor',['cohort','geography'],{expectedExecutionAllowed:false,forbiddenBehaviors:['STATE_BROADENING']}),
   c('contractor in Seattle Washington','COHORT_BROWSE','contractor',['cohort','geography'],{expectedExecutionAllowed:false,forbiddenBehaviors:['STATE_BROADENING']}),
   c('roofer in Los Angeles California','COHORT_BROWSE','contractor',['cohort','geography'],{expectedExecutionAllowed:false}),
