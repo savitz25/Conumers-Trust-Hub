@@ -34,6 +34,12 @@ test('ARCH-P0-001: multi-domain query with NO conjunction word still preserves b
   assert.ok(session);
   assert.notEqual(session!.hub, 'contractor');
   assert.notEqual(session!.hub, 'lender');
+  // The multi-hub clarification must survive createGuidedSession's outer scope-narrowing pass
+  // intact -- not get silently overwritten by an unrelated "local scope not executable" fallback
+  // once it sees session.hub is undefined.
+  assert.equal(session!.phase, 'CLARIFY');
+  assert.equal(session!.availableChoices.length, plan.candidateHubs.length);
+  assert.match(session!.nextAction ?? '', /more than one specialist/i);
 });
 
 // --- DISCOVERY must be recognized, not treated as a literal entity name (ticket section 6/8) ---
