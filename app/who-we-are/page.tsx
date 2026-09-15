@@ -25,8 +25,8 @@ const ACCOUNTABILITY = [
     a: `${BRAND.name} is currently a solo-founder operation led by ${FOUNDER.name} (${FOUNDER.role}). There is no separate anonymous research committee. Network policy and commercial decisions rest with the founder until governance is expanded and disclosed here.`,
   },
   {
-    q: 'What is the ownership relationship across the four domains?',
-    a: `${ASK_NETWORK_OWNERSHIP_LINE} Ask is the parent knowledge and standards layer. The specialist hubs are research products under that network — not unrelated companies.`,
+    q: 'What is the ownership relationship across the network?',
+    a: `${ASK_NETWORK_OWNERSHIP_LINE} Ask Trust Hub is the parent knowledge and standards layer; Move, Lender, Insurance, Contractor, Senior, and Investor Trust Hub are its six specialist research hubs — not unrelated companies.`,
   },
   {
     q: 'How does the network make money?',

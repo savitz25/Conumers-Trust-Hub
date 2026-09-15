@@ -38,7 +38,7 @@ export default function PromisePage() {
           </p>
           <p>
             {ASK_NETWORK_OWNERSHIP_LINE} Independence in this policy means research and listing order
-            are not for sale — not that the hubs are three unaffiliated companies.
+            are not for sale — not that the hubs are unaffiliated companies.
           </p>
           <p className="text-sm font-medium text-foreground/80 not-prose">
             {ASK_NETWORK_OWNERSHIP_SHORT}
