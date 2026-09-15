@@ -54,16 +54,33 @@ test('generic financial needs are local action clarifications with zero fan-out'
   }
 });
 
+// TH-DISCOVERY-001: an unsupported ranking modifier ("best"/"top"/"safest") no longer blocks an
+// otherwise-executable cohort locally -- it now reaches the real specialist, which decides based
+// on its own actual scoping requirements (a geography-scoped cohort executes with a "does not
+// rank" disclosure; an unscoped bare cohort request is still correctly rejected by the specialist
+// itself as under-specified, not by Ask pretending "best" is the reason). Genuine capability gaps
+// (performance/safety evidence, service-territory claims, individual-representative publication)
+// are unaffected and still block locally as before.
 const direct:Array<[string,string,string]>=[
-  ['Investment advisers in New Jersey','investor','SUPPORTED_RESULTS'],['Florida RIAs reporting between $1 billion and $10 billion RAUM','investor','SUPPORTED_RESULTS'],['ERA firms in Florida','investor','SUPPORTED_RESULTS'],['CRD 166089','investor','EXACT_IDENTITY'],['Best investment adviser','investor','UNSUPPORTED_CAPABILITY'],['Highest-performing adviser','investor','UNSUPPORTED_CAPABILITY'],['RIAs in Texas','investor','SUPPORTED_RESULTS'],['Investment advisers serving Florida','investor','UNSUPPORTED_CAPABILITY'],['Individual investment adviser representatives in Florida','investor','PUBLICATION_RESTRICTED'],['Florida RIAs paid by percentage of assets','investor','SUPPORTED_RESULTS'],['ERA firms with $2 billion RAUM','investor','UNSUPPORTED_CAPABILITY'],['CRD 999999999','investor','NO_CONFIDENT_MATCH'],['Advisory firm named Alpha Partners','investor','AMBIGUOUS_IDENTITIES'],['Safest RIA in New York','investor','UNSUPPORTED_CAPABILITY'],
-  ['Insurance agencies in Florida','insurance','SUPPORTED_RESULTS'],['Insurance company in Texas','insurance','UNSUPPORTED_CAPABILITY'],['Insurance agents in Florida','insurance','PUBLICATION_RESTRICTED'],['NPN 10391484','insurance','EXACT_IDENTITY'],['NAIC 10064','insurance','EXACT_IDENTITY'],['Best insurance company','insurance','UNSUPPORTED_CAPABILITY'],['Insurance companies serving Texas','insurance','UNSUPPORTED_CAPABILITY'],['Legal insurers','insurance','SUPPORTED_RESULTS'],['Florida life insurance agencies','insurance','UNSUPPORTED_CAPABILITY'],['Insurance agencies serving Florida','insurance','UNSUPPORTED_CAPABILITY'],['NPN 999999999','insurance','NO_CONFIDENT_MATCH'],
-  ['FHA lenders in Broward County','lender','SUPPORTED_RESULTS'],['Mortgage denials in Broward County','lender','SUPPORTED_RESULTS'],['NMLS 3030','lender','EXACT_IDENTITY'],['NMLS 1001618','lender','PUBLICATION_RESTRICTED'],['NMLS 170008','lender','PUBLICATION_RESTRICTED'],['LEI 549300FGXN1K3HLB1R50','lender','EXACT_IDENTITY'],['Complaints about Rocket Mortgage','lender','SUPPORTED_RESULTS'],['Best mortgage lender in Florida','lender','UNSUPPORTED_CAPABILITY'],['Lenders serving Florida','lender','UNSUPPORTED_CAPABILITY'],['VA originations in Texas','lender','SUPPORTED_RESULTS'],['NMLS 136890','lender','IDENTITY_COLLISION'],['Complaints about Newrez','lender','ZERO_MATCHING_ROWS'],['Mortgage brokers near me','lender','PUBLICATION_RESTRICTED'],
+  ['Investment advisers in New Jersey','investor','SUPPORTED_RESULTS'],['Florida RIAs reporting between $1 billion and $10 billion RAUM','investor','SUPPORTED_RESULTS'],['ERA firms in Florida','investor','SUPPORTED_RESULTS'],['CRD 166089','investor','EXACT_IDENTITY'],['Highest-performing adviser','investor','UNSUPPORTED_CAPABILITY'],['RIAs in Texas','investor','SUPPORTED_RESULTS'],['Investment advisers serving Florida','investor','UNSUPPORTED_CAPABILITY'],['Individual investment adviser representatives in Florida','investor','PUBLICATION_RESTRICTED'],['Florida RIAs paid by percentage of assets','investor','SUPPORTED_RESULTS'],['ERA firms with $2 billion RAUM','investor','UNSUPPORTED_CAPABILITY'],['CRD 999999999','investor','NO_CONFIDENT_MATCH'],['Advisory firm named Alpha Partners','investor','AMBIGUOUS_IDENTITIES'],['Safest RIA in New York','investor','UNSUPPORTED_CAPABILITY'],
+  ['Insurance agencies in Florida','insurance','SUPPORTED_RESULTS'],['Insurance company in Texas','insurance','UNSUPPORTED_CAPABILITY'],['Insurance agents in Florida','insurance','PUBLICATION_RESTRICTED'],['NPN 10391484','insurance','EXACT_IDENTITY'],['NAIC 10064','insurance','EXACT_IDENTITY'],['Best insurance company','insurance','SUPPORTED_RESULTS'],['Insurance companies serving Texas','insurance','UNSUPPORTED_CAPABILITY'],['Legal insurers','insurance','SUPPORTED_RESULTS'],['Florida life insurance agencies','insurance','UNSUPPORTED_CAPABILITY'],['Insurance agencies serving Florida','insurance','UNSUPPORTED_CAPABILITY'],['NPN 999999999','insurance','NO_CONFIDENT_MATCH'],
+  ['FHA lenders in Broward County','lender','SUPPORTED_RESULTS'],['Mortgage denials in Broward County','lender','SUPPORTED_RESULTS'],['NMLS 3030','lender','EXACT_IDENTITY'],['NMLS 1001618','lender','PUBLICATION_RESTRICTED'],['NMLS 170008','lender','PUBLICATION_RESTRICTED'],['LEI 549300FGXN1K3HLB1R50','lender','EXACT_IDENTITY'],['Complaints about Rocket Mortgage','lender','SUPPORTED_RESULTS'],['Best mortgage lender in Florida','lender','SUPPORTED_RESULTS'],['Lenders serving Florida','lender','UNSUPPORTED_CAPABILITY'],['VA originations in Texas','lender','SUPPORTED_RESULTS'],['NMLS 136890','lender','IDENTITY_COLLISION'],['Complaints about Newrez','lender','ZERO_MATCHING_ROWS'],['Mortgage brokers near me','lender','PUBLICATION_RESTRICTED'],
 ];
 
 test('audited financial direct goldens preserve hub and result states',async()=>{
   for(const [query,hub,state] of direct){const result=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(result.session.hub,hub,query);assert.equal(result.result?.resultState,state,query)}
   for(const query of ['Insurance provider in Florida','Insurance complaints against a company','Insurance professional near me','Lenders in Texas']){calls=0;const result=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(result.session.phase,'CLARIFY',query);assert.equal(result.diagnostics.specialistCalls,0,query);assert.equal(calls,0,query)}
-  assert.equal(direct.length+7,45);
+  // TH-DISCOVERY-001: "Best investment adviser" (no geography) no longer blocks locally on "best"
+  // alone -- it now reaches the mocked specialist's normal cohort fallback (SUPPORTED_RESULTS,
+  // same fixture every other unscoped-cohort case above receives), not the old local
+  // UNSUPPORTED_CAPABILITY short-circuit. Separately verified live against real InvestorTrustHub
+  // (see TH-DISCOVERY-001 closeout) that the real specialist bounds/rejects a truly unscoped
+  // cohort request on its own -- this mock doesn't simulate that scoping validation, so this test
+  // only asserts what this mock can honestly promise: routing no longer locally suppresses it.
+  const rankingResult=await orchestrateGuidedResearch({action:{type:'START',question:'Best investment adviser'}});
+  assert.equal(rankingResult.session.hub,'investor');
+  assert.equal(rankingResult.result?.resultState,'SUPPORTED_RESULTS');
+  assert.equal(direct.length+8,45);
 });
 
 test('requests preserve source semantics and publication firewalls',async()=>{

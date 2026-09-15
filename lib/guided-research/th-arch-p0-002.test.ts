@@ -106,15 +106,14 @@ test('SENIOR: network execution capability is independent of the specialist cons
 });
 
 test('LENDER: an honestly unsupported capability is represented as such, not executed or false-zeroed', async () => {
-  // "best mortgage lenders" trips Ask's own local ranking-refusal (no network call at all -- Lender
-  // never advertises ranking as a capability, so Ask doesn't pretend to ask for it). The distinction
-  // still matters: UNSUPPORTED_CAPABILITY is a different claim from ZERO_MATCHING_ROWS ("we executed
-  // the supported filters and found nothing") -- collapsing them would turn "we cannot rank" into a
-  // false "no lenders exist" answer.
-  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'best mortgage lenders in Texas' } });
-  assert.equal(r.result?.resultState, 'UNSUPPORTED_CAPABILITY');
+  // Branch/person mass listing is a genuine, still-real publication restriction (unaffected by
+  // TH-DISCOVERY-001's ranking-modifier fix below, which only changed "best"/"top"/"safest"
+  // handling). UNSUPPORTED_CAPABILITY / PUBLICATION_RESTRICTED is a different claim from
+  // ZERO_MATCHING_ROWS ("we executed the supported filters and found nothing") -- collapsing them
+  // would turn "we cannot publish this" into a false "no lenders exist" answer.
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'mortgage brokers near me' } });
+  assert.equal(r.result?.resultState, 'PUBLICATION_RESTRICTED');
   assert.notEqual(r.result?.resultState, 'ZERO_MATCHING_ROWS');
   assert.notEqual(r.result?.resultState, 'SUPPORTED_RESULTS');
-  assert.match(r.result?.consumerMessage ?? '', /does not rank/i);
   assert.equal(r.result?.rows.length, 0);
 });

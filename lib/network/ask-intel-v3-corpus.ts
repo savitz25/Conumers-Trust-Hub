@@ -39,7 +39,14 @@ const move = group('move', [
   c('How do I check if a moving company is licensed?','HOW_TO','move',['how_to'],{expectedDestinationIds:['move.verify_dot'],expectedExecutionAllowed:false,forbiddenBehaviors:['ENTITY_NAME']}),
   c("What's the difference between a broker and a carrier?",'EXPLAINER','move',['explainer']),
   c('movers in Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Florida',expectedExecutionScope:'Florida'}),
-  c('mover in tampa bay florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Tampa Bay, Florida',expectedScopeState:'CLARIFICATION_REQUIRED',expectedExecutionAllowed:false,forbiddenBehaviors:['ENTITY_NAME','STATE_BROADENING','SPECIALIST_EXECUTION']}),
+  // TH-DISCOVERY-001: a region resolving to a real state (Tampa Bay -> FL) on a state-capable
+  // specialist now offers the same state-broadening consent path as an unsupported city
+  // (see 'movers in Boca Raton Florida' below) -- not an unconditional dead end. STATE_BROADENING
+  // stays forbidden because that check only flags *silent, unconsented* execution at state grain
+  // (route.scope.executionGeography set without userConsent.approved); offering
+  // BROADENING_REQUIRES_CONSENT as the resolution state is exactly the consented path, not a
+  // violation of it.
+  c('mover in tampa bay florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Tampa Bay, Florida',expectedScopeState:'BROADENING_REQUIRES_CONSENT',expectedExecutionAllowed:false,forbiddenBehaviors:['ENTITY_NAME','STATE_BROADENING','SPECIALIST_EXECUTION']}),
   c('movers in Boca Raton Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedScopeState:'BROADENING_REQUIRES_CONSENT',expectedExecutionAllowed:false,forbiddenBehaviors:['STATE_BROADENING','SERVICE_TERRITORY']}),
   c('mover headquartered in Miami Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Miami, Florida',expectedExecutionAllowed:false}),
   c('mover serving Miami Florida','COHORT_BROWSE','move',['cohort','geography','limitation'],{expectedScopeState:'CAPABILITY_UNSUPPORTED',expectedExecutionAllowed:false,forbiddenBehaviors:['SERVICE_TERRITORY']}),

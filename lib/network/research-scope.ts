@@ -46,7 +46,21 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
   if(normalized.kind==='route'&&plan.executionMode==='IDENTITY')return {...base,resolutionState:'EXACT',executionAllowed:true,disclosureRequired:true,disclosure:`Route or service-territory capability is not verified from this source. ${capability.disclosure}`,reasonCodes:['IDENTITY_LOOKUP_ROUTE_CONTEXT_ONLY']};
   if(meaning==='SERVICE_TERRITORY'||meaning==='ORIGIN_DESTINATION')return {...base,resolutionState:'CAPABILITY_UNSUPPORTED',executionAllowed:false,disclosureRequired:true,disclosure:capability.disclosure,reasonCodes:['SERVICE_SCOPE_NOT_SOURCE_SUPPORTED']};
   if(/\bwithin\s+\d+\s*miles?\b|\bnearby\b|\bclose\s+to\b/i.test(plan.originalQuestion))return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:`The accepted source can filter exact recorded geography, but it does not execute the requested radius. ${capability.disclosure}`,reasonCodes:['RADIUS_FILTER_NOT_SUPPORTED']};
-  if(normalized.kind==='region')return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:'Choose a city or county inside the requested region before research runs.',reasonCodes:['REGION_COMPONENT_SELECTION_REQUIRED']};
+  // TH-DISCOVERY-001: a region ("Tampa Bay") that resolves to a real state, on a specialist that
+  // supports state-grain execution, must offer the SAME state-broadening consent path already
+  // used for unsupported city/county/zip requests below -- not an unconditional dead end with no
+  // path to any result. This does not silently execute the broader scope: executionAllowed only
+  // becomes true once the consumer has explicitly chosen it (consent.approvedBroaderGeography),
+  // exactly like the existing city/county/zip broadening flow. Region-specific sub-area choices
+  // (e.g. Tampa/Hillsborough, St. Petersburg/Pinellas) remain available alongside this option.
+  if(normalized.kind==='region'){
+    if(normalized.stateCode&&capability.supportedKinds.includes('state')){
+      const state={kind:'state' as const,display:normalized.stateName??normalized.stateCode,stateCode:normalized.stateCode,stateName:normalized.stateName};
+      if(consent.approvedBroaderGeography?.kind==='state'&&consent.approvedBroaderGeography.stateCode===normalized.stateCode)return {...base,executionGeography:state,resolutionState:'BROADENING_REQUIRES_CONSENT',transformation:'REGION_TO_COMPONENT',executionAllowed:true,consentRequired:true,disclosureRequired:true,disclosure:`You asked for ${normalized.display}. This source cannot execute at region grain, so you approved broader ${state.display} research instead. ${capability.disclosure}`,reasonCodes:['EXPLICIT_BROADENING_CONSENT','REGION_BROADENED_TO_STATE'],userConsent:{approved:true,requestedDisplay:normalized.display,approvedExecutionDisplay:state.display}};
+      return {...base,resolutionState:'BROADENING_REQUIRES_CONSENT',transformation:'REGION_TO_COMPONENT',executionAllowed:false,consentRequired:true,disclosureRequired:true,disclosure:`${normalized.display} is a multi-county region; this source cannot execute at region grain. Choose a specific city or county inside ${normalized.display}, or research ${state.display} more broadly. ${capability.disclosure}`,reasonCodes:['REGION_COMPONENT_SELECTION_REQUIRED','STATE_BROADENING_REQUIRES_CONSENT']};
+    }
+    return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:'Choose a city or county inside the requested region before research runs.',reasonCodes:['REGION_COMPONENT_SELECTION_REQUIRED']};
+  }
   if(normalized.kind==='route')return {...base,resolutionState:'CAPABILITY_UNSUPPORTED',executionAllowed:false,disclosureRequired:true,disclosure:capability.disclosure,reasonCodes:['ORIGIN_DESTINATION_NOT_SUPPORTED']};
   if(capability.supportedKinds.includes(normalized.kind))return {...base,executionGeography:normalized,resolutionState:'EXACT',executionAllowed:plan.executionAllowed,disclosureRequired:true,disclosure:capability.disclosure,reasonCodes:['REQUESTED_SCOPE_EXECUTABLE']};
   if(normalized.kind==='city'&&normalized.stateCode==='FL'&&normalized.county&&capability.supportedKinds.includes('county')){

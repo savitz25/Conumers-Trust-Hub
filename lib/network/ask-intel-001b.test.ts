@@ -16,7 +16,10 @@ type Expected = {
 };
 
 const matrix: Expected[] = [
-  {query:'mover in tampa bay florida',hub:'move',requested:'Tampa Bay, Florida',state:'CLARIFICATION_REQUIRED',allowed:false},
+  // TH-DISCOVERY-001: a region with a resolvable state (Tampa Bay -> FL) on a specialist that
+  // supports state-grain execution now offers the same state-broadening consent path as an
+  // unsupported city, instead of an unconditional dead end with no path to any result.
+  {query:'mover in tampa bay florida',hub:'move',requested:'Tampa Bay, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
   {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
   {query:'licensed roofer in Fort Lauderdale Florida',hub:'contractor',requested:'Fort Lauderdale, Florida',executed:'Broward County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
   {query:'roofing contractors in Broward County Florida',hub:'contractor',requested:'Broward County, Florida',executed:'Broward County, Florida',state:'EXACT',allowed:true},
