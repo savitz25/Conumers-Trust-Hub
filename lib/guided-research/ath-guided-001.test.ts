@@ -211,11 +211,19 @@ test('Contractor menu executes supported trades and returns to the trade menu fr
   }
 });
 
-test('Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows',async()=>{
+// TH-DISCOVERY-RESET-001: RESULTS FIRST. Electrical-specific FL credential data remains a genuine,
+// confirmed data gap (unchanged) -- but a real data gap on the EXACT requested trade must not end
+// on zero rows when ContractorTrustHub possesses real, relevant broader contractor entities for
+// the same geography. Falls back to the strongest legitimate broader cohort (general/building
+// contractor), clearly labeled as broader and not electrical-specific -- never silently relabeled
+// as electricians.
+test('Florida electrical falls back to broader Florida contractor entities, clearly labeled, never relabeled as electricians',async()=>{
   const response=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});
   assert.equal(response.session.hub,'contractor');assert.equal(response.session.trade,'electrical');assert.equal(response.session.geography?.city,'Boca Raton');
-  assert.equal(response.result?.resultState,'UNSUPPORTED_TRADE_CAPABILITY');assert.equal(response.result?.rows.length,0);assert.match(response.result?.consumerMessage??'',/does not include the separately regulated electrical credentials/);
-  assert.ok(response.result?.destinations.every(row=>!row.href.includes('/contractors/source-contractor')));
+  assert.equal(response.result?.resultState,'SUPPORTED_RESULTS');assert.ok((response.result?.rows.length??0)>0);
+  assert.match(response.result?.consumerMessage??'',/Electrical-specific Florida credential data is not available/);
+  assert.match(response.result?.limitations.join(' ')??'',/not electricians specifically/);
+  assert.doesNotMatch(JSON.stringify(response.result?.rows),/"classLabel":"[^"]*[Ee]lectric/,'a fallback row must never be relabeled as an electrical credential');
 });
 
 test('generic New Jersey contractor stays trade-neutral and uses source-owned capability choices',async()=>{
@@ -258,6 +266,9 @@ test('result-bearing clarification survives deterministic reload and resume',asy
   assert.equal(ordinaryResume.session.phase,'CLARIFY');assert.equal(ordinaryResume.diagnostics.specialistCalls,0);assert.equal(ordinaryResume.result,undefined);
 });
 
+// TH-DISCOVERY-RESET-001: "electrical contractor in Boca Raton" was dropped from this list -- it
+// no longer stays a zero-row clarification (see the dedicated fallback test above); it now
+// automatically falls back to real, broader Florida contractor results.
 test('every specialist result-bearing clarification re-executes with its explanation and choices',async()=>{
   const cases=[
     ['contractor in New Jersey','CLARIFICATION_REQUIRED','new_jersey_credential_class_required'],
@@ -265,7 +276,6 @@ test('every specialist result-bearing clarification re-executes with its explana
     ['contractor in Summit County New Jersey','INVALID_GEOGRAPHY','summit_is_city_in_union_county'],
     ['home improvement contractor in Unmapped City New Jersey','CLARIFICATION_REQUIRED','statewide_fallback_confirmation_required'],
     ['contractors serving New Jersey','UNSUPPORTED_TRADE_CAPABILITY','unsupported_service_territory'],
-    ['electrical contractor in Boca Raton','UNSUPPORTED_TRADE_CAPABILITY','unsupported_florida_electrical_source'],
   ] as const;
   for(const [query,state,code] of cases){const fresh=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(fresh.result?.resultState,state,query);assert.equal(fresh.result?.error?.code,code,query);assert.ok(fresh.result?.consumerMessage,query);assert.equal(fresh.result?.rows.length,0,query);assert.equal(fresh.session.lastExecution?.resultBearing,true,query);const resumed=await orchestrateGuidedResearch({session:JSON.parse(JSON.stringify(fresh.session)),action:{type:'RESUME'}});assert.equal(resumed.diagnostics.specialistCalls,1,query);assert.equal(resumed.result?.resultState,state,query);assert.equal(resumed.result?.error?.code,code,query);assert.ok(resumed.result?.consumerMessage,query);assert.deepEqual(resumed.session.availableChoices,fresh.session.availableChoices,query);assert.equal(resumed.result?.rows.length,0,query);}
 });
@@ -319,7 +329,10 @@ test('result states, deep links, refinements, and safety invariants remain expli
   for(const forbidden of ['reputation_score','Trust Score','paidStatus','subscriptionStatus','internalId'])assert.ok(!serialized.includes(forbidden));
   assert.equal(supported.diagnostics.specialistCalls,1);assert.equal(supported.result?.firstUsefulResult,true);
   const exact=await orchestrateGuidedResearch({action:{type:'START',question:'USDOT 3244649'}});assert.equal(exact.result?.consumerHeading,'Exact regulatory identity');
-  const unsupported=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});assert.equal(unsupported.result?.consumerHeading,'This source does not currently support that credential class');
+  // TH-DISCOVERY-RESET-001: "electrical contractor in Boca Raton" now falls back to real, broader
+  // Florida contractor results (see the dedicated fallback test above) instead of a bare
+  // unsupported-credential-class heading.
+  const unsupported=await orchestrateGuidedResearch({action:{type:'START',question:'electrical contractor in Boca Raton'}});assert.equal(unsupported.result?.consumerHeading,'Broader Florida contractor options (electrical-specific data not available)');
   const ui=readFileSync(new URL('../../components/guided-research.tsx',import.meta.url),'utf8');assert.doesNotMatch(ui,/Continue with the specialist research hub|No supported substitute for that claim/i);assert.match(ui,/Retry specialist explanation/);assert.match(ui,/pb-24 sm:pb-6/);assert.doesNotMatch(ui,/text-sm capitalize[^\n]*Current research/);
 });
 

@@ -72,7 +72,17 @@ test('unsupported local scope causes zero specialist calls and never becomes tru
   const original=globalThis.fetch;let calls=0;globalThis.fetch=(async()=>{calls++;throw new Error('must not execute')}) as typeof fetch;
   // TH-DISCOVERY-003: "movers in Boca Raton Florida" was dropped -- MoveTrustHub's specialist now
   // has a real recorded-headquarters-CITY filter, so it genuinely executes at city grain.
-  try{for(const query of ['mover in tampa bay florida','registered investment advisers in West Palm Beach Florida','roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(response.diagnostics.specialistCalls,0,query);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',query)}assert.equal(calls,0)}finally{globalThis.fetch=original}
+  // TH-DISCOVERY-RESET-001: "mover in tampa bay florida", "registered investment advisers in West
+  // Palm Beach Florida", and "roofer in Phoenix Arizona" were dropped -- all three now genuinely
+  // auto-broaden city/region->state and call the specialist (RESULTS FIRST); each specialist still
+  // honestly rejects an unsupported state/never fabricates a result (never SUPPORTED_RESULTS,
+  // never ZERO_MATCHING_ROWS -- a genuine capability gap, not "we searched and found zero").
+  try{
+    const response=await orchestrateGuidedResearch({action:{type:'START',question:'roofer in Phoenix Arizona'}});
+    assert.equal(calls,1,'the specialist is genuinely called once it auto-broadens to state grain');
+    assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS');
+    assert.notEqual(response.result?.resultState,'SUPPORTED_RESULTS','Arizona must never be fabricated as a real result');
+  }finally{globalThis.fetch=original}
 });
 
 test('large-cohort rendering is bounded, neutral, and never labels source order as ranking',()=>{

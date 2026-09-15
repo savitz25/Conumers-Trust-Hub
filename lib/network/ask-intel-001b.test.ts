@@ -36,6 +36,11 @@ const matrix: Expected[] = [
   // ContractorTrustHub's specialist -- geography-capabilities.ts's supportedFloridaCounties was
   // undersold at just Broward/Palm Beach and is now the specialist's true 30-county boundary.
   {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',executed:'Hillsborough County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
+  // Note: this matrix calls resolveResearchScope() directly with no consent, so it still reflects
+  // the raw, session-unaware capability result (BROADENING_REQUIRES_CONSENT/not-yet-allowed).
+  // TH-DISCOVERY-RESET-001's auto-broadening lives one layer up, in session.ts's
+  // createGuidedSession, which supplies that consent automatically for a live guided session --
+  // see the orchestrator-level tests below for that behavior.
   {query:'registered investment advisers in West Palm Beach Florida',hub:'investor',requested:'West Palm Beach, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'PRINCIPAL_OFFICE',allowed:false},
   {query:'RIAs in Florida',hub:'investor',requested:'Florida',executed:'Florida',state:'EXACT',meaning:'PRINCIPAL_OFFICE',allowed:true},
   {query:'mortgage lenders in Palm Beach County Florida',hub:'lender',requested:'Palm Beach County, Florida',executed:'Palm Beach County, Florida',state:'EXACT',meaning:'PROPERTY_GEOGRAPHY',allowed:true},
@@ -105,7 +110,13 @@ test('START blocks unsupported scopes before specialist execution',async()=>{
   const originalFetch=globalThis.fetch;let calls=0;
   globalThis.fetch=(async()=>{calls+=1;throw new Error('specialist must not run')}) as typeof fetch;
   try{
-    for(const query of ['mover in tampa bay florida','registered investment advisers in West Palm Beach Florida','mover serving Miami Florida']){
+    // TH-DISCOVERY-RESET-001: "mover in tampa bay florida" was dropped -- it now genuinely
+    // auto-broadens to Florida and executes (RESULTS FIRST), so it is no longer an "unsupported
+    // scope blocked before execution" case.
+    // TH-DISCOVERY-RESET-001: "registered investment advisers in West Palm Beach Florida" was
+    // dropped -- InvestorTrustHub's specialist has no local-office filter, so this now genuinely
+    // auto-broadens to Florida and executes (RESULTS FIRST); see its own coverage below.
+    for(const query of ['mover serving Miami Florida']){
       const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
       assert.equal(response.diagnostics.specialistCalls,0,query);
       assert.equal(response.session.phase,'CLARIFY',query);
@@ -149,10 +160,12 @@ test('specialist request bodies receive only resolved execution geography',async
     assert.equal(lender.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).county,'Palm Beach');assert.equal((seen.at(-1)?.geography as Record<string,unknown>).countyFips,'12099');
     const senior=await orchestrateGuidedResearch({action:{type:'START',question:'nursing homes in Boca Raton Florida'}});
     assert.equal(senior.diagnostics.specialistCalls,1);assert.deepEqual(seen.at(-1)?.geography,{type:'city',value:'Boca Raton',state:'FL'});
+    // TH-DISCOVERY-RESET-001: InvestorTrustHub's specialist has no local-office filter, so this
+    // now auto-broadens to Florida and executes immediately (RESULTS FIRST) instead of requiring
+    // an explicit scope_state: consent choice first.
     const investor=await orchestrateGuidedResearch({action:{type:'START',question:'registered investment advisers in West Palm Beach Florida'}});
-    assert.equal(investor.diagnostics.specialistCalls,0);assert.equal(seen.length,3);
-    const approved=await orchestrateGuidedResearch({session:investor.session,action:{type:'SELECT_CHOICE',value:'scope_state:FL'}});
-    assert.equal(approved.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).stateCode,'FL');
-    assert.equal(approved.session.executionScope.userConsent?.requestedDisplay,'West Palm Beach, Florida');
+    assert.equal(investor.diagnostics.specialistCalls,1);assert.equal(seen.length,4);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).stateCode,'FL');
+    assert.equal(investor.session.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING'),true);
+    assert.equal(investor.session.executionScope.requestedGeography?.display,'West Palm Beach, Florida');
   }finally{globalThis.fetch=originalFetch;}
 });

@@ -265,6 +265,35 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
   const stateResult=rawState as typeof contractorStates[number];
   if (stateResult!=='SUPPORTED_RESULTS' && stateResult!=='ZERO_MATCHING_ROWS' && stateResult!=='EXACT_IDENTITY') {
     const errorCode=text(payload.errorCode)??text(payload.error)??stateResult.toLowerCase();
+    // TH-DISCOVERY-RESET-001: RESULTS FIRST. Electrical-specific FL credential data is a genuine,
+    // confirmed data gap (unsupported_florida_electrical_source -- CILB simply does not include
+    // the separately-regulated electrical board), not a wiring bug -- but a real data gap on the
+    // EXACT requested trade must still fall back to the strongest legitimate broader cohort
+    // (general/building contractor) for the same geography, clearly labeled as broader, rather
+    // than a bare zero-contractor dead end. Only this one, confirmed-genuine-gap error code
+    // retries; every other failure (NJ clarifications, service-territory, geography errors, etc.)
+    // is unaffected and still returns its existing honest failure below.
+    if(errorCode==='unsupported_florida_electrical_source'&&session.trade!=='general'){
+      const fallbackBody={...body,trade:'general'};
+      const fallbackOutcome=await specialistFetch('contractor',fallbackBody);
+      if(!('error'in fallbackOutcome)){
+        const fallbackPayload=fallbackOutcome.body;
+        if(text(fallbackPayload.resultState)==='SUPPORTED_RESULTS'&&text(fallbackPayload.contractVersion)===CONTRACTOR_CONTRACT_VERSION&&text(fallbackPayload.schemaFingerprint)===CONTRACTOR_SCHEMA_FINGERPRINT){
+          const fallbackRows=records(fallbackPayload.rows).map((row):GuidedResultRow=>{
+            const geo=record(row.recordedGeography);const source=record(row.source);const credential=text(row.credentialNumber);
+            const destination=normalizeContractorDestinations(row)[0];
+            const jurisdiction=state==='NJ'?'New Jersey':state==='FL'?'Florida':state;
+            return {name:text(row.name)??'Published credential holder',hub:'contractor',identifier:credential?{label:'Credential',value:credential}:undefined,classLabel:text(row.credentialClass)??text(row.trade),recordedLocation:[text(geo.city),text(geo.county),text(geo.state)].filter(Boolean).join(', '),status:text(row.status),sourceDate:text(source.observedAt),whyShown:`Matched the selected ${session.geography?.stateName??state} source-owned trade, status, and recorded-geography filters.`,destination,facts:[jurisdiction?{label:'Credential jurisdiction',value:jurisdiction}:null,text(row.occupationCode)?{label:'Source class',value:text(row.occupationCode)!}:null,text(source.label)?{label:'Source',value:text(source.label)!}:null].filter(Boolean) as Array<{label:string;value:string}>};
+          });
+          const fallbackResult=supported(session,fallbackPayload,fallbackRows,fallbackOutcome.latencyMs,normalizeRefinements(fallbackPayload.availableRefinements).filter((row)=>row.id==='credentialStatus'));
+          fallbackResult.consumerHeading='Broader Florida contractor options (electrical-specific data not available)';
+          fallbackResult.consumerMessage=`Electrical-specific Florida credential data is not available in this source. Here are ${fallbackResult.total.toLocaleString('en-US')} general/building contractor records with recorded ${session.geography?.value??state} credential geography you can research instead.`;
+          fallbackResult.limitations=['Electrical-specific Florida credential data is not available in this source; these are broader general/building contractor records, not electricians specifically.','No electrical trade class was substituted or relabeled -- the underlying credential class remains general/building contractor.',...fallbackResult.limitations];
+          fallbackResult.destinations=[...new Map(fallbackRows.flatMap((row)=>row.destination?[row.destination]:[]).map((destination)=>[destination.href,destination])).values()];
+          return fallbackResult;
+        }
+      }
+    }
     const consumerState=stateResult==='BACKEND_UNAVAILABLE'||stateResult==='TIMEOUT'||stateResult==='INVALID_QUERY'||stateResult==='INVALID_GEOGRAPHY'||stateResult==='CLARIFICATION_REQUIRED'||stateResult==='PUBLICATION_RESTRICTED'||stateResult==='UNSUPPORTED_STATE_CAPABILITY'||stateResult==='UNSUPPORTED_TRADE_CAPABILITY'?stateResult:'UNSUPPORTED_CAPABILITY';
     const message=errorCode==='new_jersey_credential_class_required'
       ? 'Choose the New Jersey credential class you want to research. ContractorTrustHub keeps HIC and each specialty separate.'
@@ -315,6 +344,13 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
   const interpretation=record(payload.queryInterpretation);const sourceTrade=text(interpretation.trade);const sourceGeo=record(interpretation.geography);
   if(state==='NJ'&&sourceTrade){result.consumerHeading=`New Jersey ${formatCredentialClass(sourceTrade)} research results`;result.consumerMessage=`${result.total.toLocaleString('en-US')} publication-safe New Jersey credential records match these source-owned filters. New Jersey is the credential jurisdiction; a registrant's recorded address may be outside New Jersey. Source order only — not a ranking.`;result.limitations.push('Credential jurisdiction and recorded address are different fields. A recorded address does not prove headquarters, service territory, or current availability.');}
   if(sourceGeo.fallbackApplied===true)result.interpretation.push({label:'Geography scope',value:'Statewide New Jersey credential records — explicitly confirmed'});
+  // TH-DISCOVERY-RESET-001: a bare "contractor(s)" request (no trade word in the original
+  // question) defaulted session.trade to 'general' in session.ts so it can execute at all
+  // (the specialist requires a trade or identifier) -- disclose that default explicitly rather
+  // than letting "general contractor" results look like a literal match to the bare request.
+  if(session.trade==='general'&&!/\bgeneral\b|\bbuilding\b/i.test(session.originalQuestion)&&result.total>0){
+    result.limitations=['No specific trade was requested, so these are general/building contractor records -- the broadest available trade class. Choose a specific trade to narrow.', ...result.limitations];
+  }
   result.destinations=[...new Map(rows.flatMap((row)=>row.destination?[row.destination]:[]).map((destination)=>[destination.href,destination])).values()];
   return result;
 }

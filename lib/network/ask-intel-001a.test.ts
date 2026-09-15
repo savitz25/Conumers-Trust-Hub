@@ -93,13 +93,17 @@ test('planner validation repairs contradictory geographic identity plans', () =>
   assert.ok(planned.reasonCodes.includes('IDENTITY_CONTRADICTS_GEOGRAPHY'));
 });
 
+// TH-DISCOVERY-RESET-001: "mover in tampa bay florida" was dropped from this list -- it is a
+// genuine DISCOVERY query (COHORT_BROWSE) that now correctly auto-broadens to Florida and
+// executes (RESULTS FIRST); it was never actually an "unsafe planner outcome" this gate needed to
+// block. The remaining three are HOW_TO/verification questions and a genuinely-missing-identity
+// case -- categorically different from Discovery, and correctly still blocked here.
 test('Guided Research execution gate blocks unsafe planner outcomes', async () => {
   const originalFetch = globalThis.fetch;
   let calls = 0;
   globalThis.fetch = (async () => { calls += 1; throw new Error('specialist must not be called'); }) as typeof fetch;
   try {
     for (const query of [
-      'mover in tampa bay florida',
       'How do I check if a moving company is licensed?',
       'Is this financial advisor registered with the SEC?',
       'Is this home health agency Medicare certified?',

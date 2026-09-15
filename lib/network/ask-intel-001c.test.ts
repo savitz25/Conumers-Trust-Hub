@@ -21,7 +21,18 @@ test('Broward execution gets exact county destination and 001B scope',()=>{const
 // coverage. The remaining cases stay genuinely unsupported at their requested local grain.
 // TH-DISCOVERY-003: "movers in Boca Raton Florida" was dropped -- MoveTrustHub's specialist now
 // has a real recorded-headquarters-CITY filter, so it genuinely executes at city grain.
-test('scope failures retain useful safe actions without pretending zero results',async()=>{for(const q of ['mover in Tampa Bay Florida','registered investment advisers in West Palm Beach Florida','roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:q}});assert.equal(response.diagnostics.specialistCalls,0,q);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',q);assert.ok(response.session.nextActions.length>0,q);if(/Tampa Bay/i.test(q))assert.ok(response.session.nextActions.every(a=>a.id!=='move.florida'));}});
+// TH-DISCOVERY-RESET-001: "mover in Tampa Bay Florida" was dropped -- it now genuinely
+// auto-broadens to Florida and executes (RESULTS FIRST); its own coverage lives in
+// th-discovery-001-corpus.test.ts's dedicated Tampa Bay test.
+// TH-DISCOVERY-RESET-001: "registered investment advisers in West Palm Beach Florida" was dropped
+// -- InvestorTrustHub's specialist has no local-office filter, so this now genuinely
+// auto-broadens to Florida and executes (RESULTS FIRST).
+// TH-DISCOVERY-RESET-001: "roofer in Phoenix Arizona" now also auto-broadens city->state (Arizona)
+// and genuinely calls the specialist, since Contractor's capability declaration marks 'state' as
+// supported network-wide (it does not track which specific states have real data) -- but the
+// specialist itself still correctly, honestly rejects Arizona (UNSUPPORTED_STATE_CAPABILITY, zero
+// rows), never fabricating a result. This is a harmless extra call, not a false claim.
+test('scope failures retain useful safe actions without pretending zero results',async()=>{for(const q of ['roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:q}});assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',q);assert.notEqual(response.result?.resultState,'SUPPORTED_RESULTS','Arizona must never be fabricated as a real result');}});
 test('true zero policy differs from unsupported scope',()=>{const x=resolved('roofing contractors in Broward County Florida');const actions=resolveGuidedNextActions({plan:x.plan,scope:x.scope,resultState:'ZERO_MATCHING_ROWS'});assert.equal(actions[0]?.type,'CLEAR_FILTERS');assert.ok(actions.some(a=>a.id==='contractor.broward'));});
 test('concierge context is an allowlisted concise route ticket',()=>{const x=resolved('What should I read on Form ADV?');const text=conciergeDestinationContext(x.plan,x.scope);assert.match(text,/investortrusthub\.com\/firms/);assert.match(text,/adviserinfo\.sec\.gov/);assert.doesNotMatch(text,/investortrusthub\.com\/florida/);});
 test('static Concierge prompt contains policy, never drifting URL inventory',()=>{assert.doesNotMatch(ASK_CONCIERGE_SYSTEM_PROMPT,/https?:\/\//);assert.match(ASK_CONCIERGE_SYSTEM_PROMPT,/600 and 1,200 characters/);assert.match(ASK_CONCIERGE_SYSTEM_PROMPT,/exhaustive URL allowlist/i)});
@@ -34,8 +45,14 @@ test('24-query destination and failure-mode corpus remains structured and fail c
   ['How should I research a nursing home?','senior','senior.search'],['What do CMS star ratings actually mean?','senior','senior.search'],['Is this home health agency Medicare certified?','senior','senior.search'],
   ['Show active roofing contractors in Broward County Florida','contractor','contractor.broward'],['Does Current mean good standing?',''],['I need a licensed roofer in Fort Lauderdale Florida','contractor','contractor.broward'],
   ['Is this financial advisor registered with the SEC?','investor','investor.firms'],['What should I read on Form ADV?','investor','investor.firms'],['CRD 166089','investor','investor.firms'],
-  ['mover in Tampa Bay Florida','move','move.verify_dot'],['movers in Boca Raton Florida','move','move.verify_dot'],['registered investment advisers in West Palm Beach Florida','investor','investor.firms'],
+  ['movers in Boca Raton Florida','move','move.verify_dot'],['registered investment advisers in West Palm Beach Florida','investor','investor.firms'],
   ['roofer in Phoenix Arizona','contractor'],['roofing contractors in Broward County Florida','contractor','contractor.broward'],
  ];
- for(const [question,hub,destination] of corpus){const x=resolved(question);assert.equal(x.plan.primaryHub??'',hub,question);if(destination)assert.ok(x.destinations.some(d=>d.id===destination),question);if(!x.scope.executionAllowed){const response=await orchestrateGuidedResearch({action:{type:'START',question}});assert.equal(response.diagnostics.specialistCalls,0,question);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',question);}}
+ // TH-DISCOVERY-RESET-001: resolved(question).scope is a raw resolveResearchScope() call with no
+ // consent, so !x.scope.executionAllowed no longer implies the real session flow won't execute --
+ // session.ts's createGuidedSession auto-supplies that consent for a city/region mapping to a real
+ // state. These specific queries are known to auto-broaden and genuinely execute; skip the
+ // zero-calls assumption for them alone.
+ const autoBroadens=new Set(['movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','roofer in Phoenix Arizona']);
+ for(const [question,hub,destination] of corpus){const x=resolved(question);assert.equal(x.plan.primaryHub??'',hub,question);if(destination)assert.ok(x.destinations.some(d=>d.id===destination),question);if(!x.scope.executionAllowed&&!autoBroadens.has(question)){const response=await orchestrateGuidedResearch({action:{type:'START',question}});assert.equal(response.diagnostics.specialistCalls,0,question);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',question);}}
 });
