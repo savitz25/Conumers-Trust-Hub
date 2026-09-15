@@ -70,7 +70,9 @@ test('result-state families remain distinct and receive state-specific next acti
 // that the shared FL city parser now correctly recognizes, so it genuinely calls the specialist.
 test('unsupported local scope causes zero specialist calls and never becomes true zero',async()=>{
   const original=globalThis.fetch;let calls=0;globalThis.fetch=(async()=>{calls++;throw new Error('must not execute')}) as typeof fetch;
-  try{for(const query of ['mover in tampa bay florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(response.diagnostics.specialistCalls,0,query);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',query)}assert.equal(calls,0)}finally{globalThis.fetch=original}
+  // TH-DISCOVERY-003: "movers in Boca Raton Florida" was dropped -- MoveTrustHub's specialist now
+  // has a real recorded-headquarters-CITY filter, so it genuinely executes at city grain.
+  try{for(const query of ['mover in tampa bay florida','registered investment advisers in West Palm Beach Florida','roofer in Phoenix Arizona']){const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});assert.equal(response.diagnostics.specialistCalls,0,query);assert.notEqual(response.result?.resultState,'ZERO_MATCHING_ROWS',query)}assert.equal(calls,0)}finally{globalThis.fetch=original}
 });
 
 test('large-cohort rendering is bounded, neutral, and never labels source order as ranking',()=>{

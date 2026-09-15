@@ -146,8 +146,13 @@ test('complete direct queries bypass clarification while incomplete identities r
     const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
     assert.ok(response.result,query);assert.equal(response.diagnostics.specialistCalls,1,query);assert.notEqual(response.session.phase,'CLARIFY',query);
   }
+  // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real, additive recorded-headquarters-
+  // CITY filter (a plain identity/address fact, not a service-territory claim; not FL-specific --
+  // Move's underlying FMCSA company data is nationwide), so a plain city request like Dallas now
+  // resolves at EXACT scope and genuinely dispatches, instead of requiring state-broadening
+  // consent.
   const localMove=await orchestrateGuidedResearch({action:{type:'START',question:'moving company in Dallas Texas'}});
-  assert.equal(localMove.session.phase,'CLARIFY');assert.equal(localMove.diagnostics.specialistCalls,0);assert.equal(localMove.session.executionScope.resolutionState,'BROADENING_REQUIRES_CONSENT');
+  assert.notEqual(localMove.session.phase,'CLARIFY');assert.equal(localMove.diagnostics.specialistCalls,1);assert.equal(localMove.session.executionScope.resolutionState,'EXACT');
   const identity=await orchestrateGuidedResearch({action:{type:'START',question:'SHIFL'}});assert.equal(identity.session.hub,'move');assert.ok(identity.result);
   const exact=await orchestrateGuidedResearch({action:{type:'START',question:'USDOT 3244649'}});assert.equal(exact.result?.resultState,'SUPPORTED_RESULTS');assert.equal(lastMoveBody?.entityClass,'mover');
   const restored=await orchestrateGuidedResearch({session:exact.session,action:{type:'RESUME'}});assert.equal(restored.result?.resultState,'SUPPORTED_RESULTS');assert.equal(restored.diagnostics.specialistCalls,1);

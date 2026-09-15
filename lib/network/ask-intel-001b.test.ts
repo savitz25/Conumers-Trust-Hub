@@ -20,7 +20,10 @@ const matrix: Expected[] = [
   // supports state-grain execution now offers the same state-broadening consent path as an
   // unsupported city, instead of an unconditional dead end with no path to any result.
   {query:'mover in tampa bay florida',hub:'move',requested:'Tampa Bay, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
-  {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
+  // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real, additive recorded-headquarters-
+  // CITY filter (geography-capabilities.ts added 'city' to move's supportedKinds), so this
+  // executes directly at EXACT city grain instead of requiring state-broadening consent.
+  {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',executed:'Boca Raton, Florida',state:'EXACT',meaning:'RECORDED_HEADQUARTERS',allowed:true},
   {query:'licensed roofer in Fort Lauderdale Florida',hub:'contractor',requested:'Fort Lauderdale, Florida',executed:'Broward County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
   {query:'roofing contractors in Broward County Florida',hub:'contractor',requested:'Broward County, Florida',executed:'Broward County, Florida',state:'EXACT',allowed:true},
   // TH-DISCOVERY-002: a city mapping to a known-but-unpublished FL county (Tampa -> Hillsborough,
@@ -43,7 +46,9 @@ const matrix: Expected[] = [
   {query:'roofer in Phoenix Arizona',hub:'contractor',requested:'Phoenix, Arizona',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
   {query:'contractor in Seattle Washington',hub:'contractor',requested:'Seattle, Washington',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
   {query:'lender in Austin Texas',hub:'lender',requested:'Austin, Texas',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
-  {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
+  // TH-DISCOVERY-003: see the movers-in-Boca-Raton entry above -- MoveTrustHub's specialist now has
+  // a real recorded-headquarters-CITY filter, so this executes directly at EXACT city grain.
+  {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',executed:'Miami, Florida',state:'EXACT',meaning:'RECORDED_HEADQUARTERS',allowed:true},
   {query:'mover serving Miami Florida',hub:'move',requested:'Miami, Florida',state:'CAPABILITY_UNSUPPORTED',meaning:'SERVICE_TERRITORY',allowed:false},
   {query:"I'm moving from Chicago to Denver, who can move me?",hub:'move',requested:'Chicago to Denver',state:'CAPABILITY_UNSUPPORTED',meaning:'ORIGIN_DESTINATION',allowed:false},
   {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
@@ -94,11 +99,13 @@ test('scope invariants require consent and retain the original request',()=>{
 // TH-DISCOVERY-003: "insurance agencies in Fort Lauderdale Florida" was dropped from this list --
 // Fort Lauderdale/Broward is a real Insurance local-directory launch county (TH-DISCOVERY-002B)
 // that the shared FL city parser now correctly recognizes, so it genuinely calls the specialist.
+// "movers in Boca Raton Florida" was also dropped -- MoveTrustHub's specialist now has a real
+// recorded-headquarters-CITY filter (this ticket), so it genuinely executes at city grain too.
 test('START blocks unsupported scopes before specialist execution',async()=>{
   const originalFetch=globalThis.fetch;let calls=0;
   globalThis.fetch=(async()=>{calls+=1;throw new Error('specialist must not run')}) as typeof fetch;
   try{
-    for(const query of ['mover in tampa bay florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','mover serving Miami Florida']){
+    for(const query of ['mover in tampa bay florida','registered investment advisers in West Palm Beach Florida','mover serving Miami Florida']){
       const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
       assert.equal(response.diagnostics.specialistCalls,0,query);
       assert.equal(response.session.phase,'CLARIFY',query);
@@ -133,14 +140,17 @@ test('specialist request bodies receive only resolved execution geography',async
   const originalFetch=globalThis.fetch;const seen:Array<Record<string,unknown>>=[];
   globalThis.fetch=(async(_input,init)=>{seen.push(JSON.parse(String(init?.body)));return new Response('{}',{status:503,headers:{'content-type':'application/json'}})}) as typeof fetch;
   try{
+    // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real recorded-headquarters-CITY
+    // filter, so this executes at EXACT city grain -- the request body must carry the resolved
+    // city, not a broader/unresolved geography.
     const move=await orchestrateGuidedResearch({action:{type:'START',question:'movers in Boca Raton Florida'}});
-    assert.equal(move.diagnostics.specialistCalls,0);assert.equal(seen.length,0);assert.equal(move.session.executionScope.executionGeography,undefined);
+    assert.equal(move.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).city,'Boca Raton');assert.equal(move.session.executionScope.executionGeography?.kind,'city');
     const lender=await orchestrateGuidedResearch({action:{type:'START',question:'mortgage lenders in West Palm Beach Florida'}});
     assert.equal(lender.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).county,'Palm Beach');assert.equal((seen.at(-1)?.geography as Record<string,unknown>).countyFips,'12099');
     const senior=await orchestrateGuidedResearch({action:{type:'START',question:'nursing homes in Boca Raton Florida'}});
     assert.equal(senior.diagnostics.specialistCalls,1);assert.deepEqual(seen.at(-1)?.geography,{type:'city',value:'Boca Raton',state:'FL'});
     const investor=await orchestrateGuidedResearch({action:{type:'START',question:'registered investment advisers in West Palm Beach Florida'}});
-    assert.equal(investor.diagnostics.specialistCalls,0);assert.equal(seen.length,2);
+    assert.equal(investor.diagnostics.specialistCalls,0);assert.equal(seen.length,3);
     const approved=await orchestrateGuidedResearch({session:investor.session,action:{type:'SELECT_CHOICE',value:'scope_state:FL'}});
     assert.equal(approved.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).stateCode,'FL');
     assert.equal(approved.session.executionScope.userConsent?.requestedDisplay,'West Palm Beach, Florida');

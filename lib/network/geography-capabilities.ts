@@ -15,7 +15,13 @@ export type GeographyCapability={
 };
 
 export const SPECIALIST_GEOGRAPHY_CAPABILITIES:readonly GeographyCapability[]=[
-  {hub:'move',entityClasses:'*',supportedKinds:['state'],meaning:'RECORDED_HEADQUARTERS',localToStateRequiresConsent:true,disclosure:'The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.'},
+  // TH-DISCOVERY-003: 'city' added -- MoveTrustHub's specialist now has a real, additive recorded-
+  // headquarters-CITY filter (lib/directory/coverage-filter.ts's extractCityFromHeadquarters,
+  // paired with the existing recorded-headquarters-STATE filter; never a service-territory claim).
+  // A bare city with no resolvable state still falls through to state-broadening consent below
+  // (unaffected -- see research-scope.ts's normalized.kind==='city' handling), and Tampa Bay (a
+  // region, not a city) is unaffected by this and still requires the same consent.
+  {hub:'move',entityClasses:'*',supportedKinds:['state','city'],meaning:'RECORDED_HEADQUARTERS',localToStateRequiresConsent:true,disclosure:'The current accepted Move contract supports recorded-headquarters state and city, not service availability. Recorded headquarters does not establish service territory or route availability.'},
   // TH-DISCOVERY-003: this list was undersold at just Broward/Palm Beach -- live-confirmed against
   // ContractorTrustHub's specialist (lib/specialist-execution/contractor-v2.ts, which resolves
   // county via its own FLORIDA_COUNTIES list in lib/discovery/counties.ts) that all 30 of these

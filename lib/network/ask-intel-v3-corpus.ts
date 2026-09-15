@@ -40,15 +40,18 @@ const move = group('move', [
   c("What's the difference between a broker and a carrier?",'EXPLAINER','move',['explainer']),
   c('movers in Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Florida',expectedExecutionScope:'Florida'}),
   // TH-DISCOVERY-001: a region resolving to a real state (Tampa Bay -> FL) on a state-capable
-  // specialist now offers the same state-broadening consent path as an unsupported city
-  // (see 'movers in Boca Raton Florida' below) -- not an unconditional dead end. STATE_BROADENING
-  // stays forbidden because that check only flags *silent, unconsented* execution at state grain
-  // (route.scope.executionGeography set without userConsent.approved); offering
-  // BROADENING_REQUIRES_CONSENT as the resolution state is exactly the consented path, not a
-  // violation of it.
+  // specialist offers a state-broadening consent path, not an unconditional dead end. Tampa Bay is
+  // a multi-county REGION (distinct from the city Tampa), so it stays on this path even after
+  // TH-DISCOVERY-003 added real city-grain support below. STATE_BROADENING stays forbidden because
+  // that check only flags *silent, unconsented* execution at state grain (route.scope.
+  // executionGeography set without userConsent.approved); offering BROADENING_REQUIRES_CONSENT as
+  // the resolution state is exactly the consented path, not a violation of it.
   c('mover in tampa bay florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Tampa Bay, Florida',expectedScopeState:'BROADENING_REQUIRES_CONSENT',expectedExecutionAllowed:false,forbiddenBehaviors:['ENTITY_NAME','STATE_BROADENING','SPECIALIST_EXECUTION']}),
-  c('movers in Boca Raton Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedScopeState:'BROADENING_REQUIRES_CONSENT',expectedExecutionAllowed:false,forbiddenBehaviors:['STATE_BROADENING','SERVICE_TERRITORY']}),
-  c('mover headquartered in Miami Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Miami, Florida',expectedExecutionAllowed:false}),
+  // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real, additive recorded-headquarters-
+  // CITY filter (a plain identity/address fact, never a service-territory claim), so a plain city
+  // request executes directly at EXACT grain instead of requiring state-broadening consent.
+  c('movers in Boca Raton Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Boca Raton, Florida',expectedExecutionScope:'Boca Raton, Florida',expectedScopeState:'EXACT',forbiddenBehaviors:['SERVICE_TERRITORY']}),
+  c('mover headquartered in Miami Florida','COHORT_BROWSE','move',['cohort','geography'],{expectedRequestedScope:'Miami, Florida',expectedExecutionScope:'Miami, Florida',expectedScopeState:'EXACT'}),
   c('mover serving Miami Florida','COHORT_BROWSE','move',['cohort','geography','limitation'],{expectedScopeState:'CAPABILITY_UNSUPPORTED',expectedExecutionAllowed:false,forbiddenBehaviors:['SERVICE_TERRITORY']}),
   c("I'm moving from Chicago to Denver, who can move me?",'COHORT_BROWSE','move',['geography','limitation'],{expectedRequestedScope:'Chicago to Denver',expectedExecutionAllowed:false,forbiddenBehaviors:['SERVICE_TERRITORY']}),
   c('good mover boca','RECOMMENDATION_REQUEST','move',['recommendation','colloquial'],{forbiddenBehaviors:['RANKING','ENTITY_NAME']}),
