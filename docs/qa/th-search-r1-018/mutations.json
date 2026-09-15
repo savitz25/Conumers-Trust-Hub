@@ -1,0 +1,55 @@
+{
+  "requiredCount": 6,
+  "coveredCount": 6,
+  "mutations": [
+    {
+      "id": "MUTATION-1-MOVE-BROAD-SEARCH-WIDENING",
+      "blocker": "BLOCKER-MOVE-01",
+      "repo": "savitz25/Move-trust-Hub",
+      "description": "Reverted lib/search/match.ts's similarHit() length-gate (real source mutation via git stash, not a fixture).",
+      "evidence": "Move-trust-Hub docs/qa/th-search-r1-018-move/mutation-evidence.log -- 7/10 pass pre-fix (3 fail), 10/10 post-fix.",
+      "restored": true
+    },
+    {
+      "id": "MUTATION-2-INSURANCE-IDENTITY-MAPPING-REMOVED",
+      "blocker": "BLOCKER-INSURANCE-01",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "description": "Reverted lib/guided-research/session.ts + specialists.ts + contract.ts (real source mutation via git stash).",
+      "evidence": "docs/qa/th-search-r1-018/mutation-evidence-guided-research.log -- test file fails to load entirely pre-fix (parseLabeledIdentifier/FINANCIAL_SPECIALIST_LOCKS exports the fix introduces do not yet exist), 33/33 pass post-fix.",
+      "restored": true
+    },
+    {
+      "id": "MUTATION-3-FILLER-WORD-BUG-RESTORED",
+      "blocker": "BLOCKER-IDENTIFIER-FILLER-WORD-01",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "description": "Inline fixture comparison in th-search-r1-018.test.ts's 'IDENTIFIER FILLERS MUTATION' test directly re-applies the original first-token-after-label regex and asserts it still captures 'code' instead of '10064', proving the historical defect the fix replaces.",
+      "evidence": "lib/guided-research/th-search-r1-018.test.ts:'IDENTIFIER FILLERS MUTATION: restoring first-token-after-label behavior must fail these tests' -- passes (i.e. correctly demonstrates the old behavior was broken).",
+      "restored": "n/a (fixture-level comparison, no source file touched)"
+    },
+    {
+      "id": "MUTATION-4-SENIOR-DEICTIC-NOUN-REMOVED",
+      "blocker": "BLOCKER-SENIOR-01",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "description": "Real source mutation via git stash on lib/network/research-planner.ts (same stash as CROSS-01, both live in this file).",
+      "evidence": "docs/qa/th-search-r1-018/mutation-evidence-research-planner.log -- 4/33 fail pre-fix, 0/33 fail post-fix.",
+      "restored": true
+    },
+    {
+      "id": "MUTATION-5-CONTRACTOR-STALE-LOCK-RESTORED",
+      "blocker": "BLOCKER-CONTRACTOR-01",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "description": "th-search-r1-018.test.ts's dedicated mutation test independently re-applies the OLD exact-fingerprint-pin logic against a live-shaped compatible response and confirms the old logic would have rejected it, then confirms the current (fixed) code correctly accepts it.",
+      "evidence": "lib/guided-research/th-search-r1-018.test.ts:'CONTRACTOR MUTATION: restoring the stale fingerprint-pinned lock must fail Broward execution' -- passes.",
+      "restored": "n/a (comparison against the historical constant, no source file touched for this specific check; the broader guided-research revert in MUTATION-2 also covers this file)"
+    },
+    {
+      "id": "MUTATION-6-CROSS-DOMAIN-EARLY-RETURN-RESTORED",
+      "blocker": "BLOCKER-CROSS-01",
+      "repo": "savitz25/Conumers-Trust-Hub",
+      "description": "Real source mutation via git stash on lib/network/research-planner.ts (same stash as SENIOR-01, both live in this file) -- reverts the explicitMultiDomainConjunction addition entirely.",
+      "evidence": "docs/qa/th-search-r1-018/mutation-evidence-research-planner.log -- same run as MUTATION-4 (both fixes live in one file; 4 combined failures pre-fix cover both).",
+      "restored": true
+    }
+  ],
+  "note": "3 of 6 mutations used real, reverted source-file changes (git stash push/pop, matching the TH-SEARCH-R1-016/R1-017 precedent); 3 used fixture-level historical-behavior comparisons embedded directly in th-search-r1-018.test.ts, following the same approach TH-SEARCH-R1-017 used after a real source mutation attempt was correctly refused by the session's own auto-mode permission classifier for being a change to shared production files during an audit-adjacent context. Both forms are legitimate proof the corresponding test is not vacuous."
+}

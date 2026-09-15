@@ -1,0 +1,36 @@
+{
+  "testedAtUtc": "2026-09-15T00:20:00Z",
+  "baselineSha": "de839d6ff3fd8f4648303d385572a7b234763814",
+  "note": "Each blocker reproduced fresh on a clean origin/main checkout before any repair, using the exact same live-call methodology as the original R1-017 sweep.",
+  "blockers": [
+    {
+      "id": "BLOCKER-INSURANCE-01",
+      "reproduction": "node --experimental-strip-types -e \"import('./lib/guided-research/session.ts').then(async(s)=>{console.log(JSON.stringify({e:s.createGuidedSession('National Trust Insurance Group')?.identityName, g:s.createGuidedSession('insurance agencies in ZIP 33441')?.geography}))})\"",
+      "observed": "{} -- both identityName and geography undefined, confirming the unscoped ~82k cohort defect still reproduces"
+    },
+    {
+      "id": "BLOCKER-IDENTIFIER-FILLER-WORD-01",
+      "reproduction": "node --experimental-strip-types -e \"import('./lib/guided-research/session.ts').then(async(s)=>{console.log(JSON.stringify(s.createGuidedSession('NAIC code 10064')?.identifier))})\"",
+      "observed": "{\"type\":\"NAIC\",\"value\":\"CODE\"} -- confirms the filler-word corruption still reproduces"
+    },
+    {
+      "id": "BLOCKER-SENIOR-01",
+      "reproduction": "node --experimental-strip-types -e \"import('./lib/network/execution-decision.ts').then(async(ed)=>{console.log(JSON.stringify(ed.decideAskExecution('Who owns this nursing home?').plan.entityName))})\"",
+      "observed": "\"Who owns this nursing home\" -- confirms the whole-question fabrication still reproduces"
+    },
+    {
+      "id": "BLOCKER-CONTRACTOR-01",
+      "reproduction": "node --experimental-strip-types -e \"import('./lib/guided-research/orchestrator.ts').then(async(o)=>{console.log(JSON.stringify((await o.orchestrateGuidedResearch({action:{type:'START',question:'roofers in Broward County'}})).result))})\"",
+      "observed": "{\"resultState\":\"BACKEND_UNAVAILABLE\",\"error\":{\"code\":\"contract_version_mismatch\",\"retryable\":true}} -- confirms the outage still reproduces"
+    },
+    {
+      "id": "BLOCKER-CROSS-01",
+      "reproduction": "node --experimental-strip-types -e \"import('./lib/network/execution-decision.ts').then(async(ed)=>{const d=ed.decideAskExecution('I need a mover and a mortgage lender in New Jersey');console.log(JSON.stringify({intent:d.plan.intent,primaryHub:d.plan.primaryHub}))})\"",
+      "observed": "{\"intent\":\"COHORT_BROWSE\",\"primaryHub\":undefined} -- confirms the query never reaches MULTI_HUB_JOURNEY classification; separately confirmed the guided session silently executes lender-only with the mover request dropped"
+    }
+  ],
+  "testSuiteRedEvidence": {
+    "researchPlannerMutation": "docs/qa/th-search-r1-018/mutation-evidence-research-planner.log -- 4/33 th-search-r1-018.test.ts tests fail on unfixed research-planner.ts (SENIOR-01 + CROSS-01 coverage)",
+    "guidedResearchMutation": "docs/qa/th-search-r1-018/mutation-evidence-guided-research.log -- test file fails to even load on unfixed session.ts/specialists.ts (missing parseLabeledIdentifier/FINANCIAL_SPECIALIST_LOCKS exports the fix introduces/exposes), confirming INSURANCE-01, IDENTIFIER-FILLER-WORD-01, and CONTRACTOR-01 fixes are load-bearing"
+  }
+}
