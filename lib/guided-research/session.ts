@@ -179,6 +179,17 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     session.identifier = { type: FINANCIAL_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof FINANCIAL_IDENTIFIER_LABELS], value: plan.identifier.value };
   }
 
+  // TH-DISCOVERY-002: a live-rate-shopping request ("lowest mortgage rates today") has no entity
+  // to look up and no geography to browse -- it's asking for real-time pricing this network does
+  // not have. Left to the generic missing-identity clarification below, it silently got treated
+  // like any other "provide a name or ID" case without ever acknowledging rates at all. Scoped
+  // narrowly (no identifier, no entity name, no geography) so a geography-scoped rate mention
+  // ("mortgage rates in Florida") still reaches real property-market lender results instead of
+  // being intercepted here.
+  if (!plan.identifier && !plan.entityName && !plan.requestedGeography && /\b(?:mortgage|lender|home\s+loan)s?\b/i.test(q) && /\brates?\b/i.test(q)) {
+    return { ...session, hub: 'lender', phase: 'CLARIFY', missingFields: [], availableChoices: [], nextAction: 'TrustHub does not have live, real-time mortgage rate pricing. Research a specific lender’s public HMDA activity and reported loan types, or provide an NMLS ID/LEI or lender name for exact identity research instead.' };
+  }
+
   if (planRequiresImmediateClarification(plan)) {
     session.hub = plan.primaryHub as GuidedResearchSession['hub'];
     session.entityClass = plan.entityClass?.id;
@@ -229,7 +240,13 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
   }
 
-  const insuranceIntent=/\b(?:insurance|insurers?|\bNPN\b|\bNAIC\b)\b/i.test(q);
+  // TH-DISCOVERY-002: a well-known carrier brand name alone ("State Farm agent near me") matched
+  // no insurance-hub signal at all and returned a raw 422 "not_guided_query" error -- there was no
+  // path into the insurance flow to even honestly disclose that carrier-appointment evidence isn't
+  // established (ticket section 24). Mirrors the existing Rocket Mortgage/Newrez brand-name
+  // precedent already in lenderIntent below; bounded to a short list of major P&C/health carriers
+  // used only for hub routing, not a new dataset.
+  const insuranceIntent=/\b(?:insurance|insurers?|\bNPN\b|\bNAIC\b|State\s+Farm|Allstate|GEICO|Progressive|Nationwide|Farmers|USAA|Liberty\s+Mutual|Travelers)\b/i.test(q);
   if(insuranceIntent){
     session.hub='insurance';session.geography=financialGeography;
     if(/^i\s+need\s+help\s+with\s+insurance\s*[?.!]*$/i.test(q)||/\binsurance\s+provider\b/i.test(q)||/insurance\s+complaints\s+against\s+a\s+company/i.test(q)||/insurance\s+professional\s+near\s+me/i.test(q))return {...session,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:INSURANCE_CHOICES,nextAction:'What kind of insurance entity do you want to research?'};
@@ -243,9 +260,28 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     } else {
       session.insuranceResearchMode=session.identifier?'identifier':'cohort';
     }
-    session.insuranceEntityClass=/\b(?:agents?|producers?|professional)\b/i.test(q)?'producer':/\b(?:legal\s+insurers?|insurance\s+compan(?:y|ies)|insurers?)\b/i.test(q)?'legal_insurer':'agency';
+    // TH-DISCOVERY-002: "insurance company" is consumer-ambiguous (ticket section 15) -- it may
+    // mean a local agency or the underwriting carrier. A locally-scoped request (city/ZIP) almost
+    // always means "somewhere I can call/visit", which this data model represents as an agency,
+    // not a legal_insurer -- confirmed live that legal_insurer cohorts are separately unsupported
+    // regardless of geography grain ("legal insurers are limited to the accepted Wave-1 cohort"),
+    // so defaulting to legal_insurer here was choosing the class that can never execute. The
+    // unambiguous "legal insurer(s)" phrase always means legal_insurer regardless of geography.
+    const explicitLegalInsurer=/\blegal\s+insurers?\b/i.test(q);
+    const localInsuranceGeography=financialGeography?.type==='city'||financialGeography?.type==='zip';
+    const ambiguousInsuranceCompany=/\b(?:insurance\s+compan(?:y|ies)|insurers?)\b/i.test(q)&&!explicitLegalInsurer;
+    session.insuranceEntityClass=/\b(?:agents?|producers?|professional)\b/i.test(q)?'producer':(ambiguousInsuranceCompany&&localInsuranceGeography)?'agency':(explicitLegalInsurer||ambiguousInsuranceCompany)?'legal_insurer':'agency';
     session.entityClass=session.insuranceEntityClass;
-    if(/\blife\s+insurance\b/i.test(q))session.insuranceLineOfAuthority='life';
+    // TH-DISCOVERY-002: "homeowners insurance agencies in Florida" silently dropped "homeowners"
+    // and returned all 56,939 Florida agency records with no acknowledgment the product word was
+    // ignored -- confirmed live that InsuranceTrustHub's line-of-authority data does not exist at
+    // agency grain (an agency-scoped LOA filter returns a genuine, valid ZERO_MATCHING_ROWS, not
+    // an error), matching the existing 'life' handling below, just never generalized past that one
+    // word. Recognize the same product/LOA vocabulary InsuranceTrustHub's own detectLoas()
+    // recognizes so the specialist layer can disclose product specialization honestly instead of
+    // silently ignoring it.
+    const loaMatch=q.match(/\b(homeowners?|auto(?:mobile)?|health|casualty|personal\s+lines|variable\s+(?:life|annuit\w*))\s+insurance\b/i)?.[1]?.toLowerCase().replace(/\s+/g,' ') ?? (/\blife\s+insurance\b/i.test(q)?'life':undefined);
+    if(loaMatch)session.insuranceLineOfAuthority=loaMatch;
     // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: specialist-execution/v2 does not support ZIP or
     // city-grain directory filtering (confirmed live -- it silently ignores the field and
     // returns the entire ~82k-agency population). A ZIP or bare city request must never fall
@@ -266,9 +302,22 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     session.hub='lender';session.geography=financialGeography;
     if(/^i\s+need\s+a\s+mortgage\s+lender\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What would you like to research?'};
     const genericStateLenders=/^lenders?\s+in\s+(?:Texas|TX)\s*[?.!]*$/i.test(q);
-    session.lenderResearchMode=session.identifier?'identifier':/complaints?\s+about/i.test(q)?'complaints':/brokers?\s+near\s+me/i.test(q)?'unsupported_person_branch':genericStateLenders?undefined:'property_market';
-    if(genericStateLenders)return {...session,lenderResearchMode:undefined,entityClass:undefined,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What do you mean by lenders in this state?'};
-    session.identityName=q.match(/complaints?\s+about\s+(.+)$/i)?.[1]?.trim();
+    const complaintsAbout=q.match(/complaints?\s+about\s+(.+)$/i)?.[1]?.trim();
+    // TH-DISCOVERY-002: mirror the insuranceIntent block's TH-SEARCH-R1-018 BLOCKER-INSURANCE-01
+    // fix -- a specific, defensible entity name already found by the research planner
+    // (plan.entityName) is the authoritative identity candidate. Without this, a named-company
+    // query like "Rocket Mortgage" fell through to the unscoped property_market default below
+    // (this block never independently rediscovered a name), sending a doomed market_cohort
+    // request instead of the identity lookup the canonical plan (executionMode:'IDENTITY')
+    // already resolved. "complaints about X" remains its own distinct mode, checked first.
+    if(!session.identifier&&!complaintsAbout&&plan.entityName){
+      session.identityName=plan.entityName;
+      session.lenderResearchMode='identity_name';
+    } else {
+      session.lenderResearchMode=session.identifier?'identifier':complaintsAbout?'complaints':/brokers?\s+near\s+me/i.test(q)?'unsupported_person_branch':genericStateLenders?undefined:'property_market';
+      session.identityName=complaintsAbout;
+    }
+    if(genericStateLenders&&session.lenderResearchMode===undefined)return {...session,lenderResearchMode:undefined,entityClass:undefined,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What do you mean by lenders in this state?'};
     session.requestedEvidence=session.lenderResearchMode==='complaints'?['CFPB_COMPLAINTS']:[];
     session.hmdaAction=/\bdenials?\b/i.test(q)?'denial':/\bapplications?\b/i.test(q)?'application':'origination';
     session.loanType=/\bFHA\b/i.test(q)?'FHA':/\bVA\b/i.test(q)?'VA':/\bUSDA\b/i.test(q)?'USDA':/\bconventional\b/i.test(q)?'Conventional':undefined;

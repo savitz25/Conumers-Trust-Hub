@@ -1,4 +1,4 @@
-import type { GuidedExecutionResult, GuidedRefinement, GuidedResearchSession, GuidedResultRow, GuidedResultState } from './contract.ts';
+import type { GuidedChoice, GuidedExecutionResult, GuidedRefinement, GuidedResearchSession, GuidedResultRow, GuidedResultState } from './contract.ts';
 import {US_JURISDICTIONS} from '../network/us-jurisdictions.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {createGuidedSession,refreshCareSession} from './session.ts';
@@ -433,14 +433,20 @@ async function executeInvestor(session:GuidedResearchSession):Promise<GuidedExec
 
 async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExecutionResult>{
   const service=/\bserv(?:e|es|ing)|near me\b/i.test(session.originalQuestion);const ranking=/\b(?:best|top)\b/i.test(session.originalQuestion);
-  if(session.insuranceLineOfAuthority==='life'){
-    const message='InsuranceTrustHub understands the requested life-insurance credential class, but its current public execution contract does not advertise a compatible source-native life line-of-authority filter.';
-    const result=failure(session,'UNSUPPORTED_CAPABILITY',0,'line_of_authority_filter_not_supported',message);
-    result.limitations=[message,'A line of authority is not an insurer appointment, office location, service territory, or product availability.'];
-    result.firstUsefulResult=true;
-    return result;
-  }
-  if(session.insuranceResearchMode==='local_directory_handoff'){
+  // TH-DISCOVERY-002: a requested product/line-of-authority word ("homeowners", "life", ...) must
+  // not silently disappear -- but it also must not hard-block an otherwise-executable agency
+  // cohort down to zero results (confirmed live: InsuranceTrustHub has no agency-grain LOA filter
+  // capability at all -- 'agency'+LOA is a genuine ZERO_MATCHING_ROWS, 'producer'+LOA is
+  // PUBLICATION_RESTRICTED regardless, 'legal_insurer'+LOA is UNSUPPORTED_CAPABILITY -- there is
+  // no real filter to send). The underlying entity-class+geography cohort still executes below;
+  // the product word is disclosed as unestablished rather than silently dropped or used to block
+  // real, relevant agencies from being shown.
+  // TH-DISCOVERY-002: re-check the actual current geography grain, not just the stale mode flag --
+  // after a consumer explicitly accepts the "Research Florida instead" broadening choice below,
+  // afterChoice() (orchestrator.ts) replaces session.geography with the approved state-level
+  // geography but has no insurance-specific knowledge to also clear insuranceResearchMode, so
+  // without this check the broadened request would loop straight back into the same handoff.
+  if(session.insuranceResearchMode==='local_directory_handoff'&&(session.geography?.type==='zip'||session.geography?.type==='city')){
     // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: specialist-execution/v2 has no ZIP/local-directory
     // query type -- confirmed live, it silently ignores geography.zip/zipCode fields and returns
     // the entire unscoped agency population. Hand off to InsuranceTrustHub's own certified
@@ -450,9 +456,28 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
     result.limitations=[message,'Directory listing is not a regulatory identity confirmation.'];
     result.destinations=[{type:'DIRECTORY',href:`https://www.insurancetrusthub.com/ask?q=${encodeURIComponent(session.originalQuestion)}`,label:'Continue on InsuranceTrustHub'}];
     result.firstUsefulResult=true;
+    // TH-DISCOVERY-002: this must not be a bare dead end (ticket section 46, the Boca Raton
+    // flagship case). session.executionScope already independently resolved a state-broadening
+    // consent path for this same geography (Insurance's capability is state-only, so
+    // resolveResearchScope's existing city/county/zip-to-state broadening already applies here --
+    // it was simply never surfaced because this branch short-circuits straight to EXECUTE). Offer
+    // it as a real choice alongside the ZIP handoff instead of leaving zero providers with no path
+    // forward; selecting it reuses the exact same scope_state: consent mechanism TH-DISCOVERY-001
+    // established for region geography, already fully wired in orchestrator.ts.
+    const broader=session.executionScope.resolutionState==='BROADENING_REQUIRES_CONSENT'?session.executionScope.normalizedRequestedGeography:undefined;
+    if(broader?.stateCode){
+      const choices:GuidedChoice[]=[{id:'scope-statewide',label:`Research ${broader.stateName??broader.stateCode} instead`,action:'SELECT_CHOICE',value:`scope_state:${broader.stateCode}`,description:'This is broader than the place you requested and will be recorded as your explicit choice.'}];
+      result.choices=choices;
+      result.consumerMessage=`${message} Or research ${broader.stateName??broader.stateCode} agencies broadly instead -- this does not establish a ${session.executionScope.requestedGeography?.display ?? 'local'} office or service area.`;
+    }
     return result;
   }
-  const filters:Record<string,unknown>={};const loa=session.selectedFilters.lineOfAuthority??session.insuranceLineOfAuthority;if(loa)filters.lineOfAuthority=[loa];
+  // TH-DISCOVERY-002: only an explicit UI refinement selection (session.selectedFilters, sourced
+  // from the specialist's own advertised availableRefinements values) is sent as an actual filter.
+  // session.insuranceLineOfAuthority is a raw consumer product word ("homeowners") disclosed below,
+  // never sent as a filter value -- the specialist doesn't recognize it and there is no agency-grain
+  // LOA capability to send it to regardless (see the disclosure comment above).
+  const filters:Record<string,unknown>={};const loa=session.selectedFilters.lineOfAuthority;if(loa)filters.lineOfAuthority=[loa];
   // TH-DISCOVERY-001: "best"/"top" used to swap the whole request for a doomed evidence:'RANKING'
   // request (InsuranceTrustHub has no such evidence type, so this always returned zero rows). An
   // unsupported ranking modifier must not block an otherwise-executable cohort; it now runs the
@@ -473,6 +498,10 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':session.insuranceEntityClass==='legal_insurer'?'Public legal-insurer research results':'Insurance agency research results';
   result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public-safe insurance records match these exact filters.':`${result.total.toLocaleString('en-US')} public-safe ${session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency'} records match. Credential jurisdiction is not office, domicile, service territory, or product availability.`;
   if(ranking&&result.total>0)result.limitations=['InsuranceTrustHub does not rank insurance agencies or insurers as "best" or "top." Source order is not a quality or safety judgment.', ...result.limitations];
+  if(session.insuranceLineOfAuthority&&result.total>0){
+    result.limitations=[`"${session.insuranceLineOfAuthority}" product/line-of-authority specialization is not established at this entity grain by this source. These are ${session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency'} records matching the entity class and geography filters only.`, ...result.limitations];
+    result.consumerMessage=`${result.consumerMessage} "${session.insuranceLineOfAuthority}" specialization is not established by this source.`;
+  }
   return result;
 }
 

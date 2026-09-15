@@ -23,7 +23,13 @@ const matrix: Expected[] = [
   {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
   {query:'licensed roofer in Fort Lauderdale Florida',hub:'contractor',requested:'Fort Lauderdale, Florida',executed:'Broward County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
   {query:'roofing contractors in Broward County Florida',hub:'contractor',requested:'Broward County, Florida',executed:'Broward County, Florida',state:'EXACT',allowed:true},
-  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',state:'CAPABILITY_UNSUPPORTED',allowed:false},
+  // TH-DISCOVERY-002: a city mapping to a known-but-unpublished FL county (Tampa -> Hillsborough,
+  // which Contractor doesn't publish) now offers the same state-broadening consent path as an
+  // ordinary unsupported city, instead of an unconditional dead end -- a shared research-scope.ts
+  // fix made for Lender (Miami -> Miami-Dade) that incidentally, correctly, applies here too since
+  // Contractor supports state grain the same way. Not a regression: strictly more reachable results
+  // under the same consent gate, never silent.
+  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
   {query:'registered investment advisers in West Palm Beach Florida',hub:'investor',requested:'West Palm Beach, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'PRINCIPAL_OFFICE',allowed:false},
   {query:'RIAs in Florida',hub:'investor',requested:'Florida',executed:'Florida',state:'EXACT',meaning:'PRINCIPAL_OFFICE',allowed:true},
   {query:'mortgage lenders in Palm Beach County Florida',hub:'lender',requested:'Palm Beach County, Florida',executed:'Palm Beach County, Florida',state:'EXACT',meaning:'PROPERTY_GEOGRAPHY',allowed:true},
