@@ -52,7 +52,12 @@ const HOW_TO = /\b(?:how\s+(?:do|can|should|would)\s+i|how\s+to|what\s+(?:should
 const EXPLAINER = /\b(?:what\s+(?:is|are|does)|define|definition|explain|difference\s+between|what\s+do\s+.+\s+mean|does\s+.+\s+mean|(?:current|active|registered|licensed|published)\b.{0,35}\bmeans?)\b/i;
 const STATUS_EXPLAINER=/\b(?:current|active|registered|licensed|published|vendor\s+registration|HMDA|CMS\s+stars?|no\s+(?:match|enforcement|complaints?))\b[^?.!]{0,70}\b(?:mean|equal|prove|endorse|recommend|trustworthy|approved|clean|good|license)\b/i;
 const RECOMMENDATION = /\b(?:best|safest|most\s+trustworthy|legitimate|recommended|top|good)\b/i;
-const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|contractor|roofer|roof\s+guy|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b|\b(?:hire|research|check)\b[^?.!]{0,80}\b(?:them|him|her)\b/i;
+// TH-SEARCH-R1-018 BLOCKER-SENIOR-01: "nursing home"/"assisted living (facility)?"/"hospice"/
+// "senior home"/"senior facility" must be recognized as deictic care-provider nouns the same way
+// "facility" and "home health agency" already are, or a bare "this nursing home?" reference with
+// no established identity falls through to explicitEntityName()'s residue-fallback heuristic and
+// captures the entire question as a fabricated literal facility name.
+const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|contractor|roofer|roof\s+guy|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency|nursing\s+home|assisted\s+living(?:\s+facility)?|hospice|senior\s+home|senior\s+facility)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b|\b(?:hire|research|check)\b[^?.!]{0,80}\b(?:them|him|her)\b/i;
 
 function dedupe<T>(values: T[]): T[] { return [...new Set(values)]; }
 
@@ -241,8 +246,20 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   let name = overrides.proposedEntityName ?? explicitEntityName(originalQuestion, entity, geography);
   let intent: AskResearchIntent;
 
+  // TH-SEARCH-R1-018 BLOCKER-CROSS-01: a query that structurally requests 2+ specialist domains
+  // joined by an explicit conjunction ("a mover AND a mortgage lender") must be routed to
+  // MULTI_HUB_JOURNEY on that structural signal alone -- candidateHubs.length>1 combined with an
+  // explicit conjunction word -- not just the pre-existing verb-shaped phrasings (buying/moving/
+  // renting/etc.), which never matched noun-only requests like "a mover and a mortgage lender".
+  // This intentionally does not special-case any single hub keyword (spec: "do not only add the
+  // exact word 'mover' to one regex"); it relies on the planner's own hub detection, so it
+  // generalizes to contractor+lender, insurance+lender, move+senior, etc. Single-hub queries
+  // (company names such as "Rocket Mortgage" or "State Farm insurance company", or one domain
+  // with merely contextual nouns from another) never reach candidateHubs.length>1 in the first
+  // place, so they are unaffected regardless of any conjunction word present.
+  const explicitMultiDomainConjunction = candidateHubs.length > 1 && /\b(?:and|plus|as well as)\b/i.test(originalQuestion);
   if (identifier) { intent = 'IDENTIFIER_LOOKUP'; reasons.push('EXACT_IDENTIFIER_RECOGNIZED'); }
-  else if ((candidateHubs.length > 1 && /\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?|mov(?:e|ing)|relocat(?:e|ing|ion)|roof\s+(?:is\s+)?damaged|damaged\s+roof|helping\s+(?:my\s+)?(?:mother|father|parent)|research\b.+\b(?:and|plus)\b)\b/i.test(originalQuestion)) || /\bmov(?:e|ing)\b[^?.!]{0,80}\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?)\b/i.test(originalQuestion) || (/\bmov(?:e|ing)\b/i.test(originalQuestion)&&/\b(?:not sure|unsure)\b/i.test(originalQuestion)&&/\bbuy\b/i.test(originalQuestion)&&/\brent\b/i.test(originalQuestion))) { intent = 'MULTI_HUB_JOURNEY'; reasons.push('MULTIPLE_SPECIALIST_HUBS'); }
+  else if (explicitMultiDomainConjunction || (candidateHubs.length > 1 && /\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?|mov(?:e|ing)|relocat(?:e|ing|ion)|roof\s+(?:is\s+)?damaged|damaged\s+roof|helping\s+(?:my\s+)?(?:mother|father|parent)|research\b.+\b(?:and|plus)\b)\b/i.test(originalQuestion)) || /\bmov(?:e|ing)\b[^?.!]{0,80}\b(?:buy(?:ing)?|purchas(?:e|ing)|rent(?:ing)?)\b/i.test(originalQuestion) || (/\bmov(?:e|ing)\b/i.test(originalQuestion)&&/\b(?:not sure|unsure)\b/i.test(originalQuestion)&&/\bbuy\b/i.test(originalQuestion)&&/\brent\b/i.test(originalQuestion))) { intent = 'MULTI_HUB_JOURNEY'; reasons.push('MULTIPLE_SPECIALIST_HUBS'); }
   else if (HOW_TO.test(originalQuestion)) { intent = 'HOW_TO'; reasons.push('HOW_TO_LANGUAGE'); }
   else if (STATUS_EXPLAINER.test(originalQuestion)) { intent = 'EXPLAINER'; reasons.push('STATUS_MEANING_QUESTION'); }
   else if (RECOMMENDATION.test(originalQuestion)) { intent = 'RECOMMENDATION_REQUEST'; reasons.push('VALUE_JUDGMENT_REQUESTED'); }

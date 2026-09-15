@@ -1,0 +1,40 @@
+{
+  "testedAtUtc": "2026-09-15T00:25:00Z",
+  "note": "Same reproductions as blocker-red-before.json, re-run after each fix, on the same worktree.",
+  "blockers": [
+    {
+      "id": "BLOCKER-INSURANCE-01",
+      "observed": {
+        "National Trust Insurance Group": { "identityName": "National Trust Insurance Group", "insuranceResearchMode": "identity_name" },
+        "insurance agencies in ZIP 33441": { "geography": { "type": "zip", "value": "33441" }, "insuranceResearchMode": "local_directory_handoff" }
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "BLOCKER-IDENTIFIER-FILLER-WORD-01",
+      "observed": { "NAIC code 10064": { "type": "NAIC", "value": "10064" } },
+      "verdict": "PASS"
+    },
+    {
+      "id": "BLOCKER-SENIOR-01",
+      "observed": { "Who owns this nursing home?": { "entityName": null } },
+      "verdict": "PASS"
+    },
+    {
+      "id": "BLOCKER-CONTRACTOR-01",
+      "observed": "live-tested separately with a fixture matching the real ContractorTrustHub schemaFingerprint/version but a different contractFingerprint -> resultState SUPPORTED_RESULTS, total 924 (see mutation-evidence and th-search-r1-018.test.ts)",
+      "verdict": "PASS"
+    },
+    {
+      "id": "BLOCKER-CROSS-01",
+      "observed": { "I need a mover and a mortgage lender in New Jersey": { "intent": "MULTI_HUB_JOURNEY", "primaryHub": null } },
+      "verdict": "PASS"
+    }
+  ],
+  "fullGateResult": "npm run check:th-search-r1-018 -- 132/132 pass",
+  "fullRegressionResult": "npm test -- exit 0, 0 failures across the full repository suite",
+  "typecheck": "clean",
+  "lint": "0 errors, 4 pre-existing unrelated warnings",
+  "build": "next build succeeds",
+  "browserAcceptance": "60 real Playwright flows (15 flows x 1280/768/390/320) against a local production build -- 0 HTTP failures, 0 horizontal overflow, only a single benign site-wide 404 (unrelated static resource, present on every page regardless of query) observed as a console message on all 60; 7 key fix-verification flows separately re-checked with networkidle wait and visually confirmed real, correct, settled content (see browser-local-preproduction.json)."
+}

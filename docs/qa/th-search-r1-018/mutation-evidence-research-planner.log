@@ -1,0 +1,183 @@
+=== RED (research-planner.ts pre-fix: SENIOR-01 + CROSS-01) ===
+(node:37512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ INSURANCE SCOPE: named agency does not become an unscoped cohort (74.5435ms)
+✔ INSURANCE SCOPE: named insurer does not become an agency cohort (55.7358ms)
+✔ INSURANCE SCOPE: ZIP is retained and handed off, never executed as an unscoped cohort (6.9343ms)
+✔ INSURANCE SCOPE: unsupported local (bare city) path never becomes an unscoped cohort (5.3594ms)
+✔ INSURANCE SCOPE: near-me stays fail-closed (unaffected control) (388.0428ms)
+✔ INSURANCE SCOPE MUTATION: removing identityName mapping forces cohort (must fail if restored) (2.1523ms)
+✔ IDENTIFIER FILLERS: NAIC positive formats extract the real value (7.7173ms)
+✔ IDENTIFIER FILLERS: NPN positive formats extract the real value (6.8975ms)
+✔ IDENTIFIER FILLERS: CRD positive formats extract the real value (5.8882ms)
+✔ IDENTIFIER FILLERS: NMLS positive formats extract the real value (6.7222ms)
+✔ IDENTIFIER FILLERS: LEI positive formats extract the real value (3.1949ms)
+✔ IDENTIFIER FILLERS: trailing context is not swallowed as the value (4.0665ms)
+✔ IDENTIFIER FILLERS negatives: missing value never fabricates an identifier (5.3314ms)
+✔ IDENTIFIER FILLERS: a company containing the bare word "Code" is not treated as an identifier without a real label (0.378ms)
+✔ IDENTIFIER FILLERS MUTATION: restoring first-token-after-label behavior must fail these tests (0.5111ms)
+✖ SENIOR DEICTIC: nursing home (3.6098ms)
+✔ SENIOR DEICTIC: assisted living and hospice do not fabricate an entity name (5.7073ms)
+✔ SENIOR DEICTIC: exact identifier positive is not blocked by the deictic guard (1.6726ms)
+✔ SENIOR DEICTIC MUTATION: removing "nursing home" from deictic coverage must fail (must fail if restored) (0.4533ms)
+✔ CONTRACTOR: live compatible contract (matching version+schema, different fingerprint) is accepted (7.8538ms)
+✔ CONTRACTOR: stale/incompatible contractVersion is still rejected fail-closed (1.8539ms)
+✔ CONTRACTOR: incompatible schemaFingerprint is still rejected fail-closed (2.8681ms)
+✔ CONTRACTOR: wrong specialist envelope (contract family) is still rejected fail-closed (2.986ms)
+✔ CONTRACTOR: missing required result-state field is still rejected fail-closed (1.969ms)
+✔ CONTRACTOR: NJ and TX specialist semantics remain preserved (unaffected control) (4.4772ms)
+✔ CONTRACTOR MUTATION: restoring the stale fingerprint-pinned lock must fail Broward execution (must fail if restored) (2.4589ms)
+✖ CROSS DOMAIN: mover+lender requires clarification, never silently executes one domain (521.3076ms)
+✔ CROSS DOMAIN: contractor+lender requires clarification (2.6459ms)
+✖ CROSS DOMAIN: insurance+lender requires clarification (130.2657ms)
+✔ CROSS DOMAIN: move+senior requires clarification (4.2691ms)
+✔ CROSS DOMAIN false-positive controls: single-domain company names and phrasings execute normally (1649.5613ms)
+✔ CROSS DOMAIN control: the existing intentional Broward home-buying journey is preserved (1.58ms)
+✖ CROSS DOMAIN MUTATION: allowing lenderIntent early-return before the multi-domain plan check must fail (must fail if restored) (2.4836ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 29
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3537.1349
+
+✖ failing tests:
+
+test at lib\guided-research\th-search-r1-018.test.ts:156:1
+✖ SENIOR DEICTIC: nursing home (3.6098ms)
+  AssertionError [ERR_ASSERTION]: Who owns this nursing home?
+  + actual - expected
+  
+  + 'Who owns this nursing home'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts:159:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Who owns this nursing home',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\guided-research\th-search-r1-018.test.ts:268:1
+✖ CROSS DOMAIN: mover+lender requires clarification, never silently executes one domain (521.3076ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'REFINE'
+  - 'CLARIFY'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts:270:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'REFINE',
+    expected: 'CLARIFY',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\guided-research\th-search-r1-018.test.ts:281:1
+✖ CROSS DOMAIN: insurance+lender requires clarification (130.2657ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'REFINE'
+  - 'CLARIFY'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts:283:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'REFINE',
+    expected: 'CLARIFY',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\guided-research\th-search-r1-018.test.ts:307:1
+✖ CROSS DOMAIN MUTATION: allowing lenderIntent early-return before the multi-domain plan check must fail (must fail if restored) (2.4836ms)
+  AssertionError [ERR_ASSERTION]: the planner must classify this as multi-domain before any single-hub session logic runs
+  + actual - expected
+  
+  + 'COHORT_BROWSE'
+  - 'MULTI_HUB_JOURNEY'
+  
+      at TestContext.<anonymous> (file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts:309:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'COHORT_BROWSE',
+    expected: 'MULTI_HUB_JOURNEY',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+=== GREEN (fix restored) ===
+(node:33392) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ INSURANCE SCOPE: named agency does not become an unscoped cohort (41.1104ms)
+✔ INSURANCE SCOPE: named insurer does not become an agency cohort (67.3128ms)
+✔ INSURANCE SCOPE: ZIP is retained and handed off, never executed as an unscoped cohort (7.4378ms)
+✔ INSURANCE SCOPE: unsupported local (bare city) path never becomes an unscoped cohort (8.9571ms)
+✔ INSURANCE SCOPE: near-me stays fail-closed (unaffected control) (294.9372ms)
+✔ INSURANCE SCOPE MUTATION: removing identityName mapping forces cohort (must fail if restored) (4.5776ms)
+✔ IDENTIFIER FILLERS: NAIC positive formats extract the real value (11.7531ms)
+✔ IDENTIFIER FILLERS: NPN positive formats extract the real value (9.4393ms)
+✔ IDENTIFIER FILLERS: CRD positive formats extract the real value (8.4072ms)
+✔ IDENTIFIER FILLERS: NMLS positive formats extract the real value (8.5322ms)
+✔ IDENTIFIER FILLERS: LEI positive formats extract the real value (4.9496ms)
+✔ IDENTIFIER FILLERS: trailing context is not swallowed as the value (2.4599ms)
+✔ IDENTIFIER FILLERS negatives: missing value never fabricates an identifier (4.7431ms)
+✔ IDENTIFIER FILLERS: a company containing the bare word "Code" is not treated as an identifier without a real label (0.2089ms)
+✔ IDENTIFIER FILLERS MUTATION: restoring first-token-after-label behavior must fail these tests (0.3234ms)
+✔ SENIOR DEICTIC: nursing home (3.0787ms)
+✔ SENIOR DEICTIC: assisted living and hospice do not fabricate an entity name (6.0008ms)
+✔ SENIOR DEICTIC: exact identifier positive is not blocked by the deictic guard (2.2435ms)
+✔ SENIOR DEICTIC MUTATION: removing "nursing home" from deictic coverage must fail (must fail if restored) (0.6907ms)
+✔ CONTRACTOR: live compatible contract (matching version+schema, different fingerprint) is accepted (5.2834ms)
+✔ CONTRACTOR: stale/incompatible contractVersion is still rejected fail-closed (2.8496ms)
+✔ CONTRACTOR: incompatible schemaFingerprint is still rejected fail-closed (2.0771ms)
+✔ CONTRACTOR: wrong specialist envelope (contract family) is still rejected fail-closed (2.4011ms)
+✔ CONTRACTOR: missing required result-state field is still rejected fail-closed (2.2634ms)
+✔ CONTRACTOR: NJ and TX specialist semantics remain preserved (unaffected control) (6.2351ms)
+✔ CONTRACTOR MUTATION: restoring the stale fingerprint-pinned lock must fail Broward execution (must fail if restored) (4.0743ms)
+✔ CROSS DOMAIN: mover+lender requires clarification, never silently executes one domain (3.8334ms)
+✔ CROSS DOMAIN: contractor+lender requires clarification (1.4188ms)
+✔ CROSS DOMAIN: insurance+lender requires clarification (2.5086ms)
+✔ CROSS DOMAIN: move+senior requires clarification (2.8302ms)
+✔ CROSS DOMAIN false-positive controls: single-domain company names and phrasings execute normally (1595.1504ms)
+✔ CROSS DOMAIN control: the existing intentional Broward home-buying journey is preserved (2.6504ms)
+✔ CROSS DOMAIN MUTATION: allowing lenderIntent early-return before the multi-domain plan check must fail (must fail if restored) (1.803ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2639.999

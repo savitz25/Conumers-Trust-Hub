@@ -249,7 +249,16 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
   if ('error' in outcome) return failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
   const payload = outcome.body;
   if (text(payload.contract) !== SPECIALIST_EXECUTION_CONTRACT) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'contract_mismatch');
-  if (text(payload.contractVersion)!==CONTRACTOR_CONTRACT_VERSION || text(payload.schemaFingerprint)!==CONTRACTOR_SCHEMA_FINGERPRINT || text(payload.contractFingerprint)!==CONTRACTOR_CONTRACT_FINGERPRINT) return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_version_mismatch','ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.');
+  // TH-SEARCH-R1-018 BLOCKER-CONTRACTOR-01: require an exact match on contractVersion and
+  // schemaFingerprint (the version and structural-shape guarantees Ask actually depends on) but
+  // not on contractFingerprint. Confirmed live: ContractorTrustHub currently returns the SAME
+  // contract name, the SAME contractVersion ('2.1.0'), and the SAME schemaFingerprint as this
+  // lock, but a DIFFERENT contractFingerprint -- i.e. a compatible build-specific revision, not
+  // an incompatible schema change. Pinning on contractFingerprint too made every such compatible
+  // revision an outright outage for every Contractor cohort/identifier dispatch. contractFingerprint
+  // is intentionally no longer part of the fail-closed check; CONTRACTOR_CONTRACT_FINGERPRINT is
+  // still exported/tested for visibility into what the last-known-good build reported.
+  if (text(payload.contractVersion)!==CONTRACTOR_CONTRACT_VERSION || text(payload.schemaFingerprint)!==CONTRACTOR_SCHEMA_FINGERPRINT) return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_version_mismatch','ContractorTrustHub’s structured research contract is temporarily unavailable because its version lock changed.');
   const rawState=text(payload.resultState);
   const contractorStates=['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','CLARIFICATION_REQUIRED','INVALID_GEOGRAPHY','UNSUPPORTED_STATE_CAPABILITY','UNSUPPORTED_TRADE_CAPABILITY','PUBLICATION_RESTRICTED','INVALID_QUERY','BACKEND_UNAVAILABLE','TIMEOUT','EXACT_IDENTITY'] as const;
   if (!rawState || !contractorStates.includes(rawState as typeof contractorStates[number])) return failure(session,outcome.status>=500?'BACKEND_UNAVAILABLE':'INVALID_QUERY',outcome.latencyMs,'unknown_result_state');
@@ -414,10 +423,23 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
     result.firstUsefulResult=true;
     return result;
   }
+  if(session.insuranceResearchMode==='local_directory_handoff'){
+    // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: specialist-execution/v2 has no ZIP/local-directory
+    // query type -- confirmed live, it silently ignores geography.zip/zipCode fields and returns
+    // the entire unscoped agency population. Hand off to InsuranceTrustHub's own certified
+    // ZIP-directory /ask flow (insurance-ask-v1) rather than execute that unscoped cohort here.
+    const message='InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering yet. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does.';
+    const result=failure(session,'UNSUPPORTED_CAPABILITY',0,'zip_directory_not_supported',message);
+    result.limitations=[message,'Directory listing is not a regulatory identity confirmation.'];
+    result.destinations=[{type:'DIRECTORY',href:`https://www.insurancetrusthub.com/ask?q=${encodeURIComponent(session.originalQuestion)}`,label:'Continue on InsuranceTrustHub'}];
+    result.firstUsefulResult=true;
+    return result;
+  }
   const filters:Record<string,unknown>={};const loa=session.selectedFilters.lineOfAuthority??session.insuranceLineOfAuthority;if(loa)filters.lineOfAuthority=[loa];
   const body=session.identifier?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identifier',identifier:{type:session.identifier.type,value:session.identifier.value},limit:10}
-    :ranking?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'evidence',entityClass:'legal_insurer',requestedEvidence:['RANKING']}
-      :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':session.insuranceEntityClass==='legal_insurer'?'DOMICILE':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
+    :session.insuranceResearchMode==='identity_name'?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identity',entityClass:session.insuranceEntityClass,identityName:session.identityName,limit:10}
+      :ranking?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'evidence',entityClass:'legal_insurer',requestedEvidence:['RANKING']}
+        :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':session.insuranceEntityClass==='legal_insurer'?'DOMICILE':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
   const outcome=await specialistFetch('insurance',body);if('error'in outcome)return failure(session,outcome.error,outcome.latencyMs,outcome.error.toLowerCase());
   const payload=outcome.body;if(!validateFinancialContract('insurance',payload))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_mismatch','InsuranceTrustHub’s structured contract lock changed.');
   const state=financialState(payload,outcome.status);if(!['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','EXACT_IDENTITY'].includes(state))return financialFailure(session,payload,state,outcome.latencyMs);
@@ -495,7 +517,8 @@ function supported(session: GuidedResearchSession, payload: Record<string, unkno
 export function isGuidedExecutionAuthorized(session:GuidedResearchSession):boolean {
   const canonical=planAskResearch(session.originalQuestion);
   const authorizedHub=canonical.primaryHub??createGuidedSession(session.originalQuestion)?.hub;
-  if(authorizedHub!==session.hub||!session.researchPlan.executionAllowed||(!session.executionScope.executionAllowed&&!(session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY')))return false;
+  const scopeCapabilityExempt=(session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY')||(session.hub==='insurance'&&session.insuranceResearchMode==='local_directory_handoff');
+  if(authorizedHub!==session.hub||!session.researchPlan.executionAllowed||(!session.executionScope.executionAllowed&&!scopeCapabilityExempt))return false;
   if(canonical.reasonCodes.includes('CARE_TASK')){
     const original=canonical.requestedGeography,geo=session.geography;
     if(!session.providerClass||(canonical.careSetting&&canonical.careSetting!==session.providerClass)||(original?.city&&original.city.toLowerCase()!==geo?.city?.toLowerCase())||(original?.stateCode&&original.stateCode!==geo?.stateCode))return false;

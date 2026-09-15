@@ -110,7 +110,8 @@
     "verify:ath-cust-002b": "node scripts/ath-cust-002b-verify-neon.mjs",
     "proof:ath-cust-002": "node --experimental-strip-types scripts/ath-cust-002-proof.ts",
     "check:th-search-r1-008": "node --experimental-strip-types --test lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts",
-    "check:th-search-r1-016": "node --experimental-strip-types --test lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/network/prompt-2.test.ts lib/network/lender-execute.test.ts lib/network/move-execute.test.ts lib/network/insurance-execute.test.ts lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts"
+    "check:th-search-r1-016": "node --experimental-strip-types --test lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/network/prompt-2.test.ts lib/network/lender-execute.test.ts lib/network/move-execute.test.ts lib/network/insurance-execute.test.ts lib/network/ath-search-002.test.ts lib/network/ath-search-001.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts",
+    "check:th-search-r1-018": "node --experimental-strip-types --test lib/guided-research/th-search-r1-018.test.ts lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts lib/network/ath-search-002.test.ts lib/network/ask-intel-001e.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.0",

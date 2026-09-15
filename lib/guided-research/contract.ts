@@ -44,7 +44,7 @@ export type GuidedResearchSession = {
   maximumRaum?: number;
   compensationMethod?: string;
   insuranceEntityClass?: 'agency' | 'producer' | 'legal_insurer';
-  insuranceResearchMode?: 'cohort' | 'identity_name' | 'identifier' | 'complaints';
+  insuranceResearchMode?: 'cohort' | 'identity_name' | 'identifier' | 'complaints' | 'local_directory_handoff';
   insuranceLineOfAuthority?: string;
   lenderResearchMode?: 'property_market' | 'identity_name' | 'identifier' | 'complaints' | 'unsupported_person_branch';
   hmdaAction?: 'application' | 'origination' | 'denial';

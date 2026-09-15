@@ -1,0 +1,198 @@
+
+> ask-trust-hub@2.1.0 check:th-search-r1-018
+> node --experimental-strip-types --test lib/guided-research/th-search-r1-018.test.ts lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts lib/network/ath-search-002.test.ts lib/network/ask-intel-001e.test.ts
+
+(node:13924) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/ath-guided-001.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ session contract is versioned, ephemeral, validated, resettable, and action based (81.9157ms)
+✔ Back restores complete clarification and collection states without unnecessary execution (111.4109ms)
+✔ Back re-executes restored result filters and preserves sequential history (56.9805ms)
+✔ filters are visible, clearable, and server validated against current refinements (45.2225ms)
+✔ changing earlier choices invalidates dependent class, trade, and Move state (33.1226ms)
+✔ ERROR_RECOVERY Back restores and re-executes the last valid result state (13.8896ms)
+✔ complete direct queries bypass clarification while incomplete identities retain their flow (40.6752ms)
+✔ Senior life situation asks class then geography and executes class-separated evidence (4.7123ms)
+✔ Senior supported county, unsupported Home Health county, and CCN fixtures remain distinct (7.5419ms)
+✔ Contractor collects missing trade/geography and executes supported Florida DBPR scope (6.9347ms)
+✔ Contractor consumer trade menu, deterministic other flow, and direct electrician path are complete (3.9329ms)
+✔ Contractor menu executes supported trades and returns to the trade menu from results (10.4118ms)
+✔ Florida electrical resolves Boca/Palm Beach but renders unsupported without substitute rows (1.2403ms)
+✔ generic New Jersey contractor stays trade-neutral and uses source-owned capability choices (5.3405ms)
+✔ conflicting Summit County New Jersey geography is clarified, while Summit city resolves to Union County (3.8669ms)
+✔ Contractor V2.1 lock and New Jersey specialty execution remain source-owned and state-separated (24.1642ms)
+✔ New Jersey General remains unsupported and HIC is never relabeled General (3.3408ms)
+✔ result-bearing clarification survives deterministic reload and resume (43.7887ms)
+✔ every specialist result-bearing clarification re-executes with its explanation and choices (21.498ms)
+✔ New Jersey credential jurisdiction remains distinct from an out-of-state recorded address (2.7495ms)
+✔ Summit HIC executes exact Union County intersection and statewide fallback requires confirmation (4.8522ms)
+✔ Contractor service-territory requests fail closed without address substitution (7.0897ms)
+✔ Move clarifies mode, executes Auto Transport without route geography, and preserves role refinements (6.6605ms)
+✔ Move service-territory and route availability fail closed usefully (2.5368ms)
+✔ result states, deep links, refinements, and safety invariants remain explicit (8.1348ms)
+✔ absolute metrics remain zero by construction (0.4608ms)
+(node:26168) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/ath-guided-003.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FALSE_CONFIDENT_ANSWERS = 0
+SUPPORTED_INTENT_DEAD_ENDS = 0
+PUBLICATION_LEAKAGE = 0
+PRIVATE_PERSON_LEAKAGE = 0
+PROFILE_MINTING = 0
+PAID_ORDER_SIGNALS = 0
+UNIVERSAL_SCORES = 0
+SERVICE_TERRITORY_INFERENCES = 0
+RAUM_AS_PERFORMANCE = 0
+COMPLAINT_AS_WRONGDOING = 0
+HMDA_AS_HEADQUARTERS = 0
+ENTITY_CLASS_COLLAPSES = 0
+MISSING_RESULT_EXPLANATIONS_AFTER_RESUME = 0
+BROKEN_BACK_TRANSITIONS = 0
+HIDDEN_ACTIVE_FILTERS = 0
+UNCLEARABLE_ACTIVE_FILTERS = 0
+SIX_HUB_FANOUTS = 0
+✔ specialist locks are independent and exact (4.29ms)
+✔ generic financial needs are local action clarifications with zero fan-out (74.3265ms)
+✔ audited financial direct goldens preserve hub and result states (245.6882ms)
+✔ requests preserve source semantics and publication firewalls (9.5936ms)
+✔ result-bearing financial states resume, while local clarification does not call specialists (8.2978ms)
+✔ consumer UI includes all hubs and no profile minting or unsafe ranking controls (7.4362ms)
+(node:13320) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/guided-research/th-search-r1-018.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ INSURANCE SCOPE: named agency does not become an unscoped cohort (63.4067ms)
+✔ INSURANCE SCOPE: named insurer does not become an agency cohort (81.891ms)
+✔ INSURANCE SCOPE: ZIP is retained and handed off, never executed as an unscoped cohort (5.0717ms)
+✔ INSURANCE SCOPE: unsupported local (bare city) path never becomes an unscoped cohort (7.3165ms)
+✔ INSURANCE SCOPE: near-me stays fail-closed (unaffected control) (310.2352ms)
+✔ INSURANCE SCOPE MUTATION: removing identityName mapping forces cohort (must fail if restored) (2.0227ms)
+✔ IDENTIFIER FILLERS: NAIC positive formats extract the real value (6.0938ms)
+✔ IDENTIFIER FILLERS: NPN positive formats extract the real value (5.8177ms)
+✔ IDENTIFIER FILLERS: CRD positive formats extract the real value (4.4535ms)
+✔ IDENTIFIER FILLERS: NMLS positive formats extract the real value (5.6022ms)
+✔ IDENTIFIER FILLERS: LEI positive formats extract the real value (3.6311ms)
+✔ IDENTIFIER FILLERS: trailing context is not swallowed as the value (2.8368ms)
+✔ IDENTIFIER FILLERS negatives: missing value never fabricates an identifier (3.8378ms)
+✔ IDENTIFIER FILLERS: a company containing the bare word "Code" is not treated as an identifier without a real label (0.1631ms)
+✔ IDENTIFIER FILLERS MUTATION: restoring first-token-after-label behavior must fail these tests (0.2185ms)
+✔ SENIOR DEICTIC: nursing home (1.7032ms)
+✔ SENIOR DEICTIC: assisted living and hospice do not fabricate an entity name (2.8856ms)
+✔ SENIOR DEICTIC: exact identifier positive is not blocked by the deictic guard (1.8211ms)
+✔ SENIOR DEICTIC MUTATION: removing "nursing home" from deictic coverage must fail (must fail if restored) (0.6605ms)
+✔ CONTRACTOR: live compatible contract (matching version+schema, different fingerprint) is accepted (4.7971ms)
+✔ CONTRACTOR: stale/incompatible contractVersion is still rejected fail-closed (2.073ms)
+✔ CONTRACTOR: incompatible schemaFingerprint is still rejected fail-closed (2.839ms)
+✔ CONTRACTOR: wrong specialist envelope (contract family) is still rejected fail-closed (2.9835ms)
+✔ CONTRACTOR: missing required result-state field is still rejected fail-closed (1.3053ms)
+✔ CONTRACTOR: NJ and TX specialist semantics remain preserved (unaffected control) (4.9409ms)
+✔ CONTRACTOR MUTATION: restoring the stale fingerprint-pinned lock must fail Broward execution (must fail if restored) (2.6279ms)
+✔ CROSS DOMAIN: mover+lender requires clarification, never silently executes one domain (1.7167ms)
+✔ CROSS DOMAIN: contractor+lender requires clarification (1.0097ms)
+✔ CROSS DOMAIN: insurance+lender requires clarification (0.7883ms)
+✔ CROSS DOMAIN: move+senior requires clarification (1.1106ms)
+✔ CROSS DOMAIN false-positive controls: single-domain company names and phrasings execute normally (1823.4068ms)
+✔ CROSS DOMAIN control: the existing intentional Broward home-buying journey is preserved (2.875ms)
+✔ CROSS DOMAIN MUTATION: allowing lenderIntent early-return before the multi-domain plan check must fail (must fail if restored) (1.8715ms)
+(node:38056) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/network/ask-intel-001e.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ASK-INTEL-V3 scorecard {
+  move: { pass: 22, total: 22 },
+  network: { pass: 25, total: 25 },
+  lender: { pass: 24, total: 24 },
+  insurance: { pass: 22, total: 22 },
+  senior: { pass: 22, total: 22 },
+  contractor: { pass: 24, total: 24 },
+  investor: { pass: 23, total: 23 }
+}
+✔ V3 corpus is permanent, balanced, colloquial, and covers all nine intents (3.622ms)
+✔ all golden cases satisfy semantic routing and hard safety invariants (234.1176ms)
+✔ identifier families reject ambiguous digits and certify labeled sentence variants (5.4682ms)
+✔ deterministic mutations do not break representative intent and Hub routing (22.0754ms)
+✔ observability is typed, bucketed, bounded, and contains no sensitive raw fields (2.6924ms)
+✔ result-state families remain distinct and receive state-specific next actions (1.7693ms)
+✔ unsupported local scope causes zero specialist calls and never becomes true zero (16.6518ms)
+✔ large-cohort rendering is bounded, neutral, and never labels source order as ranking (6.2563ms)
+✔ response-specific URL firewall rejects protocol, origin, encoding, and user-content attacks (0.9815ms)
+✔ consumer-visible V3 code contains explicit non-inference language and no positive prohibited claims (1.5156ms)
+(node:42332) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/network/ath-search-002.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Move exact identifier maps to exact identity without rewriting specialist facts (56.2389ms)
+✔ Move ambiguity and fuzzy candidates remain uncertain and unranked (19.5124ms)
+✔ Move no-match, outage, timeout, invalid input, and contract mismatch fail closed distinctly (65.059ms)
+✔ identity failure never becomes a Move market cohort (3.9321ms)
+✔ other hub, structured, place, life-event, ranking, and universal-score routing remain separated (20.9433ms)
+✔ Concierge Markdown supports safe links and rejects executable protocols and raw HTML (3.3894ms)
+✔ golden acceptance metrics remain absolute zero (3.497ms)
+(node:19028) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/network/th-search-r1-008.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R1-008 ambiguous Senior discovery retains task and class choices (118.9127ms)
+✔ R1-008 blocked legacy execution calls no specialist (13.1248ms)
+✔ R1-008 nursing-home choice retains Austin and Texas in actual dispatch (72.8875ms)
+✔ R1-008 city-only Houston does not invent a state or execute nationally (5.4322ms)
+✔ R1-008 moving belongings to care remains a Move task (2.7418ms)
+✔ R1-008 explicit care plus move has separate ordered steps (2.4444ms)
+✔ R1-008 original class clarification completes inline source-backed results (29.7778ms)
+✔ R1-008 explicit class nursing_home executes directly (8.6033ms)
+✔ R1-008 explicit class home_health executes directly (9.2484ms)
+✔ R1-008 explicit class hospice executes directly (13.702ms)
+✔ R1-008 city-only choice completes only after state selection (7.3961ms)
+✔ R1-008 not-sure explains while retaining executable choices and location (7.3477ms)
+✔ R1-008 no CMS substitute: assisted living in Austin Texas (1.7417ms)
+✔ R1-008 no CMS substitute: memory care in Austin Texas (1.4032ms)
+✔ R1-008 no CMS substitute: independent living in Austin Texas (1.9992ms)
+✔ R1-008 rejects wrong hub contribution (3.4573ms)
+✔ R1-008 rejects wrong class contribution (3.7665ms)
+✔ R1-008 rejects wrong state contribution (5.2716ms)
+✔ R1-008 rejects wrong city contribution (4.1705ms)
+✔ R1-008 rejects wrong origin contribution (4.1976ms)
+✔ R1-008 legitimate empty cohort stays distinct from unavailable (3.5941ms)
+✔ R1-008 tampered hub cannot authorize dispatch (2.9003ms)
+✔ R1-008 tampered providerClass cannot authorize dispatch (1.9435ms)
+✔ R1-008 tampered city cannot authorize dispatch (1.5858ms)
+✔ R1-008 tampered state cannot authorize dispatch (3.0678ms)
+✔ R1-008 non-care contrasts do not gain a care-setting question (6.5972ms)
+✔ R1-008 explicit place lens retains its separately authorized overview (0.5871ms)
+✔ R1-008 direct dispatcher rejects a forged authorized plan before fetch (3.3101ms)
+✔ R1-008 missing state is never an executed scope (0.5157ms)
+✔ R1-008 malformed and overlong questions cannot become partial execution (0.3ms)
+✔ R1-008 unsupported evidence and invalid ratings cannot run an unfiltered cohort (5.9586ms)
+✔ R1-008 explicit source-rating filter reaches selected class request (5.2054ms)
+✔ R1-008 profile identity must agree with returned CCN (5.0323ms)
+✔ R1-008 journey care choice retains original local question (0.628ms)
+✔ R1-008 forged executed city value and unsupported-evidence permission are rejected (4.6686ms)
+✔ R1-008 care choice preserves original rating and executable handoff scope (6.8429ms)
+✔ R1-008 forged history cannot replace the original task during BACK (5.2682ms)
+(node:33808) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/makei/ask-trust-hub-r1-018-worktree/lib/network/th-search-r1-016.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\makei\ask-trust-hub-r1-018-worktree\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R1-016 Bug #1: NMLS and LEI are registered live on lender-ask-v1 (1.6914ms)
+✔ R1-016 Bug #1: NMLS identifier query routes to a live lender-ask-v1 execute call (29.6541ms)
+✔ R1-016 Bug #2: Lender NMLS miss downgrades EXACT_IDENTITY to NO_CONFIDENT_MATCH (72.8711ms)
+✔ R1-016 Bug #2: a real Lender NMLS hit is not downgraded (no false negative) (18.9538ms)
+✔ R1-016 Bug #3: a bare multi-word company name is recognized as an entity lookup (8.0864ms)
+✔ R1-016 Bug #3: a company name embedded in a route/journey sentence still executes an identity lookup (5.5186ms)
+✔ R1-016 Bug #3: a pure route/service-territory cohort question (no named company) stays a disclosed clarification, not silently blocked (4.3481ms)
+✔ R1-016 Bug #3 (guided session): a company name embedded in a route sentence reaches EXECUTE with the identity preserved (9.0957ms)
+✔ R1-016 Bug #3 (guided session): a bare company name still reaches EXECUTE with the identity preserved (3.5144ms)
+✔ R1-016 Bug #3 (guided session): a pure route/service query with no named company still executes a cohort search, not an identity lookup (2.1572ms)
+✔ R1-016 regression: malformed identifier-shaped input stays a blocked missing-identity clarification (3.5178ms)
+✔ R1-016 regression: an instruction to fabricate a value is not treated as a real entity lookup (0.9395ms)
+✔ R1-016 regression: previously-working cohort and identifier queries are unaffected (11.359ms)
+ℹ tests 132
+ℹ suites 0
+ℹ pass 132
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3274.6274

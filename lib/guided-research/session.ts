@@ -6,6 +6,35 @@ import { planAskResearch, planRequiresImmediateClarification, validateAskResearc
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
 
+/**
+ * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
+ *
+ * Recognizes a regulatory identifier label optionally followed by a natural filler word/phrase
+ * ("code", "company code", "number", "no.", "#") before the actual value, so phrasings like
+ * "NAIC code 10064" or "NPN number 20000635" extract the real value instead of the filler word
+ * itself. Centralized here (rather than per-hub) since every guided-session identifier capture
+ * site shares this same label+filler+value shape. `anchored` matches a direct single-value input
+ * (e.g. a dedicated "provide the identifier" follow-up field) rather than free natural-language
+ * text embedded in a longer sentence.
+ */
+export type LabeledIdentifierMatch = { type: string; value: string };
+const IDENTIFIER_FILLER_SOURCE = String.raw`(?:\s+company)?(?:\s+(?:code|number|no\.?))?\s*#?-?\s*`;
+export function parseLabeledIdentifier(text: string, digitLabels: readonly string[], options: { anchored?: boolean; leiSupported?: boolean } = {}): LabeledIdentifierMatch | null {
+  const { anchored = false, leiSupported = false } = options;
+  const start = anchored ? '^' : '\\b';
+  const end = anchored ? '$' : '\\b';
+  const digitMatch = text.match(new RegExp(`${start}(${digitLabels.join('|')})\\b${IDENTIFIER_FILLER_SOURCE}(\\d{3,12})${end}`, 'i'));
+  if (digitMatch) {
+    const rawType = digitMatch[1]!.toUpperCase();
+    return { type: rawType === 'DOT' ? 'USDOT' : rawType, value: digitMatch[2]! };
+  }
+  if (leiSupported) {
+    const leiMatch = text.match(new RegExp(`${start}LEI\\b${IDENTIFIER_FILLER_SOURCE}([A-Z0-9]{18,22})${end}`, 'i'));
+    if (leiMatch) return { type: 'LEI', value: leiMatch[1]!.toUpperCase() };
+  }
+  return null;
+}
+
 const CARE_CHOICES: GuidedChoice[] = [
   { id: 'nursing-home', label: 'Nursing home / skilled nursing', action: 'SELECT_CHOICE', value: 'nursing_home', description: 'Facility-based skilled nursing and long-term care records.' },
   { id: 'home-health', label: 'Home health agencies', action: 'SELECT_CHOICE', value: 'home_health', description: 'CMS home-health agency records, not every form of personal care. Office location is not service area.' },
@@ -134,8 +163,8 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     return next;
   }
   const financialGeography=geographyFromParsed(parsed);
-  const labeledIdentifier=q.match(/\b(CRD|NPN|NAIC|NMLS|LEI)\s*#?\s*([A-Z0-9-]+)\b/i);
-  if(labeledIdentifier)session.identifier={type:labeledIdentifier[1].toUpperCase(),value:labeledIdentifier[2].toUpperCase()};
+  const labeledIdentifier=parseLabeledIdentifier(q,['CRD','NPN','NAIC','NMLS'],{leiSupported:true});
+  if(labeledIdentifier)session.identifier=labeledIdentifier;
 
   if (planRequiresImmediateClarification(plan)) {
     session.hub = plan.primaryHub as GuidedResearchSession['hub'];
@@ -166,10 +195,31 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   if(insuranceIntent){
     session.hub='insurance';session.geography=financialGeography;
     if(/^i\s+need\s+help\s+with\s+insurance\s*[?.!]*$/i.test(q)||/\binsurance\s+provider\b/i.test(q)||/insurance\s+complaints\s+against\s+a\s+company/i.test(q)||/insurance\s+professional\s+near\s+me/i.test(q))return {...session,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:INSURANCE_CHOICES,nextAction:'What kind of insurance entity do you want to research?'};
-    session.insuranceResearchMode=session.identifier?'identifier':'cohort';
+    // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: a specific, defensible insurance entity name found
+    // by the research planner is the authoritative identity candidate (same pattern as Move's
+    // R1-016 fix) -- do not fall back to an unscoped cohort just because this hand-rolled block
+    // never independently rediscovers a name.
+    if(!session.identifier&&plan.entityName){
+      session.identityName=plan.entityName;
+      session.insuranceResearchMode='identity_name';
+    } else {
+      session.insuranceResearchMode=session.identifier?'identifier':'cohort';
+    }
     session.insuranceEntityClass=/\b(?:agents?|producers?|professional)\b/i.test(q)?'producer':/\b(?:legal\s+insurers?|insurance\s+compan(?:y|ies)|insurers?)\b/i.test(q)?'legal_insurer':'agency';
     session.entityClass=session.insuranceEntityClass;
     if(/\blife\s+insurance\b/i.test(q))session.insuranceLineOfAuthority='life';
+    // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: specialist-execution/v2 does not support ZIP or
+    // city-grain directory filtering (confirmed live -- it silently ignores the field and
+    // returns the entire ~82k-agency population). A ZIP or bare city request must never fall
+    // through to that unscoped cohort; hand off to InsuranceTrustHub's own certified ZIP/local
+    // directory /ask flow instead, which does support it.
+    if(!session.identityName&&!session.identifier){
+      const zip=q.match(/\bzip\s*(?:code)?\s*#?\s*(\d{5})\b/i)?.[1];
+      const zipGeography=zip?parseGuidedGeography(zip)??session.geography:session.geography;
+      if(zip||session.geography?.type==='zip'||session.geography?.type==='city'){
+        return {...session,geography:zipGeography,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute',insuranceResearchMode:'local_directory_handoff'};
+      }
+    }
     return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
   }
 
@@ -258,6 +308,11 @@ export function createGuidedSession(question:string):GuidedResearchSession|null{
   const unscopedIsMorePrecise=session.geography?.type==='city'&&scope.normalizedRequestedGeography?.kind==='state';
   const preserveUnsupportedTradeCity=session.hub==='contractor'&&session.trade==='electrical'&&session.geography?.type==='city';
   if(executable&&!unscopedIsMorePrecise&&!preserveUnsupportedTradeCity)session.geography=executable;
+  // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: an insurance local-directory handoff (ZIP or bare
+  // city, neither of which specialist-execution/v2 supports) already carries its own correct
+  // UNSUPPORTED_CAPABILITY + destination-link result from executeInsurance -- this scope-check's
+  // generic broadening-consent CLARIFY must not override that with a blank geography.
+  if(session.hub==='insurance'&&session.insuranceResearchMode==='local_directory_handoff')return session;
   if(!scope.requestedGeography||session.identifier||session.identityName)return session;
   if(['contractor','move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(scope.requestedGeographyMeaning??''))return session;
   if(scope.executionAllowed)return session;

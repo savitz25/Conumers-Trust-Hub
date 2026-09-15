@@ -1,5 +1,5 @@
 import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult } from './contract.ts';
-import { createGuidedSession, refreshCareSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
 import {careLocation,initialCareRatingFilters,type CareSetting} from '../network/care-task.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {validateAskQuestion} from '../network/ask-request.ts';
@@ -141,10 +141,9 @@ function collectValue(session: GuidedResearchSession, value: string): GuidedRese
     return touch({ ...next,identityName:name,missingFields:[],phase:'EXECUTE',nextAction:'execute' });
   }
   if (session.missingFields.includes('identifier')) {
-    const match=value.trim().match(/^(USDOT|DOT|MC|CRD|NPN|NAIC|NMLS|LEI)\s*#?-?\s*([A-Z0-9-]{3,24})$/i);
+    const match=parseLabeledIdentifier(value.trim(),['USDOT','DOT','MC','CRD','NPN','NAIC','NMLS'],{anchored:true,leiSupported:true});
     if (!match) throw new Error('invalid_identifier');
-    const type=/^dot$/i.test(match[1])?'USDOT':match[1].toUpperCase();
-    return touch({ ...next,identifier:{type,value:match[2].toUpperCase()},missingFields:[],phase:'EXECUTE',nextAction:'execute' });
+    return touch({ ...next,identifier:match,missingFields:[],phase:'EXECUTE',nextAction:'execute' });
   }
   throw new Error('nothing_to_collect');
 }
@@ -206,7 +205,7 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {
     session=touch({...session,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:session.identifier?'IDENTIFIER':session.identityName?'IDENTITY':'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_CLARIFICATION_COMPLETED']}});
   }
-  const specialistCapabilityCheck=session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY';
+  const specialistCapabilityCheck=(session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY')||(session.hub==='insurance'&&session.insuranceResearchMode==='local_directory_handoff');
   if (executionRequested && !session.executionScope.executionAllowed&&!specialistCapabilityCheck) {
     session=touch({...session,phase:'CLARIFY',nextAction:session.executionScope.disclosure??'The requested scope cannot be executed safely.'});
     if(['move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(session.executionScope.requestedGeographyMeaning??''))result={specialist:session.hub!,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'Requested scope is not executable',consumerMessage:session.executionScope.disclosure??'The accepted source cannot establish service territory or route availability from recorded location.',interpretation:[{label:'Requested geography',value:session.executionScope.requestedGeography?.display??'Requested route'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['Service territory and route availability are not source-backed by recorded location or regulatory authority.'],destinations:session.hub==='move'?[{type:'VERIFY' as const,href:'https://www.movetrusthub.com/verify-dot',label:'Verify a USDOT or MC'},{type:'DIRECTORY' as const,href:'https://www.movetrusthub.com/companies',label:'Research recorded headquarters'}]:[],error:{code:'requested_scope_not_executable',retryable:false},latencyMs:0,firstUsefulResult:true};
