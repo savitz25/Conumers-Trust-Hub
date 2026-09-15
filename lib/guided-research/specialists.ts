@@ -340,9 +340,18 @@ const FINANCIAL_STATES = new Set<GuidedResultState>([
   'UNSUPPORTED_CAPABILITY','PUBLICATION_RESTRICTED','INVALID_QUERY','BACKEND_UNAVAILABLE','TIMEOUT',
 ]);
 
+// TH-ARCH-P0-002: require an exact match on contractVersion and schemaFingerprint (the version and
+// structural-shape guarantees Ask actually depends on) but not on contractFingerprint, mirroring
+// the fix already applied to Contractor under TH-SEARCH-R1-018 BLOCKER-CONTRACTOR-01. Contractor's
+// own git history proves this class of fragility is real, not hypothetical: its contractFingerprint
+// hashes a descriptor that includes the supported-states list, so each purely additive state
+// addition (NJ, then TX) silently changed the fingerprint and would have been a total outage under
+// an exact-fingerprint pin. Investor/Insurance/Lender build their fingerprints the same way, so the
+// identical risk applies to them; contractFingerprint remains exported/available for diagnostics,
+// just not part of the fail-closed check.
 function validateFinancialContract(hub:'investor'|'insurance'|'lender',payload:Record<string,unknown>):boolean{
   const lock=FINANCIAL_SPECIALIST_LOCKS[hub];
-  return text(payload.contract)===SPECIALIST_EXECUTION_CONTRACT&&text(payload.contractVersion)===lock.version&&text(payload.schemaFingerprint)===lock.schemaFingerprint&&text(payload.contractFingerprint)===lock.contractFingerprint;
+  return text(payload.contract)===SPECIALIST_EXECUTION_CONTRACT&&text(payload.contractVersion)===lock.version&&text(payload.schemaFingerprint)===lock.schemaFingerprint;
 }
 
 function financialState(payload:Record<string,unknown>,status:number):GuidedResultState{
