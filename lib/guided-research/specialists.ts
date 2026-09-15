@@ -392,9 +392,16 @@ async function executeInvestor(session:GuidedResearchSession):Promise<GuidedExec
   const service=/\bserv(?:e|es|ing)\b/i.test(session.originalQuestion);
   const ranking=/\b(?:best|top)\b/i.test(session.originalQuestion);
   const performance=session.requestedEvidence.includes('PERFORMANCE')||session.requestedEvidence.includes('SAFETY_RANKING');
-  if(ranking||performance||service||session.investorFirmClass==='individual_representative'){
+  // TH-DISCOVERY-001: an unsupported qualitative ranking modifier ("best"/"top") must not block an
+  // otherwise-executable firm cohort -- only genuine capability gaps (performance/safety evidence
+  // InvestorTrustHub doesn't have; client-service-territory InvestorTrustHub can't prove; individual
+  // representatives InvestorTrustHub doesn't publish) do. `ranking` alone now falls through to the
+  // normal cohort execution below, which already threads rankingIntent through to the specialist
+  // (unused for sorting, but preserved for trace); a "does not rank" disclosure is attached to the
+  // real result afterward instead of replacing it with zero rows.
+  if(performance||service||session.investorFirmClass==='individual_representative'){
     const state=session.investorFirmClass==='individual_representative'?'PUBLICATION_RESTRICTED':'UNSUPPORTED_CAPABILITY';
-    const code=session.investorFirmClass==='individual_representative'?'individual_representative_publication_restricted':service?'service_territory_not_supported':performance?'performance_or_safety_ranking_not_supported':'ranking_not_supported';
+    const code=session.investorFirmClass==='individual_representative'?'individual_representative_publication_restricted':service?'service_territory_not_supported':'performance_or_safety_ranking_not_supported';
     const message=session.investorFirmClass==='individual_representative'?'Individual investment-adviser representatives are not published through this public contract. Research firms or an exact organization CRD instead.':service?'InvestorTrustHub can research principal-office geography, but principal office does not prove client geography or service territory.':'InvestorTrustHub does not rank firms or publish performance or safety winners. Filer-reported RAUM is not performance, returns, safety, or quality.';
     const result=failure(session,state,0,code,message);result.limitations=[message,'SEC/IARD registration is not approval or endorsement.'];result.firstUsefulResult=true;return result;
   }
@@ -420,6 +427,7 @@ async function executeInvestor(session:GuidedResearchSession):Promise<GuidedExec
   const result=supported(session,payload,rows,outcome.latencyMs,refinements);result.resultState=state;
   result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':`${firmClass==='ria'?'RIA':firmClass==='era'?'ERA':'Investment adviser firm'} research results`;
   result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public SEC/IARD firm records match these exact filters.':`${result.total.toLocaleString('en-US')} current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.`;
+  if(ranking&&result.total>0)result.limitations=['InvestorTrustHub does not rank firms as "best" or "top." Filer-reported RAUM and registration status are not performance, safety, or quality measures.', ...result.limitations];
   return result;
 }
 
@@ -445,10 +453,14 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
     return result;
   }
   const filters:Record<string,unknown>={};const loa=session.selectedFilters.lineOfAuthority??session.insuranceLineOfAuthority;if(loa)filters.lineOfAuthority=[loa];
+  // TH-DISCOVERY-001: "best"/"top" used to swap the whole request for a doomed evidence:'RANKING'
+  // request (InsuranceTrustHub has no such evidence type, so this always returned zero rows). An
+  // unsupported ranking modifier must not block an otherwise-executable cohort; it now runs the
+  // same cohort query a non-ranking request would, with a "does not rank" disclosure attached to
+  // the real result afterward instead of replacing it with zero rows.
   const body=session.identifier?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identifier',identifier:{type:session.identifier.type,value:session.identifier.value},limit:10}
     :session.insuranceResearchMode==='identity_name'?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identity',entityClass:session.insuranceEntityClass,identityName:session.identityName,limit:10}
-      :ranking?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'evidence',entityClass:'legal_insurer',requestedEvidence:['RANKING']}
-        :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':session.insuranceEntityClass==='legal_insurer'?'DOMICILE':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
+      :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':session.insuranceEntityClass==='legal_insurer'?'DOMICILE':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
   const outcome=await specialistFetch('insurance',body);if('error'in outcome)return failure(session,outcome.error,outcome.latencyMs,outcome.error.toLowerCase());
   const payload=outcome.body;if(!validateFinancialContract('insurance',payload))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_mismatch','InsuranceTrustHub’s structured contract lock changed.');
   const state=financialState(payload,outcome.status);if(!['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','EXACT_IDENTITY'].includes(state))return financialFailure(session,payload,state,outcome.latencyMs);
@@ -460,15 +472,20 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   const result=supported(session,payload,rows,outcome.latencyMs,refinements);result.resultState=state;
   result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':session.insuranceEntityClass==='legal_insurer'?'Public legal-insurer research results':'Insurance agency research results';
   result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public-safe insurance records match these exact filters.':`${result.total.toLocaleString('en-US')} public-safe ${session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency'} records match. Credential jurisdiction is not office, domicile, service territory, or product availability.`;
+  if(ranking&&result.total>0)result.limitations=['InsuranceTrustHub does not rank insurance agencies or insurers as "best" or "top." Source order is not a quality or safety judgment.', ...result.limitations];
   return result;
 }
 
 async function executeLender(session:GuidedResearchSession):Promise<GuidedExecutionResult>{
   const service=/\bserv(?:e|es|ing)|near me\b/i.test(session.originalQuestion);const ranking=/\b(?:best|top|safest)\b/i.test(session.originalQuestion);
-  if(ranking||session.lenderResearchMode==='unsupported_person_branch'){
-    const state=session.lenderResearchMode==='unsupported_person_branch'?'PUBLICATION_RESTRICTED':'UNSUPPORTED_CAPABILITY';
-    const message=state==='PUBLICATION_RESTRICTED'?'Branch and individual MLO mass publication is restricted. Research an institution, exact NMLS/LEI, or HMDA property market instead.':'LenderTrustHub does not rank mortgage lenders. Raw HMDA activity is not quality, safety, or a recommendation.';
-    const result=failure(session,state,0,state==='PUBLICATION_RESTRICTED'?'person_or_branch_publication_restricted':'ranking_not_supported',message);result.limitations=[message];result.firstUsefulResult=true;return result;
+  // TH-DISCOVERY-001: an unsupported ranking modifier ("best"/"top"/"safest") must not block an
+  // otherwise-executable HMDA property-market cohort -- only the genuine publication-restriction
+  // gap (branch/person mass listing) does. `ranking` alone now falls through to normal execution
+  // below (rankingIntent is already threaded through to the specialist for trace, unused for
+  // sorting); a "does not rank" disclosure is attached to the real result afterward.
+  if(session.lenderResearchMode==='unsupported_person_branch'){
+    const message='Branch and individual MLO mass publication is restricted. Research an institution, exact NMLS/LEI, or HMDA property market instead.';
+    const result=failure(session,'PUBLICATION_RESTRICTED',0,'person_or_branch_publication_restricted',message);result.limitations=[message];result.firstUsefulResult=true;return result;
   }
   const countyFips=session.geography?.county?.toLowerCase()==='broward'?'12011':session.geography?.county?.toLowerCase()==='palm beach'?'12099':undefined;
   const action=(session.selectedFilters.action as GuidedResearchSession['hmdaAction'])??session.hmdaAction??'origination';
@@ -495,6 +512,7 @@ async function executeLender(session:GuidedResearchSession):Promise<GuidedExecut
   else if(session.lenderResearchMode==='complaints')result.consumerMessage=`${Number(sourceRows[0]?.attachedObservationCount??0).toLocaleString('en-US')} consumer-submitted observations are attached under the accepted identity bridge. They are not findings of wrongdoing, are not size-adjusted, and are not a quality score.`;
   else result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No HMDA rows match these exact property-market filters.':`${result.total.toLocaleString('en-US')} HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.`;
   if(evidenceState&&evidenceState!==state)result.interpretation.push({label:'Evidence state',value:evidenceState});
+  if(ranking&&session.lenderResearchMode!=='complaints'&&result.total>0)result.limitations=['LenderTrustHub does not rank mortgage lenders as "best," "top," or "safest." Raw HMDA activity is not quality, safety, or a recommendation.', ...result.limitations];
   return result;
 }
 
