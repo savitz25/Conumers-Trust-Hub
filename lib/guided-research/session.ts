@@ -340,6 +340,13 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
   if(session.researchPlan.reasonCodes.includes('CARE_TASK'))return session;
+  // TH-ARCH-P0-001: the multi-hub guard above already produced its own CLARIFY (with a hub-choice
+  // menu and an explanatory message) for a query the planner recognized as spanning multiple
+  // verticals. session.hub is intentionally undefined at that point, which -- left to the scope-
+  // narrowing logic below -- gets misread as "no hub decided yet, fall through" and overwrites the
+  // hub-choice menu with an unrelated "local scope not executable" message. Return the multi-hub
+  // clarification as-is instead.
+  if(session.missingFields.includes('hub'))return session;
   if(!session.researchPlan.primaryHub&&session.hub)session.executionScope=resolveResearchScope({...session.researchPlan,primaryHub:session.hub,entityClass:session.entityClass?{id:session.entityClass,label:session.entityClass.replaceAll('_',' ')}:session.researchPlan.entityClass});
   const scope=session.executionScope;
   const executable=guidedGeographyFromExecution(scope);
