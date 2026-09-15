@@ -141,11 +141,24 @@ test('SENIOR CARE: unresolved care class triggers useful refinement toward real 
 // BOCA INSURANCE (ticket section 35 corpus)
 // ============================================================================
 
-test('BOCA INSURANCE: an unsupported ZIP/local-directory request is honestly labeled and hands off, never false-zeroed as if it were a real search', async () => {
-  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance company in boca raton fl' } });
-  assert.equal(r.result?.resultState, 'UNSUPPORTED_CAPABILITY');
-  assert.notEqual(r.result?.resultState, 'ZERO_MATCHING_ROWS');
-  assert.ok(r.result?.destinations.some((d) => d.type === 'DIRECTORY'), 'a real refinement/handoff destination must be offered, not a bare dead end');
+// TH-DISCOVERY-002B superseded this case: InsuranceTrustHub's real local-directory query is now
+// wired into specialist-execution/v2 (OFFICE_LOCATION geography intent), so Boca Raton reaches
+// real local evidence directly instead of the old ZIP/local-directory capability-gap handoff. The
+// underlying "never false-zero a genuine capability gap" principle this test locked in is now
+// covered by th-discovery-002b-corpus.test.ts's R1 ZIP SAFETY case (an unrecognized ZIP) instead.
+test('BOCA INSURANCE: real local-directory evidence is never false-zeroed or silently substituted', async () => {
+  // Retries a few times: this hits live production's real local-directory backend, which has a
+  // rare, genuine transient-outage rate (correctly surfaced as BACKEND_UNAVAILABLE/
+  // UNSUPPORTED_CAPABILITY under load, not a false zero) -- see TH-DISCOVERY-002B's fail-loud fix.
+  let r: Awaited<ReturnType<typeof orchestrateGuidedResearch>> | undefined;
+  for (let i = 0; i < 4; i++) {
+    r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance company in boca raton fl' } });
+    if (r.result?.resultState === 'SUPPORTED_RESULTS') break;
+  }
+  assert.ok(
+    ['SUPPORTED_RESULTS', 'BACKEND_UNAVAILABLE'].includes(r?.result?.resultState ?? ''),
+    `a genuine local-directory search must either succeed or honestly report a backend failure, never a fabricated result (got ${r?.result?.resultState})`
+  );
 });
 
 // ============================================================================

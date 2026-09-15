@@ -46,29 +46,40 @@ test('INSURANCE SCOPE: named insurer does not become an agency cohort', async ()
   } finally { globalThis.fetch = original; }
 });
 
-test('INSURANCE SCOPE: ZIP is retained and handed off, never executed as an unscoped cohort', async () => {
+test('INSURANCE SCOPE: ZIP is sent as a scoped local-directory request, never an unscoped cohort -- and an untrusted response still fails closed', async () => {
+  // TH-DISCOVERY-002B: specialist-execution/v2 now has a real local-directory capability, so a ZIP
+  // request is intentionally dispatched -- but scoped (geography.zip + OFFICE_LOCATION intent),
+  // never as the old unscoped cohort. This mock simulates a stale/unpatched specialist echoing the
+  // full unscoped population under SUPPORTED_RESULTS; it must still be rejected because it lacks
+  // the new branch's own geographyGrain signal (RECORDED_ZIP/RECORDED_COUNTY), which no other v2
+  // code path stamps.
   const original = globalThis.fetch;
-  let called = false;
-  globalThis.fetch = (async () => { called = true; return json({ resultState: 'SUPPORTED_RESULTS', total: 82071, rows: [] }); }) as typeof fetch;
+  let sentBody: Record<string, unknown> | undefined;
+  globalThis.fetch = (async (_url: unknown, init: RequestInit) => { sentBody = JSON.parse(String(init.body)); return json({ resultState: 'SUPPORTED_RESULTS', total: 82071, rows: [] }); }) as typeof fetch;
   try {
     const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance agencies in ZIP 33441' } });
-    assert.equal(called, false, 'specialist-execution/v2 must never be dispatched for an unsupported ZIP request');
+    const geography = sentBody?.geography as Record<string, unknown> | undefined;
+    assert.equal(geography?.zip, '33441', 'the supplied ZIP must actually be sent, not discarded');
+    assert.equal(geography?.intent, 'OFFICE_LOCATION');
     assert.equal(r.result?.resultState, 'UNSUPPORTED_CAPABILITY');
     assert.equal(r.result?.destinations?.[0]?.type, 'DIRECTORY');
     assert.match(r.result?.destinations?.[0]?.href ?? '', /insurancetrusthub\.com\/ask\?q=/);
-    assert.notEqual(r.result?.total, 82071);
+    assert.notEqual(r.result?.total, 82071, 'an untrusted response missing the local-directory geographyGrain signal must never be accepted as real local evidence');
   } finally { globalThis.fetch = original; }
 });
 
-test('INSURANCE SCOPE: unsupported local (bare city) path never becomes an unscoped cohort', async () => {
+test('INSURANCE SCOPE: bare city sends a scoped county request via the existing FL crosswalk -- and an untrusted response still fails closed, not an unscoped cohort', async () => {
   const original = globalThis.fetch;
-  let called = false;
-  globalThis.fetch = (async () => { called = true; return json({ resultState: 'SUPPORTED_RESULTS', total: 82071, rows: [] }); }) as typeof fetch;
+  let sentBody: Record<string, unknown> | undefined;
+  globalThis.fetch = (async (_url: unknown, init: RequestInit) => { sentBody = JSON.parse(String(init.body)); return json({ resultState: 'SUPPORTED_RESULTS', total: 82071, rows: [] }); }) as typeof fetch;
   try {
     const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance agency in Boca Raton Florida' } });
-    assert.equal(called, false);
+    const geography = sentBody?.geography as Record<string, unknown> | undefined;
+    assert.equal(geography?.county, 'Palm Beach', 'Boca Raton must resolve to its real county via the existing florida-municipality-crosswalk, not be sent as a bare city');
+    assert.equal(geography?.intent, 'OFFICE_LOCATION');
     assert.equal(r.result?.resultState, 'UNSUPPORTED_CAPABILITY');
     assert.equal(r.result?.destinations?.[0]?.type, 'DIRECTORY');
+    assert.notEqual(r.result?.total, 82071);
   } finally { globalThis.fetch = original; }
 });
 
