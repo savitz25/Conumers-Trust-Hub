@@ -43,3 +43,16 @@ export function resolveFloridaMunicipality(value:string){
   const key=value.toLowerCase().replace(/[,]+/g,' ').replace(/\s+/g,' ').trim();
   return FLORIDA_MUNICIPALITY_CROSSWALK[key as keyof typeof FLORIDA_MUNICIPALITY_CROSSWALK];
 }
+
+// TH-DISCOVERY-003: free-text detector reused by lib/network/ask-parse.ts so every hub's shared
+// geography parser recognizes every crosswalk municipality (not just a hardcoded 3-city allowlist
+// of Tampa/Miami/Boca Raton). Longest keys are checked first so a multi-word city is never
+// short-circuited by a shorter alias substring.
+const CROSSWALK_KEYS = Object.keys(FLORIDA_MUNICIPALITY_CROSSWALK).sort((a, b) => b.length - a.length);
+export function detectFloridaCity(q: string): { city: string; county: string } | undefined {
+  for (const key of CROSSWALK_KEYS) {
+    const pattern = new RegExp(`\\b${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+')}\\b`, 'i');
+    if (pattern.test(q)) return FLORIDA_MUNICIPALITY_CROSSWALK[key as keyof typeof FLORIDA_MUNICIPALITY_CROSSWALK];
+  }
+  return undefined;
+}

@@ -29,7 +29,10 @@ const matrix: Expected[] = [
   // fix made for Lender (Miami -> Miami-Dade) that incidentally, correctly, applies here too since
   // Contractor supports state grain the same way. Not a regression: strictly more reachable results
   // under the same consent gate, never silent.
-  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
+  // TH-DISCOVERY-003: Hillsborough (Tampa's county) is a real, live-confirmed supported county for
+  // ContractorTrustHub's specialist -- geography-capabilities.ts's supportedFloridaCounties was
+  // undersold at just Broward/Palm Beach and is now the specialist's true 30-county boundary.
+  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',executed:'Hillsborough County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
   {query:'registered investment advisers in West Palm Beach Florida',hub:'investor',requested:'West Palm Beach, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'PRINCIPAL_OFFICE',allowed:false},
   {query:'RIAs in Florida',hub:'investor',requested:'Florida',executed:'Florida',state:'EXACT',meaning:'PRINCIPAL_OFFICE',allowed:true},
   {query:'mortgage lenders in Palm Beach County Florida',hub:'lender',requested:'Palm Beach County, Florida',executed:'Palm Beach County, Florida',state:'EXACT',meaning:'PROPERTY_GEOGRAPHY',allowed:true},
@@ -88,11 +91,14 @@ test('scope invariants require consent and retain the original request',()=>{
   assert.equal(approved.executionGeography?.display,'Florida');
 });
 
+// TH-DISCOVERY-003: "insurance agencies in Fort Lauderdale Florida" was dropped from this list --
+// Fort Lauderdale/Broward is a real Insurance local-directory launch county (TH-DISCOVERY-002B)
+// that the shared FL city parser now correctly recognizes, so it genuinely calls the specialist.
 test('START blocks unsupported scopes before specialist execution',async()=>{
   const originalFetch=globalThis.fetch;let calls=0;
   globalThis.fetch=(async()=>{calls+=1;throw new Error('specialist must not run')}) as typeof fetch;
   try{
-    for(const query of ['mover in tampa bay florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','insurance agencies in Fort Lauderdale Florida','mover serving Miami Florida']){
+    for(const query of ['mover in tampa bay florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','mover serving Miami Florida']){
       const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
       assert.equal(response.diagnostics.specialistCalls,0,query);
       assert.equal(response.session.phase,'CLARIFY',query);

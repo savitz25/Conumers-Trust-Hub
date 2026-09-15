@@ -16,7 +16,14 @@ export type GeographyCapability={
 
 export const SPECIALIST_GEOGRAPHY_CAPABILITIES:readonly GeographyCapability[]=[
   {hub:'move',entityClasses:'*',supportedKinds:['state'],meaning:'RECORDED_HEADQUARTERS',localToStateRequiresConsent:true,disclosure:'The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.'},
-  {hub:'contractor',entityClasses:'*',supportedKinds:['state','county'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Broward','Palm Beach'],disclosure:'Credential/source geography does not establish service territory, availability, endorsement, or good standing.'},
+  // TH-DISCOVERY-003: this list was undersold at just Broward/Palm Beach -- live-confirmed against
+  // ContractorTrustHub's specialist (lib/specialist-execution/contractor-v2.ts, which resolves
+  // county via its own FLORIDA_COUNTIES list in lib/discovery/counties.ts) that all 30 of these
+  // counties genuinely execute (e.g. Orange/Duval/Lee/Volusia all returned real SUPPORTED_RESULTS
+  // rows), while a real FL county outside this exact list (e.g. Hendry) correctly fails closed
+  // with errorCode 'unsupported_florida_county' -- so this is the true, authoritative boundary of
+  // the specialist's own county support, not an arbitrary subset.
+  {hub:'contractor',entityClasses:'*',supportedKinds:['state','county'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Miami-Dade','Broward','Palm Beach','Hillsborough','Orange','Pinellas','Duval','Lee','Collier','Sarasota','Manatee','Pasco','Polk','Brevard','Volusia','Seminole','Osceola','Marion','Lake','St. Lucie','Martin','Indian River','Charlotte','Escambia','Leon','Alachua','Bay','Okaloosa','St. Johns','Clay'],disclosure:'Credential/source geography does not establish service territory, availability, endorsement, or good standing.'},
   {hub:'investor',entityClasses:'*',supportedKinds:['state'],meaning:'PRINCIPAL_OFFICE',localToStateRequiresConsent:true,disclosure:'Principal-office geography does not establish client geography or service territory.'},
   {hub:'insurance',entityClasses:'*',supportedKinds:['state'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,disclosure:'Credential jurisdiction does not establish office location, appointments, service territory, or product availability.'},
   {hub:'lender',entityClasses:'*',supportedKinds:['state','county'],meaning:'PROPERTY_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Broward','Palm Beach'],disclosure:'HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.'},

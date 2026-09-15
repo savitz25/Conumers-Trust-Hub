@@ -238,6 +238,12 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   }
   session=touch({...session,nextActions});
   if(session.hub==='insurance'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='insurance_producer')session=touch({...session,nextAction:'InsuranceTrustHub does not publish mass individual-producer profiles. Verify the producer through the applicable official state licensing source.'});
+  // TH-DISCOVERY-003: "verify moving company before I book" is a verification-workflow question,
+  // not a request to browse the mover directory -- give the same concrete next-step guidance the
+  // nextActions below already assemble (identify the company, verify its USDOT/MC, or use the
+  // official FMCSA source) instead of the generic "needs explanation" clarification message.
+  if(session.hub==='move'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='mover')session=touch({...session,nextAction:'To verify a moving company before booking: identify the exact company name, look up its USDOT/MC number, and inspect its recorded FMCSA authority and role (carrier, broker, or both) before you commit.'});
+  if(session.hub==='contractor'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='contractor')session=touch({...session,nextAction:'To verify a contractor before you hire them: identify the exact company name, look up its license/credential number, and inspect its recorded trade class, status, and jurisdiction before you commit.'});
   if(result)result={...result,nextActions};
   return {session,result,diagnostics:{requestId,hub:session.hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:result?.total??0,specialistCalls}};
 }

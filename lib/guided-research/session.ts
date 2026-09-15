@@ -360,8 +360,20 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     const trade = parsed.trade?.toLowerCase();
     session.trade = njTrade ?? (trade === 'general contractor' ? 'general' : trade);
     session.entityClass = 'credential_record';
+    if(session.identifier)return {...session,identityName:undefined,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
+    // TH-DISCOVERY-003: a bare company name (e.g. "ABC Roofing") used to be silently discarded
+    // here (session.identityName=undefined, unconditionally) and fall through to the trade+
+    // geography cohort-collection flow below with no explanation -- confirmed live that
+    // ContractorTrustHub's specialist has no name-based identity lookup at all (queryType:'identity'
+    // returns errorCode 'unsupported_field'; a name filter on the cohort query is silently ignored
+    // by the live API). This is a genuine capability gap, not a wiring bug, so this does not invent
+    // a name-search result -- it states the real limitation and the actual supported alternative
+    // (exact license/credential number, or trade+location cohort browse) instead of quietly
+    // pretending the name was never mentioned.
+    if (plan.entityName) {
+      return {...session,identityName:plan.entityName,phase:'CLARIFY',missingFields:[],availableChoices:[],nextAction:`ContractorTrustHub does not support company-name search -- only an exact license/credential number resolves precisely. Provide "${plan.entityName}"'s license number, or the property location and trade to browse the credential cohort instead.`};
+    }
     session.identityName = undefined;
-    if(session.identifier)return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
     const conflictingSummit = /\bsummit\s+county\b/i.test(q) && parsed.geography?.stateCode === 'NJ';
     if (conflictingSummit) return { ...session, geography:parseGuidedGeography('Summit County, New Jersey')??session.geography, phase:'EXECUTE',missingFields:[],nextAction:'execute' };
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };

@@ -151,9 +151,10 @@ test('BOCA INSURANCE: real local-directory evidence is never false-zeroed or sil
   // rare, genuine transient-outage rate (correctly surfaced as BACKEND_UNAVAILABLE/
   // UNSUPPORTED_CAPABILITY under load, not a false zero) -- see TH-DISCOVERY-002B's fail-loud fix.
   let r: Awaited<ReturnType<typeof orchestrateGuidedResearch>> | undefined;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance company in boca raton fl' } });
     if (r.result?.resultState === 'SUPPORTED_RESULTS') break;
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
   assert.ok(
     ['SUPPORTED_RESULTS', 'BACKEND_UNAVAILABLE'].includes(r?.result?.resultState ?? ''),
