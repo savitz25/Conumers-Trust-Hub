@@ -4,7 +4,7 @@ import {buildAskResearchRoute} from './ask-research-route.ts';
 import {createGuidedSession} from '../guided-research/session.ts';
 import {orchestrateGuidedResearch} from '../guided-research/orchestrator.ts';
 import {assembleNetworkAnswerWithSpecialist} from './ask-plan.ts';
-import {executeGuidedSpecialist} from '../guided-research/specialists.ts';
+import {executeGuidedSpecialist,buildSeniorClassPreviewResult} from '../guided-research/specialists.ts';
 import {decideAskExecution} from './execution-decision.ts';
 
 function seniorFixture(body:Record<string,unknown>) {
@@ -48,6 +48,32 @@ test('R1-008 ambiguous class with a resolved state shows real per-class previews
  assert(byClass.nursing_home.rows.every((row:{classLabel?:string})=>row.classLabel==='nursing_home'));
  assert.equal(r.result?.rows.length,0,'previews are separate from the main flattened rows list');
  assert.equal(r.diagnostics.specialistCalls,3);
+}));
+// TH-DISCOVERY-RESET-001C regression: the live bug was specifically that app/ask/page.tsx's
+// SERVER-RENDERED first paint calls buildSeniorClassPreviewResult directly (never through
+// orchestrateGuidedResearch, since the client only re-runs the specialist on specific follow-up
+// actions, never on the very first load of an ambiguous class with no chosen setting yet) -- a
+// prior version of this fix only worked when tested through orchestrateGuidedResearch and stayed
+// broken in production. This calls the exact same function app/ask/page.tsx calls, directly.
+test('R1-008 buildSeniorClassPreviewResult (the exact function app/ask/page.tsx calls server-side) returns real previews for a resolved-state ambiguous class',async()=>withSeniorFixture(async calls=>{
+ const session=createGuidedSession('senior care Florida');
+ assert(session);
+ assert.equal(session.researchPlan.careSetting,undefined);
+ assert(session.missingFields.includes('providerClass'));
+ assert.equal(session.geography?.stateCode,'FL');
+ const result=await buildSeniorClassPreviewResult(session);
+ assert(result,'must return a real result, not null, for a resolved-state ambiguous class');
+ assert.equal(calls.length,3);
+ const byClass=Object.fromEntries((result.classPreviews??[]).map(g=>[g.providerClass,g]));
+ assert.equal(byClass.nursing_home?.rows.length,1);
+ assert.equal(byClass.home_health?.rows.length,1);
+ assert.equal(byClass.hospice?.rows.length,1);
+}));
+test('R1-008 buildSeniorClassPreviewResult returns null once a class is chosen',async()=>withSeniorFixture(async calls=>{
+ const session={...createGuidedSession('senior care Florida')!,researchPlan:{...createGuidedSession('senior care Florida')!.researchPlan,careSetting:'nursing_home' as const},missingFields:[]};
+ const result=await buildSeniorClassPreviewResult(session);
+ assert.equal(result,null);
+ assert.equal(calls.length,0);
 }));
 test('R1-008 blocked legacy execution calls no specialist',async()=>{
  const original=globalThis.fetch,context=process.env.NODE_TEST_CONTEXT;const calls:string[]=[];

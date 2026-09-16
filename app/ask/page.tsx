@@ -5,6 +5,7 @@ import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import type { Metadata } from 'next';
 import { GuidedResearch } from '@/components/guided-research';
 import { createGuidedSession } from '@/lib/guided-research/session';
+import { buildSeniorClassPreviewResult } from '@/lib/guided-research/specialists';
 import { buildAskResearchRoute } from '@/lib/network/ask-research-route';
 import { ResearchRouteCard } from '@/components/ask-research-route-card';
 import {AskRouteAnalytics} from '@/components/ask-route-analytics';
@@ -29,6 +30,11 @@ export default async function AskPage({
   const route=query?buildAskResearchRoute(query):null;
   const decision=query?decideAskExecution(query,route!.plan):null;
   const guided=query&&!route?.journey&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
+  // TH-DISCOVERY-RESET-001C: real per-class provider previews for a genuinely ambiguous senior
+  // care request (e.g. "senior care Florida") must be present on this first server-rendered
+  // paint -- the client only re-runs the specialist on specific follow-up actions, never on the
+  // very first load of an ambiguous class with no chosen setting yet.
+  const seniorPreview=guided?await buildSeniorClassPreviewResult(guided):null;
   const observation=route?observeAskRoute(route):null;
   if(observation && (route?.journey || (!guided&&!route?.canExecute))) after(()=>recordSearchObservation(observation));
   return (
@@ -42,7 +48,7 @@ export default async function AskPage({
         <AskQueryForm query={query}/>
         {inputError?<p role="alert" className="mb-6 rounded-xl border p-4">{inputError}</p>:null}
         {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
-        {query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
+        {query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} initialResult={seniorPreview} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',
