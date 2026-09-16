@@ -26,8 +26,13 @@ globalThis.fetch=async(input,init)=>{
     if(lastBody.queryType==='evidence')return response({...meta(hub),resultState:'UNSUPPORTED_CAPABILITY',message:'InsuranceTrustHub does not publish recommendation rankings.'},422);
     if(lastBody.queryType==='identifier')return response({...meta(hub),resultState:'EXACT_IDENTITY',rows:[{entityClass:identifier.type==='NAIC'?'legal_insurer':'agency',name:'Exact Insurance Identity',npn:identifier.type==='NPN'?value:undefined,naicCode:identifier.type==='NAIC'?value:undefined,sourceObservedAt:'2026-08-01',destination:'/research/exact'}],total:1});
     if(lastBody.entityClass==='producer')return response({...meta(hub),resultState:'PUBLICATION_RESTRICTED',message:'Producer mass publication is restricted.'},422);
-    if((lastBody.geography as Record<string,unknown>|undefined)?.intent==='SERVICE_TERRITORY'||(lastBody.entityClass==='legal_insurer'&&(lastBody.geography as Record<string,unknown>|undefined)?.stateCode))return response({...meta(hub),resultState:'UNSUPPORTED_CAPABILITY',message:'This geography meaning is unsupported.'},422);
-    return response({...meta(hub),resultState:'SUPPORTED_RESULTS',rows:[{entityClass:lastBody.entityClass,name:'Public Insurance Identity',npn:'10391484',credentialJurisdiction:'Florida',sourceObservedAt:'2026-08-01',destination:'/research/10391484'}],total:lastBody.entityClass==='legal_insurer'?26:56939,availableRefinements:[]});
+    const insGeo=lastBody.geography as Record<string,unknown>|undefined;
+    if(insGeo?.intent==='SERVICE_TERRITORY'||(lastBody.entityClass==='legal_insurer'&&insGeo?.intent==='DOMICILE'))return response({...meta(hub),resultState:'UNSUPPORTED_CAPABILITY',message:'This geography meaning is unsupported.'},422);
+    // TH-DISCOVERY-RESET-001B: a legal_insurer cohort with a resolved credential-jurisdiction state
+    // now broadens to real agency rows for that state instead of a bare 422, matching the real,
+    // now-fixed InsuranceTrustHub specialist.
+    const broadenedToAgency=lastBody.entityClass==='legal_insurer'&&insGeo?.intent==='CREDENTIAL_JURISDICTION'&&Boolean(insGeo?.stateCode);
+    return response({...meta(hub),resultState:'SUPPORTED_RESULTS',rows:[{entityClass:broadenedToAgency?'agency':lastBody.entityClass,name:'Public Insurance Identity',npn:'10391484',credentialJurisdiction:'Florida',sourceObservedAt:'2026-08-01',destination:'/research/10391484'}],total:lastBody.entityClass==='legal_insurer'&&!broadenedToAgency?26:56939,availableRefinements:[]});
   }
   if(value==='1001618'||value==='170008')return response({...meta(hub),resultState:'PUBLICATION_RESTRICTED',message:'Person or branch publication is restricted.'},422);
   if(value==='136890')return response({...meta(hub),resultState:'IDENTITY_COLLISION',message:'NMLS namespaces collide.'},409);
@@ -67,9 +72,13 @@ test('generic financial needs are local action clarifications with zero fan-out'
 // agency-grain LOA filter capability at all (confirmed live), so there was never a real filter to
 // send; the cohort now executes with the product word disclosed as unestablished instead of used
 // to suppress real, relevant agencies.
+// TH-DISCOVERY-RESET-001B: 'Insurance company in Texas' (a bare, non-domicile state cohort
+// request) used to be UNSUPPORTED_CAPABILITY via InsuranceTrustHub's now-fixed stonewall; the
+// specialist now broadens it to real agency rows (see the mock's broadenedToAgency branch below,
+// mirroring the real fix), so this golden expectation moved to SUPPORTED_RESULTS.
 const direct:Array<[string,string,string]>=[
   ['Investment advisers in New Jersey','investor','SUPPORTED_RESULTS'],['Florida RIAs reporting between $1 billion and $10 billion RAUM','investor','SUPPORTED_RESULTS'],['ERA firms in Florida','investor','SUPPORTED_RESULTS'],['CRD 166089','investor','EXACT_IDENTITY'],['Highest-performing adviser','investor','UNSUPPORTED_CAPABILITY'],['RIAs in Texas','investor','SUPPORTED_RESULTS'],['Investment advisers serving Florida','investor','UNSUPPORTED_CAPABILITY'],['Individual investment adviser representatives in Florida','investor','PUBLICATION_RESTRICTED'],['Florida RIAs paid by percentage of assets','investor','SUPPORTED_RESULTS'],['ERA firms with $2 billion RAUM','investor','UNSUPPORTED_CAPABILITY'],['CRD 999999999','investor','NO_CONFIDENT_MATCH'],['Advisory firm named Alpha Partners','investor','AMBIGUOUS_IDENTITIES'],['Safest RIA in New York','investor','UNSUPPORTED_CAPABILITY'],
-  ['Insurance agencies in Florida','insurance','SUPPORTED_RESULTS'],['Insurance company in Texas','insurance','UNSUPPORTED_CAPABILITY'],['Insurance agents in Florida','insurance','PUBLICATION_RESTRICTED'],['NPN 10391484','insurance','EXACT_IDENTITY'],['NAIC 10064','insurance','EXACT_IDENTITY'],['Best insurance company','insurance','SUPPORTED_RESULTS'],['Insurance companies serving Texas','insurance','UNSUPPORTED_CAPABILITY'],['Legal insurers','insurance','SUPPORTED_RESULTS'],['Florida life insurance agencies','insurance','SUPPORTED_RESULTS'],['Insurance agencies serving Florida','insurance','UNSUPPORTED_CAPABILITY'],['NPN 999999999','insurance','NO_CONFIDENT_MATCH'],
+  ['Insurance agencies in Florida','insurance','SUPPORTED_RESULTS'],['Insurance company in Texas','insurance','SUPPORTED_RESULTS'],['Insurance agents in Florida','insurance','PUBLICATION_RESTRICTED'],['NPN 10391484','insurance','EXACT_IDENTITY'],['NAIC 10064','insurance','EXACT_IDENTITY'],['Best insurance company','insurance','SUPPORTED_RESULTS'],['Insurance companies serving Texas','insurance','UNSUPPORTED_CAPABILITY'],['Legal insurers','insurance','SUPPORTED_RESULTS'],['Florida life insurance agencies','insurance','SUPPORTED_RESULTS'],['Insurance agencies serving Florida','insurance','UNSUPPORTED_CAPABILITY'],['NPN 999999999','insurance','NO_CONFIDENT_MATCH'],
   ['FHA lenders in Broward County','lender','SUPPORTED_RESULTS'],['Mortgage denials in Broward County','lender','SUPPORTED_RESULTS'],['NMLS 3030','lender','EXACT_IDENTITY'],['NMLS 1001618','lender','PUBLICATION_RESTRICTED'],['NMLS 170008','lender','PUBLICATION_RESTRICTED'],['LEI 549300FGXN1K3HLB1R50','lender','EXACT_IDENTITY'],['Complaints about Rocket Mortgage','lender','SUPPORTED_RESULTS'],['Best mortgage lender in Florida','lender','SUPPORTED_RESULTS'],['Lenders serving Florida','lender','UNSUPPORTED_CAPABILITY'],['VA originations in Texas','lender','SUPPORTED_RESULTS'],['NMLS 136890','lender','IDENTITY_COLLISION'],['Complaints about Newrez','lender','ZERO_MATCHING_ROWS'],['Mortgage brokers near me','lender','PUBLICATION_RESTRICTED'],
 ];
 
@@ -87,6 +96,22 @@ test('audited financial direct goldens preserve hub and result states',async()=>
   assert.equal(rankingResult.session.hub,'investor');
   assert.equal(rankingResult.result?.resultState,'SUPPORTED_RESULTS');
   assert.equal(direct.length+8,45);
+});
+
+// TH-DISCOVERY-RESET-001B: "Insurance company in Texas" now reaches real results instead of a
+// dead end, but the returned rows are actually AGENCIES, not legal insurers -- the consumer-facing
+// heading/message/limitations must say so explicitly and never claim the originally-requested
+// legal-insurer class was satisfied.
+test('a broadened legal-insurer cohort is honestly relabeled as agency results, never presented as legal insurers',async()=>{
+  const result=await orchestrateGuidedResearch({action:{type:'START',question:'Insurance company in Texas'}});
+  assert.equal(result.result?.resultState,'SUPPORTED_RESULTS');
+  assert.ok(result.result?.rows.every((row)=>row.classLabel==='agency'),'rows must be truthfully labeled agency, never legal insurer');
+  // The heading may still name "legal insurer" as a disclosure of what is UNAVAILABLE, but must
+  // not claim the returned rows themselves are legal insurers.
+  assert.match(result.result?.consumerHeading??'',/broader insurance agency/i);
+  assert.doesNotMatch(result.result?.consumerHeading??'',/^public legal.insurer/i);
+  assert.match(result.result?.consumerMessage??'',/not legal underwriting insurers|legal-insurer cohort unavailable/i);
+  assert.ok((result.result?.limitations??[]).some((l)=>/not legal underwriting insurers/i.test(l)));
 });
 
 test('requests preserve source semantics and publication firewalls',async()=>{
