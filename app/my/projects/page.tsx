@@ -5,7 +5,6 @@ import { MyTrustHubEmpty, MyTrustHubShell, PageHeading } from "@/components/my-t
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 import { AnalyticsForm } from "@/components/analytics/analytics-form";
-import { captureProjectCreated } from "@/components/analytics/ask-instrumentation";
 
 const templates = [
   ["Buying a home", "buying_home"],
@@ -30,7 +29,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       {canCreate ? (
         <details className="myth-create">
           <summary>Create Project</summary>
-          <AnalyticsForm action={createProjectAction} className="myth-form myth-form-grid" onAnalyticsSubmit={() => captureProjectCreated('my_projects')}>
+          <AnalyticsForm action={createProjectAction} className="myth-form myth-form-grid" analyticsEvent="project_created">
             <label htmlFor="project-name">Project name</label>
             <input id="project-name" name="name" required maxLength={120} />
             <label htmlFor="life-event">Life event</label>

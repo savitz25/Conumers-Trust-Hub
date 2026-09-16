@@ -6,7 +6,6 @@ import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
 import { getMyTrustHubFeatureFlags } from "@/lib/my-trusthub/feature-flags";
 import { TurnstileField } from "@/components/my-trusthub/turnstile-field";
 import { AnalyticsForm } from "@/components/analytics/analytics-form";
-import { captureSignupStarted } from "@/components/analytics/ask-instrumentation";
 
 export default async function SignInPage({
   searchParams,
@@ -39,7 +38,7 @@ export default async function SignInPage({
         {error === "callback_exchange" ? <p className="myth-warning" role="alert">That sign-in link expired or could not be verified. Request a fresh link and try again.</p> : null}
         {error === "callback_session" || error === "callback_unavailable" ? <p className="myth-warning" role="alert">We could not finish sign-in safely. Request a fresh link and try again.</p> : null}
         {flags.MY_TRUSTHUB_ENABLED && !missing ? (
-          <AnalyticsForm action={requestMagicLinkAction} className="myth-form" onAnalyticsSubmit={() => captureSignupStarted('my_sign_in')}>
+          <AnalyticsForm action={requestMagicLinkAction} className="myth-form" analyticsEvent="account_signup_started">
             <label htmlFor="email">Email</label>
             <input id="email" name="email" type="email" autoComplete="email" required maxLength={254} data-ph-mask="true" />
             {process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY ? <TurnstileField siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} /> : null}

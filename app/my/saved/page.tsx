@@ -10,7 +10,6 @@ import {
   saveMoveInventorySessionAction,
 } from "@/app/my/actions";
 import { AnalyticsForm } from "@/components/analytics/analytics-form";
-import { captureProfileSaved } from "@/components/analytics/ask-instrumentation";
 import { GuestRestore } from "@/components/my-trusthub/guest-restore";
 import { GuestSessionRestore } from "@/components/my-trusthub/guest-session-restore";
 import { SessionCard } from "@/components/my-trusthub/session-card";
@@ -73,7 +72,7 @@ export default async function SavedPage({
       {canSave ? (
         <details className="myth-create">
           <summary>Save controlled canary entity</summary>
-          <AnalyticsForm action={saveCanaryEntityAction} className="myth-form myth-form-grid" onAnalyticsSubmit={() => captureProfileSaved('my_saved')}>
+          <AnalyticsForm action={saveCanaryEntityAction} className="myth-form myth-form-grid" analyticsEvent="profile_saved">
             <label htmlFor="binding-id">Approved binding UUID</label>
             <input
               id="binding-id"

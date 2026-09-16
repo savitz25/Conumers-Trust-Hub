@@ -1,19 +1,26 @@
 'use client';
 
 import type { FormHTMLAttributes, ReactNode } from 'react';
+import { captureProfileSaved, captureProjectCreated, captureSignupStarted } from '@/components/analytics/ask-instrumentation';
+
+const EVENTS = {
+  account_signup_started: () => captureSignupStarted('my_sign_in'),
+  project_created: () => captureProjectCreated('my_projects'),
+  profile_saved: () => captureProfileSaved('my_saved'),
+} as const;
 
 export function AnalyticsForm({
-  onAnalyticsSubmit,
+  analyticsEvent,
   onSubmit,
   children,
   ...props
 }: FormHTMLAttributes<HTMLFormElement> & {
-  onAnalyticsSubmit?: () => void;
+  analyticsEvent: keyof typeof EVENTS;
   children: ReactNode;
 }) {
   function handleSubmit(event: Parameters<NonNullable<FormHTMLAttributes<HTMLFormElement>['onSubmit']>>[0]) {
     try {
-      onAnalyticsSubmit?.();
+      EVENTS[analyticsEvent]();
     } catch {
       // analytics must not block submit
     }
