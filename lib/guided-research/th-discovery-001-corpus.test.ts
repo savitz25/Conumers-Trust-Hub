@@ -144,6 +144,50 @@ test('SENIOR CARE: unresolved care class triggers useful refinement toward real 
 });
 
 // ============================================================================
+// FLORIDA CROSSWALK FALSE-POSITIVE SAFETY (TH-DISCOVERY-RESET-001 Vercel review fix)
+// ============================================================================
+// Two classes of bug, both in the shared Florida-municipality-crosswalk resolution path used by
+// care-task.ts's careLocation (session.geography) and lib/network/ask-parse.ts's geography()
+// (plan.requestedGeography):
+// 1. A crosswalk key like "hollywood" must not match inside a real, distinct compound place name
+//    ("West Hollywood" is not "Hollywood, Florida").
+// 2. A crosswalk city-name substring match must never override an explicitly supplied non-Florida
+//    jurisdiction elsewhere in the same query ("Wellington, Colorado" is not Florida just because
+//    "Wellington" is also a real Palm Beach County, FL municipality).
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near West Hollywood" never falsely resolves to Hollywood, Florida', async () => {
+  const plan = planAskResearch('hospice near West Hollywood');
+  assert.notEqual(plan.requestedGeography?.stateCode, 'FL', 'West Hollywood must not be silently reassigned to Florida');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near West Hollywood' } });
+  assert.notEqual(r.session.geography?.stateCode, 'FL', 'West Hollywood must not be silently reassigned to Florida');
+  assert.notEqual(r.result?.resultState, 'SUPPORTED_RESULTS', 'an unresolved, ambiguous place must never fabricate results');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Wellington Colorado" keeps the explicit Colorado jurisdiction', async () => {
+  const plan = planAskResearch('hospice near Wellington Colorado');
+  assert.equal(plan.requestedGeography?.stateCode, 'CO');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Wellington Colorado' } });
+  assert.equal(r.session.geography?.stateCode, 'CO', 'an explicit state must always win over Florida municipality detection');
+  assert.notEqual(r.session.geography?.stateCode, 'FL');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Hollywood Maryland" keeps the explicit Maryland jurisdiction', async () => {
+  const plan = planAskResearch('hospice near Hollywood Maryland');
+  assert.equal(plan.requestedGeography?.stateCode, 'MD');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Hollywood Maryland' } });
+  assert.equal(r.session.geography?.stateCode, 'MD', 'an explicit state must always win over Florida municipality detection');
+  assert.notEqual(r.session.geography?.stateCode, 'FL');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Tampa" still resolves to real Tampa, Florida evidence', async () => {
+  const plan = planAskResearch('hospice near Tampa');
+  assert.equal(plan.requestedGeography?.stateCode, 'FL');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Tampa' } });
+  assert.equal(r.session.geography?.stateCode, 'FL');
+  assert.equal(r.result?.resultState, 'SUPPORTED_RESULTS', 'the safety fix must not regress the real, valid Tampa case');
+});
+
+// ============================================================================
 // BOCA INSURANCE (ticket section 35 corpus)
 // ============================================================================
 

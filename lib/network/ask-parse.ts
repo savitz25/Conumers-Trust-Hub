@@ -95,7 +95,18 @@ function geography(q: string): ParsedGeography | undefined {
   // (florida-municipality-crosswalk.ts) already knew them. Reuse that same crosswalk instead of a
   // second city list, so every hub's shared geography parser recognizes every known municipality.
   const flCity = detectFloridaCity(q);
-  const florida = FL.test(q) || broward || palm || Boolean(flCity);
+  // TH-DISCOVERY-RESET-001 (Vercel review fix): a crosswalk municipality match is a substring
+  // signal, not explicit evidence of Florida -- it must never override an explicitly supplied
+  // non-Florida jurisdiction elsewhere in the same query ("Wellington, Colorado" and "Hollywood,
+  // Maryland" both contain a real crosswalk city name, but the state is not Florida). The literal
+  // words "Florida"/"FL", or Broward/Palm Beach county, are still unambiguous on their own and are
+  // not gated by this check.
+  const otherStateNamedForFlorida = flCity
+    ? US_JURISDICTIONS.some(
+        (j) => j.code !== 'FL' && new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i').test(q),
+      )
+    : false;
+  const florida = FL.test(q) || broward || palm || (Boolean(flCity) && !otherStateNamedForFlorida);
   const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
   const caNamedEarly = queryLooksLikeCalifornia(q);
   const txNamedEarly = queryLooksLikeTexas(q);

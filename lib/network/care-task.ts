@@ -1,6 +1,6 @@
 import {US_JURISDICTIONS} from './us-jurisdictions.ts';
 import type {AskResearchPlan,AskRequestedGeography} from './research-planner.ts';
-import {detectFloridaCity} from './florida-municipality-crosswalk.ts';
+import {resolveFloridaMunicipality} from './florida-municipality-crosswalk.ts';
 
 export type CareSetting='nursing_home'|'home_health'|'hospice'|'assisted_living'|'memory_care'|'independent_living';
 export function careTask(question:string):{kind:'care'|'move_context'|'care_and_move';setting?:CareSetting}|null {
@@ -37,7 +37,11 @@ export function careLocation(question:string):AskRequestedGeography|undefined {
  // near Tampa") previously stayed UNRESOLVED and dead-ended asking the consumer to name a state,
  // even though the same florida-municipality-crosswalk.ts every other hub's shared geography
  // parser already uses recognizes it. Resolve it here too instead of duplicating a third parser.
- const flCity=!state&&kind==='city'?detectFloridaCity(place):undefined;
+ // Vercel review fix: `place` here is already the fully-extracted bare city/place text (not a
+ // longer sentence), so use the exact-match lookup (resolveFloridaMunicipality) rather than the
+ // substring detector (detectFloridaCity) -- a substring match would falsely resolve a real,
+ // distinct compound place name like "West Hollywood" to "Hollywood, Florida".
+ const flCity=!state&&kind==='city'?resolveFloridaMunicipality(place):undefined;
  const resolvedStateCode=state?.code??(flCity?'FL':undefined);
  const resolvedStateName=state?.name??(flCity?'Florida':undefined);
  const resolvedCity=flCity?flCity.city:place;

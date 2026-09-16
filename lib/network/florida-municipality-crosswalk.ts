@@ -82,9 +82,17 @@ export function resolveFlCountyFips(county: string | undefined): string | undefi
 // of Tampa/Miami/Boca Raton). Longest keys are checked first so a multi-word city is never
 // short-circuited by a shorter alias substring.
 const CROSSWALK_KEYS = Object.keys(FLORIDA_MUNICIPALITY_CROSSWALK).sort((a, b) => b.length - a.length);
+// TH-DISCOVERY-RESET-001 (Vercel review fix): a crosswalk key like "hollywood" must not match
+// inside a real, distinct compound place name -- "West Hollywood" (a real, different city, e.g.
+// in California) is not "Hollywood, Florida". Reject a match immediately preceded by a compass
+// direction or a qualifier word that would change which place is actually being named.
+const NOT_PRECEDED_BY_QUALIFIER = '(?<!\\b(?:west|north|south|east)\\s)';
 export function detectFloridaCity(q: string): { city: string; county: string } | undefined {
   for (const key of CROSSWALK_KEYS) {
-    const pattern = new RegExp(`\\b${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+')}\\b`, 'i');
+    const pattern = new RegExp(
+      `${NOT_PRECEDED_BY_QUALIFIER}\\b${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+')}\\b`,
+      'i',
+    );
     if (pattern.test(q)) return FLORIDA_MUNICIPALITY_CROSSWALK[key as keyof typeof FLORIDA_MUNICIPALITY_CROSSWALK];
   }
   return undefined;
