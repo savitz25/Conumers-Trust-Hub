@@ -11,9 +11,9 @@ import {bucketLatency,bucketResultCount,guidedSearchTerminalOutcome} from '@/lib
 const STORAGE_PREFIX='ath-guided-research-v1:';
 function storageKey(query:string){let hash=0;for(const char of query)hash=((hash<<5)-hash+char.charCodeAt(0))|0;return `${STORAGE_PREFIX}${Math.abs(hash)}`;}
 
-export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{query:string;initialSession:GuidedResearchSession;routeDestinationHrefs?:string[]}) {
+export function GuidedResearch({query,initialSession,initialResult=null,routeDestinationHrefs=[]}:{query:string;initialSession:GuidedResearchSession;initialResult?:GuidedExecutionResult|null;routeDestinationHrefs?:string[]}) {
   const [session,setSession]=useState<GuidedResearchSession|null>(initialSession);
-  const [result,setResult]=useState<GuidedExecutionResult|null>(null);
+  const [result,setResult]=useState<GuidedExecutionResult|null>(initialResult);
   const [busy,setBusy]=useState(initialSession.phase==='EXECUTE');
   const [error,setError]=useState('');
   const [resumeRecovery,setResumeRecovery]=useState(false);
@@ -45,7 +45,11 @@ export function GuidedResearch({query,initialSession,routeDestinationHrefs=[]}:{
   },[query,session]);
 
   useEffect(()=>{
-    setSession(initialSession);setResult(null);setError('');setResumeRecovery(false);setBusy(initialSession.phase==='EXECUTE');
+    // TH-DISCOVERY-RESET-001C: initialResult carries the server-rendered senior class previews
+    // (app/ask/page.tsx) for a genuinely ambiguous care request -- preserve it here instead of
+    // always resetting to null, so it survives this mount effect. A restored or freshly executed
+    // session below still replaces it via the normal send() round-trip.
+    setSession(initialSession);setResult(initialResult);setError('');setResumeRecovery(false);setBusy(initialSession.phase==='EXECUTE');
     let restored:GuidedResearchSession|null=null;
     try{const raw=sessionStorage.getItem(storageKey(query));if(raw){const parsed=JSON.parse(raw) as GuidedResearchSession;if(parsed.version===GUIDED_SESSION_VERSION&&parsed.originalQuestion===query)restored=parsed;}}catch{}
     if(restored)void send({type:'RESUME'},restored);else if(initialSession.phase==='EXECUTE'||(initialSession.researchPlan.reasonCodes.includes('CARE_TASK')&&initialSession.researchPlan.careSetting&&!initialSession.missingFields.length))void send({type:'EXECUTE'},initialSession);

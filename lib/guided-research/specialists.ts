@@ -269,6 +269,45 @@ export async function fetchSeniorClassPreviews(
   );
 }
 
+// TH-DISCOVERY-RESET-001C: shared by both the server-rendered first paint (app/ask/page.tsx, so
+// previews are present with no client round-trip at all) and the client action flow
+// (orchestrator.ts, so "explain the differences" and similar in-place choices keep them) -- one
+// result-construction path, not two copies to keep in sync.
+export async function buildSeniorClassPreviewResult(session: GuidedResearchSession): Promise<GuidedExecutionResult | null> {
+  if (
+    session.hub !== 'senior' ||
+    !session.researchPlan.reasonCodes.includes('CARE_TASK') ||
+    session.researchPlan.careSetting ||
+    !session.missingFields.includes('providerClass') ||
+    !session.geography?.stateCode
+  ) return null;
+  const classPreviews = await fetchSeniorClassPreviews(session);
+  const resultState = classPreviews.some((p) => p.rows.length) ? 'SUPPORTED_RESULTS' : 'ZERO_MATCHING_ROWS';
+  return {
+    specialist: 'senior',
+    executionOccurred: true,
+    resultState,
+    consumerHeading: 'Choose a care setting to narrow results',
+    consumerMessage: `Nursing homes, Home Health and Hospice are separate CMS classes with different identifiers and evidence. Real ${session.geography.stateName ?? session.geography.value} providers from each class are shown below -- choose one to narrow.`,
+    interpretation: [
+      { label: 'Requested location', value: session.researchPlan.requestedGeography?.display ?? session.geography.value },
+      { label: 'Care setting', value: 'Not yet selected -- previews shown for all three classes' },
+    ],
+    rows: [],
+    total: classPreviews.reduce((n, p) => n + p.rows.length, 0),
+    classPreviews,
+    refinements: [],
+    provenance: { contract: 'ask-execution-scope-v1' },
+    limitations: [
+      'Nursing homes, Home Health agencies and Hospice providers are separate CMS directories and are never merged into one list.',
+      'Office/recorded location is not service availability.',
+    ],
+    destinations: [],
+    latencyMs: 0,
+    firstUsefulResult: classPreviews.some((p) => p.rows.length),
+  };
+}
+
 async function executeContractor(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
   const state=session.geography?.stateCode;
   if (!state&&!session.identifier) return failure(session,'INVALID_QUERY',0,'missing_state','Add a state so ContractorTrustHub can select the correct source-backed credential system.');

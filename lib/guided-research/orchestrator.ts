@@ -3,7 +3,7 @@ import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, INSURA
 import {careLocation,initialCareRatingFilters,type CareSetting} from '../network/care-task.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {validateAskQuestion} from '../network/ask-request.ts';
-import { executeGuidedSpecialist, fetchSeniorClassPreviews, isGuidedExecutionAuthorized } from './specialists.ts';
+import { buildSeniorClassPreviewResult, executeGuidedSpecialist, isGuidedExecutionAuthorized } from './specialists.ts';
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
@@ -237,13 +237,16 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   // providers). Once a real geography is resolved, fetch the same real per-class previews
   // SeniorTrustHub's own /ask already shows directly, so they render on this same clarification
   // screen. Nursing Home / Home Health / Hospice stay in separate, clearly labeled sections --
-  // never merged into one generic universe.
-  if(!result&&session.hub==='senior'&&session.researchPlan.reasonCodes.includes('CARE_TASK')&&!session.researchPlan.careSetting&&session.missingFields.includes('providerClass')&&session.geography?.stateCode){
-    const classPreviews=await fetchSeniorClassPreviews(session);
-    specialistCalls=classPreviews.length;
-    const previewResultState=classPreviews.some(p=>p.rows.length)?'SUPPORTED_RESULTS':'ZERO_MATCHING_ROWS';
-    result={specialist:'senior',executionOccurred:true,resultState:previewResultState,consumerHeading:'Choose a care setting to narrow results',consumerMessage:`Nursing homes, Home Health and Hospice are separate CMS classes with different identifiers and evidence. Real ${session.geography.stateName??session.geography.value} providers from each class are shown below -- choose one to narrow.`,interpretation:[{label:'Requested location',value:session.researchPlan.requestedGeography?.display??session.geography.value},{label:'Care setting',value:'Not yet selected -- previews shown for all three classes'}],rows:[],total:classPreviews.reduce((n,p)=>n+p.rows.length,0),classPreviews,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['Nursing homes, Home Health agencies and Hospice providers are separate CMS directories and are never merged into one list.','Office/recorded location is not service availability.'],destinations:[],latencyMs:0,firstUsefulResult:classPreviews.some(p=>p.rows.length)};
-    session=touch({...session,lastExecution:{source:'specialist',resultState:previewResultState,resultBearing:true,choicesBearing:true,executedAt:new Date().toISOString()},resultCount:result.total});
+  // never merged into one generic universe. buildSeniorClassPreviewResult is shared with the
+  // server-rendered first paint (app/ask/page.tsx) so this in-place path (e.g. after "explain the
+  // differences") stays consistent with it.
+  if(!result){
+    const seniorPreview=await buildSeniorClassPreviewResult(session);
+    if(seniorPreview){
+      result=seniorPreview;
+      specialistCalls=seniorPreview.classPreviews?.length??0;
+      session=touch({...session,lastExecution:{source:'specialist',resultState:seniorPreview.resultState,resultBearing:true,choicesBearing:true,executedAt:new Date().toISOString()},resultCount:result.total});
+    }
   }
   let nextActions=resolveGuidedNextActions({plan:session.researchPlan,scope:session.executionScope,resultState:result?.resultState});
   if(session.researchPlan.reasonCodes.includes('CARE_TASK')&&session.researchPlan.executionAllowed&&session.providerClass&&session.geography){
