@@ -14,18 +14,25 @@ function PosthogPageviews() {
   useEffect(() => {
     if (!shouldEnablePosthog()) return;
     const path = pathname || '/';
-    if (lastPath.current === path) return;
-    lastPath.current = path;
-    void getPosthogBrowser().then((posthog) => {
-      if (!posthog) return;
-      captureSanitizedPageview(path, window.location.origin + path);
-    });
+    let cancelled = false;
+    void getPosthogBrowser()
+      .then((posthog) => {
+        if (cancelled || !posthog) return;
+        if (lastPath.current === path) return;
+        lastPath.current = path;
+        captureSanitizedPageview(path, `${window.location.origin}${path}`);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, [pathname, searchParams]);
 
   return null;
 }
 
 function PosthogIdentity() {
+  const identified = useRef(false);
   useEffect(() => {
     if (!shouldEnablePosthog()) return;
     let cancelled = false;
@@ -33,8 +40,17 @@ function PosthogIdentity() {
       .then((res) => (res.ok ? res.json() : { distinctId: null }))
       .then((body: { distinctId?: string | null }) => {
         if (cancelled) return;
-        if (body.distinctId) identifyTrustHubUser(body.distinctId);
-        else resetTrustHubUser();
+        if (body.distinctId) {
+          identified.current = true;
+          identifyTrustHubUser(body.distinctId);
+          return;
+        }
+        // Anonymous visitors stay anonymous. Do not reset() on every page load —
+        // that would drop queued telemetry. Reset only after a prior identify.
+        if (identified.current) {
+          identified.current = false;
+          resetTrustHubUser();
+        }
       })
       .catch(() => undefined);
     return () => {
