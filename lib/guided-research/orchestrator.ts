@@ -215,11 +215,17 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     validateSelectedFilters(session);
     if(!isGuidedExecutionAuthorized(session))throw new Error('execution_not_authorized');
     specialistCalls=1;
+    // TH-DISCOVERY-RESET-001: preserve any non-blocking narrowing choices session.ts already
+    // attached before execution (e.g. Tampa Bay's Tampa/St. Petersburg/Clearwater sub-areas on an
+    // auto-broadened result) -- these must survive alongside real results, not be wiped out by
+    // result.choices (which drives CLARIFY vs REFINE below and is empty for an ordinary
+    // SUPPORTED_RESULTS response).
+    const preExecutionChoices=session.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING')?session.availableChoices:[];
     result={...await executeGuidedSpecialist(session),executionOccurred:true};
     const hasChoices=Boolean(result.choices?.length);
     const phase=result.resultState==='BACKEND_UNAVAILABLE'||result.resultState==='TIMEOUT'?'ERROR_RECOVERY':hasChoices?'CLARIFY':'REFINE';
     const choicePrompt=result.error?.code==='new_jersey_credential_class_required'?'What kind of credential or work do you want to research?':result.error?.code==='summit_is_city_in_union_county'?'Choose the corrected New Jersey geography.':result.error?.code==='statewide_fallback_confirmation_required'?'Would you like to broaden this to statewide New Jersey credential records?':'Choose a source-backed research option.';
-    session=touch({...session,phase,availableChoices:result.choices??[],availableRefinements:result.refinements,lastExecution:{source:'specialist',resultState:result.resultState,errorCode:result.error?.code,resultBearing:true,choicesBearing:hasChoices,executedAt:new Date().toISOString()},resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
+    session=touch({...session,phase,availableChoices:hasChoices?result.choices!:preExecutionChoices,availableRefinements:result.refinements,lastExecution:{source:'specialist',resultState:result.resultState,errorCode:result.error?.code,resultBearing:true,choicesBearing:hasChoices,executedAt:new Date().toISOString()},resultCount:result.total,nextAction:result.resultState==='SUPPORTED_RESULTS'||result.resultState==='EXACT_IDENTITY'?'Narrow these results or open a specialist profile.':hasChoices?choicePrompt:'Review the limitation and choose a useful next action.'});
   }
   if(!result&&session.researchPlan.reasonCodes.includes('CARE_TASK')&&session.researchPlan.careSetting&&!session.missingFields.length&&(!session.researchPlan.executionAllowed||!session.executionScope.executionAllowed)){
     result={specialist:'senior',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'This care setting or scope needs a different source',consumerMessage:session.researchPlan.clarificationReason??session.executionScope.disclosure??'This combination is not supported by the accepted source.',interpretation:[{label:'Requested care setting',value:session.entityClass??'Not selected'},{label:'Requested location',value:session.researchPlan.requestedGeography?.display??'Not selected'},{label:'Execution',value:'No provider retrieval ran.'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['No nursing-home or other provider cohort was substituted.'],destinations:[],error:{code:'care_capability_unavailable',retryable:false},latencyMs:0,firstUsefulResult:true};
@@ -238,6 +244,12 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   }
   session=touch({...session,nextActions});
   if(session.hub==='insurance'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='insurance_producer')session=touch({...session,nextAction:'InsuranceTrustHub does not publish mass individual-producer profiles. Verify the producer through the applicable official state licensing source.'});
+  // TH-DISCOVERY-003: "verify moving company before I book" is a verification-workflow question,
+  // not a request to browse the mover directory -- give the same concrete next-step guidance the
+  // nextActions below already assemble (identify the company, verify its USDOT/MC, or use the
+  // official FMCSA source) instead of the generic "needs explanation" clarification message.
+  if(session.hub==='move'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='mover')session=touch({...session,nextAction:'To verify a moving company before booking: identify the exact company name, look up its USDOT/MC number, and inspect its recorded FMCSA authority and role (carrier, broker, or both) before you commit.'});
+  if(session.hub==='contractor'&&session.researchPlan.intent==='HOW_TO'&&session.researchPlan.entityClass?.id==='contractor')session=touch({...session,nextAction:'To verify a contractor before you hire them: identify the exact company name, look up its license/credential number, and inspect its recorded trade class, status, and jurisdiction before you commit.'});
   if(result)result={...result,nextActions};
   return {session,result,diagnostics:{requestId,hub:session.hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:result?.total??0,specialistCalls}};
 }

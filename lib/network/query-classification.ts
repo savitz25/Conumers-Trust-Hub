@@ -34,6 +34,12 @@ const ENTITY_CLASSES: ClassDefinition[] = [
   { id: 'auto_transport', hubId: 'move', label: 'Auto transport company', pattern: /\b(?:auto|vehicle|car)\s+(?:transport(?:er)?|shipping)\s*(?:compan(?:y|ies)|carriers?|brokers?|transporters?)?\b/i },
   { id: 'household_goods_carrier', hubId: 'move', label: 'Household-goods carrier', pattern: /\bhousehold[- ]goods\s+(?:motor\s+)?carriers?\b/i },
   { id: 'mover', hubId: 'move', label: 'Moving company', pattern: /\b(?:moving\s+compan(?:y|ies)|movers?)\b/i },
+  // TH-DISCOVERY-003: "moving brokers in florida" matched neither "movers?" nor "moving
+  // compan(y|ies)" above, so entityClass stayed undefined and classifyUniversalQuery never
+  // returned type:'COHORT' -- session.ts's moveMode then had nothing to key off of, dead-ending
+  // at a "What are you moving?" CLARIFY despite a real, executable Florida mover cohort. "moving
+  // broker" is unambiguous with mortgage/insurance broker phrasing (neither ever carries "moving").
+  { id: 'mover', hubId: 'move', label: 'Moving company', pattern: /\bmoving\s+brokers?\b/i },
   // TH-ARCH-P0-001: "mortgage broker" must classify as a lender-hub provider category (DISCOVERY),
   // scoped strictly to the "mortgage"-qualified phrase -- bare "broker" alone stays deliberately
   // unclassified here so isAmbiguousBrokerQuery's household-goods/mortgage/insurance/broker-dealer

@@ -35,6 +35,7 @@ import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
 import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
 import { detectIlCity, queryLooksLikeIllinois } from './il-network.ts';
+import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
   | 'entity'
@@ -88,10 +89,24 @@ const PALM = /\bpalm\s*beach\b/i;
 function geography(q: string): ParsedGeography | undefined {
   const broward = BROWARD.test(q);
   const palm = PALM.test(q);
-  const tampa = /\btampa(\s+bay)?\b/i.test(q);
-  const miami = /\bmiami([-\s]?dade)?\b/i.test(q);
-  const bocaRaton = /\bboca\s+raton\b/i.test(q);
-  const florida = FL.test(q) || broward || palm || tampa || miami || bocaRaton;
+  // TH-DISCOVERY-003: was a hardcoded 3-city allowlist (Tampa/Miami/Boca Raton) tested with
+  // individual regexes -- every other crosswalk municipality (Fort Lauderdale, Delray Beach, West
+  // Palm Beach, ...) silently got no `city` at all here, even though the authoritative crosswalk
+  // (florida-municipality-crosswalk.ts) already knew them. Reuse that same crosswalk instead of a
+  // second city list, so every hub's shared geography parser recognizes every known municipality.
+  const flCity = detectFloridaCity(q);
+  // TH-DISCOVERY-RESET-001 (Vercel review fix): a crosswalk municipality match is a substring
+  // signal, not explicit evidence of Florida -- it must never override an explicitly supplied
+  // non-Florida jurisdiction elsewhere in the same query ("Wellington, Colorado" and "Hollywood,
+  // Maryland" both contain a real crosswalk city name, but the state is not Florida). The literal
+  // words "Florida"/"FL", or Broward/Palm Beach county, are still unambiguous on their own and are
+  // not gated by this check.
+  const otherStateNamedForFlorida = flCity
+    ? US_JURISDICTIONS.some(
+        (j) => j.code !== 'FL' && new RegExp(`\\b${j.name.replace(/\s+/g, '\\s+')}\\b`, 'i').test(q),
+      )
+    : false;
+  const florida = FL.test(q) || broward || palm || (Boolean(flCity) && !otherStateNamedForFlorida);
   const njNamedEarly = /\bnew\s+jersey\b|\bn\.?j\.?\b|\bnewark\b/i.test(q);
   const caNamedEarly = queryLooksLikeCalifornia(q);
   const txNamedEarly = queryLooksLikeTexas(q);
@@ -260,10 +275,7 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  let city: string | undefined;
-  if (tampa) city = 'Tampa';
-  else if (miami) city = 'Miami';
-  else if (bocaRaton) city = 'Boca Raton';
+  let city: string | undefined = flCity?.city;
 
   if (broward) {
     return {

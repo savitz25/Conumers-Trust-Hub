@@ -9,7 +9,11 @@ const ssrMatrix=[
  ['nursing homes in Boca Raton Florida','SeniorTrustHub','Boca Raton, Florida',true],
 ] as const;
 test('server-safe route model covers the mandatory SSR matrix',()=>{for(const [q,hub,scope,canExecute] of ssrMatrix){const r=buildAskResearchRoute(q);assert.equal(r.hubLabel,hub,q);assert.equal(r.question,q);if(scope)assert.ok([r.requestedScope,r.executionScope].includes(scope),q);assert.equal(r.canExecute,canExecute,q);assert.ok(r.status&&r.explanation&&r.limitation);assert.ok(r.timings.totalMs>=0)}});
-test('Guided START is constructed on the server and clarification cannot execute',()=>{const tampa=createGuidedSession('mover in tampa bay florida')!;assert.equal(tampa.phase,'CLARIFY');assert.equal(tampa.executionScope.executionAllowed,false);assert.equal(tampa.lastExecution,undefined);const broward=createGuidedSession('licensed roofer in Fort Lauderdale Florida')!;assert.equal(broward.phase,'EXECUTE');assert.equal(broward.geography?.county,'Broward')});
+// TH-DISCOVERY-RESET-001: "mover in tampa bay florida" now auto-broadens to Florida instead of
+// stopping at CLARIFY with zero results -- Tampa Bay (a multi-county region) has no single
+// executable sub-area, so RESULTS FIRST means broadening straight to the state and showing real
+// movers, labeled as broader than requested, rather than a bare consent button.
+test('Guided START is constructed on the server, and a region auto-broadens to real results',()=>{const tampa=createGuidedSession('mover in tampa bay florida')!;assert.equal(tampa.phase,'EXECUTE');assert.equal(tampa.executionScope.executionAllowed,true);assert.equal(tampa.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING'),true);assert.equal(tampa.executionScope.requestedGeography?.display,'Tampa Bay, Florida');assert.equal(tampa.executionScope.executionGeography?.kind,'state');const broward=createGuidedSession('licensed roofer in Fort Lauderdale Florida')!;assert.equal(broward.phase,'EXECUTE');assert.equal(broward.geography?.county,'Broward')});
 
 const journeys=[
  ["I'm buying a home in Broward County and need to research my lender, insurance and contractor.",['lender','insurance','contractor'],[]],

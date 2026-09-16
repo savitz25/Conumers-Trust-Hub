@@ -48,7 +48,11 @@ export type AskResearchPlan = {
 
 type PlannerOverrides = { proposedIntent?: AskResearchIntent; proposedEntityName?: string };
 
-const HOW_TO = /\b(?:how\s+(?:do|can|should|would)\s+i|how\s+to|what\s+(?:should|do)\s+i\s+(?:look|read|check)|loan\s+estimate\s+what\s+matters|ways?\s+to)\b/i;
+// TH-DISCOVERY-003: "verify X before I book/hire" is a verification-workflow question, not a
+// request to browse every company in the entity class -- "verify moving company before I book"
+// used to fall through to an entity-only cohort call (no geography) that legitimately, but
+// unhelpfully, returned zero rows instead of HOW_TO guidance.
+const HOW_TO = /\b(?:how\s+(?:do|can|should|would)\s+i|how\s+to|what\s+(?:should|do)\s+i\s+(?:look|read|check)|loan\s+estimate\s+what\s+matters|ways?\s+to|verify\b[^?.!]{0,60}\bbefore\s+i\b)\b/i;
 const EXPLAINER = /\b(?:what\s+(?:is|are|does)|define|definition|explain|difference\s+between|what\s+do\s+.+\s+mean|does\s+.+\s+mean|(?:current|active|registered|licensed|published)\b.{0,35}\bmeans?)\b/i;
 const STATUS_EXPLAINER=/\b(?:current|active|registered|licensed|published|vendor\s+registration|HMDA|CMS\s+stars?|no\s+(?:match|enforcement|complaints?))\b[^?.!]{0,70}\b(?:mean|equal|prove|endorse|recommend|trustworthy|approved|clean|good|license)\b/i;
 const RECOMMENDATION = /\b(?:best|safest|most\s+trustworthy|legitimate|recommended|top|good)\b/i;
@@ -91,6 +95,12 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   if (classified) return { id: classified.id, label: classified.label };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
+  // TH-DISCOVERY-003: "moving brokers in florida" fell through every branch here (matches neither
+  // "moving compan(y|ies)" nor bare "movers?"), landing on ENTITY_LOOKUP_MISSING_IDENTITY -- a
+  // genuine dead end (missingSlots:['entityName'], executionAllowed:false, no path forward) worse
+  // than an unsupported-geography case. "moving broker" is unambiguous with mortgage/insurance
+  // broker phrasing, which never carries the word "moving".
+  if (/\bmoving\s+brokers?\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   if (/\b(?:who\s+can\s+move|moving\s+from|move\s+me\s+from)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   if (/\b(?:roofers?|roof(?:ing)?\s+(?:contractors?|guy))\b/i.test(query)) return { id: 'roofing_contractor', label: 'Roofing contractor' };
   if (/\bcontractors?\b/i.test(query)) return { id: 'contractor', label: 'Contractor' };

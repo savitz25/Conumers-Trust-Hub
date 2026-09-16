@@ -20,7 +20,10 @@ const matrix: Expected[] = [
   // supports state-grain execution now offers the same state-broadening consent path as an
   // unsupported city, instead of an unconditional dead end with no path to any result.
   {query:'mover in tampa bay florida',hub:'move',requested:'Tampa Bay, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
-  {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
+  // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real, additive recorded-headquarters-
+  // CITY filter (geography-capabilities.ts added 'city' to move's supportedKinds), so this
+  // executes directly at EXACT city grain instead of requiring state-broadening consent.
+  {query:'movers in Boca Raton Florida',hub:'move',requested:'Boca Raton, Florida',executed:'Boca Raton, Florida',state:'EXACT',meaning:'RECORDED_HEADQUARTERS',allowed:true},
   {query:'licensed roofer in Fort Lauderdale Florida',hub:'contractor',requested:'Fort Lauderdale, Florida',executed:'Broward County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
   {query:'roofing contractors in Broward County Florida',hub:'contractor',requested:'Broward County, Florida',executed:'Broward County, Florida',state:'EXACT',allowed:true},
   // TH-DISCOVERY-002: a city mapping to a known-but-unpublished FL county (Tampa -> Hillsborough,
@@ -29,7 +32,15 @@ const matrix: Expected[] = [
   // fix made for Lender (Miami -> Miami-Dade) that incidentally, correctly, applies here too since
   // Contractor supports state grain the same way. Not a regression: strictly more reachable results
   // under the same consent gate, never silent.
-  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
+  // TH-DISCOVERY-003: Hillsborough (Tampa's county) is a real, live-confirmed supported county for
+  // ContractorTrustHub's specialist -- geography-capabilities.ts's supportedFloridaCounties was
+  // undersold at just Broward/Palm Beach and is now the specialist's true 30-county boundary.
+  {query:'roofers in Tampa Florida',hub:'contractor',requested:'Tampa, Florida',executed:'Hillsborough County, Florida',state:'DETERMINISTIC_EQUIVALENT',meaning:'CREDENTIAL_GEOGRAPHY',transformation:'CITY_TO_COUNTY',allowed:true},
+  // Note: this matrix calls resolveResearchScope() directly with no consent, so it still reflects
+  // the raw, session-unaware capability result (BROADENING_REQUIRES_CONSENT/not-yet-allowed).
+  // TH-DISCOVERY-RESET-001's auto-broadening lives one layer up, in session.ts's
+  // createGuidedSession, which supplies that consent automatically for a live guided session --
+  // see the orchestrator-level tests below for that behavior.
   {query:'registered investment advisers in West Palm Beach Florida',hub:'investor',requested:'West Palm Beach, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'PRINCIPAL_OFFICE',allowed:false},
   {query:'RIAs in Florida',hub:'investor',requested:'Florida',executed:'Florida',state:'EXACT',meaning:'PRINCIPAL_OFFICE',allowed:true},
   {query:'mortgage lenders in Palm Beach County Florida',hub:'lender',requested:'Palm Beach County, Florida',executed:'Palm Beach County, Florida',state:'EXACT',meaning:'PROPERTY_GEOGRAPHY',allowed:true},
@@ -40,10 +51,18 @@ const matrix: Expected[] = [
   {query:'roofer in Phoenix Arizona',hub:'contractor',requested:'Phoenix, Arizona',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
   {query:'contractor in Seattle Washington',hub:'contractor',requested:'Seattle, Washington',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
   {query:'lender in Austin Texas',hub:'lender',requested:'Austin, Texas',state:'BROADENING_REQUIRES_CONSENT',allowed:false},
-  {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',state:'BROADENING_REQUIRES_CONSENT',meaning:'RECORDED_HEADQUARTERS',allowed:false},
+  // TH-DISCOVERY-003: see the movers-in-Boca-Raton entry above -- MoveTrustHub's specialist now has
+  // a real recorded-headquarters-CITY filter, so this executes directly at EXACT city grain.
+  {query:'mover headquartered in Miami Florida',hub:'move',requested:'Miami, Florida',executed:'Miami, Florida',state:'EXACT',meaning:'RECORDED_HEADQUARTERS',allowed:true},
   {query:'mover serving Miami Florida',hub:'move',requested:'Miami, Florida',state:'CAPABILITY_UNSUPPORTED',meaning:'SERVICE_TERRITORY',allowed:false},
   {query:"I'm moving from Chicago to Denver, who can move me?",hub:'move',requested:'Chicago to Denver',state:'CAPABILITY_UNSUPPORTED',meaning:'ORIGIN_DESTINATION',allowed:false},
-  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
+  // TH-DISCOVERY-RESET-001: Boca Raton has no real-world same-name collision in another state
+  // (verified against SeniorTrustHub's live corpus), so care-task.ts's careLocation resolves this
+  // bare city directly (RESULTS FIRST) instead of a jurisdiction dead-end on a technicality. This
+  // resolution happens in care-task.ts itself (used directly by research-planner.ts for any
+  // care-classified query), not the generic consent-gated broadening layer, so it is identical
+  // whether read from the raw plan (here) or a live session.
+  {query:'home health agency in Boca Raton',hub:'senior',requested:'Boca Raton, Florida',executed:'Boca Raton, Florida',state:'EXACT',meaning:'RECORDED_OFFICE_LOCATION',allowed:true},
   {query:'nursing homes within 25 miles of Boca Raton',hub:'senior',requested:'25 miles of Boca Raton',state:'CLARIFICATION_REQUIRED',allowed:false},
 ];
 
@@ -88,11 +107,22 @@ test('scope invariants require consent and retain the original request',()=>{
   assert.equal(approved.executionGeography?.display,'Florida');
 });
 
+// TH-DISCOVERY-003: "insurance agencies in Fort Lauderdale Florida" was dropped from this list --
+// Fort Lauderdale/Broward is a real Insurance local-directory launch county (TH-DISCOVERY-002B)
+// that the shared FL city parser now correctly recognizes, so it genuinely calls the specialist.
+// "movers in Boca Raton Florida" was also dropped -- MoveTrustHub's specialist now has a real
+// recorded-headquarters-CITY filter (this ticket), so it genuinely executes at city grain too.
 test('START blocks unsupported scopes before specialist execution',async()=>{
   const originalFetch=globalThis.fetch;let calls=0;
   globalThis.fetch=(async()=>{calls+=1;throw new Error('specialist must not run')}) as typeof fetch;
   try{
-    for(const query of ['mover in tampa bay florida','movers in Boca Raton Florida','registered investment advisers in West Palm Beach Florida','insurance agencies in Fort Lauderdale Florida','mover serving Miami Florida']){
+    // TH-DISCOVERY-RESET-001: "mover in tampa bay florida" was dropped -- it now genuinely
+    // auto-broadens to Florida and executes (RESULTS FIRST), so it is no longer an "unsupported
+    // scope blocked before execution" case.
+    // TH-DISCOVERY-RESET-001: "registered investment advisers in West Palm Beach Florida" was
+    // dropped -- InvestorTrustHub's specialist has no local-office filter, so this now genuinely
+    // auto-broadens to Florida and executes (RESULTS FIRST); see its own coverage below.
+    for(const query of ['mover serving Miami Florida']){
       const response=await orchestrateGuidedResearch({action:{type:'START',question:query}});
       assert.equal(response.diagnostics.specialistCalls,0,query);
       assert.equal(response.session.phase,'CLARIFY',query);
@@ -127,16 +157,21 @@ test('specialist request bodies receive only resolved execution geography',async
   const originalFetch=globalThis.fetch;const seen:Array<Record<string,unknown>>=[];
   globalThis.fetch=(async(_input,init)=>{seen.push(JSON.parse(String(init?.body)));return new Response('{}',{status:503,headers:{'content-type':'application/json'}})}) as typeof fetch;
   try{
+    // TH-DISCOVERY-003: MoveTrustHub's specialist now has a real recorded-headquarters-CITY
+    // filter, so this executes at EXACT city grain -- the request body must carry the resolved
+    // city, not a broader/unresolved geography.
     const move=await orchestrateGuidedResearch({action:{type:'START',question:'movers in Boca Raton Florida'}});
-    assert.equal(move.diagnostics.specialistCalls,0);assert.equal(seen.length,0);assert.equal(move.session.executionScope.executionGeography,undefined);
+    assert.equal(move.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).city,'Boca Raton');assert.equal(move.session.executionScope.executionGeography?.kind,'city');
     const lender=await orchestrateGuidedResearch({action:{type:'START',question:'mortgage lenders in West Palm Beach Florida'}});
     assert.equal(lender.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).county,'Palm Beach');assert.equal((seen.at(-1)?.geography as Record<string,unknown>).countyFips,'12099');
     const senior=await orchestrateGuidedResearch({action:{type:'START',question:'nursing homes in Boca Raton Florida'}});
     assert.equal(senior.diagnostics.specialistCalls,1);assert.deepEqual(seen.at(-1)?.geography,{type:'city',value:'Boca Raton',state:'FL'});
+    // TH-DISCOVERY-RESET-001: InvestorTrustHub's specialist has no local-office filter, so this
+    // now auto-broadens to Florida and executes immediately (RESULTS FIRST) instead of requiring
+    // an explicit scope_state: consent choice first.
     const investor=await orchestrateGuidedResearch({action:{type:'START',question:'registered investment advisers in West Palm Beach Florida'}});
-    assert.equal(investor.diagnostics.specialistCalls,0);assert.equal(seen.length,2);
-    const approved=await orchestrateGuidedResearch({session:investor.session,action:{type:'SELECT_CHOICE',value:'scope_state:FL'}});
-    assert.equal(approved.diagnostics.specialistCalls,1);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).stateCode,'FL');
-    assert.equal(approved.session.executionScope.userConsent?.requestedDisplay,'West Palm Beach, Florida');
+    assert.equal(investor.diagnostics.specialistCalls,1);assert.equal(seen.length,4);assert.equal((seen.at(-1)?.geography as Record<string,unknown>).stateCode,'FL');
+    assert.equal(investor.session.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING'),true);
+    assert.equal(investor.session.executionScope.requestedGeography?.display,'West Palm Beach, Florida');
   }finally{globalThis.fetch=originalFetch;}
 });
