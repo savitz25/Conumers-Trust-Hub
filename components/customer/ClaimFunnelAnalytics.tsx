@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
+import { captureTrustEvent } from '@/lib/analytics/trusthub';
+import { TRUSTHUB_EVENTS } from '@/lib/analytics/trusthub-events';
 import { claimAcquisitionSource, safeClaimFunnelProperties, type ClaimAcquisitionSource } from '@/lib/customer/claim-launch';
 
 export function ClaimFunnelAnalytics({
@@ -23,14 +25,24 @@ export function ClaimFunnelAnalytics({
   authenticated?: boolean;
 }) {
   useEffect(() => {
-    trackEvent(event, safeClaimFunnelProperties({
+    const props = safeClaimFunnelProperties({
       hub: hub as never,
       profileClass: profileClass as never,
       state,
       resultState,
       source: claimAcquisitionSource(source),
       authenticated,
-    }));
+    });
+    trackEvent(event, props);
+    if (event === 'claim_started') {
+      captureTrustEvent(TRUSTHUB_EVENTS.CLAIM_STARTED, {
+        surface: 'claim',
+        specialist_hub: hub,
+        state,
+        authenticated,
+        success: true,
+      });
+    }
   }, [authenticated,event,hub,profileClass,resultState,source,state]);
   return null;
 }

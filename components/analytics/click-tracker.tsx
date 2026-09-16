@@ -7,6 +7,7 @@ import {
   internalNavKeyFromPath,
 } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
+import { captureResultOpened, captureSearchSubmitted, captureSpecialistHandoff } from '@/components/analytics/ask-instrumentation';
 
 /**
  * Document-level click instrumentation for outbound specialist hubs and
@@ -25,6 +26,14 @@ export function ClickTracker() {
       const namedEvent = instrumented?.dataset.analyticsEvent;
       if (namedEvent) {
         trackEvent(namedEvent, { surface: 'homepage' });
+      }
+
+      const ath = target.closest<HTMLElement>('[data-ath-event]');
+      const athEvent = ath?.dataset.athEvent;
+      if (athEvent) {
+        const hub = ath.dataset.athHub;
+        if (athEvent === 'search_result_opened') captureResultOpened(hub, ath.dataset.athSurface || 'ask_results');
+        if (athEvent === 'specialist_handoff_started') captureSpecialistHandoff(hub, ath.dataset.athSurface || 'ask_results');
       }
 
       const anchor = target.closest('a');
@@ -47,6 +56,10 @@ export function ClickTracker() {
             });
           }
           return;
+        }
+
+        if (url.pathname === '/ask' && url.searchParams.has('q')) {
+          captureSearchSubmitted('ask_example_link');
         }
 
         const navKey = internalNavKeyFromPath(url.pathname);

@@ -4,6 +4,7 @@ import { assembleNetworkAnswerWithSpecialist } from '@/lib/network/ask-plan';
 import { CROSS_HUB_NAME_CHECK } from '@/lib/network/name-check';
 import { SAVE_TO_RESEARCH_CONTRACT } from '@/lib/network/federated-ask';
 import { seniorSearchHref } from '@/lib/network/consumer-ask';
+import { AskSearchResultsReturned } from '@/components/analytics/ask-instrumentation';
 
 const RESULT_LABELS = {
   EXACT_IDENTITY: 'Exact regulatory identity',
@@ -37,6 +38,14 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
 
   return (
     <div className="space-y-8">
+      <AskSearchResultsReturned
+        surface="ASK_EXECUTE"
+        specialistHub={primary?.hubId}
+        capability={plan.intent}
+        capabilityState={answer.resultClass}
+        resultCount={options.length}
+        success={!hardFail}
+      />
       <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: ASK_BRAND.indigo }}>
         {RESULT_LABELS[answer.resultClass]}
       </p>
@@ -76,7 +85,7 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
             {answer.noResult.actions.map((action) => <li key={action}>{action}</li>)}
           </ul>
           {researchHref ? (
-            <a href={researchHref} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white" style={{ backgroundColor: ASK_BRAND.navy }}>
+            <a href={researchHref} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white" data-ath-event="specialist_handoff_started" data-ath-hub={primary?.hubId} data-ath-surface="ask_results" style={{ backgroundColor: ASK_BRAND.navy }}>
               Continue on the specialist Trust Hub
             </a>
           ) : null}
@@ -129,6 +138,9 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
                   <a
                     href={opt.destination.href}
                     className="underline-offset-2 hover:underline"
+                    data-ath-event="search_result_opened"
+                    data-ath-hub={opt.hubId}
+                    data-ath-surface="ask_results"
                     style={{ color: ASK_BRAND.indigo }}
                   >
                     {opt.name}
@@ -152,6 +164,9 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
                 <a
                   href={opt.destination.href}
                   className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold underline-offset-2 hover:underline"
+                  data-ath-event="specialist_handoff_started"
+                  data-ath-hub={opt.hubId}
+                  data-ath-surface="ask_results"
                   style={{ color: ASK_BRAND.indigo }}
                 >
                   {opt.destination.ctaLabel}
@@ -197,6 +212,9 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
               <a
                 href={researchHref}
                 className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white"
+                data-ath-event="specialist_handoff_started"
+                data-ath-hub={primary?.hubId}
+                data-ath-surface="ask_results"
                 style={{ backgroundColor: ASK_BRAND.navy }}
               >
                 Open specialist research

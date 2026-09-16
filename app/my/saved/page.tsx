@@ -9,6 +9,8 @@ import {
   updatePrivateNoteAction,
   saveMoveInventorySessionAction,
 } from "@/app/my/actions";
+import { AnalyticsForm } from "@/components/analytics/analytics-form";
+import { captureProfileSaved } from "@/components/analytics/ask-instrumentation";
 import { GuestRestore } from "@/components/my-trusthub/guest-restore";
 import { GuestSessionRestore } from "@/components/my-trusthub/guest-session-restore";
 import { SessionCard } from "@/components/my-trusthub/session-card";
@@ -71,7 +73,7 @@ export default async function SavedPage({
       {canSave ? (
         <details className="myth-create">
           <summary>Save controlled canary entity</summary>
-          <form action={saveCanaryEntityAction} className="myth-form myth-form-grid">
+          <AnalyticsForm action={saveCanaryEntityAction} className="myth-form myth-form-grid" onAnalyticsSubmit={() => captureProfileSaved('my_saved')}>
             <label htmlFor="binding-id">Approved binding UUID</label>
             <input
               id="binding-id"
@@ -83,7 +85,7 @@ export default async function SavedPage({
               pattern="[0-9a-fA-F-]{36}"
             />
             <button className="myth-primary" type="submit">Save entity</button>
-          </form>
+          </AnalyticsForm>
           <p className="myth-muted">
             Internal canary only. Use the binding created through the approved
             parent identity-governance path.
