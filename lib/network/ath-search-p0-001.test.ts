@@ -57,8 +57,7 @@ const housingJourneys = [
 function assertHardGate(query: string) {
   const route = buildAskResearchRoute(query);
   assert.equal(isUnsupportedSecuritiesAdviceQuery(query), true, query);
-  assert.equal(route.journey, undefined, `${query} must not become a multi-hub journey`);
-  assert.notEqual(route.journey?.journeyType, 'HOME_BUYING', query);
+  assert.equal(route.journey ?? null, null, `${query} must not become a multi-hub journey`);
   assert.ok(route.plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'), query);
   assert.equal(route.plan.intent, 'RECOMMENDATION_REQUEST', query);
   assert.equal(route.plan.primaryHub, 'investor', query);
