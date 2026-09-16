@@ -2,7 +2,7 @@
 
 import type { PostHog } from 'posthog-js';
 import { analyticsEnvironment, posthogHost, posthogProjectToken, shouldEnablePosthog } from './environment';
-import { FORBIDDEN_EVENT_KEYS, sanitizeAnalyticsUrl } from './privacy';
+import { sanitizePageviewProperties } from './privacy';
 import { TRUSTHUB_HUB } from './trusthub-events';
 
 let client: PostHog | null = null;
@@ -10,21 +10,7 @@ let initializing = false;
 
 function sanitizeEvent<T extends { properties?: Record<string, unknown> } | null>(event: T): T {
   if (!event?.properties) return event;
-  const properties = event.properties;
-  if (typeof properties.$current_url === 'string') {
-    properties.$current_url = sanitizeAnalyticsUrl(properties.$current_url);
-  }
-  if (typeof properties.$pathname === 'string') {
-    properties.$pathname = String(properties.$pathname).split('?')[0];
-  }
-  if (typeof properties.$referrer === 'string') {
-    properties.$referrer = sanitizeAnalyticsUrl(properties.$referrer);
-  }
-  for (const key of Object.keys(properties)) {
-    if (FORBIDDEN_EVENT_KEYS.includes(key.toLowerCase() as (typeof FORBIDDEN_EVENT_KEYS)[number])) {
-      delete properties[key];
-    }
-  }
+  sanitizePageviewProperties(event.properties);
   return event;
 }
 

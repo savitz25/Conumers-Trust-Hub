@@ -45,6 +45,7 @@ Common properties, sent only when known:
 - Raw Ask `q` / question text is never an event property.
 - Forbidden keys are listed in `lib/analytics/privacy.ts`.
 - Pageview URLs strip `q`, `code`, `token`, `email`, and similar keys.
+- `/ask` and `/search` pageview titles are replaced with `Ask Trust Hub` so document titles that include `q` never reach PostHog.
 
 ## Session Replay
 

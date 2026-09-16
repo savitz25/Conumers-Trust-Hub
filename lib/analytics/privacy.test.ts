@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   isOpaqueTrustHubId,
   sanitizeAnalyticsUrl,
+  sanitizePageviewProperties,
   stripForbiddenProperties,
 } from './privacy.ts';
 
@@ -27,6 +28,16 @@ test('stripForbiddenProperties drops raw search and identity fields', () => {
     success: true,
   });
   assert.deepEqual(cleaned, { hub: 'ask', result_count: 3, success: true });
+});
+
+test('Ask pageview titles do not keep raw search text', () => {
+  const props = sanitizePageviewProperties({
+    $pathname: '/ask',
+    $title: 'Research: who owns this house | Ask Trust Hub',
+    $current_url: 'https://www.asktrusthub.com/ask?q=who%20owns%20this%20house',
+  });
+  assert.equal(props.$title, 'Ask Trust Hub');
+  assert.equal(props.$current_url, 'https://www.asktrusthub.com/ask');
 });
 
 test('opaque Trust Hub ids must be UUIDs, not emails or licenses', () => {

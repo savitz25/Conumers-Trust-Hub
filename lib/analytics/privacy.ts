@@ -58,6 +58,30 @@ export function isOpaqueTrustHubId(value: string): boolean {
   return UUID.test(value.trim());
 }
 
+export function sanitizePageviewProperties(properties: Record<string, unknown>): Record<string, unknown> {
+  if (typeof properties.$current_url === 'string') {
+    properties.$current_url = sanitizeAnalyticsUrl(properties.$current_url);
+  }
+  if (typeof properties.$pathname === 'string') {
+    properties.$pathname = String(properties.$pathname).split('?')[0];
+  }
+  if (typeof properties.$referrer === 'string') {
+    properties.$referrer = sanitizeAnalyticsUrl(properties.$referrer);
+  }
+  const path = String(properties.$pathname || '');
+  if (path === '/ask' || path.startsWith('/ask/') || path === '/search') {
+    properties.$title = 'Ask Trust Hub';
+    properties.title = 'Ask Trust Hub';
+    properties.$document_title = 'Ask Trust Hub';
+  }
+  for (const key of Object.keys(properties)) {
+    if (FORBIDDEN_EVENT_KEYS.includes(key.toLowerCase() as (typeof FORBIDDEN_EVENT_KEYS)[number])) {
+      delete properties[key];
+    }
+  }
+  return properties;
+}
+
 export function sanitizeAnalyticsUrl(raw: string | undefined | null): string | undefined {
   if (!raw) return undefined;
   try {
