@@ -231,6 +231,44 @@ function seniorRefinements(session: GuidedResearchSession): GuidedRefinement[] {
   return [];
 }
 
+const SENIOR_PREVIEW_CLASSES: Array<{ providerClass: 'nursing_home' | 'home_health' | 'hospice'; label: string }> = [
+  { providerClass: 'nursing_home', label: 'Nursing Homes' },
+  { providerClass: 'home_health', label: 'Home Health' },
+  { providerClass: 'hospice', label: 'Hospice' },
+];
+
+// TH-DISCOVERY-RESET-001C: "senior care Florida" is genuinely ambiguous across three separate CMS
+// classes and Ask must keep asking which one -- but the specialist itself already shows real
+// per-class previews the moment it is queried directly (SeniorTrustHub's own classPreviews, from
+// the prior ticket). Ask was flattening that away because its class-choice clarification never
+// called the specialist at all. This reuses the SAME executeSeniorRequest call the real
+// nursing-home/home-health/hospice searches already use, once per class, with the requested
+// geography -- no new specialist contract, no new architecture. Each class's own call failing
+// independently (e.g. a genuinely unsupported geography) must not block the other two previews.
+export async function fetchSeniorClassPreviews(
+  session: GuidedResearchSession,
+): Promise<NonNullable<GuidedExecutionResult['classPreviews']>> {
+  return Promise.all(
+    SENIOR_PREVIEW_CLASSES.map(async ({ providerClass, label }) => {
+      try {
+        const classSession: GuidedResearchSession = { ...session, providerClass, identifier: undefined };
+        const body = {
+          providerClass,
+          geography: session.geography
+            ? { type: session.geography.type, value: session.geography.value, ...(session.geography.stateCode ? { state: session.geography.stateCode } : {}) }
+            : undefined,
+          page: 1,
+        };
+        const result = await executeSeniorRequest(classSession, body);
+        const rows = result.resultState === 'SUPPORTED_RESULTS' || result.resultState === 'EXACT_IDENTITY' ? result.rows.slice(0, 5) : [];
+        return { providerClass, label, rows };
+      } catch {
+        return { providerClass, label, rows: [] };
+      }
+    }),
+  );
+}
+
 async function executeContractor(session: GuidedResearchSession): Promise<GuidedExecutionResult> {
   const state=session.geography?.stateCode;
   if (!state&&!session.identifier) return failure(session,'INVALID_QUERY',0,'missing_state','Add a state so ContractorTrustHub can select the correct source-backed credential system.');

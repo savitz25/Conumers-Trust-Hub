@@ -95,6 +95,15 @@ function GuidedResults({result,session,onAction,excludedHrefs}:{result:GuidedExe
       <p className="mt-2 text-sm leading-relaxed" style={{color:ASK_BRAND.ink}}>{result.consumerMessage}</p>
       {result.total>0?<p className="mt-2 font-semibold tabular-nums" style={{color:ASK_BRAND.navy}}>{result.total.toLocaleString('en-US')} matching public records</p>:null}
     </section>
+    {result.classPreviews?.some(group=>group.rows.length)?<div className="space-y-5">{result.classPreviews.map(group=>group.rows.length?<section key={group.providerClass} aria-label={`${group.label} preview`}>
+      <h3 className="text-lg font-semibold" style={{color:ASK_BRAND.navy}}>{group.label}</h3>
+      <ol className="mt-3 grid gap-3">{group.rows.map((row,index)=><li key={`${group.providerClass}-${row.identifier?.value??row.name}-${index}`} className="rounded-2xl border bg-white p-4" style={{borderColor:ASK_BRAND.border,boxShadow:ASK_SHADOW.soft}}>
+        <h4 className="font-semibold" style={{color:ASK_BRAND.navy}}>{row.name}</h4>
+        {row.recordedLocation?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>{row.recordedLocation}</p>:null}
+        <p className="mt-2 text-xs leading-relaxed" style={{color:ASK_BRAND.ink}}><span className="font-semibold">Why shown:</span> {row.whyShown}</p>
+        {row.destination?<a href={row.destination.href} className="mt-3 inline-flex min-h-11 items-center font-semibold underline-offset-2 hover:underline" style={{color:ASK_BRAND.indigo}}>{row.destination.label}</a>:null}
+      </li>)}</ol>
+    </section>:null)}</div>:null}
     {result.rows.length?<ol className="grid gap-4">{result.rows.map((row,index)=><li key={`${row.destination?.href??row.identifier?.value??row.name}-${index}`} className="rounded-2xl border bg-white p-5" style={{borderColor:ASK_BRAND.border,boxShadow:ASK_SHADOW.soft}}>
       <h3 className="text-lg font-semibold" style={{color:ASK_BRAND.navy}}>{row.name}</h3>
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
