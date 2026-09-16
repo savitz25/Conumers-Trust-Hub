@@ -593,16 +593,34 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   // the real result afterward instead of replacing it with zero rows.
   const body=session.identifier?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identifier',identifier:{type:session.identifier.type,value:session.identifier.value},limit:10}
     :session.insuranceResearchMode==='identity_name'?{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'identity',entityClass:session.insuranceEntityClass,identityName:session.identityName,limit:10}
-      :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':session.insuranceEntityClass==='legal_insurer'?'DOMICILE':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
+      // TH-DISCOVERY-RESET-001B: a bare "<state> insurance company" consumer question carries no
+      // real domicile-specific signal -- domicile and credential jurisdiction are genuinely
+      // different regulatory concepts (InsuranceTrustHub's own v1 default already resolves an
+      // unlabeled bare state to credential jurisdiction, never domicile, for this identical
+      // phrasing), and only credential-jurisdiction requests reach InsuranceTrustHub's real
+      // broadened-agency fallback for an unsupported legal-insurer cohort. Sending DOMICILE here
+      // used to make no observable difference because both intents dead-ended the same way; now it
+      // would silently keep this exact consumer question stonewalled through Ask specifically.
+      :{contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:session.insuranceEntityClass,geography:session.geography?{stateCode:session.geography.stateCode,intent:service?'SERVICE_TERRITORY':'CREDENTIAL_JURISDICTION'}:service?{intent:'SERVICE_TERRITORY'}:undefined,filters:Object.keys(filters).length?filters:undefined,page:1,limit:10};
   const outcome=await specialistFetch('insurance',body);if('error'in outcome)return failure(session,outcome.error,outcome.latencyMs,outcome.error.toLowerCase());
   const payload=outcome.body;if(!validateFinancialContract('insurance',payload))return failure(session,'BACKEND_UNAVAILABLE',outcome.latencyMs,'contract_mismatch','InsuranceTrustHub’s structured contract lock changed.');
   const state=financialState(payload,outcome.status);if(!['SUPPORTED_RESULTS','ZERO_MATCHING_ROWS','EXACT_IDENTITY'].includes(state))return financialFailure(session,payload,state,outcome.latencyMs);
   const rows=mapInsuranceRows(payload);
+  // TH-DISCOVERY-RESET-001B: the specialist can now broaden an unsupported legal-insurer state
+  // cohort to real agency rows for the same jurisdiction -- the heading/label must reflect what
+  // was ACTUALLY returned (rows[0].entityClass), never the originally-requested session class, or
+  // agency results would be falsely presented as legal insurers.
+  const actualClass=text(rows[0]?.classLabel)?.replace(/\s+/g,'_')??session.insuranceEntityClass;
   const refinements=normalizeRefinements(payload.availableRefinements).filter((row)=>session.insuranceEntityClass==='agency'&&['credentialJurisdiction','lineOfAuthority'].includes(row.id));
   const result=supported(session,payload,rows,outcome.latencyMs,refinements);result.resultState=state;
-  result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':session.insuranceEntityClass==='legal_insurer'?'Public legal-insurer research results':'Insurance agency research results';
-  const classLabel=session.insuranceEntityClass==='legal_insurer'?'legal-insurer':'agency';
+  const classLabel=actualClass==='legal_insurer'?'legal-insurer':'agency';
+  result.consumerHeading=state==='EXACT_IDENTITY'?'Exact regulatory identity':classLabel==='legal-insurer'?'Public legal-insurer research results':'Insurance agency research results';
   result.consumerMessage=state==='ZERO_MATCHING_ROWS'?'No public-safe insurance records match these exact filters.':`${result.total.toLocaleString('en-US')} public-safe ${classLabel} records match. Credential jurisdiction is not office, domicile, service territory, or product availability.`;
+  if(session.insuranceEntityClass==='legal_insurer'&&classLabel==='agency'&&result.total>0){
+    result.consumerHeading='Broader insurance agency results (legal-insurer cohort unavailable)';
+    result.consumerMessage=`The requested legal-insurer state cohort is not published as a directory. ${result.consumerMessage} These are insurance agencies, not legal underwriting insurers.`;
+    result.limitations=['These are broader insurance agencies, not legal underwriting insurers -- the requested legal-insurer state cohort is not published as a directory.', ...result.limitations];
+  }
   if(ranking&&result.total>0)result.limitations=['InsuranceTrustHub does not rank insurance agencies or insurers as "best" or "top." Source order is not a quality or safety judgment.', ...result.limitations];
   // TH-DISCOVERY-002B: match-truth hardening. The base consumerMessage above already never labels
   // this total as "homeowners insurance agencies" -- it is always "N public-safe agency records"
