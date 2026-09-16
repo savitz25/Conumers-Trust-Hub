@@ -2,6 +2,7 @@ import type { GuidedChoice, GuidedExecutionResult, GuidedRefinement, GuidedResea
 import {US_JURISDICTIONS} from '../network/us-jurisdictions.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {createGuidedSession,refreshCareSession} from './session.ts';
+import {resolveFlCountyFips} from '../network/florida-municipality-crosswalk.ts';
 
 const ENDPOINTS = {
   move: process.env.MOVE_SPECIALIST_EXECUTION_URL ?? 'https://www.movetrusthub.com/api/specialist-execution/v2',
@@ -629,7 +630,11 @@ async function executeLender(session:GuidedResearchSession):Promise<GuidedExecut
     const message='Branch and individual MLO mass publication is restricted. Research an institution, exact NMLS/LEI, or HMDA property market instead.';
     const result=failure(session,'PUBLICATION_RESTRICTED',0,'person_or_branch_publication_restricted',message);result.limitations=[message];result.firstUsefulResult=true;return result;
   }
-  const countyFips=session.geography?.county?.toLowerCase()==='broward'?'12011':session.geography?.county?.toLowerCase()==='palm beach'?'12099':undefined;
+  // TH-DISCOVERY-RESET-001: was hardcoded to only Broward/Palm Beach; LenderTrustHub's own HMDA
+  // specialist has real county-grain data for every FL county (spot-verified live), so any other
+  // real, resolved county silently fell back to a coarser state-level result instead of the
+  // precise one RESULTS FIRST calls for. See florida-municipality-crosswalk.ts's FL_COUNTY_FIPS.
+  const countyFips=resolveFlCountyFips(session.geography?.county);
   const action=(session.selectedFilters.action as GuidedResearchSession['hmdaAction'])??session.hmdaAction??'origination';
   const loanType=(session.selectedFilters.loanType as GuidedResearchSession['loanType'])??session.loanType;
   const geography=session.geography?{intent:service?'SERVICE_TERRITORY':session.lenderResearchMode?'PROPERTY_MARKET':undefined,stateCode:session.geography.stateCode,county:session.geography.county,countyFips}:service?{intent:'SERVICE_TERRITORY'}:undefined;

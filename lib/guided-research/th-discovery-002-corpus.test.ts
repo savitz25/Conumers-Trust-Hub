@@ -53,16 +53,19 @@ test('LENDER: "mortgage lender in Broward County Florida" is GOOD -- real, bound
   assert.equal(r.result?.rows.length <= 10, true, 'shown rows must be bounded regardless of total');
 });
 
-// TH-DISCOVERY-RESET-001: superseded -- a city mapping to an unpublished county now auto-broadens
-// to Florida and executes in the SAME response (RESULTS FIRST), instead of requiring a prior
-// consumer choice before ever showing a lender.
-test('LENDER: "mortgage lenders in Miami Florida" -- a city mapping to an unpublished county auto-broadens to real Florida results, not a dead end', async () => {
+// TH-DISCOVERY-RESET-001: superseded again -- Miami-Dade (like every other FL county) is a real,
+// live-verified HMDA county cohort; specialists.ts's executeLender previously only knew the FIPS
+// code for Broward/Palm Beach, so every other county silently fell back to the coarser
+// state-broadening path this test used to require. It now resolves directly and precisely to the
+// requested county in one response, with no broadening needed at all.
+test('LENDER: "mortgage lenders in Miami Florida" resolves directly to real Miami-Dade County results, not a state-broadening detour', async () => {
   const step1 = await orchestrateGuidedResearch({ action: { type: 'START', question: 'mortgage lenders in Miami Florida' } });
   assert.equal(step1.result?.resultState, 'SUPPORTED_RESULTS');
   assert.ok((step1.result?.total ?? 0) > 0);
-  assert.equal(step1.session.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING'), true);
+  assert.equal(step1.session.executionScope.resolutionState, 'DETERMINISTIC_EQUIVALENT');
+  assert.equal(step1.session.executionScope.transformation, 'CITY_TO_COUNTY');
   assert.equal(step1.session.executionScope.requestedGeography?.display, 'Miami, Florida');
-  assert.equal(step1.session.executionScope.executionGeography?.display, 'Florida');
+  assert.equal(step1.session.executionScope.executionGeography?.display, 'Miami-Dade County, Florida');
 });
 
 test('LENDER: "best mortgage lender in Florida" executes real results with an honest "does not rank" disclosure, never a proprietary score', async () => {
