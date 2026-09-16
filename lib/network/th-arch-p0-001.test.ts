@@ -89,6 +89,29 @@ test('ARCH-P0-001: "Who owns this nursing home?" never becomes a literal facilit
 
 // --- Journey geography: origin and destination are distinct and both survive (ticket section 22) ---
 
+// --- TH-DISCOVERY-GEN-001: multi-word category phrases must not become a literal entity name ---
+//
+// entityClass() carries a fixed display label (e.g. "Auto transport company") alongside the
+// entity's actual regex-matchedText from the query. explicitEntityName() strips category words out
+// of the query to decide whether "real" identity text is left over -- when it stripped only the
+// fixed label, a phrase using different words for the same category (e.g. "auto transport carrier",
+// which never contains the word "company") survived the strip untouched and was misread as a
+// literal company name (ENTITY_LOOKUP/IDENTITY with a fabricated entityName), independent of and
+// upstream of each specialist hub's own discovery-grammar fixes.
+
+test('ARCH-P0-001/GEN-001: "auto transport carrier" is DISCOVERY, not a literal company name', () => {
+  const plan = planAskResearch('auto transport carrier');
+  assert.equal(plan.intent, 'COHORT_BROWSE');
+  assert.equal(plan.executionMode, 'COHORT');
+  assert.equal(plan.entityClass?.id, 'auto_transport');
+  assert.equal(plan.entityName, undefined);
+});
+
+test('ARCH-P0-001/GEN-001: a real distinctive brand name is still treated as identity, not swallowed by category generalization', () => {
+  const plan = planAskResearch('Rocket Auto Transport LLC');
+  assert.equal(plan.entityName, 'Rocket Auto Transport LLC');
+});
+
 test('ARCH-P0-001: "moving from Los Angeles to Miami" preserves distinct origin and destination', () => {
   const plan = planAskResearch('moving from Los Angeles to Miami');
   assert.equal(plan.requestedGeography?.kind, 'route');

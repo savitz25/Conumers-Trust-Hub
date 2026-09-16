@@ -32,7 +32,7 @@ export type AskResearchPlan = {
   intent: AskResearchIntent;
   primaryHub?: SpecialistHubId;
   candidateHubs: SpecialistHubId[];
-  entityClass?: { id: string; label: string };
+  entityClass?: { id: string; label: string; matchedText?: string };
   identifier?: { type: string; value: string; raw: string };
   entityName?: string;
   requestedGeography?: AskRequestedGeography;
@@ -92,7 +92,12 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
 
 function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>): AskResearchPlan['entityClass'] {
   const classified = parsed.queryClassification.entityClass;
-  if (classified) return { id: classified.id, label: classified.label };
+  // TH-DISCOVERY-GEN-001: keep the actual regex-matched substring alongside the generic display
+  // label -- explicitEntityName() strips category words out of the query to decide whether
+  // anything "real" is left, and a fixed label (e.g. "Auto transport company") often doesn't
+  // textually match the words the consumer actually used (e.g. "auto transport carrier"),
+  // leaving the category words un-stripped and falsely read as a literal company name.
+  if (classified) return { id: classified.id, label: classified.label, matchedText: classified.matchedText };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   // TH-DISCOVERY-003: "moving brokers in florida" fell through every branch here (matches neither
@@ -204,7 +209,12 @@ function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'
   if (/\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|LLP|L\.P\.)\b/i.test(query)) return query.replace(/[?.!]+$/g, '').trim();
   if (!entity && /^[A-Z][A-Z0-9&.-]{2,40}$/.test(query.trim())) return query.trim();
   if (entity && !geography && !/\b(?:in|near|nearby|around|within|how|which|what|is\s+this|is\s+my|show|find|need|serving|headquartered)\b/i.test(query)) {
-    const residue = query.replace(new RegExp(entity.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), ' ').replace(/\b(?:moving\s+company|movers?|contractors?|lenders?|nursing\s+homes?)\b/gi, ' ').replace(/[^a-z0-9&]+/gi, ' ').trim();
+    // TH-DISCOVERY-GEN-001: strip the actual matched category text (matchedText), not just the
+    // fixed display label -- a multi-word category phrase (e.g. "auto transport carrier") often
+    // doesn't literally contain its own generic label ("Auto transport company"), so stripping the
+    // label leaves the whole category phrase behind and it gets misread as a literal company name.
+    const categoryText = entity.matchedText ?? entity.label;
+    const residue = query.replace(new RegExp(categoryText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), ' ').replace(/\b(?:moving\s+company|movers?|contractors?|lenders?|nursing\s+homes?)\b/gi, ' ').replace(/[^a-z0-9&]+/gi, ' ').trim();
     if (residue.split(/\s+/).length >= 2) return query.replace(/[?.!]+$/g, '').trim();
   }
   // Bare multi-word proper-noun company name as the whole query (e.g. "JK Moving Services"):
