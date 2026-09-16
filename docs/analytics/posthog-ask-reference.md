@@ -12,8 +12,10 @@ No personal API key or service-account secret is required for browser analytics.
 ## Initialization
 
 - Client-only `posthog-js` via `lib/analytics/posthog-browser.ts`.
+- Initialization uses a shared in-flight Promise (`lib/analytics/posthog-gate.ts`). Concurrent callers await the same client; they must not receive `null` merely because import/init is still running.
 - Mounted once from `components/analytics/posthog-root.tsx` in the App Router root layout.
-- `capture_pageview` is off. Sanitized `$pageview` is captured on pathname change.
+- `capture_pageview` is off. Sanitized `$pageview` is captured after the client is ready.
+- Anonymous `/api/analytics/identity` responses do not call `reset()`.
 - Init only when `NEXT_PUBLIC_VERCEL_ENV` / `VERCEL_ENV` is `production` and both env vars are present.
 - Localhost, Playwright `navigator.webdriver`, preview, and development do not initialize.
 
