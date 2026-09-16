@@ -134,7 +134,11 @@ function requestedGeography(query: string, parsed: ReturnType<typeof parseNetwor
     [/\bpalm\s+beach\s+county(?:\s*,?\s*florida|\s*,?\s*fl)?\b/i, 'Palm Beach County, Florida', 'county', 'RESOLVED'],
     [/\btampa(?:\s*,?\s*florida|\s*,?\s*fl)\b/i, 'Tampa, Florida', 'city', 'RESOLVED'],
     [/\batlanta\b/i, 'Atlanta', 'city', 'UNRESOLVED'],
-    [/\bboca\b/i, 'Boca', 'place', 'UNRESOLVED'],
+    // TH-DISCOVERY-RESET-001 (production certification fix): a stale, pre-crosswalk hardcoded
+    // `[/\bboca\b/i, 'Boca', 'place', 'UNRESOLVED']` entry used to live here and short-circuited
+    // this loop before ever reaching the crosswalk fallback below, so "movers in Boca" (no
+    // "Raton") always stayed an unresolved dead end even though florida-municipality-
+    // crosswalk.ts's own `boca` alias already resolves it correctly to Boca Raton, Palm Beach.
   ];
   for (const [pattern, display, kind, resolution] of known) {
     const match = query.match(pattern);
