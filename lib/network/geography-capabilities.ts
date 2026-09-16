@@ -15,11 +15,29 @@ export type GeographyCapability={
 };
 
 export const SPECIALIST_GEOGRAPHY_CAPABILITIES:readonly GeographyCapability[]=[
-  {hub:'move',entityClasses:'*',supportedKinds:['state'],meaning:'RECORDED_HEADQUARTERS',localToStateRequiresConsent:true,disclosure:'The current accepted Move contract supports recorded-headquarters state, not city service availability. Recorded headquarters does not establish service territory or route availability.'},
-  {hub:'contractor',entityClasses:'*',supportedKinds:['state','county'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Broward','Palm Beach'],disclosure:'Credential/source geography does not establish service territory, availability, endorsement, or good standing.'},
+  // TH-DISCOVERY-003: 'city' added -- MoveTrustHub's specialist now has a real, additive recorded-
+  // headquarters-CITY filter (lib/directory/coverage-filter.ts's extractCityFromHeadquarters,
+  // paired with the existing recorded-headquarters-STATE filter; never a service-territory claim).
+  // A bare city with no resolvable state still falls through to state-broadening consent below
+  // (unaffected -- see research-scope.ts's normalized.kind==='city' handling), and Tampa Bay (a
+  // region, not a city) is unaffected by this and still requires the same consent.
+  {hub:'move',entityClasses:'*',supportedKinds:['state','city'],meaning:'RECORDED_HEADQUARTERS',localToStateRequiresConsent:true,disclosure:'The current accepted Move contract supports recorded-headquarters state and city, not service availability. Recorded headquarters does not establish service territory or route availability.'},
+  // TH-DISCOVERY-003: this list was undersold at just Broward/Palm Beach -- live-confirmed against
+  // ContractorTrustHub's specialist (lib/specialist-execution/contractor-v2.ts, which resolves
+  // county via its own FLORIDA_COUNTIES list in lib/discovery/counties.ts) that all 30 of these
+  // counties genuinely execute (e.g. Orange/Duval/Lee/Volusia all returned real SUPPORTED_RESULTS
+  // rows), while a real FL county outside this exact list (e.g. Hendry) correctly fails closed
+  // with errorCode 'unsupported_florida_county' -- so this is the true, authoritative boundary of
+  // the specialist's own county support, not an arbitrary subset.
+  {hub:'contractor',entityClasses:'*',supportedKinds:['state','county'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Miami-Dade','Broward','Palm Beach','Hillsborough','Orange','Pinellas','Duval','Lee','Collier','Sarasota','Manatee','Pasco','Polk','Brevard','Volusia','Seminole','Osceola','Marion','Lake','St. Lucie','Martin','Indian River','Charlotte','Escambia','Leon','Alachua','Bay','Okaloosa','St. Johns','Clay'],disclosure:'Credential/source geography does not establish service territory, availability, endorsement, or good standing.'},
   {hub:'investor',entityClasses:'*',supportedKinds:['state'],meaning:'PRINCIPAL_OFFICE',localToStateRequiresConsent:true,disclosure:'Principal-office geography does not establish client geography or service territory.'},
   {hub:'insurance',entityClasses:'*',supportedKinds:['state'],meaning:'CREDENTIAL_GEOGRAPHY',localToStateRequiresConsent:true,disclosure:'Credential jurisdiction does not establish office location, appointments, service territory, or product availability.'},
-  {hub:'lender',entityClasses:'*',supportedKinds:['state','county'],meaning:'PROPERTY_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Broward','Palm Beach'],disclosure:'HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.'},
+  // TH-DISCOVERY-RESET-001: was hardcoded to only Broward/Palm Beach. HMDA is a comprehensive
+  // federal property-market dataset, not a bounded rollout like Contractor's licensing data --
+  // spot-verified live against every county below (including small ones like Hendry) before
+  // listing it, so this is the full set of FL counties, matching florida-municipality-
+  // crosswalk.ts's FL_COUNTY_FIPS that specialists.ts's executeLender now uses to reach it.
+  {hub:'lender',entityClasses:'*',supportedKinds:['state','county'],meaning:'PROPERTY_GEOGRAPHY',localToStateRequiresConsent:true,supportedFloridaCounties:['Alachua','Baker','Bay','Bradford','Brevard','Broward','Calhoun','Charlotte','Citrus','Clay','Collier','Columbia','DeSoto','Dixie','Duval','Escambia','Flagler','Franklin','Gadsden','Gilchrist','Glades','Gulf','Hamilton','Hardee','Hendry','Hernando','Highlands','Hillsborough','Holmes','Indian River','Jackson','Jefferson','Lafayette','Lake','Lee','Leon','Levy','Liberty','Madison','Manatee','Marion','Martin','Miami-Dade','Monroe','Nassau','Okaloosa','Okeechobee','Orange','Osceola','Palm Beach','Pasco','Pinellas','Polk','Putnam','St. Johns','St. Lucie','Santa Rosa','Sarasota','Seminole','Sumter','Suwannee','Taylor','Union','Volusia','Wakulla','Walton','Washington'],disclosure:'HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.'},
   {hub:'senior',entityClasses:['nursing_home'],supportedKinds:['state','county','city','zip'],meaning:'RECORDED_PROVIDER_LOCATION',localToStateRequiresConsent:true,disclosure:'Recorded provider location is not a radius search or verified service area.'},
   {hub:'senior',entityClasses:['home_health'],supportedKinds:['state','city','zip'],meaning:'RECORDED_OFFICE_LOCATION',localToStateRequiresConsent:true,disclosure:'Home Health office geography is not patient service availability.'},
   {hub:'senior',entityClasses:['hospice'],supportedKinds:['state','county','city'],meaning:'RECORDED_OFFICE_LOCATION',localToStateRequiresConsent:true,disclosure:'Hospice office geography is not patient service availability.'},

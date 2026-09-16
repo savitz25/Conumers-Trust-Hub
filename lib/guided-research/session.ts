@@ -358,14 +358,55 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   }
   if (hub === 'contractor') {
     const trade = parsed.trade?.toLowerCase();
-    session.trade = njTrade ?? (trade === 'general contractor' ? 'general' : trade);
+    // TH-DISCOVERY-RESET-001: ask-parse.ts's own `contractor`/`trade` gate (a hardcoded regex
+    // requiring "contractor"/"roof(ing|er)"/"hvac"/"plumb"/"electrical"/... to even attempt trade
+    // detection) never matches "electricians" ("electrician" is a different word from
+    // "electrical", not a substring of it) -- so parsed.trade silently stayed undefined and the
+    // request fell through to the generic "no trade requested" default-to-general fallback below,
+    // incorrectly substituting general contractors for a specifically-requested trade. Match
+    // directly against the same trade vocabulary specialists.ts's supportedTrades set already
+    // recognizes, using the original question text as a second, independent source.
+    const directTrade = ([
+      [/\broof(?:ing|ers?)?\b/i, 'roofing'],
+      [/\belectric(?:al|ians?)\b/i, 'electrical'],
+      [/\bhvac\b|\bair[\s-]?condition/i, 'hvac'],
+      [/\bplumb(?:ing|ers?)?\b/i, 'plumbing'],
+      [/\bgeneral\s+contractors?\b|\bbuilding\s+contractors?\b/i, 'general'],
+      [/\bpool\b|\bspa\b/i, 'pool_spa'],
+      [/\bmechanical\b/i, 'mechanical'],
+      [/\balarm\b/i, 'alarm'],
+      [/\btelecom(?:munications?)?\b/i, 'telecom'],
+      [/\blocksmiths?\b/i, 'locksmith'],
+      [/\bhearth\b/i, 'hearth'],
+      [/\bhome\s+improvement\b/i, 'home_improvement'],
+    ] as const).find(([pattern]) => pattern.test(q))?.[1];
+    session.trade = njTrade ?? (trade === 'general contractor' ? 'general' : trade) ?? directTrade;
     session.entityClass = 'credential_record';
+    if(session.identifier)return {...session,identityName:undefined,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
+    // TH-DISCOVERY-003: a bare company name (e.g. "ABC Roofing") used to be silently discarded
+    // here (session.identityName=undefined, unconditionally) and fall through to the trade+
+    // geography cohort-collection flow below with no explanation -- confirmed live that
+    // ContractorTrustHub's specialist has no name-based identity lookup at all (queryType:'identity'
+    // returns errorCode 'unsupported_field'; a name filter on the cohort query is silently ignored
+    // by the live API). This is a genuine capability gap, not a wiring bug, so this does not invent
+    // a name-search result -- it states the real limitation and the actual supported alternative
+    // (exact license/credential number, or trade+location cohort browse) instead of quietly
+    // pretending the name was never mentioned.
+    if (plan.entityName) {
+      return {...session,identityName:plan.entityName,phase:'CLARIFY',missingFields:[],availableChoices:[],nextAction:`ContractorTrustHub does not support company-name search -- only an exact license/credential number resolves precisely. Provide "${plan.entityName}"'s license number, or the property location and trade to browse the credential cohort instead.`};
+    }
     session.identityName = undefined;
-    if(session.identifier)return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
     const conflictingSummit = /\bsummit\s+county\b/i.test(q) && parsed.geography?.stateCode === 'NJ';
     if (conflictingSummit) return { ...session, geography:parseGuidedGeography('Summit County, New Jersey')??session.geography, phase:'EXECUTE',missingFields:[],nextAction:'execute' };
     if (session.trade && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
     if (!session.trade && session.geography?.stateCode==='NJ') return { ...session, phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute' };
+    // TH-DISCOVERY-RESET-001: RESULTS FIRST -- a bare "contractor(s)" request with real geography
+    // must not block on a trade-choice menu before ever showing anyone. Live-confirmed the
+    // specialist requires a trade (or identifier) to execute at all, and 'general' (building
+    // contractor) returns real, substantial results (5,535 for Miami-Dade alone) -- default to it
+    // and execute immediately. The trade menu remains available as a non-blocking narrowing
+    // choice, not a gate.
+    if (!session.trade && session.geography) return { ...session, trade: 'general', phase: 'EXECUTE', missingFields: [], availableChoices: TRADE_CHOICES, nextAction: 'execute' };
     if (!session.trade) return { ...session, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'What kind of work do you need?' };
     return { ...session, phase: 'COLLECT', missingFields: ['geography'], nextAction: 'Where is the property?' };
   }
@@ -410,11 +451,39 @@ export function createGuidedSession(question:string):GuidedResearchSession|null{
   if(!scope.requestedGeography||session.identifier||session.identityName)return session;
   if(['contractor','move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(scope.requestedGeographyMeaning??''))return session;
   if(scope.executionAllowed)return session;
-  const choices:GuidedChoice[]=[];
+  // TH-DISCOVERY-RESET-001: RESULTS FIRST. This used to stop here and hand the consumer a bare
+  // "Research <state> instead" button with zero providers -- a second action just to see any
+  // business, for a DISCOVERY query (identifier/identityName lookups already returned above,
+  // before this point, so everything reaching here is a provider-class+geography browse, never a
+  // verification/exact-identity request). Auto-broaden to state instead: resolve the SAME
+  // approved-broader-geography scope the explicit consent handler (orchestrator.ts's afterChoice)
+  // would have produced, and execute it immediately. The requested-vs-executed distinction still
+  // renders (session.executionScope.requestedGeography stays the original ask; executionGeography
+  // becomes the state) so claim strength stays honest -- this is a labeled broadening, not a
+  // silent one. AUTOMATIC_BROADENING is a distinct reason code from EXPLICIT_SCOPE_CONSENT so any
+  // consumer surface that wants to phrase these differently can.
   if(scope.resolutionState==='BROADENING_REQUIRES_CONSENT'&&scope.normalizedRequestedGeography?.stateCode){
-    const state=scope.normalizedRequestedGeography.stateName??scope.normalizedRequestedGeography.stateCode;
-    choices.push({id:'scope-statewide',label:`Research ${state} instead`,action:'SELECT_CHOICE',value:`scope_state:${scope.normalizedRequestedGeography.stateCode}`,description:'This is broader than the place you requested and will be recorded as your explicit choice.'});
+    const req=scope.normalizedRequestedGeography;
+    const stateCode=req.stateCode!;
+    const autoScope=resolveResearchScope(session.researchPlan,{approvedBroaderGeography:{kind:'state',display:req.stateName??stateCode,stateCode,stateName:req.stateName}});
+    if(autoScope.executionAllowed){
+      const narrowChoices:GuidedChoice[]=req.display==='Tampa Bay, Florida'?[
+        {id:'scope-tampa',label:'Narrow to Tampa / Hillsborough County',action:'SELECT_CHOICE',value:'scope_place:Tampa, Florida'},
+        {id:'scope-st-pete',label:'Narrow to St. Petersburg / Pinellas County',action:'SELECT_CHOICE',value:'scope_place:St. Petersburg, Florida'},
+        {id:'scope-clearwater',label:'Narrow to Clearwater / Pinellas County',action:'SELECT_CHOICE',value:'scope_place:Clearwater, Florida'},
+      ]:[];
+      // researchPlan.executionAllowed (a separate flag from executionScope.executionAllowed) must
+      // also flip, mirroring exactly what the explicit-consent handler (orchestrator.ts's
+      // afterChoice, scope_state: branch) already does -- otherwise orchestrator.ts's own
+      // `!session.researchPlan.executionAllowed` guard bounces this straight back to CLARIFY
+      // despite the scope itself now genuinely being executable.
+      return {...session,executionScope:{...autoScope,reasonCodes:[...autoScope.reasonCodes,'AUTOMATIC_BROADENING']},researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'AUTOMATIC_BROADENING']},geography:{type:'state',value:stateCode,stateCode,stateName:req.stateName,meaning:autoScope.executionGeographyMeaning},availableChoices:narrowChoices,missingFields:[],phase:'EXECUTE',nextAction:'execute'};
+    }
   }
+  // Even state-grain broadening isn't executable (e.g. a non-US-recognized place, or a hub with no
+  // state capability at all) -- this remains a genuine dead end; offer whatever narrower manual
+  // choices exist (Tampa Bay's named sub-areas) rather than fabricating a result.
+  const choices:GuidedChoice[]=[];
   if(scope.normalizedRequestedGeography?.display==='Tampa Bay, Florida'){
     choices.push(
       {id:'scope-tampa',label:'Tampa / Hillsborough County',action:'SELECT_CHOICE',value:'scope_place:Tampa, Florida'},

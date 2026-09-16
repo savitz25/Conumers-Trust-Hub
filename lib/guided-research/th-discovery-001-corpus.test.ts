@@ -32,6 +32,12 @@ test('TAMPA BAY: "best mover in tampa bay florida" preserves provider-discovery 
   assert.doesNotMatch(JSON.stringify(plan), /trust.?score/i);
 });
 
+// TH-DISCOVERY-RESET-001: RESULTS FIRST. This used to require a two-step flow (a bare "Research
+// Florida instead" button, zero movers, then a second consumer action) before ever showing a
+// mover. Tampa Bay has no single executable sub-area, so this now auto-broadens straight to
+// Florida and executes in the SAME response -- one step, real movers, honestly labeled as broader
+// than requested. Sub-region refinement (Tampa/St. Petersburg/Clearwater) remains available as a
+// non-blocking narrowing choice alongside the results, not a gate before them.
 test('TAMPA BAY: inability to prove complete Tampa Bay service territory does not require zero entities -- a path to real movers exists', async () => {
   const original = globalThis.fetch;
   globalThis.fetch = (async () => json({
@@ -41,25 +47,20 @@ test('TAMPA BAY: inability to prove complete Tampa Bay service territory does no
   })) as typeof fetch;
   try {
     const step1 = await orchestrateGuidedResearch({ action: { type: 'START', question: 'best mover in tampa bay florida' } });
-    assert.equal(step1.session.phase, 'CLARIFY');
-    assert.equal(step1.diagnostics.specialistCalls, 0, 'no result may claim Tampa Bay service before the consumer chooses a scope');
-    const broaden = step1.session.availableChoices.find((c) => c.value === 'scope_state:FL');
-    assert.ok(broaden, 'a path to broader Florida results must be offered, not just a dead end');
+    assert.equal(step1.session.phase, 'REFINE');
+    assert.equal(step1.diagnostics.specialistCalls, 1, 'a labeled, auto-broadened result executes in one step -- it does not require a prior consumer choice');
+    assert.equal(step1.result?.resultState, 'SUPPORTED_RESULTS', 'relevant source-backed mover options must be permitted automatically once Tampa Bay itself cannot execute');
+    assert.equal(step1.result?.total, 37);
+    assert.equal(step1.result?.rows[0]?.whyShown && step1.result.rows[0].whyShown.length > 0, true, 'every returned mover must state its actual evidence basis');
+    assert.ok(step1.result?.rows[0]?.destination?.href, 'canonical profile destination must be preserved when available');
     const subRegions = step1.session.availableChoices.filter((c) => c.value.startsWith('scope_place:'));
-    assert.ok(subRegions.length > 0, 'sub-region refinement (Tampa/St. Petersburg/Clearwater) must also remain available');
-
-    const step2 = await orchestrateGuidedResearch({ session: step1.session, action: { type: 'SELECT_CHOICE', value: broaden!.value } });
-    assert.equal(step2.result?.resultState, 'SUPPORTED_RESULTS', 'relevant source-backed mover options must be permitted once the consumer accepts the broader scope');
-    assert.equal(step2.result?.total, 37);
-    assert.equal(step2.result?.rows[0]?.whyShown && step2.result.rows[0].whyShown.length > 0, true, 'every returned mover must state its actual evidence basis');
-    assert.ok(step2.result?.rows[0]?.destination?.href, 'canonical profile destination must be preserved when available');
+    assert.ok(subRegions.length > 0, 'sub-region refinement (Tampa/St. Petersburg/Clearwater) must remain available alongside the results, as a narrowing choice, not a gate');
     // No result may claim Tampa Bay *service* -- the actual geography basis (recorded HQ, broadened
     // to Florida) must be visible in the interpretation, not silently pretended to satisfy Tampa Bay.
-    const askedRow = step2.session.executionScope.requestedGeography?.display;
-    const executedRow = step2.session.executionScope.executionGeography?.display;
-    assert.equal(askedRow, 'Tampa Bay, Florida');
-    assert.equal(executedRow, 'Florida');
-    assert.doesNotMatch(step2.result?.consumerMessage ?? '', /serves? tampa bay/i);
+    assert.equal(step1.session.executionScope.requestedGeography?.display, 'Tampa Bay, Florida');
+    assert.equal(step1.session.executionScope.executionGeography?.display, 'Florida');
+    assert.equal(step1.session.executionScope.reasonCodes.includes('AUTOMATIC_BROADENING'), true);
+    assert.doesNotMatch(step1.result?.consumerMessage ?? '', /serves? tampa bay/i);
   } finally { globalThis.fetch = original; }
 });
 
@@ -87,11 +88,16 @@ test('PALM BEACH: real contractors are not suppressed merely because complete se
   assert.ok(r.result?.rows[0]?.facts.some((f) => f.label === 'Credential jurisdiction'), 'the qualifying evidence basis must be visible on the result');
 });
 
-test('PALM BEACH: the genuine FL-electrical data gap is disclosed honestly, not silently substituted or falsely zeroed', async () => {
+// TH-DISCOVERY-RESET-001: superseded -- a structural data gap on the EXACT requested trade must
+// still fall back to the strongest legitimate broader cohort (general/building contractor) for
+// the same geography, clearly labeled as broader and not electrical-specific, rather than a bare
+// zero-row/unsupported-capability dead end.
+test('PALM BEACH: the genuine FL-electrical data gap falls back to real, clearly-labeled broader contractor results, never silently substituted as electricians', async () => {
   const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'electrician palm beach county' } });
-  assert.equal(r.result?.resultState, 'UNSUPPORTED_TRADE_CAPABILITY');
-  assert.notEqual(r.result?.resultState, 'ZERO_MATCHING_ROWS', 'a structural data gap is a different claim from "we searched and found zero"');
-  assert.match(r.result?.consumerMessage ?? '', /electrical/i);
+  assert.equal(r.result?.resultState, 'SUPPORTED_RESULTS');
+  assert.ok((r.result?.total ?? 0) > 0);
+  assert.match(r.result?.consumerMessage ?? '', /electrical-specific.*not available/i);
+  assert.doesNotMatch(JSON.stringify(r.result?.rows), /"classLabel":"[^"]*[Ee]lectric/, 'a fallback row must never be relabeled as an electrical credential');
 });
 
 // ============================================================================
@@ -138,6 +144,50 @@ test('SENIOR CARE: unresolved care class triggers useful refinement toward real 
 });
 
 // ============================================================================
+// FLORIDA CROSSWALK FALSE-POSITIVE SAFETY (TH-DISCOVERY-RESET-001 Vercel review fix)
+// ============================================================================
+// Two classes of bug, both in the shared Florida-municipality-crosswalk resolution path used by
+// care-task.ts's careLocation (session.geography) and lib/network/ask-parse.ts's geography()
+// (plan.requestedGeography):
+// 1. A crosswalk key like "hollywood" must not match inside a real, distinct compound place name
+//    ("West Hollywood" is not "Hollywood, Florida").
+// 2. A crosswalk city-name substring match must never override an explicitly supplied non-Florida
+//    jurisdiction elsewhere in the same query ("Wellington, Colorado" is not Florida just because
+//    "Wellington" is also a real Palm Beach County, FL municipality).
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near West Hollywood" never falsely resolves to Hollywood, Florida', async () => {
+  const plan = planAskResearch('hospice near West Hollywood');
+  assert.notEqual(plan.requestedGeography?.stateCode, 'FL', 'West Hollywood must not be silently reassigned to Florida');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near West Hollywood' } });
+  assert.notEqual(r.session.geography?.stateCode, 'FL', 'West Hollywood must not be silently reassigned to Florida');
+  assert.notEqual(r.result?.resultState, 'SUPPORTED_RESULTS', 'an unresolved, ambiguous place must never fabricate results');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Wellington Colorado" keeps the explicit Colorado jurisdiction', async () => {
+  const plan = planAskResearch('hospice near Wellington Colorado');
+  assert.equal(plan.requestedGeography?.stateCode, 'CO');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Wellington Colorado' } });
+  assert.equal(r.session.geography?.stateCode, 'CO', 'an explicit state must always win over Florida municipality detection');
+  assert.notEqual(r.session.geography?.stateCode, 'FL');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Hollywood Maryland" keeps the explicit Maryland jurisdiction', async () => {
+  const plan = planAskResearch('hospice near Hollywood Maryland');
+  assert.equal(plan.requestedGeography?.stateCode, 'MD');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Hollywood Maryland' } });
+  assert.equal(r.session.geography?.stateCode, 'MD', 'an explicit state must always win over Florida municipality detection');
+  assert.notEqual(r.session.geography?.stateCode, 'FL');
+});
+
+test('FLORIDA CROSSWALK SAFETY: "hospice near Tampa" still resolves to real Tampa, Florida evidence', async () => {
+  const plan = planAskResearch('hospice near Tampa');
+  assert.equal(plan.requestedGeography?.stateCode, 'FL');
+  const r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'hospice near Tampa' } });
+  assert.equal(r.session.geography?.stateCode, 'FL');
+  assert.equal(r.result?.resultState, 'SUPPORTED_RESULTS', 'the safety fix must not regress the real, valid Tampa case');
+});
+
+// ============================================================================
 // BOCA INSURANCE (ticket section 35 corpus)
 // ============================================================================
 
@@ -151,9 +201,10 @@ test('BOCA INSURANCE: real local-directory evidence is never false-zeroed or sil
   // rare, genuine transient-outage rate (correctly surfaced as BACKEND_UNAVAILABLE/
   // UNSUPPORTED_CAPABILITY under load, not a false zero) -- see TH-DISCOVERY-002B's fail-loud fix.
   let r: Awaited<ReturnType<typeof orchestrateGuidedResearch>> | undefined;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     r = await orchestrateGuidedResearch({ action: { type: 'START', question: 'insurance company in boca raton fl' } });
     if (r.result?.resultState === 'SUPPORTED_RESULTS') break;
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
   assert.ok(
     ['SUPPORTED_RESULTS', 'BACKEND_UNAVAILABLE'].includes(r?.result?.resultState ?? ''),
