@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
 import { trackEvent } from '@/lib/analytics/track';
+import { captureSearchSubmitted } from '@/components/analytics/ask-instrumentation';
 
 const EXAMPLES = [
   ['USDOT 3244649', 'Find USDOT 3244649.'],
@@ -21,6 +22,7 @@ export function NetworkAskInput() {
     const normalized = text.trim();
     if (normalized) {
       trackEvent('network_ask_submit', { query_length_bucket: normalized.length < 25 ? 'short' : normalized.length < 80 ? 'medium' : 'long' });
+      captureSearchSubmitted('homepage');
       router.push(`/ask?q=${encodeURIComponent(normalized)}`);
     }
   }, [router]);
@@ -35,7 +37,7 @@ export function NetworkAskInput() {
       <form onSubmit={onSubmit} role="search" aria-label="Search the Trust Hub Network" className="rounded-2xl border bg-white p-3 sm:p-4" style={{ borderColor: ASK_BRAND.border, boxShadow: ASK_SHADOW.indigo }}>
         <label htmlFor="network-ask-input" className="mb-2 block text-left text-sm font-semibold" style={{ color: ASK_BRAND.navy }}>Search the Trust Hub Network</label>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <input id="network-ask-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Company, identifier, market, place, or research question" className="min-h-12 flex-1 rounded-xl border px-4 text-base outline-none focus-visible:ring-2" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }} />
+          <input id="network-ask-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Company, identifier, market, place, or research question" className="min-h-12 flex-1 rounded-xl border px-4 text-base outline-none focus-visible:ring-2" data-ph-mask="true" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }} />
           <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2" style={{ backgroundColor: ASK_BRAND.indigo }}>
             Search <ArrowRight className="h-4 w-4" aria-hidden />
           </button>

@@ -5,6 +5,8 @@ import { isMyTrustHubCanaryOnly } from "@/lib/my-trusthub/canary-access";
 import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
 import { getMyTrustHubFeatureFlags } from "@/lib/my-trusthub/feature-flags";
 import { TurnstileField } from "@/components/my-trusthub/turnstile-field";
+import { AnalyticsForm } from "@/components/analytics/analytics-form";
+import { captureSignupStarted } from "@/components/analytics/ask-instrumentation";
 
 export default async function SignInPage({
   searchParams,
@@ -37,12 +39,12 @@ export default async function SignInPage({
         {error === "callback_exchange" ? <p className="myth-warning" role="alert">That sign-in link expired or could not be verified. Request a fresh link and try again.</p> : null}
         {error === "callback_session" || error === "callback_unavailable" ? <p className="myth-warning" role="alert">We could not finish sign-in safely. Request a fresh link and try again.</p> : null}
         {flags.MY_TRUSTHUB_ENABLED && !missing ? (
-          <form action={requestMagicLinkAction} className="myth-form">
+          <AnalyticsForm action={requestMagicLinkAction} className="myth-form" onAnalyticsSubmit={() => captureSignupStarted('my_sign_in')}>
             <label htmlFor="email">Email</label>
-            <input id="email" name="email" type="email" autoComplete="email" required maxLength={254} />
+            <input id="email" name="email" type="email" autoComplete="email" required maxLength={254} data-ph-mask="true" />
             {process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY ? <TurnstileField siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} /> : null}
             <button className="myth-primary" type="submit">Email me a sign-in link</button>
-          </form>
+          </AnalyticsForm>
         ) : (
           <p className="myth-muted">New sign-in is currently disabled by the launch gate.</p>
         )}

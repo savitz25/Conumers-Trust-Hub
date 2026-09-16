@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ClickTracker } from '@/components/analytics/click-tracker';
+import { PosthogRoot } from '@/components/analytics/posthog-root';
 import { AskChatShell } from '@/components/ask-chat/ask-chat-shell';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -33,6 +35,9 @@ export default function RootLayout({
         {/* network-standard: {ASK_NETWORK_STANDARD_VERSION} */}
         <AskChatShell>
           <ClickTracker />
+          <Suspense fallback={null}>
+            <PosthogRoot />
+          </Suspense>
           <Navbar />
           <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-[#F8FAFC]">
             {children}
