@@ -105,6 +105,7 @@ export type GuidedResultRow = {
 
 export type GuidedExecutionResult = {
   executionOccurred?: boolean;
+  classPreviews?: Array<{ providerClass: string; label: string; rows: GuidedResultRow[] }>;
   dispatch?:{hub:'senior';endpoint:string;providerClass?:string;geography?:{type:string;value:string;state?:string}};
   specialist: GuidedPilotHub;
   resultState: GuidedResultState;

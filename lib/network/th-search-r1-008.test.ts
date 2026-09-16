@@ -25,6 +25,30 @@ test('R1-008 ambiguous Senior discovery retains task and class choices',()=>{
   assert.equal(s.geography?.city?.toUpperCase(),'AUSTIN');
  }
 });
+// TH-DISCOVERY-RESET-001C: "senior care Florida" is genuinely ambiguous across three CMS classes
+// and must keep asking which one -- but real per-class providers for the resolved geography must
+// render on this SAME clarification screen (SeniorTrustHub's own /ask already shows these
+// previews directly), not stay invisible until a class is picked. Nursing Home / Home Health /
+// Hospice must appear as separate, real, correctly-classed sections -- never merged.
+test('R1-008 ambiguous class with a resolved state shows real per-class previews on the same clarification screen',async()=>withSeniorFixture(async calls=>{
+ const r=await orchestrateGuidedResearch({action:{type:'START',question:'senior care Florida'}});
+ assert.equal(r.session.hub,'senior');
+ assert.equal(r.session.phase,'CLARIFY');
+ assert(r.session.availableChoices.some(c=>c.value==='nursing_home'),'class-choice buttons must remain');
+ assert(r.session.availableChoices.some(c=>c.value==='home_health'));
+ assert(r.session.availableChoices.some(c=>c.value==='hospice'));
+ assert.equal(calls.length,3,'one real specialist call per class, no more');
+ assert.deepEqual(new Set(calls.map(c=>c.body.providerClass)),new Set(['nursing_home','home_health','hospice']));
+ assert(calls.every(c=>(c.body.geography as {state:string}).state==='FL'));
+ const byClass=Object.fromEntries((r.result?.classPreviews??[]).map(g=>[g.providerClass,g]));
+ assert.equal(byClass.nursing_home?.rows.length,1);
+ assert.equal(byClass.home_health?.rows.length,1);
+ assert.equal(byClass.hospice?.rows.length,1);
+ // Never merged into one generic universe -- each group's own rows carry only that group's class.
+ assert(byClass.nursing_home.rows.every((row:{classLabel?:string})=>row.classLabel==='nursing_home'));
+ assert.equal(r.result?.rows.length,0,'previews are separate from the main flattened rows list');
+ assert.equal(r.diagnostics.specialistCalls,3);
+}));
 test('R1-008 blocked legacy execution calls no specialist',async()=>{
  const original=globalThis.fetch,context=process.env.NODE_TEST_CONTEXT;const calls:string[]=[];
  delete process.env.NODE_TEST_CONTEXT;
@@ -41,9 +65,12 @@ test('R1-008 moving belongings to care remains a Move task',()=>{const r=buildAs
 test('R1-008 explicit care plus move has separate ordered steps',()=>{const r=buildAskResearchRoute('Find senior homes in Austin, then help me plan the move');assert(r.journey);assert.deepEqual(r.journey.orderedHubs,['senior','move']);});
 
 test('R1-008 original class clarification completes inline source-backed results',async()=>withSeniorFixture(async calls=>{
- const initial=await orchestrateGuidedResearch({action:{type:'START',question:'senior homes in Austin Texas'}});assert.equal(calls.length,0);
+ // TH-DISCOVERY-RESET-001C: the initial ambiguous-class clarification now also fetches real
+ // per-class previews (one specialist call per class) instead of zero calls, so real providers
+ // are visible before a class is picked -- selecting a class still runs its own additional call.
+ const initial=await orchestrateGuidedResearch({action:{type:'START',question:'senior homes in Austin Texas'}});assert.equal(calls.length,3);
  const selected=await orchestrateGuidedResearch({session:initial.session,action:{type:'SELECT_CHOICE',value:'nursing_home'}});
- assert.equal(calls.length,1);assert.equal(selected.result?.specialist,'senior');assert.equal(selected.result?.total,7);assert.equal(selected.result.rows.length,1);assert.equal(selected.result.rows[0].recordedLocation,'Austin, TX');assert.match(selected.result.rows[0].whyShown,/Austin, TX/);assert.equal(selected.result.resultState,'SUPPORTED_RESULTS');assert.equal(selected.diagnostics.specialistCalls,1);
+ assert.equal(calls.length,4);assert.equal(selected.result?.specialist,'senior');assert.equal(selected.result?.total,7);assert.equal(selected.result.rows.length,1);assert.equal(selected.result.rows[0].recordedLocation,'Austin, TX');assert.match(selected.result.rows[0].whyShown,/Austin, TX/);assert.equal(selected.result.resultState,'SUPPORTED_RESULTS');assert.equal(selected.diagnostics.specialistCalls,1);
  assert(selected.result.rows[0].facts.some(f=>f.label==='Source as of'&&f.value==='2026-08-01'));
 }));
 for(const [q,cls,city] of [['nursing homes in Austin Texas','nursing_home','Austin'],['home health agencies in Houston Texas','home_health','Houston'],['hospice in Madison Wisconsin','hospice','Madison']])test(`R1-008 explicit class ${cls} executes directly`,async()=>withSeniorFixture(async calls=>{
@@ -55,7 +82,9 @@ test('R1-008 city-only choice completes only after state selection',async()=>wit
 }));
 test('R1-008 not-sure explains while retaining executable choices and location',async()=>withSeniorFixture(async calls=>{
  const s=createGuidedSession('senior homes in Austin Texas')!;
- const explained=await orchestrateGuidedResearch({session:s,action:{type:'SELECT_CHOICE',value:'explain_care'}});assert.equal(calls.length,0);assert.match(explained.session.nextAction!,/Home Health/);assert.equal(explained.session.geography?.city,'Austin');
+ // TH-DISCOVERY-RESET-001C: "explain the differences" stays on the same ambiguous-class screen,
+ // so real per-class previews are (re-)fetched here too -- not just on the very first load.
+ const explained=await orchestrateGuidedResearch({session:s,action:{type:'SELECT_CHOICE',value:'explain_care'}});assert.equal(calls.length,3);assert.match(explained.session.nextAction!,/Home Health/);assert.equal(explained.session.geography?.city,'Austin');
  const result=await orchestrateGuidedResearch({session:explained.session,action:{type:'SELECT_CHOICE',value:'home_health'}});assert.equal(result.result?.resultState,'SUPPORTED_RESULTS');
 }));
 for(const q of ['assisted living in Austin Texas','memory care in Austin Texas','independent living in Austin Texas'])test(`R1-008 no CMS substitute: ${q}`,async()=>withSeniorFixture(async calls=>{const r=await orchestrateGuidedResearch({action:{type:'START',question:q}});assert.equal(calls.length,0);assert.equal(r.session.hub,'senior');assert.equal(r.session.providerClass,undefined);assert.match(r.session.nextAction!,/state-specific/);}));
