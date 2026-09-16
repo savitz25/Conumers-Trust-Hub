@@ -1,5 +1,6 @@
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
+import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
 import type { UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
@@ -83,9 +84,10 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
     // below of a match and let the generic multi-hub geography fallback leak in as a false
     // multi-domain signal for an ordinary single-vertical trade query.
     ['contractor', /\b(?:contractors?|roofers?|roof(?:ing)?(?:\s+guy)?|HVAC|electricians?|plumbers?|locksmiths?|hearth|telecom|mechanical|CBC|CGC|CCC)\b/i],
-    ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|(?:Form\s+)?ADV|IARD|principal\s+office)\b/i],
+    ['investor', /\b(?:financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|RIA|ERA|CRD|SEC|(?:Form\s+)?ADV|IARD|principal\s+office|who can help me invest)\b/i],
   ];
   for (const [hub, pattern] of patterns) if (pattern.test(query)) explicit.push(hub);
+  if (isInvestorAdviserSeekingQuery(query)) explicit.push('investor');
   if(parsed.intent==='place'&&explicit.length)return dedupe(explicit);
   return dedupe([...hubs,...explicit]);
 }
@@ -114,7 +116,7 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   if (/\b(?:mortgage\s+)?lenders?\b/i.test(query)) return { id: 'mortgage_lender', label: 'Mortgage lender' };
   if (/\brefinanc(?:e|ing)\b/i.test(query)) return { id: 'mortgage_lender', label: 'Mortgage lender' };
   if (/\b(?:HMDA|originations?|applications?|denials?|\bFHA\b|\bVA\b|\bUSDA\b)\b/i.test(query) && parsed.suggestedHubs.includes('lender')) return { id: 'hmda_reporting_institution', label: 'HMDA reporting institution' };
-  if (/\b(?:financial|investment)\s+advis(?:er|or)s?\b/i.test(query)) return { id: 'investment_adviser', label: 'Investment adviser' };
+  if (/\b(?:financial|investment)\s+advis(?:er|or)s?\b/i.test(query) || isInvestorAdviserSeekingQuery(query)) return { id: 'investment_adviser', label: 'Investment adviser' };
   if (/\binsurance\s+agents?\b/i.test(query)) return { id: 'insurance_producer', label: 'Insurance producer' };
   if (/\binsurance\s+compan(?:y|ies)\b/i.test(query)) return { id: 'legal_insurer', label: 'Legal insurer' };
   if (/\bhome\s+health(?:\s+agency)?\b/i.test(query)) return { id: 'home_health', label: 'Home Health' };
@@ -260,6 +262,22 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  if (isUnsupportedSecuritiesAdviceQuery(originalQuestion)) {
+    return {
+      version: 'ask-research-plan-v1',
+      originalQuestion,
+      intent: 'RECOMMENDATION_REQUEST',
+      primaryHub: 'investor',
+      candidateHubs: ['investor'],
+      requestedEvidence: [],
+      missingSlots: [],
+      executionAllowed: false,
+      executionMode: 'CLARIFY',
+      clarificationReason: investorFailClosedReason(originalQuestion),
+      reasonCodes: ['UNSUPPORTED_SECURITIES_ADVICE', 'VALUE_JUDGMENT_REQUESTED', 'SPECIALIST_EXECUTION_BLOCKED'],
+      legacyQueryType: 'COHORT',
+    };
+  }
   const parsed = parseNetworkAsk(originalQuestion);
   const candidateHubs = inferHubs(originalQuestion, parsed);
   const primaryHub = candidateHubs.length === 1 ? candidateHubs[0] : undefined;
@@ -294,6 +312,7 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   else if (EXPLAINER.test(originalQuestion)) { intent = 'EXPLAINER'; reasons.push('EXPLAINER_LANGUAGE'); }
   else if (/\b(?:compare|versus|vs\.?|difference\s+between)\b/i.test(originalQuestion)) { intent = 'COMPARE'; reasons.push('COMPARISON_LANGUAGE'); }
   else if (DEICTIC_ENTITY.test(originalQuestion)) { intent = 'ENTITY_LOOKUP_MISSING_IDENTITY'; reasons.push('SPECIFIC_REFERENCE_WITHOUT_IDENTITY'); }
+  else if (isInvestorAdviserSeekingQuery(originalQuestion)) { intent = 'COHORT_BROWSE'; reasons.push('ENTITY_CLASS_BROWSE'); }
   else if (name) { intent = 'ENTITY_LOOKUP'; reasons.push('EXPLICIT_IDENTITY_EVIDENCE'); }
   else if (entity && (geography || entity.id === 'auto_transport' || parsed.queryClassification.type === 'COHORT')) { intent = 'COHORT_BROWSE'; reasons.push('ENTITY_CLASS_BROWSE'); }
   else if (entity && /\b(?:which|show|find|list|need|licensed|active|registered)\b/i.test(originalQuestion)) { intent = 'COHORT_BROWSE'; reasons.push('ENTITY_CLASS_BROWSE'); }
@@ -346,5 +365,6 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'HOW_TO_LANGUAGE', 'EXPLAINER_LANGUAGE', 'SPECIFIC_REFERENCE_WITHOUT_IDENTITY',
     'GEOGRAPHY_SCOPE_UNRESOLVED', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
     'IDENTITY_EVIDENCE_FAILED_VALIDATION', 'MULTIPLE_SPECIALIST_HUBS',
+    'UNSUPPORTED_SECURITIES_ADVICE',
   ].includes(code));
 }

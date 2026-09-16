@@ -1,4 +1,5 @@
 import {careTask} from './care-task.ts';
+import { isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { RESEARCH_DESTINATIONS, type ResearchDestination } from './research-destinations.ts';
 import type { AskResearchPlan, AskRequestedGeography } from './research-planner.ts';
@@ -15,6 +16,7 @@ function make(step:number,hub:SpecialistHubId,goal:string,why:string,required:bo
 
 export function planAskMultiHubJourney(plan:AskResearchPlan):AskMultiHubJourney|null{
   if(careTask(plan.originalQuestion)?.kind==='move_context')return null;
+  if(isUnsupportedSecuritiesAdviceQuery(plan.originalQuestion)||plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'))return null;
   const q=plan.originalQuestion.toLowerCase();const geo=plan.requestedGeography;
   const moving=/\b(?:mov(?:e|ing|er)|relocat)/.test(q),buying=/\b(buy|buying|purchase|purchasing)\b/.test(q),renting=/\b(rent|renting)\b/.test(q),roof=/\broof/.test(q),senior=/\b(mother|father|parent|senior|nursing home|hospice|care)\b/.test(q);
   const explicit=[['lender','lender|mortgage'],['insurance','insurance|insurer|coverage'],['contractor','contractor|roofer'],['move','move|moving|mover|relocation'],['senior','senior|nursing|home health|hospice|parent|mother|father']] as const;
