@@ -14,18 +14,14 @@ function PosthogPageviews() {
   useEffect(() => {
     if (!shouldEnablePosthog()) return;
     const path = pathname || '/';
-    let cancelled = false;
     void getPosthogBrowser()
       .then((posthog) => {
-        if (cancelled || !posthog) return;
+        if (!posthog) return;
         if (lastPath.current === path) return;
         lastPath.current = path;
-        captureSanitizedPageview(path, `${window.location.origin}${path}`);
+        captureSanitizedPageview(path, window.location.href);
       })
       .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
   }, [pathname, searchParams]);
 
   return null;

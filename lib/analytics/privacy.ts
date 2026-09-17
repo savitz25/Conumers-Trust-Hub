@@ -58,6 +58,23 @@ export function isOpaqueTrustHubId(value: string): boolean {
   return UUID.test(value.trim());
 }
 
+/** SDK/ingest fields. Stripping `token` makes posthog-js drop the event (401). */
+export const POSTHOG_RESERVED_KEYS = [
+  'token',
+  'distinct_id',
+  'timestamp',
+  'uuid',
+  'event',
+  'offset',
+  'api_key',
+] as const;
+
+export function isPosthogReservedKey(key: string): boolean {
+  const lower = key.toLowerCase();
+  if (lower.startsWith('$')) return true;
+  return (POSTHOG_RESERVED_KEYS as readonly string[]).includes(lower);
+}
+
 export function sanitizePageviewProperties(properties: Record<string, unknown>): Record<string, unknown> {
   if (typeof properties.$current_url === 'string') {
     properties.$current_url = sanitizeAnalyticsUrl(properties.$current_url);
@@ -68,18 +85,27 @@ export function sanitizePageviewProperties(properties: Record<string, unknown>):
   if (typeof properties.$referrer === 'string') {
     properties.$referrer = sanitizeAnalyticsUrl(properties.$referrer);
   }
-  const path = String(properties.$pathname || '');
-  if (path === '/ask' || path.startsWith('/ask/') || path === '/search') {
+  const path = String(properties.$pathname || properties.$current_url || '');
+  if (path.includes('/ask') || path.includes('/search')) {
     properties.$title = 'Ask Trust Hub';
     properties.title = 'Ask Trust Hub';
     properties.$document_title = 'Ask Trust Hub';
   }
   for (const key of Object.keys(properties)) {
+    if (isPosthogReservedKey(key)) continue;
     if (FORBIDDEN_EVENT_KEYS.includes(key.toLowerCase() as (typeof FORBIDDEN_EVENT_KEYS)[number])) {
       delete properties[key];
     }
   }
   return properties;
+}
+
+export function sanitizeCaptureResult<T extends { event?: string; properties?: Record<string, unknown> } | null>(
+  event: T,
+): T {
+  if (!event) return event;
+  if (event.properties) sanitizePageviewProperties(event.properties);
+  return event;
 }
 
 export function sanitizeAnalyticsUrl(raw: string | undefined | null): string | undefined {

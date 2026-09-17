@@ -55,27 +55,39 @@ export function AskSearchResultsReturned(props: ResultsProps) {
 }
 
 export function captureSearchSubmitted(surface: string, specialistHub?: string): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.SEARCH_SUBMITTED, {
-    surface,
-    specialist_hub: specialistHub,
-    success: true,
-  });
+  captureTrustEvent(
+    TRUSTHUB_EVENTS.SEARCH_SUBMITTED,
+    {
+      surface,
+      specialist_hub: specialistHub,
+      success: true,
+    },
+    { sendBeforeUnload: true },
+  );
 }
 
 export function captureResultOpened(specialistHub?: string, surface = 'ask_results'): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.SEARCH_RESULT_OPENED, {
-    surface,
-    specialist_hub: specialistHub,
-    success: true,
-  });
+  captureTrustEvent(
+    TRUSTHUB_EVENTS.SEARCH_RESULT_OPENED,
+    {
+      surface,
+      specialist_hub: specialistHub,
+      success: true,
+    },
+    { sendBeforeUnload: true },
+  );
 }
 
 export function captureSpecialistHandoff(specialistHub?: string, surface = 'ask_results'): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.SPECIALIST_HANDOFF_STARTED, {
-    surface,
-    specialist_hub: specialistHub,
-    success: true,
-  });
+  captureTrustEvent(
+    TRUSTHUB_EVENTS.SPECIALIST_HANDOFF_STARTED,
+    {
+      surface,
+      specialist_hub: specialistHub,
+      success: true,
+    },
+    { sendBeforeUnload: true },
+  );
 }
 
 export function captureProfileSaved(surface = 'my_trusthub'): void {

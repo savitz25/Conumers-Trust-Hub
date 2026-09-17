@@ -5,6 +5,9 @@ import { captureTrustEvent, identifyTrustHubUser } from './trusthub.ts';
 
 test('captureTrustEvent never throws when PostHog is unavailable', () => {
   assert.doesNotThrow(() => captureTrustEvent('search_submitted', { query: 'secret question', email: 'a@b.c' }));
+  assert.doesNotThrow(() =>
+    captureTrustEvent('search_submitted', { surface: 'ask_form', success: true }, { sendBeforeUnload: true }),
+  );
 });
 
 test('identifyTrustHubUser ignores email and names', () => {
