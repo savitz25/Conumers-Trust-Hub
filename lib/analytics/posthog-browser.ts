@@ -3,7 +3,7 @@
 import type { PostHog } from 'posthog-js';
 import { analyticsEnvironment, posthogHost, posthogProjectToken, shouldEnablePosthog } from './environment';
 import { createPosthogClientGate } from './posthog-gate';
-import { sanitizeCaptureResult } from './privacy';
+import { sanitizeCapturedNetworkRequest, sanitizeCaptureResult } from './privacy';
 import { TRUSTHUB_HUB } from './trusthub-events';
 
 function sanitizeEvent<T extends { event?: string; properties?: Record<string, unknown> } | null>(event: T): T {
@@ -27,6 +27,7 @@ async function loadPosthog(): Promise<PostHog | null> {
         email: true,
       },
       maskTextSelector: 'input, textarea, [contenteditable], [data-ph-mask], .myth-form, .myth-auth-card',
+      maskCapturedNetworkRequestFn: (request) => sanitizeCapturedNetworkRequest(request),
     },
     loaded: (instance) => {
       instance.register({

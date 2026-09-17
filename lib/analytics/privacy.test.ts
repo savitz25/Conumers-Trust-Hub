@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   isOpaqueTrustHubId,
   sanitizeAnalyticsUrl,
+  sanitizeCapturedNetworkRequest,
   sanitizeCaptureResult,
   sanitizePageviewProperties,
   stripForbiddenProperties,
@@ -81,3 +82,11 @@ test('before_send never returns undefined for a valid capture payload', () => {
   assert.equal(result?.event, 'search_submitted');
   assert.equal(result?.properties?.token, 'phc_test_token');
 });
+
+test('recording start_url analogue strips Ask q via network mask helper', () => {
+  const request = sanitizeCapturedNetworkRequest({
+    name: 'https://www.asktrusthub.com/ask?q=licensed+electrician+in+fort+lauderdale',
+  });
+  assert.equal(request.name, 'https://www.asktrusthub.com/ask');
+});
+

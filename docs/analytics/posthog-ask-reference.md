@@ -49,6 +49,7 @@ Common properties, sent only when known:
 - Pageview URLs strip `q`, `code`, `token`, `email`, and similar keys.
 - `/ask` and `/search` pageview titles are replaced with `Ask Trust Hub` so document titles that include `q` never reach PostHog.
 - `before_send` must not strip PostHog reserved properties (`token`, `distinct_id`, `$…`). Removing `token` causes posthog-js to drop the event.
+- Session Replay recording `start_url` / player footer URL is sanitized with the same query-key list via `session_recording.maskCapturedNetworkRequestFn` (and rrweb Meta `href` in `$snapshot_data` if `before_send` sees it). Event `$current_url` sanitization alone does not cover recording metadata.
 - Navigation-critical events (`search_submitted`, result open, specialist handoff) capture with `{ send_instantly: true, transport: 'sendBeacon' }`.
 
 ## Session Replay
@@ -58,6 +59,8 @@ Enabled only with production init:
 - `maskAllInputs: true`
 - password and email input masking
 - `maskTextSelector`: `input, textarea, [contenteditable], [data-ph-mask], .myth-form, .myth-auth-card`
+- `maskCapturedNetworkRequestFn`: strips Ask `q` / `query` / `question` and auth keys from recording/page URLs
+- `data-ph-mask` on post-submit query echoes and user-geography echoes (You asked, Current research geography, Requested/Research scope, disclosure). Public provider/evidence text stays unmasked.
 
 ## Event names
 

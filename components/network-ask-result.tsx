@@ -5,6 +5,7 @@ import { CROSS_HUB_NAME_CHECK } from '@/lib/network/name-check';
 import { SAVE_TO_RESEARCH_CONTRACT } from '@/lib/network/federated-ask';
 import { seniorSearchHref } from '@/lib/network/consumer-ask';
 import { AskSearchResultsReturned } from '@/components/analytics/ask-instrumentation';
+import { isAskReplayMaskedEchoLabel } from '@/lib/analytics/privacy';
 
 const RESULT_LABELS = {
   EXACT_IDENTITY: 'Exact regulatory identity',
@@ -261,7 +262,7 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
               <dt className="text-xs uppercase" style={{ color: ASK_BRAND.ink }}>
                 {row.label}
               </dt>
-              <dd className="text-sm font-semibold" style={{ color: ASK_BRAND.navy }}>
+              <dd className="text-sm font-semibold" style={{ color: ASK_BRAND.navy }} {...(isAskReplayMaskedEchoLabel(row.label) ? { 'data-ph-mask': true } : {})}>
                 {row.value}
               </dd>
             </div>
