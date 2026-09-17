@@ -15,16 +15,29 @@ export function commonTrustHubProperties(
   });
 }
 
+export type TrustHubCaptureOptions = {
+  /** Use before GET navigation / full page unload. Does not sleep. */
+  sendBeforeUnload?: boolean;
+};
+
+let lastPageviewPath = '';
+
 export function captureTrustEvent(
   event: TrustHubEventName | string,
   properties?: Partial<TrustHubEventProperties>,
+  options?: TrustHubCaptureOptions,
 ): void {
   try {
     if (!shouldEnablePosthog()) return;
     const payload = commonTrustHubProperties(properties);
     void getPosthogBrowser()
       .then((posthog) => {
-        posthog?.capture(event, payload);
+        if (!posthog) return;
+        if (options?.sendBeforeUnload) {
+          posthog.capture(event, payload, { send_instantly: true, transport: 'sendBeacon' });
+          return;
+        }
+        posthog.capture(event, payload);
       })
       .catch(() => undefined);
   } catch {
@@ -34,14 +47,21 @@ export function captureTrustEvent(
 
 export function captureSanitizedPageview(pathname: string, href?: string): void {
   try {
+    const path = pathname.split('?')[0] || '/';
+    if (lastPageviewPath === path) return;
+    lastPageviewPath = path;
     captureTrustEvent('$pageview', {
       surface: 'app_router',
-      $pathname: pathname.split('?')[0],
+      $pathname: path,
       $current_url: sanitizeAnalyticsUrl(href || pathname),
     } as Partial<TrustHubEventProperties>);
   } catch {
     // ignore
   }
+}
+
+export function resetPageviewDedupeForTests(): void {
+  lastPageviewPath = '';
 }
 
 export function identifyTrustHubUser(distinctId: string | null | undefined): void {

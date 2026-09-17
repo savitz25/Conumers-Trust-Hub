@@ -3,13 +3,11 @@
 import type { PostHog } from 'posthog-js';
 import { analyticsEnvironment, posthogHost, posthogProjectToken, shouldEnablePosthog } from './environment';
 import { createPosthogClientGate } from './posthog-gate';
-import { sanitizePageviewProperties } from './privacy';
+import { sanitizeCaptureResult } from './privacy';
 import { TRUSTHUB_HUB } from './trusthub-events';
 
-function sanitizeEvent<T extends { properties?: Record<string, unknown> } | null>(event: T): T {
-  if (!event?.properties) return event;
-  sanitizePageviewProperties(event.properties);
-  return event;
+function sanitizeEvent<T extends { event?: string; properties?: Record<string, unknown> } | null>(event: T): T {
+  return sanitizeCaptureResult(event);
 }
 
 async function loadPosthog(): Promise<PostHog | null> {

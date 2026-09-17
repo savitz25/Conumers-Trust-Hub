@@ -48,6 +48,8 @@ Common properties, sent only when known:
 - Forbidden keys are listed in `lib/analytics/privacy.ts`.
 - Pageview URLs strip `q`, `code`, `token`, `email`, and similar keys.
 - `/ask` and `/search` pageview titles are replaced with `Ask Trust Hub` so document titles that include `q` never reach PostHog.
+- `before_send` must not strip PostHog reserved properties (`token`, `distinct_id`, `$…`). Removing `token` causes posthog-js to drop the event.
+- Navigation-critical events (`search_submitted`, result open, specialist handoff) capture with `{ send_instantly: true, transport: 'sendBeacon' }`.
 
 ## Session Replay
 

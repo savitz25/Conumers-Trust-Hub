@@ -26,7 +26,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "check:ath-obs-001": "node --experimental-strip-types --test lib/analytics/privacy.test.ts lib/analytics/environment.test.ts lib/analytics/posthog-gate.test.ts && npx --yes tsx --test lib/analytics/trusthub.test.ts",
+    "check:ath-obs-001": "node --experimental-strip-types --test lib/analytics/privacy.test.ts lib/analytics/environment.test.ts lib/analytics/posthog-gate.test.ts lib/analytics/ath-obs-001c.test.ts && npx --yes tsx --test lib/analytics/trusthub.test.ts",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "npm run check:ask-home-001 && node scripts/assert-network-v2.mjs && node scripts/assert-share-002.mjs && node scripts/assert-share-003.mjs && node scripts/assert-visual-002.mjs && npm run check:ath-obs-001 && npm run check:ath-nj-001 && npm run check:ath-nj-county-002 && npm run check:ath-nj-county-003 && npm run check:ath-ca-001 && npm run check:ath-ca-002 && npm run check:ath-tx-001 && npm run check:ath-tx-002 && npm run check:ath-wa-001 && npm run check:ath-wa-002 && npm run check:ath-az-001 && npm run check:ath-az-final && npm run check:ath-co-001 && npm run check:ath-va-net-001 && npm run check:ath-ny-net-001 && npm run check:ath-il-001 && npm run check:ath-metrics-001c && npm run check:ath-metrics-type-001 && npm run check:ath-metrics-004b && npm run check:ath-metrics-004c && npm run check:ath-metrics-r2-06 && npm run check:th-p0-network-disclosure-01 && npm run check:th-arch-p0-001",
