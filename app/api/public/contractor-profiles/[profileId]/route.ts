@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
-import { withPlatform } from '@/lib/customer/server';
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const headers = { 'Cache-Control': 'public, max-age=0, s-maxage=60', 'X-Robots-Tag': 'noindex, nofollow' };
+import { publicReadHeaders, readPublicContractorState } from '@/lib/customer/public-read-server';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ profileId: string }> }) {
   const { profileId } = await params;
-  if (!UUID.test(profileId)) return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
   try {
-    // Dedicated Contractor publication contract is frozen at V1.
-    const profile = await withPlatform((p) => p.publicBusinessProfile(profileId));
-    if (!profile) return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
-    return NextResponse.json(profile, { headers });
+    const result = await readPublicContractorState(profileId);
+    const headers = publicReadHeaders(result.source);
+    if (!result.state.hasPublicBusinessProfile || !result.state.profile) {
+      return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
+    }
+    return NextResponse.json(result.state.profile, { headers });
   } catch {
-    return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
+    return NextResponse.json(
+      { error: 'not_found' },
+      { status: 404, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=21600, stale-while-revalidate=86400', 'X-Robots-Tag': 'noindex, nofollow' } },
+    );
   }
 }

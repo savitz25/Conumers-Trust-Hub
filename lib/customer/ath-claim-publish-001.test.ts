@@ -12,9 +12,9 @@ test('Contractor V1 profile projection is explicit, public-only, and drift-prote
   assert.deepEqual(PUBLIC_BUSINESS_FIELD_KEYS, ['description','website','public_phone','public_email','founded_year','emergency_service']);
   assert.equal((fixture.fields as Record<string, unknown>).contact_context, undefined);
   for (const privateKey of ['claimId','grantId','orgId','userId','claimantEmail','authorityEvidence','internalRationale']) assert.equal(JSON.stringify(fixture).includes(privateKey), false);
-  assert.match(profileRoute, /publicBusinessProfile\(profileId\)/);
-  assert.match(replyRoute, /publicBusinessReplies\(profileId\)/);
-  assert.match(profileRoute, /s-maxage=60/); assert.match(profileRoute, /noindex/);
+  assert.match(profileRoute, /readPublicContractorState/);
+  assert.match(replyRoute, /readPublicContractorState/);
+  assert.match(profileRoute, /s-maxage=21600/); assert.match(profileRoute, /noindex/);
 });
 
 test('active authority gates both profile and response publication', () => {

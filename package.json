@@ -26,6 +26,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "check:ath-neon-001": "node --experimental-strip-types --test lib/customer/public-read-layer.test.ts lib/customer/ath-claim-publish-001.test.ts",
     "check:ath-obs-001": "node --experimental-strip-types --test lib/analytics/privacy.test.ts lib/analytics/environment.test.ts lib/analytics/posthog-gate.test.ts lib/analytics/ath-obs-001c.test.ts lib/analytics/ath-obs-001d.test.ts && npx --yes tsx --test lib/analytics/trusthub.test.ts",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
