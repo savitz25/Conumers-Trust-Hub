@@ -224,12 +224,19 @@ export function paReleaseGatePassed(
   return true;
 }
 
+// Unambiguous Pennsylvania city names used as a standalone "looks like PA" geography
+// signal. Ambiguous common English words (e.g. "reading") are intentionally excluded
+// here so that ordinary queries like "reading reviews" are not misclassified as PA.
 const PA_CITY_RE =
+  /\b(philadelphia|pittsburgh|harrisburg|erie|scranton|allentown|lancaster)\b/i;
+// Broader city detection (includes ambiguous tokens like "reading") used only to name
+// the city once Pennsylvania has already been established from other context.
+const PA_CITY_DETECT_RE =
   /\b(philadelphia|pittsburgh|harrisburg|erie|scranton|allentown|reading|lancaster)\b/i;
 const PA_COUNTY_RE = /\b(allegheny|montgomery|bucks|delaware|chester)\s+county\b/i;
 
 export function detectPaCity(query: string): string | undefined {
-  const city = query.match(PA_CITY_RE);
+  const city = query.match(PA_CITY_DETECT_RE);
   if (!city) return undefined;
   const raw = city[1].toLowerCase();
   return raw.replace(/\b\w/g, (letter) => letter.toUpperCase());

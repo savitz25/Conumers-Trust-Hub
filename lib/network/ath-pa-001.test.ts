@@ -10,6 +10,7 @@ import {
   PA_SEMANTIC_GUARDRAILS,
   PA_VERIFICATION,
   classifyPaHub,
+  detectPaCity,
   detectRequestedInsuranceProducts,
   evaluatePaPageEvidence,
   paPublicationSemanticFingerprint,
@@ -237,6 +238,15 @@ test('Philadelphia names stay statewide and do not invent local routes', () => {
   const parsed = parseNetworkAsk('roofing contractors in Philadelphia');
   assert.equal(parsed.geography?.stateCode, 'PA');
   assert.match(parsed.geography?.meaning ?? '', /not a local Ask route|statewide|Philadelphia/i);
+});
+
+test('the English gerund reading is not a standalone Pennsylvania geography signal', () => {
+  assert.equal(queryLooksLikePennsylvania('reading reviews'), false);
+  assert.equal(queryLooksLikePennsylvania('reading insurance'), false);
+  assert.equal(routePaAsk('reading insurance'), undefined);
+  assert.equal(queryLooksLikePennsylvania('Reading Pennsylvania'), true);
+  assert.equal(detectPaCity('Reading Pennsylvania'), 'Reading');
+  assert.equal(routePaAsk('insurance companies Pennsylvania')?.hubId, 'insurance');
 });
 
 test('claim eligibility surfaces are unchanged', () => {
