@@ -173,6 +173,13 @@ export function insuranceFailClosedReason(q: string): string | undefined {
   if (/\bhow many insurance providers\b/i.test(q)) {
     return 'Counts require an entity class. Agencies, individual producers, and legal insurers are not added into one “insurance providers” total.';
   }
+  if (
+    /\bpennsylvania\b/i.test(q) &&
+    /\bagenc/i.test(q) &&
+    /\b(homeowners?|auto(?:mobile)?|car insurance)\b/i.test(q)
+  ) {
+    return 'homeowners/auto is a consumer product request, not an official agency line of authority in this extract. InsuranceTrustHub does not execute the unfiltered Pennsylvania agency census as a product-qualified result.';
+  }
   if (/\bdomicil/i.test(q) && /\binsurer/i.test(q)) {
     return 'Legal-insurer domicile is not currently a complete national Ask field. Domicile is not inferred from address, market activity, or authorization.';
   }

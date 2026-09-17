@@ -1,0 +1,39 @@
+{
+  "philadelphia_pittsburgh_phase": {
+    "status": "NOT_STARTED",
+    "local_work_needed_now": "NO",
+    "reason": "Pennsylvania's strongest new intelligence is statewide. Six specialist /pennsylvania pages plus Ask /pennsylvania are the public research surfaces. Do not start Philadelphia, Pittsburgh, Allegheny, Montgomery, Bucks, Delaware, or Chester merely for symmetry."
+  },
+  "cross_hub": {
+    "contractor": [
+      "HICPA statewide roster remains search-only",
+      "HICPA↔specialty exact bridges absent",
+      "municipal license census not acquired"
+    ],
+    "move": [
+      "HHG broker roster search-only",
+      "complaint bulk missing",
+      "no exact PUC ↔ USDOT/MC bridge"
+    ],
+    "senior": [
+      "current PCH/ALR rosters search-only",
+      "Adult Day bulk missing",
+      "statewide NH surveys not acquired"
+    ],
+    "lender": [
+      "current NMLS company/MLO/servicer rosters search-only",
+      "mortgage-specific enforcement census not acquired",
+      "NMLS↔LEI crosswalk absent"
+    ],
+    "insurance": [
+      "agency/producer census search-only",
+      "complaint/enforcement NAIC joins absent",
+      "unique regulatory matters unknown"
+    ],
+    "investor": [
+      "securities-only enforcement census unknown",
+      "IA-only enforcement census unknown",
+      "exact CRD attachments remain 0"
+    ]
+  }
+}

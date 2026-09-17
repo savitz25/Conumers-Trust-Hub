@@ -69,6 +69,7 @@ import { vaCaveatForHub, vaSpecialistUrl, routeVaAsk } from './va-network.ts';
 import { nyCaveatForHub, nySpecialistUrl, requestedLegalJurisdiction, routeNyAsk } from './ny-network.ts';
 import { ilCaveatForHub, ilSpecialistUrl, routeIlAsk } from './il-network.ts';
 import { orCaveatForHub, orSpecialistUrl, routeOrAsk } from './or-network.ts';
+import { paCaveatForHub, paSpecialistUrl, routePaAsk } from './pa-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -198,6 +199,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'NY') return '/new-york';
   if (parsed.geography?.stateCode === 'IL') return '/illinois';
   if (parsed.geography?.stateCode === 'OR') return '/oregon';
+  if (parsed.geography?.stateCode === 'PA') return '/pennsylvania';
   return undefined;
 }
 
@@ -1157,6 +1159,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0]) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateOr(h, orCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'PA') {
+    const paRoute = routePaAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(
+        dest &&
+          (/\/ask(\?|$)/i.test(dest) ||
+            /\/api\/ask/i.test(dest) ||
+            /\/verify(\?|$)/i.test(dest) ||
+            /\/companies\?/i.test(dest)),
+      );
+    const annotatePa = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : paSpecialistUrl(hub.hubId),
+        geographyCapability: hub.geographyCapability,
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? paSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (paRoute) {
+      const already = hubs.some((h) => h.hubId === paRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: paRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[paRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: paRoute.destination,
+            reason: paRoute.caveat,
+            whatItCanAnswer: `Pennsylvania research on ${NETWORK_PUBLIC_NAMES[paRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Pennsylvania',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === paRoute.hubId ? annotatePa(h, paRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === paRoute.hubId), ...hubs.filter((h) => h.hubId !== paRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotatePa(h, paCaveatForHub(primary)) : h));
     }
   }
 

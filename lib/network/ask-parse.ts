@@ -36,6 +36,7 @@ import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from '.
 import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
 import { detectIlCity, queryLooksLikeIllinois } from './il-network.ts';
 import { detectOrCity, queryLooksLikeOregon } from './or-network.ts';
+import { detectPaCity, queryLooksLikePennsylvania } from './pa-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -118,6 +119,7 @@ function geography(q: string): ParsedGeography | undefined {
   const nyNamedEarly = queryLooksLikeNewYork(q);
   const ilNamedEarly = queryLooksLikeIllinois(q);
   const orNamedEarly = queryLooksLikeOregon(q);
+  const paNamedEarly = queryLooksLikePennsylvania(q);
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -440,6 +442,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: ilCity
         ? `${ilCity}, Illinois. Illinois research is statewide; a city or county name is not a local Ask route. Chicago and Cook County Ask pages are not published.`
         : 'Illinois. State licensing is not physical location; specialist geography meaning differs by hub. Illinois city and county Ask pages are not published.',
+    };
+  }
+
+  if (paNamedEarly) {
+    const paCity = detectPaCity(q);
+    return {
+      stateCode: 'PA',
+      stateName: 'Pennsylvania',
+      city: paCity,
+      meaning: paCity
+        ? `${paCity}, Pennsylvania. Pennsylvania research is statewide; a city or county name is not a local Ask route. Philadelphia and Pittsburgh Ask pages are not published.`
+        : 'Pennsylvania. State licensing is not physical location; specialist geography meaning differs by hub. Pennsylvania city and county Ask pages are not published.',
     };
   }
 

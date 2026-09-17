@@ -87,6 +87,16 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     note: 'Florida CILB prefixes (CBC/CGC/CCC/…) route to ContractorTrustHub Verify. Other states need an explicit state. Pattern match is not a national license.',
   },
   {
+    id: 'pa_hic',
+    hubId: 'contractor',
+    label: 'Pennsylvania HICPA registration',
+    examples: ['PA HIC 123456', 'HICPA 123456'],
+    pattern: /^(?:pa\s+)?hic(?:pa)?\s*#?\s*\d{4,12}$/i,
+    live: false,
+    destinationHint: 'https://www.contractortrusthub.com/pennsylvania',
+    note: 'Labeled PA HIC / HICPA is a Pennsylvania home-improvement registration identifier. It is not a general-contractor license and is not translated into a generic contractor name search. Bare digits fail closed.',
+  },
+  {
     id: 'cms_ccn',
     hubId: 'senior',
     label: 'CMS CCN',

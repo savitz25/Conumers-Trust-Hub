@@ -1,0 +1,67 @@
+{
+  "ticket": "ATH-PA-001",
+  "version": "ath-pa-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/pennsylvania",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_philadelphia_routes": false,
+  "hardcoded_pittsburgh_routes": false,
+  "pennsylvania_local_phase": "NO",
+  "pennsylvania_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "release_gate_passed": true,
+  "ask_fingerprint": "d04612c275e62f9c2c411c919481edb2bc9b4f0f6a0f5c4c862a06f0eb397739",
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "contractor-pa-state-intel-v1",
+      "fingerprint": "ad8e95e11e486c9c124b7da270d6fa38808fa4ab0be5d2008167283728324e9a",
+      "certified_release_sha": "6d4156791360d74c0f22054b8e445c335c999248"
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "move-pa-state-intel-v1",
+      "fingerprint": "1f8b97db78233d0a89fcab02bb92c8ff51633ba69da993ecc6eea79c985d88b3",
+      "certified_release_sha": "081cbe4633beb9008e2d2cac31185920dfcbef1e"
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "senior-pa-state-intel-v1",
+      "fingerprint": "460c6865eb7c3fdb040c95768f42e8ef90009fe9f6f80571c3268d5944ae7fed",
+      "certified_release_sha": "7c634a44cef433de340e86f862fb8181a6838daf"
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "lender-pa-state-intel-v1",
+      "fingerprint": "32c420aaf3dd2672a6b73774df8f567ddf6fdb08de9a29b9d95e5f948fe698c2",
+      "certified_release_sha": "5155a85e40254f2b05a72c3b92daff2fcba1a167"
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "insurance-pa-state-intel-v1",
+      "fingerprint": "530c42b9bb39e86bf76160594c5b37a6b105a6742e4a11b7c364a828e2294239",
+      "certified_release_sha": "f479b9bac0f3561c17b53bdc18bc1d6125e2edcc"
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/pennsylvania",
+      "publication_status": "live",
+      "snapshot_version": "investor-pa-state-intel-v1",
+      "fingerprint": "80420690c44566280ed43dd31e5a7976c182dbf473594d721d07ee3cfde5aad0",
+      "certified_release_sha": "d7d574f98786fbfc6de22fb3a6f5eb83d466da7a"
+    }
+  ]
+}

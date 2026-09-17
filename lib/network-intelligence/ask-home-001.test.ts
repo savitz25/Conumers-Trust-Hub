@@ -55,10 +55,10 @@ test('no universal score, paid ordering, or unsupported provider mega-total', ()
 });
 
 test('ten-state routing metadata preserves asymmetric specialist coverage', () => {
-  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR']);
+  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR', 'US-PA']);
   assert.equal(coverage.jurisdictions['US-FL'].askPath, '/florida');
   assert.deepEqual(coverage.jurisdictions['US-FL'].nationalOnly, ['investor']);
-  for (const state of ['US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR']) assert.deepEqual([...coverage.jurisdictions[state].specialistPublished].sort(), [...HUB_IDS].sort());
+  for (const state of ['US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR', 'US-PA']) assert.deepEqual([...coverage.jurisdictions[state].specialistPublished].sort(), [...HUB_IDS].sort());
   assert.deepEqual([...coverage.jurisdictions['US-AZ'].specialistPublished].sort(), ['contractor', 'investor', 'lender', 'senior']);
   assert.deepEqual(coverage.jurisdictions['US-AZ'].nationalOnly, ['insurance']);
   assert.deepEqual(coverage.jurisdictions['US-AZ'].noComparableStateUniverse, ['move']);
