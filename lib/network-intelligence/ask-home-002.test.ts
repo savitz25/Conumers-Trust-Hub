@@ -53,8 +53,8 @@ test('no unsafe aggregate, stale source claim, or ambiguous Lender profile claim
   assert.equal(home.derived_display_metrics.find((metric) => metric.metric_id === 'normalized_dataset_entry_count')?.value, 11);
 });
 
-test('eleven-state routing metadata preserves asymmetric specialist coverage', () => {
-  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR']);
+test('twelve-state routing metadata preserves asymmetric specialist coverage', () => {
+  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR', 'US-PA']);
   assert.equal(coverage.jurisdictions['US-FL'].askPath, '/florida');
   assert.deepEqual(coverage.jurisdictions['US-FL'].nationalOnly, ['investor']);
   assert.deepEqual(coverage.jurisdictions['US-AZ'].nationalOnly, ['insurance']);
@@ -63,7 +63,8 @@ test('eleven-state routing metadata preserves asymmetric specialist coverage', (
   assert.equal(coverage.jurisdictions['US-VA'].askPath, '/virginia');
   assert.equal(coverage.jurisdictions['US-NY'].askPath, '/new-york');
   assert.equal(coverage.jurisdictions['US-IL'].askPath, '/illinois');
-  assert.match(source, /Eleven-state network explorer/);
+  assert.equal(coverage.jurisdictions['US-PA'].askPath, '/pennsylvania');
+  assert.match(source, /Twelve-state network explorer/);
 });
 
 test('consumer semantic firewalls and limitations are visible', () => {

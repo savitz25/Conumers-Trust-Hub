@@ -1,0 +1,578 @@
+{
+  "state_code": "PA",
+  "state_name": "Pennsylvania",
+  "ask_path": "/pennsylvania",
+  "ask_canonical": "https://www.asktrusthub.com/pennsylvania",
+  "version": "ath-pa-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_philadelphia_routes": false,
+  "hardcoded_pittsburgh_routes": false,
+  "pennsylvania_local_phase": "NO",
+  "pennsylvania_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "Pennsylvania’s strongest Trust Hub evidence is HICPA search-only home-improvement registration plus separate asbestos/lead and public-work debarment layers, a PA PUC intrastate Household Goods universe that is not FMCSA, DOH facility licensing with 1,202 exact state→CMS bridges while PCH/ALR remain search-only, 2025 HMDA county-market activity that is not an NMLS census, PID licensed-company NAIC identities with complaint/enforcement/exam/insolvency catalogs while agency/producer bulk remains search-only, and IAPD state-IA/ERA/notice/principal-office lenses that cannot collapse into one adviser total. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_pennsylvania_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /pennsylvania pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /pennsylvania is indexable. Any one specialist failure fails the gate. Do not weaken the gate. Philadelphia/Pittsburgh/local routes are not published.",
+    "verified_at": "2026-09-17T18:32:19.859Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "283 asbestos + 148 lead contractor certification IDs",
+      "grain": "Distinct DLI CERT IDs. Supporting: 299 asbestos contractor rows / 4,985 people; 155 lead contractor rows / 943 people; 6 current prevailing-wage debarment listing rows. HICPA statewide census is OPEN_SEARCH_ONLY. Pennsylvania has no universal general-contractor license."
+    },
+    {
+      "hub_id": "move",
+      "display": "267 distinct PA PUC Utility Codes",
+      "grain": "Active Household Goods Operators list. Supporting: 269 active list rows; 266 distinct Carrier IDs; 537 insurance observations; 1,923 docket rows. PUC intrastate authority is not FMCSA interstate authority."
+    },
+    {
+      "hub_id": "senior",
+      "display": "1,202 exact PA state→CMS bridges",
+      "grain": "647 nursing-home + 403 Home Health + 152 Hospice exact CCN bridges. Supporting: 659 DOH nursing-home rows; 659 Home Health; 4,656 Home Care; 178 Hospice. Classes are separate. PCH/ALR current rosters remain OPEN_SEARCH_ONLY."
+    },
+    {
+      "hub_id": "lender",
+      "display": "444,887 HMDA 2025 applications",
+      "grain": "Canonical county-market grain: 271,254 originations / 80,570 denials / 67 counties. Not lenders. Current NMLS company, broker, servicer, and MLO rosters remain OPEN_SEARCH_ONLY."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,722 licensed-company NAIC identities",
+      "grain": "PID Licensed Company Search A–Z. Supporting: 595 2025 complaint comparison rows / 9,209 complaints; 3,232 Enforcement Actions documents. Company ≠ agency ≠ producer. Agency and producer bulk remain OPEN_SEARCH_ONLY."
+    },
+    {
+      "hub_id": "investor",
+      "display": "864 approved Pennsylvania state IA CRDs",
+      "grain": "IAPD APPROVED state IA. Supporting: 99 state ERA, 3,411 notice filings, 623 principal-office overlay. Do not add these populations. Principal office is not registration. Notice filing is not state IA. ERA is not an RIA."
+    }
+  ],
+  "what_makes_pennsylvania_different": [
+    "Contractor: Pennsylvania has no universal statewide general-contractor license. HICPA home-improvement registration is search-only and is not a competence finding. Asbestos, lead, and public-work debarment are separate grains.",
+    "Move: PA PUC publishes a real intrastate Household Goods authority universe distinct from federal FMCSA. Utility Code is not automatically Carrier ID. A docket is not an adverse finding.",
+    "Senior: DOH facility licensing has meaningful exact state↔CMS bridges, while PCH/ALR remain separate DHS systems and current rosters are search-only. Home Care is not Home Health.",
+    "Lender: Strong 2025 HMDA market activity plus DoBS/NMLS search paths and PHFA program context, but no fake combined lenders census. NMLS current rosters remain search-only.",
+    "Insurance: Strong PID legal-insurer census, complaint comparison, enforcement, exams, and insolvency catalogs; agency/producer bulk remains search-only. Property and Allied Lines is not homeowners. SQA-009 product intent is preserved.",
+    "Investor: Strong IAPD jurisdiction lenses, but state registration, ERA, notice filing, and headquarters are separate regulatory concepts. Mixed DoBS documents are not an IA disciplinary census."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "HICPA_STATEWIDE_CENSUS": "OPEN_SEARCH_ONLY",
+      "HICPA_COUNTS": null,
+      "ASBESTOS_CONTRACTOR_ROWS": 299,
+      "DISTINCT_ASBESTOS_CERT_IDS": 283,
+      "ASBESTOS_INDIVIDUAL_ROWS": 4985,
+      "LEAD_CONTRACTOR_ROWS": 155,
+      "DISTINCT_LEAD_CERT_IDS": 148,
+      "LEAD_INDIVIDUAL_ROWS": 943,
+      "PREVAILING_WAGE_DEBARMENT_ROWS": 6,
+      "DEBARMENT_FIRM_RESPONDENTS": 8,
+      "DEBARMENT_PERSON_RESPONDENTS": 8,
+      "EXACT_HICPA_SPECIALTY_CROSSWALKS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 431,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "HICPA registration ≠ general-contractor license. Specialty CERT ≠ HICPA. Firm ≠ person. Debarment ≠ complaint. Search-only ≠ zero. Municipal licensing ≠ state licensing."
+    },
+    "move": {
+      "PUC_ACTIVE_HHG_LIST_ROWS": 269,
+      "DISTINCT_UTILITY_CODES": 267,
+      "DISTINCT_CARRIER_IDS": 266,
+      "ACTIVE_HHG_AUTHORITY_ROWS": 269,
+      "BOUNDED_INSURANCE_OBSERVATIONS": 537,
+      "CURRENT_CARGO_OBSERVATIONS": 260,
+      "CURRENT_LIABILITY_OBSERVATIONS": 261,
+      "BOUNDED_DOCKET_ROWS": 1923,
+      "DISTINCT_DOCKET_NUMBERS": 1922,
+      "HHG_BROKER_ROSTER": "OPEN_SEARCH_ONLY",
+      "SERVICE_TERRITORY": "OPEN_SEARCH_ONLY",
+      "COMPLAINTS": "OPEN_SEARCH_ONLY",
+      "ENFORCEMENT_CENSUS": "OPEN_SEARCH_ONLY",
+      "EXACT_PUC_TO_USDOT_CROSSWALKS": 0,
+      "EXACT_PUC_TO_MC_CROSSWALKS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 267,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "Utility Code ≠ automatically Carrier ID. Carrier ≠ broker. Authority row ≠ unique mover. Office address ≠ service territory. Insurance evidence ≠ authority. Docket ≠ adverse finding. PA PUC ≠ FMCSA. Carrier ID ≠ MC."
+    },
+    "senior": {
+      "PCH_CURRENT_ROSTER": "OPEN_SEARCH_ONLY",
+      "PCH_AUG_2026_HOMES": 995,
+      "PCH_AUG_2026_CAPACITY": 61906,
+      "PCH_AUG_2026_RESIDENTS": 38898,
+      "ALR_CURRENT_ROSTER": "OPEN_SEARCH_ONLY",
+      "DOH_NURSING_HOME_ROWS": 659,
+      "DOH_NURSING_HOME_EXACT_CCNS": 647,
+      "SANCTION_ROWS": 1539,
+      "UNIQUE_SANCTIONS": 1533,
+      "HOME_HEALTH_ROWS": 659,
+      "HOME_HEALTH_EXACT_CCNS": 403,
+      "HOME_CARE_ROWS": 4656,
+      "HOSPICE_ROWS": 178,
+      "HOSPICE_EXACT_CCNS": 152,
+      "LIFE_PROVIDERS": 24,
+      "LIFE_CENTERS": 58,
+      "CMS_NURSING_HOMES": 656,
+      "CMS_HOME_HEALTH": 415,
+      "CMS_HOSPICE": 179,
+      "EXACT_STATE_TO_CMS_BRIDGES": 1202,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 6234,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "PCH ≠ ALR ≠ nursing home. Home Care ≠ Home Health ≠ Hospice. LIFE/PACE ≠ facility license class. State Facility ID ≠ CMS CCN unless source-published. 659 NH = 659 Home Health is coincidence. Sanction ≠ inspection ≠ complaint."
+    },
+    "lender": {
+      "HMDA_2025_PA_COUNTY_APPLICATIONS": 444887,
+      "HMDA_2025_PA_COUNTY_ORIGINATIONS": 271254,
+      "HMDA_2025_PA_COUNTY_DENIALS": 80570,
+      "HMDA_2025_PA_COUNTIES": 67,
+      "HMDA_2025_PA_LEI_APPLICATIONS": 441180,
+      "HMDA_2025_PA_LEI_ORIGINATIONS": 271254,
+      "HMDA_2025_PA_LEI_DENIALS": 79217,
+      "HMDA_2025_PA_DISTINCT_LEIS": 994,
+      "CFPB_2025_PA_MORTGAGE_COMPLAINTS": 849,
+      "PHFA_ROWS": 106,
+      "PHFA_DISTINCT_LENDER_NAMES": 102,
+      "DOBS_OPEN_DATA_MORTGAGE_LENDER": 626,
+      "DOBS_OPEN_DATA_MORTGAGE_BROKER": 863,
+      "DOBS_OPEN_DATA_MORTGAGE_SERVICING": 264,
+      "DOBS_OPEN_DATA_MLO_PERSONS": 22286,
+      "DOBS_MIXED_ENFORCEMENT_DOCUMENTS": 1525,
+      "MORTGAGE_SPECIFIC_ENFORCEMENT_CENSUS": "NOT_ACQUIRED",
+      "FDIC_PA_INSTITUTIONS": 110,
+      "PA_NMLS_LENDER_ROSTER": "OPEN_SEARCH_ONLY",
+      "PA_NMLS_BROKER_ROSTER": "OPEN_SEARCH_ONLY",
+      "PA_NMLS_SERVICER_ROSTER": "OPEN_SEARCH_ONLY",
+      "PA_NMLS_MLO_ROSTER": "OPEN_SEARCH_ONLY",
+      "EXACT_NMLS_LEI_CROSSWALKS": 0,
+      "EXACT_CFPB_NMLS_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_LENDER_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "Canonical HMDA scalar is county-market 444,887, not LEI-cell 441,180. Application ≠ lender. LEI ≠ NMLS. Open Data supporting rows ≠ NMLS census. MLO ≠ lender. Broker ≠ lender ≠ servicer. CFPB complaint ≠ finding. PHFA ≠ DoBS license. FDIC bank ≠ non-bank licensee."
+    },
+    "insurance": {
+      "PID_LICENSED_COMPANY_LETTER_ROWS": 1724,
+      "PID_LICENSED_COMPANY_DISTINCT_NAIC": 1722,
+      "PID_PA_DOMICILE_DISTINCT_NAIC": 211,
+      "PID_SURPLUS_LINES_DISTINCT_NAIC": 233,
+      "PID_2025_COMPLAINT_ROWS": 595,
+      "PID_2025_COMPLAINT_DISTINCT_NAMES": 500,
+      "PID_2025_COMPLAINT_SUM": 9209,
+      "PID_ENFORCEMENT_ACTIONS": 3232,
+      "PID_MARKET_CONDUCT_ACTIONS": 450,
+      "PID_FINANCIAL_EXAM_DOCUMENTS": 494,
+      "PID_LIQUIDATION_CATALOG_DOCUMENTS": 95,
+      "PA_AGENCY_ROSTER": "OPEN_SEARCH_ONLY",
+      "PA_PRODUCER_ROSTER": "OPEN_SEARCH_ONLY",
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "Legal insurer ≠ group. Insurer ≠ agency ≠ producer. NAIC ≠ NPN. Surplus lines ≠ admitted census. Company power ≠ consumer product. Property and Allied Lines ≠ homeowners. Complaint ≠ violation. PID Complaint Index ≠ Trust Score. Market-conduct ≠ financial exam ≠ enforcement. Liquidation ≠ rehabilitation ≠ discharge."
+    },
+    "investor": {
+      "PA_PRINCIPAL_OFFICE_OVERLAY": 623,
+      "PA_RAW_MAINADDR_EXTRACT": 628,
+      "PA_STATE_IA_APPROVED_CRDS": 864,
+      "PA_STATE_ERA_ACTIVE_CRDS": 99,
+      "PA_FEDERAL_NOTICE_FILED_CRDS": 3411,
+      "PA_IA_NOTICE_OVERLAP": 5,
+      "PA_IA_ERA_OVERLAP": 0,
+      "PA_ERA_NOTICE_OVERLAP": 0,
+      "PA_OFFICE_IA_OVERLAP": 1,
+      "DOBS_MIXED_ENFORCEMENT_DOCUMENTS": 1525,
+      "PA_DOBS_SECURITIES_ONLY_COUNT": null,
+      "PA_DOBS_IA_ONLY_COUNT": null,
+      "EXACT_CRD_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 963,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "State IA ≠ SEC RIA ≠ ERA ≠ notice filing. Principal office ≠ registration. IAR person ≠ adviser firm. Broker-dealer ≠ investment adviser. Mixed DoBS catalog ≠ IA disciplinary census. Document ≠ unique matter."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "The six specialist hubs contain incompatible grains and overlapping identities. Ask does not publish Pennsylvania providers, businesses, licensed professionals, or records as an aggregated numerical total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /pennsylvania pages plus Ask /pennsylvania. Page/surface count only — not a business, record, provider, or license count. 7 surfaces ≠ 7 providers."
+    },
+    "NET_NEW_STATE_RESEARCH_IDENTITIES_BY_HUB": {
+      "contractor": 431,
+      "move": 267,
+      "senior": 6234,
+      "lender": 0,
+      "insurance": 0,
+      "investor": 963,
+      "presentation": "per-hub research expansion only. Do not publish the arithmetic sum as providers, companies, facilities, professionals, or canonical organizations."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "coverage_type": "HICPA_SEARCH_ONLY_PLUS_SPECIALTY_DEBARMENT",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/pennsylvania",
+      "snapshot_version": "contractor-pa-state-intel-v1",
+      "fingerprint": "ad8e95e11e486c9c124b7da270d6fa38808fa4ab0be5d2008167283728324e9a",
+      "certified_release_sha": "6d4156791360d74c0f22054b8e445c335c999248",
+      "source_clock": "Specialist-accepted contractor-pa-state-intel-v1. HICPA is search-only. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Attorney General HICPA; Department of Labor & Industry",
+      "primary_identity": "HICPA registration when source-native; DLI CERT for asbestos/lead",
+      "topic": "licensed contractors Pennsylvania",
+      "plain_question": "Does Pennsylvania have a universal statewide general-contractor license?",
+      "research_topics": [
+        "HICPA home-improvement registration (search-only)",
+        "DLI asbestos contractor CERT IDs",
+        "DLI lead contractor CERT IDs",
+        "Prevailing-wage debarment listings"
+      ],
+      "primary_identifiers": ["PA HIC", "DLI asbestos CERT", "DLI lead CERT"],
+      "identifier_types": ["HICPA", "DLI_CERT"],
+      "source_summary": "No universal statewide GC license. HICPA is the primary statewide home-improvement registration and remains OPEN_SEARCH_ONLY.",
+      "coverage_summary": "283 asbestos + 148 lead contractor certification IDs. HICPA statewide census is search-only.",
+      "coverage_limitation": "HICPA counts are null, not zero. Exact HICPA↔specialty crosswalks: 0. Municipal licensing is not state licensing.",
+      "what_research": "HICPA search, asbestos/lead CERT IDs, and public-work debarment",
+      "next_step": "Open ContractorTrustHub Pennsylvania and verify on official HICPA or DLI search",
+      "semantic_guardrails": [
+        "HICPA ≠ general-contractor license",
+        "HICPA ≠ endorsement",
+        "specialty CERT ≠ HICPA",
+        "firm ≠ person",
+        "debarment ≠ complaint"
+      ],
+      "verified_facts": [
+        "Asbestos: 299 contractor rows / 283 distinct CERT IDs / 4,985 people.",
+        "Lead: 155 contractor rows / 148 distinct CERT IDs / 943 people.",
+        "Current prevailing-wage debarment listing rows: 6. HICPA census OPEN_SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "contractors Pennsylvania",
+        "licensed contractor Pennsylvania",
+        "home improvement contractor Pennsylvania",
+        "asbestos contractor Pennsylvania",
+        "lead contractor Pennsylvania",
+        "debarred contractor Pennsylvania"
+      ],
+      "gap_examples": [
+        "HICPA statewide roster",
+        "HICPA↔specialty exact bridges",
+        "municipal license census"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "coverage_type": "STATE_PUC_INTRASTATE_HHG",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/pennsylvania",
+      "snapshot_version": "move-pa-state-intel-v1",
+      "fingerprint": "1f8b97db78233d0a89fcab02bb92c8ff51633ba69da993ecc6eea79c985d88b3",
+      "certified_release_sha": "081cbe4633beb9008e2d2cac31185920dfcbef1e",
+      "source_clock": "Specialist-accepted move-pa-state-intel-v1 PA PUC active Household Goods Operators list. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Public Utility Commission",
+      "primary_identity": "PA PUC Utility Code; Carrier ID is a separate grain",
+      "topic": "movers Pennsylvania",
+      "plain_question": "How many distinct PA PUC Utility Codes are on the active Household Goods list — and is that FMCSA authority?",
+      "research_topics": [
+        "PA PUC active HHG Utility Codes",
+        "Cargo and liability insurance observations",
+        "Bounded PUC dockets",
+        "FMCSA interstate identity research"
+      ],
+      "primary_identifiers": ["PA PUC Utility Code", "Carrier ID", "USDOT", "MC"],
+      "identifier_types": ["PUC_UTILITY_CODE", "CARRIER_ID", "USDOT", "MC"],
+      "source_summary": "Official PA PUC intrastate Household Goods authority. Not FMCSA interstate authority.",
+      "coverage_summary": "267 distinct PA PUC Utility Codes. PUC ≠ FMCSA.",
+      "coverage_limitation": "Broker roster, service territory, complaints, and enforcement census remain OPEN_SEARCH_ONLY. Exact PUC→USDOT and PUC→MC crosswalks: 0.",
+      "what_research": "PA PUC Household Goods authority, insurance observations, and dockets",
+      "next_step": "Open MoveTrustHub Pennsylvania and confirm the Utility Code on the official PUC list",
+      "semantic_guardrails": [
+        "Utility Code ≠ automatically Carrier ID",
+        "carrier ≠ broker",
+        "PA PUC ≠ FMCSA",
+        "docket ≠ adverse finding",
+        "Carrier ID ≠ MC"
+      ],
+      "verified_facts": [
+        "269 active list rows / 267 Utility Codes / 266 Carrier IDs.",
+        "537 insurance observations (260 cargo / 261 liability).",
+        "1,923 docket rows / 1,922 distinct docket numbers."
+      ],
+      "routing_intents": [
+        "movers Pennsylvania",
+        "household goods movers Pennsylvania",
+        "PA PUC mover Pennsylvania",
+        "interstate mover Pennsylvania"
+      ],
+      "gap_examples": [
+        "HHG broker roster",
+        "complaint bulk",
+        "PUC↔USDOT/MC bridge"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "coverage_type": "DOH_DHS_CMS_SEPARATE_CLASSES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/pennsylvania",
+      "snapshot_version": "senior-pa-state-intel-v1",
+      "fingerprint": "460c6865eb7c3fdb040c95768f42e8ef90009fe9f6f80571c3268d5944ae7fed",
+      "certified_release_sha": "7c634a44cef433de340e86f862fb8181a6838daf",
+      "source_clock": "Specialist-accepted senior-pa-state-intel-v1. PCH monthly aggregate August 2026 is not a roster. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Department of Health; Department of Human Services; CMS overlay",
+      "primary_identity": "PA state facility ID; CMS CCN when source-published",
+      "topic": "nursing homes Pennsylvania",
+      "plain_question": "What Pennsylvania senior-care classes exist — and can they be added into one facilities total?",
+      "research_topics": [
+        "DOH nursing homes and exact CCNs",
+        "Home Health vs Home Care vs Hospice",
+        "PCH monthly aggregate vs current roster",
+        "LIFE/PACE providers and centers"
+      ],
+      "primary_identifiers": ["PA state facility ID", "CMS CCN"],
+      "identifier_types": ["PA_FACILITY_ID", "CMS_CCN"],
+      "source_summary": "DOH facility licensing plus CMS overlays. PCH/ALR current rosters remain search-only.",
+      "coverage_summary": "1,202 exact PA state→CMS bridges. Classes are separate.",
+      "coverage_limitation": "PCH and ALR current rosters OPEN_SEARCH_ONLY. 659 nursing homes matching 659 Home Health rows is coincidence, not identity.",
+      "what_research": "DOH licenses, CMS overlays, sanctions, and LIFE/PACE",
+      "next_step": "Open SeniorTrustHub Pennsylvania and verify the care class on the official source",
+      "semantic_guardrails": [
+        "PCH ≠ ALR ≠ nursing home",
+        "Home Care ≠ Home Health ≠ Hospice",
+        "LIFE/PACE ≠ facility license class",
+        "state ID ≠ CCN unless source-published",
+        "sanction ≠ inspection ≠ complaint"
+      ],
+      "verified_facts": [
+        "DOH NH 659 / 647 exact CCNs; Home Health 659 / 403 CCNs; Home Care 4,656; Hospice 178 / 152 CCNs.",
+        "Exact state→CMS bridges 1,202. LIFE 24 providers / 58 centers.",
+        "PCH monthly Aug 2026: 995 homes / 61,906 capacity / 38,898 residents — not a roster."
+      ],
+      "routing_intents": [
+        "nursing homes Pennsylvania",
+        "personal care homes Pennsylvania",
+        "assisted living Pennsylvania",
+        "home health Pennsylvania",
+        "home care Pennsylvania",
+        "hospice Pennsylvania"
+      ],
+      "gap_examples": [
+        "current PCH/ALR rosters",
+        "Adult Day bulk",
+        "statewide NH surveys"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Mortgage Lenders",
+      "coverage_type": "HMDA_2025_PLUS_SEARCH_ONLY_NMLS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/pennsylvania",
+      "snapshot_version": "lender-pa-state-intel-v1",
+      "fingerprint": "32c420aaf3dd2672a6b73774df8f567ddf6fdb08de9a29b9d95e5f948fe698c2",
+      "certified_release_sha": "5155a85e40254f2b05a72c3b92daff2fcba1a167",
+      "source_clock": "Specialist-accepted lender-pa-state-intel-v1 HMDA 2025 Pennsylvania county grain. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Department of Banking and Securities; CFPB HMDA",
+      "primary_identity": "NMLS when source-native",
+      "topic": "HMDA applications Pennsylvania 2025",
+      "plain_question": "How many HMDA 2025 applications were reported for Pennsylvania properties — and is that a lender census?",
+      "research_topics": [
+        "HMDA 2025 county-market applications/originations/denials",
+        "Current NMLS company, broker, servicer, and MLO search paths",
+        "CFPB mortgage complaints",
+        "PHFA participation"
+      ],
+      "primary_identifiers": ["NMLS", "LEI"],
+      "identifier_types": ["NMLS", "LEI"],
+      "source_summary": "2025 HMDA Pennsylvania property geography plus search-only current NMLS rosters.",
+      "coverage_summary": "444,887 HMDA 2025 applications. Applications are not lenders.",
+      "coverage_limitation": "Canonical scalar is county-market 444,887, not LEI-cell 441,180. NMLS company/broker/servicer/MLO rosters remain OPEN_SEARCH_ONLY. Do not use 994 LEIs, 626 Open Data lender rows, FDIC 110, or PHFA 102 names as the NMLS census.",
+      "what_research": "HMDA 2025 Pennsylvania market activity, CFPB complaints, and PHFA participation",
+      "next_step": "Open LenderTrustHub Pennsylvania; verify a specific firm on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "HMDA application ≠ lender",
+        "LEI ≠ NMLS",
+        "Open Data rows ≠ NMLS census",
+        "MLO ≠ lender company",
+        "broker ≠ lender ≠ servicer",
+        "CFPB complaint ≠ finding"
+      ],
+      "verified_facts": [
+        "County grain: 444,887 applications; 271,254 originations; 80,570 denials; 67 counties.",
+        "LEI-cell grain: 441,180 applications; 994 distinct LEIs.",
+        "CFPB 849 complaints; PHFA 106 rows / 102 names; NMLS current rosters OPEN_SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "mortgage lenders Pennsylvania",
+        "licensed mortgage lender Pennsylvania",
+        "HMDA applications Pennsylvania 2025",
+        "mortgage complaints Pennsylvania"
+      ],
+      "gap_examples": [
+        "current NMLS company/MLO/servicer rosters",
+        "mortgage-specific enforcement census",
+        "NMLS↔LEI crosswalk"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "coverage_type": "PID_COMPANY_CENSUS_PLUS_SEARCH_ONLY_AGENCY_PRODUCER",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/pennsylvania",
+      "snapshot_version": "insurance-pa-state-intel-v1",
+      "fingerprint": "530c42b9bb39e86bf76160594c5b37a6b105a6742e4a11b7c364a828e2294239",
+      "certified_release_sha": "f479b9bac0f3561c17b53bdc18bc1d6125e2edcc",
+      "source_clock": "Specialist-accepted insurance-pa-state-intel-v1. Company information current as of 2026-09-14. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Insurance Department",
+      "primary_identity": "NAIC for legal insurers; NPN when source-native",
+      "topic": "insurance companies Pennsylvania",
+      "plain_question": "How many distinct NAIC identities are on the PID licensed-company list — and is that agencies?",
+      "research_topics": [
+        "PID licensed-company NAIC census",
+        "2025 Complaint Comparison tables",
+        "Enforcement and market-conduct catalogs",
+        "Agency/producer search paths"
+      ],
+      "primary_identifiers": ["NAIC", "NPN"],
+      "identifier_types": ["NAIC", "NPN"],
+      "source_summary": "PID licensed-company census plus complaint, enforcement, exam, and insolvency catalogs. Agency/producer bulk remains search-only.",
+      "coverage_summary": "1,722 licensed-company NAIC identities. Company ≠ agency ≠ producer.",
+      "coverage_limitation": "Agency and producer bulk OPEN_SEARCH_ONLY. Property and Allied Lines is not homeowners. SQA-009: homeowners/auto agency queries must not become the generic PA agency census.",
+      "what_research": "PID licensed companies, 2025 complaint tables, enforcement, exams, surplus lines, liquidation",
+      "next_step": "Open InsuranceTrustHub Pennsylvania; verify a company on PID Licensed Company Search",
+      "semantic_guardrails": [
+        "insurer ≠ agency ≠ producer",
+        "NAIC ≠ NPN",
+        "surplus lines ≠ admitted census",
+        "company power ≠ consumer product",
+        "complaint ≠ violation",
+        "PID Complaint Index ≠ Trust Score"
+      ],
+      "verified_facts": [
+        "1,724 letter rows / 1,722 distinct NAIC / 211 PA-domicile.",
+        "2025 complaints: 595 insurer-line rows / 500 names / 9,209 complaints.",
+        "3,232 Enforcement Actions; 450 Market Conduct Actions; 494 financial exams; 95 liquidation/rehab/discharge documents."
+      ],
+      "routing_intents": [
+        "insurance companies Pennsylvania",
+        "insurance agencies Pennsylvania",
+        "homeowners insurance agencies Pennsylvania",
+        "auto insurance agencies Pennsylvania",
+        "insurance complaints Pennsylvania"
+      ],
+      "gap_examples": [
+        "agency/producer census",
+        "NAIC attachments for complaints/enforcement",
+        "unique regulatory matters"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Advisers",
+      "coverage_type": "IAPD_LENSES_PLUS_MIXED_DOBS_CATALOG",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/pennsylvania",
+      "snapshot_version": "investor-pa-state-intel-v1",
+      "fingerprint": "80420690c44566280ed43dd31e5a7976c182dbf473594d721d07ee3cfde5aad0",
+      "certified_release_sha": "d7d574f98786fbfc6de22fb3a6f5eb83d466da7a",
+      "source_clock": "Specialist-accepted investor-pa-state-intel-v1 IAPD compilations IA_FIRM_*_Feed_09_17_2026. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Pennsylvania Department of Banking and Securities; SEC IAPD",
+      "primary_identity": "firm CRD",
+      "topic": "state registered investment adviser Pennsylvania",
+      "plain_question": "How many approved Pennsylvania state-IA CRDs are in the accepted IAPD extract — and can they be added to notice filings?",
+      "research_topics": [
+        "Approved Pennsylvania state-IA CRDs",
+        "State ERA reporting firms",
+        "Federal-covered notice filings",
+        "Principal-office overlay"
+      ],
+      "primary_identifiers": ["CRD", "SEC file number"],
+      "identifier_types": ["CRD", "SEC"],
+      "source_summary": "Separate IAPD registration/reporting lenses. Mixed DoBS enforcement documents are not an IA disciplinary census.",
+      "coverage_summary": "864 approved Pennsylvania state-IA CRDs. Do not add ERA, notice, or principal-office overlays.",
+      "coverage_limitation": "Principal office is not registration. Notice filing is not state IA. ERA is not an RIA. Mixed DoBS 1,525 documents have no securities-only or IA-only facet. Exact CRD attachments: 0.",
+      "what_research": "IAPD Pennsylvania state IA / ERA / notice lenses",
+      "next_step": "Open InvestorTrustHub Pennsylvania and verify on IAPD",
+      "semantic_guardrails": [
+        "state IA ≠ SEC RIA",
+        "state IA ≠ ERA",
+        "notice filing ≠ state IA",
+        "principal office ≠ registration",
+        "IAR person ≠ adviser firm",
+        "mixed DoBS catalog ≠ IA disciplinary census"
+      ],
+      "verified_facts": [
+        "864 APPROVED state IA CRDs; 99 ACTIVE ERA CRDs; 3,411 FILED notice CRDs.",
+        "623 principal-office overlay (raw MainAddr PA extract 628 is a different grain).",
+        "IA∩notice=5; IA∩ERA=0; ERA∩notice=0; office∩IA=1."
+      ],
+      "routing_intents": [
+        "investment advisers Pennsylvania",
+        "state registered investment adviser Pennsylvania",
+        "ERA Pennsylvania",
+        "notice filing Pennsylvania adviser",
+        "financial adviser Pennsylvania"
+      ],
+      "gap_examples": [
+        "securities-only enforcement census",
+        "IA-only enforcement census",
+        "exact CRD attachments"
+      ]
+    }
+  ]
+}
