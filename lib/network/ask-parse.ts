@@ -35,6 +35,7 @@ import { detectCoCity, queryLooksLikeColorado } from './co-network.ts';
 import { detectVaCity, queryLooksLikeVirginia, standaloneVirginiaIndex } from './va-network.ts';
 import { detectNyCity, queryLooksLikeNewYork, requestedLegalJurisdiction } from './ny-network.ts';
 import { detectIlCity, queryLooksLikeIllinois } from './il-network.ts';
+import { detectOrCity, queryLooksLikeOregon } from './or-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -116,6 +117,7 @@ function geography(q: string): ParsedGeography | undefined {
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
   const ilNamedEarly = queryLooksLikeIllinois(q);
+  const orNamedEarly = queryLooksLikeOregon(q);
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -357,7 +359,19 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
-  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona) && (!coNamedEarly || washingtonNamedBeforeColorado) && (!vaNamedEarly || washingtonNamedBeforeVirginia)) {
+  if (orNamedEarly && (/\boregon\b/i.test(q) || detectOrCity(q) || /\b(multnomah|clackamas|lane|marion)\s+county\b/i.test(q))) {
+    const orCity = detectOrCity(q);
+    return {
+      stateCode: 'OR',
+      stateName: 'Oregon',
+      city: orCity,
+      meaning: orCity
+        ? `${orCity}, Oregon. Oregon research is statewide; a city or county name is not a local Ask route. Portland and Multnomah County Ask pages are not published.`
+        : 'Oregon. State licensing is not physical location; specialist geography meaning differs by hub. Oregon city and county Ask pages are not published.',
+    };
+  }
+
+  if (waNamedEarly && (!azNamedEarly || washingtonNamedBeforeArizona) && (!coNamedEarly || washingtonNamedBeforeColorado) && (!vaNamedEarly || washingtonNamedBeforeVirginia) && !/\boregon\b/i.test(q)) {
     const waCity = detectWaCity(q);
     return {
       stateCode: 'WA',

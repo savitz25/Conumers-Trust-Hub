@@ -11,6 +11,7 @@ import { coReleaseGatePassed } from '@/lib/network/co-network';
 import { vaReleaseGatePassed } from '@/lib/network/va-network';
 import { nyReleaseGatePassed } from '@/lib/network/ny-network';
 import { ilReleaseGatePassed } from '@/lib/network/il-network';
+import { orReleaseGatePassed } from '@/lib/network/or-network';
 import { listNjPilotCounties } from '@/lib/network/nj-counties';
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
@@ -68,6 +69,9 @@ const CORE: {
     : []),
   ...(ilReleaseGatePassed()
     ? [{ path: '/illinois', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-12' }]
+    : []),
+  ...(orReleaseGatePassed()
+    ? [{ path: '/oregon', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-17' }]
     : []),
   { path: '/trust', priority: 0.85, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/promise', priority: 0.8, changeFrequency: 'monthly', lastmod: '2026-08-07' },
