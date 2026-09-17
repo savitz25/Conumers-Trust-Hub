@@ -85,6 +85,7 @@ export function ConciergeEntry({ className, dominant = false }: Props) {
               enterKeyHint="go"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              data-ph-mask="true"
               placeholder={ASK_HERO_CONCIERGE_PLACEHOLDER}
               className={cn(
                 'w-full rounded-xl border-0 font-medium',
