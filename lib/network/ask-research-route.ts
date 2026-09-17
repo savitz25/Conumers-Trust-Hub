@@ -1,18 +1,28 @@
 import {decideAskExecution} from './execution-decision.ts';
 import { performance } from 'node:perf_hooks';
+import { investorFailClosedReason, UNSUPPORTED_SECURITIES_ADVICE_STATUS } from './investor-ask.ts';
 import { planAskResearch, type AskResearchPlan } from './research-planner.ts';
 import { type AskExecutionScope } from './research-scope.ts';
-import { resolveResearchDestinations, type ResearchDestination } from './research-destinations.ts';
+import { RESEARCH_DESTINATIONS, resolveResearchDestinations, type ResearchDestination } from './research-destinations.ts';
 import { planAskMultiHubJourney, type AskMultiHubJourney } from './ask-multi-hub-journey.ts';
 
 export type AskResearchRouteCard={version:'ask-research-route-v1';question:string;intentLabel:string;hubLabel?:string;requestedScope?:string;executionScope?:string;scopeMeaning?:string;status:string;explanation:string;limitation:string;canExecute:boolean;destinations:ResearchDestination[];plan:AskResearchPlan;scope:AskExecutionScope;journey?:AskMultiHubJourney;timings:{plannerMs:number;scopeMs:number;destinationsMs:number;totalMs:number}};
 const HUB={move:'MoveTrustHub',lender:'LenderTrustHub',insurance:'InsuranceTrustHub',senior:'SeniorTrustHub',contractor:'ContractorTrustHub',investor:'InvestorTrustHub'} as const;
 const INTENT:Record<AskResearchPlan['intent'],string>={IDENTIFIER_LOOKUP:'Exact identifier research',ENTITY_LOOKUP:'Specific organization research',ENTITY_LOOKUP_MISSING_IDENTITY:'One organization — identity needed',COHORT_BROWSE:'Browse source-backed records',HOW_TO:'Research guidance',EXPLAINER:'Evidence explainer',COMPARE:'Evidence comparison',RECOMMENDATION_REQUEST:'Evidence for a value-based question',MULTI_HUB_JOURNEY:'Ordered multi-specialist research path'};
+function securitiesAdviceDestinations():ResearchDestination[]{
+  const iapd=RESEARCH_DESTINATIONS.find(d=>d.id==='official.iapd');
+  const ask=RESEARCH_DESTINATIONS.find(d=>d.id==='investor.ask');
+  const rows:ResearchDestination[]=[];
+  if(iapd)rows.push(iapd);
+  if(ask)rows.push({...ask,label:'Research an investment adviser',href:`${ask.href}?${new URLSearchParams({q:'How do I research an investment adviser?'})}`});
+  return rows;
+}
+
 export function buildAskResearchRoute(question:string):AskResearchRouteCard{
-  const start=performance.now(),p0=performance.now();const plan=planAskResearch(question);const p1=performance.now();const decision=decideAskExecution(question,plan);const scope=decision.scope;const p2=performance.now();const journey=planAskMultiHubJourney(plan)??undefined;const destinations=journey?[]:resolveResearchDestinations({researchPlan:plan,executionScope:scope,limit:3});const p3=performance.now();
+  const start=performance.now(),p0=performance.now();const plan=planAskResearch(question);const p1=performance.now();const decision=decideAskExecution(question,plan);const scope=decision.scope;const p2=performance.now();const securitiesAdvice=plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE');const journey=securitiesAdvice?undefined:planAskMultiHubJourney(plan)??undefined;const destinations=journey?[]:securitiesAdvice?securitiesAdviceDestinations():resolveResearchDestinations({researchPlan:plan,executionScope:scope,limit:3});const p3=performance.now();
   const requested=scope.requestedGeography?.display;const executed=scope.executionGeography?.display;
-  const status=decision.mode==='PLACE_LENS'?'Published place overview: no live provider query.':journey?'Choose one research step to begin.':decision.executionAllowed?'Route confirmed — specialist research can begin.':'I need one detail before I search.';
-  const explanation=decision.mode==='PLACE_LENS'?'This overview describes published network coverage. Choose a specialist task to execute research.':journey?'Ask has ordered the relevant specialist research. No specialist search runs until you choose a step.':scope.disclosure??plan.clarificationReason??'Ask matched this question to the specialist that owns the evidence.';
+  const status=securitiesAdvice?UNSUPPORTED_SECURITIES_ADVICE_STATUS:decision.mode==='PLACE_LENS'?'Published place overview: no live provider query.':journey?'Choose one research step to begin.':decision.executionAllowed?'Route confirmed — specialist research can begin.':'I need one detail before I search.';
+  const explanation=securitiesAdvice?(investorFailClosedReason(plan.originalQuestion)??plan.clarificationReason??UNSUPPORTED_SECURITIES_ADVICE_STATUS):decision.mode==='PLACE_LENS'?'This overview describes published network coverage. Choose a specialist task to execute research.':journey?'Ask has ordered the relevant specialist research. No specialist search runs until you choose a step.':scope.disclosure??plan.clarificationReason??'Ask matched this question to the specialist that owns the evidence.';
   const limitation=scope.requestedGeographyMeaning==='SERVICE_TERRITORY'||plan.primaryHub==='move'?'Recorded location and regulatory authority do not prove service availability.':scope.executionGeographyMeaning==='PROPERTY_GEOGRAPHY'?'HMDA property geography is not lender headquarters, licensing, or current service territory.':plan.primaryHub==='contractor'?'Credential status does not mean good standing, endorsement, or service territory.':'Source records are evidence, not a TrustHub ranking or endorsement.';
-  return {version:'ask-research-route-v1',question:plan.originalQuestion,intentLabel:INTENT[plan.intent],hubLabel:plan.primaryHub?HUB[plan.primaryHub]:undefined,requestedScope:requested,executionScope:executed,scopeMeaning:scope.executionGeographyMeaning?.toLowerCase().replaceAll('_',' '),status,explanation,limitation,canExecute:decision.executionAllowed,destinations,plan,scope,journey,timings:{plannerMs:+(p1-p0).toFixed(2),scopeMs:+(p2-p1).toFixed(2),destinationsMs:+(p3-p2).toFixed(2),totalMs:+(p3-start).toFixed(2)}};
+  return {version:'ask-research-route-v1',question:plan.originalQuestion,intentLabel:INTENT[plan.intent],hubLabel:plan.primaryHub?HUB[plan.primaryHub]:undefined,requestedScope:requested,executionScope:executed,scopeMeaning:scope.executionGeographyMeaning?.toLowerCase().replaceAll('_',' '),status,explanation,limitation,canExecute:securitiesAdvice?false:decision.executionAllowed,destinations,plan,scope,journey,timings:{plannerMs:+(p1-p0).toFixed(2),scopeMs:+(p2-p1).toFixed(2),destinationsMs:+(p3-p2).toFixed(2),totalMs:+(p3-start).toFixed(2)}};
 }

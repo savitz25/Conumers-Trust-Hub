@@ -29,7 +29,8 @@ export default async function AskPage({
   if(q!==undefined){try{query=validateAskQuestion(q);}catch{inputError='Enter one question of up to 500 characters, then try again.';}}
   const route=query?buildAskResearchRoute(query):null;
   const decision=query?decideAskExecution(query,route!.plan):null;
-  const guided=query&&!route?.journey&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
+  const refuseSecuritiesAdvice=Boolean(route?.plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'));
+  const guided=query&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
   // TH-DISCOVERY-RESET-001C: real per-class provider previews for a genuinely ambiguous senior
   // care request (e.g. "senior care Florida") must be present on this first server-rendered
   // paint -- the client only re-runs the specialist on specific follow-up actions, never on the

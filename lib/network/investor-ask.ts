@@ -97,6 +97,7 @@ export function isInvestorClassQuery(q: string): boolean {
     detectInvestorFirmType(q) ||
       /\b(?:form\s+adv|iard|crd\s*#?\s*\d{1,10}|raum|regulatory assets|asset-based|fixed fees?|hourly (charges|fees)|compensation methods?)\b/i.test(q) ||
       /\b(investment firm|investment compan(?:y|ies)|investment adviser|investments?|wealth management|financial adviser|financial advisor|broker-?dealers?)\b/i.test(q) ||
+      isInvestorAdviserSeekingQuery(q) ||
       isInvestorRankingQuery(q) ||
       isInvestorAdviceQuery(q)
   );
@@ -109,9 +110,50 @@ export function isInvestorRankingQuery(q: string): boolean {
   );
 }
 
-export function isInvestorAdviceQuery(q: string): boolean {
-  return /\b(what stocks? should i buy|should i buy|move my ira|portfolio recommendation|pick (an? )?investments?|who should i hire)\b/i.test(q);
+const SECURITIES_INSTRUMENT =
+  /\b(?:stocks?|etfs?|e\.?\s*t\.?\s*f\.?s?|exchange[-\s]?traded funds?|mutual funds?|index funds?|equities|securities|tickers?)\b/i;
+const ADVISER_REGISTRATION_RESEARCH =
+  /\b(?:investment advis(?:er|or)s?|financial advis(?:er|or)s?|registered investment|exempt reporting advis(?:er|or)|form\s+adv|\biard\b|\bcrd\b|\brias?\b|\beras?\b|sec[-\s]?registered|disciplinary|disclosures?|principal office)\b/i;
+const NON_SECURITIES_PURCHASE =
+  /\b(?:houses?|homes?|housing|propert(?:y|ies)|mortgages?|condos?|apartments?|insurance|polic(?:y|ies)|lenders?|loans?|contractors?|roofers?|movers?|nursing|cars?|vehicles?|autos?)\b/i;
+
+/** Adviser-seeking research (not personal securities picking). */
+export function isInvestorAdviserSeekingQuery(q: string): boolean {
+  return /\b(?:who can help me invest|i need (?:an? )?(?:investment|financial) advis(?:er|or))\b/i.test(q);
 }
+
+/**
+ * Category B: personal stock/ETF/allocation advice. Intent gate for live `/ask`.
+ * Must not fire on InvestorTrustHub firm/adviser research or housing "buy" journeys.
+ */
+export function isUnsupportedSecuritiesAdviceQuery(q: string): boolean {
+  const text = q.trim();
+  if (!text) return false;
+  if (ADVISER_REGISTRATION_RESEARCH.test(text) && !SECURITIES_INSTRUMENT.test(text)) return false;
+  const instrument = SECURITIES_INSTRUMENT.test(text);
+  const allocation =
+    /\bwhere (?:should|do|can|would) i invest\b/i.test(text) ||
+    /\binvest\s+(?:my\s+)?(?:money|savings)?\s*\$?\d/i.test(text);
+  const pickList =
+    /\b(?:give me|pick|recommend|name|list|suggest)\b[^?.!]{0,50}\b(?:\d+|a few|three|some|a|an)?\s*(?:stocks?|etfs?|funds?|securities)\b/i.test(text) ||
+    /\b(?:stocks?|etfs?|funds?)\b[^?.!]{0,40}\b(?:outperform|beat the market|right now|for retirement|today|to buy|to sell)\b/i.test(text);
+  const adviceVerb =
+    /\b(?:should i (?:buy|sell|hold|invest)|what .{0,40}(?:buy|sell|pick|invest)|which (?:stocks?|etfs?|funds?)|best .{0,20}(?:stocks?|etfs?|funds?)|(?:stocks?|etfs?|funds?).{0,20}(?:best|buy|invest)|outperform|right now|for retirement|invest in)\b/i.test(
+      text,
+    );
+  const tickerAdvice = /\bshould i (?:buy|sell|hold)\b/i.test(text) && !NON_SECURITIES_PURCHASE.test(text);
+  const recommendInstrument = instrument && /\b(?:recommend|suggest|pick|buy|sell|invest)\b/i.test(text);
+  const portfolio =
+    /\b(?:portfolio recommendation|pick (?:an? )?investments?|move my ira)\b/i.test(text);
+  return Boolean(allocation || pickList || portfolio || (instrument && adviceVerb) || recommendInstrument || (tickerAdvice && !ADVISER_REGISTRATION_RESEARCH.test(text)));
+}
+
+export function isInvestorAdviceQuery(q: string): boolean {
+  return isUnsupportedSecuritiesAdviceQuery(q) || /\b(?:move my ira|portfolio recommendation|pick (an? )?investments?|who should i hire)\b/i.test(q);
+}
+
+export const UNSUPPORTED_SECURITIES_ADVICE_STATUS =
+  'TrustHub does not recommend stocks, ETFs, or personal investments.';
 
 export function investorGeographyMeaning(q: string): string {
   if (/\bserv(e|es|ing)\b|\bclients in\b|\bnotice-?filed\b/i.test(q)) {

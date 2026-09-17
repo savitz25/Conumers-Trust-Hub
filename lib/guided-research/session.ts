@@ -163,6 +163,9 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   const parsed = parseNetworkAsk(q);
   const plan = validateAskResearchPlan(planAskResearch(q));
   const session = base(q, plan);
+  if(plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE')){
+    return {...session,hub:'investor',phase:'CLARIFY',missingFields:[],availableChoices:[],nextAction:plan.clarificationReason??'InvestorTrustHub researches adviser regulatory records rather than recommending investments or personal portfolio decisions.'};
+  }
   if(plan.reasonCodes.includes('CARE_TASK')){
     session.selectedFilters=initialCareRatingFilters(q,plan.careSetting);
     const next=refreshCareSession({...session,hub:'senior'},plan.careSetting);
