@@ -233,7 +233,7 @@ export function AskChatPanel() {
                       }
                 }
               >
-                {m.role === 'assistant' ? <><SafeConciergeMarkdown content={m.content} allowedUrls={m.allowedUrls}/>{m.actions?.length?<div className="mt-2 flex flex-wrap gap-2">{m.actions.slice(0,3).map(a=><a key={a.id} href={a.href} className="inline-flex min-h-10 items-center rounded-lg border px-3 font-semibold text-[#4F46E5]">{a.owner==='OFFICIAL'?'Official source — ':''}{a.label}</a>)}</div>:null}</> : m.content}
+                {m.role === 'assistant' ? <><SafeConciergeMarkdown content={m.content} allowedUrls={m.allowedUrls}/>{m.actions?.length?<div className="mt-2 flex flex-wrap gap-2">{m.actions.slice(0,3).map(a=><a key={a.id} href={a.href} className="inline-flex min-h-10 items-center rounded-lg border px-3 font-semibold text-[#4F46E5]">{a.owner==='OFFICIAL'?'Official source — ':''}{a.label}</a>)}</div>:null}</> : <span data-ph-mask>{m.content}</span>}
               </div>
             </div>
           ))}
@@ -274,6 +274,7 @@ export function AskChatPanel() {
                   void sendMessage(input);
                 }
               }}
+              data-ph-mask="true"
               placeholder="Ask about moving, lending, insurance…"
               className="min-h-11 flex-1 resize-none rounded-xl border bg-white px-3 py-2.5 text-base leading-snug focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-sm"
               style={{

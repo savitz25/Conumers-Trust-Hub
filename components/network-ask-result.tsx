@@ -276,6 +276,7 @@ export async function NetworkAskResult({ query, hideInterpretation=false }: { qu
             name="q"
             defaultValue={plan.query}
             className="min-h-11 flex-1 rounded-xl border px-3 text-sm"
+            data-ph-mask="true"
             style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.navy }}
           />
           <button
