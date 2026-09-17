@@ -1,0 +1,40 @@
+{
+  "portland_multnomah_phase": {
+    "status": "NOT_STARTED",
+    "local_work_needed_now": "NO",
+    "reason": "Oregon's strongest new intelligence is statewide. Six specialist /oregon pages plus Ask /oregon are the public research surfaces. Do not start Portland, Multnomah, Washington County, Clackamas, Lane, or Marion merely for symmetry."
+  },
+  "cross_hub": {
+    "contractor": [
+      "CCB complaint/discipline bulk not fully acquired",
+      "BCD final-order bulk limitations",
+      "no forced profile attachments"
+    ],
+    "move": [
+      "mover-level complaint bulk missing",
+      "complete order/CMP universe missing",
+      "no exact Oregon certificate ↔ USDOT/MC bridge"
+    ],
+    "senior": [
+      "complaint filing universe incomplete",
+      "ODHS↔CMS bridge not established",
+      "regulatory-action source scope limited"
+    ],
+    "lender": [
+      "current company/MLO/servicer rosters search-only",
+      "Oregon complaint bulk unacquired",
+      "NMLS↔HMDA crosswalk absent"
+    ],
+    "insurance": [
+      "agency/producer/authorized-insurer census search-only",
+      "complaint NAIC joins absent",
+      "mixed Enforcement bucket unresolved",
+      "receivership bulk search-only"
+    ],
+    "investor": [
+      "complaint bulk absent",
+      "adviser-specific enforcement census absent",
+      "enforcement CRD attachment not established"
+    ]
+  }
+}

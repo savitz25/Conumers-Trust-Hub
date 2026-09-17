@@ -1,0 +1,67 @@
+{
+  "ticket": "ATH-OR-001",
+  "version": "ath-or-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/oregon",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_portland_routes": false,
+  "hardcoded_multnomah_routes": false,
+  "oregon_local_phase": "NO",
+  "oregon_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "release_gate_passed": true,
+  "ask_fingerprint": "d8919b2e90c9aa647bd1bc013ee1733567d4589dc31807778f43b75398e32e04",
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "contractor-or-state-intel-v1",
+      "fingerprint": "b09a4da9e9566d52ad8b8ca6b2ce2f011e797dd5e6dd4ec308dfb3019c937fce",
+      "certified_release_sha": "9c45a5ad5fd8fc846f57f02009cbae6060d358a9"
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "move-or-state-intel-v1",
+      "fingerprint": "88315442cd5207330e94ded88c4eb882ef4694817737479e6f26153100ec8423",
+      "certified_release_sha": "ecafe63f310b79ca764e35ae956c33a521b09626"
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "senior-or-state-intel-v1",
+      "fingerprint": "1041ed21b2647cb670a0b5056458df04d8272e000a5206bb22030d70d3de0cbc",
+      "certified_release_sha": "e7fa4cf02257411f06d376cf8e255339e1dde976"
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "lender-or-state-intel-v1",
+      "fingerprint": "8e67c1dced6a6b6e39d291899722baa3d5c4dae91f156b8239f37c0bbc269d66",
+      "certified_release_sha": "471cb1815333d37f13dfb958d49842001e8d6ef0"
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "insurance-or-state-intel-v1",
+      "fingerprint": "df48d2f563f81a90c12929a3eb7eb1e2e403e395e75913a595d671959dd00f3a",
+      "certified_release_sha": "f807dcc489fc715d61b5d83f6c72bf286c6de1e6"
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/oregon",
+      "publication_status": "live",
+      "snapshot_version": "investor-or-state-intel-v1",
+      "fingerprint": "c14319b60b458f87c0243af59c6119f7c914eeb442da2ee62bac4ac279c56443",
+      "certified_release_sha": "600e29f6d0f0b4c57e09207eaca93c609580f842"
+    }
+  ]
+}

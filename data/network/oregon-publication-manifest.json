@@ -1,0 +1,523 @@
+{
+  "state_code": "OR",
+  "state_name": "Oregon",
+  "ask_path": "/oregon",
+  "ask_canonical": "https://www.asktrusthub.com/oregon",
+  "version": "ath-or-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_portland_routes": false,
+  "hardcoded_multnomah_routes": false,
+  "oregon_local_phase": "NO",
+  "oregon_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "Oregon’s strongest Trust Hub evidence is a CCB credential snapshot plus a separate BCD specialty-licensing layer, an official ODOT authorized household-goods certificate list that is not USDOT/MC authority, ODHS care-setting/inspection/violation/regulatory-action evidence that must not be added across NF/ALF/RCF/AFH or ODHS/OHA/CMS, 2025 HMDA Oregon property applications that are not lenders, DFR insurance complaint/exam/order evidence that is not an insurer census, and IAPD state-IA/ERA/notice/principal-office lenses that cannot collapse into one adviser total. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_oregon_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /oregon pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /oregon is indexable. Any one specialist failure fails the gate. Do not weaken the gate. Portland/Multnomah/local routes are not published.",
+    "verified_at": "2026-09-17T03:00:00.000Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "45,501 distinct Oregon CCB license IDs",
+      "grain": "Distinct license_number in CCB Active Licenses. Supporting: 56,172 CCB rows. Not 45,501 contractor companies. BCD business 5,562, person 33,844, and inspector 8,553 credentials are not added to CCB."
+    },
+    {
+      "hub_id": "move",
+      "display": "113 authorized Oregon household-goods certificate IDs",
+      "grain": "Official ODOT CCD authorized-list certificate IDs. Certificate is not USDOT and not MC. Local cartage and other-than-local overlap. Complaint and enforcement bulk remain unacquired."
+    },
+    {
+      "hub_id": "senior",
+      "display": "128 NF · 240 ALF · 332 RCF · 1,580 AFH open ODHS settings",
+      "grain": "Open ODHS license classes. Do not add them. OHA HHA 66 and hospice 74 are not CMS Home Health 51 or CMS Hospice 66. Matching 128 ODHS NF and CMS NH counts is not a CCN bridge."
+    },
+    {
+      "hub_id": "lender",
+      "display": "146,902 HMDA 2025 applications for Oregon properties",
+      "grain": "County-market property geography. Not lenders. Supporting: 89,073 originations and 22,290 denials. Current DFR/NMLS company, MLO, and servicer rosters remain OPEN_SEARCH_ONLY."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,309 DFR 2025 insurer-line complaint table rows",
+      "grain": "Name-only complaint tables. Not Oregon insurers. Supporting: 738 insurance-native order documents / 726 distinct cases. Agency, producer, and authorized-insurer universes remain OPEN_SEARCH_ONLY. DFR Complaint Index is not a Trust Score."
+    },
+    {
+      "hub_id": "investor",
+      "display": "335 approved Oregon state-IA CRDs",
+      "grain": "IAPD APPROVED state IA. Supporting: 26 ERA, 2,262 notice filings, 167 principal-office overlay. Do not add these populations. Principal office is not registration. Notice filing is not state IA. ERA is not an RIA."
+    }
+  ],
+  "what_makes_oregon_different": [
+    "Contractor: Oregon uses CCB credential evidence plus BCD specialty licensing, but credentials, persons, businesses, and inspectors remain different grains. Current complaint/adverse bulk remains incomplete.",
+    "Move: Oregon has a clean ODOT authorized HHG certificate list, but the certificate is not USDOT/MC authority and state complaint/enforcement bulk is not acquired.",
+    "Senior: Oregon has strong ODHS facility/inspection/violation/regulatory-action data, but care classes and ODHS/OHA/CMS universes remain separate.",
+    "Lender: Oregon has good 2025 HMDA market evidence and DFR mortgage-order context, while the current DFR/NMLS company/MLO/servicer rosters remain search-only.",
+    "Insurance: Oregon has unusually strong DFR complaint, examination, and order evidence, while current agency/producer/authorized-insurer licensing universes remain search-only.",
+    "Investor: Oregon has strong IAPD registration/reporting lenses plus DFR securities orders, but principal office, state IA, ERA, and federal notice filings cannot be collapsed."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "CCB_SOURCE_ROWS": 56172,
+      "DISTINCT_CCB_LICENSE_IDS": 45501,
+      "BCD_ACTIVE_CREDENTIAL_ROWS": 47959,
+      "BCD_BUSINESS_ROWS": 5562,
+      "BCD_PERSON_ROWS": 33844,
+      "BCD_INSPECTOR_ROWS": 8553,
+      "ADVERSE_BULK_OBSERVATIONS": null,
+      "EXACT_ADVERSE_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "CCB row is not a contractor company. BCD business is not BCD person and not inspector. License credential is not a unique company. Do not add these classes."
+    },
+    "move": {
+      "ODOT_AUTHORIZED_HHG_ROWS": 113,
+      "DISTINCT_OREGON_HHG_CERTIFICATE_IDS": 113,
+      "LOCAL_CARTAGE_ROWS": 110,
+      "OTHER_THAN_LOCAL_ROWS": 102,
+      "UNRESTRICTED_OTHER_THAN_LOCAL": 27,
+      "SPECIALIZED_PIANO_ROWS": 6,
+      "COMPLAINT_OBSERVATIONS": null,
+      "ENFORCEMENT_OBSERVATIONS": null,
+      "EXACT_OREGON_CERTIFICATE_TO_USDOT_CROSSWALKS": 0,
+      "EXACT_OREGON_CERTIFICATE_TO_MC_CROSSWALKS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "Oregon certificate is not USDOT and not MC. Local cartage and other-than-local overlap. Complaint intake is not a complaint dataset. Enforcement framework is not an enforcement case."
+    },
+    "senior": {
+      "ODHS_OPEN_NF": 128,
+      "ODHS_OPEN_ALF": 240,
+      "ODHS_OPEN_RCF": 332,
+      "ODHS_OPEN_AFH": 1580,
+      "OHA_HHA_LICENSES": 66,
+      "OHA_HOSPICE_LICENSES": 74,
+      "CMS_NURSING_HOMES": 128,
+      "CMS_HOME_HEALTH": 51,
+      "CMS_HOSPICE": 66,
+      "ODHS_INSPECTION_ROWS": 12752,
+      "SUBSTANTIATED_VIOLATION_ROWS": 48153,
+      "REGULATORY_ACTION_DOCUMENT_ROWS": 1299,
+      "DISTINCT_REGULATORY_ACTION_SANCTION_IDS": 1038,
+      "EXACT_ODHS_TO_CMS_BRIDGES": 0,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "NF != ALF != RCF != AFH. ODHS != OHA != CMS. Inspection != complaint. Violation row != facility. Regulatory-action document != provider. Matching 128 NF/CMS NH counts is not a CCN bridge."
+    },
+    "lender": {
+      "HMDA_2025_OR_COUNTY_APPLICATIONS": 146902,
+      "HMDA_2025_OR_COUNTY_ORIGINATIONS": 89073,
+      "HMDA_2025_OR_COUNTY_DENIALS": 22290,
+      "HMDA_2025_OR_COUNTIES": 36,
+      "HMDA_2025_OR_LEI_APPLICATIONS": 145271,
+      "HMDA_2025_OR_LEI_ORIGINATIONS": 89073,
+      "HMDA_2025_OR_LEI_DENIALS": 21731,
+      "HMDA_2025_OR_DISTINCT_LEIS": 629,
+      "DFR_MORTGAGE_ORDER_DOCUMENTS": 10,
+      "DFR_MORTGAGE_UNIQUE_MATTERS": 10,
+      "OHCS_FLEX_LENDING_PARTICIPANTS": 23,
+      "FDIC_OREGON_DEPOSITORY_OVERLAY": 14,
+      "OR_MORTGAGE_COMPANY_ROSTER": "OPEN_SEARCH_ONLY",
+      "OR_MLO_ROSTER": "OPEN_SEARCH_ONLY",
+      "OR_SERVICER_ROSTER": "OPEN_SEARCH_ONLY",
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_LENDER_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "Canonical consumer HMDA scalar is the county-market 146,902 applications, not the 145,271 LEI-cell total. Application != lender. LEI != Oregon mortgage license. FDIC bank != DFR mortgage company. OHCS participant != statewide license."
+    },
+    "insurance": {
+      "DFR_2025_COMPLAINT_TABLE_ROWS": 1309,
+      "DFR_2025_COMPLAINT_DISTINCT_NAMES": 780,
+      "DFR_2025_AUTO_COMPLAINTS": 1439,
+      "DFR_2025_HOMEOWNERS_COMPLAINTS": 775,
+      "DFR_2025_HEALTH_COMPLAINTS": 730,
+      "DFR_2025_LIFE_COMPLAINTS": 116,
+      "DFR_2025_ANNUITY_COMPLAINTS": 28,
+      "DFR_2025_LTC_COMPLAINTS": 46,
+      "MARKET_CONDUCT_REPORTS": 27,
+      "MARKET_CONDUCT_DISTINCT_NAMES": 26,
+      "FINANCIAL_EXAM_REPORTS": 44,
+      "FINANCIAL_EXAM_DISTINCT_NAMES": 44,
+      "DFR_INSURANCE_ORDER_DOCUMENTS": 738,
+      "DFR_INSURANCE_UNIQUE_CASES": 726,
+      "OR_AGENCY_ROSTER": "OPEN_SEARCH_ONLY",
+      "OR_PRODUCER_ROSTER": "OPEN_SEARCH_ONLY",
+      "OR_AUTHORIZED_INSURER_ROSTER": "OPEN_SEARCH_ONLY",
+      "OR_APPOINTMENT_COVERAGE": "OPEN_SEARCH_ONLY",
+      "OR_RECEIVERSHIP_ROWS": null,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "Agency != producer != insurer. License != appointment. Complaint != violation. Complaint Index != Trust Score. Market-conduct exam != discipline. Financial exam != enforcement. 738 documents != 726 matters."
+    },
+    "investor": {
+      "OR_PRINCIPAL_OFFICE_OVERLAY": 167,
+      "OR_RAW_MAINADDR_EXTRACT": 165,
+      "OR_STATE_IA_APPROVED_CRDS": 335,
+      "OR_STATE_ERA_ACTIVE_CRDS": 26,
+      "OR_FEDERAL_NOTICE_FILED_CRDS": 2262,
+      "DFR_SECURITIES_ORDER_DOCUMENTS": 431,
+      "DFR_UNIQUE_S_PREFIX_CASES": 394,
+      "NEW_STATE_IA_ERA_RESEARCH_IDENTITIES": 366,
+      "EXACT_ADVERSE_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "grain_note": "Principal office != Oregon registration. State IA != ERA != notice filing. Firm != individual. 431 documents != 394 matters. Do not sum 167 + 335 + 26 + 2,262."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Oregon CCB credentials, ODHS care settings, ODOT mover certificates, HMDA applications, insurance complaint/order/exam observations, and IAPD registration/reporting lenses have incompatible grains. Ask does not publish an Oregon-records total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /oregon pages plus Ask /oregon. Page/surface count only — not a business, record, provider, or license count. 7 surfaces != 7 providers."
+    }
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "coverage_type": "STATE_CCB_PLUS_BCD_SEPARATE_GRAINS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/oregon",
+      "snapshot_version": "contractor-or-state-intel-v1",
+      "fingerprint": "b09a4da9e9566d52ad8b8ca6b2ce2f011e797dd5e6dd4ec308dfb3019c937fce",
+      "certified_release_sha": "9c45a5ad5fd8fc846f57f02009cbae6060d358a9",
+      "source_clock": "Specialist-accepted contractor-or-state-intel-v1 CCB Active Licenses as of 2026-09-15. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Oregon Construction Contractors Board; Building Codes Division",
+      "primary_identity": "CCB license_number",
+      "topic": "Oregon contractor license",
+      "plain_question": "How many distinct Oregon CCB license IDs are in the accepted snapshot — and is that unique companies?",
+      "research_topics": [
+        "Distinct CCB active license IDs",
+        "CCB source rows vs unique companies",
+        "BCD business, person, and inspector credentials",
+        "Complaint and final-order search paths"
+      ],
+      "primary_identifiers": ["CCB license ID", "BCD LicNbr"],
+      "identifier_types": ["CCB", "BCD"],
+      "source_summary": "Oregon CCB active licenses plus a separate BCD trade-credential layer. A CCB license is not a BCD credential.",
+      "coverage_summary": "45,501 distinct CCB license IDs from 56,172 rows. Not 45,501 contractor companies.",
+      "coverage_limitation": "BCD business/person/inspector grains are not added to CCB. Adverse bulk observations were not acquired. Exact adverse profile attachments: 0.",
+      "what_research": "CCB active licenses and BCD specialty credentials",
+      "next_step": "Open ContractorTrustHub Oregon and verify on CCB license search",
+      "semantic_guardrails": [
+        "CCB row ≠ contractor company",
+        "BCD business ≠ BCD person ≠ inspector",
+        "license credential ≠ unique company"
+      ],
+      "verified_facts": [
+        "56,172 CCB source rows; 45,501 distinct license IDs.",
+        "BCD: 5,562 business, 33,844 person, 8,553 inspector credentials.",
+        "Exact adverse profile attachments: 0."
+      ],
+      "routing_intents": [
+        "contractors in Oregon",
+        "Oregon contractor license",
+        "CCB license Oregon",
+        "roofing contractor Oregon"
+      ],
+      "gap_examples": [
+        "CCB complaint/discipline bulk",
+        "BCD final-order bulk"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "coverage_type": "STATE_ODOT_AUTHORIZED_HHG",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/oregon",
+      "snapshot_version": "move-or-state-intel-v1",
+      "fingerprint": "88315442cd5207330e94ded88c4eb882ef4694817737479e6f26153100ec8423",
+      "certified_release_sha": "ecafe63f310b79ca764e35ae956c33a521b09626",
+      "source_clock": "Specialist-accepted move-or-state-intel-v1 official ODOT authorized HHG list. Ask does not invent a retrieval instant.",
+      "primary_regulator": "ODOT CCD",
+      "primary_identity": "Oregon HHG certificate number",
+      "topic": "Oregon household goods mover",
+      "plain_question": "How many official Oregon household-goods certificates are on the authorized list — and is that USDOT authority?",
+      "research_topics": [
+        "ODOT authorized HHG certificate IDs",
+        "Local cartage vs other-than-local authority",
+        "USDOT/MC identity research",
+        "Complaint intake vs complaint dataset"
+      ],
+      "primary_identifiers": ["Oregon HHG certificate", "USDOT", "MC"],
+      "identifier_types": ["ODOT_HHG", "USDOT", "MC"],
+      "source_summary": "Official ODOT authorized household-goods list. A certificate is not USDOT or MC authority.",
+      "coverage_summary": "113 authorized Oregon household-goods certificate IDs. Certificate ≠ USDOT/MC.",
+      "coverage_limitation": "Local cartage and other-than-local overlap. Complaint and enforcement observations remain null. Exact certificate↔USDOT and certificate↔MC crosswalks: 0.",
+      "what_research": "ODOT authorized household-goods certificates and FMCSA interstate identity",
+      "next_step": "Open MoveTrustHub Oregon and confirm the certificate on the official ODOT list",
+      "semantic_guardrails": [
+        "Oregon certificate ≠ USDOT",
+        "Oregon certificate ≠ MC",
+        "local cartage and other-than-local overlap",
+        "complaint intake ≠ complaint dataset"
+      ],
+      "verified_facts": [
+        "113 authorized HHG rows / 113 distinct certificate IDs.",
+        "110 local-cartage rows; 102 other-than-local; 27 unrestricted other-than-local; 6 specialized/piano.",
+        "Exact certificate→USDOT 0; certificate→MC 0."
+      ],
+      "routing_intents": [
+        "movers in Oregon",
+        "Oregon mover certificate",
+        "Oregon household goods mover",
+        "interstate mover Oregon"
+      ],
+      "gap_examples": [
+        "mover-level complaint bulk",
+        "complete order/CMP universe",
+        "certificate↔USDOT/MC bridge"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "coverage_type": "ODHS_OHA_CMS_SEPARATE_UNIVERSES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/oregon",
+      "snapshot_version": "senior-or-state-intel-v1",
+      "fingerprint": "1041ed21b2647cb670a0b5056458df04d8272e000a5206bb22030d70d3de0cbc",
+      "certified_release_sha": "e7fa4cf02257411f06d376cf8e255339e1dde976",
+      "source_clock": "Specialist-accepted senior-or-state-intel-v1 ODHS providers as of 2026-09-16. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Oregon Department of Human Services; Oregon Health Authority; CMS overlay",
+      "primary_identity": "ODHS Provider ID; CMS CCN",
+      "topic": "assisted living Oregon",
+      "plain_question": "What open ODHS senior-care classes exist in Oregon — and can they be added into one facilities total?",
+      "research_topics": [
+        "Open ODHS NF/ALF/RCF/AFH settings",
+        "OHA home health and hospice licenses",
+        "CMS overlays",
+        "Inspections, substantiated violations, regulatory actions"
+      ],
+      "primary_identifiers": ["ODHS Provider ID", "CMS CCN"],
+      "identifier_types": ["ODHS", "CMS_CCN"],
+      "source_summary": "ODHS license classes plus separate OHA and CMS universes. They are not one Oregon senior-facilities total.",
+      "coverage_summary": "128 NF · 240 ALF · 332 RCF · 1,580 AFH open ODHS settings. Do not add them.",
+      "coverage_limitation": "OHA HHA 66 is not CMS Home Health 51. Matching 128 NF and CMS NH counts is not a CCN bridge. Exact ODHS→CMS bridges: 0.",
+      "what_research": "ODHS provider, inspection, violation, and regulatory-action evidence plus OHA/CMS overlays",
+      "next_step": "Open SeniorTrustHub Oregon and verify on ODHS Licensed Long-Term Care Settings Search",
+      "semantic_guardrails": [
+        "NF ≠ ALF ≠ RCF ≠ AFH",
+        "ODHS ≠ OHA ≠ CMS",
+        "inspection ≠ complaint",
+        "violation row ≠ facility"
+      ],
+      "verified_facts": [
+        "Open ODHS: 128 NF, 240 ALF, 332 RCF, 1,580 AFH.",
+        "OHA HHA 66; OHA hospice 74; CMS NH 128; CMS HH 51; CMS hospice 66.",
+        "12,752 inspection rows; 48,153 substantiated violation rows; 1,299 action documents / 1,038 sanction IDs."
+      ],
+      "routing_intents": [
+        "nursing homes in Oregon",
+        "assisted living Oregon",
+        "residential care Oregon",
+        "adult foster homes Oregon",
+        "senior care violations Oregon"
+      ],
+      "gap_examples": [
+        "complaint filing universe",
+        "ODHS↔CMS bridge",
+        "regulatory-action source scope"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Mortgage Lenders",
+      "coverage_type": "HMDA_2025_PLUS_SEARCH_ONLY_ROSTERS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/oregon",
+      "snapshot_version": "lender-or-state-intel-v1",
+      "fingerprint": "8e67c1dced6a6b6e39d291899722baa3d5c4dae91f156b8239f37c0bbc269d66",
+      "certified_release_sha": "471cb1815333d37f13dfb958d49842001e8d6ef0",
+      "source_clock": "Specialist-accepted lender-or-state-intel-v1 HMDA 2025 Oregon county grain. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Oregon DFR; CFPB HMDA",
+      "primary_identity": "NMLS when source-native",
+      "topic": "HMDA applications Oregon 2025",
+      "plain_question": "How many HMDA 2025 applications were reported for Oregon properties — and is that a lender census?",
+      "research_topics": [
+        "HMDA 2025 county-market applications/originations/denials",
+        "Current DFR/NMLS company, MLO, and servicer search paths",
+        "DFR mortgage orders",
+        "OHCS Flex Lending participation"
+      ],
+      "primary_identifiers": ["NMLS", "LEI", "DFR case"],
+      "identifier_types": ["NMLS", "LEI", "DFR"],
+      "source_summary": "2025 HMDA Oregon property geography plus search-only current license rosters.",
+      "coverage_summary": "146,902 HMDA 2025 applications for Oregon properties. Applications are not lenders.",
+      "coverage_limitation": "Canonical scalar is county-market 146,902, not LEI-cell 145,271. Company/MLO/servicer rosters remain OPEN_SEARCH_ONLY.",
+      "what_research": "HMDA 2025 Oregon market activity, DFR mortgage orders, and OHCS participation",
+      "next_step": "Open LenderTrustHub Oregon; verify a specific firm on NMLS Consumer Access",
+      "semantic_guardrails": [
+        "HMDA application ≠ lender",
+        "HMDA LEI ≠ Oregon mortgage license",
+        "FDIC bank ≠ Oregon mortgage company",
+        "OHCS participant ≠ statewide license",
+        "MLO ≠ company"
+      ],
+      "verified_facts": [
+        "County grain: 146,902 applications; 89,073 originations; 22,290 denials; 36 counties.",
+        "LEI-cell grain: 145,271 applications; 629 distinct LEIs.",
+        "10 DFR mortgage-order documents / 10 unique matters; 23 OHCS Flex names; 14 FDIC depositories."
+      ],
+      "routing_intents": [
+        "mortgage lenders Oregon",
+        "licensed mortgage lender Oregon",
+        "HMDA applications Oregon 2025",
+        "mortgage denials Oregon"
+      ],
+      "gap_examples": [
+        "current company/MLO/servicer rosters",
+        "Oregon complaint bulk",
+        "NMLS↔HMDA crosswalk"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "coverage_type": "DFR_COMPLAINT_EXAM_ORDER_PLUS_SEARCH_ONLY_ROSTERS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/oregon",
+      "snapshot_version": "insurance-or-state-intel-v1",
+      "fingerprint": "df48d2f563f81a90c12929a3eb7eb1e2e403e395e75913a595d671959dd00f3a",
+      "certified_release_sha": "f807dcc489fc715d61b5d83f6c72bf286c6de1e6",
+      "source_clock": "Specialist-accepted insurance-or-state-intel-v1 2025 DFR complaint tables and insurance-native AdminOrders. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Oregon Division of Financial Regulation",
+      "primary_identity": "NPN when source-native; NAIC when source-native",
+      "topic": "insurance complaints Oregon",
+      "plain_question": "What DFR 2025 complaint-table evidence exists for Oregon — and is that a count of insurers?",
+      "research_topics": [
+        "2025 DFR insurer-line complaint tables",
+        "Market-conduct and financial exam indexes",
+        "Insurance-native DFR administrative orders",
+        "Agency/producer/authorized-insurer search paths"
+      ],
+      "primary_identifiers": ["NPN", "NAIC", "DFR case"],
+      "identifier_types": ["NPN", "NAIC", "DFR"],
+      "source_summary": "Strong DFR complaint, examination, and order evidence. Current license universes remain search-only.",
+      "coverage_summary": "1,309 DFR 2025 insurer-line complaint table rows. Not Oregon insurers.",
+      "coverage_limitation": "Agency, producer, authorized-insurer, appointment, and receivership universes remain OPEN_SEARCH_ONLY. Complaint Index is not a Trust Score.",
+      "what_research": "DFR 2025 complaint tables, exam indexes, and insurance-native orders",
+      "next_step": "Open InsuranceTrustHub Oregon; verify a license on NAIC SBS",
+      "semantic_guardrails": [
+        "agency ≠ producer ≠ insurer",
+        "license ≠ appointment",
+        "complaint ≠ violation",
+        "Complaint Index ≠ Trust Score",
+        "market-conduct exam ≠ discipline",
+        "738 documents ≠ 726 matters"
+      ],
+      "verified_facts": [
+        "1,309 complaint-table rows / 780 distinct names; auto 1,439; homeowners 775; health 730; life 116; annuities 28; LTC 46.",
+        "27 market-conduct reports / 26 names; 44 financial exams / 44 names.",
+        "738 insurance-native order documents / 726 distinct cases."
+      ],
+      "routing_intents": [
+        "insurance agency Oregon",
+        "insurance agent Oregon",
+        "insurance complaints Oregon",
+        "Oregon insurance enforcement",
+        "market conduct exam Oregon"
+      ],
+      "gap_examples": [
+        "agency/producer/authorized-insurer census",
+        "complaint NAIC joins",
+        "mixed Enforcement bucket",
+        "receivership bulk"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Advisers",
+      "coverage_type": "IAPD_LENSES_PLUS_DFR_SECURITIES_ORDERS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/oregon",
+      "snapshot_version": "investor-or-state-intel-v1",
+      "fingerprint": "c14319b60b458f87c0243af59c6119f7c914eeb442da2ee62bac4ac279c56443",
+      "certified_release_sha": "600e29f6d0f0b4c57e09207eaca93c609580f842",
+      "source_clock": "Specialist-accepted investor-or-state-intel-v1 IAPD compilations 2026-09-10 and reconciled principal-office overlay 2026-08-27. Ask does not invent a retrieval instant.",
+      "primary_regulator": "Oregon DFR Securities; SEC IAPD",
+      "primary_identity": "firm CRD",
+      "topic": "state registered investment adviser Oregon",
+      "plain_question": "How many approved Oregon state-IA CRDs are in the accepted IAPD extract — and can they be added to notice filings?",
+      "research_topics": [
+        "Approved Oregon state-IA CRDs",
+        "State ERA reporting firms",
+        "Federal-covered notice filings",
+        "Principal-office overlay",
+        "DFR securities orders"
+      ],
+      "primary_identifiers": ["CRD", "SEC file number", "DFR S- case"],
+      "identifier_types": ["CRD", "SEC", "DFR"],
+      "source_summary": "Separate IAPD registration/reporting lenses plus DFR securities administrative orders.",
+      "coverage_summary": "335 approved Oregon state-IA CRDs. Do not add ERA, notice, or principal-office overlays.",
+      "coverage_limitation": "Principal office is not Oregon registration. Notice filing is not state IA. ERA is not an RIA. 431 order documents are not 394 unique matters. Exact adverse profile attachments: 0.",
+      "what_research": "IAPD Oregon state IA / ERA / notice lenses and DFR securities cases",
+      "next_step": "Open InvestorTrustHub Oregon and verify on IAPD",
+      "semantic_guardrails": [
+        "principal office ≠ Oregon registration",
+        "state IA ≠ ERA",
+        "notice filing ≠ Oregon license",
+        "firm ≠ individual",
+        "431 documents ≠ 394 matters"
+      ],
+      "verified_facts": [
+        "167 principal-office overlay; 165 raw MainAddr extract.",
+        "335 APPROVED state IA CRDs; 26 ACTIVE ERA CRDs; 2,262 FILED notice CRDs.",
+        "431 DFR securities documents / 394 unique S- cases; 366 new state IA+ERA research identities; 0 exact adverse attachments."
+      ],
+      "routing_intents": [
+        "investment adviser Oregon",
+        "state registered investment adviser Oregon",
+        "CRD 105958 Oregon",
+        "Oregon adviser enforcement",
+        "Oregon notice filing"
+      ],
+      "gap_examples": [
+        "complaint bulk",
+        "adviser-specific enforcement census",
+        "enforcement CRD attachment"
+      ]
+    }
+  ]
+}
