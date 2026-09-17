@@ -1,2 +1,12 @@
-import{NextResponse}from'next/server';import{withPlatform}from'@/lib/customer/server';const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,headers={'Cache-Control':'public, max-age=0, s-maxage=60','X-Robots-Tag':'noindex, nofollow'};
-export async function GET(_r:Request,{params}:{params:Promise<{profileId:string}>}){const{profileId}=await params;if(!UUID.test(profileId))return NextResponse.json({error:'not_found'},{status:404,headers});try{return NextResponse.json(await withPlatform(p=>p.publicBusinessReplies(profileId)),{headers})}catch{return NextResponse.json({error:'not_found'},{status:404,headers})}}
+import { NextResponse } from 'next/server';
+import { publicReadHeaders, readPublicContractorState } from '@/lib/customer/public-read-server';
+
+export async function GET(_r: Request, { params }: { params: Promise<{ profileId: string }> }) {
+  const { profileId } = await params;
+  try {
+    const result = await readPublicContractorState(profileId);
+    return NextResponse.json(result.state.replies, { headers: publicReadHeaders(result.source) });
+  } catch {
+    return NextResponse.json({ error: 'not_found' }, { status: 404, headers: publicReadHeaders('invalid') });
+  }
+}
