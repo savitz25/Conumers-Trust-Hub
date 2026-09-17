@@ -8,6 +8,7 @@ import {
 } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
 import { captureResultOpened, captureSearchSubmitted, captureSpecialistHandoff } from '@/components/analytics/ask-instrumentation';
+import { classifyAskClick } from '@/lib/analytics/handoff';
 
 /**
  * Document-level click instrumentation for outbound specialist hubs and
@@ -28,18 +29,24 @@ export function ClickTracker() {
         trackEvent(namedEvent, { surface: 'homepage' });
       }
 
+      const anchor = target.closest('a');
+      const href = anchor instanceof HTMLAnchorElement ? anchor.getAttribute('href') : null;
       const ath = target.closest<HTMLElement>('[data-ath-event]');
-      const athEvent = ath?.dataset.athEvent;
-      if (athEvent) {
-        const hub = ath.dataset.athHub;
-        if (athEvent === 'search_result_opened') captureResultOpened(hub, ath.dataset.athSurface || 'ask_results');
-        if (athEvent === 'specialist_handoff_started') captureSpecialistHandoff(hub, ath.dataset.athSurface || 'ask_results');
+      const classified = classifyAskClick({
+        href,
+        currentOrigin: window.location.origin,
+        athEvent: ath?.dataset.athEvent,
+        athHub: ath?.dataset.athHub,
+        athSurface: ath?.dataset.athSurface,
+      });
+      if (classified.searchResultOpened) {
+        captureResultOpened(classified.searchResultOpened.specialistHub, classified.searchResultOpened.surface);
+      }
+      if (classified.specialistHandoff) {
+        captureSpecialistHandoff(classified.specialistHandoff.specialistHub, classified.specialistHandoff.surface);
       }
 
-      const anchor = target.closest('a');
       if (!anchor || !(anchor instanceof HTMLAnchorElement)) return;
-
-      const href = anchor.getAttribute('href');
       if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) {
         return;
       }
