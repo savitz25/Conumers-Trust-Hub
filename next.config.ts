@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs/config';
 
 const nextConfig: NextConfig = {
   // Prefer trailingSlash false + host redirects handled at edge (Vercel www primary).
@@ -106,4 +107,28 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
+const sentryOrg = process.env.SENTRY_ORG;
+const sentryProject = process.env.SENTRY_PROJECT;
+
+export default withSentryConfig(nextConfig, {
+  org: sentryOrg,
+  project: sentryProject,
+  authToken: sentryAuthToken,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: '/sentry-tunnel',
+  sourcemaps: {
+    disable: !sentryAuthToken || !sentryOrg || !sentryProject,
+    deleteSourcemapsAfterUpload: true,
+  },
+  release: {
+    name: process.env.VERCEL_GIT_COMMIT_SHA,
+  },
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayIframe: true,
+    excludeReplayShadowDom: true,
+    excludeReplayWorker: true,
+  },
+});

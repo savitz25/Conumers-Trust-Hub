@@ -1,6 +1,13 @@
 "use client";
 
-export default function MyTrustHubError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
+
+export default function MyTrustHubError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
+
   return (
     <main className="myth-auth-page">
       <section className="myth-auth-card" role="alert">
