@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-09-18T16:56:11.894Z",
+ "generatedAt": "2026-09-18T17:02:39.118Z",
  "cleanBefore": {
   "status": 0,
-  "pass": 23,
+  "pass": 24,
   "fail": 0,
   "failing": []
  },
@@ -31,7 +31,8 @@
    "why": "An unfiltered cohort is admitted as name candidates.",
    "detected": true,
    "failedTests": [
-    "5c. real adapters reject an unfiltered cohort and an unechoed name"
+    "5c. real adapters reject an unfiltered cohort and an unechoed name",
+    "H4. padding-only pages are dropped without a false failure; an ignored filter is still a failure"
    ]
   },
   {
@@ -49,7 +50,7 @@
  ],
  "cleanAfter": {
   "status": 0,
-  "pass": 23,
+  "pass": 24,
   "fail": 0,
   "failing": []
  }
