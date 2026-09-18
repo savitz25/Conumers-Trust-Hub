@@ -1,0 +1,118 @@
+{
+ "note": "Single run of the unchanged frozen sample against integrated candidate tree 5de49bd (merge 11ae9e4). Not re-run. Prior runs preserved. Small diagnostic sample; no statistical claim.",
+ "frozenSampleBlob": "d0a3502b41c8a2990f6a8827439139d8f4330d97",
+ "evaluatedAt": "2026-09-18T19:29:36.518Z",
+ "scope": "each request scoped to the record's own hub",
+ "perHub": {
+  "lender": {
+   "endToEndRecall": "5/20",
+   "recallWhenTargetSourceCompleted": "5/20",
+   "targetHubTechnicalFailuresAllVariants": 0,
+   "targetHubUnsupportedDisplayed": 0,
+   "redundantClarifications": 0,
+   "irrelevantCandidates": 0
+  },
+  "senior": {
+   "endToEndRecall": "18/20",
+   "recallWhenTargetSourceCompleted": "18/18",
+   "targetHubTechnicalFailuresAllVariants": 0,
+   "targetHubUnsupportedDisplayed": 2,
+   "redundantClarifications": 0,
+   "irrelevantCandidates": 0
+  },
+  "investor": {
+   "endToEndRecall": "20/20",
+   "recallWhenTargetSourceCompleted": "20/20",
+   "targetHubTechnicalFailuresAllVariants": 0,
+   "targetHubUnsupportedDisplayed": 0,
+   "redundantClarifications": 1,
+   "irrelevantCandidates": 0
+  },
+  "move": {
+   "endToEndRecall": "20/20",
+   "recallWhenTargetSourceCompleted": "20/20",
+   "targetHubTechnicalFailuresAllVariants": 0,
+   "targetHubUnsupportedDisplayed": 0,
+   "redundantClarifications": 0,
+   "irrelevantCandidates": 0
+  },
+  "insurance": {
+   "endToEndRecall": "20/20",
+   "recallWhenTargetSourceCompleted": "20/20",
+   "targetHubTechnicalFailuresAllVariants": 0,
+   "targetHubUnsupportedDisplayed": 0,
+   "redundantClarifications": 0,
+   "irrelevantCandidates": 0
+  }
+ },
+ "changedRun4ToRun5": [
+  {
+   "hub": "investor",
+   "variant": "displayed",
+   "input": "ALPHA ASSET MANAGEMENT",
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 1
+   },
+   "run5": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   }
+  },
+  {
+   "hub": "investor",
+   "variant": "lowercase",
+   "input": "alpha asset management",
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 1
+   },
+   "run5": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   }
+  },
+  {
+   "hub": "investor",
+   "variant": "presentation",
+   "input": "CINCINNATI ASSET MANAGEMENT",
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   },
+   "run5": {
+    "found": false,
+    "irrelevant": 0
+   }
+  }
+ ],
+ "irrelevantCandidatesRun5": [],
+ "alphaAssetManagementRows": [
+  {
+   "variant": "displayed",
+   "input": "ALPHA ASSET MANAGEMENT",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "returned": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "lowercase",
+   "input": "alpha asset management",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "returned": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "presentation",
+   "input": "ALPHA ASSET MANAGEMENT",
+   "irrelevant": 0
+  }
+ ]
+}
