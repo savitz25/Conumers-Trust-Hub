@@ -4,7 +4,8 @@
 import { writeFileSync } from 'node:fs';
 import { safeHubUrl } from '../lib/network/name-candidates/adapters.ts';
 const C = 'trusthub-specialist-execution-v2';
-const out: unknown[] = [];
+type Opened = { showsThisNpn: boolean; showsRevalidatedIdentity: boolean };
+const out: Array<{ name: string; record: unknown; npn: string; rawParams: string[][]; droppedParams: string[]; keptParams: string[]; rawLink: Opened; sanitizedLink: Opened | string }> = [];
 for (const name of ['allied', 'beacon', 'summit']) {
   const res = await fetch('https://www.insurancetrusthub.com/api/specialist-execution/v2', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ contract: C, queryType: 'identity', identityName: name, limit: 10 }) });
   const body = await res.json() as { rows?: Array<Record<string, unknown>> };
@@ -19,4 +20,4 @@ for (const name of ['allied', 'beacon', 'summit']) {
   }
 }
 writeFileSync('docs/qa/th-search-r1-019a/review-1/insurance-link-validation.json', JSON.stringify({ checkedAt: new Date().toISOString(), rows: out }, null, 1));
-for (const r of out as Array<Record<string, any>>) console.log(String(r.record).slice(0, 38).padEnd(40), 'dropped:', r.droppedParams.join(',') || '-', '| raw opens record:', r.rawLink.showsThisNpn, '| sanitized opens record:', r.sanitizedLink.showsThisNpn);
+for (const r of out) console.log(String(r.record).slice(0, 38).padEnd(40), 'dropped:', r.droppedParams.join(',') || '-', '| raw opens record:', r.rawLink.showsThisNpn, '| sanitized opens record:', typeof r.sanitizedLink === 'string' ? r.sanitizedLink : r.sanitizedLink.showsThisNpn);

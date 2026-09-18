@@ -98,7 +98,9 @@ export function rowRelatesToName(suppliedName: string, matchedName: string | nul
   const all = nameTokens(suppliedName);
   const matched = nameTokens(matchedName);
   if (!all.length || !matched.length) return false;
-  if (fold(matchedName).includes(fold(suppliedName))) return true;
+  // Whole-name containment must fall on WORD boundaries. A hub "contains" match that lands mid-word
+  // ("alpha asset management" inside "CLEVERALPHA ASSET MANAGEMENT") is not a name candidate.
+  if (` ${fold(matchedName)} `.includes(` ${fold(suppliedName)} `)) return true;
   // No category-word-only padding: when the supplied name has a distinctive part ("C&L" in "C&L Movers
   // LLC"), a row must relate to THAT part -- sharing only "Movers"/"LLC" is not a name candidate.
   const distinct = all.filter((t) => !isGenericNameToken(t));

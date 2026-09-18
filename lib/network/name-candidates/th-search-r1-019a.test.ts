@@ -255,7 +255,11 @@ test('H3. no category-word-only padding: rows must relate to the distinctive par
   for (const padded of ['Call The Movers', 'Caseys Movers LLC', 'Champion Movers LLC']) assert.equal(rowRelatesToName('C&L Movers LLC', padded, 'PREFIX_OR_TOKEN'), false, padded);
   assert.equal(rowRelatesToName('Allied Moving', 'Best Moving', 'PREFIX_OR_TOKEN'), false);
   assert.equal(rowRelatesToName('Allied Moving', 'Allied Van Lines', 'PREFIX_OR_TOKEN'), true);
-  assert.equal(rowRelatesToName('tate asset management', 'PARK STATE ASSET MANAGEMENT LLC', 'NAME_CONTAINS'), true, 'hub "contains" semantics are kept (and labeled as the weaker method)');
+  // Review-1: a hub "contains" hit that lands MID-WORD is irrelevant and is no longer admitted (found by the holdout: CLEVERALPHA for "Alpha Asset Management").
+  assert.equal(rowRelatesToName('tate asset management', 'PARK STATE ASSET MANAGEMENT LLC', 'NAME_CONTAINS'), false);
+  assert.equal(rowRelatesToName('Alpha Asset Management', 'CLEVERALPHA ASSET MANAGEMENT, LLC', 'NAME_CONTAINS'), false);
+  assert.equal(rowRelatesToName('tate asset management', '"TATE ASSET MANAGEMENT" AND "DCO WEALTH MANAGEMENT"', 'NAME_CONTAINS'), true, 'word-boundary containment is kept');
+  assert.equal(rowRelatesToName('Alpha Asset Management', 'ALPHA ASSET MANAGEMENT', 'NAME_CONTAINS'), true);
   assert.equal(rowRelatesToName('Capital Asset Management, Inc.', 'CAPITAL ASSET MANAGEMENT, INC.', 'EXACT_SOURCE_NAME'), true, 'all-generic names still relate to themselves');
 });
 test('H4. padding-only pages are dropped without a false failure; an ignored filter is still a failure', async () => {
