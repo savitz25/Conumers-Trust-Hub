@@ -180,7 +180,7 @@ test('32-40 Florida and network regression surfaces', () => {
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New Jersey network gateway/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'new-jersey'));
   assert.match(readFileSync('lib/network/published-ask-states.ts', 'utf8'), /slug: 'new-jersey'/);
-  assert.match(placesSrc, /\/new-jersey/);
+  assert.match(readFileSync('lib/network/place-lens.ts', 'utf8'), /askStatePlaceEntries|\/new-jersey/);
   assert.equal(existsSync('app/promise/page.tsx'), true);
   assert.equal(existsSync('app/methodology/page.tsx'), true);
   assert.equal(existsSync('lib/customer/handoff.ts'), true);
