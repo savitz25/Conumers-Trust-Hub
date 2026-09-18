@@ -108,9 +108,23 @@ function stripTerminalPunctuation(value: string): string {
   return value.replace(/[.!\s]+$/g, '').trim();
 }
 
+/**
+ * `interpretAs: 'category'` is the customer's EXPLICIT choice (a click on the labeled alternate action)
+ * to read their text as a category instead of a name. It is honored only where that second reading
+ * genuinely exists; it can never be inferred from a zero-result, a timeout or a failure.
+ */
 export function decideNameCandidateSearch(
   question: string,
-  options: { plan?: AskResearchPlan; selectedHub?: string | null } = {},
+  options: { plan?: AskResearchPlan; selectedHub?: string | null; interpretAs?: string | null } = {},
+): NameCandidateDecision {
+  const decision = decideName(question, options);
+  if (options.interpretAs === 'category' && decision.operation === 'NAME_CANDIDATES' && decision.alternateCohortInterpretation) return not('USER_CHOSE_CATEGORY_INTERPRETATION');
+  return decision;
+}
+
+function decideName(
+  question: string,
+  options: { plan?: AskResearchPlan; selectedHub?: string | null },
 ): NameCandidateDecision {
   let original: string;
   try { original = validateAskQuestion(question); } catch { return not('INVALID_INPUT'); }

@@ -14,9 +14,10 @@ export async function POST(request: Request) {
   try {
     const body=await request.json();
     if(body?.action?.type==='START'&&typeof body.action.question==='string'){
-      const name=decideNameCandidateSearch(body.action.question);
-      if(name.operation==='NAME_CANDIDATES'&&!name.alternateCohortInterpretation)return NextResponse.json({error:'name_candidate_search',message:'This is a business or provider name. Use the network name search.',redirect:`/ask?q=${encodeURIComponent(name.originalInput)}`},{status:409,headers:{'Cache-Control':'no-store'}});
+      const name=decideNameCandidateSearch(body.action.question,{interpretAs:body.interpretAs==='category'?'category':null});
+      if(name.operation==='NAME_CANDIDATES')return NextResponse.json({error:'name_candidate_search',message:'This is a business or provider name. Use the network name search.',redirect:`/ask?q=${encodeURIComponent(name.originalInput)}`},{status:409,headers:{'Cache-Control':'no-store'}});
     }
+    if(body&&typeof body==='object')delete body.interpretAs;
     const response=await orchestrateGuidedResearch(body);
     after(()=>recordGuidedSearch(response));
     return NextResponse.json(response,{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','Server-Timing':`guided;dur=${(performance.now()-started).toFixed(1)}, specialist;dur=${response.result?.latencyMs??0}`}});

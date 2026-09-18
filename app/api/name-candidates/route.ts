@@ -4,6 +4,7 @@ import { searchNameCandidates } from '@/lib/network/name-candidates/orchestrator
 import { MAX_PAGE } from '@/lib/network/name-candidates/contract';
 import { SPECIALIST_HUB_IDS, isSpecialistHubId, type SpecialistHubId } from '@/lib/network/registry';
 import { recordNameCandidateSearch } from '@/lib/control-plane/product-events';
+import { createFixtureAdaptersForScenario, fixtureModeEnabled } from '@/lib/network/name-candidates/fixtures';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   const decision = decideNameCandidateSearch(body.q, { selectedHub: hub });
   if (decision.operation !== 'NAME_CANDIDATES') return NextResponse.json({ error: 'not_a_name_search', reason: decision.reason }, { status: 422, headers: noStore });
 
-  const response = await searchNameCandidates({ originalInput: decision.originalInput, name: decision.name, hubScope: decision.hubScope, priorityHubs: decision.priorityHubs, pages, revision, unresolvedConditions: decision.unresolvedConditions });
+  const response = await searchNameCandidates({ originalInput: decision.originalInput, name: decision.name, hubScope: decision.hubScope, priorityHubs: decision.priorityHubs, pages, revision, unresolvedConditions: decision.unresolvedConditions }, fixtureModeEnabled() ? { adapters: createFixtureAdaptersForScenario() } : {});
   after(() => recordNameCandidateSearch(response));
   return NextResponse.json(response, { headers: { ...noStore, 'Server-Timing': `name-candidates;dur=${response.timing.totalMs}` } });
 }

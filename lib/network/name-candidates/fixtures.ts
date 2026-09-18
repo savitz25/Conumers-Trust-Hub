@@ -44,7 +44,18 @@ export function fixtureHubMatch(recordName: string, supplied: string): MatchMeth
 
 const PAGE = 5;
 
-export function createFixtureAdapters(records: FixtureRecord[], behavior: Partial<Record<SpecialistHubId, 'fail' | 'ignore_name_filter' | 'silent'>> = {}): Record<SpecialistHubId, HubNameAdapter> {
+/**
+ * Controlled hub behaviors for deterministic tests and browser proof.
+ *  'fail'                 every call is a technical failure
+ *  'unsupported'          the hub cannot search this input by name
+ *  'ignore_name_filter'   the hub ignored the name (must surface as a failure)
+ *  { emptyFirstPage }     page 1 has nothing admissible but hasMore=true and NO continuation URL
+ *  { failFromPage2 }      page 1 is fine; every later page fails
+ *  { delayFromPage2Ms }   later pages answer slowly (drives the stale "View more" race)
+ */
+export type FixtureBehavior = 'fail' | 'unsupported' | 'ignore_name_filter' | { emptyFirstPage?: boolean; failFromPage2?: boolean; delayFromPage2Ms?: number };
+
+export function createFixtureAdapters(records: FixtureRecord[], behavior: Partial<Record<SpecialistHubId, FixtureBehavior>> = {}): Record<SpecialistHubId, HubNameAdapter> {
   const entries = SPECIALIST_HUB_IDS.map((hub): [SpecialistHubId, HubNameAdapter] => {
     const base = { hub, searchedScope: `Fixture ${hub} records`, matchBreadth: 'Fixture hub exact/normalized/prefix/contains matching' };
     const blank: Omit<HubNameSearchOutcome, 'state'> = { ...base, nameFilterApplied: false, candidates: [], returnedCount: 0, hubReportedTotal: null, page: 1, hasMore: false, truncatedWithoutCursor: false, continuation: null, message: null, latencyMs: 0, calls: 1 };
@@ -58,15 +69,23 @@ export function createFixtureAdapters(records: FixtureRecord[], behavior: Partia
       ...base, enabled: true, sourceGrain: `fixture ${hub} record`,
       async search(name, page): Promise<HubNameSearchOutcome> {
         const mine = records.filter((row) => row.hub === hub);
-        if (behavior[hub] === 'fail') return { ...blank, page, state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' };
+        const mode = behavior[hub]; const opts = typeof mode === 'object' ? mode : {};
+        if (mode === 'fail') return { ...blank, page, state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' };
+        if (mode === 'unsupported') return { ...blank, page, state: 'UNSUPPORTED_OPERATION', message: `Fixture ${hub} cannot search this input by name.` };
+        if (page > 1 && opts.delayFromPage2Ms) await new Promise((resolve) => setTimeout(resolve, opts.delayFromPage2Ms));
+        if (page > 1 && opts.failFromPage2) return { ...blank, page, state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' };
         if (behavior[hub] === 'ignore_name_filter') {
           // A broken specialist that IGNORES the name and returns its cohort. It cannot prove the
           // filter ran, so it must surface as a failure -- never as candidates, never as a miss.
           return { ...blank, page, state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven', message: 'Fixture hub ignored the name filter.' };
         }
         const matched = mine.flatMap((row) => { const method = fixtureHubMatch(row.name, name); return method ? [toCandidate(row, method)] : []; });
-        const slice = matched.slice((page - 1) * PAGE, page * PAGE);
-        const hasMore = matched.length > page * PAGE;
+        // emptyFirstPage: what a real adapter produces when a hub's first page is all category-word padding
+        // (see test H4) -- nothing admissible, more rows exist, and there is no continuation URL.
+        if (opts.emptyFirstPage && page === 1 && matched.length) return { ...blank, page, nameFilterApplied: true, hubReportedTotal: matched.length + PAGE, hasMore: true, state: 'PARTIAL_TRUNCATED' };
+        const shift = opts.emptyFirstPage ? 1 : 0;
+        const slice = matched.slice((page - 1 - shift) * PAGE, (page - shift) * PAGE);
+        const hasMore = matched.length > (page - shift) * PAGE;
         return { ...blank, page, nameFilterApplied: true, candidates: slice, returnedCount: slice.length, hubReportedTotal: matched.length, hasMore, state: slice.length ? (hasMore ? 'PARTIAL_TRUNCATED' : 'COMPLETED_WITH_CANDIDATES') : 'COMPLETED_NO_CANDIDATES' };
       },
     }];
@@ -74,8 +93,29 @@ export function createFixtureAdapters(records: FixtureRecord[], behavior: Partia
   return Object.fromEntries(entries) as Record<SpecialistHubId, HubNameAdapter>;
 }
 
+const many = (hub: SpecialistHubId, stem: string, count: number, entityType: string, path: string): FixtureRecord[] => Array.from({ length: count }, (_, i) => ({ hub, key: `fx-${stem.toLowerCase().replaceAll(' ', '-')}-${i + 1}`, name: `${stem} ${String.fromCharCode(65 + i)}`, entityType, profilePath: `${path}/fx-${stem.toLowerCase().replaceAll(' ', '-')}-${i + 1}` }));
+
+/** HYPOTHETICAL records for the paging / continuation / stale-race scenario. */
+export const PAGING_RACE_FIXTURE: FixtureRecord[] = [
+  { hub: 'move', key: 'fx-borealis-van-lines', name: 'Borealis Van Lines', entityType: 'Mover (Carrier)', identifier: { label: 'USDOT', value: '9100001' }, profilePath: '/companies/fx-borealis-van-lines' },
+  ...many('senior', 'Borealis Care Center', 7, 'Nursing Home', '/facility/cms/900100'),
+  ...many('lender', 'Borealis Lending', 6, 'Lender institution', '/lender'),
+  { hub: 'investor', key: 'fx-aurora-quill', name: 'Aurora Quill Advisors', entityType: 'Investment adviser firm (RIA)', identifier: { label: 'CRD', value: '9100002' } },
+];
+export const PAGING_RACE_BEHAVIOR: Partial<Record<SpecialistHubId, FixtureBehavior>> = {
+  move: { emptyFirstPage: true, delayFromPage2Ms: 6000 }, // page 1 empty+hasMore, no continuation URL; page 2 is slow and holds the record
+  lender: { failFromPage2: true },
+};
+
+export const FIXTURE_SCENARIOS = ['five-allied', 'paging-race'] as const;
+
+/** The fixture adapters for the scenario named in NAME_CANDIDATES_FIXTURE. */
+export function createFixtureAdaptersForScenario(env: Record<string, string | undefined> = process.env): Record<SpecialistHubId, HubNameAdapter> {
+  return env.NAME_CANDIDATES_FIXTURE === 'paging-race' ? createFixtureAdapters(PAGING_RACE_FIXTURE, PAGING_RACE_BEHAVIOR) : createFixtureAdapters(FIVE_ALLIED_FIXTURE);
+}
+
 /** Fixture serving is impossible on a production deployment, whatever the env says. */
 export function fixtureModeEnabled(env: Record<string, string | undefined> = process.env): boolean {
   // NODE_ENV is deliberately not used: an optimized local `next start` demo runs with NODE_ENV=production.
-  return env.NAME_CANDIDATES_FIXTURE === 'five-allied' && env.VERCEL_ENV !== 'production';
+  return (FIXTURE_SCENARIOS as readonly string[]).includes(env.NAME_CANDIDATES_FIXTURE ?? '') && env.VERCEL_ENV !== 'production';
 }
