@@ -260,7 +260,7 @@ test('NJ, Florida, and California public surfaces remain additive and unchanged'
   assert.equal(CA_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/california');
   assert.equal(CA_PUBLICATION_MANIFEST.release_gate.passed, true);
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.equal(existsSync('app/new-jersey/page.tsx'), true);
   assert.equal(existsSync('app/new-jersey/monmouth-county/page.tsx'), true);
   assert.equal(existsSync('app/places/florida/page.tsx'), true);

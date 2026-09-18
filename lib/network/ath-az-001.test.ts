@@ -255,7 +255,7 @@ test('Washington, Texas, California, NJ, and Florida public surfaces are unchang
   assert.match(sitemap, /askStateSitemapEntries/);
   assert.match(sitemap, /askStateSitemapEntries/);
   assert.match(sitemap, /askStateSitemapEntries/);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.match(waPage, /washington/i);
   assert.match(txPage, /texas/);
   assert.match(caPage, /california/);

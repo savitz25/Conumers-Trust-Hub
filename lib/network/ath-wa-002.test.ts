@@ -257,7 +257,7 @@ test('NJ, Florida, California, and Texas public surfaces remain additive and unc
   assert.equal(TX_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/texas');
   assert.equal(TX_PUBLICATION_MANIFEST.release_gate.passed, true);
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.equal(existsSync('app/new-jersey/page.tsx'), true);
   assert.equal(existsSync('app/places/florida/page.tsx'), true);
   assert.equal(existsSync('app/california/page.tsx'), true);
