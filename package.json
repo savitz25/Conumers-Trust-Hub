@@ -59,6 +59,7 @@
     "check:ath-il-001": "node --experimental-strip-types --test lib/network/ath-il-001.test.ts",
     "check:ath-or-001": "node --experimental-strip-types --test lib/network/ath-or-001.test.ts",
     "check:ath-pa-001": "node --experimental-strip-types --test lib/network/ath-pa-001.test.ts",
+    "test:pa-rel-001": "node --experimental-strip-types --test lib/network/pa-rel-001.test.ts",
     "verify:pa-network": "node scripts/verify-pennsylvania-network.mjs",
     "verify:ny-network": "node scripts/verify-ny-network.mjs",
     "verify:il-network": "node scripts/verify-il-network.mjs",
