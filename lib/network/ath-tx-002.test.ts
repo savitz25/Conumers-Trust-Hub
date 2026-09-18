@@ -26,7 +26,6 @@ import { CA_PUBLICATION_MANIFEST } from './ca-network.ts';
 const page = 'app/texas/page.tsx';
 const ui = 'components/texas-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync(page, 'utf8');

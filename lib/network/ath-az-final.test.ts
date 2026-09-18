@@ -28,7 +28,6 @@ import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' 
 const page = 'app/arizona/page.tsx';
 const ui = 'components/arizona-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync('app/arizona/page.tsx', 'utf8');

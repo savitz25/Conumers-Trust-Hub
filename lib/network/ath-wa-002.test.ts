@@ -27,7 +27,6 @@ import { TX_PUBLICATION_MANIFEST } from './tx-network.ts';
 const page = 'app/washington/page.tsx';
 const ui = 'components/washington-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync(page, 'utf8');

@@ -25,7 +25,6 @@ import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 const page = 'app/california/page.tsx';
 const ui = 'components/california-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync(page, 'utf8');
