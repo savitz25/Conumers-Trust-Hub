@@ -1,0 +1,158 @@
+{
+ "checkedAt": "2026-09-18T20:33:18.390Z",
+ "via": "final build of tree 7126009, next start :3105, real hub calls (not the public deployment)",
+ "results": [
+  {
+   "q": "Allied",
+   "status": 200,
+   "ms": 1519,
+   "candidateCount": 17,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "PARTIAL_TRUNCATED",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "UNSUPPORTED_OPERATION",
+    "investor": "COMPLETED_WITH_CANDIDATES"
+   },
+   "keys": [
+    "move:profile:allied-van-lines | Allied Van Lines",
+    "insurance:npn:10058617 | 3A ALLIED INSURANCE CORP.",
+    "insurance:npn:19286222 | ALLIED ADVANTAGE INSURANCE SERVICES LLC,",
+    "insurance:npn:9255897 | ALLIED AMERICAN UNDERWRITERS, INC.",
+    "insurance:npn:23442 | ALLIED BENEFIT SYSTEMS, LLC.",
+    "insurance:npn:18062626 | ALLIED BENEFITS SOLUTIONS, LLC",
+    "insurance:npn:20083131 | ALLIED BROKERS INSURANCE AGENCY, INC.",
+    "insurance:npn:3336166 | ALLIED BUILDING MATERIAL AGENCY, INC. DBA GREEN TREE RISK PARTNERS",
+    "insurance:npn:7888596 | ALLIED BUSINESS SERVICES INC",
+    "insurance:npn:8771938 | ALLIED ELITE FINANCIAL, LLC",
+    "insurance:npn:20426373 | ALLIED HEALTH INSURANCE ASSOCIATES",
+    "investor:crd:112441 | ALLIED ASSET ADVISORS INC",
+    "investor:crd:322494 | ALLIED INDUSTRIAL PARTNERS",
+    "investor:crd:159103 | ALLIED INVESTMENT ADVISORS LLC",
+    "investor:crd:113809 | ALLIED PORTFOLIO MANAGEMENT, INC.",
+    "investor:crd:328952 | ALLIED PRIVATE WEALTH",
+    "investor:crd:315791 | ALLIED STRATEGIC PARTNERS MANAGEMENT, LP"
+   ]
+  },
+  {
+   "q": "Cirta",
+   "status": 200,
+   "ms": 1275,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "keys": [
+    "move:profile:cirta-moving-llc | Cirta Moving LLC"
+   ]
+  },
+  {
+   "q": "Pure Moving Company",
+   "status": 200,
+   "ms": 1439,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "keys": [
+    "move:profile:pure-moving-company | Pure Moving Company"
+   ]
+  },
+  {
+   "q": "1-800-Pack-Rat",
+   "status": 200,
+   "ms": 1132,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "keys": [
+    "move:profile:1-800-pack-rat | 1-800-Pack-Rat"
+   ]
+  },
+  {
+   "q": "Abbey Delray South",
+   "status": 200,
+   "ms": 1226,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_NO_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_WITH_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "keys": [
+    "senior:nursing_home:105411 | ABBEY DELRAY SOUTH"
+   ]
+  },
+  {
+   "q": "Tate Asset Management",
+   "status": 200,
+   "ms": 1154,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_NO_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_WITH_CANDIDATES"
+   },
+   "keys": [
+    "investor:crd:160657 | \"TATE ASSET MANAGEMENT\" AND \"DCO WEALTH MANAGEMENT\""
+   ]
+  },
+  {
+   "q": "Rocket Mortgage",
+   "status": 200,
+   "ms": 1093,
+   "candidateCount": 1,
+   "hubStates": {
+    "lender": "COMPLETED_WITH_CANDIDATES",
+    "move": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "keys": [
+    "lender:nmls:3030 | Rocket Mortgage"
+   ]
+  },
+  {
+   "q": "Cincinnati Asset Management",
+   "status": 200,
+   "ms": 1156,
+   "candidateCount": 1,
+   "hubStates": {
+    "contractor": "UNSUPPORTED_OPERATION",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "move": "COMPLETED_NO_CANDIDATES",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_WITH_CANDIDATES"
+   },
+   "keys": [
+    "investor:crd:104946 | CINCINNATI ASSET MANAGEMENT INC"
+   ]
+  }
+ ]
+}
