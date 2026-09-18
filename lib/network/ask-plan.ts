@@ -70,6 +70,7 @@ import { nyCaveatForHub, nySpecialistUrl, requestedLegalJurisdiction, routeNyAsk
 import { ilCaveatForHub, ilSpecialistUrl, routeIlAsk } from './il-network.ts';
 import { orCaveatForHub, orSpecialistUrl, routeOrAsk } from './or-network.ts';
 import { paCaveatForHub, paSpecialistUrl, routePaAsk } from './pa-network.ts';
+import { ncCaveatForHub, ncSpecialistUrl, routeNcAsk } from './nc-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -200,6 +201,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'IL') return '/illinois';
   if (parsed.geography?.stateCode === 'OR') return '/oregon';
   if (parsed.geography?.stateCode === 'PA') return '/pennsylvania';
+  if (parsed.geography?.stateCode === 'NC') return '/north-carolina';
   return undefined;
 }
 
@@ -1204,6 +1206,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0]) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotatePa(h, paCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'NC') {
+    const ncRoute = routeNcAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(
+        dest &&
+          (/\/ask(\?|$)/i.test(dest) ||
+            /\/api\/ask/i.test(dest) ||
+            /\/verify(\?|$)/i.test(dest) ||
+            /\/companies\?/i.test(dest)),
+      );
+    const annotateNc = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : ncSpecialistUrl(hub.hubId),
+        geographyCapability: hub.geographyCapability,
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? ncSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (ncRoute) {
+      const already = hubs.some((h) => h.hubId === ncRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: ncRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[ncRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: ncRoute.destination,
+            reason: ncRoute.caveat,
+            whatItCanAnswer: `North Carolina research on ${NETWORK_PUBLIC_NAMES[ncRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'North Carolina',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === ncRoute.hubId ? annotateNc(h, ncRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === ncRoute.hubId), ...hubs.filter((h) => h.hubId !== ncRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateNc(h, ncCaveatForHub(primary)) : h));
     }
   }
 

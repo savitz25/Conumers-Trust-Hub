@@ -1,0 +1,67 @@
+{
+  "ticket": "ATH-NC-001",
+  "version": "ath-nc-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/north-carolina",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_charlotte_routes": false,
+  "hardcoded_raleigh_routes": false,
+  "north_carolina_local_phase": "NO",
+  "north_carolina_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "release_gate_passed": true,
+  "ask_fingerprint": "dd629cbd0176b8ea9165dafa7ecb5da5600e175a19794fea36c16569b098439a",
+  "specialist_hubs": [
+    {
+      "hub_id": "contractor",
+      "canonical_state_url": "https://www.contractortrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "contractor-nc-state-intel-v1",
+      "fingerprint": "17bd03c18651bcb88ba52d54aeba3297d5ced19ae29190159c833d01774eb297",
+      "certified_release_sha": "0be9e356a4e71cb6d9b4fa3711c2b523501a84e1"
+    },
+    {
+      "hub_id": "move",
+      "canonical_state_url": "https://www.movetrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "move-nc-state-intel-v1",
+      "fingerprint": "9b4becfd1d99f78abdbe79daabb0ba61571e6b6fc3e13f8fb1dc439661e46bec",
+      "certified_release_sha": "560a3ac5dd566d37a8fb37b66627d993cd8f235f"
+    },
+    {
+      "hub_id": "senior",
+      "canonical_state_url": "https://www.seniortrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "senior-nc-state-intel-v1",
+      "fingerprint": "a53e54853c351e287e8d91a7f131369d60a4e40a3f35a64d2e86899ed41d3181",
+      "certified_release_sha": "2f603dcb5d8c4910608f08535b2295c5065cb3f2"
+    },
+    {
+      "hub_id": "lender",
+      "canonical_state_url": "https://www.lendertrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "lender-nc-state-intel-v1",
+      "fingerprint": "95cc55e2092335c30698c676c67eb6ca0559a7a4dc33a68ce8e82bf4cfe6c10d",
+      "certified_release_sha": "dbf7f3e8f58415e16ddaed330f51e69e0d858290"
+    },
+    {
+      "hub_id": "insurance",
+      "canonical_state_url": "https://www.insurancetrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "insurance-nc-state-intel-v1",
+      "fingerprint": "a3abc66b4595a426fe6a3969b396f24cd9ecfaf3189411cf1a7ea0db9b2feab0",
+      "certified_release_sha": "c8d869b19c028cf5b9f143291bbe4471eca89099"
+    },
+    {
+      "hub_id": "investor",
+      "canonical_state_url": "https://www.investortrusthub.com/north-carolina",
+      "publication_status": "live",
+      "snapshot_version": "investor-nc-state-intel-v1",
+      "fingerprint": "697edd7ef765dcc52930e2953ddeb55d111a3cd361afba79504d76588a696325",
+      "certified_release_sha": "b90f8d4582a3cac0cbe048032fdfd37174a223f9"
+    }
+  ]
+}

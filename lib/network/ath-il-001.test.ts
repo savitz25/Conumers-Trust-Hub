@@ -234,7 +234,7 @@ test('claim eligibility surfaces are unchanged', () => {
 
 test('state page inventory adds Illinois once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'IL').length, 1);
-  assert.equal(ASK_NETWORK_STATES.length, 12);
+  assert.equal(ASK_NETWORK_STATES.length, 13);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/illinois'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/illinois/chicago'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Illinois network gateway/);
