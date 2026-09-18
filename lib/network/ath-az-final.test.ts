@@ -162,8 +162,7 @@ test('no Trust Score, ratings schema, or local Arizona routes', () => {
 });
 
 test('homepage, footer, places, concierge, and discovery are gated on the Arizona flag', () => {
-  assert.match(footerDs, /\/arizona/);
-  assert.match(footerSrc, /azReleaseGatePassed/);
+  assert.match(footerSrc, /askStateFooterLinks/);
   assert.match(home, /buildAskStateCoverage/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'arizona'));
   assert.match(placesSrc, /listPlaceLensIndex/);

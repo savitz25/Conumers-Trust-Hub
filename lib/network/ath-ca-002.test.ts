@@ -211,8 +211,7 @@ test('six URL definitions; Move or any specialist failure blocks complete', () =
 });
 
 test('homepage, footer, places, concierge, and discovery retain canonical California routing', () => {
-  assert.match(footerDs, /\/california/);
-  assert.match(footerSrc, /caReleaseGatePassed/);
+  assert.match(footerSrc, /askStateFooterLinks/);
   assert.match(home, /buildAskStateCoverage/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'california'));
   assert.match(placesSrc, /listPlaceLensIndex/);

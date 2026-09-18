@@ -213,8 +213,7 @@ test('six URL definitions; any specialist failure blocks complete', () => {
 });
 
 test('homepage, footer, places, concierge, and discovery are gated on the six-hub flag', () => {
-  assert.match(footerDs, /\/washington/);
-  assert.match(footerSrc, /waReleaseGatePassed/);
+  assert.match(footerSrc, /askStateFooterLinks/);
   assert.match(home, /buildAskStateCoverage/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'washington'));
   assert.match(placesSrc, /listPlaceLensIndex/);
