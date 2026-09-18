@@ -1,0 +1,23 @@
+{
+ "finding1": {
+  "alternate": true,
+  "moveState": "TECHNICAL_FAILURE",
+  "candidateCount": 0,
+  "reviewedHeadShowsNameResults": false,
+  "defect": "REPRODUCED: a Move source FAILURE drops the name UI and re-enters the legacy \"What are you moving?\" path"
+ },
+ "finding2": {
+  "groupRendered": false,
+  "canFetchMore": false,
+  "defect": "REPRODUCED: hasMore=true with no continuation URL, but no group/View-more control exists"
+ },
+ "finding3": {
+  "state": "COMPLETED_NO_CANDIDATES",
+  "defect": "REPRODUCED: valid upstream ambiguity reported as a completed miss"
+ },
+ "finding4": {
+  "kind": "COMPLETED_MISS",
+  "heading": "No records named “Allied” were found",
+  "defect": "REPRODUCED: leads with an unqualified miss although Move failed"
+ }
+}
