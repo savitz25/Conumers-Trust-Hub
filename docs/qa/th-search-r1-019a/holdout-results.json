@@ -1,35 +1,7 @@
 {
- "evaluatedAt": "2026-09-18T16:48:47.834Z",
+ "evaluatedAt": "2026-09-18T16:58:27.215Z",
  "note": "Diagnostic small-sample evaluation against live hub operations. Not a statistical certification.",
  "summary": {
-  "senior": {
-   "records": 20,
-   "displayed": {
-    "n": 20,
-    "found": 17
-   },
-   "lowercase": {
-    "n": 20,
-    "found": 17
-   },
-   "presentation": {
-    "n": 1,
-    "found": 0
-   },
-   "redundantClarifications": 6,
-   "technicalOrUnsupported": 1,
-   "candidatesReturned": 34,
-   "irrelevantCandidates": 0,
-   "misses": [
-    "displayed: \"JUPITER REHABILITATION AND HEALTHCARE CENTER\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:MULTIPLE_SPECIALIST_HUBS",
-    "lowercase: \"jupiter rehabilitation and healthcare center\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:MULTIPLE_SPECIALIST_HUBS",
-    "displayed: \"Deerbrook Skilled Nursing and Rehab Center\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:CARE_TASK",
-    "lowercase: \"deerbrook skilled nursing and rehab center\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:CARE_TASK",
-    "displayed: \"FFIII Houston SNF Tenant LLC\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "lowercase: \"ffiii houston snf tenant llc\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "presentation: \"FFIII Houston SNF Tenant\" -> UNSUPPORTED_OPERATION"
-   ]
-  },
   "lender": {
    "records": 20,
    "displayed": {
@@ -43,6 +15,10 @@
    "presentation": {
     "n": 12,
     "found": 0
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 6
    },
    "redundantClarifications": 0,
    "technicalOrUnsupported": 0,
@@ -93,793 +69,112 @@
     "presentation: \"Better Mortgage\" -> COMPLETED_WITH_CANDIDATES"
    ]
   },
+  "senior": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 18
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 18
+   },
+   "presentation": {
+    "n": 1,
+    "found": 0
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 18
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 5,
+   "candidatesReturned": 36,
+   "irrelevantCandidates": 0,
+   "misses": [
+    "displayed: \"Deerbrook Skilled Nursing and Rehab Center\" -> UNSUPPORTED_OPERATION",
+    "lowercase: \"deerbrook skilled nursing and rehab center\" -> UNSUPPORTED_OPERATION",
+    "displayed: \"FFIII Houston SNF Tenant LLC\" -> UNSUPPORTED_OPERATION",
+    "lowercase: \"ffiii houston snf tenant llc\" -> UNSUPPORTED_OPERATION",
+    "presentation: \"FFIII Houston SNF Tenant\" -> UNSUPPORTED_OPERATION"
+   ]
+  },
   "investor": {
    "records": 20,
    "displayed": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "lowercase": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "presentation": {
     "n": 14,
-    "found": 13
+    "found": 14
    },
-   "redundantClarifications": 3,
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
+   "redundantClarifications": 0,
    "technicalOrUnsupported": 0,
-   "candidatesReturned": 54,
-   "irrelevantCandidates": 2,
-   "misses": [
-    "displayed: \"CAPITAL ASSET MANAGEMENT, INC.\" -> NOT_NAME_SEARCH:CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
-    "lowercase: \"capital asset management, inc.\" -> NOT_NAME_SEARCH:CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
-    "presentation: \"CAPITAL ASSET MANAGEMENT\" -> NOT_NAME_SEARCH:CATEGORY_OR_GEOGRAPHY_WORDS_ONLY"
-   ]
+   "candidatesReturned": 66,
+   "irrelevantCandidates": 14,
+   "misses": []
   },
   "move": {
    "records": 20,
    "displayed": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "lowercase": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "presentation": {
     "n": 9,
     "found": 8
    },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
    "redundantClarifications": 0,
-   "technicalOrUnsupported": 2,
-   "candidatesReturned": 77,
-   "irrelevantCandidates": 10,
+   "technicalOrUnsupported": 1,
+   "candidatesReturned": 48,
+   "irrelevantCandidates": 0,
    "misses": [
-    "displayed: \"Al's Relocation & Storage\" -> TECHNICAL_FAILURE",
-    "lowercase: \"al's relocation & storage\" -> TECHNICAL_FAILURE",
-    "presentation: \"C&L Movers\" -> PARTIAL_TRUNCATED (truncated)"
+    "presentation: \"C&L Movers\" -> TECHNICAL_FAILURE"
    ]
   },
   "insurance": {
    "records": 20,
    "displayed": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "lowercase": {
     "n": 20,
-    "found": 19
+    "found": 20
    },
    "presentation": {
     "n": 18,
     "found": 18
    },
-   "redundantClarifications": 2,
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
+   "redundantClarifications": 0,
    "technicalOrUnsupported": 0,
-   "candidatesReturned": 88,
+   "candidatesReturned": 90,
    "irrelevantCandidates": 0,
-   "misses": [
-    "displayed: \"1ST TEXAS AGENCY INC\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "lowercase: \"1st texas agency inc\" -> NOT_NAME_SEARCH:PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY"
-   ]
+   "misses": []
   }
  },
  "results": {
-  "senior": [
-   {
-    "key": "ccn:105485",
-    "name": "HAMLIN PLACE OF BOYNTON BEACH",
-    "variant": "displayed",
-    "input": "HAMLIN PLACE OF BOYNTON BEACH",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 428
-   },
-   {
-    "key": "ccn:105485",
-    "name": "HAMLIN PLACE OF BOYNTON BEACH",
-    "variant": "lowercase",
-    "input": "hamlin place of boynton beach",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 269
-   },
-   {
-    "key": "ccn:105485",
-    "name": "HAMLIN PLACE OF BOYNTON BEACH",
-    "variant": "presentation",
-    "input": "HAMLIN PLACE OF BOYNTON BEACH",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:106111",
-    "name": "HEALTH CENTER AT SINAI RESIDENCES",
-    "variant": "displayed",
-    "input": "HEALTH CENTER AT SINAI RESIDENCES",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 312
-   },
-   {
-    "key": "ccn:106111",
-    "name": "HEALTH CENTER AT SINAI RESIDENCES",
-    "variant": "lowercase",
-    "input": "health center at sinai residences",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 267
-   },
-   {
-    "key": "ccn:106111",
-    "name": "HEALTH CENTER AT SINAI RESIDENCES",
-    "variant": "presentation",
-    "input": "HEALTH CENTER AT SINAI RESIDENCES",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:105496",
-    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
-    "variant": "displayed",
-    "input": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 314
-   },
-   {
-    "key": "ccn:105496",
-    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
-    "variant": "lowercase",
-    "input": "isles of boynton nursing and rehab center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 255
-   },
-   {
-    "key": "ccn:105496",
-    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
-    "variant": "presentation",
-    "input": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:105555",
-    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
-    "variant": "displayed",
-    "input": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:MULTIPLE_SPECIALIST_HUBS",
-    "found": false
-   },
-   {
-    "key": "ccn:105555",
-    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
-    "variant": "lowercase",
-    "input": "jupiter rehabilitation and healthcare center",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:MULTIPLE_SPECIALIST_HUBS",
-    "found": false
-   },
-   {
-    "key": "ccn:105555",
-    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
-    "variant": "presentation",
-    "input": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:105268",
-    "name": "LAKESIDE HEALTH CENTER",
-    "variant": "displayed",
-    "input": "LAKESIDE HEALTH CENTER",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 256
-   },
-   {
-    "key": "ccn:105268",
-    "name": "LAKESIDE HEALTH CENTER",
-    "variant": "lowercase",
-    "input": "lakeside health center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 255
-   },
-   {
-    "key": "ccn:105268",
-    "name": "LAKESIDE HEALTH CENTER",
-    "variant": "presentation",
-    "input": "LAKESIDE HEALTH CENTER",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:676467",
-    "name": "Cypress Creek Rehabilitation and Healthcare Center",
-    "variant": "displayed",
-    "input": "Cypress Creek Rehabilitation and Healthcare Center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 344
-   },
-   {
-    "key": "ccn:676467",
-    "name": "Cypress Creek Rehabilitation and Healthcare Center",
-    "variant": "lowercase",
-    "input": "cypress creek rehabilitation and healthcare center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 254
-   },
-   {
-    "key": "ccn:676467",
-    "name": "Cypress Creek Rehabilitation and Healthcare Center",
-    "variant": "presentation",
-    "input": "Cypress Creek Rehabilitation and Healthcare Center",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:676263",
-    "name": "Deerbrook Skilled Nursing and Rehab Center",
-    "variant": "displayed",
-    "input": "Deerbrook Skilled Nursing and Rehab Center",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:CARE_TASK",
-    "found": false
-   },
-   {
-    "key": "ccn:676263",
-    "name": "Deerbrook Skilled Nursing and Rehab Center",
-    "variant": "lowercase",
-    "input": "deerbrook skilled nursing and rehab center",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:CARE_TASK",
-    "found": false
-   },
-   {
-    "key": "ccn:676263",
-    "name": "Deerbrook Skilled Nursing and Rehab Center",
-    "variant": "presentation",
-    "input": "Deerbrook Skilled Nursing and Rehab Center",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:676081",
-    "name": "EAST VIEW HEALTHCARE",
-    "variant": "displayed",
-    "input": "EAST VIEW HEALTHCARE",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 251
-   },
-   {
-    "key": "ccn:676081",
-    "name": "EAST VIEW HEALTHCARE",
-    "variant": "lowercase",
-    "input": "east view healthcare",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 251
-   },
-   {
-    "key": "ccn:676081",
-    "name": "EAST VIEW HEALTHCARE",
-    "variant": "presentation",
-    "input": "EAST VIEW HEALTHCARE",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:676412",
-    "name": "Fall Creek Rehabilitation and Healthcare Center",
-    "variant": "displayed",
-    "input": "Fall Creek Rehabilitation and Healthcare Center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 278
-   },
-   {
-    "key": "ccn:676412",
-    "name": "Fall Creek Rehabilitation and Healthcare Center",
-    "variant": "lowercase",
-    "input": "fall creek rehabilitation and healthcare center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 260
-   },
-   {
-    "key": "ccn:676412",
-    "name": "Fall Creek Rehabilitation and Healthcare Center",
-    "variant": "presentation",
-    "input": "Fall Creek Rehabilitation and Healthcare Center",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:676111",
-    "name": "FFIII Houston SNF Tenant LLC",
-    "variant": "displayed",
-    "input": "FFIII Houston SNF Tenant LLC",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "found": false
-   },
-   {
-    "key": "ccn:676111",
-    "name": "FFIII Houston SNF Tenant LLC",
-    "variant": "lowercase",
-    "input": "ffiii houston snf tenant llc",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "found": false
-   },
-   {
-    "key": "ccn:676111",
-    "name": "FFIII Houston SNF Tenant LLC",
-    "variant": "presentation",
-    "input": "FFIII Houston SNF Tenant",
-    "redundantClarification": false,
-    "state": "UNSUPPORTED_OPERATION",
-    "failureKind": null,
-    "returned": 0,
-    "found": false,
-    "rank": null,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 144
-   },
-   {
-    "key": "ccn:146053",
-    "name": "ALIYA OF PALOS PARK",
-    "variant": "displayed",
-    "input": "ALIYA OF PALOS PARK",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 246
-   },
-   {
-    "key": "ccn:146053",
-    "name": "ALIYA OF PALOS PARK",
-    "variant": "lowercase",
-    "input": "aliya of palos park",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 244
-   },
-   {
-    "key": "ccn:146053",
-    "name": "ALIYA OF PALOS PARK",
-    "variant": "presentation",
-    "input": "ALIYA OF PALOS PARK",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:146198",
-    "name": "ALL AMERICAN VLGE NRSG & RHB",
-    "variant": "displayed",
-    "input": "ALL AMERICAN VLGE NRSG & RHB",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 259
-   },
-   {
-    "key": "ccn:146198",
-    "name": "ALL AMERICAN VLGE NRSG & RHB",
-    "variant": "lowercase",
-    "input": "all american vlge nrsg & rhb",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 252
-   },
-   {
-    "key": "ccn:146198",
-    "name": "ALL AMERICAN VLGE NRSG & RHB",
-    "variant": "presentation",
-    "input": "ALL AMERICAN VLGE NRSG & RHB",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:145867",
-    "name": "ALTA REHAB AT FAIRMONT",
-    "variant": "displayed",
-    "input": "ALTA REHAB AT FAIRMONT",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 249
-   },
-   {
-    "key": "ccn:145867",
-    "name": "ALTA REHAB AT FAIRMONT",
-    "variant": "lowercase",
-    "input": "alta rehab at fairmont",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 253
-   },
-   {
-    "key": "ccn:145867",
-    "name": "ALTA REHAB AT FAIRMONT",
-    "variant": "presentation",
-    "input": "ALTA REHAB AT FAIRMONT",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:145913",
-    "name": "Aperion Care Burbank",
-    "variant": "displayed",
-    "input": "Aperion Care Burbank",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 278
-   },
-   {
-    "key": "ccn:145913",
-    "name": "Aperion Care Burbank",
-    "variant": "lowercase",
-    "input": "aperion care burbank",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 281
-   },
-   {
-    "key": "ccn:145913",
-    "name": "Aperion Care Burbank",
-    "variant": "presentation",
-    "input": "Aperion Care Burbank",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:145877",
-    "name": "APERION CARE DOLTON",
-    "variant": "displayed",
-    "input": "APERION CARE DOLTON",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 263
-   },
-   {
-    "key": "ccn:145877",
-    "name": "APERION CARE DOLTON",
-    "variant": "lowercase",
-    "input": "aperion care dolton",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 265
-   },
-   {
-    "key": "ccn:145877",
-    "name": "APERION CARE DOLTON",
-    "variant": "presentation",
-    "input": "APERION CARE DOLTON",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:035164",
-    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
-    "variant": "displayed",
-    "input": "DESERT BLOSSOM HEALTH & REHAB CENTER",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 252
-   },
-   {
-    "key": "ccn:035164",
-    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
-    "variant": "lowercase",
-    "input": "desert blossom health & rehab center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 275
-   },
-   {
-    "key": "ccn:035164",
-    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
-    "variant": "presentation",
-    "input": "DESERT BLOSSOM HEALTH & REHAB CENTER",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:035062",
-    "name": "DESERT HAVEN CARE CENTER",
-    "variant": "displayed",
-    "input": "DESERT HAVEN CARE CENTER",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 596
-   },
-   {
-    "key": "ccn:035062",
-    "name": "DESERT HAVEN CARE CENTER",
-    "variant": "lowercase",
-    "input": "desert haven care center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 259
-   },
-   {
-    "key": "ccn:035062",
-    "name": "DESERT HAVEN CARE CENTER",
-    "variant": "presentation",
-    "input": "DESERT HAVEN CARE CENTER",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:035014",
-    "name": "Desert Terrace Healthcare Center",
-    "variant": "displayed",
-    "input": "Desert Terrace Healthcare Center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 266
-   },
-   {
-    "key": "ccn:035014",
-    "name": "Desert Terrace Healthcare Center",
-    "variant": "lowercase",
-    "input": "desert terrace healthcare center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 578
-   },
-   {
-    "key": "ccn:035014",
-    "name": "Desert Terrace Healthcare Center",
-    "variant": "presentation",
-    "input": "Desert Terrace Healthcare Center",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:035166",
-    "name": "Estrella Health And Rehabilitation Center",
-    "variant": "displayed",
-    "input": "Estrella Health And Rehabilitation Center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 255
-   },
-   {
-    "key": "ccn:035166",
-    "name": "Estrella Health And Rehabilitation Center",
-    "variant": "lowercase",
-    "input": "estrella health and rehabilitation center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 551
-   },
-   {
-    "key": "ccn:035166",
-    "name": "Estrella Health And Rehabilitation Center",
-    "variant": "presentation",
-    "input": "Estrella Health And Rehabilitation Center",
-    "skipped": "identical_to_displayed"
-   },
-   {
-    "key": "ccn:035256",
-    "name": "Freedom Plaza Care Center",
-    "variant": "displayed",
-    "input": "Freedom Plaza Care Center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 263
-   },
-   {
-    "key": "ccn:035256",
-    "name": "Freedom Plaza Care Center",
-    "variant": "lowercase",
-    "input": "freedom plaza care center",
-    "redundantClarification": false,
-    "state": "COMPLETED_WITH_CANDIDATES",
-    "failureKind": null,
-    "returned": 1,
-    "found": true,
-    "rank": 1,
-    "truncated": false,
-    "irrelevant": 0,
-    "ms": 262
-   },
-   {
-    "key": "ccn:035256",
-    "name": "Freedom Plaza Care Center",
-    "variant": "presentation",
-    "input": "Freedom Plaza Care Center",
-    "skipped": "identical_to_displayed"
-   }
-  ],
   "lender": [
    {
     "key": "lei:7H6GLXDRUGQFU57RNE97",
@@ -891,10 +186,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 317
+    "ms": 385
    },
    {
     "key": "lei:7H6GLXDRUGQFU57RNE97",
@@ -906,10 +202,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 127
+    "ms": 133
    },
    {
     "key": "lei:7H6GLXDRUGQFU57RNE97",
@@ -928,10 +225,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 114
+    "ms": 104
    },
    {
     "key": "lei:549300VN9E1DEKF26E34",
@@ -943,10 +241,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 178
+    "ms": 148
    },
    {
     "key": "lei:549300VN9E1DEKF26E34",
@@ -965,10 +264,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 110
+    "ms": 181
    },
    {
     "key": "lei:549300FNXYY540N23N64",
@@ -980,10 +280,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 128
+    "ms": 119
    },
    {
     "key": "lei:549300FNXYY540N23N64",
@@ -1002,10 +303,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 110
+    "ms": 129
    },
    {
     "key": "lei:549300LYRWPSYPK6S325",
@@ -1017,10 +319,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 114
+    "ms": 132
    },
    {
     "key": "lei:549300LYRWPSYPK6S325",
@@ -1032,10 +335,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 126
+    "ms": 121
    },
    {
     "key": "lei:254900DTLHVWQ7NP7R34",
@@ -1047,10 +351,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 116
+    "ms": 119
    },
    {
     "key": "lei:254900DTLHVWQ7NP7R34",
@@ -1062,10 +367,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 116
+    "ms": 106
    },
    {
     "key": "lei:254900DTLHVWQ7NP7R34",
@@ -1077,10 +383,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 109
+    "ms": 108
    },
    {
     "key": "lei:549300YIQ7S7Z8PIHE53",
@@ -1092,10 +399,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 121
+    "ms": 104
    },
    {
     "key": "lei:549300YIQ7S7Z8PIHE53",
@@ -1107,10 +415,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 99
+    "ms": 113
    },
    {
     "key": "lei:549300YIQ7S7Z8PIHE53",
@@ -1129,10 +438,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 138
+    "ms": 101
    },
    {
     "key": "lei:54930030S6J5KOL5LJ73",
@@ -1144,10 +454,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 114
+    "ms": 110
    },
    {
     "key": "lei:54930030S6J5KOL5LJ73",
@@ -1166,10 +477,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 115
+    "ms": 118
    },
    {
     "key": "lei:549300J7I82PNDVU8H22",
@@ -1181,10 +493,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 110
+    "ms": 113
    },
    {
     "key": "lei:549300J7I82PNDVU8H22",
@@ -1196,10 +509,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 112
+    "ms": 98
    },
    {
     "key": "lei:549300Y5Y88FQLI7VE83",
@@ -1211,10 +525,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 111
+    "ms": 119
    },
    {
     "key": "lei:549300Y5Y88FQLI7VE83",
@@ -1226,10 +541,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 474
+    "ms": 124
    },
    {
     "key": "lei:549300Y5Y88FQLI7VE83",
@@ -1241,10 +557,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 112
+    "ms": 127
    },
    {
     "key": "lei:549300NOCASXPA34X033",
@@ -1256,10 +573,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 112
+    "ms": 103
    },
    {
     "key": "lei:549300NOCASXPA34X033",
@@ -1271,10 +589,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 107
+    "ms": 95
    },
    {
     "key": "lei:549300NOCASXPA34X033",
@@ -1293,10 +612,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 103
+    "ms": 121
    },
    {
     "key": "lei:549300DD5QQUHO6PCH70",
@@ -1308,10 +628,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 87
+    "ms": 113
    },
    {
     "key": "lei:549300DD5QQUHO6PCH70",
@@ -1323,10 +644,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 98
+    "ms": 110
    },
    {
     "key": "lei:RVDPPPGHCGZ40J4VQ731",
@@ -1338,10 +660,11 @@
     "failureKind": null,
     "returned": 1,
     "found": false,
+    "foundByName": true,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 110
+    "ms": 107
    },
    {
     "key": "lei:RVDPPPGHCGZ40J4VQ731",
@@ -1353,10 +676,11 @@
     "failureKind": null,
     "returned": 1,
     "found": false,
+    "foundByName": true,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 108
+    "ms": 135
    },
    {
     "key": "lei:RVDPPPGHCGZ40J4VQ731",
@@ -1368,10 +692,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 95
+    "ms": 1074
    },
    {
     "key": "lei:549300121SF0K2LN2804",
@@ -1383,10 +708,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 113
+    "ms": 117
    },
    {
     "key": "lei:549300121SF0K2LN2804",
@@ -1398,10 +724,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 125
+    "ms": 99
    },
    {
     "key": "lei:549300121SF0K2LN2804",
@@ -1420,10 +747,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1455
+    "ms": 98
    },
    {
     "key": "lei:G5AHTAP80NWA3Q8RDC78",
@@ -1435,10 +763,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 113
+    "ms": 94
    },
    {
     "key": "lei:G5AHTAP80NWA3Q8RDC78",
@@ -1457,10 +786,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 143
+    "ms": 114
    },
    {
     "key": "lei:549300E2UX99HKDBR481",
@@ -1472,10 +802,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 102
+    "ms": 106
    },
    {
     "key": "lei:549300E2UX99HKDBR481",
@@ -1487,10 +818,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 109
+    "ms": 104
    },
    {
     "key": "lei:54930043BMDE130FJ617",
@@ -1502,10 +834,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 183
+    "ms": 115
    },
    {
     "key": "lei:54930043BMDE130FJ617",
@@ -1517,10 +850,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 155
+    "ms": 102
    },
    {
     "key": "lei:54930043BMDE130FJ617",
@@ -1532,10 +866,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 108
+    "ms": 128
    },
    {
     "key": "lei:549300KOAKQX3BEWWT56",
@@ -1547,10 +882,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 111
+    "ms": 80
    },
    {
     "key": "lei:549300KOAKQX3BEWWT56",
@@ -1562,10 +898,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 100
+    "ms": 129
    },
    {
     "key": "lei:549300KOAKQX3BEWWT56",
@@ -1577,10 +914,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 199
+    "ms": 106
    },
    {
     "key": "lei:549300DMYENRV818D594",
@@ -1592,10 +930,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 133
+    "ms": 115
    },
    {
     "key": "lei:549300DMYENRV818D594",
@@ -1607,10 +946,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 100
+    "ms": 84
    },
    {
     "key": "lei:549300DMYENRV818D594",
@@ -1622,10 +962,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 134
+    "ms": 100
    },
    {
     "key": "lei:54930021WPEXNHYZUL09",
@@ -1637,10 +978,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 294
+    "ms": 111
    },
    {
     "key": "lei:54930021WPEXNHYZUL09",
@@ -1652,10 +994,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 107
+    "ms": 118
    },
    {
     "key": "lei:54930021WPEXNHYZUL09",
@@ -1667,10 +1010,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 261
+    "ms": 99
    },
    {
     "key": "lei:549300PIL8LFAQ04XC20",
@@ -1682,10 +1026,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 91
+    "ms": 129
    },
    {
     "key": "lei:549300PIL8LFAQ04XC20",
@@ -1697,10 +1042,11 @@
     "failureKind": null,
     "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 106
+    "ms": 84
    },
    {
     "key": "lei:549300PIL8LFAQ04XC20",
@@ -1712,10 +1058,802 @@
     "failureKind": null,
     "returned": 1,
     "found": false,
+    "foundByName": false,
     "rank": null,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 98
+    "ms": 110
+   }
+  ],
+  "senior": [
+   {
+    "key": "ccn:105485",
+    "name": "HAMLIN PLACE OF BOYNTON BEACH",
+    "variant": "displayed",
+    "input": "HAMLIN PLACE OF BOYNTON BEACH",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 487
+   },
+   {
+    "key": "ccn:105485",
+    "name": "HAMLIN PLACE OF BOYNTON BEACH",
+    "variant": "lowercase",
+    "input": "hamlin place of boynton beach",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 478
+   },
+   {
+    "key": "ccn:105485",
+    "name": "HAMLIN PLACE OF BOYNTON BEACH",
+    "variant": "presentation",
+    "input": "HAMLIN PLACE OF BOYNTON BEACH",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:106111",
+    "name": "HEALTH CENTER AT SINAI RESIDENCES",
+    "variant": "displayed",
+    "input": "HEALTH CENTER AT SINAI RESIDENCES",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 407
+   },
+   {
+    "key": "ccn:106111",
+    "name": "HEALTH CENTER AT SINAI RESIDENCES",
+    "variant": "lowercase",
+    "input": "health center at sinai residences",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 288
+   },
+   {
+    "key": "ccn:106111",
+    "name": "HEALTH CENTER AT SINAI RESIDENCES",
+    "variant": "presentation",
+    "input": "HEALTH CENTER AT SINAI RESIDENCES",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:105496",
+    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
+    "variant": "displayed",
+    "input": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 269
+   },
+   {
+    "key": "ccn:105496",
+    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
+    "variant": "lowercase",
+    "input": "isles of boynton nursing and rehab center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 261
+   },
+   {
+    "key": "ccn:105496",
+    "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
+    "variant": "presentation",
+    "input": "ISLES OF BOYNTON NURSING AND REHAB CENTER",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:105555",
+    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
+    "variant": "displayed",
+    "input": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 283
+   },
+   {
+    "key": "ccn:105555",
+    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
+    "variant": "lowercase",
+    "input": "jupiter rehabilitation and healthcare center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 425
+   },
+   {
+    "key": "ccn:105555",
+    "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
+    "variant": "presentation",
+    "input": "JUPITER REHABILITATION AND HEALTHCARE CENTER",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:105268",
+    "name": "LAKESIDE HEALTH CENTER",
+    "variant": "displayed",
+    "input": "LAKESIDE HEALTH CENTER",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 314
+   },
+   {
+    "key": "ccn:105268",
+    "name": "LAKESIDE HEALTH CENTER",
+    "variant": "lowercase",
+    "input": "lakeside health center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 263
+   },
+   {
+    "key": "ccn:105268",
+    "name": "LAKESIDE HEALTH CENTER",
+    "variant": "presentation",
+    "input": "LAKESIDE HEALTH CENTER",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:676467",
+    "name": "Cypress Creek Rehabilitation and Healthcare Center",
+    "variant": "displayed",
+    "input": "Cypress Creek Rehabilitation and Healthcare Center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 302
+   },
+   {
+    "key": "ccn:676467",
+    "name": "Cypress Creek Rehabilitation and Healthcare Center",
+    "variant": "lowercase",
+    "input": "cypress creek rehabilitation and healthcare center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 267
+   },
+   {
+    "key": "ccn:676467",
+    "name": "Cypress Creek Rehabilitation and Healthcare Center",
+    "variant": "presentation",
+    "input": "Cypress Creek Rehabilitation and Healthcare Center",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:676263",
+    "name": "Deerbrook Skilled Nursing and Rehab Center",
+    "variant": "displayed",
+    "input": "Deerbrook Skilled Nursing and Rehab Center",
+    "redundantClarification": false,
+    "state": "UNSUPPORTED_OPERATION",
+    "failureKind": null,
+    "returned": 0,
+    "found": false,
+    "foundByName": false,
+    "rank": null,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 162
+   },
+   {
+    "key": "ccn:676263",
+    "name": "Deerbrook Skilled Nursing and Rehab Center",
+    "variant": "lowercase",
+    "input": "deerbrook skilled nursing and rehab center",
+    "redundantClarification": false,
+    "state": "UNSUPPORTED_OPERATION",
+    "failureKind": null,
+    "returned": 0,
+    "found": false,
+    "foundByName": false,
+    "rank": null,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 166
+   },
+   {
+    "key": "ccn:676263",
+    "name": "Deerbrook Skilled Nursing and Rehab Center",
+    "variant": "presentation",
+    "input": "Deerbrook Skilled Nursing and Rehab Center",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:676081",
+    "name": "EAST VIEW HEALTHCARE",
+    "variant": "displayed",
+    "input": "EAST VIEW HEALTHCARE",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 264
+   },
+   {
+    "key": "ccn:676081",
+    "name": "EAST VIEW HEALTHCARE",
+    "variant": "lowercase",
+    "input": "east view healthcare",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 263
+   },
+   {
+    "key": "ccn:676081",
+    "name": "EAST VIEW HEALTHCARE",
+    "variant": "presentation",
+    "input": "EAST VIEW HEALTHCARE",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:676412",
+    "name": "Fall Creek Rehabilitation and Healthcare Center",
+    "variant": "displayed",
+    "input": "Fall Creek Rehabilitation and Healthcare Center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 283
+   },
+   {
+    "key": "ccn:676412",
+    "name": "Fall Creek Rehabilitation and Healthcare Center",
+    "variant": "lowercase",
+    "input": "fall creek rehabilitation and healthcare center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 277
+   },
+   {
+    "key": "ccn:676412",
+    "name": "Fall Creek Rehabilitation and Healthcare Center",
+    "variant": "presentation",
+    "input": "Fall Creek Rehabilitation and Healthcare Center",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:676111",
+    "name": "FFIII Houston SNF Tenant LLC",
+    "variant": "displayed",
+    "input": "FFIII Houston SNF Tenant LLC",
+    "redundantClarification": false,
+    "state": "UNSUPPORTED_OPERATION",
+    "failureKind": null,
+    "returned": 0,
+    "found": false,
+    "foundByName": false,
+    "rank": null,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 163
+   },
+   {
+    "key": "ccn:676111",
+    "name": "FFIII Houston SNF Tenant LLC",
+    "variant": "lowercase",
+    "input": "ffiii houston snf tenant llc",
+    "redundantClarification": false,
+    "state": "UNSUPPORTED_OPERATION",
+    "failureKind": null,
+    "returned": 0,
+    "found": false,
+    "foundByName": false,
+    "rank": null,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 217
+   },
+   {
+    "key": "ccn:676111",
+    "name": "FFIII Houston SNF Tenant LLC",
+    "variant": "presentation",
+    "input": "FFIII Houston SNF Tenant",
+    "redundantClarification": false,
+    "state": "UNSUPPORTED_OPERATION",
+    "failureKind": null,
+    "returned": 0,
+    "found": false,
+    "foundByName": false,
+    "rank": null,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 158
+   },
+   {
+    "key": "ccn:146053",
+    "name": "ALIYA OF PALOS PARK",
+    "variant": "displayed",
+    "input": "ALIYA OF PALOS PARK",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 252
+   },
+   {
+    "key": "ccn:146053",
+    "name": "ALIYA OF PALOS PARK",
+    "variant": "lowercase",
+    "input": "aliya of palos park",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 267
+   },
+   {
+    "key": "ccn:146053",
+    "name": "ALIYA OF PALOS PARK",
+    "variant": "presentation",
+    "input": "ALIYA OF PALOS PARK",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:146198",
+    "name": "ALL AMERICAN VLGE NRSG & RHB",
+    "variant": "displayed",
+    "input": "ALL AMERICAN VLGE NRSG & RHB",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 265
+   },
+   {
+    "key": "ccn:146198",
+    "name": "ALL AMERICAN VLGE NRSG & RHB",
+    "variant": "lowercase",
+    "input": "all american vlge nrsg & rhb",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 261
+   },
+   {
+    "key": "ccn:146198",
+    "name": "ALL AMERICAN VLGE NRSG & RHB",
+    "variant": "presentation",
+    "input": "ALL AMERICAN VLGE NRSG & RHB",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:145867",
+    "name": "ALTA REHAB AT FAIRMONT",
+    "variant": "displayed",
+    "input": "ALTA REHAB AT FAIRMONT",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 258
+   },
+   {
+    "key": "ccn:145867",
+    "name": "ALTA REHAB AT FAIRMONT",
+    "variant": "lowercase",
+    "input": "alta rehab at fairmont",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 229
+   },
+   {
+    "key": "ccn:145867",
+    "name": "ALTA REHAB AT FAIRMONT",
+    "variant": "presentation",
+    "input": "ALTA REHAB AT FAIRMONT",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:145913",
+    "name": "Aperion Care Burbank",
+    "variant": "displayed",
+    "input": "Aperion Care Burbank",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 264
+   },
+   {
+    "key": "ccn:145913",
+    "name": "Aperion Care Burbank",
+    "variant": "lowercase",
+    "input": "aperion care burbank",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 256
+   },
+   {
+    "key": "ccn:145913",
+    "name": "Aperion Care Burbank",
+    "variant": "presentation",
+    "input": "Aperion Care Burbank",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:145877",
+    "name": "APERION CARE DOLTON",
+    "variant": "displayed",
+    "input": "APERION CARE DOLTON",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 259
+   },
+   {
+    "key": "ccn:145877",
+    "name": "APERION CARE DOLTON",
+    "variant": "lowercase",
+    "input": "aperion care dolton",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 268
+   },
+   {
+    "key": "ccn:145877",
+    "name": "APERION CARE DOLTON",
+    "variant": "presentation",
+    "input": "APERION CARE DOLTON",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:035164",
+    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
+    "variant": "displayed",
+    "input": "DESERT BLOSSOM HEALTH & REHAB CENTER",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 236
+   },
+   {
+    "key": "ccn:035164",
+    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
+    "variant": "lowercase",
+    "input": "desert blossom health & rehab center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 307
+   },
+   {
+    "key": "ccn:035164",
+    "name": "DESERT BLOSSOM HEALTH & REHAB CENTER",
+    "variant": "presentation",
+    "input": "DESERT BLOSSOM HEALTH & REHAB CENTER",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:035062",
+    "name": "DESERT HAVEN CARE CENTER",
+    "variant": "displayed",
+    "input": "DESERT HAVEN CARE CENTER",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 229
+   },
+   {
+    "key": "ccn:035062",
+    "name": "DESERT HAVEN CARE CENTER",
+    "variant": "lowercase",
+    "input": "desert haven care center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 250
+   },
+   {
+    "key": "ccn:035062",
+    "name": "DESERT HAVEN CARE CENTER",
+    "variant": "presentation",
+    "input": "DESERT HAVEN CARE CENTER",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:035014",
+    "name": "Desert Terrace Healthcare Center",
+    "variant": "displayed",
+    "input": "Desert Terrace Healthcare Center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 273
+   },
+   {
+    "key": "ccn:035014",
+    "name": "Desert Terrace Healthcare Center",
+    "variant": "lowercase",
+    "input": "desert terrace healthcare center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 251
+   },
+   {
+    "key": "ccn:035014",
+    "name": "Desert Terrace Healthcare Center",
+    "variant": "presentation",
+    "input": "Desert Terrace Healthcare Center",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:035166",
+    "name": "Estrella Health And Rehabilitation Center",
+    "variant": "displayed",
+    "input": "Estrella Health And Rehabilitation Center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 279
+   },
+   {
+    "key": "ccn:035166",
+    "name": "Estrella Health And Rehabilitation Center",
+    "variant": "lowercase",
+    "input": "estrella health and rehabilitation center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 270
+   },
+   {
+    "key": "ccn:035166",
+    "name": "Estrella Health And Rehabilitation Center",
+    "variant": "presentation",
+    "input": "Estrella Health And Rehabilitation Center",
+    "skipped": "identical_to_displayed"
+   },
+   {
+    "key": "ccn:035256",
+    "name": "Freedom Plaza Care Center",
+    "variant": "displayed",
+    "input": "Freedom Plaza Care Center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 255
+   },
+   {
+    "key": "ccn:035256",
+    "name": "Freedom Plaza Care Center",
+    "variant": "lowercase",
+    "input": "freedom plaza care center",
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 260
+   },
+   {
+    "key": "ccn:035256",
+    "name": "Freedom Plaza Care Center",
+    "variant": "presentation",
+    "input": "Freedom Plaza Care Center",
+    "skipped": "identical_to_displayed"
    }
   ],
   "investor": [
@@ -1729,10 +1867,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 434
+    "ms": 464
    },
    {
     "key": "crd:319484",
@@ -1744,10 +1883,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 192
+    "ms": 195
    },
    {
     "key": "crd:319484",
@@ -1766,10 +1906,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 204
+    "ms": 242
    },
    {
     "key": "crd:343129",
@@ -1781,10 +1922,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 194
+    "ms": 213
    },
    {
     "key": "crd:343129",
@@ -1796,10 +1938,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 190
+    "ms": 188
    },
    {
     "key": "crd:339082",
@@ -1811,10 +1954,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 226
+    "ms": 191
    },
    {
     "key": "crd:339082",
@@ -1826,10 +1970,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 213
+    "ms": 200
    },
    {
     "key": "crd:339082",
@@ -1841,10 +1986,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 182
+    "ms": 212
    },
    {
     "key": "crd:324329",
@@ -1856,10 +2002,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 193
+    "ms": 210
    },
    {
     "key": "crd:324329",
@@ -1871,10 +2018,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 187
+    "ms": 221
    },
    {
     "key": "crd:324329",
@@ -1886,10 +2034,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 185
+    "ms": 218
    },
    {
     "key": "crd:134943",
@@ -1901,10 +2050,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 219
+    "ms": 204
    },
    {
     "key": "crd:134943",
@@ -1916,10 +2066,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 205
+    "ms": 189
    },
    {
     "key": "crd:134943",
@@ -1931,10 +2082,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 175
+    "ms": 184
    },
    {
     "key": "crd:141112",
@@ -1946,6 +2098,7 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
@@ -1961,10 +2114,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 199
+    "ms": 221
    },
    {
     "key": "crd:141112",
@@ -1976,10 +2130,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 174
+    "ms": 163
    },
    {
     "key": "crd:310641",
@@ -1991,10 +2146,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 210
+    "ms": 209
    },
    {
     "key": "crd:310641",
@@ -2006,10 +2162,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 203
+    "ms": 212
    },
    {
     "key": "crd:310641",
@@ -2021,10 +2178,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 183
+    "ms": 209
    },
    {
     "key": "crd:136667",
@@ -2036,10 +2194,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 203
+    "ms": 199
    },
    {
     "key": "crd:136667",
@@ -2051,10 +2210,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 232
+    "ms": 192
    },
    {
     "key": "crd:136667",
@@ -2066,10 +2226,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 184
+    "ms": 202
    },
    {
     "key": "crd:289273",
@@ -2081,10 +2242,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 175
+    "ms": 179
    },
    {
     "key": "crd:289273",
@@ -2096,10 +2258,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 178
+    "ms": 191
    },
    {
     "key": "crd:289273",
@@ -2118,10 +2281,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 234
+    "ms": 192
    },
    {
     "key": "crd:140054",
@@ -2133,10 +2297,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 290
+    "ms": 202
    },
    {
     "key": "crd:140054",
@@ -2148,10 +2313,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 193
+    "ms": 235
    },
    {
     "key": "crd:284487",
@@ -2163,10 +2329,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 215
+    "ms": 229
    },
    {
     "key": "crd:284487",
@@ -2178,10 +2345,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 215
+    "ms": 206
    },
    {
     "key": "crd:284487",
@@ -2193,10 +2361,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 199
+    "ms": 189
    },
    {
     "key": "crd:112571",
@@ -2208,10 +2377,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 1,
-    "ms": 193
+    "ms": 208
    },
    {
     "key": "crd:112571",
@@ -2223,10 +2393,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 1,
-    "ms": 201
+    "ms": 200
    },
    {
     "key": "crd:112571",
@@ -2245,10 +2416,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 224
+    "ms": 349
    },
    {
     "key": "crd:161853",
@@ -2260,10 +2432,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 207
+    "ms": 220
    },
    {
     "key": "crd:161853",
@@ -2275,10 +2448,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 188
+    "ms": 249
    },
    {
     "key": "crd:311902",
@@ -2290,10 +2464,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 186
+    "ms": 213
    },
    {
     "key": "crd:311902",
@@ -2305,10 +2480,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 563
+    "ms": 186
    },
    {
     "key": "crd:311902",
@@ -2320,10 +2496,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 188
+    "ms": 185
    },
    {
     "key": "crd:31256",
@@ -2335,10 +2512,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 225
+    "ms": 216
    },
    {
     "key": "crd:31256",
@@ -2350,10 +2528,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 209
+    "ms": 231
    },
    {
     "key": "crd:31256",
@@ -2365,6 +2544,7 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
@@ -2380,10 +2560,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 179
+    "ms": 190
    },
    {
     "key": "crd:324812",
@@ -2395,10 +2576,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 183
+    "ms": 296
    },
    {
     "key": "crd:324812",
@@ -2412,27 +2594,48 @@
     "name": "CAPITAL ASSET MANAGEMENT, INC.",
     "variant": "displayed",
     "input": "CAPITAL ASSET MANAGEMENT, INC.",
-    "redundantClarification": true,
-    "reason": "CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
-    "found": false
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 1,
+    "ms": 197
    },
    {
     "key": "crd:120597",
     "name": "CAPITAL ASSET MANAGEMENT, INC.",
     "variant": "lowercase",
     "input": "capital asset management, inc.",
-    "redundantClarification": true,
-    "reason": "CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
-    "found": false
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 1,
+    "ms": 219
    },
    {
     "key": "crd:120597",
     "name": "CAPITAL ASSET MANAGEMENT, INC.",
     "variant": "presentation",
     "input": "CAPITAL ASSET MANAGEMENT",
-    "redundantClarification": true,
-    "reason": "CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
-    "found": false
+    "redundantClarification": false,
+    "state": "PARTIAL_TRUNCATED",
+    "failureKind": null,
+    "returned": 10,
+    "found": true,
+    "foundByName": true,
+    "rank": 4,
+    "truncated": true,
+    "irrelevant": 10,
+    "ms": 655
    },
    {
     "key": "crd:150488",
@@ -2444,10 +2647,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 196
+    "ms": 205
    },
    {
     "key": "crd:150488",
@@ -2459,10 +2663,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 208
+    "ms": 199
    },
    {
     "key": "crd:150488",
@@ -2481,10 +2686,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 210
+    "ms": 234
    },
    {
     "key": "crd:16678",
@@ -2496,10 +2702,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 204
+    "ms": 219
    },
    {
     "key": "crd:16678",
@@ -2518,10 +2725,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 210
+    "ms": 183
    },
    {
     "key": "crd:104946",
@@ -2533,10 +2741,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 209
+    "ms": 222
    },
    {
     "key": "crd:104946",
@@ -2548,10 +2757,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 187
+    "ms": 174
    }
   ],
   "move": [
@@ -2565,10 +2775,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1134
+    "ms": 1287
    },
    {
     "key": "slug:across-states-moving-llc",
@@ -2580,10 +2791,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 738
+    "ms": 1116
    },
    {
     "key": "slug:across-states-moving-llc",
@@ -2595,10 +2807,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 714
+    "ms": 915
    },
    {
     "key": "slug:addison-forwarding-company",
@@ -2610,10 +2823,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 783
+    "ms": 809
    },
    {
     "key": "slug:addison-forwarding-company",
@@ -2625,10 +2839,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 843
+    "ms": 716
    },
    {
     "key": "slug:addison-forwarding-company",
@@ -2647,10 +2862,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 819
+    "ms": 896
    },
    {
     "key": "slug:aer-logistics",
@@ -2662,10 +2878,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 585
+    "ms": 1043
    },
    {
     "key": "slug:aer-logistics",
@@ -2682,12 +2899,13 @@
     "redundantClarification": false,
     "state": "PARTIAL_TRUNCATED",
     "failureKind": null,
-    "returned": 8,
+    "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": true,
-    "irrelevant": 5,
-    "ms": 650
+    "irrelevant": 0,
+    "ms": 1096
    },
    {
     "key": "slug:ag-moving-and-storage",
@@ -2697,12 +2915,13 @@
     "redundantClarification": false,
     "state": "PARTIAL_TRUNCATED",
     "failureKind": null,
-    "returned": 8,
+    "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": true,
-    "irrelevant": 5,
-    "ms": 720
+    "irrelevant": 0,
+    "ms": 1098
    },
    {
     "key": "slug:ag-moving-and-storage",
@@ -2717,14 +2936,15 @@
     "variant": "displayed",
     "input": "Al's Relocation & Storage",
     "redundantClarification": false,
-    "state": "TECHNICAL_FAILURE",
-    "failureKind": "name_filter_not_proven",
-    "returned": 0,
-    "found": false,
-    "rank": null,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 715
+    "ms": 694
    },
    {
     "key": "slug:al-s-relocation-storage",
@@ -2732,14 +2952,15 @@
     "variant": "lowercase",
     "input": "al's relocation & storage",
     "redundantClarification": false,
-    "state": "TECHNICAL_FAILURE",
-    "failureKind": "name_filter_not_proven",
-    "returned": 0,
-    "found": false,
-    "rank": null,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 690
+    "ms": 874
    },
    {
     "key": "slug:al-s-relocation-storage",
@@ -2758,10 +2979,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 611
+    "ms": 820
    },
    {
     "key": "slug:booker-smith-transportation",
@@ -2773,10 +2995,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 752
+    "ms": 782
    },
    {
     "key": "slug:booker-smith-transportation",
@@ -2795,10 +3018,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 644
+    "ms": 736
    },
    {
     "key": "slug:brazosmovers-com-llc",
@@ -2810,10 +3034,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 659
+    "ms": 696
    },
    {
     "key": "slug:brazosmovers-com-llc",
@@ -2825,10 +3050,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 542
+    "ms": 706
    },
    {
     "key": "slug:brown-box-movers",
@@ -2840,10 +3066,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 759
+    "ms": 882
    },
    {
     "key": "slug:brown-box-movers",
@@ -2855,10 +3082,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 748
+    "ms": 1119
    },
    {
     "key": "slug:brown-box-movers",
@@ -2877,10 +3105,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 491
+    "ms": 863
    },
    {
     "key": "slug:bugbee-a-s",
@@ -2892,10 +3121,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 509
+    "ms": 526
    },
    {
     "key": "slug:bugbee-a-s",
@@ -2912,12 +3142,13 @@
     "redundantClarification": false,
     "state": "PARTIAL_TRUNCATED",
     "failureKind": null,
-    "returned": 6,
+    "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": true,
     "irrelevant": 0,
-    "ms": 699
+    "ms": 670
    },
    {
     "key": "slug:c-l-movers-llc",
@@ -2927,12 +3158,13 @@
     "redundantClarification": false,
     "state": "PARTIAL_TRUNCATED",
     "failureKind": null,
-    "returned": 6,
+    "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": true,
     "irrelevant": 0,
-    "ms": 739
+    "ms": 650
    },
    {
     "key": "slug:c-l-movers-llc",
@@ -2940,14 +3172,15 @@
     "variant": "presentation",
     "input": "C&L Movers",
     "redundantClarification": false,
-    "state": "PARTIAL_TRUNCATED",
-    "failureKind": null,
-    "returned": 7,
+    "state": "TECHNICAL_FAILURE",
+    "failureKind": "name_filter_not_proven",
+    "returned": 0,
     "found": false,
+    "foundByName": false,
     "rank": null,
-    "truncated": true,
+    "truncated": false,
     "irrelevant": 0,
-    "ms": 725
+    "ms": 718
    },
    {
     "key": "slug:alkhlif-transport-llc",
@@ -2959,10 +3192,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 709
+    "ms": 671
    },
    {
     "key": "slug:alkhlif-transport-llc",
@@ -2974,10 +3208,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 670
+    "ms": 721
    },
    {
     "key": "slug:alkhlif-transport-llc",
@@ -2989,10 +3224,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 631
+    "ms": 672
    },
    {
     "key": "slug:apex-cargo-trans",
@@ -3004,10 +3240,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 640
+    "ms": 560
    },
    {
     "key": "slug:apex-cargo-trans",
@@ -3019,10 +3256,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 553
+    "ms": 725
    },
    {
     "key": "slug:apex-cargo-trans",
@@ -3041,10 +3279,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 742
+    "ms": 1058
    },
    {
     "key": "slug:armbruster-moving-storage-inc",
@@ -3056,10 +3295,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 836
+    "ms": 884
    },
    {
     "key": "slug:armbruster-moving-storage-inc",
@@ -3071,10 +3311,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 715
+    "ms": 925
    },
    {
     "key": "slug:ask-amy-home-furnishings-ask-amy-commercial-furnishings",
@@ -3086,10 +3327,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 714
+    "ms": 732
    },
    {
     "key": "slug:ask-amy-home-furnishings-ask-amy-commercial-furnishings",
@@ -3101,10 +3343,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 796
+    "ms": 1422
    },
    {
     "key": "slug:ask-amy-home-furnishings-ask-amy-commercial-furnishings",
@@ -3123,10 +3366,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 733
+    "ms": 794
    },
    {
     "key": "slug:bamm-moving-and-cleaning-llc",
@@ -3138,10 +3382,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 734
+    "ms": 740
    },
    {
     "key": "slug:bamm-moving-and-cleaning-llc",
@@ -3153,10 +3398,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 738
+    "ms": 693
    },
    {
     "key": "slug:integrity-moving-mobile-storage-llc",
@@ -3168,10 +3414,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 731
+    "ms": 726
    },
    {
     "key": "slug:integrity-moving-mobile-storage-llc",
@@ -3183,10 +3430,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 736
+    "ms": 713
    },
    {
     "key": "slug:integrity-moving-mobile-storage-llc",
@@ -3198,10 +3446,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 690
+    "ms": 692
    },
    {
     "key": "slug:j-d-sam-trans-inc",
@@ -3213,10 +3462,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 611
+    "ms": 687
    },
    {
     "key": "slug:j-d-sam-trans-inc",
@@ -3228,10 +3478,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 601
+    "ms": 586
    },
    {
     "key": "slug:j-d-sam-trans-inc",
@@ -3243,10 +3494,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 551
+    "ms": 1311
    },
    {
     "key": "slug:keim-express-transport",
@@ -3258,10 +3510,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 566
+    "ms": 647
    },
    {
     "key": "slug:keim-express-transport",
@@ -3273,10 +3526,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 574
+    "ms": 663
    },
    {
     "key": "slug:keim-express-transport",
@@ -3295,10 +3549,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 600
+    "ms": 717
    },
    {
     "key": "slug:khr-services",
@@ -3310,10 +3565,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 637
+    "ms": 808
    },
    {
     "key": "slug:khr-services",
@@ -3332,10 +3588,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 838
+    "ms": 873
    },
    {
     "key": "slug:krupp-moving-and-storage-ii-llc",
@@ -3347,10 +3604,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 730
+    "ms": 766
    },
    {
     "key": "slug:krupp-moving-and-storage-ii-llc",
@@ -3362,10 +3620,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 978
+    "ms": 886
    }
   ],
   "insurance": [
@@ -3379,10 +3638,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1625
+    "ms": 1855
    },
    {
     "key": "npn:21664325",
@@ -3394,10 +3654,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1324
+    "ms": 1240
    },
    {
     "key": "npn:21664325",
@@ -3416,10 +3677,11 @@
     "failureKind": null,
     "returned": 4,
     "found": true,
+    "foundByName": true,
     "rank": 4,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1989
+    "ms": 1307
    },
    {
     "key": "npn:8417663",
@@ -3431,10 +3693,11 @@
     "failureKind": null,
     "returned": 4,
     "found": true,
+    "foundByName": true,
     "rank": 4,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1157
+    "ms": 1280
    },
    {
     "key": "npn:8417663",
@@ -3446,10 +3709,11 @@
     "failureKind": null,
     "returned": 4,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1078
+    "ms": 1234
    },
    {
     "key": "npn:12664272",
@@ -3461,10 +3725,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1066
+    "ms": 1131
    },
    {
     "key": "npn:12664272",
@@ -3476,10 +3741,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1135
+    "ms": 1850
    },
    {
     "key": "npn:12664272",
@@ -3491,10 +3757,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1113
+    "ms": 1610
    },
    {
     "key": "npn:19548104",
@@ -3506,10 +3773,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1129
+    "ms": 1544
    },
    {
     "key": "npn:19548104",
@@ -3521,10 +3789,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1089
+    "ms": 1465
    },
    {
     "key": "npn:19548104",
@@ -3536,10 +3805,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1125
+    "ms": 1145
    },
    {
     "key": "npn:21381648",
@@ -3551,10 +3821,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1101
+    "ms": 1147
    },
    {
     "key": "npn:21381648",
@@ -3566,10 +3837,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1125
+    "ms": 1159
    },
    {
     "key": "npn:21381648",
@@ -3588,10 +3860,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1056
+    "ms": 1248
    },
    {
     "key": "npn:17313366",
@@ -3603,10 +3876,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1229
+    "ms": 1155
    },
    {
     "key": "npn:17313366",
@@ -3618,10 +3892,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1163
+    "ms": 1117
    },
    {
     "key": "npn:21686103",
@@ -3633,10 +3908,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1302
+    "ms": 1188
    },
    {
     "key": "npn:21686103",
@@ -3648,10 +3924,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1124
+    "ms": 1165
    },
    {
     "key": "npn:21686103",
@@ -3663,10 +3940,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1151
+    "ms": 1120
    },
    {
     "key": "npn:21226126",
@@ -3678,10 +3956,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1116
+    "ms": 1104
    },
    {
     "key": "npn:21226126",
@@ -3693,10 +3972,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1138
+    "ms": 1150
    },
    {
     "key": "npn:21226126",
@@ -3708,10 +3988,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1175
+    "ms": 1134
    },
    {
     "key": "npn:20164257",
@@ -3723,10 +4004,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1183
+    "ms": 1107
    },
    {
     "key": "npn:20164257",
@@ -3738,10 +4020,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1086
+    "ms": 1163
    },
    {
     "key": "npn:20164257",
@@ -3753,10 +4036,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1083
+    "ms": 1666
    },
    {
     "key": "npn:21479124",
@@ -3768,10 +4052,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1189
+    "ms": 2402
    },
    {
     "key": "npn:21479124",
@@ -3783,6 +4068,7 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
@@ -3798,10 +4084,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1126
+    "ms": 2433
    },
    {
     "key": "npn:19235993",
@@ -3813,10 +4100,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1084
+    "ms": 1148
    },
    {
     "key": "npn:19235993",
@@ -3828,10 +4116,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1146
+    "ms": 2034
    },
    {
     "key": "npn:19235993",
@@ -3843,10 +4132,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1093
+    "ms": 1447
    },
    {
     "key": "npn:20572955",
@@ -3858,10 +4148,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1110
+    "ms": 1482
    },
    {
     "key": "npn:20572955",
@@ -3873,10 +4164,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1090
+    "ms": 1170
    },
    {
     "key": "npn:20572955",
@@ -3888,10 +4180,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1097
+    "ms": 1308
    },
    {
     "key": "npn:21785098",
@@ -3903,10 +4196,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1104
+    "ms": 1153
    },
    {
     "key": "npn:21785098",
@@ -3918,10 +4212,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1082
+    "ms": 1125
    },
    {
     "key": "npn:21785098",
@@ -3933,10 +4228,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1145
+    "ms": 1097
    },
    {
     "key": "npn:9118784",
@@ -3948,10 +4244,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1087
+    "ms": 1102
    },
    {
     "key": "npn:9118784",
@@ -3963,10 +4260,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1062
+    "ms": 1294
    },
    {
     "key": "npn:9118784",
@@ -3978,10 +4276,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1081
+    "ms": 1086
    },
    {
     "key": "npn:21360813",
@@ -3993,10 +4292,11 @@
     "failureKind": null,
     "returned": 5,
     "found": true,
+    "foundByName": true,
     "rank": 5,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1098
+    "ms": 1071
    },
    {
     "key": "npn:21360813",
@@ -4008,10 +4308,11 @@
     "failureKind": null,
     "returned": 5,
     "found": true,
+    "foundByName": true,
     "rank": 5,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1097
+    "ms": 2070
    },
    {
     "key": "npn:21360813",
@@ -4023,10 +4324,11 @@
     "failureKind": null,
     "returned": 5,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1047
+    "ms": 1223
    },
    {
     "key": "npn:21031199",
@@ -4038,10 +4340,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1079
+    "ms": 1065
    },
    {
     "key": "npn:21031199",
@@ -4053,10 +4356,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1150
+    "ms": 2191
    },
    {
     "key": "npn:21031199",
@@ -4068,10 +4372,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1102
+    "ms": 3563
    },
    {
     "key": "npn:16436939",
@@ -4083,10 +4388,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1075
+    "ms": 1132
    },
    {
     "key": "npn:16436939",
@@ -4098,10 +4404,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1151
+    "ms": 1106
    },
    {
     "key": "npn:16436939",
@@ -4113,10 +4420,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1113
+    "ms": 1168
    },
    {
     "key": "npn:957844",
@@ -4128,10 +4436,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 2,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1114
+    "ms": 1111
    },
    {
     "key": "npn:957844",
@@ -4143,10 +4452,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 2,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1132
+    "ms": 1096
    },
    {
     "key": "npn:957844",
@@ -4158,28 +4468,43 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 2,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1104
+    "ms": 1480
    },
    {
     "key": "npn:15981011",
     "name": "1ST TEXAS AGENCY INC",
     "variant": "displayed",
     "input": "1ST TEXAS AGENCY INC",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "found": false
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 1526
    },
    {
     "key": "npn:15981011",
     "name": "1ST TEXAS AGENCY INC",
     "variant": "lowercase",
     "input": "1st texas agency inc",
-    "redundantClarification": true,
-    "reason": "PLANNER_PROTECTED:IDENTITY_CONTRADICTS_GEOGRAPHY",
-    "found": false
+    "redundantClarification": false,
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "failureKind": null,
+    "returned": 1,
+    "found": true,
+    "foundByName": true,
+    "rank": 1,
+    "truncated": false,
+    "irrelevant": 0,
+    "ms": 1099
    },
    {
     "key": "npn:15981011",
@@ -4191,10 +4516,11 @@
     "failureKind": null,
     "returned": 1,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1065
+    "ms": 1124
    },
    {
     "key": "npn:22092577",
@@ -4206,10 +4532,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 2,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1104
+    "ms": 1148
    },
    {
     "key": "npn:22092577",
@@ -4221,10 +4548,11 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 2,
     "truncated": false,
     "irrelevant": 0,
-    "ms": 1133
+    "ms": 1150
    },
    {
     "key": "npn:22092577",
@@ -4236,6 +4564,7 @@
     "failureKind": null,
     "returned": 2,
     "found": true,
+    "foundByName": true,
     "rank": 1,
     "truncated": false,
     "irrelevant": 0,

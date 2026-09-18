@@ -57,9 +57,11 @@ export function sortCandidates<T extends { matchMethod: Parameters<typeof method
 
 export function summarizeCoverage(hubs: HubNameSearchOutcome[]): NameCandidateCoverage {
   const inScope = hubs.filter((h) => h.state !== 'NOT_SEARCHED_OUT_OF_SCOPE');
-  const completed = inScope.filter((h) => h.state === 'COMPLETED_WITH_CANDIDATES' || h.state === 'COMPLETED_NO_CANDIDATES' || h.state === 'PARTIAL_TRUNCATED');
+  // A truncated page with nothing admissible is NOT a completed search of that hub: more rows exist there.
+  const truncatedEmpty = (h: HubNameSearchOutcome) => h.state === 'PARTIAL_TRUNCATED' && h.candidates.length === 0;
+  const completed = inScope.filter((h) => (h.state === 'COMPLETED_WITH_CANDIDATES' || h.state === 'COMPLETED_NO_CANDIDATES' || h.state === 'PARTIAL_TRUNCATED') && !truncatedEmpty(h));
   const unsupported = inScope.filter((h) => h.state === 'UNSUPPORTED_OPERATION' || h.state === 'POLICY_RESTRICTED');
-  const incomplete = inScope.filter((h) => h.state === 'TECHNICAL_FAILURE');
+  const incomplete = inScope.filter((h) => h.state === 'TECHNICAL_FAILURE' || truncatedEmpty(h));
   const anyCandidates = hubs.some((h) => h.candidates.length > 0);
   return {
     searchedHubs: inScope.filter((h) => h.calls > 0).map((h) => h.hub),

@@ -131,12 +131,19 @@ async function call(ctx: AdapterContext, url: string | URL, init: RequestInit): 
 function finish(base: Base, name: string, mapped: NameCandidate[], rawRowCount: number, extra: Partial<HubNameSearchOutcome>, started: number, page: number): HubNameSearchOutcome {
   const admitted = mapped.filter((c) => rowRelatesToName(name, c.matchedName, c.matchMethod));
   if (rawRowCount > 0 && admitted.length === 0) {
-    return outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven', message: 'The specialist returned records that do not relate to this name, so they were not shown as matches.' }, started, page);
+    // Two very different situations produce "no admissible rows":
+    //  - rows that share NOTHING with the name: the hub ignored the filter -> a failure, never a miss;
+    //  - rows that share only generic words ("C&L Movers" -> "Call The Movers"): category-word padding
+    //    from a hub that DID search the name. Those rows are dropped; the search itself completed.
+    const supplied = new Set(nameTokens(name).filter((t) => t.length >= 2));
+    const padding = mapped.some((c) => nameTokens(c.matchedName).some((t) => supplied.has(t)));
+    if (!padding) return outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven', message: 'The specialist returned records that do not relate to this name, so they were not shown as matches.' }, started, page);
   }
   const seen = new Set<string>();
   const candidates = admitted.filter((c) => (seen.has(c.stableKey) ? false : (seen.add(c.stableKey), true)));
   const truncated = Boolean(extra.hasMore || extra.truncatedWithoutCursor);
-  return outcome(base, { ...extra, nameFilterApplied: true, candidates, state: candidates.length ? (truncated ? 'PARTIAL_TRUNCATED' : 'COMPLETED_WITH_CANDIDATES') : 'COMPLETED_NO_CANDIDATES' }, started, page);
+  // With more rows available at the hub, an empty admitted page is "partial", not a completed miss.
+  return outcome(base, { ...extra, nameFilterApplied: true, candidates, state: truncated ? 'PARTIAL_TRUNCATED' : candidates.length ? 'COMPLETED_WITH_CANDIDATES' : 'COMPLETED_NO_CANDIDATES' }, started, page);
 }
 
 // ---------------------------------------------------------------- Move

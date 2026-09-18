@@ -258,3 +258,16 @@ test('H3. no category-word-only padding: rows must relate to the distinctive par
   assert.equal(rowRelatesToName('tate asset management', 'PARK STATE ASSET MANAGEMENT LLC', 'NAME_CONTAINS'), true, 'hub "contains" semantics are kept (and labeled as the weaker method)');
   assert.equal(rowRelatesToName('Capital Asset Management, Inc.', 'CAPITAL ASSET MANAGEMENT, INC.', 'EXACT_SOURCE_NAME'), true, 'all-generic names still relate to themselves');
 });
+test('H4. padding-only pages are dropped without a false failure; an ignored filter is still a failure', async () => {
+  const base = { contractVersion: MOVE_NETWORK_RESOLVER_VERSION, schemaFingerprint: MOVE_NETWORK_SCHEMA_FINGERPRINT, contractFingerprint: MOVE_NETWORK_CONTRACT_FINGERPRINT, resolutionClass: 'FUZZY_CANDIDATES', returnedResultCount: 2, normalizedQuery: 'c l movers' };
+  const row = (name: string) => ({ publicDisplayName: name, legalName: null, canonicalSlug: name.toLowerCase().replaceAll(' ', '-'), canonicalUrl: 'https://www.movetrusthub.com/companies/x', usdot: '1', mc: null, role: 'Carrier', recordedHq: {}, matchClass: 'token_prefix', matchReason: 'Company-name token match' });
+  const padded = await moveNameAdapter.search('C&L Movers', 1, ctx(jsonFetch(() => ({ body: { ...base, totalMatchingIdentityCount: 80, results: [row('Call The Movers'), row('Caseys Movers LLC')] } }))));
+  assert.equal(padded.state, 'PARTIAL_TRUNCATED'); assert.equal(padded.nameFilterApplied, true); assert.equal(padded.candidates.length, 0); assert.ok(padded.continuation, 'the hub continuation is offered');
+  const { summarizeCoverage } = await import('./orchestrator.ts');
+  const coverage = summarizeCoverage([padded]);
+  assert.equal(coverage.genuineNetworkMiss, false); assert.equal(coverage.completedHubsMiss, false); assert.deepEqual(coverage.incompleteHubs, ['move']);
+  const view = buildNameResultsView({ query: 'C&L Movers', name: 'C&L Movers', scope: 'move', hubs: [padded] });
+  assert.equal(view.kind, 'NOT_COMPLETED'); assert.ok(view.notIncluded.some((r) => /loosely related/.test(r.line)));
+  const ignored = await moveNameAdapter.search('C&L Movers', 1, ctx(jsonFetch(() => ({ body: { ...base, totalMatchingIdentityCount: 2, results: [row('Zeta Relocation'), row('Omega Hauling')] } }))));
+  assert.deepEqual([ignored.state, ignored.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven']);
+});

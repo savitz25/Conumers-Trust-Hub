@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-18T16:55:24.926Z",
+ "generatedAt": "2026-09-18T16:56:11.894Z",
  "cleanBefore": {
   "status": 0,
   "pass": 23,
@@ -31,7 +31,7 @@
    "why": "An unfiltered cohort is admitted as name candidates.",
    "detected": true,
    "failedTests": [
-    "lib\\network\\name-candidates\\th-search-r1-019a.test.ts"
+    "5c. real adapters reject an unfiltered cohort and an unechoed name"
    ]
   },
   {
@@ -43,21 +43,14 @@
     "1b. optional Moving filter narrows to the two Move records and keeps the query; All restores it",
     "6. similarly named records stay distinct, and a lone approximate candidate is not labeled exact",
     "7a. one source fails while others succeed: valid cards kept, incomplete coverage disclosed",
-    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub",
-    "H1. organization-shaped names are searched even where the planner read a journey, care task or place",
-    "H2. the name-echo proof tolerates hub apostrophe/ampersand folding",
-    "H3. no category-word-only padding: rows must relate to the distinctive part of the name"
+    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub"
    ]
   }
  ],
  "cleanAfter": {
-  "status": 1,
-  "pass": 20,
-  "fail": 3,
-  "failing": [
-   "H1. organization-shaped names are searched even where the planner read a journey, care task or place",
-   "H2. the name-echo proof tolerates hub apostrophe/ampersand folding",
-   "H3. no category-word-only padding: rows must relate to the distinctive part of the name"
-  ]
+  "status": 0,
+  "pass": 23,
+  "fail": 0,
+  "failing": []
  }
 }

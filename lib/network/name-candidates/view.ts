@@ -23,6 +23,7 @@ export function askNameHref(query: string, hub: NameHubScope): string {
 }
 
 export function hubStatusLine(hub: HubNameSearchOutcome): string | null {
+  if (hub.state === 'PARTIAL_TRUNCATED' && hub.candidates.length === 0) return `${NETWORK_PUBLIC_NAMES[hub.hub]} returned only loosely related records on its first page, and more exist there. This is not a "no match" result.`;
   if (hub.state === 'TECHNICAL_FAILURE') return `${NETWORK_PUBLIC_NAMES[hub.hub]} could not be searched just now. This is not a "no match" result -- try again.`;
   if (hub.state === 'UNSUPPORTED_OPERATION') return hub.message ?? `${NETWORK_PUBLIC_NAMES[hub.hub]} could not be searched by name from here.`;
   if (hub.state === 'POLICY_RESTRICTED') return hub.message ?? `${NETWORK_PUBLIC_NAMES[hub.hub]} does not publish matching records for name search.`;
@@ -37,8 +38,9 @@ export function buildNameResultsView(input: { query: string; name: string; scope
     return { hub: hub.hub, title: NETWORK_PUBLIC_NAMES[hub.hub], cards: hub.candidates.slice(0, shown), shown, returned: hub.candidates.length, canReveal: shown < hub.candidates.length, canFetchMore, moreMayExist: canFetchMore || hub.truncatedWithoutCursor };
   });
   const total = groups.reduce((n, group) => n + group.returned, 0);
-  const completedNames = hubs.filter((h) => COMPLETED.has(h.state)).map((h) => NETWORK_PUBLIC_NAMES[h.hub]);
-  const anyFailed = hubs.some((h) => h.state === 'TECHNICAL_FAILURE');
+  const truncatedEmpty = (h: HubNameSearchOutcome) => h.state === 'PARTIAL_TRUNCATED' && h.candidates.length === 0;
+  const completedNames = hubs.filter((h) => COMPLETED.has(h.state) && !truncatedEmpty(h)).map((h) => NETWORK_PUBLIC_NAMES[h.hub]);
+  const anyFailed = hubs.some((h) => h.state === 'TECHNICAL_FAILURE' || truncatedEmpty(h));
   const kind: NameResultsView['kind'] = total > 0 ? 'CANDIDATES' : completedNames.length ? 'COMPLETED_MISS' : 'NOT_COMPLETED';
   // Singular/plural follows the actual count; the match label on each card follows evidence, not count.
   const heading = kind === 'CANDIDATES' ? `${total} ${total === 1 ? 'record' : 'records'} with a name like “${name}”` : kind === 'NOT_COMPLETED' ? `We could not complete a search for “${name}”` : `No records named “${name}” were found`;
