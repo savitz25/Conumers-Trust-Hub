@@ -1,0 +1,588 @@
+{
+  "state_code": "NC",
+  "state_name": "North Carolina",
+  "ask_path": "/north-carolina",
+  "ask_canonical": "https://www.asktrusthub.com/north-carolina",
+  "version": "ath-nc-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_charlotte_routes": false,
+  "hardcoded_raleigh_routes": false,
+  "north_carolina_local_phase": "NO",
+  "north_carolina_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "North Carolina’s strongest Trust Hub evidence is NCLBGC search-only current contractor licensing plus recent licensed discipline and unlicensed injunctions, an NCUC household-goods C-number/T-number monthly list that is not FMCSA, DHSR facility classes with an official Adult Care Star Rating that is not a TrustHub ranking, NCCOB current mortgage license classes with exact NCCOB↔NMLS source-native pairs plus HMDA 2025 market activity, NCDOI Licensing Actions and exams while company/agency/producer bulk remains search-only, and NC SOS IA/IAR/BD/agent registers plus IAPD state-IA/ERA/notice/principal-office lenses that cannot collapse into one adviser total. Organizations and evidence records stay separate. Missing, restricted, and search-only sources are unknown — not zero.",
+  "release_gate": {
+    "passed": true,
+    "required_live_specialist_north_carolina_pages": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /north-carolina pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /north-carolina is indexable. Any one specialist failure fails the gate. Do not weaken the gate. Charlotte/Raleigh/local routes are not published.",
+    "verified_at": "2026-09-18T00:00:00.000Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "contractor",
+      "display": "Current NCLBGC statewide roster is search-only",
+      "grain": "Do not headline 38,523 mixed records as active contractors. Supporting: 49 recent licensed case-summary license identities; 43 Spring 2026 unlicensed injunction cases; 236 NC DOA debarred-vendor rows. $40,000 project-value threshold is not every construction job."
+    },
+    {
+      "hub_id": "move",
+      "display": "362 NCUC C-number identities on the September 8, 2026 carrier-list snapshot",
+      "grain": "MONTHLY_LIST_SNAPSHOT, not real-time authority. Supporting: 357 T-numbers; 357 exact C↔T bridges; 5 rows missing T; 5 temporarily suspended observations still listed. Source-announced 361 and parsed 362 must both be preserved. C ≠ T ≠ USDOT ≠ MC."
+    },
+    {
+      "hub_id": "senior",
+      "display": "568 Adult Care Home licenses",
+      "grain": "ACH ≠ FCH ≠ Nursing Home. Supporting separately: 515 Family Care Home licenses; 423 Nursing Home licenses; 1,057 NC DHSR Star Rating observations. Star Rating is government evidence, not a TrustHub ranking or AggregateRating."
+    },
+    {
+      "hub_id": "lender",
+      "display": "484,454 HMDA 2025 North Carolina applications",
+      "grain": "Canonical county-market grain: 279,735 originations / 86,923 denial observations / 100 counties. Not lenders. 640 NCCOB Mortgage Lender rows is a license-class grain. 1,380 mixed current licensed entities is not a lender count."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "2,874 NCDOI Licensing Action catalog rows",
+      "grain": "Mixed license-class catalog — not providers, not complaints, not unique regulatory matters. Supporting: 1,717 Insurance Producer rows; 255 Business Entity rows; 404 distinct docket numbers. Company/agency/producer bulk remain OPEN_SEARCH_ONLY. SQA-009: homeowners/auto agency queries must not become generic NC agencies."
+    },
+    {
+      "hub_id": "investor",
+      "display": "687 North Carolina SOS IA firm CRDs",
+      "grain": "SOS register clock 2026-06-30. Supporting separately: 701 IAPD APPROVED NC state-IA firms from a different clock; 33 ERA; 3,704 notice filings. Do not force 687 and 701 to match. Principal office is not registration."
+    }
+  ],
+  "what_makes_north_carolina_different": [
+    "Contractor: NCLBGC uses a $40,000 project-value threshold plus classification/limitation/qualifier rules, with separate electrical and PHFS boards. Current statewide roster is search-only. Recent licensed discipline and unlicensed injunctions are separate grains.",
+    "Move: NCUC uses a state-specific C-number household-goods Certificate of Exemption plus a separate T-number company/docket identity and a statewide Maximum Rate Tariff. Intrastate NCUC authority is not FMCSA interstate authority.",
+    "Senior: NC DHSR publishes distinct ACH/FCH/Nursing/Home Health/Hospice systems plus an official Adult Care Star Rating and penalty evidence. Star Rating is government evidence, not a TrustHub ranking.",
+    "Lender: NCCOB provides current mortgage licensing with exact NCCOB↔NMLS source-native identity plus substantial mortgage enforcement. Company class, MLO person, HMDA activity, and complaints remain distinct.",
+    "Insurance: NCDOI exposes Licensing Actions, market examinations, financial examinations, company market-share evidence, and receivership context while company/agency/producer bulk rosters remain search-only. SQA-009 product intent is preserved.",
+    "Investor: NC SOS publishes separate IA/IAR/BD/agent registers while IAPD adds state IA/ERA/notice/principal-office lenses on different clocks. Do not add those populations."
+  ],
+  "hub_expansion_ledgers": {
+    "contractor": {
+      "NCLBGC_STATEWIDE_CENSUS": "OPEN_SEARCH_ONLY",
+      "NCLBGC_MIXED_HISTORICAL_RECORDS": 38523,
+      "NCLBGC_MIXED_IS_NOT_ACTIVE_CENSUS": true,
+      "GENERAL_CONTRACTOR_THRESHOLD_USD": 40000,
+      "RECENT_LICENSED_CASE_SUMMARY_LICENSE_IDENTITIES": 49,
+      "SPRING_2026_UNLICENSED_INJUNCTION_CASES": 43,
+      "NC_DOA_DEBARRED_VENDOR_ROWS": 236,
+      "ELECTRICAL_ROSTER": "OPEN_SEARCH_ONLY",
+      "PHFS_ROSTER": "OPEN_SEARCH_ONLY",
+      "STATEWIDE_PERMIT_CAPABILITY": "LOCAL_OR_FRAGMENTED",
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "$40,000 threshold ≠ every construction job. 38,523 mixed records ≠ active contractors. Licensee ≠ qualifier. Unlimited ≠ best. Electrical/PHFS boards ≠ NCLBGC. Complaint ≠ discipline. Unlicensed injunction ≠ licensed discipline. Debarment ≠ license. Search-only ≠ zero."
+    },
+    "move": {
+      "LIST_ROWS": 362,
+      "DISTINCT_C_NUMBERS": 362,
+      "SOURCE_ANNOUNCED_TOTAL": 361,
+      "DISTINCT_T_NUMBERS": 357,
+      "EXACT_C_TO_T_CROSSWALKS": 357,
+      "ROWS_MISSING_T": 5,
+      "AUTHORIZED_AS_LISTED": 357,
+      "TEMPORARILY_SUSPENDED": 5,
+      "SNAPSHOT_KIND": "MONTHLY_LIST_SNAPSHOT",
+      "TARIFF": "NCUC HHG NO. 2 issued 2025-12-30 effective 2026-01-01",
+      "CURRENT_CARRIER_INSURANCE_BULK": "NOT_ACQUIRED",
+      "DOCKET_PORTAL": "OPEN_SEARCH_ONLY",
+      "COMPLAINTS": "INTAKE_AVAILABLE / BULK_NOT_PUBLIC",
+      "EXACT_NCUC_TO_USDOT_BRIDGES": 0,
+      "EXACT_NCUC_TO_MC_BRIDGES": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 362,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_MOVE_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "C-number = Certificate of Exemption. T-number is a separate company/docket identity. C ≠ T ≠ USDOT ≠ MC. Monthly list ≠ real-time status. 361 announced and 362 parsed C identities are both preserved. Tariff ≠ quote. Insurance requirement ≠ current coverage."
+    },
+    "senior": {
+      "ADULT_CARE_HOME_LICENSES": 568,
+      "FAMILY_CARE_HOME_LICENSES": 515,
+      "NURSING_HOME_LICENSES": 423,
+      "HOME_HEALTH_LISTING_ROWS": 192,
+      "HOSPICE_LISTING_ROWS": 212,
+      "HOME_CARE_ALL_MIXED_FILE_ROWS": 3336,
+      "NURSING_POOL_LICENSES": 631,
+      "DHSR_STAR_RATING_OBSERVATIONS": 1057,
+      "EXACT_STATE_LICENSE_TO_FID": 1083,
+      "ADULT_CARE_PENALTY_ROWS": 489,
+      "DISTINCT_PENALTY_EVENTS": 488,
+      "DISTINCT_LICENSES_WITH_PENALTIES": 190,
+      "CMS_NURSING_HOMES": 419,
+      "CMS_HOME_HEALTH": 166,
+      "CMS_HOSPICE": 76,
+      "EXACT_STATE_TO_CMS_BRIDGES": 0,
+      "ADULT_DAY_CENTERS": 93,
+      "ADULT_DAY_CERTIFIED_SLOTS": 5850,
+      "PACE_ORGANIZATIONS": 11,
+      "PACE_LOCATIONS": 14,
+      "NCDOI_CCRC_MAP_COMMUNITIES": 66,
+      "CCRC_HANDBOOK_IDENTITY_ROWS": 68,
+      "CONTINUING_CARE_AT_HOME": 10,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 2633,
+      "NET_NEW_CANONICAL_FACILITIES": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "ACH ≠ FCH ≠ Nursing Home. Home Care ≠ Home Health ≠ Hospice. Nursing Pool ≠ Home Care. Adult Day ≠ residential. PACE org ≠ location. CCRC ≠ DHSR component. State license ≠ CMS CCN. DHSR Star Rating ≠ TrustHub ranking ≠ AggregateRating."
+    },
+    "lender": {
+      "NC_CURRENT_LICENSED_ENTITY_ROWS": 1380,
+      "NC_MORTGAGE_LENDER_ROWS": 640,
+      "NC_MORTGAGE_BROKER_ROWS": 574,
+      "NC_MORTGAGE_SERVICER_ROWS": 62,
+      "NC_MOSR_ROWS": 104,
+      "NC_CURRENT_EXACT_NCCOB_NMLS_PAIRS": 1380,
+      "NC_CURRENT_DISTINCT_NMLS_IDS": 1376,
+      "NC_MLO_OFFICIAL_MATCHING_RECORDS": 24612,
+      "NC_REVERSE_MORTGAGE_CERTIFICATE_ROWS": 112,
+      "HMDA_2025_NC_COUNTY_APPLICATIONS": 484454,
+      "HMDA_2025_NC_COUNTY_ORIGINATIONS": 279735,
+      "HMDA_2025_NC_COUNTY_DENIALS": 86923,
+      "HMDA_2025_NC_COUNTIES": 100,
+      "HMDA_LEI_CELL_APPLICATIONS": 478702,
+      "HMDA_DISTINCT_LEIS": 1121,
+      "NC_CFPB_2025_MORTGAGE_COMPLAINT_ROWS": 920,
+      "NC_NCCOB_MORTGAGE_ORDER_DOCUMENTS": 723,
+      "NC_NCCOB_MORTGAGE_UNIQUE_MATTERS": 693,
+      "NC_FDIC_DEPOSITORY_ROWS": 91,
+      "EXACT_NMLS_LEI_CROSSWALKS": 0,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "NCCOB ≠ NMLS. License ≠ NMLS ID. Lender ≠ broker ≠ servicer ≠ MOSR. MLO person ≠ company. 1,380 mixed entities ≠ lender count. HMDA application ≠ lender. LEI ≠ NMLS. CFPB complaint ≠ finding. Enforcement document ≠ complaint. NCHFA ≠ license. FDIC ≠ NCCOB mortgage license."
+    },
+    "insurance": {
+      "COMPANY_ROSTER": "OPEN_SEARCH_ONLY",
+      "AGENCY_ROSTER": "OPEN_SEARCH_ONLY",
+      "PRODUCER_ROSTER": "OPEN_SEARCH_ONLY",
+      "SURPLUS_LINES_ROSTER": "OPEN_SEARCH_ONLY",
+      "NCDOI_LICENSING_ACTION_ROWS": 2874,
+      "DISTINCT_DOCKET_NUMBERS": 404,
+      "UNIQUE_COMPLETE_MATTER_COUNT": null,
+      "INSURANCE_PRODUCER_ROWS": 1717,
+      "BUSINESS_ENTITY_ROWS": 255,
+      "ADJUSTER_ROWS": 72,
+      "OTHER_MIXED_LICENSE_ROWS": 830,
+      "EXACT_NPN_ROWS": 2398,
+      "ROWS_WITHOUT_EXACT_ID": 444,
+      "HOMEOWNERS_MULTIPLE_PERIL_COMPANY_ROWS": 199,
+      "PRIVATE_PASSENGER_AUTO_COMPANY_ROWS": 190,
+      "MARKET_REGULATION_EXAM_ROWS": 138,
+      "FINANCIAL_EXAM_ROWS": 158,
+      "CURRENT_RECEIVERSHIP_NAMED_LEGAL_ENTITIES": 6,
+      "COMPLAINT_BULK": "INTAKE_AVAILABLE / BULK_NOT_PUBLIC",
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 0,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "Legal insurer ≠ agency ≠ producer ≠ adjuster. NAIC ≠ NPN. Business-entity license has no product LOA. Company market-share line ≠ agency product capability. Licensing action ≠ complaint. Document/row ≠ unique matter. Market exam ≠ financial exam ≠ enforcement. SQA-009: homeowners/auto agency queries must not become generic NC agencies."
+    },
+    "investor": {
+      "SOS_IA_FIRM_CRDS": 687,
+      "SOS_IAR_PERSON_CRDS": 21528,
+      "SOS_BD_FIRM_CRDS": 1786,
+      "SOS_SECURITIES_AGENT_PERSON_CRDS": 247984,
+      "IAPD_STATE_IA_REGISTRATION_ROWS": 702,
+      "IAPD_APPROVED_CURRENT_STATE_IA_FIRMS": 701,
+      "IAPD_STATE_ERA": 33,
+      "IAPD_FEDERAL_NOTICE_FILINGS": 3704,
+      "IAPD_PRINCIPAL_OFFICE_OVERLAY": 325,
+      "EXACT_SOS_IA_IAPD_APPROVED_OVERLAP": 663,
+      "SOS_ONLY_CRDS": 24,
+      "IAPD_ONLY_CRDS": 38,
+      "ENFORCEMENT_CATALOG_DOCUMENTS": 284,
+      "ADMINISTRATIVE_DOCUMENTS": 188,
+      "CRIMINAL_DOCUMENTS": 72,
+      "SUMMARY_CEASE_AND_DESIST": 22,
+      "FINAL_ADMINISTRATIVE_ORDER": 73,
+      "EXACT_CRD_ENFORCEMENT_ATTACHMENTS": 0,
+      "NET_NEW_STATE_RESEARCH_IDENTITIES": 687,
+      "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+      "NET_NEW_PUBLIC_INVESTOR_PROFILES": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false,
+      "grain_note": "IA firm ≠ IAR person. BD ≠ IA. AG = securities agent, not Attorney General. SOS register ≠ IAPD snapshot. State IA ≠ ERA ≠ notice. Principal office ≠ registration. 701 IAPD approved ≠ 687 SOS by automatic correction. Summary C&D ≠ final finding. Charge ≠ conviction."
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "The six specialist hubs contain incompatible grains and overlapping identities. Ask does not publish North Carolina providers, businesses, licensed professionals, or records as an aggregated numerical total."
+    },
+    "NEW_PUBLIC_RESEARCH_SURFACES": {
+      "status": "KNOWN",
+      "value": 7,
+      "explanation": "Six specialist /north-carolina pages plus Ask /north-carolina. Page/surface count only — not a business, record, provider, or license count. 7 surfaces ≠ 7 providers."
+    },
+    "NET_NEW_STATE_RESEARCH_IDENTITIES_BY_HUB": {
+      "contractor": 0,
+      "move": 362,
+      "senior": 2633,
+      "lender": 0,
+      "insurance": 0,
+      "investor": 687,
+      "presentation": "per-hub research expansion only. Do not publish the arithmetic sum as providers, companies, facilities, professionals, or canonical organizations."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false
+  },
+  "hubs": [
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "coverage_type": "NCLBGC_SEARCH_ONLY_PLUS_DISCIPLINE_INJUNCTION",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/north-carolina",
+      "snapshot_version": "contractor-nc-state-intel-v1",
+      "fingerprint": "17bd03c18651bcb88ba52d54aeba3297d5ced19ae29190159c833d01774eb297",
+      "certified_release_sha": "0be9e356a4e71cb6d9b4fa3711c2b523501a84e1",
+      "source_clock": "Specialist-accepted contractor-nc-state-intel-v1. Current NCLBGC roster is search-only. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina Licensing Board for General Contractors",
+      "primary_identity": "NCLBGC license number; NCBEEC and PHFS licenses are separate boards",
+      "topic": "licensed contractors North Carolina",
+      "plain_question": "Is the current NCLBGC statewide roster a bulk census, or search-only?",
+      "research_topics": [
+        "NCLBGC current license search",
+        "Recent licensed case-summary identities",
+        "Spring 2026 unlicensed injunctions",
+        "NC DOA debarred vendors"
+      ],
+      "primary_identifiers": ["NCLBGC license", "NCBEEC license", "PHFS license"],
+      "identifier_types": ["NCLBGC", "NCBEEC", "PHFS"],
+      "source_summary": "Current NCLBGC statewide roster remains OPEN_SEARCH_ONLY. 38,523 mixed records are not an active-contractor census.",
+      "coverage_summary": "Current NCLBGC statewide roster is search-only. Supporting: 49 recent licensed case-summary identities; 43 unlicensed injunctions.",
+      "coverage_limitation": "Search-only is not zero. $40,000 threshold is not every job. Electrical and PHFS boards are not NCLBGC.",
+      "what_research": "NCLBGC search, licensed discipline, unlicensed injunctions, and debarment",
+      "next_step": "Open ContractorTrustHub North Carolina and verify on official NCLBGC search",
+      "semantic_guardrails": [
+        "$40,000 threshold ≠ every construction job requires NCLBGC license",
+        "38,523 mixed records ≠ active contractors",
+        "licensee ≠ qualifier",
+        "Unlimited ≠ best",
+        "electrical board ≠ NCLBGC"
+      ],
+      "verified_facts": [
+        "Current NCLBGC statewide roster: OPEN_SEARCH_ONLY.",
+        "Recent licensed case-summary license identities: 49.",
+        "Spring 2026 unlicensed injunction cases: 43. NC DOA debarred-vendor rows: 236."
+      ],
+      "routing_intents": [
+        "contractors North Carolina",
+        "licensed contractor North Carolina",
+        "general contractor North Carolina",
+        "roofing contractor North Carolina",
+        "contractor disciplinary action North Carolina"
+      ],
+      "gap_examples": [
+        "current NCLBGC bulk roster",
+        "electrical bulk roster",
+        "PHFS bulk roster",
+        "statewide permit census"
+      ]
+    },
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "coverage_type": "STATE_NCUC_INTRASTATE_HHG",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/north-carolina",
+      "snapshot_version": "move-nc-state-intel-v1",
+      "fingerprint": "9b4becfd1d99f78abdbe79daabb0ba61571e6b6fc3e13f8fb1dc439661e46bec",
+      "certified_release_sha": "560a3ac5dd566d37a8fb37b66627d993cd8f235f",
+      "source_clock": "Specialist-accepted move-nc-state-intel-v1 September 8, 2026 NCUC carrier-list snapshot. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina Utilities Commission",
+      "primary_identity": "NCUC C-number; T-number is a separate grain",
+      "topic": "movers North Carolina",
+      "plain_question": "Are 362 C-number identities currently active movers?",
+      "research_topics": [
+        "NCUC C-number Certificate of Exemption",
+        "NCUC T-number company/docket identity",
+        "Maximum Rate Tariff",
+        "Intrastate vs FMCSA interstate"
+      ],
+      "primary_identifiers": ["NCUC C-number", "NCUC T-number", "USDOT", "MC"],
+      "identifier_types": ["NCUC_C", "NCUC_T", "USDOT", "MC"],
+      "source_summary": "Official NCUC household-goods monthly list snapshot. Not real-time authority and not FMCSA.",
+      "coverage_summary": "362 NCUC C-number identities on the September 8, 2026 carrier-list snapshot. Monthly list ≠ real-time status.",
+      "coverage_limitation": "Do not call 362 currently active movers. Exact NCUC→USDOT and NCUC→MC bridges: 0. Current carrier insurance bulk not acquired.",
+      "what_research": "NCUC C/T identities, tariff, and state/federal authority separation",
+      "next_step": "Open MoveTrustHub North Carolina and confirm the C-number on the official NCUC list",
+      "semantic_guardrails": [
+        "C-number ≠ T-number",
+        "C/T ≠ USDOT",
+        "C/T ≠ MC",
+        "monthly list ≠ real-time authority",
+        "NCUC ≠ FMCSA"
+      ],
+      "verified_facts": [
+        "List rows 362 / distinct C-numbers 362 / source-announced 361.",
+        "Distinct T-numbers 357; exact C↔T 357; 5 missing T; 5 temporarily suspended still listed."
+      ],
+      "routing_intents": [
+        "movers North Carolina",
+        "NCUC mover North Carolina",
+        "interstate mover North Carolina",
+        "moving rates North Carolina"
+      ],
+      "gap_examples": [
+        "real-time authority census",
+        "current carrier insurance bulk",
+        "complaint bulk",
+        "exact NCUC↔USDOT/MC bridges"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior care",
+      "coverage_type": "DHSR_FACILITY_CLASSES_PLUS_STAR_RATING",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/north-carolina",
+      "snapshot_version": "senior-nc-state-intel-v1",
+      "fingerprint": "a53e54853c351e287e8d91a7f131369d60a4e40a3f35a64d2e86899ed41d3181",
+      "certified_release_sha": "2f603dcb5d8c4910608f08535b2295c5065cb3f2",
+      "source_clock": "Specialist-accepted senior-nc-state-intel-v1. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina DHSR",
+      "primary_identity": "DHSR state license; FID and CMS CCN remain separate",
+      "topic": "adult care homes North Carolina",
+      "plain_question": "Are Adult Care Homes the same as Nursing Homes in North Carolina?",
+      "research_topics": [
+        "Adult Care Home licenses",
+        "Family Care Home licenses",
+        "Nursing Home licenses",
+        "NC DHSR Star Rating"
+      ],
+      "primary_identifiers": ["DHSR state license", "DHSR FID", "CMS CCN"],
+      "identifier_types": ["DHSR_LICENSE", "DHSR_FID", "CMS_CCN"],
+      "source_summary": "DHSR publishes distinct ACH/FCH/Nursing/Home Health/Hospice classes. Star Rating is official Adult Care evidence, not a TrustHub ranking.",
+      "coverage_summary": "568 Adult Care Home licenses. Supporting separately: 515 Family Care Home; 423 Nursing Home; 1,057 DHSR Star Rating observations.",
+      "coverage_limitation": "Do not add ACH + FCH + NH + Home Health + Home Care + Hospice + PACE + CCRC. Exact state↔CMS bridges: 0.",
+      "what_research": "DHSR facility classes, Star Rating, penalties, Adult Day/PACE/CCRC",
+      "next_step": "Open SeniorTrustHub North Carolina and verify the DHSR license class",
+      "semantic_guardrails": [
+        "Adult Care Home ≠ Family Care Home",
+        "ACH/FCH ≠ Nursing Home",
+        "Home Care ≠ Home Health",
+        "NC DHSR Star Rating ≠ TrustHub ranking",
+        "state license ≠ CMS CCN"
+      ],
+      "verified_facts": [
+        "Adult Care Home licenses 568; Family Care Home 515; Nursing Home 423.",
+        "NC DHSR Star Rating listing observations 1,057. Exact state↔CMS bridges: 0."
+      ],
+      "routing_intents": [
+        "adult care homes North Carolina",
+        "family care homes North Carolina",
+        "assisted living North Carolina",
+        "nursing homes North Carolina",
+        "NC DHSR star rating",
+        "home health North Carolina",
+        "hospice North Carolina",
+        "PACE North Carolina",
+        "CCRC North Carolina"
+      ],
+      "gap_examples": [
+        "exact state↔CMS bridges",
+        "combined senior-care denominator (rejected)"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lending",
+      "coverage_type": "NCCOB_CURRENT_CLASSES_PLUS_HMDA",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/north-carolina",
+      "snapshot_version": "lender-nc-state-intel-v1",
+      "fingerprint": "95cc55e2092335c30698c676c67eb6ca0559a7a4dc33a68ce8e82bf4cfe6c10d",
+      "certified_release_sha": "dbf7f3e8f58415e16ddaed330f51e69e0d858290",
+      "source_clock": "Specialist-accepted lender-nc-state-intel-v1. HMDA vintage 2025. NCCOB current Show All as of 2026-09-17. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina Office of the Commissioner of Banks",
+      "primary_identity": "NCCOB license number; NMLS Unique ID is a separate grain",
+      "topic": "mortgage lenders North Carolina",
+      "plain_question": "How many current NCCOB Mortgage Lender licenses are in the Show All company source?",
+      "research_topics": [
+        "NCCOB Mortgage Lender class",
+        "HMDA 2025 county-market applications",
+        "CFPB 2025 mortgage complaints",
+        "NCCOB mortgage enforcement"
+      ],
+      "primary_identifiers": ["NCCOB license", "NMLS Unique ID", "LEI"],
+      "identifier_types": ["NCCOB_LICENSE", "NMLS", "LEI"],
+      "source_summary": "Current NCCOB company Show All is class-separated. HMDA applications are market activity, not lenders.",
+      "coverage_summary": "484,454 HMDA 2025 North Carolina applications. 640 current NCCOB Mortgage Lender rows is a separate license-class grain.",
+      "coverage_limitation": "Do not answer how-many-lenders with 1,380, 24,612, 1,121 LEIs, 91 FDIC, or 484,454 applications. MLO person ≠ company.",
+      "what_research": "NCCOB license classes, HMDA, CFPB complaints, mortgage enforcement",
+      "next_step": "Open LenderTrustHub North Carolina and verify NCCOB/NMLS identity on official search",
+      "semantic_guardrails": [
+        "NCCOB ≠ NMLS",
+        "NCCOB license ≠ NMLS ID",
+        "lender ≠ broker ≠ servicer ≠ MOSR",
+        "1,380 mixed entities ≠ lender count",
+        "HMDA application ≠ lender"
+      ],
+      "verified_facts": [
+        "HMDA 2025 county-market: 484,454 applications / 279,735 originations / 86,923 denials / 100 counties.",
+        "Current NCCOB Mortgage Lender rows: 640. Mixed current licensed entities: 1,380. Exact NCCOB↔NMLS pairs: 1,380."
+      ],
+      "routing_intents": [
+        "mortgage lenders North Carolina",
+        "mortgage broker North Carolina",
+        "mortgage servicer North Carolina",
+        "MOSR North Carolina",
+        "HMDA applications North Carolina 2025",
+        "mortgage complaints North Carolina"
+      ],
+      "gap_examples": [
+        "MLO distinct-ID census (not fully paged)",
+        "NMLS↔LEI exact bridges",
+        "NCHFA bulk participating-lender census"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "coverage_type": "NCDOI_ACTIONS_EXAMS_SEARCH_ONLY_ROSTERS",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/north-carolina",
+      "snapshot_version": "insurance-nc-state-intel-v1",
+      "fingerprint": "a3abc66b4595a426fe6a3969b396f24cd9ecfaf3189411cf1a7ea0db9b2feab0",
+      "certified_release_sha": "c8d869b19c028cf5b9f143291bbe4471eca89099",
+      "source_clock": "Specialist-accepted insurance-nc-state-intel-v1. Company/agency/producer bulk remain search-only. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina Department of Insurance",
+      "primary_identity": "NAIC company code; NPN is a separate grain",
+      "topic": "insurance companies North Carolina",
+      "plain_question": "Are 2,874 Licensing Action rows a count of North Carolina insurance providers?",
+      "research_topics": [
+        "NCDOI Licensing Actions",
+        "Company market-share lines",
+        "Market regulation exams",
+        "Financial exams and receivership"
+      ],
+      "primary_identifiers": ["NAIC Company Code", "NPN", "NC insurance license"],
+      "identifier_types": ["NAIC", "NPN", "NC_INSURANCE_LICENSE"],
+      "source_summary": "Company, agency, producer, and surplus-lines bulk remain OPEN_SEARCH_ONLY. Licensing Actions are a mixed catalog.",
+      "coverage_summary": "2,874 NCDOI Licensing Action catalog rows. Mixed license-class catalog — not providers, not complaints, not unique matters.",
+      "coverage_limitation": "SQA-009: homeowners/auto insurance agencies North Carolina must not silently become generic NC agencies. 199 homeowners company market-share rows are not homeowners agency evidence.",
+      "what_research": "Licensing Actions, exams, market-share lines, receivership, search-only rosters",
+      "next_step": "Open InsuranceTrustHub North Carolina and verify NAIC/NPN on official NCDOI search",
+      "semantic_guardrails": [
+        "legal insurer ≠ agency ≠ producer",
+        "NAIC ≠ NPN",
+        "company market-share line ≠ agency product capability",
+        "licensing action ≠ complaint",
+        "search-only ≠ zero"
+      ],
+      "verified_facts": [
+        "Licensing Action rows 2,874 / distinct dockets 404 / unique complete matter count null.",
+        "Insurance Producer rows 1,717; Business Entity rows 255. Company/agency/producer bulk OPEN_SEARCH_ONLY."
+      ],
+      "routing_intents": [
+        "insurance companies North Carolina",
+        "insurance agencies North Carolina",
+        "homeowners insurance agencies North Carolina",
+        "auto insurance agencies North Carolina",
+        "insurance licensing actions North Carolina",
+        "market conduct exam North Carolina",
+        "financial exam North Carolina",
+        "insurance receivership North Carolina"
+      ],
+      "gap_examples": [
+        "current company/agency/producer bulk rosters",
+        "unique regulatory-matter census",
+        "agency product LOA"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investing",
+      "coverage_type": "NC_SOS_REGISTERS_PLUS_IAPD_LENSES",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/north-carolina",
+      "snapshot_version": "investor-nc-state-intel-v1",
+      "fingerprint": "697edd7ef765dcc52930e2953ddeb55d111a3cd361afba79504d76588a696325",
+      "certified_release_sha": "b90f8d4582a3cac0cbe048032fdfd37174a223f9",
+      "source_clock": "Specialist-accepted investor-nc-state-intel-v1. NC SOS register clock 2026-06-30. IAPD lenses use a different clock. Ask does not invent a retrieval instant.",
+      "primary_regulator": "North Carolina Secretary of State Securities Division",
+      "primary_identity": "firm CRD; person CRD is a separate grain",
+      "topic": "investment advisers North Carolina",
+      "plain_question": "Do 687 SOS IA firm CRDs equal 701 IAPD APPROVED NC state-IA firms?",
+      "research_topics": [
+        "NC SOS IA firm CRDs",
+        "IAPD APPROVED state IA",
+        "ERA and notice filings",
+        "Administrative vs criminal enforcement"
+      ],
+      "primary_identifiers": ["firm CRD", "person CRD", "SEC/IARD identifier"],
+      "identifier_types": ["FIRM_CRD", "PERSON_CRD", "IARD"],
+      "source_summary": "SOS registers and IAPD jurisdiction lenses are different clocks and different grains. Do not add them.",
+      "coverage_summary": "687 North Carolina SOS IA firm CRDs. Supporting separately: 701 IAPD APPROVED state-IA firms from a newer/different clock.",
+      "coverage_limitation": "Do not add 687 + 701 + 33 ERA + 3,704 notice + 325 principal office + 21,528 IAR people. Principal office ≠ state registration.",
+      "what_research": "SOS IA/IAR/BD/agent registers, IAPD lenses, administrative vs criminal enforcement",
+      "next_step": "Open InvestorTrustHub North Carolina and verify the firm CRD on official SOS/IAPD records",
+      "semantic_guardrails": [
+        "IA firm ≠ IAR person",
+        "BD firm ≠ IA firm",
+        "SOS register ≠ IAPD snapshot",
+        "State IA ≠ ERA ≠ notice filing",
+        "summary cease & desist ≠ final finding"
+      ],
+      "verified_facts": [
+        "SOS IA firm CRDs 687 (2026-06-30). IAPD APPROVED current State IA firms 701.",
+        "Exact SOS IA ↔ IAPD approved overlap 663. Enforcement catalog documents 284; exact CRD attachments 0."
+      ],
+      "routing_intents": [
+        "investment advisers North Carolina",
+        "NC registered investment adviser",
+        "IAR North Carolina",
+        "ERA North Carolina",
+        "notice filing North Carolina",
+        "investment adviser headquartered North Carolina",
+        "NC securities cease and desist"
+      ],
+      "gap_examples": [
+        "forced SOS/IAPD count match (rejected)",
+        "exact CRD enforcement attachments"
+      ]
+    }
+  ]
+}

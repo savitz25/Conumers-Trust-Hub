@@ -263,8 +263,8 @@ test('claim eligibility surfaces are unchanged', () => {
 
 test('state page inventory adds Pennsylvania once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'PA').length, 1);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'pennsylvania');
-  assert.equal(ASK_NETWORK_STATES.length, 12);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'pennsylvania'));
+  assert.equal(ASK_NETWORK_STATES.length, 13);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/pennsylvania'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/pennsylvania/philadelphia'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Pennsylvania network gateway/);

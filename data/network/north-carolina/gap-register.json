@@ -1,0 +1,37 @@
+{
+  "charlotte_raleigh_phase": {
+    "status": "NOT_STARTED",
+    "local_work_needed_now": "NO",
+    "reason": "North Carolina's strongest new intelligence is statewide. Six specialist /north-carolina pages plus Ask /north-carolina are the public research surfaces. Do not start Charlotte, Raleigh, Durham, Mecklenburg, Wake, Guilford, Forsyth, or Buncombe merely for symmetry."
+  },
+  "cross_hub": {
+    "contractor": [
+      "current NCLBGC statewide roster remains search-only",
+      "electrical and PHFS bulk rosters remain search-only",
+      "statewide permit census is local or fragmented"
+    ],
+    "move": [
+      "real-time authority census not acquired",
+      "current carrier insurance bulk not acquired",
+      "no exact NCUC ↔ USDOT/MC bridge"
+    ],
+    "senior": [
+      "exact state↔CMS bridges remain 0",
+      "do not add ACH/FCH/NH/Home Health/Hospice/PACE/CCRC"
+    ],
+    "lender": [
+      "MLO distinct-ID census not fully paged",
+      "NMLS↔LEI crosswalk absent",
+      "NCHFA bulk participating-lender census search-only"
+    ],
+    "insurance": [
+      "company/agency/producer bulk remain search-only",
+      "unique complete matter count unknown",
+      "agency product LOA not established by business-entity license"
+    ],
+    "investor": [
+      "SOS vs IAPD clocks remain unforced",
+      "exact CRD enforcement attachments remain 0"
+    ]
+  }
+}
