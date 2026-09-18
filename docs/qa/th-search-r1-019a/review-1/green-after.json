@@ -1,0 +1,24 @@
+{
+ "finding1": {
+  "alternate": true,
+  "moveState": "TECHNICAL_FAILURE",
+  "candidateCount": 0,
+  "pageLogicMeasured": "page-state.ts (corrected)",
+  "reviewedHeadShowsNameResults": true,
+  "defect": "not reproduced"
+ },
+ "finding2": {
+  "groupRendered": true,
+  "canFetchMore": true,
+  "defect": "not reproduced"
+ },
+ "finding3": {
+  "state": "AMBIGUOUS_NO_CANDIDATES",
+  "defect": "not reproduced"
+ },
+ "finding4": {
+  "kind": "PARTIAL_MISS",
+  "heading": "No matches for “Allied” in the 5 sources that completed",
+  "defect": "not reproduced"
+ }
+}

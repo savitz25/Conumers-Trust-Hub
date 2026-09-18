@@ -1,0 +1,122 @@
+{
+ "generatedAt": "2026-09-18T20:30:23.129Z",
+ "cleanBefore": {
+  "status": 0,
+  "pass": 44,
+  "fail": 0,
+  "failing": []
+ },
+ "mutations": [
+  {
+   "id": "A_RESTORED_HUB_REQUIRED_GATE",
+   "why": "A name must again have a known hub before it can be searched.",
+   "detected": true,
+   "failedTests": [
+    "G1. a recognized city inside a supplied organization name does not erase the name",
+    "G2. METAMORPHIC geo-catalog invariant: recognizing the leading place never changes the name decision",
+    "G4. the PAGE path: full name reaches every enabled hub once, records stay separate, no hub questionnaire",
+    "G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched",
+    "R1e. positive control + the explicit category choice is the ONLY way into the legacy path",
+    "1a. \"Allied\" shows all five eligible records across four hubs with no hub selection",
+    "1b. optional Moving filter narrows to the two Move records and keeps the query; All restores it",
+    "2. a newly added matching record is discoverable with no code change",
+    "3/4. lowercase, one-word, numeric-leading, hyphenated and category-word names enter candidate search with no hub keyword",
+    "5a. records named only with industry words never appear for a name search",
+    "5b. a hub that ignores the name filter is a FAILURE -- never candidates, never a miss",
+    "6. similarly named records stay distinct, and a lone approximate candidate is not labeled exact",
+    "7a. one source fails while others succeed: valid cards kept, incomplete coverage disclosed",
+    "7b. all-source failure is NOT a no-match",
+    "7c. a genuine completed miss is distinct from failure and keeps the entered name",
+    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub",
+    "10b. telemetry carries outcome classes only -- never the searched name, identifiers or URLs"
+   ]
+  },
+  {
+   "id": "B_DROPPED_NAME_FILTER_GUARD",
+   "why": "An unfiltered cohort is admitted as name candidates.",
+   "detected": true,
+   "failedTests": [
+    "R3d. a source-established alias is not discarded for having different words -- and its text is never invented",
+    "5c. real adapters reject an unfiltered cohort and an unechoed name",
+    "H4. padding-only pages are dropped without a false failure; an ignored filter is still a failure"
+   ]
+  },
+  {
+   "id": "C_SILENT_OMISSION_OF_RESPONDING_HUB",
+   "why": "An enabled, responding hub is silently dropped from the fan-out.",
+   "detected": true,
+   "failedTests": [
+    "G4. the PAGE path: full name reaches every enabled hub once, records stay separate, no hub questionnaire",
+    "G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched",
+    "R1a. relevant source FAILS, others miss: the name result is kept -- no legacy gate, no second retrieval",
+    "R1c. relevant source UNSUPPORTED: name result kept, unsupported stays distinct from a completed miss",
+    "R2a. first page has NO admissible rows, hasMore=true, NO continuation URL: a real next-page control exists and reaches the record",
+    "R2c. multi-page + caps: a cap never claims exhaustion",
+    "R4b. ordinary positive results are unchanged, and incomplete coverage is said next to them",
+    "1a. \"Allied\" shows all five eligible records across four hubs with no hub selection",
+    "1b. optional Moving filter narrows to the two Move records and keeps the query; All restores it",
+    "6. similarly named records stay distinct, and a lone approximate candidate is not labeled exact",
+    "7a. one source fails while others succeed: valid cards kept, incomplete coverage disclosed",
+    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub"
+   ]
+  },
+  {
+   "id": "D_ZERO_RESULT_FALLS_BACK_TO_LEGACY",
+   "why": "A name search with no candidates is silently reclassified into the legacy/category path.",
+   "detected": true,
+   "failedTests": [
+    "G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched",
+    "R1a. relevant source FAILS, others miss: the name result is kept -- no legacy gate, no second retrieval",
+    "R1b. ALL sources fail: still the name result",
+    "R1c. relevant source UNSUPPORTED: name result kept, unsupported stays distinct from a completed miss",
+    "R1d. genuine scoped miss: name kept, alternate reading offered as an EXPLICIT labeled action only"
+   ]
+  },
+  {
+   "id": "E_AMBIGUITY_BECOMES_MISS",
+   "why": "Valid upstream ambiguity is reported as a completed miss.",
+   "detected": true,
+   "failedTests": [
+    "R3a. valid upstream AMBIGUOUS_IDENTITIES with empty rows is preserved -- never COMPLETED_NO_CANDIDATES"
+   ]
+  },
+  {
+   "id": "F_EMPTY_PAGE_HAS_NO_CONTROL",
+   "why": "A truncated-empty hub is no longer a group, so page two is unreachable.",
+   "detected": true,
+   "failedTests": [
+    "R2a. first page has NO admissible rows, hasMore=true, NO continuation URL: a real next-page control exists and reaches the record",
+    "R4. headlines, lead and telemetry share ONE coverage interpretation",
+    "H4. padding-only pages are dropped without a false failure; an ignored filter is still a failure"
+   ]
+  },
+  {
+   "id": "G_UNQUALIFIED_MISS_HEADLINE",
+   "why": "The headline claims an all-network miss while a source did not complete.",
+   "detected": true,
+   "failedTests": [
+    "G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched",
+    "R1a. relevant source FAILS, others miss: the name result is kept -- no legacy gate, no second retrieval",
+    "R1c. relevant source UNSUPPORTED: name result kept, unsupported stays distinct from a completed miss",
+    "R4. headlines, lead and telemetry share ONE coverage interpretation"
+   ]
+  },
+  {
+   "id": "H_GEOGRAPHY_TOKEN_EXCLUSION",
+   "why": "A place word the planner recognizes is removed from the supplied name, so publishing a new state disables existing organization names.",
+   "detected": true,
+   "failedTests": [
+    "G1. a recognized city inside a supplied organization name does not erase the name",
+    "G2. METAMORPHIC geo-catalog invariant: recognizing the leading place never changes the name decision",
+    "G4. the PAGE path: full name reaches every enabled hub once, records stay separate, no hub questionnaire",
+    "G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched"
+   ]
+  }
+ ],
+ "cleanAfter": {
+  "status": 0,
+  "pass": 44,
+  "fail": 0,
+  "failing": []
+ }
+}

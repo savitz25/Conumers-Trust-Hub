@@ -1,0 +1,302 @@
+{
+ "checkedAt": "2026-09-18T19:28:00.939Z",
+ "via": "final integrated build, next start :3105, real hub calls (not the public deployment)",
+ "results": [
+  {
+   "q": "Allied",
+   "status": 200,
+   "ms": 2016,
+   "candidateCount": 17,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "PARTIAL_TRUNCATED",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "UNSUPPORTED_OPERATION",
+    "investor": "COMPLETED_WITH_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "move:profile:allied-van-lines",
+     "name": "Allied Van Lines",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "USDOT 76235, MC 15735",
+     "dateLabel": "Last checked by MoveTrustHub",
+     "action": "PROFILE"
+    },
+    {
+     "key": "insurance:npn:10058617",
+     "name": "3A ALLIED INSURANCE CORP.",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 10058617",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:19286222",
+     "name": "ALLIED ADVANTAGE INSURANCE SERVICES LLC,",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 19286222",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:9255897",
+     "name": "ALLIED AMERICAN UNDERWRITERS, INC.",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 9255897",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:23442",
+     "name": "ALLIED BENEFIT SYSTEMS, LLC.",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 23442",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:18062626",
+     "name": "ALLIED BENEFITS SOLUTIONS, LLC",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 18062626",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:20083131",
+     "name": "ALLIED BROKERS INSURANCE AGENCY, INC.",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 20083131",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:3336166",
+     "name": "ALLIED BUILDING MATERIAL AGENCY, INC. DBA GREEN TREE RISK PARTNERS",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 3336166",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:7888596",
+     "name": "ALLIED BUSINESS SERVICES INC",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 7888596",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:8771938",
+     "name": "ALLIED ELITE FINANCIAL, LLC",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 8771938",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "insurance:npn:20426373",
+     "name": "ALLIED HEALTH INSURANCE ASSOCIATES",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "NPN 20426373",
+     "dateLabel": "Observed in source on",
+     "action": "RESEARCH"
+    },
+    {
+     "key": "investor:crd:112441",
+     "name": "ALLIED ASSET ADVISORS INC",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 112441",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    },
+    {
+     "key": "investor:crd:322494",
+     "name": "ALLIED INDUSTRIAL PARTNERS",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 322494",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    },
+    {
+     "key": "investor:crd:159103",
+     "name": "ALLIED INVESTMENT ADVISORS LLC",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 159103",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    },
+    {
+     "key": "investor:crd:113809",
+     "name": "ALLIED PORTFOLIO MANAGEMENT, INC.",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 113809",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    },
+    {
+     "key": "investor:crd:328952",
+     "name": "ALLIED PRIVATE WEALTH",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 328952",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    },
+    {
+     "key": "investor:crd:315791",
+     "name": "ALLIED STRATEGIC PARTNERS MANAGEMENT, LP",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 315791",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    }
+   ]
+  },
+  {
+   "q": "Cirta",
+   "status": 200,
+   "ms": 1222,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "move:profile:cirta-moving-llc",
+     "name": "Cirta Moving LLC",
+     "method": "PREFIX_OR_TOKEN",
+     "ids": "USDOT 4074980",
+     "dateLabel": "Last checked by MoveTrustHub",
+     "action": "PROFILE"
+    }
+   ]
+  },
+  {
+   "q": "Pure Moving Company",
+   "status": 200,
+   "ms": 1346,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "move:profile:pure-moving-company",
+     "name": "Pure Moving Company",
+     "method": "EXACT_SOURCE_NAME",
+     "ids": "",
+     "dateLabel": "Last checked by MoveTrustHub",
+     "action": "PROFILE"
+    }
+   ]
+  },
+  {
+   "q": "1-800-Pack-Rat",
+   "status": 200,
+   "ms": 1173,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_WITH_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "move:profile:1-800-pack-rat",
+     "name": "1-800-Pack-Rat",
+     "method": "EXACT_SOURCE_NAME",
+     "ids": "USDOT 1534531, MC 648624",
+     "dateLabel": "Last checked by MoveTrustHub",
+     "action": "PROFILE"
+    }
+   ]
+  },
+  {
+   "q": "Abbey Delray South",
+   "status": 200,
+   "ms": 1241,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_NO_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_WITH_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "senior:nursing_home:105411",
+     "name": "ABBEY DELRAY SOUTH",
+     "method": "NORMALIZED_NAME",
+     "ids": "CMS CCN 105411",
+     "dateLabel": "CMS source as-of date",
+     "action": "PROFILE"
+    }
+   ]
+  },
+  {
+   "q": "Tate Asset Management",
+   "status": 200,
+   "ms": 1293,
+   "candidateCount": 1,
+   "hubStates": {
+    "move": "COMPLETED_NO_CANDIDATES",
+    "lender": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_WITH_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "investor:crd:160657",
+     "name": "\"TATE ASSET MANAGEMENT\" AND \"DCO WEALTH MANAGEMENT\"",
+     "method": "NAME_CONTAINS",
+     "ids": "CRD 160657",
+     "dateLabel": "Form ADV filing date",
+     "action": "OFFICIAL_SOURCE"
+    }
+   ]
+  },
+  {
+   "q": "Rocket Mortgage",
+   "status": 200,
+   "ms": 1210,
+   "candidateCount": 1,
+   "hubStates": {
+    "lender": "COMPLETED_WITH_CANDIDATES",
+    "move": "COMPLETED_NO_CANDIDATES",
+    "insurance": "COMPLETED_NO_CANDIDATES",
+    "contractor": "UNSUPPORTED_OPERATION",
+    "senior": "COMPLETED_NO_CANDIDATES",
+    "investor": "COMPLETED_NO_CANDIDATES"
+   },
+   "cards": [
+    {
+     "key": "lender:nmls:3030",
+     "name": "Rocket Mortgage",
+     "method": "EXACT_SOURCE_NAME",
+     "ids": "NMLS 3030, LEI 549300FGXN1K3HLB1R50",
+     "dateLabel": "Fetched from source on",
+     "action": "PROFILE"
+    }
+   ]
+  }
+ ]
+}

@@ -7,6 +7,8 @@ import { searchTerminalOutcome, type AskIntelObservation } from '@/lib/network/a
 import { guidedSearchTerminalOutcome } from '@/lib/network/ask-intel-observability';
 import type { GuidedApiResponse } from '@/lib/guided-research/contract';
 import type { SqlClient } from '@/lib/customer/sql';
+import type { NameCandidateResponse } from '@/lib/network/name-candidates/contract';
+import { nameCandidateTelemetry } from '@/lib/network/name-candidates/telemetry';
 
 export const FIRST_PARTY_CLIENT_EVENTS = [
   'claim_cta_clicked','claim_handoff_received','claim_auth_required','claim_auth_returned',
@@ -65,6 +67,12 @@ export async function recordSearchObservation(observation: AskIntelObservation):
 export async function recordGuidedSearch(response: GuidedApiResponse): Promise<void> {
   const result=response.result, hasNext=Boolean(result?.destinations.length || result?.nextActions?.length);
   await recordProductEventV1({schema_version:'product_event.v1',event_id:randomUUID(),event_name:'search_terminal_outcome',occurred_at:new Date().toISOString(),surface:'GUIDED',hub:hub(response.session.hub),route_family:'/ask',profile_class:safeToken(response.session.entityClass),intent:safeToken(response.session.researchPlan.intent),terminal_outcome:guidedSearchTerminalOutcome(result?.resultState ?? 'CLARIFICATION_REQUIRED',result?.total??0,hasNext),failure_reason:safeToken(result?.error?.code ?? (result?.total?'none':result?.resultState ?? 'CLARIFICATION_REQUIRED')),next_action_type:safeToken(result?.nextActions?.[0]?.type ?? result?.destinations[0]?.type),auth_state:'UNKNOWN',duration_ms:Math.max(0,Math.min(300000,response.diagnostics.latencyMs)),result_count_bucket:resultCountBucket(result?.total??0),build_id:safeToken(process.env.VERCEL_GIT_COMMIT_SHA,80)});
+}
+
+/** TH-SEARCH-R1-019A: outcome classes and buckets only -- never the searched name, identifiers or URLs. */
+export async function recordNameCandidateSearch(response: NameCandidateResponse): Promise<void> {
+  const t=nameCandidateTelemetry(response);
+  await recordProductEventV1({schema_version:'product_event.v1',event_id:randomUUID(),event_name:'search_terminal_outcome',occurred_at:new Date().toISOString(),surface:'NAME_CANDIDATES',hub:hub(t.hubScope),route_family:'/ask',intent:'NAME_CANDIDATES',terminal_outcome:t.terminalOutcome,failure_reason:t.reason,next_action_type:t.candidateCount?'CANDIDATE_CARD':'REFINE_NAME',auth_state:'UNKNOWN',duration_ms:t.durationMs,result_count_bucket:resultCountBucket(t.candidateCount),build_id:safeToken(process.env.VERCEL_GIT_COMMIT_SHA,80)});
 }
 
 function resultCountBucket(value:number):ProductEventV1['result_count_bucket']{return value<=0?'0':value===1?'1':value<=10?'2-10':value<=25?'11-25':value<=100?'26-100':value<=500?'101-500':value<=1000?'501-1000':'1001+'}

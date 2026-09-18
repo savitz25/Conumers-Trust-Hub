@@ -1,0 +1,257 @@
+{
+ "note": "Both runs are preserved in full. Nothing was re-run to obtain a better sample. Small diagnostic sample; no statistical claim.",
+ "scopeOfEveryRequest": "hubScope = the record's own hub, so all failures below are TARGET-hub failures",
+ "run3": {
+  "evaluatedAt": "2026-09-18T17:05:05.399Z",
+  "perHub": {
+   "senior": {
+    "endToEndRecall": "18/20",
+    "recallWhenTargetSourceCompleted": "18/18",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 2,
+    "redundantClarifications": 0,
+    "nameLevelHits": 18
+   },
+   "lender": {
+    "endToEndRecall": "5/20",
+    "recallWhenTargetSourceCompleted": "5/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 6
+   },
+   "investor": {
+    "endToEndRecall": "20/20",
+    "recallWhenTargetSourceCompleted": "20/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 20
+   },
+   "move": {
+    "endToEndRecall": "20/20",
+    "recallWhenTargetSourceCompleted": "20/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 20
+   },
+   "insurance": {
+    "endToEndRecall": "17/20",
+    "recallWhenTargetSourceCompleted": "17/17",
+    "targetHubTechnicalFailures": 3,
+    "failureKinds": {
+     "timeout": 3
+    },
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 17
+   }
+  }
+ },
+ "run4": {
+  "evaluatedAt": "2026-09-18T18:45:06.059Z",
+  "perHub": {
+   "lender": {
+    "endToEndRecall": "5/20",
+    "recallWhenTargetSourceCompleted": "5/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 6
+   },
+   "senior": {
+    "endToEndRecall": "18/20",
+    "recallWhenTargetSourceCompleted": "18/18",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 2,
+    "redundantClarifications": 0,
+    "nameLevelHits": 18
+   },
+   "investor": {
+    "endToEndRecall": "20/20",
+    "recallWhenTargetSourceCompleted": "20/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 20
+   },
+   "move": {
+    "endToEndRecall": "20/20",
+    "recallWhenTargetSourceCompleted": "20/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 20
+   },
+   "insurance": {
+    "endToEndRecall": "20/20",
+    "recallWhenTargetSourceCompleted": "20/20",
+    "targetHubTechnicalFailures": 0,
+    "failureKinds": {},
+    "targetHubUnsupported": 0,
+    "redundantClarifications": 0,
+    "nameLevelHits": 20
+   }
+  }
+ },
+ "changedOutcomesRun3ToRun4": [
+  {
+   "hub": "insurance",
+   "variant": "displayed",
+   "input": "1847 BENEFITS, LLC,",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "presentation",
+   "input": "1847 BENEFITS",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "lowercase",
+   "input": "1889 specialty insurance services llc",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "displayed",
+   "input": "1985 INSURANCE SOLUTIONS LLC,",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "lowercase",
+   "input": "1985 insurance solutions llc,",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "presentation",
+   "input": "1985 INSURANCE SOLUTIONS",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "lowercase",
+   "input": "1099policy insurance agency, llc",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "presentation",
+   "input": "1099POLICY INSURANCE AGENCY",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  },
+  {
+   "hub": "insurance",
+   "variant": "displayed",
+   "input": "12 INTERACTIVE LLC",
+   "run3": {
+    "state": "TECHNICAL_FAILURE",
+    "found": false
+   },
+   "run4": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true
+   }
+  }
+ ],
+ "irrelevantCandidatesRun4": [
+  {
+   "hub": "investor",
+   "input": "ALPHA ASSET MANAGEMENT",
+   "variant": "displayed",
+   "candidates": [
+    {
+     "displayName": "CLEVERALPHA",
+     "stableKey": "investor:crd:301620",
+     "matchMethod": "NAME_CONTAINS",
+     "matchedField": "SEC/IARD legal name",
+     "matchedName": "CLEVERALPHA ASSET MANAGEMENT, LLC",
+     "hubMatchExplanation": "This firm matches because it is classified as an RIA in the current SEC/IARD roster, its sourced firm name contains “ALPHA ASSET MANAGEMENT”. Matched source legal name: CLEVERALPHA ASSET MANAGEMENT, LLC."
+    }
+   ]
+  },
+  {
+   "hub": "investor",
+   "input": "alpha asset management",
+   "variant": "lowercase",
+   "candidates": [
+    {
+     "displayName": "CLEVERALPHA",
+     "stableKey": "investor:crd:301620",
+     "matchMethod": "NAME_CONTAINS",
+     "matchedField": "SEC/IARD legal name",
+     "matchedName": "CLEVERALPHA ASSET MANAGEMENT, LLC",
+     "hubMatchExplanation": "This firm matches because it is classified as an RIA in the current SEC/IARD roster, its sourced firm name contains “alpha asset management”. Matched source legal name: CLEVERALPHA ASSET MANAGEMENT, LLC."
+    }
+   ]
+  }
+ ]
+}

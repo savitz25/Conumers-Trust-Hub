@@ -1,0 +1,1007 @@
+[
+ {
+  "q": "Allied",
+  "basis": "BARE_NAME",
+  "candidateCount": 17,
+  "timing": {
+   "totalMs": 1463,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor",
+    "senior"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 1,
+    "more": false,
+    "capped": false,
+    "ms": 1142,
+    "calls": 1,
+    "top": [
+     "Allied Van Lines [PREFIX_OR_TOKEN] USDOT 76235/MC 15735 -> https://www.movetrusthub.com/companies/allied-van-lines"
+    ]
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 286,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "PARTIAL_TRUNCATED",
+    "applied": true,
+    "n": 10,
+    "total": null,
+    "more": false,
+    "capped": true,
+    "ms": 1419,
+    "calls": 1,
+    "top": [
+     "3A ALLIED INSURANCE CORP. [PREFIX_OR_TOKEN] NPN 10058617 -> https://www.insurancetrusthub.com/ask?q=Find+Allied&selected=269dbfd0-e1f7-4474-9a5e-b3aebe936908",
+     "ALLIED ADVANTAGE INSURANCE SERVICES LLC, [PREFIX_OR_TOKEN] NPN 19286222 -> https://www.insurancetrusthub.com/ask?q=Find+Allied&selected=9de852bb-b9f7-4725-9230-4b0566e39224",
+     "ALLIED AMERICAN UNDERWRITERS, INC. [PREFIX_OR_TOKEN] NPN 9255897 -> https://www.insurancetrusthub.com/ask?q=Find+Allied&selected=0101665c-37cc-4a89-8be5-fd465eebf09b"
+    ]
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 294,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 6,
+    "total": 6,
+    "more": false,
+    "capped": false,
+    "ms": 489,
+    "calls": 1,
+    "top": [
+     "ALLIED ASSET ADVISORS INC [NAME_CONTAINS] CRD 112441 -> https://adviserinfo.sec.gov/firm/summary/112441",
+     "ALLIED INDUSTRIAL PARTNERS [NAME_CONTAINS] CRD 322494 -> https://adviserinfo.sec.gov/firm/summary/322494",
+     "ALLIED INVESTMENT ADVISORS LLC [NAME_CONTAINS] CRD 159103 -> https://adviserinfo.sec.gov/firm/summary/159103"
+    ]
+   }
+  ]
+ },
+ {
+  "q": "Cirta",
+  "basis": "BARE_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1238,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 1,
+    "more": false,
+    "capped": false,
+    "ms": 678,
+    "calls": 1,
+    "top": [
+     "Cirta Moving LLC [PREFIX_OR_TOKEN] USDOT 4074980 -> https://www.movetrusthub.com/companies/cirta-moving-llc"
+    ]
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 120,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1236,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 267,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 167,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ },
+ {
+  "q": "Pure Moving Company",
+  "basis": "NAME_WITH_CATEGORY_WORD",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1141,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 1,
+    "more": false,
+    "capped": false,
+    "ms": 855,
+    "calls": 1,
+    "top": [
+     "Pure Moving Company [EXACT_SOURCE_NAME]  -> https://www.movetrusthub.com/companies/pure-moving-company"
+    ]
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 108,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1139,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 254,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 190,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ },
+ {
+  "q": "1-800-Pack-Rat",
+  "basis": "BARE_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1268,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 1,
+    "more": false,
+    "capped": false,
+    "ms": 702,
+    "calls": 1,
+    "top": [
+     "1-800-Pack-Rat [EXACT_SOURCE_NAME] USDOT 1534531/MC 648624 -> https://www.movetrusthub.com/companies/1-800-pack-rat"
+    ]
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 110,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1267,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 270,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 182,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ },
+ {
+  "q": "Abbey Delray South",
+  "basis": "PLANNER_ENTITY_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1338,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 620,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 285,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1337,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 431,
+    "calls": 1,
+    "top": [
+     "ABBEY DELRAY SOUTH [NORMALIZED_NAME] CMS CCN 105411 -> https://www.seniortrusthub.com/facility/cms/105411/abbey-delray-south"
+    ]
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 347,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ },
+ {
+  "q": "Tate Asset Management",
+  "basis": "PLANNER_ENTITY_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1326,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 975,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 183,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1325,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 474,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 3,
+    "more": false,
+    "capped": false,
+    "ms": 286,
+    "calls": 1,
+    "top": [
+     "\"TATE ASSET MANAGEMENT\" AND \"DCO WEALTH MANAGEMENT\" [NAME_CONTAINS] CRD 160657 -> https://adviserinfo.sec.gov/firm/summary/160657"
+    ]
+   }
+  ]
+ },
+ {
+  "q": "Alpha Asset Management",
+  "basis": "PLANNER_ENTITY_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1273,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 620,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 129,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1272,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1129,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": 2,
+    "more": false,
+    "capped": false,
+    "ms": 229,
+    "calls": 1,
+    "top": [
+     "ALPHA ASSET MANAGEMENT [NORMALIZED_NAME] CRD 112571 -> https://adviserinfo.sec.gov/firm/summary/112571"
+    ]
+   }
+  ]
+ },
+ {
+  "q": "Rocket Mortgage",
+  "basis": "PLANNER_ENTITY_NAME",
+  "candidateCount": 1,
+  "timing": {
+   "totalMs": 1163,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "lender",
+    "move",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "lender",
+    "move",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": false,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "lender",
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "applied": true,
+    "n": 1,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 113,
+    "calls": 1,
+    "top": [
+     "Rocket Mortgage [EXACT_SOURCE_NAME] NMLS 3030/LEI 549300FGXN1K3HLB1R50 -> https://www.lendertrusthub.com/lender/rocket-mortgage"
+    ]
+   },
+   {
+    "hub": "move",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 526,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1162,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 401,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 181,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ },
+ {
+  "q": "zzqx nonexistent 9917",
+  "basis": "BARE_NAME",
+  "candidateCount": 0,
+  "timing": {
+   "totalMs": 1098,
+   "overallDeadlineMs": 9000,
+   "calls": 5
+  },
+  "coverage": {
+   "searchedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "completedHubs": [
+    "move",
+    "lender",
+    "insurance",
+    "senior",
+    "investor"
+   ],
+   "incompleteHubs": [],
+   "unsupportedHubs": [
+    "contractor"
+   ],
+   "policyRestrictedHubs": [],
+   "ambiguousHubs": [],
+   "allInScopeCompleted": false,
+   "completedHubsMiss": true,
+   "genuineNetworkMiss": false
+  },
+  "hubs": [
+   {
+    "hub": "move",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 396,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "lender",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 98,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "insurance",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 1098,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "contractor",
+    "state": "UNSUPPORTED_OPERATION",
+    "applied": false,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 0,
+    "calls": 0,
+    "top": []
+   },
+   {
+    "hub": "senior",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": null,
+    "more": false,
+    "capped": false,
+    "ms": 294,
+    "calls": 1,
+    "top": []
+   },
+   {
+    "hub": "investor",
+    "state": "COMPLETED_NO_CANDIDATES",
+    "applied": true,
+    "n": 0,
+    "total": 0,
+    "more": false,
+    "capped": false,
+    "ms": 183,
+    "calls": 1,
+    "top": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,366 @@
+{
+ "note": "Unchanged frozen sample; each request scoped to the record's own hub. Run 6 ran once on interim fix tree 67cb914 (d03f07a); the runtime then changed (planner-cohort refinement), so run 7 ran once on the FINAL runtime tree 7126009 (b0b2c12). Neither was repeated; all runs 2-7 are preserved. Small diagnostic sample; no statistical claim.",
+ "frozenSampleBlob": "d0a3502b41c8a2990f6a8827439139d8f4330d97",
+ "run7EvaluatedAt": "2026-09-18T20:32:45.337Z",
+ "run7": {
+  "lender": {
+   "displayed": {
+    "endToEnd": "5/20",
+    "whenTargetCompleted": "5/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "5/20",
+    "whenTargetCompleted": "5/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "0/12",
+    "whenTargetCompleted": "0/12",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "senior": {
+   "displayed": {
+    "endToEnd": "18/20",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 2,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "18/20",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 2,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "0/1",
+    "whenTargetCompleted": "0/0",
+    "targetFailures": 0,
+    "targetUnsupported": 1,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "investor": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "14/14",
+    "whenTargetCompleted": "14/14",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "move": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "8/9",
+    "whenTargetCompleted": "8/9",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "insurance": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "18/18",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  }
+ },
+ "run6": {
+  "lender": {
+   "displayed": {
+    "endToEnd": "5/20",
+    "whenTargetCompleted": "5/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "5/20",
+    "whenTargetCompleted": "5/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "0/12",
+    "whenTargetCompleted": "0/12",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "senior": {
+   "displayed": {
+    "endToEnd": "18/20",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 2,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "18/20",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 2,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "0/1",
+    "whenTargetCompleted": "0/0",
+    "targetFailures": 0,
+    "targetUnsupported": 1,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "investor": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "14/14",
+    "whenTargetCompleted": "14/14",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "move": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "8/9",
+    "whenTargetCompleted": "8/9",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  },
+  "insurance": {
+   "displayed": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "lowercase": {
+    "endToEnd": "20/20",
+    "whenTargetCompleted": "20/20",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   },
+   "presentation": {
+    "endToEnd": "18/18",
+    "whenTargetCompleted": "18/18",
+    "targetFailures": 0,
+    "targetUnsupported": 0,
+    "notTreatedAsNameSearch": 0,
+    "irrelevantCandidates": 0
+   }
+  }
+ },
+ "changedRun5ToRun7": [
+  {
+   "hub": "investor",
+   "variant": "presentation",
+   "input": "CINCINNATI ASSET MANAGEMENT",
+   "before": {
+    "state": "CATEGORY_OR_GEOGRAPHY_WORDS_ONLY",
+    "found": false,
+    "irrelevant": 0
+   },
+   "after": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   }
+  }
+ ],
+ "changedRun6ToRun7": [],
+ "changedRun4ToRun7": [
+  {
+   "hub": "investor",
+   "variant": "displayed",
+   "input": "ALPHA ASSET MANAGEMENT",
+   "before": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 1
+   },
+   "after": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   }
+  },
+  {
+   "hub": "investor",
+   "variant": "lowercase",
+   "input": "alpha asset management",
+   "before": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 1
+   },
+   "after": {
+    "state": "COMPLETED_WITH_CANDIDATES",
+    "found": true,
+    "irrelevant": 0
+   }
+  }
+ ],
+ "cincinnatiRowsRun7": [
+  {
+   "variant": "displayed",
+   "input": "CINCINNATI ASSET MANAGEMENT INC",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "rank": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "lowercase",
+   "input": "cincinnati asset management inc",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "rank": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "presentation",
+   "input": "CINCINNATI ASSET MANAGEMENT",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "rank": 1,
+   "irrelevant": 0
+  }
+ ],
+ "alphaRowsRun7": [
+  {
+   "variant": "displayed",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "returned": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "lowercase",
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "found": true,
+   "returned": 1,
+   "irrelevant": 0
+  },
+  {
+   "variant": "presentation",
+   "irrelevant": 0,
+   "skipped": "identical_to_displayed"
+  }
+ ]
+}
