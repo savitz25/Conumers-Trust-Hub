@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fingerprint, loadHubManifests, readArtifact, validateNetwork } from './contract.ts';
+import { askStateExplorerEyebrow } from '../network/published-ask-states.ts';
 
 type HomeContract = {
   version: string; network_contract_fingerprint: string;
@@ -66,7 +67,8 @@ test('twelve-state routing metadata preserves asymmetric specialist coverage', (
   assert.equal(coverage.jurisdictions['US-PA'].askPath, '/pennsylvania');
   assert.equal(coverage.jurisdictions['US-NC'].askPath, '/north-carolina');
   assert.equal(coverage.jurisdictions['US-OH'].askPath, '/ohio');
-  assert.match(source, /Fourteen-state network explorer/);
+  assert.match(source, /askStateExplorerEyebrow/);
+  assert.match(askStateExplorerEyebrow(), /Fourteen-state network explorer/);
 });
 
 test('consumer semantic firewalls and limitations are visible', () => {
