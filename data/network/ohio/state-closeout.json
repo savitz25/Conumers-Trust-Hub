@@ -1,0 +1,12 @@
+{
+  "ticket": "ATH-OH-001",
+  "contract": "ath-oh-network-release-v1",
+  "ask_path": "/ohio",
+  "scope": "STATE_LEVEL_ONLY",
+  "local_work_needed_now": "NO",
+  "cross_hub_record_total": null,
+  "cross_hub_record_total_status": "REJECTED",
+  "oh_public_state_research_surfaces": 7,
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false
+}

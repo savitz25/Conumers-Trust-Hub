@@ -14,6 +14,11 @@ test('PA-REL-001 mixed-case statewide paths normalize', () => {
   assert.equal(normalizedPublishedStatePath('/NoRtH-CaRoLiNa'), '/north-carolina');
   assert.equal(normalizedPublishedStatePath('/north-carolina'), null);
   assert.equal(normalizedPublishedStatePath('/North-Carolina/charlotte'), null);
+  assert.equal(normalizedPublishedStatePath('/Ohio'), '/ohio');
+  assert.equal(normalizedPublishedStatePath('/OHIO'), '/ohio');
+  assert.equal(normalizedPublishedStatePath('/oHiO'), '/ohio');
+  assert.equal(normalizedPublishedStatePath('/ohio'), null);
+  assert.equal(normalizedPublishedStatePath('/Ohio/columbus'), null);
   assert.equal(normalizedPublishedStatePath('/ask'), null);
 });
 

@@ -56,6 +56,8 @@ export default function PlacesIndexPage() {
                               ? 'Open Pennsylvania network research'
                             : item.href === '/north-carolina'
                               ? 'Open North Carolina network research'
+                            : item.href === '/ohio'
+                              ? 'Open Ohio network research'
                         : 'Open Place Lens'}
               </Link>
             </li>

@@ -310,6 +310,7 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/oregon', label: 'Oregon research' },
       { href: '/pennsylvania', label: 'Pennsylvania research' },
       { href: '/north-carolina', label: 'North Carolina research' },
+      { href: '/ohio', label: 'Ohio research' },
       { href: '/trust', label: 'Trust Center' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },

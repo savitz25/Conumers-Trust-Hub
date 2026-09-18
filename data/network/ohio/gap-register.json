@@ -1,0 +1,13 @@
+{
+  "state": "OH",
+  "columbus_cleveland_phase": { "status": "NOT_STARTED", "note": "No Ask city or county Ohio intelligence routes." },
+  "cross_hub_record_total": { "status": "REJECTED", "value": null },
+  "remaining_gaps": [
+    "OCILB discipline and unlicensed enforcement remain OPEN_SEARCH_ONLY",
+    "PUCO current HHG roster remains OPEN_SEARCH_ONLY",
+    "State home-health and hospice bulk remain SEARCH_ONLY",
+    "RMLA company and MLO bulk remain OPEN_SEARCH_ONLY",
+    "Individual insurance agent full census not acquired",
+    "IAR/dealer bulk and complete Division Orders remain search/records-request"
+  ]
+}

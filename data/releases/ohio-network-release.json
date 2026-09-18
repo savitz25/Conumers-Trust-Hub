@@ -1,0 +1,7 @@
+{
+  "ticket": "ATH-OH-001",
+  "contract": "ath-oh-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/ohio",
+  "required_hubs": ["contractor", "move", "senior", "lender", "insurance", "investor"],
+  "local_work_needed_now": "NO"
+}
