@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { captureTrustEvent } from '@/lib/analytics/trusthub';
 import { TRUSTHUB_EVENTS } from '@/lib/analytics/trusthub-events';
+import { MY_TRUSTHUB_EVENTS, boundedJourneyProperties, type MyTrustHubEventName } from '@/lib/analytics/my-trusthub-contract';
 
 type ResultsProps = {
   specialistHub?: string;
@@ -90,14 +91,28 @@ export function captureSpecialistHandoff(specialistHub?: string, surface = 'ask_
   );
 }
 
-export function captureProfileSaved(surface = 'my_trusthub'): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.PROFILE_SAVED, { surface, success: true });
+/**
+ * ATH-OBS-002D. A form SUBMIT is an intent, never a success: `profile_saved` / `project_created`
+ * used to fire here with `success: true` before the server had done anything. Confirmed outcomes are
+ * now emitted by components/analytics/my-trusthub-outcomes.tsx from server-set markers.
+ */
+export function captureMyTrustHubJourneyEvent(event: MyTrustHubEventName, properties: Record<string, unknown>): void {
+  captureTrustEvent(event, boundedJourneyProperties(properties));
 }
 
-export function captureProjectCreated(surface = 'my_trusthub'): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.PROJECT_CREATED, { surface, success: true });
+export function captureProfileSaveIntent(): void {
+  captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_INTENT, { surface: 'my_saved', action_source: 'my_saved_form', auth_state: 'authenticated', outcome: 'intent' });
 }
 
+export function captureGuestImportSaveIntent(projectContextPresent: boolean): void {
+  captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_INTENT, { surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'intent', project_context_present: projectContextPresent });
+}
+
+export function captureProjectItemAdded(surface: 'my_saved' | 'my_project_detail'): void {
+  captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROJECT_ITEM_ADDED, { surface, auth_state: 'authenticated', outcome: 'success', project_context_present: true });
+}
+
+/** Sign-in link requested (pre-existing event name). An intent: delivery and sign-in are not yet known. */
 export function captureSignupStarted(surface = 'my_sign_in'): void {
-  captureTrustEvent(TRUSTHUB_EVENTS.ACCOUNT_SIGNUP_STARTED, { surface, success: true });
+  captureTrustEvent(TRUSTHUB_EVENTS.ACCOUNT_SIGNUP_STARTED, { surface, auth_state: 'guest', outcome: 'intent' });
 }

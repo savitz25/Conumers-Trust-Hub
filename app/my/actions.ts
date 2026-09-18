@@ -141,16 +141,18 @@ export async function signOutAction() {
 export async function saveCanaryEntityAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_SAVED_ENABLED");
   const adapter = await requiredAdapter();
-  await adapter.saveEntity(uuidField(formData, "bindingId"));
+  // ATH-OBS-002D: bounded one-shot outcome markers. `saved=1` is set only after saveEntity resolved.
+  const bindingId = uuidField(formData, "bindingId");
+  await safeMutation("my_trusthub_save_failed", "/my/saved?error=unable&failed=save", () => adapter.saveEntity(bindingId));
   revalidatePath("/my");
   revalidatePath("/my/saved");
-  redirect("/my/saved");
+  redirect("/my/saved?saved=1");
 }
 
 export async function createProjectAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_PROJECTS_ENABLED");
   const adapter = await requiredAdapter();
-  const projectId = await safeMutation("my_trusthub_project_create_failed", "/my/projects?error=unable", () => adapter.createProject({
+  const projectId = await safeMutation("my_trusthub_project_create_failed", "/my/projects?error=unable&failed=project", () => adapter.createProject({
     creationKey: randomUUID(),
     name: textField(formData, "name", 120),
     lifeEventType: textField(formData, "lifeEventType", 40),
@@ -158,7 +160,7 @@ export async function createProjectAction(formData: FormData) {
   }));
   revalidatePath("/my");
   revalidatePath("/my/projects");
-  redirect(`/my/projects/${projectId}`);
+  redirect(`/my/projects/${projectId}?created=1`);
 }
 
 export async function updateProjectAction(formData: FormData) {
@@ -288,16 +290,17 @@ export async function commitGuestImportAction(formData: FormData) {
     const payload = guestPayload(textField(formData, "payload", 262144));
     const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean);
     if (!selectedItemIds.length) redirect("/my/saved?import=none");
+    const importProjectId = optionalUuidField(formData, "projectId");
     await adapter.commitGuestImport({
       payload,
       selectedItemIds,
       idempotencyKey: uuidField(formData, "idempotencyKey"),
-      projectId: optionalUuidField(formData, "projectId"),
+      projectId: importProjectId,
     });
     revalidatePath("/my");
     revalidatePath("/my/saved");
     revalidatePath("/my/projects");
-    redirect("/my/saved?import=complete");
+    redirect(importProjectId ? "/my/saved?import=complete&import_project=1" : "/my/saved?import=complete");
   } catch (error) {
     if (error && typeof error === "object" && "digest" in error) throw error;
     redirect("/my/saved?import=invalid");
@@ -410,8 +413,8 @@ export async function startWatchAction(formData: FormData) {
   const adapter = await requiredAdapter();
   const savedEntityId = uuidField(formData, "savedEntityId");
   const selected = capabilityIds(formData);
-  if (!selected.length) redirect("/my/watches?error=coverage-required");
-  await safeMutation("my_trusthub_watch_start_failed", "/my/watches?error=unable", () =>
+  if (!selected.length) redirect("/my/watches?error=coverage-required&failed=watch");
+  await safeMutation("my_trusthub_watch_start_failed", "/my/watches?error=unable&failed=watch", () =>
     adapter.startWatch(savedEntityId, selected, uuidField(formData, "idempotencyKey")));
   revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/watches");
   redirect("/my/watches?started=1");

@@ -10,7 +10,8 @@ export async function GET() {
   if (!jar.get("__Host-myth-p13-start")?.value) return handoffError();
   jar.set("__Host-myth-p13-start", "", { secure: true, httpOnly: true, sameSite: "lax", path: "/", maxAge: 0 });
   const adapter = await ProductionMyTrustHubAdapter.create(); const user = await adapter?.getUser();
-  if (!user) return NextResponse.redirect(`${ASK_ORIGIN}/my/sign-in`, { status: 303, headers: safeHeaders });
+  // ATH-OBS-002D: bounded marker -- sign-in was required by a guest Save handoff.
+  if (!user) return NextResponse.redirect(`${ASK_ORIGIN}/my/sign-in?continue=save`, { status: 303, headers: safeHeaders });
   try {
     const intent = opaque(), state = opaque(), nonce = opaque();
     await scopedRuntime("broker").query("select ops.prepare_contractor_save($1,$2,$3,$4)", [intent, state, nonce, user.id]);

@@ -10,12 +10,15 @@ export async function GET() {
   if (!adapter || !user) return handoffError(401);
   const jar = await cookies(); const code = jar.get(P13_ARRIVAL_COOKIE)?.value;
   const [state, nonce] = (jar.get(P13_COOKIE)?.value ?? "").split(".");
-  if (!validOpaque(code) || !validOpaque(state) || !validOpaque(nonce)) return handoffError();
+  // ATH-OBS-002D: a SIGNED-IN customer whose Save handoff fails lands on a page that can measure it
+  // (a plain-text response runs no analytics). The copy is the same sentence handoffError() returns.
+  const failed = () => NextResponse.redirect(`${ASK_ORIGIN}/my/saved?handoff=failed`, { status: 303, headers: safeHeaders });
+  if (!validOpaque(code) || !validOpaque(state) || !validOpaque(nonce)) return failed();
   try {
     const result = await scopedRuntime("broker").query<{ binding_id: string }>("select ops.consume_contractor_save($1,$2,$3,$4,$5,$6) as binding_id", [code, state, nonce, user.id, "contractor", "ask"]);
     await adapter.saveEntity(result.rows[0].binding_id);
     const response = NextResponse.redirect(`${ASK_ORIGIN}/my/saved?handoff=saved`, { status: 303, headers: safeHeaders });
     for (const name of [P13_COOKIE, P13_ARRIVAL_COOKIE]) response.cookies.set(name, "", { secure: true, httpOnly: true, sameSite: "lax", path: "/", maxAge: 0 });
     return response;
-  } catch { return handoffError(); }
+  } catch { return failed(); }
 }
