@@ -1,0 +1,260 @@
+[
+ {
+  "q": "Allied",
+  "primaryHub": null,
+  "reasonCodes": [
+   "IDENTITY_EVIDENCE_INSUFFICIENT",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "allied",
+  "primaryHub": null,
+  "reasonCodes": [
+   "IDENTITY_EVIDENCE_INSUFFICIENT",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "Cirta",
+  "primaryHub": null,
+  "reasonCodes": [
+   "IDENTITY_EVIDENCE_INSUFFICIENT",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "1-800-Pack-Rat",
+  "primaryHub": null,
+  "reasonCodes": [
+   "IDENTITY_EVIDENCE_INSUFFICIENT",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "10 East Partners",
+  "primaryHub": null,
+  "reasonCodes": [
+   "IDENTITY_EVIDENCE_INSUFFICIENT",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "Allied Moving",
+  "primaryHub": "move",
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "move",
+  "identityName": "Allied Moving",
+  "identifier": null,
+  "missing": [],
+  "journey": false
+ },
+ {
+  "q": "Pure Moving Company",
+  "primaryHub": "move",
+  "reasonCodes": [
+   "ENTITY_CLASS_BROWSE"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "move",
+  "identityName": null,
+  "identifier": null,
+  "missing": [
+   "moveMode"
+  ],
+  "journey": false
+ },
+ {
+  "q": "A Holly Patterson Extended Care Facility",
+  "primaryHub": "senior",
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "senior",
+  "identityName": "A Holly Patterson Extended Care Facility",
+  "identifier": null,
+  "missing": [
+   "providerClass"
+  ],
+  "journey": false
+ },
+ {
+  "q": "Allied Van Lines",
+  "primaryHub": null,
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "Abbey Delray South",
+  "primaryHub": null,
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "Tate Asset Management",
+  "primaryHub": null,
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": null,
+  "journey": false
+ },
+ {
+  "q": "Rocket Mortgage",
+  "primaryHub": "lender",
+  "reasonCodes": [
+   "EXPLICIT_IDENTITY_EVIDENCE"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "lender",
+  "identityName": "Rocket Mortgage",
+  "identifier": null,
+  "missing": [],
+  "journey": false
+ },
+ {
+  "q": "roofers in Broward County",
+  "primaryHub": "contractor",
+  "reasonCodes": [
+   "ENTITY_CLASS_BROWSE"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "contractor",
+  "identityName": null,
+  "identifier": null,
+  "missing": [],
+  "journey": false
+ },
+ {
+  "q": "Who owns this company?",
+  "primaryHub": null,
+  "reasonCodes": [
+   "SPECIFIC_REFERENCE_WITHOUT_IDENTITY",
+   "SPECIALIST_EXECUTION_BLOCKED"
+  ],
+  "canExecute": false,
+  "decisionMode": "CLARIFICATION",
+  "executionAllowed": false,
+  "guidedHub": null,
+  "identityName": null,
+  "identifier": null,
+  "missing": [
+   "entityName"
+  ],
+  "journey": false
+ },
+ {
+  "q": "NMLS 401052",
+  "primaryHub": "lender",
+  "reasonCodes": [
+   "EXACT_IDENTIFIER_RECOGNIZED"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "lender",
+  "identityName": null,
+  "identifier": {
+   "type": "NMLS",
+   "value": "401052"
+  },
+  "missing": [],
+  "journey": false
+ },
+ {
+  "q": "USDOT 3244649",
+  "primaryHub": "move",
+  "reasonCodes": [
+   "EXACT_IDENTIFIER_RECOGNIZED"
+  ],
+  "canExecute": true,
+  "decisionMode": "SINGLE_SPECIALIST",
+  "executionAllowed": true,
+  "guidedHub": "move",
+  "identityName": null,
+  "identifier": {
+   "type": "usdot",
+   "value": "3244649"
+  },
+  "missing": [],
+  "journey": false
+ }
+]

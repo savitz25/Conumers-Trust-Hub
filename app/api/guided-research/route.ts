@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { orchestrateGuidedResearch } from '@/lib/guided-research/orchestrator';
 import { recordGuidedSearch } from '@/lib/control-plane/product-events';
 import { after } from 'next/server';
+import { decideNameCandidateSearch } from '@/lib/network/name-candidates/decision';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -12,6 +13,10 @@ export async function POST(request: Request) {
   if (length>32_768) return NextResponse.json({error:'payload_too_large'},{status:413});
   try {
     const body=await request.json();
+    if(body?.action?.type==='START'&&typeof body.action.question==='string'){
+      const name=decideNameCandidateSearch(body.action.question);
+      if(name.operation==='NAME_CANDIDATES'&&!name.alternateCohortInterpretation)return NextResponse.json({error:'name_candidate_search',message:'This is a business or provider name. Use the network name search.',redirect:`/ask?q=${encodeURIComponent(name.originalInput)}`},{status:409,headers:{'Cache-Control':'no-store'}});
+    }
     const response=await orchestrateGuidedResearch(body);
     after(()=>recordGuidedSearch(response));
     return NextResponse.json(response,{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','Server-Timing':`guided;dur=${(performance.now()-started).toFixed(1)}, specialist;dur=${response.result?.latencyMs??0}`}});

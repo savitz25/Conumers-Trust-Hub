@@ -14,6 +14,11 @@ import {recordSearchObservation} from '@/lib/control-plane/product-events';
 import {after} from 'next/server';
 import {decideAskExecution} from '@/lib/network/execution-decision';
 import {validateAskQuestion} from '@/lib/network/ask-request';
+import {decideNameCandidateSearch} from '@/lib/network/name-candidates/decision';
+import {searchNameCandidates} from '@/lib/network/name-candidates/orchestrator';
+import {createFixtureAdapters,fixtureModeEnabled,FIVE_ALLIED_FIXTURE} from '@/lib/network/name-candidates/fixtures';
+import {NameCandidateResults} from '@/components/name-candidate-results';
+import {recordNameCandidateSearch} from '@/lib/control-plane/product-events';
 
 export const revalidate = 3600;
 
@@ -22,13 +27,22 @@ export async function generateMetadata({searchParams}:{searchParams:Promise<{q?:
 export default async function AskPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string|string[] }>;
+  searchParams: Promise<{ q?: string|string[]; hub?: string|string[] }>;
 }) {
-  const { q } = await searchParams;
+  const { q, hub } = await searchParams;
   let query='',inputError='';
   if(q!==undefined){try{query=validateAskQuestion(q);}catch{inputError='Enter one question of up to 500 characters, then try again.';}}
   const route=query?buildAskResearchRoute(query):null;
   const decision=query?decideAskExecution(query,route!.plan):null;
+  // TH-SEARCH-R1-019A: ONE authoritative name-candidate decision. A supplied business/provider name
+  // is searched across the network first -- no hub selection, identifier or repeated name required.
+  // `hub` is only ever a real user-selected filter chip; an inferred industry is a display hint.
+  const nameDecision=query&&route&&!route.journey?decideNameCandidateSearch(query,{plan:route.plan,selectedHub:typeof hub==='string'?hub:null}):null;
+  const nameSearch=nameDecision?.operation==='NAME_CANDIDATES'?await searchNameCandidates({originalInput:nameDecision.originalInput,name:nameDecision.name,hubScope:nameDecision.hubScope,priorityHubs:nameDecision.priorityHubs,unresolvedConditions:nameDecision.unresolvedConditions},fixtureModeEnabled()?{adapters:createFixtureAdapters(FIVE_ALLIED_FIXTURE)}:{}):null;
+  if(nameSearch)after(()=>recordNameCandidateSearch(nameSearch));
+  // A text that could ALSO be a category request ("Pure Moving Company") shows candidates first; only
+  // when no hub has any candidate does the existing category/guided research path take over.
+  const showNameCandidates=Boolean(nameSearch&&nameDecision?.operation==='NAME_CANDIDATES'&&(nameSearch.candidateCount>0||!nameDecision.alternateCohortInterpretation));
   const refuseSecuritiesAdvice=Boolean(route?.plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'));
   const guided=query&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
   // TH-DISCOVERY-RESET-001C: real per-class provider previews for a genuinely ambiguous senior
@@ -37,7 +51,7 @@ export default async function AskPage({
   // very first load of an ambiguous class with no chosen setting yet.
   const seniorPreview=guided?await buildSeniorClassPreviewResult(guided):null;
   const observation=route?observeAskRoute(route):null;
-  if(observation && (route?.journey || (!guided&&!route?.canExecute))) after(()=>recordSearchObservation(observation));
+  if(observation && !showNameCandidates && (route?.journey || (!guided&&!route?.canExecute))) after(()=>recordSearchObservation(observation));
   return (
     <>
       <PageHeader
@@ -48,8 +62,9 @@ export default async function AskPage({
       <div className="container-page py-10 sm:py-14">
         <AskQueryForm query={query}/>
         {inputError?<p role="alert" className="mb-6 rounded-xl border p-4">{inputError}</p>:null}
-        {route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
-        {query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} initialResult={seniorPreview} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
+        {showNameCandidates&&nameSearch?<NameCandidateResults query={query} initial={nameSearch}/>:null}
+        {!showNameCandidates&&route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
+        {showNameCandidates ? null : query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} initialResult={seniorPreview} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {[
               'Show active roofing contractors in Broward County.',
