@@ -457,6 +457,6 @@ export const PLACE_LENS_INDEX = [
 ] as const;
 
 export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
-  const existing = new Set(PLACE_LENS_INDEX.map((item) => item.href));
+  const existing = new Set<string>(PLACE_LENS_INDEX.map((item) => item.href));
   return [...PLACE_LENS_INDEX, ...askStatePlaceEntries().filter((item) => !existing.has(item.href))];
 }
