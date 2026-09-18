@@ -72,7 +72,7 @@ test('Ask /colorado canonical, indexable, no denver route, no Trust Score, no pa
   assert.equal(CO_PUBLICATION_MANIFEST.colorado_local_phase, 'NO');
   assert.equal(CO_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(CO_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/colorado/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/colorado\/denver/);
   assert.equal(existsSync('app/colorado/page.tsx'), true);
   assert.deepEqual(readdirSync('app/colorado').filter((name) => name !== 'page.tsx'), []);

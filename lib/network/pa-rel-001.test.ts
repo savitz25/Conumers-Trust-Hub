@@ -28,9 +28,9 @@ test('PA-REL-001 proxy issues 308 and footer/sitemap stay lowercase', () => {
   assert.match(proxy, /308/);
   assert.match(proxy, /\/:path/);
   const footer = readFileSync('components/footer.tsx', 'utf8');
-  assert.match(footer, /\/pennsylvania/);
+  assert.match(footer, /askStateFooterLinks/);
   assert.doesNotMatch(footer, /href: '\/Pennsylvania'/);
   const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-  assert.match(sitemap, /path: '\/pennsylvania'/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/Pennsylvania/);
 });

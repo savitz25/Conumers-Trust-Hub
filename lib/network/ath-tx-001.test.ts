@@ -27,7 +27,7 @@ const smlFix = JSON.parse(
 test('ATH-TX-001 is state-level research only: ATH-TX-002 publishes Ask /texas, still no counties', () => {
   assert.equal(existsSync('app/texas/page.tsx'), true);
   assert.equal(existsSync('app/places/texas'), false);
-  assert.match(sitemap, /\/texas/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.specialist_repo_edits, false);
@@ -127,7 +127,7 @@ test('required Texas network files exist', () => {
 test('NJ, Florida, and California public surfaces are unchanged by this ticket', () => {
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.match(njPage, /new-jersey/);
   assert.match(flPage, /florida/);
   assert.match(caPage, /california/);

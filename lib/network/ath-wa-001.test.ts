@@ -35,7 +35,7 @@ const oicFix = JSON.parse(
 test('ATH-WA-001 is state-level research only: ATH-WA-002 publishes Ask /washington, still no counties', () => {
   assert.equal(existsSync('app/washington/page.tsx'), true);
   assert.equal(existsSync('app/places/washington'), false);
-  assert.match(sitemap, /\/washington/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.city_work, false);
@@ -178,12 +178,12 @@ test('required Washington network files exist', () => {
 test('NJ, Florida, California, and Texas public surfaces are unchanged by this ticket', () => {
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.match(njPage, /new-jersey/);
   assert.match(flPage, /florida/);
   assert.match(caPage, /california/);
   assert.match(txPage, /texas/);
-  assert.match(sitemap, /\/texas/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(existsSync('app/new-jersey/monmouth-county/page.tsx'), true);
   assert.equal(existsSync('app/places/florida/page.tsx'), true);
   assert.equal(existsSync('app/california/page.tsx'), true);

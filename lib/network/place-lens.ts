@@ -2,18 +2,7 @@ import type { CoverageLevel } from './coverage-atlas.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { hubById } from './source-registry.ts';
-import { caReleaseGatePassed } from './ca-network.ts';
-import { txReleaseGatePassed } from './tx-network.ts';
-import { waReleaseGatePassed } from './wa-network.ts';
-import { azReleaseGatePassed } from './az-network.ts';
-import { coReleaseGatePassed } from './co-network.ts';
-import { vaReleaseGatePassed } from './va-network.ts';
-import { nyReleaseGatePassed } from './ny-network.ts';
-import { ilReleaseGatePassed } from './il-network.ts';
-import { orReleaseGatePassed } from './or-network.ts';
-import { paReleaseGatePassed } from './pa-network.ts';
-import { ncReleaseGatePassed } from './nc-network.ts';
-import { ohReleaseGatePassed } from './oh-network.ts';
+import { askStatePlaceEntries } from './published-ask-states.ts';
 
 export type PlaceMetric = {
   label: string;
@@ -467,92 +456,7 @@ export const PLACE_LENS_INDEX = [
   { href: '/new-jersey', label: 'New Jersey', detail: 'Network gateway to specialist New Jersey research pages. Not a county page.' },
 ] as const;
 
-const CALIFORNIA_PLACE = {
-  href: '/california',
-  label: 'California',
-  detail: 'Network gateway to specialist California research pages. State-level only — not a county page.',
-} as const;
-
-const TEXAS_PLACE = {
-  href: '/texas',
-  label: 'Texas',
-  detail: 'Network gateway to specialist Texas research pages. State-level only — not a city or county page.',
-} as const;
-
-const WASHINGTON_PLACE = {
-  href: '/washington',
-  label: 'Washington',
-  detail: 'Network gateway to specialist Washington research pages. State-level only — not a city or county page.',
-} as const;
-
-const ARIZONA_PLACE = {
-  href: '/arizona',
-  label: 'Arizona',
-  detail: 'Network gateway to specialist Arizona research pages. State-level only — not a city or county page.',
-} as const;
-
-const COLORADO_PLACE = {
-  href: '/colorado',
-  label: 'Colorado',
-  detail: 'Network gateway to specialist Colorado research pages. State-level only — not a city or county page.',
-} as const;
-
-const VIRGINIA_PLACE = {
-  href: '/virginia',
-  label: 'Virginia',
-  detail: 'Network gateway to specialist Virginia research pages. State-level only — not a city or county page.',
-} as const;
-
-const NEW_YORK_PLACE = {
-  href: '/new-york',
-  label: 'New York',
-  detail: 'Network gateway to specialist New York research pages. Statewide only — NYC local routes are not started.',
-} as const;
-
-const ILLINOIS_PLACE = {
-  href: '/illinois',
-  label: 'Illinois',
-  detail: 'Network gateway to specialist Illinois research pages. State-level only — not a city or county page.',
-} as const;
-
-const OREGON_PLACE = {
-  href: '/oregon',
-  label: 'Oregon',
-  detail: 'Network gateway to specialist Oregon research pages. State-level only — not a city or county page.',
-} as const;
-
-const PENNSYLVANIA_PLACE = {
-  href: '/pennsylvania',
-  label: 'Pennsylvania',
-  detail: 'Network gateway to specialist Pennsylvania research pages. State-level only — not a city or county page.',
-} as const;
-
-const NORTH_CAROLINA_PLACE = {
-  href: '/north-carolina',
-  label: 'North Carolina',
-  detail: 'Network gateway to specialist North Carolina research pages. State-level only — not a city or county page.',
-} as const;
-
-const OHIO_PLACE = {
-  href: '/ohio',
-  label: 'Ohio',
-  detail: 'Network gateway to specialist Ohio research pages. State-level only — not a city or county page.',
-} as const;
-
 export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
-  const extra = [
-    ...(caReleaseGatePassed() ? [CALIFORNIA_PLACE] : []),
-    ...(txReleaseGatePassed() ? [TEXAS_PLACE] : []),
-    ...(waReleaseGatePassed() ? [WASHINGTON_PLACE] : []),
-    ...(azReleaseGatePassed() ? [ARIZONA_PLACE] : []),
-    ...(coReleaseGatePassed() ? [COLORADO_PLACE] : []),
-    ...(vaReleaseGatePassed() ? [VIRGINIA_PLACE] : []),
-    ...(nyReleaseGatePassed() ? [NEW_YORK_PLACE] : []),
-    ...(ilReleaseGatePassed() ? [ILLINOIS_PLACE] : []),
-    ...(orReleaseGatePassed() ? [OREGON_PLACE] : []),
-    ...(paReleaseGatePassed() ? [PENNSYLVANIA_PLACE] : []),
-    ...(ncReleaseGatePassed() ? [NORTH_CAROLINA_PLACE] : []),
-    ...(ohReleaseGatePassed() ? [OHIO_PLACE] : []),
-  ];
-  return [...PLACE_LENS_INDEX, ...extra];
+  const existing = new Set<string>(PLACE_LENS_INDEX.map((item) => item.href));
+  return [...PLACE_LENS_INDEX, ...askStatePlaceEntries().filter((item) => !existing.has(item.href))];
 }

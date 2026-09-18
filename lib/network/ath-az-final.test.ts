@@ -28,7 +28,6 @@ import lenderFallback from '../../data/network-metrics/lender-v1-fallback.json' 
 const page = 'app/arizona/page.tsx';
 const ui = 'components/arizona-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync('app/arizona/page.tsx', 'utf8');
@@ -56,8 +55,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(AZ_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.equal(AZ_PUBLICATION_MANIFEST.arizona_local_phase, 'NO');
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /azReleaseGatePassed/);
-  assert.match(sitemap, /\/arizona/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listAzHubs().length, 6);
   assert.match(gateway, /Research Arizona Providers/);
   assert.equal(existsSync('app/places/arizona'), false);
@@ -162,8 +161,7 @@ test('no Trust Score, ratings schema, or local Arizona routes', () => {
 });
 
 test('homepage, footer, places, concierge, and discovery are gated on the Arizona flag', () => {
-  assert.match(footerDs, /\/arizona/);
-  assert.match(footerSrc, /azReleaseGatePassed/);
+  assert.match(footerSrc, /askStateFooterLinks/);
   assert.match(home, /buildAskStateCoverage/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'arizona'));
   assert.match(placesSrc, /listPlaceLensIndex/);

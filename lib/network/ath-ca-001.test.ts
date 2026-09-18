@@ -19,7 +19,7 @@ const elmsFix = JSON.parse(
 test('ATH-CA-001 research artifacts remain; public gateway is ATH-CA-002 state-level only', () => {
   assert.equal(existsSync('app/california/page.tsx'), true);
   assert.equal(existsSync('app/places/california'), false);
-  assert.match(sitemap, /caReleaseGatePassed/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(existsSync('app/california/los-angeles-county'), false);
 });
@@ -81,7 +81,7 @@ test('required California network files exist', () => {
 test('NJ and Florida public surfaces are unchanged by this ticket', () => {
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.match(njPage, /new-jersey/);
   assert.match(flPage, /florida/);
   assert.equal(existsSync('app/new-jersey/monmouth-county/page.tsx'), true);

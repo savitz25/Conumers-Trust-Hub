@@ -32,33 +32,7 @@ export default function PlacesIndexPage() {
                 {item.detail}
               </p>
               <Link href={item.href} className="mt-4 inline-flex min-h-11 items-center font-semibold" style={{ color: ASK_BRAND.indigo }}>
-                {item.href === '/new-jersey'
-                  ? 'Open New Jersey network research'
-                  : item.href === '/california'
-                    ? 'Open California network research'
-                    : item.href === '/texas'
-                      ? 'Open Texas network research'
-                      : item.href === '/washington'
-                        ? 'Open Washington network research'
-                        : item.href === '/arizona'
-                          ? 'Open Arizona network research'
-                          : item.href === '/colorado'
-                            ? 'Open Colorado network research'
-                            : item.href === '/virginia'
-                              ? 'Open Virginia network research'
-                            : item.href === '/new-york'
-                              ? 'Open New York network research'
-                            : item.href === '/illinois'
-                              ? 'Open Illinois network research'
-                            : item.href === '/oregon'
-                              ? 'Open Oregon network research'
-                            : item.href === '/pennsylvania'
-                              ? 'Open Pennsylvania network research'
-                            : item.href === '/north-carolina'
-                              ? 'Open North Carolina network research'
-                            : item.href === '/ohio'
-                              ? 'Open Ohio network research'
-                        : 'Open Place Lens'}
+                {item.href.startsWith('/places/') ? 'Open Place Lens' : `Open ${item.label} network research`}
               </Link>
             </li>
           ))}
