@@ -1,0 +1,12 @@
+RED-BEFORE on integrated runtime tree ba37030a030f893dc2dd93425dfcb232c9443682 (head f75822f), decision.ts blob f5173fd1a46fc57ecb71b0fa2af10dc6666d7df1, 2026-09-18T20:20:56Z
+  AssertionError [ERR_ASSERTION]: "Asset Management" led by a place must be a name search in all three catalog states (known=false unknown=true learned=false)
+  AssertionError [ERR_ASSERTION]: "Cincinnati Asset Management" must be a name-candidate search
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+ℹ fail 4
+ℹ pass 1
+ℹ tests 5
+✔ G3. protected contrasts: explicit geography / cohort / explanation / identifier / journey requests keep their operation (13.4287ms)
+✖ G1. a recognized city inside a supplied organization name does not erase the name (case / legal suffix irrelevant) (49.9684ms)
+✖ G2. METAMORPHIC geo-catalog invariant: recognizing the leading place never changes the name decision (2.5785ms)
+✖ G4. the PAGE path: full name reaches every enabled hub once, records stay separate, no hub questionnaire (1.7273ms)
+✖ G5. zero candidates, target failure and incomplete coverage keep the NAME result; the place reading is never auto-dispatched (0.8138ms)
