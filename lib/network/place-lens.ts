@@ -13,6 +13,7 @@ import { ilReleaseGatePassed } from './il-network.ts';
 import { orReleaseGatePassed } from './or-network.ts';
 import { paReleaseGatePassed } from './pa-network.ts';
 import { ncReleaseGatePassed } from './nc-network.ts';
+import { ohReleaseGatePassed } from './oh-network.ts';
 
 export type PlaceMetric = {
   label: string;
@@ -532,6 +533,12 @@ const NORTH_CAROLINA_PLACE = {
   detail: 'Network gateway to specialist North Carolina research pages. State-level only — not a city or county page.',
 } as const;
 
+const OHIO_PLACE = {
+  href: '/ohio',
+  label: 'Ohio',
+  detail: 'Network gateway to specialist Ohio research pages. State-level only — not a city or county page.',
+} as const;
+
 export function listPlaceLensIndex(): Array<{ href: string; label: string; detail: string }> {
   const extra = [
     ...(caReleaseGatePassed() ? [CALIFORNIA_PLACE] : []),
@@ -545,6 +552,7 @@ export function listPlaceLensIndex(): Array<{ href: string; label: string; detai
     ...(orReleaseGatePassed() ? [OREGON_PLACE] : []),
     ...(paReleaseGatePassed() ? [PENNSYLVANIA_PLACE] : []),
     ...(ncReleaseGatePassed() ? [NORTH_CAROLINA_PLACE] : []),
+    ...(ohReleaseGatePassed() ? [OHIO_PLACE] : []),
   ];
   return [...PLACE_LENS_INDEX, ...extra];
 }

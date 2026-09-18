@@ -18,6 +18,7 @@ import { ilReleaseGatePassed } from '@/lib/network/il-network';
 import { orReleaseGatePassed } from '@/lib/network/or-network';
 import { paReleaseGatePassed } from '@/lib/network/pa-network';
 import { ncReleaseGatePassed } from '@/lib/network/nc-network';
+import { ohReleaseGatePassed } from '@/lib/network/oh-network';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -101,7 +102,8 @@ export function Footer() {
                       (item.href !== '/illinois' || ilReleaseGatePassed()) &&
                       (item.href !== '/oregon' || orReleaseGatePassed()) &&
                       (item.href !== '/pennsylvania' || paReleaseGatePassed()) &&
-                      (item.href !== '/north-carolina' || ncReleaseGatePassed()),
+                      (item.href !== '/north-carolina' || ncReleaseGatePassed()) &&
+                      (item.href !== '/ohio' || ohReleaseGatePassed()),
                   )
                   .map((item) => (
                   <li key={item.href}>

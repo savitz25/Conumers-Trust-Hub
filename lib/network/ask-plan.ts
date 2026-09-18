@@ -71,6 +71,7 @@ import { ilCaveatForHub, ilSpecialistUrl, routeIlAsk } from './il-network.ts';
 import { orCaveatForHub, orSpecialistUrl, routeOrAsk } from './or-network.ts';
 import { paCaveatForHub, paSpecialistUrl, routePaAsk } from './pa-network.ts';
 import { ncCaveatForHub, ncSpecialistUrl, routeNcAsk } from './nc-network.ts';
+import { ohCaveatForHub, ohSpecialistUrl, routeOhAsk } from './oh-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -1251,6 +1252,51 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0]) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateNc(h, ncCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'OH') {
+    const ohRoute = routeOhAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(
+        dest &&
+          (/\/ask(\?|$)/i.test(dest) ||
+            /\/api\/ask/i.test(dest) ||
+            /\/verify(\?|$)/i.test(dest) ||
+            /\/companies\?/i.test(dest)),
+      );
+    const annotateOh = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : ohSpecialistUrl(hub.hubId),
+        geographyCapability: hub.geographyCapability,
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? ohSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (ohRoute) {
+      const already = hubs.some((h) => h.hubId === ohRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: ohRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[ohRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: ohRoute.destination,
+            reason: ohRoute.caveat,
+            whatItCanAnswer: `Ohio research on ${NETWORK_PUBLIC_NAMES[ohRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Ohio',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === ohRoute.hubId ? annotateOh(h, ohRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === ohRoute.hubId), ...hubs.filter((h) => h.hubId !== ohRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0]) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateOh(h, ohCaveatForHub(primary)) : h));
     }
   }
 

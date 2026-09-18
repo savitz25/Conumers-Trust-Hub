@@ -162,15 +162,16 @@ export const ASK_NETWORK_STATES = [
   { code: 'OR', slug: 'oregon', name: 'Oregon' },
   { code: 'PA', slug: 'pennsylvania', name: 'Pennsylvania' },
   { code: 'NC', slug: 'north-carolina', name: 'North Carolina' },
+  { code: 'OH', slug: 'ohio', name: 'Ohio' },
 ] as const;
 
 const ADAPTER_PATHS: Partial<Record<SpecialistHubId, string[]>> = {
-  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
-  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
-  move: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
-  lender: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
-  insurance: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
-  investor: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina'],
+  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
+  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
+  move: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
+  lender: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
+  insurance: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
+  investor: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio'],
 };
 
 function specialistPaths(contract: LoadedSpecialistContract): string[] {
