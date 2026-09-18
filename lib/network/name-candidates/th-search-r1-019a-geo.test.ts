@@ -56,7 +56,9 @@ test('G2. METAMORPHIC geo-catalog invariant: recognizing the leading place never
   // Same organization phrase, three planner-geography states: (a) a place the catalog knows today,
   // (b) an unknown token in its position, (c) that unknown token AFTER the catalog learns it -- built
   // from the real plan the planner emits for a known place, so it is exactly what a new state rollout produces.
-  const PHRASES: Array<[place: string, rest: string]> = [['Cincinnati', 'Asset Management'], ['Columbus', 'Home Lending'], ['Denver', 'Roofing Company'], ['Austin', 'Wealth Partners']];
+  const PHRASES: Array<[place: string, rest: string]> = [['Cincinnati', 'Asset Management'], ['Columbus', 'Home Lending'], ['Denver', 'Roofing Company'], ['Austin', 'Wealth Partners'],
+    // The planner reads these as a COHORT once the place is known; written as an organization name they stay names.
+    ['Cincinnati', 'Moving Company'], ['Denver', 'Insurance Agency']];
   const NEW_PLACE = 'Zentoria';
   for (const [place, rest] of PHRASES) {
     const known = `${place} ${rest}`; const unknown = `${NEW_PLACE} ${rest}`;
@@ -77,7 +79,7 @@ test('G3. protected contrasts: explicit geography / cohort / explanation / ident
     'investment advisers in Cincinnati Ohio', 'asset managers in Denver Colorado', 'What does TrustHub know about Cincinnati?', 'roofers in Broward County',
     'nursing homes in Austin Texas', 'moving from Cincinnati to Columbus', 'CRD 104946', 'NMLS 3030', 'USDOT 76235', 'USDOT 99999999', 'Who owns this company?',
     // A place alone is not an organization name; a planner-established cohort ("<place> <provider class>") stays a cohort.
-    'Cincinnati', 'Cincinnati Ohio', 'Denver Colorado', 'Denver movers', 'movers Denver', 'Cleveland lenders', 'Columbus nursing homes',
+    'Cincinnati', 'Cincinnati Ohio', 'Denver Colorado', 'Denver movers', 'movers Denver', 'Cleveland lenders', 'Denver roofers', 'Columbus nursing homes', 'moving company Denver', 'insurance agency Cincinnati', 'Cincinnati home health care',
   ];
   for (const q of CONTRASTS) assert.equal(decideNameCandidateSearch(q).operation, 'NOT_NAME_SEARCH', `"${q}" must not become a name search`);
   // The planner's own constraints on real location research are untouched.

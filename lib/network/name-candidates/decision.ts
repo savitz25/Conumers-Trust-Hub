@@ -104,16 +104,21 @@ function geographyTokens(plan: AskResearchPlan): Set<string> {
  * Recognized GEOGRAPHY is context, never a disqualifier: a place word inside a supplied phrase
  * ("Cincinnati Asset Management") is part of the name, exactly as it was before the planner's
  * catalog learned that place -- so publishing more places can never make a name less discoverable.
- * Geography is discounted in only two established cases: the planner itself resolved the text as a
- * cohort request ("Denver movers", "moving from Cincinnati to Columbus"), or the phrase is nothing
- * but the place ("Cincinnati Ohio").
+ * Geography is discounted in only two established cases: the phrase is nothing but the place
+ * ("Cincinnati Ohio"), or the planner itself resolved the text as a cohort request ("Denver movers",
+ * "moving company Denver", "moving from Cincinnati to Columbus") -- unless that text is WRITTEN as an
+ * organization name: led by the place and carrying an organization-form word or legal suffix
+ * ("Cincinnati Moving Company"), which is searched as a name with the cohort reading kept as the
+ * explicit labeled alternative.
  */
 export function distinctiveTokens(value: string, plan: AskResearchPlan): string[] {
   const tokens = nameTokens(value);
   const nonGeneric = tokens.filter((token) => !CATEGORY_TOKENS.has(token) && !DESCRIPTOR_TOKENS.has(token));
   const geo = geographyTokens(plan);
   const placeOnly = tokens.every((token) => geo.has(token) || DESCRIPTOR_TOKENS.has(token));
-  if (plan.intent !== 'COHORT_BROWSE' && !placeOnly) return nonGeneric;
+  const writtenAsOrganization = geo.has(tokens[0] ?? '') && (ORG_FORM.test(value) || LEGAL_SUFFIX.test(value));
+  const plannerCohort = plan.intent === 'COHORT_BROWSE' && !writtenAsOrganization;
+  if (!plannerCohort && !placeOnly) return nonGeneric;
   return nonGeneric.filter((token) => !geo.has(token));
 }
 

@@ -24,7 +24,7 @@ const mutations = [
     find: "completedCount === 0 ? 'NOT_COMPLETED' : coverage.genuineNetworkMiss ? 'COMPLETED_MISS' : 'PARTIAL_MISS';", replace: "completedCount === 0 ? 'NOT_COMPLETED' : 'COMPLETED_MISS';" },
   // Final integration correction: recognized geography again disqualifies a name's own words.
   { id: 'H_GEOGRAPHY_TOKEN_EXCLUSION', file: 'lib/network/name-candidates/decision.ts', why: 'A place word the planner recognizes is removed from the supplied name, so publishing a new state disables existing organization names.',
-    find: "  if (plan.intent !== 'COHORT_BROWSE' && !placeOnly) return nonGeneric;", replace: "  if (false) return nonGeneric;" },
+    find: "  if (!plannerCohort && !placeOnly) return nonGeneric;", replace: "  if (tokens.length < 0) return nonGeneric;" },
 ];
 
 const report = { generatedAt: new Date().toISOString(), cleanBefore: run(), mutations: [], cleanAfter: null };
