@@ -1,0 +1,176 @@
+{
+ "note": "Run 2 SUMMARY ONLY, recovered verbatim from the builder session log. Its per-row results file was overwritten by run 3 before the reviewer asked for every run to be preserved; no per-row detail exists for this run.",
+ "summary": {
+  "lender": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 5
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 5
+   },
+   "presentation": {
+    "n": 12,
+    "found": 0
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 6
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 0,
+   "candidatesReturned": 13,
+   "irrelevantCandidates": 0,
+   "misses": [
+    "displayed: \"Guild Mortgage Company LLC\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"guild mortgage company llc\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"Guild Mortgage Company\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"CMG Mortgage, Inc.\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"cmg mortgage, inc.\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"CMG Mortgage\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"FAIRWINDS CREDIT UNION\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"fairwinds credit union\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"OCMBC, INC.\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"ocmbc, inc.\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"OCMBC\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"DEEPHAVEN MORTGAGE LLC\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"deephaven mortgage llc\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"DEEPHAVEN MORTGAGE\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"Movement Mortgage, LLC\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"movement mortgage, llc\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"Movement Mortgage\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"Fairway Independent Mortgage Corporation\" -> COMPLETED_WITH_CANDIDATES",
+    "lowercase: \"fairway independent mortgage corporation\" -> COMPLETED_WITH_CANDIDATES",
+    "presentation: \"Fairway Independent Mortgage\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"PRIMELENDING, A PLAINSCAPITAL COMPANY\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"primelending, a plainscapital company\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"Frost Bank\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"frost bank\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"Broker Solutions, Inc.\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"broker solutions, inc.\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"Broker Solutions\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"PROVIDENT FUNDING ASSOCIATES, L.P.\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"provident funding associates, l.p.\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"PROVIDENT FUNDING ASSOCIATES\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"CLM MORTGAGE, INC.\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"clm mortgage, inc.\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"CLM MORTGAGE\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"SWBC MORTGAGE CORPORATION\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"swbc mortgage corporation\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"SWBC MORTGAGE\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"PLANET HOME LENDING, LLC\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"planet home lending, llc\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"PLANET HOME LENDING\" -> COMPLETED_NO_CANDIDATES",
+    "displayed: \"Better Mortgage Corporation\" -> COMPLETED_NO_CANDIDATES",
+    "lowercase: \"better mortgage corporation\" -> COMPLETED_NO_CANDIDATES",
+    "presentation: \"Better Mortgage\" -> COMPLETED_WITH_CANDIDATES"
+   ]
+  },
+  "senior": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 18
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 18
+   },
+   "presentation": {
+    "n": 1,
+    "found": 0
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 18
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 5,
+   "candidatesReturned": 36,
+   "irrelevantCandidates": 0,
+   "misses": [
+    "displayed: \"Deerbrook Skilled Nursing and Rehab Center\" -> UNSUPPORTED_OPERATION",
+    "lowercase: \"deerbrook skilled nursing and rehab center\" -> UNSUPPORTED_OPERATION",
+    "displayed: \"FFIII Houston SNF Tenant LLC\" -> UNSUPPORTED_OPERATION",
+    "lowercase: \"ffiii houston snf tenant llc\" -> UNSUPPORTED_OPERATION",
+    "presentation: \"FFIII Houston SNF Tenant\" -> UNSUPPORTED_OPERATION"
+   ]
+  },
+  "investor": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 20
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 20
+   },
+   "presentation": {
+    "n": 14,
+    "found": 14
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 0,
+   "candidatesReturned": 66,
+   "irrelevantCandidates": 14,
+   "misses": []
+  },
+  "move": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 20
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 20
+   },
+   "presentation": {
+    "n": 9,
+    "found": 8
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 1,
+   "candidatesReturned": 48,
+   "irrelevantCandidates": 0,
+   "misses": [
+    "presentation: \"C&L Movers\" -> TECHNICAL_FAILURE"
+   ]
+  },
+  "insurance": {
+   "records": 20,
+   "displayed": {
+    "n": 20,
+    "found": 20
+   },
+   "lowercase": {
+    "n": 20,
+    "found": 20
+   },
+   "presentation": {
+    "n": 18,
+    "found": 18
+   },
+   "nameLevelDisplayed": {
+    "n": 20,
+    "found": 20
+   },
+   "redundantClarifications": 0,
+   "technicalOrUnsupported": 0,
+   "candidatesReturned": 90,
+   "irrelevantCandidates": 0,
+   "misses": []
+  }
+ }
+}

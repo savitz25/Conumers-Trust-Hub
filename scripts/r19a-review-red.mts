@@ -15,9 +15,14 @@ const out: Record<string, unknown> = {};
   const d = decideNameCandidateSearch('Pure Moving Company');
   if (d.operation !== 'NAME_CANDIDATES') throw new Error('expected name decision');
   const r = await searchNameCandidates({ name: d.name, hubScope: d.hubScope, priorityHubs: d.priorityHubs }, { adapters: createFixtureAdapters(FIVE_ALLIED_FIXTURE, { move: 'fail' }) });
-  // The exact expression used by app/ask/page.tsx at the reviewed head:
-  const reviewedHeadExpression = r.candidateCount > 0 || !d.alternateCohortInterpretation;
-  out.finding1 = { alternate: d.alternateCohortInterpretation, moveState: r.hubs.find((h) => h.hub === 'move')!.state, candidateCount: r.candidateCount, reviewedHeadShowsNameResults: reviewedHeadExpression, defect: reviewedHeadExpression === false ? 'REPRODUCED: a Move source FAILURE drops the name UI and re-enters the legacy "What are you moving?" path' : 'not reproduced' };
+  // Reviewed head: app/ask/page.tsx used `candidateCount > 0 || !alternateCohortInterpretation`.
+  // After the correction the page delegates to page-state.ts; when that module exists, measure IT.
+  const pageState = await import('../lib/network/name-candidates/page-state.ts').catch(() => null);
+  const { planAskResearch } = await import('../lib/network/research-planner.ts');
+  const reviewedHeadExpression = pageState
+    ? (await pageState.resolveAskNameState({ query: 'Pure Moving Company', plan: planAskResearch('Pure Moving Company') }, { adapters: createFixtureAdapters(FIVE_ALLIED_FIXTURE, { move: 'fail' }) })).mode === 'NAME_RESULTS'
+    : r.candidateCount > 0 || !d.alternateCohortInterpretation;
+  out.finding1 = { alternate: d.alternateCohortInterpretation, moveState: r.hubs.find((h) => h.hub === 'move')!.state, candidateCount: r.candidateCount, pageLogicMeasured: pageState ? 'page-state.ts (corrected)' : 'reviewed-head expression', reviewedHeadShowsNameResults: reviewedHeadExpression, defect: reviewedHeadExpression === false ? 'REPRODUCED: a Move source FAILURE drops the name UI and re-enters the legacy "What are you moving?" path' : 'not reproduced' };
 }
 
 // Finding 2: a truncated-empty first page has no usable continuation.

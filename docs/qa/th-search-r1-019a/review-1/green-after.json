@@ -3,8 +3,9 @@
   "alternate": true,
   "moveState": "TECHNICAL_FAILURE",
   "candidateCount": 0,
-  "reviewedHeadShowsNameResults": false,
-  "defect": "REPRODUCED: a Move source FAILURE drops the name UI and re-enters the legacy \"What are you moving?\" path"
+  "pageLogicMeasured": "page-state.ts (corrected)",
+  "reviewedHeadShowsNameResults": true,
+  "defect": "not reproduced"
  },
  "finding2": {
   "groupRendered": true,

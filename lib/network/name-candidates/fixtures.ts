@@ -107,11 +107,16 @@ export const PAGING_RACE_BEHAVIOR: Partial<Record<SpecialistHubId, FixtureBehavi
   lender: { failFromPage2: true },
 };
 
-export const FIXTURE_SCENARIOS = ['five-allied', 'paging-race'] as const;
+/** HYPOTHETICAL: a relevant source that is DOWN while the customer searches a name with an alternate category reading. */
+export const SOURCE_FAILURE_FIXTURE: FixtureRecord[] = [...FIVE_ALLIED_FIXTURE, { hub: 'move', key: 'fx-pure-moving-company', name: 'Pure Moving Company', entityType: 'Mover (Carrier)', profilePath: '/companies/fx-pure-moving-company' }];
+
+export const FIXTURE_SCENARIOS = ['five-allied', 'paging-race', 'source-failure'] as const;
 
 /** The fixture adapters for the scenario named in NAME_CANDIDATES_FIXTURE. */
 export function createFixtureAdaptersForScenario(env: Record<string, string | undefined> = process.env): Record<SpecialistHubId, HubNameAdapter> {
-  return env.NAME_CANDIDATES_FIXTURE === 'paging-race' ? createFixtureAdapters(PAGING_RACE_FIXTURE, PAGING_RACE_BEHAVIOR) : createFixtureAdapters(FIVE_ALLIED_FIXTURE);
+  if (env.NAME_CANDIDATES_FIXTURE === 'paging-race') return createFixtureAdapters(PAGING_RACE_FIXTURE, PAGING_RACE_BEHAVIOR);
+  if (env.NAME_CANDIDATES_FIXTURE === 'source-failure') return createFixtureAdapters(SOURCE_FAILURE_FIXTURE, { move: 'fail' });
+  return createFixtureAdapters(FIVE_ALLIED_FIXTURE);
 }
 
 /** Fixture serving is impossible on a production deployment, whatever the env says. */

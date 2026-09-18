@@ -9,7 +9,7 @@ import type { SpecialistHubId } from '../lib/network/registry.ts';
 const frozen = JSON.parse(readFileSync('docs/qa/th-search-r1-019a/holdout-frozen.json', 'utf8'));
 const SUFFIX = /[\s,]+(?:l\.?l\.?c\.?|inc\.?|incorporated|corp\.?|corporation|l\.?p\.?|l\.?l\.?p\.?|ltd\.?|co\.?)[\s,.]*$/i;
 const presentation = (name: string) => { let v = name.replace(/\s*\(.*?\)\s*/g, ' ').replace(/["“”]/g, '').trim(); for (let i = 0; i < 2; i++) v = v.replace(SUFFIX, '').trim(); return v.replace(/[,.\s]+$/g, '').trim(); };
-type EvalRow = { key: string; name: string; variant: string; input: string; skipped?: string; redundantClarification?: boolean; reason?: string; state?: string; failureKind?: string | null; returned?: number; found?: boolean; foundByName?: boolean; rank?: number | null; truncated?: boolean; irrelevant?: number; ms?: number };
+type EvalRow = { key: string; name: string; variant: string; input: string; skipped?: string; redundantClarification?: boolean; reason?: string; state?: string; failureKind?: string | null; returned?: number; found?: boolean; foundByName?: boolean; rank?: number | null; truncated?: boolean; irrelevant?: number; irrelevantDetail?: unknown[]; ms?: number };
 const squash = (v: string) => nameTokens(v).join('');
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -33,8 +33,9 @@ async function evalHub(hub: SpecialistHubId, drawn: Array<{ key: string; name: s
       const h = r.hubs.find((x) => x.hub === hub)!;
       const rank = h.candidates.findIndex((c) => isTarget(hub, record.key, c));
       const distinct = distinctiveTokens(decision.name, planAskResearch(decision.name));
-      const irrelevant = h.candidates.filter((c) => { const m = nameTokens(c.matchedName); const basis = distinct.length ? distinct : nameTokens(decision.name); return !basis.some((d) => m.some((t) => t === d || t.startsWith(d) || d.startsWith(t))); }).length;
-      rows.push({ key: record.key, name: record.name, variant, input, redundantClarification: false, state: h.state, failureKind: h.failureKind ?? null, returned: h.candidates.length, found: rank >= 0, foundByName: h.candidates.some((c) => squash(c.displayName) === squash(record.name) || squash(c.matchedName) === squash(record.name)), rank: rank >= 0 ? rank + 1 : null, truncated: h.hasMore || h.truncatedWithoutCursor, irrelevant, ms: h.latencyMs });
+      const irrelevantRows = h.candidates.filter((c) => { const m = nameTokens(c.matchedName ?? c.displayName); const basis = distinct.length ? distinct : nameTokens(decision.name); return !basis.some((d) => m.some((t) => t === d || t.startsWith(d) || d.startsWith(t))); });
+      const irrelevant = irrelevantRows.length;
+      rows.push({ key: record.key, name: record.name, variant, input, redundantClarification: false, state: h.state, failureKind: h.failureKind ?? null, returned: h.candidates.length, found: rank >= 0, foundByName: h.candidates.some((c) => squash(c.displayName) === squash(record.name) || squash(c.matchedName) === squash(record.name)), rank: rank >= 0 ? rank + 1 : null, truncated: h.hasMore || h.truncatedWithoutCursor, irrelevant, irrelevantDetail: irrelevantRows.map((c) => ({ displayName: c.displayName, stableKey: c.stableKey, matchMethod: c.matchMethod, matchedField: c.matchedField, matchedName: c.matchedName, hubMatchExplanation: c.hubMatchExplanation })), ms: h.latencyMs });
       await sleep(120);
     }
   }
@@ -54,5 +55,6 @@ await Promise.all((Object.keys(frozen.hubs) as SpecialistHubId[]).map(async (hub
     candidatesReturned: returned, irrelevantCandidates: searched.reduce((n: number, r) => n + (r.irrelevant ?? 0), 0),
     misses: evaluated.filter((r) => !r.found).map((r) => `${r.variant}: ${JSON.stringify(r.input)} -> ${r.redundantClarification ? 'NOT_NAME_SEARCH:' + r.reason : r.state + (r.truncated ? ' (truncated)' : '')}`) };
 }));
-writeFileSync('docs/qa/th-search-r1-019a/holdout-results.json', JSON.stringify({ evaluatedAt: new Date().toISOString(), note: 'Diagnostic small-sample evaluation against live hub operations. Not a statistical certification.', summary, results }, null, 1));
+const OUT = process.argv[2] ?? 'docs/qa/th-search-r1-019a/holdout-results.json';
+writeFileSync(OUT, JSON.stringify({ evaluatedAt: new Date().toISOString(), note: 'Diagnostic small-sample evaluation against live hub operations. Not a statistical certification.', summary, results }, null, 1));
 console.log(JSON.stringify(summary, null, 1));

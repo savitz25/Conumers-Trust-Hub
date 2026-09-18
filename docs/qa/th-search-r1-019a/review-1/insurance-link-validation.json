@@ -1,0 +1,269 @@
+{
+ "checkedAt": "2026-09-18T18:44:17.266Z",
+ "rows": [
+  {
+   "name": "allied",
+   "record": "3A ALLIED INSURANCE CORP.",
+   "npn": "10058617",
+   "rawParams": [
+    [
+     "q",
+     "Find allied"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "269dbfd0-e1f7-4474-9a5e-b3aebe936908"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  },
+  {
+   "name": "allied",
+   "record": "ALLIED ADVANTAGE INSURANCE SERVICES LLC,",
+   "npn": "19286222",
+   "rawParams": [
+    [
+     "q",
+     "Find allied"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "9de852bb-b9f7-4725-9230-4b0566e39224"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  },
+  {
+   "name": "beacon",
+   "record": "BEACON ADVISORS LLC",
+   "npn": "20636822",
+   "rawParams": [
+    [
+     "q",
+     "Find beacon"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "b3023c06-af5f-4854-928c-a1ccbd71e28a"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  },
+  {
+   "name": "beacon",
+   "record": "BEACON AND STONE RISK ADVISORS DBA BEACON AND STONE INSURANCE GROUP",
+   "npn": "22058494",
+   "rawParams": [
+    [
+     "q",
+     "Find beacon"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "eec04c7c-7f79-47fa-b9a0-b99fa2e1174e"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  },
+  {
+   "name": "summit",
+   "record": "BLUE SUMMIT INSURANCE SOLUTIONS LLC,",
+   "npn": "19316488",
+   "rawParams": [
+    [
+     "q",
+     "Find summit"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "f774eac8-dff0-4b6d-a126-16d254f43a1a"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  },
+  {
+   "name": "summit",
+   "record": "CASCADE SUMMIT INSURANCE OF OREGON, INC.",
+   "npn": "16716031",
+   "rawParams": [
+    [
+     "q",
+     "Find summit"
+    ],
+    [
+     "entity",
+     "undefined"
+    ],
+    [
+     "state",
+     "undefined"
+    ],
+    [
+     "loa",
+     "undefined"
+    ],
+    [
+     "selected",
+     "6bad821f-7251-4f3b-9a8b-40794d29e422"
+    ]
+   ],
+   "droppedParams": [
+    "entity=undefined",
+    "state=undefined",
+    "loa=undefined"
+   ],
+   "keptParams": [
+    "q",
+    "selected"
+   ],
+   "rawLink": {
+    "showsThisNpn": false,
+    "showsRevalidatedIdentity": false
+   },
+   "sanitizedLink": {
+    "showsThisNpn": true,
+    "showsRevalidatedIdentity": true
+   }
+  }
+ ]
+}
