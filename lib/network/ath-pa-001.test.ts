@@ -81,12 +81,12 @@ test('Ask /pennsylvania canonical, indexability follows gate, no Philadelphia/Pi
   assert.equal(PA_PUBLICATION_MANIFEST.pennsylvania_local_phase_status, 'NOT_STARTED');
   assert.equal(PA_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(PA_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/pennsylvania/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/philadelphia/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/pittsburgh/);
-  assert.match(footer, /paReleaseGatePassed/);
-  assert.match(footer, /\/pennsylvania/);
-  assert.match(places, /Open Pennsylvania network research/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(places, /Open \${item.label} network research/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/allegheny/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/montgomery/);
   assert.equal(existsSync('app/pennsylvania/page.tsx'), true);
@@ -264,7 +264,7 @@ test('claim eligibility surfaces are unchanged', () => {
 test('state page inventory adds Pennsylvania once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'PA').length, 1);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'pennsylvania'));
-  assert.equal(ASK_NETWORK_STATES.length, 13);
+  assert.equal(ASK_NETWORK_STATES.length, 14);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/pennsylvania'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/pennsylvania/philadelphia'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Pennsylvania network gateway/);

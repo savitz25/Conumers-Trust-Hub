@@ -77,7 +77,7 @@ test('Ask /oregon canonical, indexability follows gate, no Portland/Multnomah ro
   assert.equal(OR_PUBLICATION_MANIFEST.oregon_local_phase_status, 'NOT_STARTED');
   assert.equal(OR_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(OR_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/oregon/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/oregon\/portland/);
   assert.doesNotMatch(sitemap, /\/oregon\/multnomah/);
   assert.equal(existsSync('app/oregon/page.tsx'), true);
@@ -224,7 +224,7 @@ test('claim eligibility surfaces are unchanged', () => {
 test('state page inventory adds Oregon once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'OR').length, 1);
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.slug === 'oregon').length, 1);
-  assert.equal(ASK_NETWORK_STATES.length, 13);
+  assert.equal(ASK_NETWORK_STATES.length, 14);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/oregon'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/oregon/portland'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Oregon network gateway/);

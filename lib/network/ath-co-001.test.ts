@@ -72,7 +72,7 @@ test('Ask /colorado canonical, indexable, no denver route, no Trust Score, no pa
   assert.equal(CO_PUBLICATION_MANIFEST.colorado_local_phase, 'NO');
   assert.equal(CO_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(CO_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/colorado/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/colorado\/denver/);
   assert.equal(existsSync('app/colorado/page.tsx'), true);
   assert.deepEqual(readdirSync('app/colorado').filter((name) => name !== 'page.tsx'), []);
@@ -214,11 +214,11 @@ test('claim eligibility surfaces are unchanged', () => {
 });
 
 test('state page count increments exactly once and places/concierge stay gated', () => {
-  assert.equal(ASK_NETWORK_STATES.length, 13);
+  assert.equal(ASK_NETWORK_STATES.length, 14);
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'CO').length, 1);
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio'],
   );
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/colorado'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/colorado/denver'), false);

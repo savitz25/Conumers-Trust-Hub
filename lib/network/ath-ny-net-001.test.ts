@@ -94,7 +94,7 @@ test('Ask /new-york canonical, indexability follows gate, no NYC routes', () => 
   assert.equal(NY_PUBLICATION_MANIFEST.new_york_local_phase_status, 'NOT_STARTED');
   assert.equal(NY_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(NY_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/new-york/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/new-york\/manhattan/);
   assert.doesNotMatch(sitemap, /\/new-york\/brooklyn/);
   assert.equal(existsSync('app/new-york/page.tsx'), true);

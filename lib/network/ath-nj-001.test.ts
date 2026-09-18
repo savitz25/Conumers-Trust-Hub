@@ -35,7 +35,7 @@ test('1-6 gateway route, indexable after gate, canonical, sitemap, six cards, no
   assert.match(pageSrc, /noIndex: !gate/);
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /\/new-jersey/);
+  assert.match(sitemap, /askStateSitemapEntries|listNjPilotCounties/);
   assert.match(sitemap, /njReleaseGatePassed/);
   assert.equal(listNjHubs().length, 6);
   assert.match(gateway, /Specialist New Jersey research/);
@@ -178,9 +178,9 @@ test('32-40 Florida and network regression surfaces', () => {
   assert.equal(broward.placeLensHref, '/places/florida/broward');
   assert.match(flPage, /floridaPlaceLens/);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New Jersey network gateway/);
-  assert.match(footer, /\/new-jersey/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'new-jersey'));
-  assert.match(placesSrc, /\/new-jersey/);
+  assert.match(readFileSync('lib/network/published-ask-states.ts', 'utf8'), /slug: 'new-jersey'/);
+  assert.match(readFileSync('lib/network/place-lens.ts', 'utf8'), /askStatePlaceEntries|\/new-jersey/);
   assert.equal(existsSync('app/promise/page.tsx'), true);
   assert.equal(existsSync('app/methodology/page.tsx'), true);
   assert.equal(existsSync('lib/customer/handoff.ts'), true);

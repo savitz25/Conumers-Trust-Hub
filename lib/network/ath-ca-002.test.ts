@@ -25,7 +25,6 @@ import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 const page = 'app/california/page.tsx';
 const ui = 'components/california-network-gateway.tsx';
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
-const footerDs = readFileSync('lib/design/ask-design-system.ts', 'utf8');
 const footerSrc = readFileSync('components/footer.tsx', 'utf8');
 const gateway = readFileSync(ui, 'utf8');
 const pageSrc = readFileSync(page, 'utf8');
@@ -53,8 +52,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(CA_PUBLICATION_MANIFEST.state_code, 'CA');
   assert.equal(CA_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /caReleaseGatePassed/);
-  assert.match(sitemap, /\/california/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listCaHubs().length, 6);
   assert.match(gateway, /Specialist California research/);
   assert.equal(existsSync('app/ca'), false);
@@ -211,8 +210,7 @@ test('six URL definitions; Move or any specialist failure blocks complete', () =
 });
 
 test('homepage, footer, places, concierge, and discovery retain canonical California routing', () => {
-  assert.match(footerDs, /\/california/);
-  assert.match(footerSrc, /caReleaseGatePassed/);
+  assert.match(footerSrc, /askStateFooterLinks/);
   assert.match(home, /buildAskStateCoverage/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'california'));
   assert.match(placesSrc, /listPlaceLensIndex/);
@@ -240,7 +238,7 @@ test('NJ and Florida public surfaces remain additive and unchanged', () => {
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.equal(NJ_PUBLICATION_MANIFEST.release_gate.passed, true);
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/new-jersey\/monmouth-county/);
+  assert.match(sitemap, /listNjPilotCounties/);
   assert.equal(existsSync('app/new-jersey/page.tsx'), true);
   assert.equal(existsSync('app/new-jersey/monmouth-county/page.tsx'), true);
   assert.equal(existsSync('app/places/florida/page.tsx'), true);

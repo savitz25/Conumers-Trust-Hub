@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fingerprint, loadHubManifests, readArtifact, validateNetwork } from './contract.ts';
+import { askStateExplorerEyebrow } from '../network/published-ask-states.ts';
 
 type HomeContract = {
   version: string; network_contract_fingerprint: string;
@@ -54,7 +55,7 @@ test('no unsafe aggregate, stale source claim, or ambiguous Lender profile claim
 });
 
 test('twelve-state routing metadata preserves asymmetric specialist coverage', () => {
-  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR', 'US-PA', 'US-NC']);
+  assert.deepEqual(Object.keys(coverage.jurisdictions), ['US-FL', 'US-NJ', 'US-CA', 'US-TX', 'US-WA', 'US-AZ', 'US-CO', 'US-VA', 'US-NY', 'US-IL', 'US-OR', 'US-PA', 'US-NC', 'US-OH']);
   assert.equal(coverage.jurisdictions['US-FL'].askPath, '/florida');
   assert.deepEqual(coverage.jurisdictions['US-FL'].nationalOnly, ['investor']);
   assert.deepEqual(coverage.jurisdictions['US-AZ'].nationalOnly, ['insurance']);
@@ -65,7 +66,9 @@ test('twelve-state routing metadata preserves asymmetric specialist coverage', (
   assert.equal(coverage.jurisdictions['US-IL'].askPath, '/illinois');
   assert.equal(coverage.jurisdictions['US-PA'].askPath, '/pennsylvania');
   assert.equal(coverage.jurisdictions['US-NC'].askPath, '/north-carolina');
-  assert.match(source, /Thirteen-state network explorer/);
+  assert.equal(coverage.jurisdictions['US-OH'].askPath, '/ohio');
+  assert.match(source, /askStateExplorerEyebrow/);
+  assert.match(askStateExplorerEyebrow(), /Fourteen-state network explorer/);
 });
 
 test('consumer semantic firewalls and limitations are visible', () => {

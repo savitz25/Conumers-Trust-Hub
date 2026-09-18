@@ -76,7 +76,7 @@ test('Ask /illinois canonical, indexability follows gate, no Chicago/Cook routes
   assert.equal(IL_PUBLICATION_MANIFEST.illinois_local_phase_status, 'NOT_STARTED');
   assert.equal(IL_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(IL_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/illinois/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/illinois\/chicago/);
   assert.doesNotMatch(sitemap, /\/illinois\/cook/);
   assert.equal(existsSync('app/illinois/page.tsx'), true);
@@ -234,7 +234,7 @@ test('claim eligibility surfaces are unchanged', () => {
 
 test('state page inventory adds Illinois once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'IL').length, 1);
-  assert.equal(ASK_NETWORK_STATES.length, 13);
+  assert.equal(ASK_NETWORK_STATES.length, 14);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/illinois'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/illinois/chicago'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Illinois network gateway/);

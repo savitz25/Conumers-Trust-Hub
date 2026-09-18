@@ -1,18 +1,7 @@
 /** PA-REL-001: normalize mixed-case published statewide intelligence paths. */
-export const PUBLISHED_STATEWIDE_SLUGS = [
-  'arizona',
-  'california',
-  'colorado',
-  'illinois',
-  'new-jersey',
-  'new-york',
-  'north-carolina',
-  'oregon',
-  'pennsylvania',
-  'texas',
-  'virginia',
-  'washington',
-] as const;
+import { askPublishedStatewideSlugs } from './published-ask-states.ts';
+
+export const PUBLISHED_STATEWIDE_SLUGS = askPublishedStatewideSlugs();
 
 const SLUGS = new Set<string>(PUBLISHED_STATEWIDE_SLUGS);
 
