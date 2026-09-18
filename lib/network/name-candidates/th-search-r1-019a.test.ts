@@ -267,7 +267,8 @@ test('H4. padding-only pages are dropped without a false failure; an ignored fil
   const coverage = summarizeCoverage([padded]);
   assert.equal(coverage.genuineNetworkMiss, false); assert.equal(coverage.completedHubsMiss, false); assert.deepEqual(coverage.incompleteHubs, ['move']);
   const view = buildNameResultsView({ query: 'C&L Movers', name: 'C&L Movers', scope: 'move', hubs: [padded] });
-  assert.equal(view.kind, 'NOT_COMPLETED'); assert.ok(view.notIncluded.some((r) => /loosely related/.test(r.line)));
+  // Review-1 finding 2: a truncated-empty hub is a GROUP with a real next-page control, not a dead-end disclosure.
+  assert.equal(view.kind, 'NOT_COMPLETED'); const g = view.groups.find((row) => row.hub === 'move'); assert.ok(g && g.canFetchMore && /has more records to check/.test(g.emptyPageNote ?? ''));
   const ignored = await moveNameAdapter.search('C&L Movers', 1, ctx(jsonFetch(() => ({ body: { ...base, totalMatchingIdentityCount: 2, results: [row('Zeta Relocation'), row('Omega Hauling')] } }))));
   assert.deepEqual([ignored.state, ignored.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven']);
 });
