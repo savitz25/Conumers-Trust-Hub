@@ -65,8 +65,12 @@ export type NameCandidate = {
   displayName: string;
   /** Source-backed entity type as reported by the hub (never inferred from the name). */
   entityType: string | null;
-  /** The actual source name the hub matched, and which field it came from. */
-  matchedName: string;
+  /**
+   * The actual source name text the hub matched. NULL when the hub established the match on a name
+   * it does not return (a documented alias / historical name): Ask never substitutes the display
+   * name and presents it as the matched text.
+   */
+  matchedName: string | null;
   matchedField: string;
   matchMethod: MatchMethod;
   /** The hub's own words for why the record matched, when supplied. */
@@ -76,6 +80,8 @@ export type NameCandidate = {
   /** Meaning of the recorded location per the hub (never service territory). */
   locationMeaning: string | null;
   sourceAsOf: string | null;
+  /** What sourceAsOf MEANS per the hub field it came from (checked / filing / observed / fetched). Never relabeled as an official effective date. */
+  sourceDateLabel: string;
   /** Hub-reported publication/projection state; null = hub did not supply one. */
   publicationState: string | null;
   /** Canonical profile URL or supported research action from the hub. Never fabricated. */
@@ -90,6 +96,8 @@ export type HubOutcomeState =
   | 'COMPLETED_WITH_CANDIDATES'
   | 'COMPLETED_NO_CANDIDATES'
   | 'PARTIAL_TRUNCATED'
+  /** The hub validly reported that several identities share this name but returned no records. NOT a miss. */
+  | 'AMBIGUOUS_NO_CANDIDATES'
   | 'UNSUPPORTED_OPERATION'
   | 'POLICY_RESTRICTED'
   | 'TECHNICAL_FAILURE'
@@ -140,7 +148,12 @@ export type NameCandidateCoverage = {
   searchedHubs: SpecialistHubId[];
   completedHubs: SpecialistHubId[];
   incompleteHubs: SpecialistHubId[];
+  /** Could not be searched by name for this input (operation unsupported). */
   unsupportedHubs: SpecialistHubId[];
+  /** Matching records exist but are not published for name discovery. */
+  policyRestrictedHubs: SpecialistHubId[];
+  /** The hub reported ambiguity without returning records. */
+  ambiguousHubs: SpecialistHubId[];
   /** True only if EVERY in-scope hub completed a real name search (none failed, none unsupported). */
   allInScopeCompleted: boolean;
   /** No candidates among the hubs that completed, and no in-scope hub had a technical failure. */

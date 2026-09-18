@@ -13,9 +13,10 @@
  */
 import { SPECIALIST_HUB_IDS, type SpecialistHubId } from '../registry.ts';
 import { NAME_ADAPTERS, type HubNameAdapter } from './adapters.ts';
+import { summarizeCoverage } from './coverage.ts';
 import {
   MAX_PAGE, NAME_CANDIDATES_VERSION, methodRank, validateSuppliedName,
-  type HubNameSearchOutcome, type NameCandidateCoverage, type NameCandidateRequest, type NameCandidateResponse,
+  type HubNameSearchOutcome, type NameCandidateRequest, type NameCandidateResponse,
 } from './contract.ts';
 
 export const PER_HUB_TIMEOUT_MS = 7_000;
@@ -55,24 +56,7 @@ export function sortCandidates<T extends { matchMethod: Parameters<typeof method
   return [...rows].sort((a, b) => methodRank(a.matchMethod) - methodRank(b.matchMethod) || a.displayName.localeCompare(b.displayName, 'en', { sensitivity: 'base' }) || a.stableKey.localeCompare(b.stableKey));
 }
 
-export function summarizeCoverage(hubs: HubNameSearchOutcome[]): NameCandidateCoverage {
-  const inScope = hubs.filter((h) => h.state !== 'NOT_SEARCHED_OUT_OF_SCOPE');
-  // A truncated page with nothing admissible is NOT a completed search of that hub: more rows exist there.
-  const truncatedEmpty = (h: HubNameSearchOutcome) => h.state === 'PARTIAL_TRUNCATED' && h.candidates.length === 0;
-  const completed = inScope.filter((h) => (h.state === 'COMPLETED_WITH_CANDIDATES' || h.state === 'COMPLETED_NO_CANDIDATES' || h.state === 'PARTIAL_TRUNCATED') && !truncatedEmpty(h));
-  const unsupported = inScope.filter((h) => h.state === 'UNSUPPORTED_OPERATION' || h.state === 'POLICY_RESTRICTED');
-  const incomplete = inScope.filter((h) => h.state === 'TECHNICAL_FAILURE' || truncatedEmpty(h));
-  const anyCandidates = hubs.some((h) => h.candidates.length > 0);
-  return {
-    searchedHubs: inScope.filter((h) => h.calls > 0).map((h) => h.hub),
-    completedHubs: completed.map((h) => h.hub),
-    incompleteHubs: incomplete.map((h) => h.hub),
-    unsupportedHubs: unsupported.map((h) => h.hub),
-    allInScopeCompleted: inScope.length > 0 && incomplete.length === 0 && unsupported.length === 0,
-    completedHubsMiss: !anyCandidates && completed.length > 0 && incomplete.length === 0,
-    genuineNetworkMiss: !anyCandidates && inScope.length > 0 && incomplete.length === 0 && unsupported.length === 0,
-  };
-}
+export { summarizeCoverage } from './coverage.ts';
 
 export async function searchNameCandidates(input: Pick<NameCandidateRequest, 'name' | 'hubScope'> & Partial<NameCandidateRequest>, options: OrchestratorOptions = {}): Promise<NameCandidateResponse> {
   const started = Date.now();

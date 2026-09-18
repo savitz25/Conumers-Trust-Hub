@@ -51,7 +51,7 @@ export function createFixtureAdapters(records: FixtureRecord[], behavior: Partia
     const toCandidate = (row: FixtureRecord, method: MatchMethod): NameCandidate => ({
       hub, sourceGrain: `fixture ${hub} record`, stableKey: `${hub}:fixture:${row.key}`, displayName: row.name, entityType: row.entityType, matchedName: row.name, matchedField: 'fixture source name',
       matchMethod: method, hubMatchExplanation: 'Fixture hub name match', identifiers: row.identifier ? [row.identifier] : [], recordedLocation: row.location ?? null, locationMeaning: row.location ? 'Recorded location -- not service territory' : null,
-      sourceAsOf: '2026-01-01', publicationState: row.profilePath ? 'PUBLIC_PROFILE' : 'RESEARCH_ROW_ONLY',
+      sourceAsOf: '2026-01-01', sourceDateLabel: 'Fixture source date', publicationState: row.profilePath ? 'PUBLIC_PROFILE' : 'RESEARCH_ROW_ONLY',
       action: row.profilePath ? { type: 'PROFILE', href: `${CANONICAL_ORIGINS[hub]}${row.profilePath}`, label: 'Open fixture profile' } : null,
     });
     return [hub, {

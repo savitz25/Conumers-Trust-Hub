@@ -46,6 +46,9 @@ const OFFICIAL_ORIGINS: Partial<Record<SpecialistHubId, string[]>> = {
   lender: ['https://www.consumerfinance.gov'],
 };
 
+/** Query params that select WHICH record a hub link opens. */
+const RECORD_IDENTITY_PARAMS = new Set(['selected', 'id', 'slug', 'crd', 'ccn', 'npn', 'naic', 'nmls', 'lei', 'usdot', 'mc', 'q']);
+
 function text(value: unknown): string | null { return typeof value === 'string' && value.trim() ? value.trim() : null; }
 function record(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function records(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((row) => row && typeof row === 'object' && !Array.isArray(row)) as Record<string, unknown>[] : []; }
@@ -63,7 +66,13 @@ export function safeHubUrl(hub: SpecialistHubId, raw: unknown): { href: string; 
   if (url.protocol !== 'https:' || url.username || url.password) return null;
   // URL hygiene on a HUB-SUPPLIED action (nothing is constructed): some hub links carry params whose
   // value is the literal string "undefined"/"null", which breaks the hub's own page. Drop only those.
-  for (const [key, val] of [...url.searchParams.entries()]) if (val === 'undefined' || val === 'null' || val === '') url.searchParams.delete(key);
+  for (const [key, val] of [...url.searchParams.entries()]) {
+    if (val !== 'undefined' && val !== 'null') continue;
+    // A broken param that IDENTIFIES the record cannot be dropped: the link would silently open an
+    // unscoped page. No link is more honest than the wrong link.
+    if (RECORD_IDENTITY_PARAMS.has(key.toLowerCase())) return null;
+    url.searchParams.delete(key);
+  }
   if (url.origin === origin) return { href: url.toString(), official: false };
   if (OFFICIAL_ORIGINS[hub]?.includes(url.origin)) return { href: url.toString(), official: true };
   return null;
@@ -81,7 +90,11 @@ function action(hub: SpecialistHubId, raw: unknown, kind: 'PROFILE' | 'RESEARCH'
  * said. Hub-labelled similar-spelling suggestions are exempt from token sharing only when the
  * response as a whole proved the name filter ran.
  */
-export function rowRelatesToName(suppliedName: string, matchedName: string, method: MatchMethod): boolean {
+export function rowRelatesToName(suppliedName: string, matchedName: string | null, method: MatchMethod): boolean {
+  // The hub matched a documented alias / historical name it does not return. The relation is
+  // source-established (and the response-level echo proved the filter ran); the CURRENT display name
+  // having different words is not grounds to discard it. Only this explicit method is exempt.
+  if (matchedName === null) return method === 'DOCUMENTED_ALIAS';
   const all = nameTokens(suppliedName);
   const matched = nameTokens(matchedName);
   if (!all.length || !matched.length) return false;
@@ -128,7 +141,17 @@ async function call(ctx: AdapterContext, url: string | URL, init: RequestInit): 
 }
 
 /** Shared tail: relevance guard + cohort-masquerade rejection + state selection. */
-function finish(base: Base, name: string, mapped: NameCandidate[], rawRowCount: number, extra: Partial<HubNameSearchOutcome>, started: number, page: number): HubNameSearchOutcome {
+type Upstream = { state: string; hubName: string; continuation: CandidateAction | null };
+function finish(base: Base, name: string, mapped: NameCandidate[], rawRowCount: number, extra: Partial<HubNameSearchOutcome>, started: number, page: number, upstream?: Upstream): HubNameSearchOutcome {
+  // Rows were returned but none could be mapped into the candidate contract: a malformed payload, never a miss.
+  if (rawRowCount > 0 && mapped.length === 0) return outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned records in an unexpected shape, so they were not shown.' }, started, page);
+  if (upstream && rawRowCount === 0) {
+    // A valid upstream ambiguity is NOT a completed miss: several identities share this name, the
+    // endpoint simply does not return them. Nothing is manufactured or selected.
+    if (upstream.state === 'AMBIGUOUS_IDENTITIES') return outcome(base, { state: 'AMBIGUOUS_NO_CANDIDATES', nameFilterApplied: true, continuation: upstream.continuation, message: `${upstream.hubName} reports that more than one record shares this name, but this endpoint does not return them. This is not a "no match" result.` }, started, page);
+    // The hub claims a match yet supplied no record: contradictory payload, never a miss.
+    if (upstream.state === 'EXACT_IDENTITY' || upstream.state === 'SUPPORTED_RESULTS') return outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a match but returned no record.' }, started, page);
+  }
   const admitted = mapped.filter((c) => rowRelatesToName(name, c.matchedName, c.matchMethod));
   if (rawRowCount > 0 && admitted.length === 0) {
     // Two very different situations produce "no admissible rows":
@@ -136,7 +159,7 @@ function finish(base: Base, name: string, mapped: NameCandidate[], rawRowCount: 
     //  - rows that share only generic words ("C&L Movers" -> "Call The Movers"): category-word padding
     //    from a hub that DID search the name. Those rows are dropped; the search itself completed.
     const supplied = new Set(nameTokens(name).filter((t) => t.length >= 2));
-    const padding = mapped.some((c) => nameTokens(c.matchedName).some((t) => supplied.has(t)));
+    const padding = mapped.some((c) => nameTokens(c.matchedName ?? c.displayName).some((t) => supplied.has(t)));
     if (!padding) return outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven', message: 'The specialist returned records that do not relate to this name, so they were not shown as matches.' }, started, page);
   }
   const seen = new Set<string>();
@@ -181,10 +204,12 @@ export const moveNameAdapter: HubNameAdapter = {
       return [{
         hub: 'move', sourceGrain: 'FMCSA public mover identity', stableKey: `move:profile:${slug}`, displayName: display,
         entityType: text(row.role) && row.role !== 'Unknown' ? `Mover (${row.role})` : 'Mover',
-        matchedName: legalField && legal ? legal : display, matchedField: legalField ? 'FMCSA legal name' : 'public display name',
+        // A documented alias is source-established, but the resolver does not return the alias text.
+        matchedName: method === 'DOCUMENTED_ALIAS' ? null : legalField && legal ? legal : display,
+        matchedField: method === 'DOCUMENTED_ALIAS' ? 'a documented alias (the source does not return the alias text)' : legalField ? 'FMCSA legal name' : 'public display name',
         matchMethod: method, hubMatchExplanation: text(row.matchReason),
         identifiers: [usdot ? { label: 'USDOT', value: usdot } : null, mc ? { label: 'MC', value: mc } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: text(hq.raw), locationMeaning: 'Recorded headquarters -- not service territory', sourceAsOf: text(row.sourceLastChecked),
+        recordedLocation: text(hq.raw), locationMeaning: 'Recorded headquarters -- not service territory', sourceAsOf: text(row.sourceLastChecked), sourceDateLabel: 'Last checked by MoveTrustHub',
         publicationState: 'PUBLIC_PROFILE', action: act,
       }];
     });
@@ -198,6 +223,7 @@ export const moveNameAdapter: HubNameAdapter = {
 };
 
 // ---------------------------------------------------------------- v2 identity (Investor / Insurance / Lender)
+const HUB_NAME = { investor: 'InvestorTrustHub', insurance: 'InsuranceTrustHub', lender: 'LenderTrustHub' } as const;
 async function v2Identity(hub: 'investor' | 'insurance' | 'lender', base: Base, body: Record<string, unknown>, ctx: AdapterContext, started: number, page: number) {
   const lock = NAME_SPECIALIST_LOCKS[hub];
   const res = await call(ctx, lock.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ contract: NAME_SPECIALIST_CONTRACT, queryType: 'identity', ...body }) });
@@ -212,7 +238,7 @@ async function v2Identity(hub: 'investor' | 'insurance' | 'lender', base: Base, 
   if (!['SUPPORTED_RESULTS', 'ZERO_MATCHING_ROWS', 'EXACT_IDENTITY', 'NO_CONFIDENT_MATCH', 'AMBIGUOUS_IDENTITIES'].includes(state)) {
     return { fail: outcome(base, { state: 'TECHNICAL_FAILURE', failureKind: res.status >= 500 ? 'unavailable' : 'invalid_response' }, started, page) };
   }
-  return { payload: p, state };
+  return { payload: p, state, continuation: records(p.destinations).map((d) => action(hub, d.url, 'RESEARCH', HUB_NAME[hub])).find((a) => a && a.type !== 'OFFICIAL_SOURCE') ?? null };
 }
 
 const investorBase: Base = { hub: 'investor', searchedScope: 'Current SEC/IARD investment-adviser firms (RIA and ERA)', matchBreadth: 'Firm display/legal names containing the entered text' };
@@ -241,11 +267,11 @@ export const investorNameAdapter: HubNameAdapter = {
         // The hub reports "contains"; a byte-for-byte normalized equality of the RETURNED name is described as such.
         matchMethod: exact ? 'NORMALIZED_NAME' : 'NAME_CONTAINS', hubMatchExplanation: why || null,
         identifiers: [{ label: 'CRD', value: crd }], recordedLocation: text(row.principalOffice), locationMeaning: 'Principal office -- not client geography',
-        sourceAsOf: text(row.sourceAsOf) ?? text(row.filingDate), publicationState: text(row.publicationState), action: profile ?? official,
+        sourceAsOf: text(row.sourceAsOf) ?? text(row.filingDate), sourceDateLabel: text(row.sourceAsOf) ? 'Source as-of date' : 'Form ADV filing date', publicationState: text(row.publicationState), action: profile ?? official,
       }];
     });
     const pagination = record(p.pagination);
-    return finish(investorBase, name, mapped, rows.length, { hubReportedTotal: typeof p.total === 'number' ? p.total : null, hasMore: pagination.hasMore === true }, started, page);
+    return finish(investorBase, name, mapped, rows.length, { hubReportedTotal: typeof p.total === 'number' ? p.total : null, hasMore: pagination.hasMore === true }, started, page, { state: r.state, hubName: 'InvestorTrustHub', continuation: r.continuation });
   },
 };
 
@@ -276,13 +302,13 @@ export const insuranceNameAdapter: HubNameAdapter = {
         matchMethod: INSURANCE_METHOD[text(evidence.method) ?? ''] ?? 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
         identifiers: [naic ? { label: 'NAIC Company Code', value: naic } : null, npn ? { label: 'NPN', value: npn } : null].filter(Boolean) as NameCandidate['identifiers'],
         recordedLocation: text(row.credentialJurisdiction), locationMeaning: text(row.credentialJurisdiction) ? 'Credential jurisdiction -- not office or service area' : null,
-        sourceAsOf: text(row.sourceObservedAt), publicationState: text(row.publicationState),
+        sourceAsOf: text(row.sourceObservedAt), sourceDateLabel: 'Observed in source on', publicationState: text(row.publicationState),
         action: isProfile ? action('insurance', row.destination, 'PROFILE', 'InsuranceTrustHub') : action('insurance', row.selectionUrl, 'RESEARCH', 'InsuranceTrustHub'),
       }];
     });
     // The hub caps identity candidates at 10 with no cursor and asserts no exact total.
     const capped = rows.length >= HUB_PAGE_SIZE;
-    return finish(insuranceBase, name, mapped, rows.length, { truncatedWithoutCursor: capped, continuation: capped ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub') : null }, started, page);
+    return finish(insuranceBase, name, mapped, rows.length, { truncatedWithoutCursor: capped, continuation: capped ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub') : null }, started, page, { state: r.state, hubName: 'InsuranceTrustHub', continuation: r.continuation });
   },
 };
 
@@ -303,14 +329,18 @@ export const lenderNameAdapter: HubNameAdapter = {
       if (!display || !key) return [];
       return [{
         hub: 'lender', sourceGrain: 'NMLS/LEI lender institution', stableKey: `lender:${key}`, displayName: display, entityType: 'Lender institution',
-        matchedName: display, matchedField: 'accepted public or historical institution name',
+        // The hub matches EXACT public or historical names. When the returned display name is not what was
+        // entered, the match was on a historical/alternate name the endpoint does not return.
+        matchedName: fold(display) === fold(name) ? display : null,
+        matchedField: fold(display) === fold(name) ? 'accepted public institution name' : 'a historical or alternate institution name (the source does not return that text)',
         matchMethod: fold(display) === fold(name) ? 'EXACT_SOURCE_NAME' : 'DOCUMENTED_ALIAS', hubMatchExplanation: text(qi.matchMethod)?.replaceAll('_', ' ') ?? null,
         identifiers: [nmls ? { label: 'NMLS', value: nmls } : null, lei ? { label: 'LEI', value: lei } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: null, locationMeaning: null, sourceAsOf: text(row.sourceFetchedAt), publicationState: text(row.publicationState),
+        recordedLocation: null, locationMeaning: null, sourceAsOf: text(row.sourceFetchedAt), sourceDateLabel: 'Fetched from source on', publicationState: text(row.publicationState),
         action: action('lender', record(row.destination).url, 'PROFILE', 'LenderTrustHub'),
       }];
     });
-    return finish(lenderBase, name, mapped, rows.length, {}, started, page);
+    // Ambiguity continuation: the payload's own hub destination, else the hub's existing public lender directory.
+    return finish(lenderBase, name, mapped, rows.length, {}, started, page, { state: r.state, hubName: 'LenderTrustHub', continuation: r.continuation ?? action('lender', '/lender', 'RESEARCH', 'LenderTrustHub') });
   },
 };
 
@@ -342,7 +372,7 @@ export const seniorNameAdapter: HubNameAdapter = {
         entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()), matchedName: display, matchedField: 'CMS provider name',
         matchMethod: fold(display) === fold(name) ? 'NORMALIZED_NAME' : 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
         identifiers: [{ label: 'CMS CCN', value: ccn }], recordedLocation: text(row.location), locationMeaning: 'Recorded CMS location -- not service availability',
-        sourceAsOf: text(row.sourceAsOf), publicationState: 'PUBLIC_PROFILE', action: act,
+        sourceAsOf: text(row.sourceAsOf), sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
       }];
     });
     const pagination = record(p.pagination);
