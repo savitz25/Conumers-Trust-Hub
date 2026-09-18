@@ -178,7 +178,7 @@ test('32-40 Florida and network regression surfaces', () => {
   assert.equal(broward.placeLensHref, '/places/florida/broward');
   assert.match(flPage, /floridaPlaceLens/);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /New Jersey network gateway/);
-  assert.match(footer, /\/new-jersey/);
+  assert.match(footer, /askStateFooterLinks/);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'new-jersey'));
   assert.match(placesSrc, /\/new-jersey/);
   assert.equal(existsSync('app/promise/page.tsx'), true);
