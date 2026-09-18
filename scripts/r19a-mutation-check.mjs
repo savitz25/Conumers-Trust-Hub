@@ -3,7 +3,7 @@
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts'];
+const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts', 'lib/network/name-candidates/th-search-r1-019a-geo.test.ts'];
 const run = () => { const r = spawnSync(process.execPath, GATE, { encoding: 'utf8' }); const out = r.stdout + r.stderr; return { status: r.status, pass: Number(/ℹ pass (\d+)/.exec(out)?.[1] ?? -1), fail: Number(/ℹ fail (\d+)/.exec(out)?.[1] ?? -1), failing: [...out.matchAll(/^✖ (.+?) \(/gm)].map((m) => m[1]).filter((v, i, a) => a.indexOf(v) === i) }; };
 
 const mutations = [
@@ -22,6 +22,9 @@ const mutations = [
     find: "  const groups = hubs.filter((hub) => hub.candidates.length > 0 || hub.hasMore || (isTruncatedEmpty(hub) && Boolean(hub.continuation)))", replace: "  const groups = hubs.filter((hub) => hub.candidates.length > 0)" },
   { id: 'G_UNQUALIFIED_MISS_HEADLINE', file: 'lib/network/name-candidates/view.ts', why: 'The headline claims an all-network miss while a source did not complete.',
     find: "completedCount === 0 ? 'NOT_COMPLETED' : coverage.genuineNetworkMiss ? 'COMPLETED_MISS' : 'PARTIAL_MISS';", replace: "completedCount === 0 ? 'NOT_COMPLETED' : 'COMPLETED_MISS';" },
+  // Final integration correction: recognized geography again disqualifies a name's own words.
+  { id: 'H_GEOGRAPHY_TOKEN_EXCLUSION', file: 'lib/network/name-candidates/decision.ts', why: 'A place word the planner recognizes is removed from the supplied name, so publishing a new state disables existing organization names.',
+    find: "  if (plan.intent !== 'COHORT_BROWSE' && !placeOnly) return nonGeneric;", replace: "  if (false) return nonGeneric;" },
 ];
 
 const report = { generatedAt: new Date().toISOString(), cleanBefore: run(), mutations: [], cleanAfter: null };

@@ -98,10 +98,23 @@ function geographyTokens(plan: AskResearchPlan): Set<string> {
   return new Set(nameTokens(words));
 }
 
-/** Tokens that could only come from a specific business name, not a category description. */
+/**
+ * Tokens that could only come from a specific business name, not a category description.
+ *
+ * Recognized GEOGRAPHY is context, never a disqualifier: a place word inside a supplied phrase
+ * ("Cincinnati Asset Management") is part of the name, exactly as it was before the planner's
+ * catalog learned that place -- so publishing more places can never make a name less discoverable.
+ * Geography is discounted in only two established cases: the planner itself resolved the text as a
+ * cohort request ("Denver movers", "moving from Cincinnati to Columbus"), or the phrase is nothing
+ * but the place ("Cincinnati Ohio").
+ */
 export function distinctiveTokens(value: string, plan: AskResearchPlan): string[] {
+  const tokens = nameTokens(value);
+  const nonGeneric = tokens.filter((token) => !CATEGORY_TOKENS.has(token) && !DESCRIPTOR_TOKENS.has(token));
   const geo = geographyTokens(plan);
-  return nameTokens(value).filter((token) => !CATEGORY_TOKENS.has(token) && !DESCRIPTOR_TOKENS.has(token) && !geo.has(token));
+  const placeOnly = tokens.every((token) => geo.has(token) || DESCRIPTOR_TOKENS.has(token));
+  if (plan.intent !== 'COHORT_BROWSE' && !placeOnly) return nonGeneric;
+  return nonGeneric.filter((token) => !geo.has(token));
 }
 
 function stripTerminalPunctuation(value: string): string {
