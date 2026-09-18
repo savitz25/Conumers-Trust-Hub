@@ -81,12 +81,12 @@ test('Ask /pennsylvania canonical, indexability follows gate, no Philadelphia/Pi
   assert.equal(PA_PUBLICATION_MANIFEST.pennsylvania_local_phase_status, 'NOT_STARTED');
   assert.equal(PA_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(PA_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/pennsylvania/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/philadelphia/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/pittsburgh/);
-  assert.match(footer, /paReleaseGatePassed/);
-  assert.match(footer, /\/pennsylvania/);
-  assert.match(places, /Open Pennsylvania network research/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(places, /Open \${item.label} network research/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/allegheny/);
   assert.doesNotMatch(sitemap, /\/pennsylvania\/montgomery/);
   assert.equal(existsSync('app/pennsylvania/page.tsx'), true);

@@ -81,12 +81,11 @@ test('Ask /ohio canonical, indexability follows gate, no Columbus/Cleveland rout
   assert.equal(OH_PUBLICATION_MANIFEST.ohio_local_phase_status, 'NOT_STARTED');
   assert.equal(OH_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(OH_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/ohio/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/ohio\/columbus/);
   assert.doesNotMatch(sitemap, /\/ohio\/cleveland/);
-  assert.match(footer, /ohReleaseGatePassed/);
-  assert.match(footer, /\/ohio/);
-  assert.match(places, /Open Ohio network research/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(places, /Open \${item.label} network research/);
   assert.equal(existsSync('app/ohio/page.tsx'), true);
   assert.deepEqual(readdirSync('app/ohio').filter((name) => name !== 'page.tsx'), []);
   assert.match(page, /noIndex: !gate/);

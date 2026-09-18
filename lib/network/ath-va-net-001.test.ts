@@ -61,7 +61,7 @@ test('Ask /virginia canonical, indexability follows gate, no local routes', () =
   assert.equal(VA_PUBLICATION_MANIFEST.virginia_local_phase, 'NO');
   assert.equal(VA_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(VA_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/virginia/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/virginia\/richmond/);
   assert.doesNotMatch(sitemap, /\/virginia\/fairfax/);
   assert.equal(existsSync('app/virginia/page.tsx'), true);

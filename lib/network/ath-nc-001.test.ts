@@ -81,12 +81,12 @@ test('Ask /north-carolina canonical, indexability follows gate, no Charlotte/Ral
   assert.equal(NC_PUBLICATION_MANIFEST.north_carolina_local_phase_status, 'NOT_STARTED');
   assert.equal(NC_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(NC_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/north-carolina/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/north-carolina\/charlotte/);
   assert.doesNotMatch(sitemap, /\/north-carolina\/raleigh/);
-  assert.match(footer, /ncReleaseGatePassed/);
-  assert.match(footer, /\/north-carolina/);
-  assert.match(places, /Open North Carolina network research/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(footer, /askStateFooterLinks/);
+  assert.match(places, /Open \${item.label} network research/);
   assert.doesNotMatch(sitemap, /\/north-carolina\/durham/);
   assert.doesNotMatch(sitemap, /\/north-carolina\/mecklenburg/);
   assert.equal(existsSync('app/north-carolina/page.tsx'), true);

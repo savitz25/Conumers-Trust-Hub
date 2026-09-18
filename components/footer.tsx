@@ -7,18 +7,7 @@ import {
   ASK_NETWORK_LINKS,
 } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
-import { caReleaseGatePassed } from '@/lib/network/ca-network';
-import { txReleaseGatePassed } from '@/lib/network/tx-network';
-import { waReleaseGatePassed } from '@/lib/network/wa-network';
-import { azReleaseGatePassed } from '@/lib/network/az-network';
-import { coReleaseGatePassed } from '@/lib/network/co-network';
-import { vaReleaseGatePassed } from '@/lib/network/va-network';
-import { nyReleaseGatePassed } from '@/lib/network/ny-network';
-import { ilReleaseGatePassed } from '@/lib/network/il-network';
-import { orReleaseGatePassed } from '@/lib/network/or-network';
-import { paReleaseGatePassed } from '@/lib/network/pa-network';
-import { ncReleaseGatePassed } from '@/lib/network/nc-network';
-import { ohReleaseGatePassed } from '@/lib/network/oh-network';
+import { askStateFooterLinks } from '@/lib/network/published-ask-states';
 
 /**
  * Ask Trust Hub footer — Phase 1.
@@ -89,23 +78,14 @@ export function Footer() {
                 {col.title}
               </h4>
               <ul className="space-y-2.5 text-sm text-slate-300">
-                {col.links
-                  .filter(
-                    (item) =>
-                      (item.href !== '/california' || caReleaseGatePassed()) &&
-                      (item.href !== '/texas' || txReleaseGatePassed()) &&
-                      (item.href !== '/washington' || waReleaseGatePassed()) &&
-                      (item.href !== '/arizona' || azReleaseGatePassed()) &&
-                      (item.href !== '/colorado' || coReleaseGatePassed()) &&
-                      (item.href !== '/virginia' || vaReleaseGatePassed()) &&
-                      (item.href !== '/new-york' || nyReleaseGatePassed()) &&
-                      (item.href !== '/illinois' || ilReleaseGatePassed()) &&
-                      (item.href !== '/oregon' || orReleaseGatePassed()) &&
-                      (item.href !== '/pennsylvania' || paReleaseGatePassed()) &&
-                      (item.href !== '/north-carolina' || ncReleaseGatePassed()) &&
-                      (item.href !== '/ohio' || ohReleaseGatePassed()),
-                  )
-                  .map((item) => (
+                {(col.title === 'Explore'
+                  ? [
+                      ...col.links.slice(0, col.links.findIndex((item) => item.href === '/trust')),
+                      ...askStateFooterLinks(),
+                      ...col.links.slice(col.links.findIndex((item) => item.href === '/trust')),
+                    ]
+                  : col.links
+                ).map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}

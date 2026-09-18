@@ -3,19 +3,8 @@ import { BRAND } from '@/lib/brand';
 import { getAllGuideSlugs } from '@/lib/growth/guides';
 import { getAllJourneySlugs } from '@/lib/growth/journeys';
 import { njReleaseGatePassed } from '@/lib/network/nj-network';
-import { caReleaseGatePassed } from '@/lib/network/ca-network';
-import { txReleaseGatePassed } from '@/lib/network/tx-network';
-import { waReleaseGatePassed } from '@/lib/network/wa-network';
-import { azReleaseGatePassed } from '@/lib/network/az-network';
-import { coReleaseGatePassed } from '@/lib/network/co-network';
-import { vaReleaseGatePassed } from '@/lib/network/va-network';
-import { nyReleaseGatePassed } from '@/lib/network/ny-network';
-import { ilReleaseGatePassed } from '@/lib/network/il-network';
-import { orReleaseGatePassed } from '@/lib/network/or-network';
-import { paReleaseGatePassed } from '@/lib/network/pa-network';
-import { ncReleaseGatePassed } from '@/lib/network/nc-network';
-import { ohReleaseGatePassed } from '@/lib/network/oh-network';
 import { listNjPilotCounties } from '@/lib/network/nj-counties';
+import { askStateSitemapEntries } from '@/lib/network/published-ask-states';
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? BRAND.url).replace(/\/$/, '');
 
@@ -33,57 +22,14 @@ const CORE: {
   { path: '/places/florida', priority: 0.8, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/places/florida/broward', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/places/florida/palm-beach', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  ...askStateSitemapEntries(),
   ...(njReleaseGatePassed()
-    ? [
-        { path: '/new-jersey', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-03' },
-        // ATH-NJ-COUNTY-002 indexed county gateways:
-        // /new-jersey/monmouth-county
-        // /new-jersey/middlesex-county
-        // /new-jersey/somerset-county
-        // /new-jersey/union-county
-        ...listNjPilotCounties().map((c) => ({
-          path: c.ask_path,
-          priority: 0.8,
-          changeFrequency: 'weekly' as const,
-          lastmod: '2026-09-03',
-        })),
-      ]
-    : []),
-  ...(caReleaseGatePassed()
-    ? [{ path: '/california', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-03' }]
-    : []),
-  ...(txReleaseGatePassed()
-    ? [{ path: '/texas', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-04' }]
-    : []),
-  ...(waReleaseGatePassed()
-    ? [{ path: '/washington', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-04' }]
-    : []),
-  ...(azReleaseGatePassed()
-    ? [{ path: '/arizona', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-04' }]
-    : []),
-  ...(coReleaseGatePassed()
-    ? [{ path: '/colorado', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-10' }]
-    : []),
-  ...(vaReleaseGatePassed()
-    ? [{ path: '/virginia', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-10' }]
-    : []),
-  ...(nyReleaseGatePassed()
-    ? [{ path: '/new-york', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-11' }]
-    : []),
-  ...(ilReleaseGatePassed()
-    ? [{ path: '/illinois', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-12' }]
-    : []),
-  ...(orReleaseGatePassed()
-    ? [{ path: '/oregon', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-17' }]
-    : []),
-  ...(paReleaseGatePassed()
-    ? [{ path: '/pennsylvania', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-17' }]
-    : []),
-  ...(ncReleaseGatePassed()
-    ? [{ path: '/north-carolina', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-18' }]
-    : []),
-  ...(ohReleaseGatePassed()
-    ? [{ path: '/ohio', priority: 0.85, changeFrequency: 'weekly' as const, lastmod: '2026-09-18' }]
+    ? listNjPilotCounties().map((c) => ({
+        path: c.ask_path,
+        priority: 0.8,
+        changeFrequency: 'weekly' as const,
+        lastmod: '2026-09-03',
+      }))
     : []),
   { path: '/trust', priority: 0.85, changeFrequency: 'monthly', lastmod: '2026-08-07' },
   { path: '/promise', priority: 0.8, changeFrequency: 'monthly', lastmod: '2026-08-07' },

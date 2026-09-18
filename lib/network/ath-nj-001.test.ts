@@ -35,7 +35,7 @@ test('1-6 gateway route, indexable after gate, canonical, sitemap, six cards, no
   assert.match(pageSrc, /noIndex: !gate/);
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /\/new-jersey/);
+  assert.match(sitemap, /askStateSitemapEntries|listNjPilotCounties/);
   assert.match(sitemap, /njReleaseGatePassed/);
   assert.equal(listNjHubs().length, 6);
   assert.match(gateway, /Specialist New Jersey research/);

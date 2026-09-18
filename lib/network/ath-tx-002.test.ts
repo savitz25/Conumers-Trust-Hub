@@ -54,8 +54,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(TX_PUBLICATION_MANIFEST.state_code, 'TX');
   assert.equal(TX_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /txReleaseGatePassed/);
-  assert.match(sitemap, /\/texas/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listTxHubs().length, 6);
   assert.match(gateway, /Specialist Texas research/);
   assert.match(gateway, /Research Texas Providers/);

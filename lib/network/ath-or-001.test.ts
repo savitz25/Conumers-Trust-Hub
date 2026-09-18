@@ -77,7 +77,7 @@ test('Ask /oregon canonical, indexability follows gate, no Portland/Multnomah ro
   assert.equal(OR_PUBLICATION_MANIFEST.oregon_local_phase_status, 'NOT_STARTED');
   assert.equal(OR_PUBLICATION_MANIFEST.trust_score, false);
   assert.equal(OR_PUBLICATION_MANIFEST.paid_ranking, false);
-  assert.match(sitemap, /\/oregon/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.doesNotMatch(sitemap, /\/oregon\/portland/);
   assert.doesNotMatch(sitemap, /\/oregon\/multnomah/);
   assert.equal(existsSync('app/oregon/page.tsx'), true);

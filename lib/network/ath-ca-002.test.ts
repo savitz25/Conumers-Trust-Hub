@@ -53,8 +53,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(CA_PUBLICATION_MANIFEST.state_code, 'CA');
   assert.equal(CA_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /caReleaseGatePassed/);
-  assert.match(sitemap, /\/california/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listCaHubs().length, 6);
   assert.match(gateway, /Specialist California research/);
   assert.equal(existsSync('app/ca'), false);

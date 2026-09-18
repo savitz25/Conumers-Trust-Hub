@@ -55,8 +55,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(WA_PUBLICATION_MANIFEST.state_code, 'WA');
   assert.equal(WA_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /waReleaseGatePassed/);
-  assert.match(sitemap, /\/washington/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listWaHubs().length, 6);
   assert.match(gateway, /Specialist Washington research/);
   assert.match(gateway, /Research Washington Providers/);

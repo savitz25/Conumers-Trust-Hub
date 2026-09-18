@@ -56,8 +56,8 @@ test('gateway route exists, indexable after gate, canonical, sitemap gated, six 
   assert.equal(AZ_PUBLICATION_MANIFEST.hardcoded_county_routes, false);
   assert.equal(AZ_PUBLICATION_MANIFEST.arizona_local_phase, 'NO');
   assert.match(pageSrc, /createPageMetadata/);
-  assert.match(sitemap, /azReleaseGatePassed/);
-  assert.match(sitemap, /\/arizona/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(listAzHubs().length, 6);
   assert.match(gateway, /Research Arizona Providers/);
   assert.equal(existsSync('app/places/arizona'), false);

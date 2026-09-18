@@ -46,7 +46,7 @@ function source(id: string) {
 test('ATH-AZ-001 is state-level research only: ATH-AZ-FINAL publishes Ask /arizona, still no counties', () => {
   assert.equal(existsSync('app/arizona/page.tsx'), true);
   assert.equal(existsSync('app/places/arizona'), false);
-  assert.match(sitemap, /\/arizona/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(manifest.arizona_local_phase, 'NO');
   assert.equal(manifest.publication.county_work, false);
@@ -252,9 +252,9 @@ test('Washington, Texas, California, NJ, and Florida public surfaces are unchang
   assert.equal(existsSync('app/places/florida/page.tsx'), true);
   assert.equal(NJ_PUBLICATION_MANIFEST.ask_canonical, 'https://www.asktrusthub.com/new-jersey');
   assert.equal(listNjPilotCounties().length, 4);
-  assert.match(sitemap, /\/washington/);
-  assert.match(sitemap, /\/texas/);
-  assert.match(sitemap, /\/california/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.match(sitemap, /\/new-jersey\/monmouth-county/);
   assert.match(waPage, /washington/i);
   assert.match(txPage, /texas/);

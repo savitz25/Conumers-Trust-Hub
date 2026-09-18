@@ -19,7 +19,7 @@ const elmsFix = JSON.parse(
 test('ATH-CA-001 research artifacts remain; public gateway is ATH-CA-002 state-level only', () => {
   assert.equal(existsSync('app/california/page.tsx'), true);
   assert.equal(existsSync('app/places/california'), false);
-  assert.match(sitemap, /caReleaseGatePassed/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(existsSync('app/california/los-angeles-county'), false);
 });

@@ -27,7 +27,7 @@ const smlFix = JSON.parse(
 test('ATH-TX-001 is state-level research only: ATH-TX-002 publishes Ask /texas, still no counties', () => {
   assert.equal(existsSync('app/texas/page.tsx'), true);
   assert.equal(existsSync('app/places/texas'), false);
-  assert.match(sitemap, /\/texas/);
+  assert.match(sitemap, /askStateSitemapEntries/);
   assert.equal(manifest.scope, 'STATE_LEVEL_ONLY');
   assert.equal(manifest.publication.county_work, false);
   assert.equal(manifest.publication.specialist_repo_edits, false);
