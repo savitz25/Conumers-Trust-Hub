@@ -37,14 +37,14 @@ export default async function AskPage({
   // TH-SEARCH-R1-019A: ONE authoritative name-candidate decision. A supplied business/provider name
   // is searched across the network first -- no hub selection, identifier or repeated name required.
   // `hub` is only ever a real user-selected filter chip; an inferred industry is a display hint.
-  const nameDecision=query&&route&&!route.journey?decideNameCandidateSearch(query,{plan:route.plan,selectedHub:typeof hub==='string'?hub:null}):null;
+  const nameDecision=query&&route?decideNameCandidateSearch(query,{plan:route.plan,selectedHub:typeof hub==='string'?hub:null}):null;
   const nameSearch=nameDecision?.operation==='NAME_CANDIDATES'?await searchNameCandidates({originalInput:nameDecision.originalInput,name:nameDecision.name,hubScope:nameDecision.hubScope,priorityHubs:nameDecision.priorityHubs,unresolvedConditions:nameDecision.unresolvedConditions},fixtureModeEnabled()?{adapters:createFixtureAdapters(FIVE_ALLIED_FIXTURE)}:{}):null;
   if(nameSearch)after(()=>recordNameCandidateSearch(nameSearch));
   // A text that could ALSO be a category request ("Pure Moving Company") shows candidates first; only
   // when no hub has any candidate does the existing category/guided research path take over.
   const showNameCandidates=Boolean(nameSearch&&nameDecision?.operation==='NAME_CANDIDATES'&&(nameSearch.candidateCount>0||!nameDecision.alternateCohortInterpretation));
   const refuseSecuritiesAdvice=Boolean(route?.plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'));
-  const guided=query&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
+  const guided=query&&!showNameCandidates&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
   // TH-DISCOVERY-RESET-001C: real per-class provider previews for a genuinely ambiguous senior
   // care request (e.g. "senior care Florida") must be present on this first server-rendered
   // paint -- the client only re-runs the specialist on specific follow-up actions, never on the

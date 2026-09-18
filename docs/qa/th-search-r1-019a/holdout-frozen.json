@@ -1,0 +1,831 @@
+{
+ "frozenAt": "2026-09-18T16:47:03.805Z",
+ "method": "Fixed (scope,page,row) positions from each hub cohort operation; pages [2,7], rows [0,2,4,6,8]; two state scopes per hub (Senior: four county scopes at page 2, because county cohorts have fewer than 7 pages). Drawn before any name matching was evaluated.",
+ "hubs": {
+  "move": {
+   "drawn": [
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 2,
+     "row": 0,
+     "key": "slug:across-states-moving-llc",
+     "name": "Across States Moving LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 2,
+     "row": 2,
+     "key": "slug:addison-forwarding-company",
+     "name": "Addison Forwarding Company"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 2,
+     "row": 4,
+     "key": "slug:aer-logistics",
+     "name": "Aer Logistics"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 2,
+     "row": 6,
+     "key": "slug:ag-moving-and-storage",
+     "name": "Ag Moving And Storage"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 2,
+     "row": 8,
+     "key": "slug:al-s-relocation-storage",
+     "name": "Al's Relocation & Storage"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 7,
+     "row": 0,
+     "key": "slug:booker-smith-transportation",
+     "name": "Booker-smith Transportation"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 7,
+     "row": 2,
+     "key": "slug:brazosmovers-com-llc",
+     "name": "Brazosmovers.com LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 7,
+     "row": 4,
+     "key": "slug:brown-box-movers",
+     "name": "Brown Box Movers"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 7,
+     "row": 6,
+     "key": "slug:bugbee-a-s",
+     "name": "Bugbee A&S"
+    },
+    {
+     "hub": "move",
+     "scope": "TX",
+     "page": 7,
+     "row": 8,
+     "key": "slug:c-l-movers-llc",
+     "name": "C&L Movers LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 2,
+     "row": 0,
+     "key": "slug:alkhlif-transport-llc",
+     "name": "Alkhlif Transport LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 2,
+     "row": 2,
+     "key": "slug:apex-cargo-trans",
+     "name": "Apex Cargo Trans"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 2,
+     "row": 4,
+     "key": "slug:armbruster-moving-storage-inc",
+     "name": "Armbruster Moving & Storage, INC."
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 2,
+     "row": 6,
+     "key": "slug:ask-amy-home-furnishings-ask-amy-commercial-furnishings",
+     "name": "Ask Amy Home Furnishings Ask Amy Commercial Furnishings"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 2,
+     "row": 8,
+     "key": "slug:bamm-moving-and-cleaning-llc",
+     "name": "Bamm Moving And Cleaning LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 7,
+     "row": 0,
+     "key": "slug:integrity-moving-mobile-storage-llc",
+     "name": "Integrity Moving & Mobile Storage LLC"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 7,
+     "row": 2,
+     "key": "slug:j-d-sam-trans-inc",
+     "name": "J & D Sam Trans INC"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 7,
+     "row": 4,
+     "key": "slug:keim-express-transport",
+     "name": "Keim Express Transport"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 7,
+     "row": 6,
+     "key": "slug:khr-services",
+     "name": "Khr Services"
+    },
+    {
+     "hub": "move",
+     "scope": "OH",
+     "page": 7,
+     "row": 8,
+     "key": "slug:krupp-moving-and-storage-ii-llc",
+     "name": "Krupp Moving And Storage Ii LLC"
+    }
+   ],
+   "notes": []
+  },
+  "investor": {
+   "drawn": [
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 2,
+     "row": 0,
+     "key": "crd:319484",
+     "name": "49 FINANCIAL"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 2,
+     "row": 2,
+     "key": "crd:343129",
+     "name": "52AFRICA MANAGEMENT, LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 2,
+     "row": 4,
+     "key": "crd:339082",
+     "name": "818 FAMILY OFFICE, LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 2,
+     "row": 6,
+     "key": "crd:324329",
+     "name": "9823 CAPITAL, LP"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 2,
+     "row": 8,
+     "key": "crd:134943",
+     "name": "A SLING & A STONE, INCORPORATED"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 7,
+     "row": 0,
+     "key": "crd:141112",
+     "name": "ANCIENT ART, L.P."
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 7,
+     "row": 2,
+     "key": "crd:310641",
+     "name": "ANDROS CAPITAL PARTNERS LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 7,
+     "row": 4,
+     "key": "crd:136667",
+     "name": "ANNANDALE CAPITAL, LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 7,
+     "row": 6,
+     "key": "crd:289273",
+     "name": "APEIRON"
+    },
+    {
+     "hub": "investor",
+     "scope": "TX",
+     "page": 7,
+     "row": 8,
+     "key": "crd:140054",
+     "name": "APPLIED FINANCE ADVISORS, LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 2,
+     "row": 0,
+     "key": "crd:284487",
+     "name": "ALIGN CAPITAL PARTNERS, LP"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 2,
+     "row": 2,
+     "key": "crd:112571",
+     "name": "ALPHA ASSET MANAGEMENT"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 2,
+     "row": 4,
+     "key": "crd:161853",
+     "name": "AMERICAN MONEY MANAGEMENT CORPORATION (\"AMMC\")"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 2,
+     "row": 6,
+     "key": "crd:311902",
+     "name": "ANCORA ALTERNATIVES LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 2,
+     "row": 8,
+     "key": "crd:31256",
+     "name": "ANCORA RETIREMENT PLAN ADVISORS, LLC"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 7,
+     "row": 0,
+     "key": "crd:324812",
+     "name": "CANOPY PARTNERS"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 7,
+     "row": 2,
+     "key": "crd:120597",
+     "name": "CAPITAL ASSET MANAGEMENT, INC."
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 7,
+     "row": 4,
+     "key": "crd:150488",
+     "name": "CARNEGIE INVESTMENT COUNSEL"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 7,
+     "row": 6,
+     "key": "crd:16678",
+     "name": "CBIZ RETIREMENT PLAN ADVISORY SERVICES"
+    },
+    {
+     "hub": "investor",
+     "scope": "OH",
+     "page": 7,
+     "row": 8,
+     "key": "crd:104946",
+     "name": "CINCINNATI ASSET MANAGEMENT INC"
+    }
+   ],
+   "notes": []
+  },
+  "insurance": {
+   "drawn": [
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 2,
+     "row": 0,
+     "key": "npn:21664325",
+     "name": "1 PLUS 3 INSURANCE LLC DBA DEL TORO INSURANCE"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 2,
+     "row": 2,
+     "key": "npn:8417663",
+     "name": "1 SOURCE INSURANCE AGENCY INC."
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 2,
+     "row": 4,
+     "key": "npn:12664272",
+     "name": "1 STOP BENEFITS, INC."
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 2,
+     "row": 6,
+     "key": "npn:19548104",
+     "name": "1 STOP INSURANCE & FINANCIAL SERVICES LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 2,
+     "row": 8,
+     "key": "npn:21381648",
+     "name": "1 STOP INSURANCE FL AND MORE"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 7,
+     "row": 0,
+     "key": "npn:17313366",
+     "name": "1847 BENEFITS, LLC,"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 7,
+     "row": 2,
+     "key": "npn:21686103",
+     "name": "1889 SPECIALTY INSURANCE SERVICES LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 7,
+     "row": 4,
+     "key": "npn:21226126",
+     "name": "1908 SETTLEMENT SERVICES LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 7,
+     "row": 6,
+     "key": "npn:20164257",
+     "name": "1945 INSURANCE GROUP INC,"
+    },
+    {
+     "hub": "insurance",
+     "scope": "FL",
+     "page": 7,
+     "row": 8,
+     "key": "npn:21479124",
+     "name": "1985 INSURANCE SOLUTIONS LLC,"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 2,
+     "row": 0,
+     "key": "npn:19235993",
+     "name": "1099POLICY INSURANCE AGENCY, LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 2,
+     "row": 2,
+     "key": "npn:20572955",
+     "name": "10TH STREET CAPITAL LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 2,
+     "row": 4,
+     "key": "npn:21785098",
+     "name": "1111GRASSHOPPER LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 2,
+     "row": 6,
+     "key": "npn:9118784",
+     "name": "12 INTERACTIVE LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 2,
+     "row": 8,
+     "key": "npn:21360813",
+     "name": "123 INSURANCE GROUP LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 7,
+     "row": 0,
+     "key": "npn:21031199",
+     "name": "1ST MYIN-BIZ LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 7,
+     "row": 2,
+     "key": "npn:16436939",
+     "name": "1ST PATRIOT RISK MANAGEMENT LLC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 7,
+     "row": 4,
+     "key": "npn:957844",
+     "name": "1ST SOURCE INSURANCE INC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 7,
+     "row": 6,
+     "key": "npn:15981011",
+     "name": "1ST TEXAS AGENCY INC"
+    },
+    {
+     "hub": "insurance",
+     "scope": "TX",
+     "page": 7,
+     "row": 8,
+     "key": "npn:22092577",
+     "name": "1ST UNITED INSURANCE SERVICES LLC,"
+    }
+   ],
+   "notes": []
+  },
+  "lender": {
+   "drawn": [
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 2,
+     "row": 0,
+     "key": "lei:7H6GLXDRUGQFU57RNE97",
+     "name": "JPMorgan Chase Bank"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 2,
+     "row": 2,
+     "key": "lei:549300VN9E1DEKF26E34",
+     "name": "Space Coast Credit Union"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 2,
+     "row": 4,
+     "key": "lei:549300FNXYY540N23N64",
+     "name": "Newrez"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 2,
+     "row": 6,
+     "key": "lei:549300LYRWPSYPK6S325",
+     "name": "Guild Mortgage Company LLC"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 2,
+     "row": 8,
+     "key": "lei:254900DTLHVWQ7NP7R34",
+     "name": "CMG Mortgage, Inc."
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 7,
+     "row": 0,
+     "key": "lei:549300YIQ7S7Z8PIHE53",
+     "name": "AmeriSave Mortgage"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 7,
+     "row": 2,
+     "key": "lei:54930030S6J5KOL5LJ73",
+     "name": "FAIRWINDS CREDIT UNION"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 7,
+     "row": 4,
+     "key": "lei:549300J7I82PNDVU8H22",
+     "name": "OCMBC, INC."
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 7,
+     "row": 6,
+     "key": "lei:549300Y5Y88FQLI7VE83",
+     "name": "DEEPHAVEN MORTGAGE LLC"
+    },
+    {
+     "hub": "lender",
+     "scope": "FL",
+     "page": 7,
+     "row": 8,
+     "key": "lei:549300NOCASXPA34X033",
+     "name": "Lakeview Loan Servicing"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 2,
+     "row": 0,
+     "key": "lei:549300DD5QQUHO6PCH70",
+     "name": "Movement Mortgage, LLC"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 2,
+     "row": 2,
+     "key": "lei:RVDPPPGHCGZ40J4VQ731",
+     "name": "Fairway Independent Mortgage Corporation"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 2,
+     "row": 4,
+     "key": "lei:549300121SF0K2LN2804",
+     "name": "PRIMELENDING, A PLAINSCAPITAL COMPANY"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 2,
+     "row": 6,
+     "key": "lei:G5AHTAP80NWA3Q8RDC78",
+     "name": "Frost Bank"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 2,
+     "row": 8,
+     "key": "lei:549300E2UX99HKDBR481",
+     "name": "Broker Solutions, Inc."
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 7,
+     "row": 0,
+     "key": "lei:54930043BMDE130FJ617",
+     "name": "PROVIDENT FUNDING ASSOCIATES, L.P."
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 7,
+     "row": 2,
+     "key": "lei:549300KOAKQX3BEWWT56",
+     "name": "CLM MORTGAGE, INC."
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 7,
+     "row": 4,
+     "key": "lei:549300DMYENRV818D594",
+     "name": "SWBC MORTGAGE CORPORATION"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 7,
+     "row": 6,
+     "key": "lei:54930021WPEXNHYZUL09",
+     "name": "PLANET HOME LENDING, LLC"
+    },
+    {
+     "hub": "lender",
+     "scope": "TX",
+     "page": 7,
+     "row": 8,
+     "key": "lei:549300PIL8LFAQ04XC20",
+     "name": "Better Mortgage Corporation"
+    }
+   ],
+   "notes": []
+  },
+  "senior": {
+   "drawn": [
+    {
+     "hub": "senior",
+     "scope": "Palm Beach|FL",
+     "page": 2,
+     "row": 0,
+     "key": "ccn:105485",
+     "name": "HAMLIN PLACE OF BOYNTON BEACH"
+    },
+    {
+     "hub": "senior",
+     "scope": "Palm Beach|FL",
+     "page": 2,
+     "row": 2,
+     "key": "ccn:106111",
+     "name": "HEALTH CENTER AT SINAI RESIDENCES"
+    },
+    {
+     "hub": "senior",
+     "scope": "Palm Beach|FL",
+     "page": 2,
+     "row": 4,
+     "key": "ccn:105496",
+     "name": "ISLES OF BOYNTON NURSING AND REHAB CENTER"
+    },
+    {
+     "hub": "senior",
+     "scope": "Palm Beach|FL",
+     "page": 2,
+     "row": 6,
+     "key": "ccn:105555",
+     "name": "JUPITER REHABILITATION AND HEALTHCARE CENTER"
+    },
+    {
+     "hub": "senior",
+     "scope": "Palm Beach|FL",
+     "page": 2,
+     "row": 8,
+     "key": "ccn:105268",
+     "name": "LAKESIDE HEALTH CENTER"
+    },
+    {
+     "hub": "senior",
+     "scope": "Harris|TX",
+     "page": 2,
+     "row": 0,
+     "key": "ccn:676467",
+     "name": "Cypress Creek Rehabilitation and Healthcare Center"
+    },
+    {
+     "hub": "senior",
+     "scope": "Harris|TX",
+     "page": 2,
+     "row": 2,
+     "key": "ccn:676263",
+     "name": "Deerbrook Skilled Nursing and Rehab Center"
+    },
+    {
+     "hub": "senior",
+     "scope": "Harris|TX",
+     "page": 2,
+     "row": 4,
+     "key": "ccn:676081",
+     "name": "EAST VIEW HEALTHCARE"
+    },
+    {
+     "hub": "senior",
+     "scope": "Harris|TX",
+     "page": 2,
+     "row": 6,
+     "key": "ccn:676412",
+     "name": "Fall Creek Rehabilitation and Healthcare Center"
+    },
+    {
+     "hub": "senior",
+     "scope": "Harris|TX",
+     "page": 2,
+     "row": 8,
+     "key": "ccn:676111",
+     "name": "FFIII Houston SNF Tenant LLC"
+    },
+    {
+     "hub": "senior",
+     "scope": "Cook|IL",
+     "page": 2,
+     "row": 0,
+     "key": "ccn:146053",
+     "name": "ALIYA OF PALOS PARK"
+    },
+    {
+     "hub": "senior",
+     "scope": "Cook|IL",
+     "page": 2,
+     "row": 2,
+     "key": "ccn:146198",
+     "name": "ALL AMERICAN VLGE NRSG & RHB"
+    },
+    {
+     "hub": "senior",
+     "scope": "Cook|IL",
+     "page": 2,
+     "row": 4,
+     "key": "ccn:145867",
+     "name": "ALTA REHAB AT FAIRMONT"
+    },
+    {
+     "hub": "senior",
+     "scope": "Cook|IL",
+     "page": 2,
+     "row": 6,
+     "key": "ccn:145913",
+     "name": "Aperion Care Burbank"
+    },
+    {
+     "hub": "senior",
+     "scope": "Cook|IL",
+     "page": 2,
+     "row": 8,
+     "key": "ccn:145877",
+     "name": "APERION CARE DOLTON"
+    },
+    {
+     "hub": "senior",
+     "scope": "Maricopa|AZ",
+     "page": 2,
+     "row": 0,
+     "key": "ccn:035164",
+     "name": "DESERT BLOSSOM HEALTH & REHAB CENTER"
+    },
+    {
+     "hub": "senior",
+     "scope": "Maricopa|AZ",
+     "page": 2,
+     "row": 2,
+     "key": "ccn:035062",
+     "name": "DESERT HAVEN CARE CENTER"
+    },
+    {
+     "hub": "senior",
+     "scope": "Maricopa|AZ",
+     "page": 2,
+     "row": 4,
+     "key": "ccn:035014",
+     "name": "Desert Terrace Healthcare Center"
+    },
+    {
+     "hub": "senior",
+     "scope": "Maricopa|AZ",
+     "page": 2,
+     "row": 6,
+     "key": "ccn:035166",
+     "name": "Estrella Health And Rehabilitation Center"
+    },
+    {
+     "hub": "senior",
+     "scope": "Maricopa|AZ",
+     "page": 2,
+     "row": 8,
+     "key": "ccn:035256",
+     "name": "Freedom Plaza Care Center"
+    }
+   ],
+   "notes": []
+  }
+ }
+}

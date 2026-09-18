@@ -52,8 +52,14 @@ const IDENTIFIER_LABEL = /\b(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CC
 /** A phrase LED by an identifier-family label ("NAIC ABCD") is a malformed identifier attempt, not a name -- mirrors the planner's own protection. */
 const LEADING_IDENTIFIER_LABEL = /^(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)\b/i;
 const SENTENCE_START = /^(?:show|find|list|which|what|who|whom|whose|where|when|why|how|is|are|was|were|does|do|did|can|could|should|would|will|i|i'm|im|we|my|need|looking|search|get|give|tell|help|compare|verify|check|research|look|please|any|are\s+there)\b/i;
-const SENTENCE_ANYWHERE = /\b(?:near\s+me|in\s+my\s+area|for\s+me|i\s+need|i\s+want|do\s+i|should\s+i|can\s+i)\b/i;
+const SENTENCE_ANYWHERE = /\b(?:near\s+me|in\s+my\s+area|for\s+me|i|i'm|im|my|we|our|need|want|looking|buying|selling|renting|hiring|help|should|research)\b/i;
 const LOCATIVE = /\b(?:in|near|nearby|around|within|serving|headquartered|based\s+in|located\s+in)\b/i;
+/** A legal-entity suffix is explicit evidence of a business name (the planner treats it the same way). */
+const LEGAL_SUFFIX = /\b(?:llc|l\.l\.c|inc|incorporated|corp|corporation|llp|lp|l\.p|ltd|pllc|pc)\b/i;
+/** Organization-form words: strong evidence a phrase names an organization rather than describing a task. */
+const ORG_FORM = /\b(?:center|centre|facility|company|agency|associates|partners|group|services|solutions|enterprises|holdings|tenant|bank|union|village|manor|place|residences|pavilion|institute|foundation)\b/i;
+/** Planner protections that a clearly organization-shaped NAME may still be searched under (candidates first; the protected path remains the fallback). */
+const NAME_OVERRIDABLE_CODES = new Set(['MULTIPLE_SPECIALIST_HUBS', 'CARE_TASK', 'IDENTITY_CONTRADICTS_GEOGRAPHY']);
 const PLACE_LENS = /^(?:what does trusthub know about|show (?:the )?place lens(?: for)?)\b/i;
 
 /**
@@ -78,6 +84,9 @@ const DESCRIPTOR_TOKENS = new Set([
   'piano', 'furniture', 'auto', 'car', 'cars', 'vehicle', 'vehicles', 'fha', 'va', 'usda', 'conventional', 'jumbo', 'refinance', 'refinancing', 'purchase', 'homeowners', 'renters', 'life', 'medicare', 'medicaid',
   'a', 'an', 'the', 'and', 'or', 'of', 'for', 'to', 'with', 'by', 'on', 'at', 'my', 'me', 'some', 'all', 'new', 'small', 'big', 'large',
 ]);
+
+/** True for industry/category or qualifier words that cannot, alone, identify a specific business. */
+export function isGenericNameToken(token: string): boolean { return CATEGORY_TOKENS.has(token) || DESCRIPTOR_TOKENS.has(token); }
 
 export function nameTokens(value: string): string[] {
   return value.toLowerCase().replace(/[’']/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/).filter(Boolean);
@@ -112,8 +121,17 @@ export function decideNameCandidateSearch(
   if (plan.identifier || IDENTIFIER_LABEL.test(original)) return not('IDENTIFIER_PATH_PROTECTED');
   if (/^[\d\s#-]+$/.test(original)) return not('BARE_DIGITS_ARE_IDENTIFIER_INPUT');
   if (LEADING_IDENTIFIER_LABEL.test(original)) return not('MALFORMED_IDENTIFIER_ATTEMPT_PROTECTED');
-  for (const code of plan.reasonCodes) if (PROTECTED_REASON_CODES.has(code)) return not(`PLANNER_PROTECTED:${code}`);
-  if (plan.intent === 'MULTI_HUB_JOURNEY' || plan.intent === 'HOW_TO' || plan.intent === 'EXPLAINER' || plan.intent === 'COMPARE') return not(`PLANNER_INTENT:${plan.intent}`);
+  // A phrase that is unmistakably an ORGANIZATION NAME (name-shaped, carries an organization-form word
+  // or legal suffix, no sentence/locative structure) may be searched even where the planner read its
+  // words as a journey ("... Rehabilitation AND Healthcare Center"), a care task ("... Skilled Nursing
+  // and Rehab Center") or a place ("1st Texas Agency Inc"). Candidates lead; the planner's protected
+  // path stays the fallback when no hub has a candidate.
+  const bare = stripTerminalPunctuation(original);
+  const organizationShaped = !original.includes('?') && !SENTENCE_START.test(bare) && !SENTENCE_ANYWHERE.test(bare) && !LOCATIVE.test(bare) && (ORG_FORM.test(bare) || LEGAL_SUFFIX.test(bare)) && nameTokens(bare).length <= 10;
+  const blocking = plan.reasonCodes.filter((code) => PROTECTED_REASON_CODES.has(code));
+  const overridden = blocking.length > 0 && organizationShaped && blocking.every((code) => NAME_OVERRIDABLE_CODES.has(code));
+  if (blocking.length && !overridden) return not(`PLANNER_PROTECTED:${blocking[0]}`);
+  if (!overridden && (plan.intent === 'MULTI_HUB_JOURNEY' || plan.intent === 'HOW_TO' || plan.intent === 'EXPLAINER' || plan.intent === 'COMPARE')) return not(`PLANNER_INTENT:${plan.intent}`);
 
   // Unambiguous instruction: "<category> named X" / "companies called X". The category limits
   // scope ONLY in this explicit form (or via a user-selected hub) -- never from a name's own words.
@@ -133,16 +151,26 @@ export function decideNameCandidateSearch(
   if (!quoted && (SENTENCE_START.test(name) || SENTENCE_ANYWHERE.test(name))) return not('SENTENCE_NOT_NAME');
   if (!quoted && LOCATIVE.test(name)) return not('LOCATIVE_PHRASE_IS_DISCOVERY');
 
-  const distinctive = distinctiveTokens(name, plan);
-  if (!distinctive.length) return not('CATEGORY_OR_GEOGRAPHY_WORDS_ONLY');
-
   const base = { operation: 'NAME_CANDIDATES' as const, originalInput: original, name, hubScope: selectedHub, priorityHubs: plan.candidateHubs, unresolvedConditions: [] as string[] };
+  if (overridden) {
+    // Organization-form words alone ("moving company and storage services") are still just a category.
+    if (!distinctiveTokens(name, plan).length && !LEGAL_SUFFIX.test(name)) return not(`PLANNER_PROTECTED:${blocking[0]}`);
+    return { ...base, basis: 'NAME_WITH_CATEGORY_WORD', alternateCohortInterpretation: true };
+  }
 
   // The planner already captured this whole input as an entity name. Previously that capture was
   // discarded whenever the hub was unknown ("Allied Van Lines", "Abbey Delray South").
-  if (plan.intent === 'ENTITY_LOOKUP' && plan.entityName && stripTerminalPunctuation(plan.entityName).toLowerCase() === name.toLowerCase()) {
+  // An all-generic-word capture is only trusted when the planner found NO category class (its strict
+  // whole-query title-case rule, e.g. "Capital Asset Management"); with a category class present its
+  // residue heuristic can over-capture a description ("moving company and storage services").
+  const plannerCapturedWholeInput = plan.intent === 'ENTITY_LOOKUP' && Boolean(plan.entityName) && stripTerminalPunctuation(plan.entityName!).toLowerCase() === name.toLowerCase();
+  if (plannerCapturedWholeInput && (distinctiveTokens(name, plan).length > 0 || LEGAL_SUFFIX.test(name) || !plan.entityClass)) {
     return { ...base, basis: 'PLANNER_ENTITY_NAME', alternateCohortInterpretation: false };
   }
+  const distinctive = distinctiveTokens(name, plan);
+  // All-generic-word names exist ("Capital Asset Management, Inc."). A legal suffix is explicit name evidence.
+  if (!distinctive.length && !LEGAL_SUFFIX.test(name)) return not('CATEGORY_OR_GEOGRAPHY_WORDS_ONLY');
+
   const valueJudgment = plan.reasonCodes.includes('VALUE_JUDGMENT_REQUESTED');
   if (!plan.entityClass && !plan.requestedGeography && !valueJudgment) {
     return { ...base, basis: 'BARE_NAME', alternateCohortInterpretation: false };

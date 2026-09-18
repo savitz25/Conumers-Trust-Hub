@@ -229,3 +229,32 @@ test('source files contain no raw control bytes (regex escapes must stay escapes
     assert.equal(bad, 0, `${file.pathname} contains ${bad} raw control byte(s)`);
   }
 });
+
+// ---------------------------------------------------------------- Holdout-derived blockers (found by the frozen live holdout)
+test('H1. organization-shaped names are searched even where the planner read a journey, care task or place', () => {
+  for (const q of ['JUPITER REHABILITATION AND HEALTHCARE CENTER', 'jupiter rehabilitation and healthcare center', 'Deerbrook Skilled Nursing and Rehab Center', 'FFIII Houston SNF Tenant LLC', '1ST TEXAS AGENCY INC', 'CAPITAL ASSET MANAGEMENT, INC.']) {
+    const d = decideNameCandidateSearch(q);
+    assert.equal(d.operation, 'NAME_CANDIDATES', `REDUNDANT CLARIFICATION: ${q} -> ${d.operation === 'NOT_NAME_SEARCH' ? d.reason : ''}`);
+  }
+  // ...but the planner's protected reading stays the fallback, and real tasks/journeys are untouched.
+  const jupiter = decideNameCandidateSearch('Jupiter Rehabilitation and Healthcare Center');
+  assert.ok(jupiter.operation === 'NAME_CANDIDATES' && jupiter.alternateCohortInterpretation === true);
+  for (const q of ['I need a mover and a mortgage company', 'a mover and a mortgage lender', 'senior care Florida', 'nursing homes in Palm Beach County', 'moving company and storage services', 'help my mother find a care facility']) {
+    assert.equal(decideNameCandidateSearch(q).operation, 'NOT_NAME_SEARCH', `${q} must keep its protected path`);
+  }
+});
+test('H2. the name-echo proof tolerates hub apostrophe/ampersand folding ("Al\'s" -> "al s")', async () => {
+  const { echoesName } = await import('./adapters.ts');
+  assert.equal(echoesName('al s relocation storage', "Al's Relocation & Storage"), true);
+  assert.equal(echoesName('als relocation storage', "Al's Relocation & Storage"), true);
+  assert.equal(echoesName('allied', 'Allied Van Lines'), false, 'a different (shortened) echo is still not proof');
+  assert.equal(echoesName(null, 'Allied'), false); assert.equal(echoesName('', 'Allied'), false);
+});
+test('H3. no category-word-only padding: rows must relate to the distinctive part of the name', () => {
+  assert.equal(rowRelatesToName('C&L Movers LLC', 'C&L Movers LLC', 'EXACT_SOURCE_NAME'), true);
+  for (const padded of ['Call The Movers', 'Caseys Movers LLC', 'Champion Movers LLC']) assert.equal(rowRelatesToName('C&L Movers LLC', padded, 'PREFIX_OR_TOKEN'), false, padded);
+  assert.equal(rowRelatesToName('Allied Moving', 'Best Moving', 'PREFIX_OR_TOKEN'), false);
+  assert.equal(rowRelatesToName('Allied Moving', 'Allied Van Lines', 'PREFIX_OR_TOKEN'), true);
+  assert.equal(rowRelatesToName('tate asset management', 'PARK STATE ASSET MANAGEMENT LLC', 'NAME_CONTAINS'), true, 'hub "contains" semantics are kept (and labeled as the weaker method)');
+  assert.equal(rowRelatesToName('Capital Asset Management, Inc.', 'CAPITAL ASSET MANAGEMENT, INC.', 'EXACT_SOURCE_NAME'), true, 'all-generic names still relate to themselves');
+});

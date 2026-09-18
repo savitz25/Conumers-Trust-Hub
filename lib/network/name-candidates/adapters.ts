@@ -18,7 +18,7 @@ import { SENIOR_ASK_API, SENIOR_ASK_CONTRACT } from '../senior-ask.ts';
 import {
   HUB_PAGE_SIZE, type CandidateAction, type HubNameSearchOutcome, type MatchMethod, type NameCandidate,
 } from './contract.ts';
-import { nameTokens } from './decision.ts';
+import { isGenericNameToken, nameTokens } from './decision.ts';
 
 export const NAME_SPECIALIST_CONTRACT = 'trusthub-specialist-execution-v2';
 /** Version + structural-shape locks (contractFingerprint intentionally not pinned -- see TH-ARCH-P0-002). */
@@ -50,6 +50,10 @@ function text(value: unknown): string | null { return typeof value === 'string' 
 function record(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function records(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((row) => row && typeof row === 'object' && !Array.isArray(row)) as Record<string, unknown>[] : []; }
 const fold = (value: string) => nameTokens(value).join(' ');
+/** Separator-insensitive form for ECHO comparison only: hubs differ on whether "Al's" folds to "als" or "al s". */
+const squash = (value: string) => nameTokens(value).join('');
+/** True when the hub's echo of the searched name is the name we sent. */
+export const echoesName = (echo: string | null, name: string): boolean => Boolean(echo) && squash(echo!) === squash(name);
 
 /** Allowlisted absolute https URL on the hub's canonical origin (or its official source). */
 export function safeHubUrl(hub: SpecialistHubId, raw: unknown): { href: string; official: boolean } | null {
@@ -78,10 +82,16 @@ function action(hub: SpecialistHubId, raw: unknown, kind: 'PROFILE' | 'RESEARCH'
  * response as a whole proved the name filter ran.
  */
 export function rowRelatesToName(suppliedName: string, matchedName: string, method: MatchMethod): boolean {
-  const supplied = nameTokens(suppliedName).filter((t) => t.length >= 2);
+  const all = nameTokens(suppliedName);
   const matched = nameTokens(matchedName);
-  if (!supplied.length || !matched.length) return false;
+  if (!all.length || !matched.length) return false;
   if (fold(matchedName).includes(fold(suppliedName))) return true;
+  // No category-word-only padding: when the supplied name has a distinctive part ("C&L" in "C&L Movers
+  // LLC"), a row must relate to THAT part -- sharing only "Movers"/"LLC" is not a name candidate.
+  const distinct = all.filter((t) => !isGenericNameToken(t));
+  if (distinct.length && distinct.every((t) => t.length < 2)) return squash(matchedName).includes(distinct.join(''));
+  const supplied = (distinct.length ? distinct : all).filter((t) => t.length >= 2);
+  if (!supplied.length) return false;
   const shares = supplied.some((s) => matched.some((m) => m === s || (s.length >= 3 && m.startsWith(s)) || (m.length >= 3 && s.startsWith(m))));
   if (shares) return true;
   if (method !== 'SIMILAR_SPELLING') return false;
@@ -153,7 +163,7 @@ export const moveNameAdapter: HubNameAdapter = {
       return outcome(moveBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
     }
     // Proof the name filter ran: the hub echoes its normalized form of OUR name.
-    if (fold(text(p.normalizedQuery) ?? '') !== fold(name)) return outcome(moveBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    if (!echoesName(text(p.normalizedQuery), name)) return outcome(moveBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
     const rows = records(p.results);
     const mapped = rows.flatMap((row): NameCandidate[] => {
       const display = text(row.publicDisplayName); const slug = text(row.canonicalSlug);
@@ -206,7 +216,7 @@ export const investorNameAdapter: HubNameAdapter = {
     const r = await v2Identity('investor', investorBase, { identityName: name, page, limit: HUB_PAGE_SIZE }, ctx, started, page);
     if ('fail' in r) return r.fail!;
     const p = r.payload;
-    if (fold(text(record(p.appliedFilters).identityName) ?? '') !== fold(name)) return outcome(investorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    if (!echoesName(text(record(p.appliedFilters).identityName), name)) return outcome(investorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
     const rows = records(p.rows);
     const mapped = rows.flatMap((row): NameCandidate[] => {
       const firm = text(row.firmName); const legal = text(row.legalName); const crd = text(row.crd);
@@ -242,7 +252,7 @@ export const insuranceNameAdapter: HubNameAdapter = {
     if ('fail' in r) return r.fail!;
     const p = r.payload;
     const echoed = records(record(p.queryInterpretation).interpretation).find((row) => text(row.label) === 'Requested name');
-    if (fold(text(echoed?.value) ?? '') !== fold(name)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    if (!echoesName(text(echoed?.value ?? null), name)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
     const rows = records(p.rows);
     const mapped = rows.flatMap((row): NameCandidate[] => {
       const entityClass = text(row.entityClass);
@@ -277,7 +287,7 @@ export const lenderNameAdapter: HubNameAdapter = {
     const r = await v2Identity('lender', lenderBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
     if ('fail' in r) return r.fail!;
     const p = r.payload; const qi = record(p.queryInterpretation);
-    if (fold(text(qi.identityName) ?? '') !== fold(name)) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    if (!echoesName(text(qi.identityName), name)) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
     const identity = record(p.identity);
     const rows = records(p.rows).length ? records(p.rows) : Object.keys(identity).length ? [identity] : [];
     const mapped = rows.flatMap((row): NameCandidate[] => {
@@ -312,7 +322,7 @@ export const seniorNameAdapter: HubNameAdapter = {
     const query = record(p.query);
     // This endpoint interprets free text. Unless it PROVES it ran a provider-name search on exactly
     // our name, its answer is about some other question -- never a name miss.
-    if (text(query.mode) !== 'entity' || fold(text(query.identityQuery) ?? '') !== fold(name)) {
+    if (text(query.mode) !== 'entity' || !echoesName(text(query.identityQuery), name)) {
       return outcome(seniorBase, { state: 'UNSUPPORTED_OPERATION', message: 'SeniorTrustHub interpreted this text as a care-category question instead of a provider name, so a name search could not be confirmed.' }, started, page);
     }
     const rows = records(p.results);

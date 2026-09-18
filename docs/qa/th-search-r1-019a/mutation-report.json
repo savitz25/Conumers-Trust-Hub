@@ -1,0 +1,63 @@
+{
+ "generatedAt": "2026-09-18T16:55:24.926Z",
+ "cleanBefore": {
+  "status": 0,
+  "pass": 23,
+  "fail": 0,
+  "failing": []
+ },
+ "mutations": [
+  {
+   "id": "A_RESTORED_HUB_REQUIRED_GATE",
+   "why": "A name must again have a known hub before it can be searched.",
+   "detected": true,
+   "failedTests": [
+    "1a. \"Allied\" shows all five eligible records across four hubs with no hub selection",
+    "1b. optional Moving filter narrows to the two Move records and keeps the query; All restores it",
+    "2. a newly added matching record is discoverable with no code change",
+    "3/4. lowercase, one-word, numeric-leading, hyphenated and category-word names enter candidate search with no hub keyword",
+    "5a. records named only with industry words never appear for a name search",
+    "5b. a hub that ignores the name filter is a FAILURE -- never candidates, never a miss",
+    "6. similarly named records stay distinct, and a lone approximate candidate is not labeled exact",
+    "7a. one source fails while others succeed: valid cards kept, incomplete coverage disclosed",
+    "7b. all-source failure is NOT a no-match",
+    "7c. a genuine completed miss is distinct from failure and keeps the entered name",
+    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub",
+    "10b. telemetry carries outcome classes only -- never the searched name, identifiers or URLs"
+   ]
+  },
+  {
+   "id": "B_DROPPED_NAME_FILTER_GUARD",
+   "why": "An unfiltered cohort is admitted as name candidates.",
+   "detected": true,
+   "failedTests": [
+    "lib\\network\\name-candidates\\th-search-r1-019a.test.ts"
+   ]
+  },
+  {
+   "id": "C_SILENT_OMISSION_OF_RESPONDING_HUB",
+   "why": "An enabled, responding hub is silently dropped from the fan-out.",
+   "detected": true,
+   "failedTests": [
+    "1a. \"Allied\" shows all five eligible records across four hubs with no hub selection",
+    "1b. optional Moving filter narrows to the two Move records and keeps the query; All restores it",
+    "6. similarly named records stay distinct, and a lone approximate candidate is not labeled exact",
+    "7a. one source fails while others succeed: valid cards kept, incomplete coverage disclosed",
+    "8. per-hub pages, View more and revision are preserved; an initial cap never hides another hub",
+    "H1. organization-shaped names are searched even where the planner read a journey, care task or place",
+    "H2. the name-echo proof tolerates hub apostrophe/ampersand folding",
+    "H3. no category-word-only padding: rows must relate to the distinctive part of the name"
+   ]
+  }
+ ],
+ "cleanAfter": {
+  "status": 1,
+  "pass": 20,
+  "fail": 3,
+  "failing": [
+   "H1. organization-shaped names are searched even where the planner read a journey, care task or place",
+   "H2. the name-echo proof tolerates hub apostrophe/ampersand folding",
+   "H3. no category-word-only padding: rows must relate to the distinctive part of the name"
+  ]
+ }
+}
