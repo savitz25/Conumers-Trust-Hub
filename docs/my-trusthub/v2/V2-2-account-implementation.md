@@ -2,6 +2,8 @@
 
 Date: 2026-09-19. Owner: Builder 4. Production release/activation: HOLD.
 
+Follow-up: `V2-2R-account-review.md` supersedes automatic legacy-bundle retirement (local copies now retained), mutable cookie/sign-out failure handling, invitation readiness responses and browser-derived auth-completion telemetry. Original test counts below describe the original V2-2 revision; see `v2-2r-validation.json` for the hardening run.
+
 ## Revision and authority
 
 - Repository: `savitz25/Conumers-Trust-Hub`.
