@@ -1,4 +1,14 @@
-# Move V2-1 independent QA — Builder 4 / V2-2R
+# Move V2-1 independent QA — Builder 4
+
+## V2-3C exact-head re-QA: PASS, QA-M9 CLOSED
+
+Tested `35a83ca97f98fb5ee46bb849569808fd5e962a90` on 2026-09-19. Re-ran the committed 12-group browser matrix and new independent assertions in Ask `scripts/qa-v2-3c-independent.mjs`. Guest Save → local status → reload preserves exactly one correct slug and explicit device/unconfirmed-parent disclosure. Button `aria-describedby` points to populated status; icon accessible name says device. Owner-confirmed legacy account context (MOCKED) says Move account shortlist, not device-only and not parent My TrustHub.
+
+Original failure below is historical, superseded by this re-QA. [Finding closure with exact-head evidence](https://github.com/savitz25/Move-trust-Hub/pull/156#issuecomment-5744273847). No Move runtime edits in V2-3C. Existing prior Builder 3 correction is the reviewed implementation, not proof on its own.
+
+Evidence: **BROWSER** actual component/runtime/localStorage; **MOCKED** Auth/cloud/account-context fixtures. Matrix covers immediate/deferred Save, duplicates, delayed Auth/module, failed storage/retry, navigation/account change, failed cloud local retention, keyboard and 1440/390/320. Real authenticated provider/RLS and full deployed page layout remain **NOT RUN**. This PASS is local Save/reload scope, not parent synchronization.
+
+## Historical V2-2R review
 
 Date: 2026-09-19. Reviewed immutable head: `db6d640398ee622d0c3153e968ce14d621ec744a`, PR https://github.com/savitz25/Move-trust-Hub/pull/156.
 

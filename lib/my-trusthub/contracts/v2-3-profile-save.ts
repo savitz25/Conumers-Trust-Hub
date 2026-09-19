@@ -1,6 +1,7 @@
 /** V2-3 executable specification only. No endpoints, credentials, DB or hub adapters.
  * Trusted* inputs below are server-resolved records, NEVER browser authorization.
  */
+import type { ProfileTransferPort } from './v2-3-profile-transfer.ts';
 export const SPECIALIST_HUBS = ['move', 'insurance', 'lender', 'contractor', 'senior', 'investor'] as const;
 export type SpecialistHub = typeof SPECIALIST_HUBS[number];
 export type ResearchKind = 'profile' | 'comparison' | 'calculator' | 'inventory' | 'plan' | 'worksheet';
@@ -108,10 +109,12 @@ export type GuestTransfer = { version: 'v2-3/selected-profiles/1'; selected: Sel
 export type ContinueHook = { kind: ResearchKind; hub: SpecialistHub; schemaKey?: string; opaqueContextRef?: string };
 
 /** Proposed logical facade over P13 broker + P12 owner RPCs. NOT implemented/exposed. */
-export interface ParentProfileSavePort {
+export interface ParentProfileSavePort extends ProfileTransferPort {
   prepareAuthenticatedHandoff(input: { profile: ProfileIdentity; returnContextRef: string }): Promise<{ formPostRef: string; expiresAt: number }>;
   consumeAuthenticatedHandoff(input: { formPostRef: string; browserProof: string }): Promise<{ accountContextRef: string }>;
   resolveExactBinding(profile: ProfileIdentity): Promise<{ capability: SaveCapability }>;
+  /** @deprecated P12 logical example only. V2-3 adapters MUST use commitProfileSave
+   * with selected item/manifest/Project bindings, not this v1 illustrative shape. */
   save(request: SaveRequest): Promise<SaveResult>;
   readSaved(input: { profile: ProfileIdentity; accountContextRef: string }): Promise<{ saved: boolean; savedRef?: string }>;
   unsave(input: { savedRef: string; accountContextRef: string; requestKey: string }): Promise<{ removed: boolean }>;

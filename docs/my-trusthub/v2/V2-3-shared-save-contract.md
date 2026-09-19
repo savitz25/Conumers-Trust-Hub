@@ -1,8 +1,8 @@
 # V2-3 shared specialist profile Save contract
 
-Version: `v2-3/profile-save/1`. Prepared 2026-09-19 by Builder 4.
+Version: V2-3C closure, `v2-3/selected-profiles/2`. Updated 2026-09-19 by Builder 4. Original `profile-save/1` tests remain historical invariant examples, not the complete adapter wire format.
 
-Status: READY FOR CONTRACT REVIEW; no specialist adapters/endpoints, migrations, permissions, credentials or production changes deployed. Executable specification: `lib/my-trusthub/contracts/v2-3-profile-save.ts`; deterministic reference-model tests: adjacent `.test.ts`. This is not a replacement identity system or a live API implementation.
+Status: READY FOR RUNTIME IMPLEMENTATION of the reviewed shared contract, not authorization to deploy or enable adapters. No specialist adapters/endpoints, migrations, permissions, credentials or production changes deployed. The complete typed port is `lib/my-trusthub/contracts/v2-3-profile-transfer.ts`, inherited by `ParentProfileSavePort`; `v2-3-profile-transfer.model.ts` is a deterministic in-memory reference model only. Existing `v2-3-profile-save.ts` predicates/tests are retained. This is not a replacement identity system or a live API implementation. The V2-3C section below controls where it refines the original proposal.
 
 ## Invariants
 
@@ -39,7 +39,7 @@ Watch capability is evaluated separately by the existing Watch contracts and exp
 7. P13 validates issuer, audience, hub service identity, allowed operation scope, browser state/nonce, expiry, one-time status and current consumer/session context. Consume is atomic in the existing broker transaction; the pure TypeScript predicate is not a substitute for atomic database consumption.
 8. Parent resolves exact bindings/publication and executes only selected eligible Saves through owner-authorized P12 operations. No broad parent table credentials are distributed to a specialist. Responses expose bounded result references, not the consumer UUID, email, notes, unrelated Saves or Projects.
 9. Parent returns a durable operation receipt with exact identity, account context, request key, Saved reference, and separate Project outcome. The specialist verifies the receipt through its authorized server channel; URL flags and localStorage cannot assert durable parent success.
-10. Default is **retain local copies**, including failed/unsupported/unselected/edited/new items. Automatic retirement is permitted only after verified durable receipt AND atomic compare-and-delete of the exact selected item revision/digest in the originating store. All writers must participate (e.g. versioned IndexedDB transaction); localStorage read-modify-write plus a Web Lock used by only one writer is insufficient. V2-2R therefore retains legacy bundles instead of rewriting them.
+10. First-release rule is **KEEP LOCAL COPY**, including successful/failed/unsupported/unselected/edited/new items. There is NO retirement operation in V2-3C. Successful parent acknowledgment may update account-confirmed UI while retaining local research. Atomic retirement, if ever wanted, requires a separately versioned protocol in which every writer participates; localStorage read-modify-write plus one writer's Web Lock is insufficient.
 
 Ask cannot read a specialist domain's localStorage. This design requires specialist producers and BFF transport; the parent-only code does not complete that transfer. No email-only legacy-account linking. Existing legacy accounts require the reviewed verified-link procedure, and imports remain explicit.
 
@@ -108,11 +108,65 @@ All share parent identity, privacy and optional Project membership. Use P18's ap
 
 | Specialist | Legacy repair handoff | Adapter/identity mapping | Independent status |
 | --- | --- | --- | --- |
-| Move | PR #156, `db6d640398ee622d0c3153e968ce14d621ec744a` | Native company slug; reviewed parent mapping still required | Local fixture checks executed; reload local-copy disclosure defect returned to Builder 3 |
-| Insurance | PR #55, `426ad49b91d0fdc65b54e4ce515c45c7732910a5`, arrived during this run | Handoff/file inventory reviewed; do not guess agency/person/insurer binding | PENDING INDEPENDENT RUNTIME QA; Builder 3 report not certification |
-| Lender | PR #52, `315093be109796c9dd170e80a936ecd10e9cff7d`, arrived during this run | Handoff/file inventory reviewed; no localhost repair/config changes | PENDING INDEPENDENT RUNTIME QA; Builder 3 report not certification |
+| Move | PR #156, `35a83ca97f98fb5ee46bb849569808fd5e962a90` | Local slug is NOT implicitly parent native ID; exact `Company.id` binding mapping below | QA-M9 closed by independent exact-head re-QA; real provider NOT RUN |
+| Insurance | PR #55, `426ad49b91d0fdc65b54e4ce515c45c7732910a5` | Mapper rules below; agency/person/insurer kept distinct | Independent local QA FAIL B4-I1, reload device disclosure; returned to Builder 3 |
+| Lender | PR #52, `315093be109796c9dd170e80a936ecd10e9cff7d` | Mapper rules below; no localhost repair/config changes | Independent local QA FAIL B4-L1 reload disclosure / B4-L2 stale push acknowledgment; returned to Builder 3 |
 | Contractor | Existing P13 proof is not generic six-hub completion | Reuse approved exact identity/broker contract; separate incident out of scope | Adapter not implemented here |
 | Senior | Prior local Save report is not parent-sync evidence | Existing published class mapping required | Adapter not implemented here |
 | Investor | No new implementation under this ticket | Existing published class mapping required | Adapter not implemented here |
 
 Before adapter implementation: coordinator accepts this contract, each hub supplies exact publication/native-class/binding mapping and immutable preview, and an authorized isolated parent/BFF/database/inbox path exists. Then implement one scoped adapter with owner/RLS/idempotency/replay/browser tests, review, and separately approve release. Do not deploy six speculative endpoints or enable signup under this contract-preparation ticket.
+
+## V2-3C: closed specialist review findings
+
+| Finding | Disposition | Contract change / test | Runtime migration required? | Blocks adapter coding? |
+| --- | --- | --- | --- | --- |
+| Insurance `/providers/{slug}` not covered by old P13 registry | Accepted | Exact typed profile destination constructor + environment registry; C01–C03. Separate metadata/broker proposal in `V2-3C-unapplied-registry-proposal.md`; old broad-prefix route is NOT opened. | Y, UNAPPLIED; atomic broker implementation remains a release prerequisite | N for isolated implementation; Y for runtime enablement until proposal is implemented/tested |
+| Missing staging/continuation/receipt methods | Accepted | Six named operations below, strict input validation C04–C10, atomic-consumption reference model | Persistent staging/continuation/receipt implementation must reuse/extend P13 in a separately reviewed migration package; no new grant implied | N; implementation obligations explicit |
+| Slug/native/class and manifest/Project binding unclear | Accepted and clarified | Mapping rules below, versioned SHA-256 fingerprint, item + Project bound receipt; C05/C06/C09–C14 | No identity/data rewrite; unresolved binding stays local | N; a record without a reviewed mapping cannot be enabled for parent Save |
+
+No finding is silently rejected. Insurance/Lender legacy QA findings remain open independently of this protocol closure.
+
+### Three identities, exact mapping rules
+
+1. `localItemId` identifies a record in the specialist browser store. Move derives it from the existing exact local `companySlug` namespace; Insurance/Lender use their existing saved item `id`. It is never a parent entity ID.
+2. `{hub,nativeId,profileClass}` is a trusted specialist identity. IDs preserve case/namespace. Slug may be native ID ONLY in an explicitly reviewed adapter mapping, never by network-wide convention.
+3. Parent `networkEntityId` is resolved from reviewed binding records by the parent, never accepted from request JSON. A business claim token or legacy Auth subject is not consumer authority.
+
+| Surface | Required trusted mapper | Existing class / handling |
+| --- | --- | --- |
+| Move local `companySlug` | Resolve canonical public `Company` using existing resolver/alias policy → `Company.id` → exact reviewed parent binding; retain captured slug as return context | Existing binding class `mover`, not invented `moving_company` taxonomy. Capabilities/roles are not identity classes. State-only/NJ without binding remains local; no USDOT/Florida/Watch gate for basic local Save. |
+| Insurance `providerSlug` | Resolve public Provider through current provenance/trust-state gate → `Provider.id`; require a reviewed exact map to the appropriate specialist native entity and class | Provider type does not prove person versus agency. Missing reviewed discriminator/binding yields `local_only` or `identity_review_required`; never guess from name, license text or LOA. `agency` test fixture represents an already-reviewed agency mapping, not a blanket provider classification. |
+| Insurance legal insurer | Separate `/insurers` producer is NOT included in first-wave provider adapter. Future explicit mapper uses published `entity_id` + existing `legal_insurer` class | Never reuse agency mapping, NPN or provider slug as NAIC/legal-insurer identity. No `/insurers` return capability added here. |
+| Lender local `lenderSlug` | Resolve exact public catalog profile, then reviewed map to published institution `institution_id` / `nmls-inst:*` binding, preserving original route context | Existing bound class `institution`; legacy catalog ID, branch variation, NMLS string or display type alone cannot supply the institution UUID. Missing mapping stays local. |
+
+These mappers must recheck publication at commit, using the appropriate surface's gate. SEO noindex does not itself mean unpublished. They MUST NOT use name/email/display-name/geography similarity or modify regulatory/entity data. `TrustedMapper` and `TrustedCommitAdapter.resolveCurrent` are explicit server-only ports; pure types do not make browser data trusted. Record-specific mapping fixtures are required in each adapter PR. This resolves the mapping rule without inventing nonexistent accepted bindings.
+
+### Complete operation boundary
+
+All input objects reject extra/missing fields, including consumer IDs, emails, roles, notes, token payloads, binding IDs and success booleans. Six first-release port methods:
+
+| Method | Caller / binding / result |
+| --- | --- |
+| `prepareGuestProfileTransfer` | Specialist same-origin BFF validates Origin/CSRF, obtains exact local selection and trusted profile mapper, sets source hub/audience and server-generated return task. At most 50 items / 64 KiB / 10 minutes. Returns opaque transfer ref + manifest digest + expiry. Browser binding is derived by BFF cookie/challenge, not request JSON. |
+| `prepareProfileSaveContinuation` | Authorized source BFF presents transfer ref/digest to parent-held continuation service; fixed audience Ask, matching hub/browser/environment. Returns expiring opaque continuation ref. No consumer yet; no account mutation. |
+| `consumeProfileSaveContinuation` | After verified/admitted parent session and explicit displayed account/selection confirmation, validate issuer/audience/browser proof and atomically consume once. Bind transfer/digest to a parent-issued current account context. Mint a fresh 90-second authenticated P13 exchange only now. |
+| `commitProfileSave` | Exact captured selected item, transfer/manifest digest, idempotency key and current account context; trusted current binding/publication lookup; optional parent-owned Project reference. Returns per-item parent and Project outcome separately. No direct table access. |
+| `getProfileSaveReceipt` | Reauthenticate current parent account context for exact request key; returns only that authorized receipt or null. Lost-response lookup does not reuse consumed handoff and does not require unexpired guest staging. A new login can obtain a fresh narrowly scoped grant to the same operation only after parent verifies same subject/browser intent; never silently carry it into a different account. |
+| `verifyProfileSaveReceipt` | Authorized same-hub BFF calls parent over authenticated server channel with exact receipt/request/context/manifest/item/Project references. Parent loads authoritative stored receipt. No browser-supplied parent-success payload is accepted. Return contains no email, UUID, unrelated Saves or Project notes. |
+
+Transport remains fixed-target browser-bound form POST, with HttpOnly challenge/state cookies and appropriate CSP/no-store/no-referrer. Browser receives no service credential. Specialist BFF and parent authenticate each other using existing approved identities; absence fails closed. No new scope is activated here. Stage refs are CSPRNG opaque values stored hashed at rest; raw refs never enter URLs/logs/analytics. The deterministic model's counter refs are TEST ONLY.
+
+The source specialist owns staged profile-only manifest storage; parent owns continuation/account context and durable receipt storage. Staging is not authority to Save. Parent fetches the manifest via the authorized source BFF, confirms selection, then commits through P12. Database/runtime authors must supply atomic consume, uniqueness/idempotency transactions, RLS, current-session validation and bounded retention/rate limits. Local Maps are not that implementation. An email journey exceeding staging lifetime restarts from retained local selection; no extension of P13's 90-second exchange.
+
+### Digest, receipt and Project rules
+
+Each selected item carries exact local ID, captured revision, SHA-256 digest and specialist tuple. Adapter-generated revision/digest describes the captured profile-only projection, not private notes/tool payload. Without a revision writer, snapshot a versioned digest of the exact allowed projection and use that digest as revision; this is evidence binding, NOT permission to delete the local record. Keep all local data.
+
+Manifest digest algorithm is `manifestDigest` in the executable spec: SHA-256 over UTF-8 JSON positional array `[version,sourceHub,audience,selected item arrays,return-task array]`. Selection order is significant; object property insertion order is not. Exact captured revision/digest and trusted return identity are included. Idempotency key binds verified subject/context + transfer ref + manifest digest + exact item projection + optional Project ref. Changing any of these under the same key fails.
+
+Receipt parent outcomes: `saved`, `already_saved`, `local_only`, `identity_review_required`, `profile_not_published`, `unsupported_class`, `failed`. Only `saved`/`already_saved` carry an authorized parent Saved reference. Project outcomes: `not_requested`, `added`, `already_member`, `failed`, with only the exact requested opaque Project reference. Parent Save success survives Project failure. Retry Project under its own operation key, referencing the same logical Save; duplicate Save still resolves `already_saved`. No Project is required, and zero Watches/Alerts/ranking/provider disclosure follows.
+
+Receipt binds request key, account context, manifest digest, exact selected local ID/revision/digest/tuple, parent Saved ref when authorized, and separate Project result. Transport/provider failure without authoritative receipt is unknown, NOT saved/zero-result proof; retain local copy and retry/lookup. All receipt results set `localCopy:'keep'`. Forged completion query, stale item digest, wrong Project, wrong BFF or another consumer cannot acknowledge this selection. Account switching invalidates current context; require a new confirmation.
+
+UI can show parent acknowledgment while retaining device data. Legacy Move/Insurance/Lender account success remains labeled as its own workspace, never parent My TrustHub. Compare/Continue hooks and calculator/comparison/inventory/plan schemas remain separate, as above. No runtime adapter or transfer endpoint is deployed by V2-3C.
