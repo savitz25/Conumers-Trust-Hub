@@ -93,6 +93,7 @@ const PROJECT_DETAIL = /^\/my\/projects\/[0-9a-f-]{36}$/i;
  * (normally zero or one). Marker VALUES are matched against literals; they are never forwarded.
  */
 export function resolveMyTrustHubOutcomes(pathname: string, params: URLSearchParams, context: { continuationReason?: string | null } = {}): MyTrustHubOutcome[] {
+  void context; // Retain caller compatibility; browser attribution is not authentication evidence.
   const path = normalizePath(pathname);
   const outcomes: MyTrustHubOutcome[] = [];
   const add = (event: MyTrustHubEventName, properties: Record<string, unknown>, consumeParams: string[]) => outcomes.push({ event, properties: boundedJourneyProperties(properties), consumeParams });
@@ -123,9 +124,8 @@ const errorParam = params.get('error');
     const reason = params.get('access') === 'restricted' ? 'access_restricted' : errorParam ? (SIGN_IN_FAILURES[errorParam] ?? 'unable') : null;
     if (reason) add(MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_FAILED, { ...guest, outcome: 'failure', failure_reason: reason }, ['error', 'access']);
   }
-  if (['/my', '/my/saved', '/my/projects', '/my/you'].includes(path) && params.get('auth') === 'complete') {
-    add(MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_COMPLETED, { ...authed, surface: 'my_home', outcome: 'success', continuation_reason: context.continuationReason === 'save_handoff' ? 'save_handoff' : 'direct' }, ['auth']);
-  }
+  // V2-2R: auth=complete is forgeable/bookmarkable, not an authentication receipt.
+  // Verified completion is recorded at the server action / PKCE callback boundary.
   return outcomes;
 }
 

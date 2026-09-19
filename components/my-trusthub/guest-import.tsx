@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { commitGuestImportAction, commitGuestSessionImportAction, previewGuestImportAction, previewGuestSessionImportAction } from '@/app/my/actions';
-import { importRequestKey, retireAcknowledged } from '@/lib/my-trusthub/guest-retirement';
+import { importRequestKey } from '@/lib/my-trusthub/guest-retirement';
 import type { ProjectListRow } from '@/lib/my-trusthub/production-adapter';
 import { captureGuestImportSaveIntent, captureMyTrustHubJourneyEvent } from '@/components/analytics/ask-instrumentation';
 import { MY_TRUSTHUB_EVENTS } from '@/lib/analytics/my-trusthub-contract';
@@ -37,11 +37,12 @@ export function GuestImport({ storageKey, sessions, projects, ownerId, ownerLabe
       const result = await (sessions ? commitGuestSessionImportAction(form) : commitGuestImportAction(form));
       if (!result.ok || !result.acknowledgment) { setMessage(result.error ?? 'Import could not be confirmed. Local research is unchanged.'); return; }
       const current = localStorage.getItem(storageKey) ?? '';
-      const retained = retireAcknowledged(current, payload, selected, result.acknowledgment, ownerId);
-      if (retained !== current) localStorage.setItem(storageKey, retained);
-      setPayload(retained); setPreview(null);
+      // Legacy bundle writers have no shared transaction/lock. A cross-tab write
+      // can land between getItem/setItem even in synchronous code. Keep the local
+      // copy until all producers support atomic per-item revision retirement.
+      setPayload(current); setPreview(null);
       const accepted = result.acknowledgment.itemIds.filter(id => selected.includes(id));
-      setMessage(`${accepted.length} selected item(s) confirmed in the displayed account. Unselected, unsupported and edited local research was kept.`);
+      setMessage(`${accepted.length} selected item(s) confirmed in the displayed account. Local copies were kept on this device to protect research edited in other tabs.`);
       try {
         if (!sessions && accepted.length) captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'success', project_context_present: Boolean(project) });
       } catch { /* receipt handling must not depend on analytics */ }

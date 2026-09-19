@@ -24,6 +24,6 @@ export function TurnstileField({ siteKey, resetKey }: { siteKey: string; resetKe
     script?.addEventListener('load', render); script?.addEventListener('error', failed); render();
     return () => { script?.removeEventListener('load', render); script?.removeEventListener('error', failed); if (widget.current) window.turnstile?.remove(widget.current); widget.current = undefined; };
   }, [siteKey]);
-  useEffect(() => { if (token.current) token.current.value = ''; if (widget.current) window.turnstile?.reset(widget.current); }, [resetKey]);
+  useEffect(() => { if (token.current) token.current.value = ''; if (widget.current) window.turnstile?.reset(widget.current); setStatus('Complete a fresh security check.'); }, [resetKey]);
   return <><div ref={host} aria-label="Security verification" /><input ref={token} type="hidden" name="captchaToken" /><p role="status">{status}</p><button type="button" className="myth-secondary" onClick={() => { if (token.current) token.current.value = ''; if (widget.current) window.turnstile?.reset(widget.current); setStatus('Complete a fresh security check.'); }}>Retry security check</button></>;
 }

@@ -8,9 +8,11 @@ export async function GET(request: NextRequest) {
   const privateHeaders = { 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' };
   if (!enabled(process.env.MY_TRUSTHUB_ENABLED)) return new NextResponse(null, { status: 404, headers: privateHeaders });
   if (!runtime || request.nextUrl.origin !== runtime.origin) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
-  const client = await createMyTrustHubSupabaseClient();
+  const client = await createMyTrustHubSupabaseClient(true);
   if (!client) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
   const destination = await exchangeAccountCode(client.auth, request.nextUrl.searchParams.get('code'), request.nextUrl.searchParams.get('next'), process.env, request.nextUrl.searchParams.get('flow') === 'password');
-  console.info(JSON.stringify({ event: 'my_trusthub_auth_callback', outcome: destination.includes('error=') ? 'exchange_failed' : 'authenticated' }));
+  console.info(JSON.stringify(destination.includes('error=')
+    ? { event: 'my_trusthub_auth_callback', outcome: 'exchange_failed' }
+    : { event: 'auth_continuation_completed', method: 'verified_email_exchange', outcome: 'authenticated' }));
   return NextResponse.redirect(new URL(destination, runtime.origin), { headers: privateHeaders });
 }

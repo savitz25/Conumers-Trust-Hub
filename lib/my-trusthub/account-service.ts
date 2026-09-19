@@ -32,7 +32,11 @@ export async function runAccountOperation(operation: AccountOperation, form: For
       diagnostic(classify(changed.error));
       if (changed.error) return { error: 'Your password could not be changed. Request a fresh recovery email and try again.' };
       // End this browser session after a sensitive change; never create a second identity.
-      await auth.signOut({ scope: 'local' });
+      const ended = await auth.signOut({ scope: 'local' });
+      if (ended.error) {
+        diagnostic('provider_failure');
+        return { error: 'Your password changed, but sign-out could not be confirmed. Try signing out again before switching accounts.' };
+      }
       return { destination: `/my/sign-in?next=${encodeURIComponent(next)}`, completion: 'password' };
     }
     if (!email || email.length > 254 || !/^\S+@\S+\.\S+$/.test(email)) return { error: 'Enter a valid email address.' };
@@ -45,9 +49,9 @@ export async function runAccountOperation(operation: AccountOperation, form: For
     const redirectTo = `${runtime.origin}/auth/callback?next=${encodeURIComponent(next)}`;
     if (operation === 'signup') {
       if (password.length < 12 || password.length > 128 || password !== form.get('confirmPassword')) return { error: 'Use 12–128 characters and enter the same new password twice.' };
-      if (!registrationAllowed(email, env)) { diagnostic('admission_blocked'); return { message: SIGNUP_MESSAGE }; }
       // Operator attests confirmation/CAPTCHA/password security settings only at a reviewed release.
       if (!enabled(env.MY_TRUSTHUB_AUTH_SECURITY_READY)) { diagnostic('configuration_missing'); return { error: 'Account creation is not available yet.' }; }
+      if (!registrationAllowed(email, env)) { diagnostic('admission_blocked'); return { message: SIGNUP_MESSAGE }; }
       const result = await auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, captchaToken: token } });
       diagnostic(classify(result.error));
       if (result.data.session) { await auth.signOut({ scope: 'local' }); diagnostic('configuration_missing'); return { error: 'Account creation could not finish safely. Please contact support.' }; }

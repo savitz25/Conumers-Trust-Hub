@@ -86,14 +86,12 @@ test('AUTH CONTINUATION START: guest Save routed to sign-in carries the reason, 
   assert.deepEqual(o.properties, { surface: 'my_sign_in', auth_state: 'guest', outcome: 'intent', continuation_reason: 'save_handoff' });
 });
 
-test('AUTH CONTINUATION COMPLETE: fires only from the callback-set ?auth=complete marker on /my', () => {
-  const o = only(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'), { continuationReason: 'save_handoff' }));
-  assert.equal(o.event, MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_COMPLETED);
-  assert.equal(o.properties.continuation_reason, 'save_handoff');
+test('V2-2R forged auth completion marker is not a verified authentication receipt', () => {
+  assert.deepEqual(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'), { continuationReason: 'save_handoff' }), []);
 });
 
-test('AUTH CONTINUATION COMPLETE defaults to "direct" when no continuation reason was recorded', () => {
-  assert.equal(only(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'))).properties.continuation_reason, 'direct');
+test('V2-2R bookmarked completion marker cannot manufacture a direct login event', () => {
+  assert.deepEqual(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete')), []);
 });
 
 test('AUTH CONTINUATION FAILED covers every sign-in and callback failure code, and access rejection', () => {

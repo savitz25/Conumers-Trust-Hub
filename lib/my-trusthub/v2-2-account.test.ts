@@ -5,6 +5,7 @@ import { accessMode, accountRuntime, admitted, captchaState, emailRequestAllowed
 import { EMAIL_MESSAGE, RECOVERY_MESSAGE, runAccountOperation, type AuthApi, type Diagnostic, type AccountResult } from './account-service.ts';
 import { exchangeAccountCode } from './account-callback.ts';
 import { importRequestKey, retireAcknowledged } from './guest-retirement.ts';
+import { applySessionCookieWrite } from './cookie-writes.ts';
 
 const env: AccountEnv = { MY_TRUSTHUB_ENABLED: 'true', MY_TRUSTHUB_ACCESS_MODE: 'public', MY_TRUSTHUB_SIGNUP_ENABLED: 'true', MY_TRUSTHUB_AUTH_SECURITY_READY: 'true', NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY: 'fixture-key-not-a-provider-token', VERCEL_ENV: 'production', NEXT_PUBLIC_SITE_URL: PARENT_ORIGIN, NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: PARENT_BACKEND };
 const user = { id: '10000000-0000-4000-8000-000000000001', email: 'ordinary@example.test', email_confirmed_at: '2026-09-19T00:00:00Z', app_metadata: {} };
@@ -202,4 +203,69 @@ test('UI privacy/accessibility and event cutover contracts', () => {
   assert.ok(!read('components/my-trusthub/account-entry.tsx').includes('canonical account'));
   assert.ok(read('lib/supabase/middleware.ts').includes('auth.getUser()'));
   assert.ok(read('lib/supabase/server.ts').includes('cookieStore.set(name, value, options)'));
+});
+
+test('V2-2R security-readiness errors cannot reveal invitation eligibility', async () => {
+  const policy = { ...env, MY_TRUSTHUB_ACCESS_MODE: 'invitation', MY_TRUSTHUB_INVITED_EMAILS: user.email, MY_TRUSTHUB_AUTH_SECURITY_READY: 'false' };
+  const eligible = fixture(), other = fixture();
+  const a = await runAccountOperation('signup', form(), eligible.api, policy, quiet);
+  const b = await runAccountOperation('signup', form({ email: 'unknown@example.test' }), other.api, policy, quiet);
+  assert.deepEqual(a, b);
+  assert.equal(eligible.calls.length + other.calls.length, 0);
+});
+
+test('V2-2R failed sign-out after password update must not report a completed sign-out', async () => {
+  const sdk = fixture({ signedIn: true });
+  sdk.api.signOut = async () => ({ error: { name: 'AuthApiError', status: 503, message: 'private provider detail' } } as Awaited<ReturnType<AuthApi['signOut']>>);
+  const result = await runAccountOperation('password', form(), sdk.api, env, quiet);
+  assert.equal(result.completion, undefined);
+  assert.equal(result.destination, undefined);
+  assert.match(result.error ?? '', /sign.out/i);
+  assert.ok(!JSON.stringify(result).includes('private provider detail'));
+});
+
+test('V2-2R acknowledgment never rewrites a shared legacy localStorage bundle', () => {
+  // A second tab can edit between getItem and setItem, even without an await.
+  // Current writers do not share a transactional lock: retaining the local copy
+  // is the only safe retirement policy until V2-3 introduces atomic revisions.
+  const source = readFileSync(new URL('../../components/my-trusthub/guest-import.tsx', import.meta.url), 'utf8');
+  assert.ok(!source.includes('localStorage.setItem('));
+  assert.ok(!source.includes('localStorage.removeItem('));
+  assert.ok(source.includes('Local copies were kept'));
+});
+
+test('V2-2R password length permits passphrases without composition rules; existing login minimum unchanged', async () => {
+  for (const password of ['a'.repeat(11), 'a'.repeat(129)]) {
+    const sdk = fixture();
+    assert.ok((await runAccountOperation('signup', form({ password, confirmPassword: password }), sdk.api, env, quiet)).error);
+    assert.equal(sdk.calls.length, 0);
+  }
+  const passphrase = 'only lowercase words are accepted';
+  assert.ok((await runAccountOperation('signup', form({ password: passphrase, confirmPassword: passphrase }), fixture().api, env, quiet)).message);
+  const login = fixture();
+  assert.equal((await runAccountOperation('login', form({ password: 'legacy' }), login.api, env, quiet)).completion, 'login');
+});
+
+test('V2-2R rate limits never trigger automatic Auth retries or reveal provider details', async () => {
+  for (const operation of ['signup', 'login', 'link', 'recovery'] as const) {
+    const sdk = fixture({ error: { status: 429 } });
+    const events: Diagnostic[] = [];
+    const result = await runAccountOperation(operation, form(), sdk.api, env, d => events.push(d));
+    assert.equal(sdk.calls.filter(c => c.name !== 'signOut').length, 1);
+    assert.ok(events.includes('rate_limited'));
+    assert.ok(!JSON.stringify(result).includes(user.email));
+  }
+});
+
+test('V2-2R mutable Auth cookie failures propagate safely; read-only render may defer refresh', () => {
+  let reports = 0;
+  const failure = () => { throw new Error('private cookie value'); };
+  assert.throws(() => applySessionCookieWrite(failure, true, () => reports++), { message: 'SESSION_COOKIE_WRITE_FAILED' });
+  assert.doesNotThrow(() => applySessionCookieWrite(failure, false, () => reports++));
+  let written = false;
+  applySessionCookieWrite(() => { written = true; }, true, () => reports++);
+  assert.equal(written, true); assert.equal(reports, 2);
+  for (const path of ['app/my/account-actions.ts', 'app/auth/callback/route.ts']) {
+    assert.ok(readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8').includes('createMyTrustHubSupabaseClient(true)'));
+  }
 });
