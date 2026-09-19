@@ -7,6 +7,7 @@ import { ClaimRecoveryCard } from '@/components/customer/ClaimRecoveryCard';
 import { ClaimProgress } from '@/components/customer/ClaimProgress';
 import { ClaimFunnelAnalytics } from '@/components/customer/ClaimFunnelAnalytics';
 import { PUBLIC_CLAIM_CONTRACT } from '@/lib/customer/public-claim-contract';
+import { claimSignInErrorMessage, readClaimAuthErrorParam } from '@/lib/customer/auth-error-code';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +22,9 @@ export default async function ClaimContinuePage({
   }
 
   const sessionToken = await readSessionToken();
-  const intentError: string | null = sp.auth_error || null;
+  // ATH-OBS-002E: the query value is user-controllable. Only an allow-listed code is displayed or measured.
+  const intentError = readClaimAuthErrorParam(sp.auth_error);
+  const signInMessage = claimSignInErrorMessage(intentError);
   const existing = await readIntentId();
 
   const result = await withPlatform(async (p) => {
@@ -33,7 +36,12 @@ export default async function ClaimContinuePage({
   });
 
   if (!result.intent) {
-    return <ClaimRecoveryCard code={intentError || 'HANDOFF_INVALID'} />;
+    return (
+      <>
+        {signInMessage ? <p className="mb-4 rounded-lg border border-border bg-slate-50 p-4 text-sm" role="alert">{signInMessage}</p> : null}
+        <ClaimRecoveryCard code={intentError || 'HANDOFF_INVALID'} />
+      </>
+    );
   }
 
   const { intent, user } = result;
@@ -43,6 +51,7 @@ export default async function ClaimContinuePage({
       <ClaimFunnelAnalytics event="claim_handoff_received" hub={intent.payload.hub_id} profileClass={intent.payload.entity_class || intent.payload.provider_class} state={intent.payload.home_state || undefined} authenticated={Boolean(user)} />
       <ClaimFunnelAnalytics event={user ? 'claim_auth_returned' : 'claim_auth_required'} hub={intent.payload.hub_id} authenticated={Boolean(user)} />
       <ClaimProgress current={user ? 2 : 1} />
+      {signInMessage ? <p className="rounded-lg border border-border bg-slate-50 p-4 text-sm" role="alert">{signInMessage}</p> : null}
       <header>
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo">AskTrustHub</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-navy">

@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { captureSanitizedPageview, identifyTrustHubUser, resetTrustHubUser } from '@/lib/analytics/trusthub';
 import { getPosthogBrowser } from '@/lib/analytics/posthog-browser';
 import { shouldEnablePosthog } from '@/lib/analytics/environment';
+import { MyTrustHubOutcomes } from '@/components/analytics/my-trusthub-outcomes';
 
 function PosthogPageviews() {
   const pathname = usePathname();
@@ -63,6 +64,7 @@ export function PosthogRoot() {
   return (
     <>
       <PosthogPageviews />
+      <MyTrustHubOutcomes />
       <PosthogIdentity />
     </>
   );

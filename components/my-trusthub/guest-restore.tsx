@@ -7,6 +7,7 @@ import {
   type GuestPreviewState,
 } from "@/app/my/actions";
 import type { ProjectListRow } from "@/lib/my-trusthub/production-adapter";
+import { AnalyticsForm } from "@/components/analytics/analytics-form";
 
 export const GUEST_RESEARCH_STORAGE_KEY = "mytrusthub:guest-research:v1";
 
@@ -49,7 +50,7 @@ export function GuestRestore({
           {pending ? "Checking…" : "Review research"}
         </button>
       ) : preview.ok && preview.items ? (
-        <form action={commitGuestImportAction} className="myth-guest-items">
+        <AnalyticsForm action={commitGuestImportAction} className="myth-guest-items" analyticsEvent="guest_import_save_intent">
           <input type="hidden" name="payload" value={payload} />
           <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
           {preview.items.map((item) => (
@@ -77,7 +78,7 @@ export function GuestRestore({
             </label>
           ) : null}
           <button className="myth-primary" type="submit">Restore selected research</button>
-        </form>
+        </AnalyticsForm>
       ) : (
         <div role="alert">
           <p>{preview.error}</p>

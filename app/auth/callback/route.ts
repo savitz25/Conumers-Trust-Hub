@@ -42,5 +42,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/my/sign-in?access=restricted", request.nextUrl.origin));
   }
   console.info(JSON.stringify({ level: "info", event: "my_trusthub_auth_callback", outcome: "authenticated", host: request.nextUrl.host }));
+  // ATH-OBS-002D: bounded one-shot marker, set only after the session was exchanged AND validated.
+  if (destination.pathname === "/my") destination.searchParams.set("auth", "complete");
   return NextResponse.redirect(destination);
 }

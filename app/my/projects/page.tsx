@@ -4,7 +4,6 @@ import { createProjectAction } from "@/app/my/actions";
 import { MyTrustHubEmpty, MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
-import { AnalyticsForm } from "@/components/analytics/analytics-form";
 
 const templates = [
   ["Buying a home", "buying_home"],
@@ -29,7 +28,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       {canCreate ? (
         <details className="myth-create">
           <summary>Create Project</summary>
-          <AnalyticsForm action={createProjectAction} className="myth-form myth-form-grid" analyticsEvent="project_created">
+          <form action={createProjectAction} className="myth-form myth-form-grid">
             <label htmlFor="project-name">Project name</label>
             <input id="project-name" name="name" required maxLength={120} />
             <label htmlFor="life-event">Life event</label>
@@ -39,7 +38,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
             <label htmlFor="target-date">Target date <span>(optional)</span></label>
             <input id="target-date" name="targetDate" type="date" />
             <button className="myth-primary" type="submit">Create Project</button>
-          </AnalyticsForm>
+          </form>
         </details>
       ) : <p className="myth-warning">Project mutations are disabled by the launch gate.</p>}
       {projects.length ? (

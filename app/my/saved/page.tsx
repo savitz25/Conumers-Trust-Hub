@@ -10,6 +10,7 @@ import {
   saveMoveInventorySessionAction,
 } from "@/app/my/actions";
 import { AnalyticsForm } from "@/components/analytics/analytics-form";
+import { ProjectAddForm } from "@/components/analytics/tracked-action-form";
 import { GuestRestore } from "@/components/my-trusthub/guest-restore";
 import { GuestSessionRestore } from "@/components/my-trusthub/guest-session-restore";
 import { SessionCard } from "@/components/my-trusthub/session-card";
@@ -45,6 +46,7 @@ export default async function SavedPage({
       <PageHeading eyebrow="PRIVATE RESEARCH LIBRARY" title="Saved Research">
         Saved profiles stay available whether or not they belong to a Project.
       </PageHeading>
+      {query.handoff === "failed" ? <p className="myth-warning" role="alert">This handoff is unavailable, expired, or already used. Return to the Contractor profile and try Save again.</p> : null}
       {query.handoff === "saved" ? <p className="myth-notice" role="status">Contractor profile saved to My TrustHub. Existing Saves are kept once. Watching is a separate choice.</p> : null}
       {importState === "complete" ? <p className="myth-notice" role="status">Guest research restored. Existing Saves were kept once.</p> : null}
       {importState === "invalid" ? <p className="myth-warning" role="alert">That guest research could not be restored safely.</p> : null}
@@ -72,7 +74,7 @@ export default async function SavedPage({
       {canSave ? (
         <details className="myth-create">
           <summary>Save controlled canary entity</summary>
-          <AnalyticsForm action={saveCanaryEntityAction} className="myth-form myth-form-grid" analyticsEvent="profile_saved">
+          <AnalyticsForm action={saveCanaryEntityAction} className="myth-form myth-form-grid" analyticsEvent="profile_save_intent">
             <label htmlFor="binding-id">Approved binding UUID</label>
             <input
               id="binding-id"
@@ -126,12 +128,21 @@ export default async function SavedPage({
                   {activeProjects.map((project) => {
                     const assigned = item.project_ids.includes(project.project_id);
                     return (
-                      <form action={assigned ? removeSavedFromProjectAction : addSavedToProjectAction} key={project.project_id}>
-                        <input type="hidden" name="projectId" value={project.project_id} />
-                        <input type="hidden" name="savedEntityId" value={item.saved_entity_id} />
-                        <span>{project.name}</span>
-                        <button className="myth-secondary" type="submit">{assigned ? "Remove" : "Add"}</button>
-                      </form>
+                      assigned ? (
+                        <form action={removeSavedFromProjectAction} key={project.project_id}>
+                          <input type="hidden" name="projectId" value={project.project_id} />
+                          <input type="hidden" name="savedEntityId" value={item.saved_entity_id} />
+                          <span>{project.name}</span>
+                          <button className="myth-secondary" type="submit">Remove</button>
+                        </form>
+                      ) : (
+                        <ProjectAddForm action={addSavedToProjectAction} surface="my_saved" key={project.project_id}>
+                          <input type="hidden" name="projectId" value={project.project_id} />
+                          <input type="hidden" name="savedEntityId" value={item.saved_entity_id} />
+                          <span>{project.name}</span>
+                          <button className="myth-secondary" type="submit">Add</button>
+                        </ProjectAddForm>
+                      )
                     );
                   })}
                   {!activeProjects.length ? <p className="myth-muted">Create an active Project to file this research.</p> : null}

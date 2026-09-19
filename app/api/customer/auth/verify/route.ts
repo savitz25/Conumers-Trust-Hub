@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AuthError } from '@/lib/customer/store';
+import { signInLinkErrorCode } from '@/lib/customer/auth-error-code';
 import { currentContext, setSessionCookie, withPlatform } from '@/lib/customer/server';
 
 export const runtime = 'nodejs';
@@ -15,7 +16,8 @@ export async function GET(request: Request) {
     await setSessionCookie(result.sessionToken);
     return NextResponse.redirect(new URL(next, url.origin));
   } catch (e) {
-    const code = e instanceof AuthError ? e.code : 'expired_link';
+    // ATH-OBS-002E: the URL carries a bounded enum only -- never an exception message.
+    const code = signInLinkErrorCode(e instanceof AuthError ? e.code : 'expired_link');
     return NextResponse.redirect(new URL(`/claim/continue?auth_error=${code}`, url.origin));
   }
 }

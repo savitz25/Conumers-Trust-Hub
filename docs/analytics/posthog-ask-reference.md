@@ -2,6 +2,9 @@
 
 Reusable observability contract for later specialist-hub rollout. Do not copy this ticket into other repos until this Ask implementation is production-verified.
 
+For the My TrustHub canonical journey event contract (ATH-OBS-002D) and `auth_error` URL privacy
+(ATH-OBS-002E), see `docs/analytics/posthog-ask-event-contract.md`.
+
 ## Required environment variables
 
 - `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`
