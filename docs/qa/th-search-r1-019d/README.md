@@ -182,7 +182,121 @@ own dependency note untouched). No L1-P / source-permission change — Ask still
 AnnieMac by name, exactly as Lender's own release documented. No auth/RLS/data/schema/billing/
 environment change. No new dependency.
 
-## 10. Remaining scope (explicitly open, not claimed here)
+## 10. Astra review 1 corrections (CHANGES_REQUESTED on `5d1f31e6d3e0fb0a9963d264443f33817ad2fb35`)
+
+Three defect families plus the neutral-label copy requirement, fixed on the same branch/PR. Live
+evidence for R1 and R2 was independently reproduced against the real endpoint on 2026-09-19 before
+any code change (matching curls, same responses the review cited), per the reviewer's instruction to
+reproduce before editing.
+
+**R1 -- initialism equivalence must survive OTHER name-form differences.** `fold()`'s whole-string
+containment already collapsed "V.I.P." to "vip", but `rowRelatesToName`'s token-sharing FALLBACK
+(used whenever containment fails for any reason, e.g. a differing legal suffix) recomputed raw,
+uncollapsed `nameTokens()`. "VIP Mortgage LLC" vs "V.I.P. MORTGAGE, INC." (LLC vs INC) fell through to
+that fallback and was rejected, then silently reclassified as category-word padding
+(`COMPLETED_NO_CANDIDATES`) because it still shared the generic word "mortgage". Fixed by introducing
+one `normalizedTokens()` helper (collapse-then-tokenize) used everywhere `rowRelatesToName` compares
+two names, not only inside `fold()`. `collapseInitialisms` was also narrowed to single ASCII LETTERS
+only (a lone digit token, e.g. from "3 M Company", is never folded into a run) after tracing the
+numeric-leading-name requirement. New tests: `th-search-r1-019d-review1.test.ts` "R1-fix" (the exact
+differing-suffix case, both directions, case, suffix-added/removed) and "R1-fix cross-hub regression"
+(unrelated initialisms, mid-word containment, meaningful separated initials, numeric-leading names,
+plus one real run through `investorNameAdapter` proving the shared helper is not Lender-scoped).
+
+**R2 -- the hub-supplied continuation must survive Ask's own cap.** `lenderNameAdapter` set
+`continuation = hasMore ? null : ...`, so once Lender had ANY further page the continuation was
+discarded; if Ask's own 50-card cap was reached before Lender's `hasMore` ever went false (the normal
+case for a common name), the customer had no way forward at all despite Lender reporting dozens more
+records. Fixed by computing the continuation on every successful page unconditionally (Lender's
+`operation.ts` always returns one). Added `lenderResearchAction()` so the continuation additionally
+stays scoped to the searched name (its `q` param must echo the supplied name) rather than merely
+landing on Lender's origin. New test "R2-fix" walks the REAL adapter across 5 real pages via
+`mergeHubPage` to the exact 50-card Ask cap and asserts `hub.continuation` is non-null with the
+correct scoped href -- not just that `moreStateOf === 'ASK_CAPPED'`.
+
+**R3 -- complete validation for the v1 contract before coercion (representative fixes, not a new
+framework).** All derived read-only from the released `operation.ts`/`engine.ts` (never guessed):
+- A: transport status is now checked (`res.status !== 200` fails closed even behind a
+  success-shaped body); `NO_MATCH` with nonempty `candidates`, and `CANDIDATES`/`AMBIGUOUS_EXACT_NAME`
+  with zero real rows, are now contract failures (`invalid_response`), not silently accepted.
+- B: `Array.isArray(p.candidates)` is checked BEFORE the existing `records()` filter can silently turn
+  a non-array or array-of-primitives payload into an empty "completed miss"; `finish()`'s existing
+  malformed-vs-miss distinction now receives the TRUE raw array length, not the post-filter count.
+  Pagination is validated against the engine's own formulas (`reachable = min(total, window)`,
+  `pageCount = max(1, ceil(reachable/limit))`, `hasMore`/`outOfRange` derived the same way) -- checking
+  relationships, never a specific name's counts. A genuinely valid empty out-of-range page is still
+  accepted.
+- C: `stableKey` namespace is checked against the catalog's own three prefixes
+  (`nmls-inst:`/`lei:`/`hmda-lei:`) -- a branch/person-shaped key can never come from this catalog and
+  is now rejected rather than passed on `startsWith('lender:')` alone. `publicationState` is checked
+  against the three states the engine actually emits; an unrecognized one is dropped, not displayed.
+- D: each declared method is checked against the field it is allowed to have come from in
+  `engine.ts matchOneName` (e.g. `DOCUMENTED_HISTORICAL_NAME` only from `historical_name`,
+  `DERIVED_SLUG_FORM` only from `derived_slug_form`) -- an intact match block with an impossible
+  method/field pairing is now caught, not just a block with the whole match object deleted. The method
+  lookup is also `Object.hasOwn`-guarded against prototype-chain keys.
+- E: a PROFILE-typed action whose URL actually resolves to `search.gleif.org` now ALWAYS takes the
+  strict LEI-fragment-bound path (previously it could borrow the generic, weaker PROFILE check and
+  bypass the binding entirely). The RESEARCH continuation is dropped, not merely left on the Lender
+  origin, when its own `q` param does not echo the searched name.
+- F: unchanged from the existing per-row `flatMap` drop + `finish()`'s "all-garbage -> failure,
+  some-valid -> proceed" logic, now fed the correct raw row count (see B) so a single malformed row
+  among otherwise-good rows still proceeds instead of failing the whole page.
+
+Identifier syntax (`NMLS: \d{2,12}`, `LEI: [A-Z0-9]{20}`) and per-label de-duplication are enforced
+without inventing new identifier shapes; a malformed identifier is dropped from that one field, never
+erasing the card. New tests: "R3-fix A" through "R3-fix: identifier syntax and duplicates" in
+`th-search-r1-019d-review1.test.ts`.
+
+Several EXISTING fixtures in `th-search-r1-019d.test.ts` and `th-search-r1-019a-review1.test.ts`
+predated this stricter validation and were themselves non-compliant with the real contract --
+`stableKey` used the wrong namespace (`lender:nmls:…` instead of the catalog's actual
+`lender:nmls-inst:…`), `DOCUMENTED_HISTORICAL_NAME`/`DERIVED_SLUG_FORM` rows omitted the one `field`
+value those methods can actually carry, and the window-cap/out-of-range pagination tests requested
+page 1 or page 4 while asserting numbers only a different page could produce. These are corrected to
+the real contract's shapes (verified against `lib/name-candidates/{catalog,engine,operation}.ts`,
+read-only); no test's asserted OUTCOME changed as a result, only the fixture's internal consistency.
+
+**Small existing copy requirement.** `components/name-candidate-results.tsx` now renders a constant
+`"Lending institution record"` as the Lender candidate card's lead-badge subtype instead of passing
+`candidate.entityType` straight through (unverified upstream subtype provenance, per the original
+assignment). `entityType` itself is untouched on the adapter/candidate object for every hub including
+Lender -- only the ONE render site for this one hub's badge changed.
+
+**Evidence for this pass:**
+- `astra-review1-red-before.txt` / `astra-review1-green-after.txt` -- 12 of the 13 new
+  `th-search-r1-019d-review1.test.ts` tests fail against the exact reviewed head
+  (`5d1f31e6d3e0fb0a9963d264443f33817ad2fb35`, `adapters.ts` + the component swapped back byte-for-byte
+  and restored afterward) and all 13 pass on the corrected build.
+- `mutation-report.json` -- 8 mutations (the original 3 plus 5 new ones re-introducing each Astra
+  review 1 defect individually), all DETECTED, all byte-identical restores.
+- `holdout-through-adapter.json` -- the UNCHANGED frozen `docs/qa/th-search-r1-019a/holdout-frozen.json`
+  Lender sample (sha256 `0336a217…`, 20 rows, order/keys untouched) run for the first time through the
+  REAL `lenderNameAdapter` against the LIVE endpoint: 20/20 present. 5 of the 20 (JPMorgan Chase Bank,
+  Space Coast Credit Union, Newrez, AmeriSave Mortgage, Lakeview Loan Servicing) are keyed by their
+  published-profile `nmls-inst:` stable key rather than the sample's original `lei:` key -- a
+  legitimate re-keying (the LEI still appears verbatim in that candidate's `identifiers`), disclosed
+  honestly rather than hidden. The combined initialism+suffix family (VIP Mortgage LLC /
+  V.I.P. Mortgage Inc) was run as a SEPARATE live case, confirming R1's fix end-to-end on production
+  data, not just mocked fixtures.
+- `astra-review1-browser.json` -- fresh headless Playwright, real typed input, against the corrected
+  local build and the live endpoint: "VIP Mortgage LLC" now returns "V.I.P. MORTGAGE, INC." live;
+  "First" walked through real "View more" clicks to Ask's exact 50-card cap with `moreState ===
+  'ASK_CAPPED'` AND the native continuation link genuinely present and correctly scoped
+  (`https://www.lendertrusthub.com/ask?q=First`); BMO/Frost/Randolph-Brooks profile and GLEIF links
+  unaffected; a genuine miss stayed a genuine miss; refresh/back preserved query state; no page
+  overflow at 320px; the only console error is the pre-existing, unrelated Vercel Analytics 404 on a
+  plain local `next start`.
+- Full regression: `npm run check:th-search-r1-019d` (now also runs the new review-1 file; 25 + 44 +
+  136 tests, all pass), `check:ath-guided-001/003`, `check:ath-claim-governance-001`,
+  `check:ath-obs-001`, `check:ath-metrics-r2-06`, `check:ath-neon-001` (all pass), `tsc --noEmit`
+  (clean), `eslint` on every changed/new file (clean), `next build` (succeeds).
+
+No parent-owned catalog/matcher, company exception, index, or paid service was added. No change to
+source permissions, query budgets, the R1-019A architecture, or the L1-P boundary. `origin/main` did
+not move during this pass (`4831532`); PR #182 stays draft, unmerged.
+
+## 11. Remaining scope (explicitly open, not claimed here)
 
 - Separate exact-head coordinator/Astra review, then merge and deploy authorization.
 - Post-deployment: verify the correct Ask deployment/alias, a small canonical browser smoke on

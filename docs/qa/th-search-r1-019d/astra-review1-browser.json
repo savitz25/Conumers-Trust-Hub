@@ -1,0 +1,1004 @@
+{
+ "ranAt": "2026-09-19T16:24:21.614Z",
+ "base": "http://localhost:3231",
+ "tool": "Playwright headless Chromium; fresh context per viewport; deviceScaleFactor 1; real keyboard+mouse; LIVE lender-name-candidates-v1 (read-only)",
+ "viewports": {
+  "390": {
+   "vipLlc": {
+    "typed": "VIP Mortgage LLC",
+    "kind": "CANDIDATES",
+    "searched": "VIP Mortgage LLC",
+    "heading": "1 record with a name like “VIP Mortgage LLC”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "V.I.P. MORTGAGE, INC."
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "bmo": {
+    "typed": "BMO Bank",
+    "kind": "CANDIDATES",
+    "searched": "BMO Bank",
+    "heading": "1 record with a name like “BMO Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "BMO Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "bmoProfileHref": "https://www.lendertrusthub.com/lender/bmo-bank",
+   "randolphBrooksFcu": {
+    "typed": "Randolph-Brooks FCU",
+    "kind": "CANDIDATES",
+    "searched": "Randolph-Brooks FCU",
+    "heading": "1 record with a name like “Randolph-Brooks FCU”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "Randolph-Brooks Federal Credit Union"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "first": {
+    "typed": "First",
+    "kind": "CANDIDATES",
+    "searched": "First",
+    "heading": "50 records with a name like “First”",
+    "cards": [
+     {
+      "hub": "move",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "America First Moving Services INC",
+       "First Choice Movers",
+       "First Rate Movers",
+       "First Southern Van Lines",
+       "First Way Movers"
+      ],
+      "subtypeBadges": [
+       "Move Trust Hub · Mover (Broker)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "lender",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "First American Bank",
+       "First Bank",
+       "FIRST BANK & TRUST",
+       "First Citizens Bank",
+       "First Citizens National Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "ACCORD INSURANCE NETWORK OF PALM COAST, INC DBA FIRST FLORIDA INSURANCE NETWORK",
+       "ACCRETIVE GLOBAL RISK ADVISORS LLC DBA ACCRETIVE COMP DBA EGIS RISK ADVISORS DBA FIRST FLORIDA INSURANCE BROKERS",
+       "ADAM KLOHR-THRIVENT FINANCIAL, FIRST COAST GROUP",
+       "ADVISORS FIRST MARKETING GROUP, INC",
+       "AGENT FIRST ALLIANCE LLC"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "senior",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "CARE FIRST HOME HEALTH",
+       "CARE FIRST HOME HEALTH CARE",
+       "CARE FIRST HOME HEALTH CARE INC",
+       "CARE FIRST HOME HEALTH INC.",
+       "CARE FIRST HOME HEALTH SERVICES, INC"
+      ],
+      "subtypeBadges": [
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "investor",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "ALM FIRST FINANCIAL ADVISORS LLC",
+       "AMERICA FIRST INVESTMENT ADVISORS LLC",
+       "BUFFALO FIRST WEALTH MANAGEMENT, LLC",
+       "CLIENT FIRST CAPITAL, LLC",
+       "CLIENT FIRST INVESTMENT MANAGEMENT LLC"
+      ],
+      "subtypeBadges": [
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "firstAtCap": {
+    "kind": "CANDIDATES",
+    "searched": "First",
+    "heading": "92 records with a name like “First”",
+    "cards": [
+     {
+      "hub": "move",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "America First Moving Services INC",
+       "First Choice Movers",
+       "First Rate Movers",
+       "First Southern Van Lines",
+       "First Way Movers"
+      ],
+      "subtypeBadges": [
+       "Move Trust Hub · Mover (Broker)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "lender",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "ASK_CAPPED",
+      "names": [
+       "First American Bank",
+       "First Bank",
+       "FIRST BANK & TRUST",
+       "First Citizens Bank",
+       "First Citizens National Bank",
+       "FIRST COLONY MORTGAGE CORPORATION",
+       "FIRST COMMUNITY",
+       "FIRST COMMUNITY",
+       "First Community Bank",
+       "First Community Bank",
+       "FIRST COMMUNITY CREDIT UNION",
+       "FIRST COMMUNITY MORTGAGE, INC.",
+       "First Dakota National Bank",
+       "First Federal Bank",
+       "First Federal Bank, A FSB",
+       "First Financial Bank",
+       "First Financial Bank",
+       "First Financial Bank",
+       "First Hawaiian Bank",
+       "First Heritage Mortgage, LLC",
+       "FIRST HOME MORTGAGE CORPORATION",
+       "First Horizon Bank",
+       "First International Bank & Trust",
+       "First Interstate Bank",
+       "First Merchants Bank",
+       "First National Bank",
+       "First National Bank Alaska",
+       "First National Bank of Omaha",
+       "First National Bank of Pennsylvania",
+       "First Palmetto Bank",
+       "First PREMIER Bank",
+       "First Reliance Bank",
+       "FIRST SAVINGS MORTGAGE CORPORATION",
+       "First Security Bank",
+       "FIRST SOURCE",
+       "First State Bank of St. Charles, Missouri",
+       "First State Community Bank",
+       "FIRST TECHNOLOGY",
+       "FIRST TECHNOLOGY FEDERAL CREDIT UNION",
+       "First Western Bank & Trust",
+       "First Western Trust Bank",
+       "America First Credit Union",
+       "America's First Credit Union",
+       "Bank First, N.A.",
+       "CITIZENS EQUITY FIRST CREDIT UNION",
+       "Citizens First Bank",
+       "FIRST WORLD MORTGAGE CORPORATION",
+       "Firstar Bank",
+       "FirstBank",
+       "FirstBank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 50,
+      "continuationHref": "https://www.lendertrusthub.com/ask?q=First",
+      "continuationText": "Continue research on LenderTrustHub"
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "ACCORD INSURANCE NETWORK OF PALM COAST, INC DBA FIRST FLORIDA INSURANCE NETWORK",
+       "ACCRETIVE GLOBAL RISK ADVISORS LLC DBA ACCRETIVE COMP DBA EGIS RISK ADVISORS DBA FIRST FLORIDA INSURANCE BROKERS",
+       "ADAM KLOHR-THRIVENT FINANCIAL, FIRST COAST GROUP",
+       "ADVISORS FIRST MARKETING GROUP, INC",
+       "AGENT FIRST ALLIANCE LLC"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "senior",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "CARE FIRST HOME HEALTH",
+       "CARE FIRST HOME HEALTH CARE",
+       "CARE FIRST HOME HEALTH CARE INC",
+       "CARE FIRST HOME HEALTH INC.",
+       "CARE FIRST HOME HEALTH SERVICES, INC"
+      ],
+      "subtypeBadges": [
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "investor",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "ALM FIRST FINANCIAL ADVISORS LLC",
+       "AMERICA FIRST INVESTMENT ADVISORS LLC",
+       "BUFFALO FIRST WEALTH MANAGEMENT, LLC",
+       "CLIENT FIRST CAPITAL, LLC",
+       "CLIENT FIRST INVESTMENT MANAGEMENT LLC"
+      ],
+      "subtypeBadges": [
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "firstNativeContinuationHref": "https://www.lendertrusthub.com/ask?q=First",
+   "firstNativeContinuationText": "Continue research on LenderTrustHub",
+   "frost": {
+    "typed": "Frost Bank",
+    "kind": "CANDIDATES",
+    "searched": "Frost Bank",
+    "heading": "2 records with a name like “Frost Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "Frost Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "FROST BANK"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "frostGleifHref": "https://search.gleif.org/#/record/G5AHTAP80NWA3Q8RDC78",
+   "miss": {
+    "typed": "Zzqx Nonexistent Lending Fixture 019d",
+    "kind": "PARTIAL_MISS",
+    "searched": "Zzqx Nonexistent Lending Fixture 019d",
+    "heading": "No matches for “Zzqx Nonexistent Lending Fixture 019d” in the 5 sources that completed",
+    "cards": [],
+    "overflow": false
+   },
+   "refresh": {
+    "kind": "CANDIDATES",
+    "searched": "BMO Bank",
+    "heading": "1 record with a name like “BMO Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "BMO Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "historyBack": {
+    "kind": "PARTIAL_MISS",
+    "searched": "Zzqx Nonexistent Lending Fixture 019d",
+    "heading": "No matches for “Zzqx Nonexistent Lending Fixture 019d” in the 5 sources that completed",
+    "cards": [],
+    "overflow": false
+   }
+  },
+  "1280": {
+   "vipLlc": {
+    "typed": "VIP Mortgage LLC",
+    "kind": "CANDIDATES",
+    "searched": "VIP Mortgage LLC",
+    "heading": "1 record with a name like “VIP Mortgage LLC”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "V.I.P. MORTGAGE, INC."
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "bmo": {
+    "typed": "BMO Bank",
+    "kind": "CANDIDATES",
+    "searched": "BMO Bank",
+    "heading": "1 record with a name like “BMO Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "BMO Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "bmoProfileHref": "https://www.lendertrusthub.com/lender/bmo-bank",
+   "randolphBrooksFcu": {
+    "typed": "Randolph-Brooks FCU",
+    "kind": "CANDIDATES",
+    "searched": "Randolph-Brooks FCU",
+    "heading": "1 record with a name like “Randolph-Brooks FCU”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "Randolph-Brooks Federal Credit Union"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "first": {
+    "typed": "First",
+    "kind": "CANDIDATES",
+    "searched": "First",
+    "heading": "50 records with a name like “First”",
+    "cards": [
+     {
+      "hub": "move",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "America First Moving Services INC",
+       "First Choice Movers",
+       "First Rate Movers",
+       "First Southern Van Lines",
+       "First Way Movers"
+      ],
+      "subtypeBadges": [
+       "Move Trust Hub · Mover (Broker)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "lender",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "First American Bank",
+       "First Bank",
+       "FIRST BANK & TRUST",
+       "First Citizens Bank",
+       "First Citizens National Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "ACCORD INSURANCE NETWORK OF PALM COAST, INC DBA FIRST FLORIDA INSURANCE NETWORK",
+       "ACCRETIVE GLOBAL RISK ADVISORS LLC DBA ACCRETIVE COMP DBA EGIS RISK ADVISORS DBA FIRST FLORIDA INSURANCE BROKERS",
+       "ADAM KLOHR-THRIVENT FINANCIAL, FIRST COAST GROUP",
+       "ADVISORS FIRST MARKETING GROUP, INC",
+       "AGENT FIRST ALLIANCE LLC"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "senior",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "CARE FIRST HOME HEALTH",
+       "CARE FIRST HOME HEALTH CARE",
+       "CARE FIRST HOME HEALTH CARE INC",
+       "CARE FIRST HOME HEALTH INC.",
+       "CARE FIRST HOME HEALTH SERVICES, INC"
+      ],
+      "subtypeBadges": [
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "investor",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "ALM FIRST FINANCIAL ADVISORS LLC",
+       "AMERICA FIRST INVESTMENT ADVISORS LLC",
+       "BUFFALO FIRST WEALTH MANAGEMENT, LLC",
+       "CLIENT FIRST CAPITAL, LLC",
+       "CLIENT FIRST INVESTMENT MANAGEMENT LLC"
+      ],
+      "subtypeBadges": [
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "firstAtCap": {
+    "kind": "CANDIDATES",
+    "searched": "First",
+    "heading": "92 records with a name like “First”",
+    "cards": [
+     {
+      "hub": "move",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "America First Moving Services INC",
+       "First Choice Movers",
+       "First Rate Movers",
+       "First Southern Van Lines",
+       "First Way Movers"
+      ],
+      "subtypeBadges": [
+       "Move Trust Hub · Mover (Broker)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)",
+       "Move Trust Hub · Mover (Carrier)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "lender",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "ASK_CAPPED",
+      "names": [
+       "First American Bank",
+       "First Bank",
+       "FIRST BANK & TRUST",
+       "First Citizens Bank",
+       "First Citizens National Bank",
+       "FIRST COLONY MORTGAGE CORPORATION",
+       "FIRST COMMUNITY",
+       "FIRST COMMUNITY",
+       "First Community Bank",
+       "First Community Bank",
+       "FIRST COMMUNITY CREDIT UNION",
+       "FIRST COMMUNITY MORTGAGE, INC.",
+       "First Dakota National Bank",
+       "First Federal Bank",
+       "First Federal Bank, A FSB",
+       "First Financial Bank",
+       "First Financial Bank",
+       "First Financial Bank",
+       "First Hawaiian Bank",
+       "First Heritage Mortgage, LLC",
+       "FIRST HOME MORTGAGE CORPORATION",
+       "First Horizon Bank",
+       "First International Bank & Trust",
+       "First Interstate Bank",
+       "First Merchants Bank",
+       "First National Bank",
+       "First National Bank Alaska",
+       "First National Bank of Omaha",
+       "First National Bank of Pennsylvania",
+       "First Palmetto Bank",
+       "First PREMIER Bank",
+       "First Reliance Bank",
+       "FIRST SAVINGS MORTGAGE CORPORATION",
+       "First Security Bank",
+       "FIRST SOURCE",
+       "First State Bank of St. Charles, Missouri",
+       "First State Community Bank",
+       "FIRST TECHNOLOGY",
+       "FIRST TECHNOLOGY FEDERAL CREDIT UNION",
+       "First Western Bank & Trust",
+       "First Western Trust Bank",
+       "America First Credit Union",
+       "America's First Credit Union",
+       "Bank First, N.A.",
+       "CITIZENS EQUITY FIRST CREDIT UNION",
+       "Citizens First Bank",
+       "FIRST WORLD MORTGAGE CORPORATION",
+       "Firstar Bank",
+       "FirstBank",
+       "FirstBank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record",
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 50,
+      "continuationHref": "https://www.lendertrusthub.com/ask?q=First",
+      "continuationText": "Continue research on LenderTrustHub"
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "ACCORD INSURANCE NETWORK OF PALM COAST, INC DBA FIRST FLORIDA INSURANCE NETWORK",
+       "ACCRETIVE GLOBAL RISK ADVISORS LLC DBA ACCRETIVE COMP DBA EGIS RISK ADVISORS DBA FIRST FLORIDA INSURANCE BROKERS",
+       "ADAM KLOHR-THRIVENT FINANCIAL, FIRST COAST GROUP",
+       "ADVISORS FIRST MARKETING GROUP, INC",
+       "AGENT FIRST ALLIANCE LLC"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency",
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "senior",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "CARE FIRST HOME HEALTH",
+       "CARE FIRST HOME HEALTH CARE",
+       "CARE FIRST HOME HEALTH CARE INC",
+       "CARE FIRST HOME HEALTH INC.",
+       "CARE FIRST HOME HEALTH SERVICES, INC"
+      ],
+      "subtypeBadges": [
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health",
+       "SeniorTrustHub · Home Health"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "investor",
+      "state": "PARTIAL_TRUNCATED",
+      "more": "MORE_AVAILABLE",
+      "names": [
+       "ALM FIRST FINANCIAL ADVISORS LLC",
+       "AMERICA FIRST INVESTMENT ADVISORS LLC",
+       "BUFFALO FIRST WEALTH MANAGEMENT, LLC",
+       "CLIENT FIRST CAPITAL, LLC",
+       "CLIENT FIRST INVESTMENT MANAGEMENT LLC"
+      ],
+      "subtypeBadges": [
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)",
+       "InvestorTrustHub · Investment adviser firm (RIA)"
+      ],
+      "cardCount": 5,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "firstNativeContinuationHref": "https://www.lendertrusthub.com/ask?q=First",
+   "firstNativeContinuationText": "Continue research on LenderTrustHub",
+   "frost": {
+    "typed": "Frost Bank",
+    "kind": "CANDIDATES",
+    "searched": "Frost Bank",
+    "heading": "2 records with a name like “Frost Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "Frost Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     },
+     {
+      "hub": "insurance",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "FROST BANK"
+      ],
+      "subtypeBadges": [
+       "Insurance Trust Hub · Insurance agency"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "frostGleifHref": "https://search.gleif.org/#/record/G5AHTAP80NWA3Q8RDC78",
+   "miss": {
+    "typed": "Zzqx Nonexistent Lending Fixture 019d",
+    "kind": "PARTIAL_MISS",
+    "searched": "Zzqx Nonexistent Lending Fixture 019d",
+    "heading": "No matches for “Zzqx Nonexistent Lending Fixture 019d” in the 5 sources that completed",
+    "cards": [],
+    "overflow": false
+   },
+   "refresh": {
+    "kind": "CANDIDATES",
+    "searched": "BMO Bank",
+    "heading": "1 record with a name like “BMO Bank”",
+    "cards": [
+     {
+      "hub": "lender",
+      "state": "COMPLETED_WITH_CANDIDATES",
+      "more": "COMPLETE",
+      "names": [
+       "BMO Bank"
+      ],
+      "subtypeBadges": [
+       "Lender Trust Hub · Lending institution record"
+      ],
+      "cardCount": 1,
+      "continuationHref": null,
+      "continuationText": null
+     }
+    ],
+    "overflow": false
+   },
+   "historyBack": {
+    "kind": "PARTIAL_MISS",
+    "searched": "Zzqx Nonexistent Lending Fixture 019d",
+    "heading": "No matches for “Zzqx Nonexistent Lending Fixture 019d” in the 5 sources that completed",
+    "cards": [],
+    "overflow": false
+   }
+  }
+ },
+ "overflow320": {
+  "vipLlc": {
+   "innerWidth": 320,
+   "docScrollWidth": 320,
+   "overflow": false
+  },
+  "first": {
+   "innerWidth": 320,
+   "docScrollWidth": 320,
+   "overflow": false
+  },
+  "bmo": {
+   "innerWidth": 320,
+   "docScrollWidth": 320,
+   "overflow": false
+  }
+ },
+ "consoleErrors": [
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "1280: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "390: Failed to load resource: the server responded with a status of 404 (Not Found)"
+ ]
+}

@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019d.test.ts', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts'];
+const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019d.test.ts', 'lib/network/name-candidates/th-search-r1-019d-review1.test.ts', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts'];
 const run = () => {
   const r = spawnSync(process.execPath, GATE, { encoding: 'utf8' });
   const out = r.stdout + r.stderr;
@@ -20,6 +20,19 @@ const mutations = [
     find: "  if (url.origin !== 'https://search.gleif.org' || url.hash !== `#/record/${lei}`) return null;", replace: "  if (url.origin !== 'https://search.gleif.org') return null;" },
   { id: 'C_FAILURE_MISCLASSIFIED_AS_MISS', file: 'lib/network/name-candidates/adapters.ts', why: 'A technical source failure (SOURCE_UNAVAILABLE) is reported as a completed miss instead of a failure.',
     find: "if (state === 'SOURCE_UNAVAILABLE') return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);", replace: "if (state === 'SOURCE_UNAVAILABLE') return outcome(lenderBase, { state: 'COMPLETED_NO_CANDIDATES' }, started, page);" },
+  // -------------------------------------------------------------- Astra review 1 (CHANGES_REQUESTED on 5d1f31e) repairs
+  { id: 'D_R1_INITIALISM_FALLBACK_UNCOLLAPSED', file: 'lib/network/name-candidates/adapters.ts', why: 'The token-sharing fallback in rowRelatesToName compares raw (uncollapsed) tokens again, so a differing legal suffix (VIP Mortgage LLC vs V.I.P. MORTGAGE, INC.) defeats initialism equivalence.',
+    find: 'const all = normalizedTokens(suppliedName);\n  const matched = normalizedTokens(matchedName);', replace: 'const all = nameTokens(suppliedName);\n  const matched = nameTokens(matchedName);' },
+  { id: 'E_R2_CONTINUATION_NULLED_ON_HASMORE', file: 'lib/network/name-candidates/adapters.ts', why: "The hub-supplied continuation is dropped whenever upstream hasMore is true, so Ask holds no way forward once its own cap is reached with more source records remaining.",
+    find: 'const continuation = lenderResearchAction(name, continuationRaw.url);', replace: 'const continuation = hasMore ? null : lenderResearchAction(name, continuationRaw.url);' },
+  { id: 'F_R3_PAGINATION_VALIDATION_BYPASSED', file: 'lib/network/name-candidates/adapters.ts', why: 'Malformed/inconsistent pagination (wrong page, row-count mismatch, impossible hasMore) is silently accepted instead of failing closed.',
+    find: 'if (!validLenderPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {', replace: 'if (false && !validLenderPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {' },
+  { id: 'G_R3_GLEIF_BYPASS_VIA_PROFILE_TYPE', file: 'lib/network/name-candidates/adapters.ts', why: 'A PROFILE-typed action secretly pointed at a GLEIF URL bypasses the strict LEI-fragment binding and is waved through as an official source.',
+    find: "const act = originOf(rowAction.url) === 'https://search.gleif.org' ? lenderOfficialAction(rowAction.url, lei)\n        : actionType === 'PROFILE' ? action('lender', rowAction.url, 'PROFILE', 'LenderTrustHub')",
+    replace: "const act = actionType === 'PROFILE' ? action('lender', rowAction.url, 'PROFILE', 'LenderTrustHub')" },
+  { id: 'H_R3_NO_MATCH_CONTRADICTION_UNCHECKED', file: 'lib/network/name-candidates/adapters.ts', why: 'A NO_MATCH result that also supplies candidate rows is silently admitted as real candidates instead of failing as a contradictory payload.',
+    find: "    if (state === 'NO_MATCH' && rawCandidates.length > 0) {\n      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);\n    }\n",
+    replace: '' },
 ];
 
 const report = { generatedAt: new Date().toISOString(), cleanBefore: run(), mutations: [], cleanAfter: null };
