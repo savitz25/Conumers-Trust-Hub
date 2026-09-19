@@ -1,0 +1,130 @@
+{
+  "schema": "my-trusthub-v2-readiness/v1",
+  "ticket": "V2-0",
+  "owner": "Builder 4",
+  "evidence_cutoff_utc": "2026-09-19T15:56:00Z",
+  "repository": "savitz25/Conumers-Trust-Hub",
+  "branch": "mth-v2-0-account-gate-b4",
+  "base_sha": "4831532ac799077c6963c7ad54b1562ec5409167",
+  "production": {
+    "classification": "verified configuration",
+    "revision": "4831532ac799077c6963c7ad54b1562ec5409167",
+    "vercel_deployment_id": "dpl_842RPnBA68E5yXZgDC2JNDcjbxjg",
+    "immutable_host": "conumers-trust-pbutopyly-savitz25-s-projects.vercel.app",
+    "state": "READY",
+    "github_deployment_id": "6534982900",
+    "github_deployment_created_at": "2026-09-19T00:07:19Z",
+    "lookup_alias": "asktrusthub.com"
+  },
+  "verdicts": {
+    "v2_0_decision_packet": "READY",
+    "v2_1_independent_qa": "PENDING",
+    "v2_2_implementation_authorization": "PENDING FOUNDER DECISION",
+    "public_activation": "NOT PERFORMED",
+    "network_wide_v2": "NOT YET CERTIFIED"
+  },
+  "recommendation": {
+    "classification": "proposed",
+    "code_preparation": "GO only after separate V2-2 authorization",
+    "production_public_activation": "HOLD",
+    "reason": "Password flow and safe continuation are missing; login and registration gates are coupled; direct Auth/environment configuration and approved live QA are unverified."
+  },
+  "deployed_guest_gets": {
+    "classification": "observed in deployed behavior",
+    "method": "Unauthenticated HTTP GET, no forms or browser rendering",
+    "canonical_origin": "https://www.asktrusthub.com",
+    "routes": [
+      { "path": "/my", "final_status": 200, "final_path": "/my" },
+      { "path": "/my/sign-in", "final_status": 200, "final_path": "/my/sign-in", "copy": "Canary admission; public signup disabled; email sign-in link" },
+      { "path": "/my/saved", "final_status": 200, "final_path": "/my/sign-in" },
+      { "path": "/my/projects", "final_status": 200, "final_path": "/my/sign-in" },
+      { "path": "/my-trust-journey", "final_status": 200, "final_path": "/my-trust-journey" }
+    ]
+  },
+  "code_findings": {
+    "classification": "verified in deployed-revision code",
+    "ids": ["A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11", "A12", "A13", "A14"],
+    "summary": [
+      "Canary default true is not direct production setting evidence.",
+      "Public-mode signup-disabled branch suppresses existing-user magic-link request.",
+      "Blocked requests use sent=1 and inaccurate unconditional check-email copy.",
+      "Parent password signup/login/setup/recovery flow absent from inspected account code.",
+      "Production localhost fallback exists in code; no live localhost redirect observed.",
+      "Canonical proxy can redirect nonproduction account routes to production.",
+      "Callback prefix check permits normalized within-origin escape from /my scope.",
+      "SSR getUser/cookie refresh exists; real session persistence not executed.",
+      "CAPTCHA token handling exists; provider enforcement/configuration unverified.",
+      "Magic-link intent currently named account_signup_started.",
+      "Guest research and session restore clear entire local bundle on completion query marker.",
+      "Specialist localStorage is not automatically available on Ask origin.",
+      "Contractor-only handoff code is not proof of six-hub Save integration."
+    ]
+  },
+  "watch_state": {
+    "classification": "verified configuration",
+    "evidence_kind": "read-only persisted-state aggregate, NOT runtime feature flags",
+    "active_watch_count": 1,
+    "alert_count": 0,
+    "delivery_record_count": 0,
+    "queries_run": 2,
+    "processing_enabled": "NOT VERIFIED",
+    "runtime_flags": "NOT VERIFIED",
+    "handoff_off_statement": "historical report only",
+    "reconciliation": "Stored active Watch can coexist with disabled processing; no toggle performed."
+  },
+  "unverified_configuration": [
+    "Deployed feature flag values by environment and canary entitlement configuration",
+    "NEXT_PUBLIC_SITE_URL and effective Auth origin consistency",
+    "Supabase Site URL, Redirect URLs, signup switch and email confirmation policy",
+    "Password policy and confirmation/recovery template compatibility",
+    "SMTP sender, rate limits and delivery behavior",
+    "CAPTCHA provider enforcement, frontend configuration and hostname alignment",
+    "Session expiry, inactivity and refresh settings",
+    "Existing safe isolated Auth environment and preview routing"
+  ],
+  "tests_actually_run": [
+    { "name": "Five unauthenticated GET observations", "result": "COMPLETED", "scope": "HTTP only, not authenticated or visual QA" },
+    { "name": "Deployment/main metadata", "result": "VERIFIED", "scope": "Exact production revision" },
+    { "name": "Two aggregate SELECTs", "result": "COMPLETED", "scope": "No identifiers or private content" },
+    { "name": "Node URL normalization reproduction", "result": "REPRODUCED", "details": "Both /my/../../ask and /my/%2e%2e/ask normalize to /ask; external protocol-relative input falls back to /my. Initial shell quoting invocation failed, corrected invocation succeeded." },
+    { "name": "npm run check:my-trusthub-stage-2", "result": "FAIL", "details": "Watch and Alerts stay out of navigation; following chained prep not run" },
+    { "name": "npm run check:my-trusthub-stage-3", "result": "FAIL", "details": "Stage 3 15/15 PASS; P18 static PASS; prep fails forbidden Stage 1 route app/my/watches" }
+  ],
+  "not_run": [
+    "Full application suite and build",
+    "Production account, email, recovery or database mutation tests",
+    "Authenticated or cross-device account journey",
+    "Browser viewport, keyboard and focus certification",
+    "Independent Builder 3 Move preview QA"
+  ],
+  "move_qa": {
+    "status": "PENDING_BUILD_3_PREVIEW",
+    "repository": "savitz25/Move-trust-Hub",
+    "pr": null,
+    "reviewed_patch_head": null,
+    "preview_url": null,
+    "preview_commit": null,
+    "backend_classification": "NOT VERIFIED",
+    "local_worktree_base_only": "5018639dee0901bbc630cafdd633015421f86e00",
+    "local_concurrent_changes": "Observed uncommitted Builder 3 Save changes; untouched",
+    "QA-01": "NOT RUN",
+    "QA-02": "NOT RUN",
+    "QA-03": "NOT RUN",
+    "QA-04": "NOT RUN",
+    "QA-05": "NOT RUN",
+    "QA-06": "NOT RUN",
+    "QA-07": "NOT RUN",
+    "QA-08": "NOT RUN",
+    "independently_verified_defects": [],
+    "polling_policy": "Bounded published PR checks; finish packet without waiting indefinitely"
+  },
+  "documentation": {
+    "packet": "docs/my-trusthub/v2/V2-0-stage2-decision-packet.md",
+    "readiness": "artifacts/my-trusthub/v2/v2-0-readiness.json",
+    "independent_qa_document": null,
+    "reason_no_qa_document": "Independent QA not performed"
+  },
+  "production_mutations_performed": "NONE",
+  "runtime_changes": [],
+  "next_action": "Founder decides admission mode and separately authorizes bounded V2-2 implementation plus safe nonproduction QA; production activation remains a separate gate."
+}
