@@ -43,7 +43,9 @@ export type HubNameAdapter = {
 
 const OFFICIAL_ORIGINS: Partial<Record<SpecialistHubId, string[]>> = {
   investor: ['https://adviserinfo.sec.gov'],
-  lender: ['https://www.consumerfinance.gov'],
+  // TH-SEARCH-R1-019D: search.gleif.org is the official LEI registry the released Lender
+  // name-candidates operation cites for a research row that has no LenderTrustHub profile.
+  lender: ['https://www.consumerfinance.gov', 'https://search.gleif.org'],
 };
 
 /** Query params that select WHICH record a hub link opens. */
@@ -52,7 +54,22 @@ const RECORD_IDENTITY_PARAMS = new Set(['selected', 'id', 'slug', 'crd', 'ccn', 
 function text(value: unknown): string | null { return typeof value === 'string' && value.trim() ? value.trim() : null; }
 function record(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function records(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((row) => row && typeof row === 'object' && !Array.isArray(row)) as Record<string, unknown>[] : []; }
-const fold = (value: string) => nameTokens(value).join(' ');
+/**
+ * Collapse a run of consecutive single-letter tokens into one initialism token: "v","i","p" -> "vip".
+ * A generic, symmetric name-form equivalence (not hub-specific): "V.I.P." and "VIP" are the same
+ * word once punctuation is stripped by nameTokens, whichever side of a comparison carries the dots.
+ */
+function collapseInitialisms(tokens: string[]): string[] {
+  const out: string[] = []; let run = '';
+  for (const token of tokens) {
+    if (token.length === 1 && /[a-z0-9]/.test(token)) { run += token; continue; }
+    if (run) { out.push(run); run = ''; }
+    out.push(token);
+  }
+  if (run) out.push(run);
+  return out;
+}
+const fold = (value: string) => collapseInitialisms(nameTokens(value)).join(' ');
 /** Separator-insensitive form for ECHO comparison only: hubs differ on whether "Al's" folds to "als" or "al s". */
 const squash = (value: string) => nameTokens(value).join('');
 /** True when the hub's echo of the searched name is the name we sent. */
@@ -314,35 +331,121 @@ export const insuranceNameAdapter: HubNameAdapter = {
   },
 };
 
-const lenderBase: Base = { hub: 'lender', searchedScope: 'Accepted public lender institutions', matchBreadth: 'EXACT public or historical institution name only -- partial names are not matched by this source' };
+// ---------------------------------------------------------------- Lender (lender-name-candidates-v1, TH-SEARCH-R1-019D)
+// R1-019C released a candidate operation, SEPARATE from and alongside the untouched v2 identity/evidence
+// contract above (still used elsewhere in Ask -- e.g. guided-research -- for exact NMLS/LEI, complaints
+// and HMDA cohorts). This is the only place that dispatches Lender NAME_CANDIDATES; it never falls back
+// to v2 on a miss, restriction or failure.
+export const LENDER_NAME_CANDIDATES_CONTRACT = 'lender-name-candidates-v1';
+export const LENDER_NAME_CANDIDATES_LOCK = {
+  url: process.env.LENDER_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.lendertrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: '09e9764c94ec410bfb6426c890ab85c527004af61bbd958d27767842f3489a4b',
+} as const;
+
+/** The hub's own method vocabulary, mapped honestly -- a search-form rule is never relabeled a documented alias. */
+const LENDER_METHOD: Record<string, MatchMethod> = {
+  EXACT_NORMALIZED_NAME: 'NORMALIZED_NAME',
+  DOCUMENTED_HISTORICAL_NAME: 'DOCUMENTED_ALIAS',
+  LEGAL_SUFFIX_NORMALIZED: 'NORMALIZED_NAME',
+  ABBREVIATION_NORMALIZED: 'NORMALIZED_NAME',
+  DERIVED_SLUG_FORM: 'HUB_NAME_MATCH',
+  WORD_PREFIX: 'PREFIX_OR_TOKEN',
+  DISTINCTIVE_TOKENS: 'PREFIX_OR_TOKEN',
+};
+
+/**
+ * The one action Ask cannot get from safeHubUrl's generic origin check alone: an
+ * OFFICIAL_IDENTIFIER_VERIFICATION link must land on GLEIF's real record for the returned LEI, not
+ * merely on the GLEIF origin. A link that fails this is dropped -- never rewritten to a generic page.
+ */
+function lenderOfficialAction(raw: unknown, lei: string | null): CandidateAction | null {
+  if (!lei) return null;
+  const safe = safeHubUrl('lender', raw);
+  if (!safe || !safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  if (url.origin !== 'https://search.gleif.org' || url.hash !== `#/record/${lei}`) return null;
+  return { type: 'OFFICIAL_SOURCE', href: safe.href, label: 'Verify with the official source' };
+}
+
+const lenderBase: Base = {
+  hub: 'lender', searchedScope: 'Published LenderTrustHub institution profiles and public HMDA reporting institutions',
+  matchBreadth: 'Normalized, historical and search-form name matches, then word-prefix and distinctive-word candidates',
+};
 export const lenderNameAdapter: HubNameAdapter = {
-  ...lenderBase, enabled: true, sourceGrain: 'NMLS/LEI lender institution',
+  ...lenderBase, enabled: true, sourceGrain: 'Lender institution name candidate',
   async search(name, page, ctx) {
     const started = Date.now();
-    const r = await v2Identity('lender', lenderBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
-    if ('fail' in r) return r.fail!;
-    const p = r.payload; const qi = record(p.queryInterpretation);
-    if (!echoesName(text(qi.identityName), name)) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
-    const identity = record(p.identity);
-    const rows = records(p.rows).length ? records(p.rows) : Object.keys(identity).length ? [identity] : [];
+    const res = await call(ctx, LENDER_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
+    });
+    if ('failure' in res) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== LENDER_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== LENDER_NAME_CANDIDATES_LOCK.version || text(p.schemaFingerprint) !== LENDER_NAME_CANDIDATES_LOCK.schemaFingerprint) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (state === 'RESTRICTED_SCOPE') {
+      // The upstream operation itself declined this input (identifier/person/branch-shaped). Not
+      // evidence a hidden matching institution exists, and never a completed miss.
+      return outcome(lenderBase, { state: 'UNSUPPORTED_OPERATION', message: 'LenderTrustHub could not search this input as an institution name.' }, started, page);
+    }
+    if (state === 'SOURCE_UNAVAILABLE') return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
+    if (!['CANDIDATES', 'AMBIGUOUS_EXACT_NAME', 'NO_MATCH'].includes(state)) {
+      // Includes INVALID_REQUEST: Ask's own request was malformed. An adapter/contract defect, never a miss.
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    }
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    const rows = records(p.candidates);
     const mapped = rows.flatMap((row): NameCandidate[] => {
-      const display = text(row.displayName) ?? text(row.institutionName); const nmls = text(row.nmls); const lei = text(row.lei);
-      const key = nmls ? `nmls:${nmls}` : lei ? `lei:${lei}` : null;
-      if (!display || !key) return [];
+      const displayName = text(row.displayName);
+      const stableKey = text(row.stableKey);
+      const matchRow = record(row.match);
+      const method = LENDER_METHOD[text(matchRow.method) ?? ''];
+      const matchedValue = text(matchRow.value);
+      const matchedField = text(matchRow.sourceLabel);
+      // A row missing any of these, or claiming an unrecognized method, is dropped -- never invented.
+      if (!displayName || !stableKey || !stableKey.startsWith('lender:') || !method || !matchedValue || !matchedField) return [];
+      const identifiers = records(row.identifiers).flatMap((id) => {
+        const label = text(id.label); const value = text(id.value);
+        return label && value && (label === 'NMLS' || label === 'LEI') ? [{ label, value }] : [];
+      });
+      const rowAction = record(row.action);
+      const actionType = text(rowAction.type);
+      const lei = identifiers.find((id) => id.label === 'LEI')?.value ?? null;
+      const act = actionType === 'PROFILE' ? action('lender', rowAction.url, 'PROFILE', 'LenderTrustHub')
+        : actionType === 'OFFICIAL_IDENTIFIER_VERIFICATION' ? lenderOfficialAction(rowAction.url, lei)
+          : null;
+      const clock = record(record(row.source).clock);
       return [{
-        hub: 'lender', sourceGrain: 'NMLS/LEI lender institution', stableKey: `lender:${key}`, displayName: display, entityType: 'Lender institution',
-        // The hub matches EXACT public or historical names. When the returned display name is not what was
-        // entered, the match was on a historical/alternate name the endpoint does not return.
-        matchedName: fold(display) === fold(name) ? display : null,
-        matchedField: fold(display) === fold(name) ? 'accepted public institution name' : 'a historical or alternate institution name (the source does not return that text)',
-        matchMethod: fold(display) === fold(name) ? 'EXACT_SOURCE_NAME' : 'DOCUMENTED_ALIAS', hubMatchExplanation: text(qi.matchMethod)?.replaceAll('_', ' ') ?? null,
-        identifiers: [nmls ? { label: 'NMLS', value: nmls } : null, lei ? { label: 'LEI', value: lei } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: null, locationMeaning: null, sourceAsOf: text(row.sourceFetchedAt), sourceDateLabel: 'Fetched from source on', publicationState: text(row.publicationState),
-        action: action('lender', record(row.destination).url, 'PROFILE', 'LenderTrustHub'),
+        hub: 'lender', sourceGrain: 'Lender institution name candidate', stableKey, displayName,
+        entityType: text(row.entityType),
+        matchedName: matchedValue, matchedField, matchMethod: method, hubMatchExplanation: text(matchRow.explanation),
+        identifiers, recordedLocation: null, locationMeaning: null,
+        sourceAsOf: text(clock.value), sourceDateLabel: text(clock.label) ?? 'Source as-of date',
+        publicationState: text(row.publicationState), action: act,
       }];
     });
-    // Ambiguity continuation: the payload's own hub destination, else the hub's existing public lender directory.
-    return finish(lenderBase, name, mapped, rows.length, {}, started, page, { state: r.state, hubName: 'LenderTrustHub', continuation: r.continuation ?? action('lender', '/lender', 'RESEARCH', 'LenderTrustHub') });
+    const pagination = record(p.pagination);
+    const hasMore = pagination.hasMore === true;
+    const continuationRaw = record(p.continuation);
+    const continuation = hasMore ? null : action('lender', continuationRaw.url, 'RESEARCH', 'LenderTrustHub');
+    return finish(lenderBase, name, mapped, rows.length, {
+      hubReportedTotal: typeof pagination.total === 'number' ? pagination.total : null,
+      hasMore,
+      // Lender's own 200-candidate window is exhausted, not a hub-side page cursor -- the same
+      // "capped without a usable cursor" shape Insurance already reports.
+      truncatedWithoutCursor: pagination.truncated === true && !hasMore,
+      continuation,
+    }, started, page,
+    // The released engine's AMBIGUOUS_EXACT_NAME always carries >=2 candidates -- this is a defensive
+    // floor only, so a future response that reports ambiguity with zero rows still reads as ambiguity,
+    // never a silent completed miss.
+    state === 'AMBIGUOUS_EXACT_NAME' ? { state: 'AMBIGUOUS_IDENTITIES', hubName: 'LenderTrustHub', continuation } : undefined);
   },
 };
 
