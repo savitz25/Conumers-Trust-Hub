@@ -1,0 +1,42 @@
+{
+ "generatedAt": "2026-09-19T14:19:45.795Z",
+ "cleanBefore": {
+  "pass": 51,
+  "fail": 0,
+  "failing": []
+ },
+ "mutations": [
+  {
+   "id": "A_RESTORED_OLD_V2_DISPATCH",
+   "why": "Lender name search falls back to the old exact-only v2 identity operation instead of the released v1 candidate operation.",
+   "detected": true,
+   "failedTests": [
+    "01 name dispatch calls the released v1 endpoint, never trusthub-specialist-execution-v2"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "B_GLEIF_FRAGMENT_CHECK_LOST",
+   "why": "A GLEIF action is accepted without verifying its #/record/<LEI> fragment matches the record's own LEI.",
+   "detected": true,
+   "failedTests": [
+    "05 wrong echo/fingerprint, malformed rows and bad GLEIF identifiers are rejected -- never converted to misses"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "C_FAILURE_MISCLASSIFIED_AS_MISS",
+   "why": "A technical source failure (SOURCE_UNAVAILABLE) is reported as a completed miss instead of a failure.",
+   "detected": true,
+   "failedTests": [
+    "07 miss, restriction, source failure, partial/capped results and valid empty pages stay distinct; other hubs survive a Lender failure"
+   ],
+   "restoredByteIdentical": true
+  }
+ ],
+ "cleanAfter": {
+  "pass": 51,
+  "fail": 0,
+  "failing": []
+ }
+}
