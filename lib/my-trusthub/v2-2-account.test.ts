@@ -269,3 +269,10 @@ test('V2-2R mutable Auth cookie failures propagate safely; read-only render may 
     assert.ok(readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8').includes('createMyTrustHubSupabaseClient(true)'));
   }
 });
+
+test('V2-2R trailing-dot DNS aliases cannot bypass production backend exclusion', () => {
+  const alias = `${PARENT_BACKEND}.`;
+  const preview = { ...env, VERCEL_ENV: 'preview', NEXT_PUBLIC_SITE_URL: 'http://localhost:3032', NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: alias, MY_TRUSTHUB_NONPRODUCTION_APPROVED: 'true', MY_TRUSTHUB_TEST_ORIGIN: 'http://localhost:3032', MY_TRUSTHUB_TEST_SUPABASE_URL: alias };
+  assert.equal(accountRuntime(preview), null);
+  assert.equal(accountRuntime({ ...preview, NEXT_PUBLIC_SITE_URL: `${PARENT_ORIGIN}.`, MY_TRUSTHUB_TEST_ORIGIN: `${PARENT_ORIGIN}.` }), null);
+});

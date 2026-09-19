@@ -40,6 +40,9 @@ function originOnly(raw?: string): string | null {
   try {
     const u = new URL(raw);
     if (u.username || u.password || u.search || u.hash || u.pathname !== '/') return null;
+    // DNS treats a trailing dot as the same host. Do not let a textual alias of
+    // the production project pass the isolated-pair exclusion below.
+    if (u.hostname.endsWith('.')) return null;
     const local = ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname);
     return u.protocol === 'https:' || (u.protocol === 'http:' && local) ? u.origin : null;
   } catch { return null; }
