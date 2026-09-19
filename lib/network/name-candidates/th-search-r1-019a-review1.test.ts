@@ -132,34 +132,59 @@ test('R2c. multi-page + caps: a cap never claims exhaustion (more available / so
 });
 
 // ================================================================ Finding 3
-const LENDER = { contract: 'trusthub-specialist-execution-v2', contractVersion: '2.1.0', schemaFingerprint: '0da572d08450e68f4f01a4f4b28e2e813503f50b1a84546a29d7eb817db205dd' };
-const qi = (n: string) => ({ queryType: 'identity', entityClass: 'institution', identityName: n, matchMethod: 'exact_public_or_historical_name' });
-test('R3a. valid upstream AMBIGUOUS_IDENTITIES with empty rows is preserved -- never COMPLETED_NO_CANDIDATES', async () => {
-  const r = await lenderNameAdapter.search('First National', 1, ctx(jsonFetch({ ...LENDER, resultState: 'AMBIGUOUS_IDENTITIES', queryInterpretation: qi('first national'), rows: [], destinations: [{ type: 'INSTITUTION_DIRECTORY', url: '/lender' }] })));
+// TH-SEARCH-R1-019D: lenderNameAdapter now calls the RELEASED lender-name-candidates-v1 operation.
+// trusthub-specialist-execution-v2 (see NAME_SPECIALIST_LOCKS.lender in adapters.ts) stays reserved
+// for exact identifiers/evidence elsewhere in Ask, untouched by this change; LENDER_V1 below is the
+// contract this adapter speaks now.
+const LENDER_V1 = { contract: 'lender-name-candidates-v1', contractVersion: '1.0.0', schemaFingerprint: '09e9764c94ec410bfb6426c890ab85c527004af61bbd958d27767842f3489a4b' };
+const lenderName = (supplied: string) => ({ supplied, normalized: supplied.toLowerCase(), predicateApplied: true });
+const lenderPagination = (n: number) => ({ page: 1, limit: 10, returned: n, total: n, reachable: n, hasMore: false, truncated: false, outOfRange: false, pageCount: 1, window: 200 });
+type LenderCandidateOverrides = Partial<{ stableKey: string; displayName: string; entityType: string | null; method: string; field: string; value: string; sourceLabelText: string; explanation: string | null; identifiers: Array<{ label: string; value: string }>; publicationState: string; action: { type: string; url: string } | null; sourceAsOf: string | null }>;
+const lenderCandidate = (over: LenderCandidateOverrides = {}) => ({
+  stableKey: over.stableKey ?? 'lender:nmls-inst:1001', displayName: over.displayName ?? 'First National Bank', entityType: over.entityType ?? 'Nonbank mortgage company',
+  match: { method: over.method ?? 'EXACT_NORMALIZED_NAME', field: over.field ?? 'canonical_name', value: over.value ?? (over.displayName ?? 'First National Bank'), sourceLabel: over.sourceLabelText ?? 'published profile canonical name', explanation: over.explanation ?? 'exact match', isDocumentedSourceName: true },
+  identifiers: over.identifiers ?? [{ label: 'NMLS', value: '1001' }], publicationState: over.publicationState ?? 'public_profile',
+  action: over.action === undefined ? { type: 'PROFILE', url: 'https://www.lendertrusthub.com/lender/first-national-bank' } : over.action,
+  source: { reference: 'fixture', clock: { label: 'Source as-of date', value: over.sourceAsOf ?? null } },
+});
+test('R3a. a defensive floor: AMBIGUOUS_EXACT_NAME with empty rows is preserved -- never COMPLETED_NO_CANDIDATES (the released engine never actually returns this; the ambiguity signal must survive a future response drift)', async () => {
+  const r = await lenderNameAdapter.search('First National', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'AMBIGUOUS_EXACT_NAME', name: lenderName('First National'), scope: {}, source: {}, candidates: [], pagination: lenderPagination(0), continuation: { url: 'https://www.lendertrusthub.com/ask?q=First+National' }, limitations: [] })));
   assert.equal(r.state, 'AMBIGUOUS_NO_CANDIDATES'); assert.notEqual(r.state, 'COMPLETED_NO_CANDIDATES');
   assert.equal(r.nameFilterApplied, true); assert.equal(r.candidates.length, 0, 'nothing is manufactured or selected');
-  assert.equal(r.continuation?.href, 'https://www.lendertrusthub.com/lender'); assert.match(r.message ?? '', /more than one record shares this name.*does not return them/);
+  assert.equal(r.continuation?.href, 'https://www.lendertrusthub.com/ask?q=First+National'); assert.match(r.message ?? '', /more than one record shares this name.*does not return them/);
   const coverage = summarizeCoverage([r]);
   assert.deepEqual([coverage.ambiguousHubs, coverage.genuineNetworkMiss, coverage.completedHubsMiss], [['lender'], false, false]);
   const view = buildNameResultsView({ query: 'First National', name: 'First National', scope: 'lender', hubs: [r] });
   assert.equal(view.kind, 'NOT_COMPLETED'); assert.match(view.heading, /First National/); assert.doesNotMatch(view.heading, /^No records named/);
 });
-test('R3b. ambiguity WITH records renders them as separate candidates; true miss and positive controls are unchanged', async () => {
-  const rows = [{ displayName: 'First National Bank', nmls: '1001', destination: { url: '/lender/first-national-bank' } }, { displayName: 'First National Bank', nmls: '2002', destination: { url: '/lender/first-national-bank-2' } }];
-  const amb = await lenderNameAdapter.search('First National Bank', 1, ctx(jsonFetch({ ...LENDER, resultState: 'AMBIGUOUS_IDENTITIES', queryInterpretation: qi('first national bank'), rows })));
-  assert.equal(amb.state, 'COMPLETED_WITH_CANDIDATES'); assert.deepEqual(amb.candidates.map((c) => c.stableKey), ['lender:nmls:1001', 'lender:nmls:2002'], 'same-name institutions stay distinct');
-  const miss = await lenderNameAdapter.search('Zzqx Bank', 1, ctx(jsonFetch({ ...LENDER, resultState: 'NO_CONFIDENT_MATCH', queryInterpretation: qi('zzqx bank'), rows: [] })));
+test('R3b. ambiguity WITH records renders them as separate candidates (not merged); true miss, restricted-scope and a positive control are distinct', async () => {
+  const rows = [lenderCandidate({ stableKey: 'lender:nmls-inst:1001' }), lenderCandidate({ stableKey: 'lender:nmls-inst:2002', identifiers: [{ label: 'NMLS', value: '2002' }], action: { type: 'PROFILE', url: 'https://www.lendertrusthub.com/lender/first-national-bank-2' } })];
+  const amb = await lenderNameAdapter.search('First National Bank', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'AMBIGUOUS_EXACT_NAME', name: lenderName('First National Bank'), scope: {}, source: {}, candidates: rows, pagination: lenderPagination(2), continuation: null, limitations: [] })));
+  assert.equal(amb.state, 'COMPLETED_WITH_CANDIDATES'); assert.deepEqual(amb.candidates.map((c) => c.stableKey), ['lender:nmls-inst:1001', 'lender:nmls-inst:2002'], 'same-name institutions stay distinct -- multiple keys are not merged into one company');
+  const miss = await lenderNameAdapter.search('Zzqx Bank', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'NO_MATCH', name: lenderName('Zzqx Bank'), scope: {}, source: {}, candidates: [], pagination: lenderPagination(0), continuation: null, limitations: ['No institution name matched WITHIN THE SEARCHED SCOPE. This is not a finding that no such institution exists.'] })));
   assert.equal(miss.state, 'COMPLETED_NO_CANDIDATES');
-  const hit = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER, resultState: 'EXACT_IDENTITY', queryInterpretation: qi('rocket mortgage'), rows: [], identity: { displayName: 'Rocket Mortgage', nmls: '3030', destination: { url: '/lender/rocket-mortgage' } } })));
-  assert.deepEqual([hit.state, hit.candidates[0].matchMethod, hit.candidates[0].matchedName], ['COMPLETED_WITH_CANDIDATES', 'EXACT_SOURCE_NAME', 'Rocket Mortgage']);
+  const restricted = await lenderNameAdapter.search('NMLS 3030', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'RESTRICTED_SCOPE', name: lenderName('NMLS 3030'), scope: {}, source: null, candidates: [], pagination: null, continuation: null, limitations: ['This operation searches institution NAMES only.'] })));
+  assert.equal(restricted.state, 'UNSUPPORTED_OPERATION'); assert.notEqual(restricted.state, 'COMPLETED_NO_CANDIDATES'); assert.equal(restricted.candidates.length, 0, 'a restricted upstream operation is not evidence a hidden match exists');
+  const hit = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: lenderName('Rocket Mortgage'), scope: {}, source: {}, candidates: [lenderCandidate({ stableKey: 'lender:nmls-inst:3030', displayName: 'Rocket Mortgage', value: 'Rocket Mortgage', identifiers: [{ label: 'NMLS', value: '3030' }], action: { type: 'PROFILE', url: 'https://www.lendertrusthub.com/lender/rocket-mortgage' } })], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  assert.deepEqual([hit.state, hit.candidates[0].matchMethod, hit.candidates[0].matchedName], ['COMPLETED_WITH_CANDIDATES', 'NORMALIZED_NAME', 'Rocket Mortgage']);
 });
 test('R3c. malformed or contradictory payloads are failures, never successful misses', async () => {
-  const claimsMatchNoRecord = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER, resultState: 'EXACT_IDENTITY', queryInterpretation: qi('rocket mortgage'), rows: [] })));
-  assert.deepEqual([claimsMatchNoRecord.state, claimsMatchNoRecord.failureKind], ['TECHNICAL_FAILURE', 'invalid_response']);
-  const unmappable = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER, resultState: 'SUPPORTED_RESULTS', queryInterpretation: qi('rocket mortgage'), rows: [{ unexpected: true }] })));
-  assert.deepEqual([unmappable.state, unmappable.failureKind], ['TECHNICAL_FAILURE', 'invalid_response']);
+  const wrongFingerprint = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, schemaFingerprint: 'x'.repeat(64), resultState: 'CANDIDATES', name: lenderName('Rocket Mortgage'), scope: {}, source: {}, candidates: [], pagination: null, continuation: null, limitations: [] })));
+  assert.deepEqual([wrongFingerprint.state, wrongFingerprint.failureKind], ['TECHNICAL_FAILURE', 'contract_mismatch']);
+  const echoNotProven = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: { supplied: 'something else', normalized: 'something else', predicateApplied: true }, scope: {}, source: {}, candidates: [lenderCandidate()], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  assert.deepEqual([echoNotProven.state, echoNotProven.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven'], 'a wrong echo is a filter failure even if predicateApplied claims true');
+  const predicateNotApplied = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: { supplied: 'Rocket Mortgage', normalized: 'rocket mortgage', predicateApplied: false }, scope: {}, source: {}, candidates: [], pagination: null, continuation: null, limitations: [] })));
+  assert.deepEqual([predicateNotApplied.state, predicateNotApplied.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven']);
+  const unmappable = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: lenderName('Rocket Mortgage'), scope: {}, source: {}, candidates: [{ unexpected: true }], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  assert.deepEqual([unmappable.state, unmappable.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'a row present but unmappable is a failure, never a silently empty success');
+  const fabricatedMethod = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: lenderName('Rocket Mortgage'), scope: {}, source: {}, candidates: [lenderCandidate({ method: 'INVENTED_METHOD' })], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  assert.deepEqual([fabricatedMethod.state, fabricatedMethod.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'an unrecognized source method is dropped as unmappable, not invented into a known one');
   const notJsonObject = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch([1, 2, 3])));
   assert.equal(notJsonObject.state, 'TECHNICAL_FAILURE');
+  const restrictedIsNeverAMiss = await lenderNameAdapter.search('NMLS 3030', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'RESTRICTED_SCOPE', name: lenderName('NMLS 3030'), scope: {}, source: null, candidates: [], pagination: null, continuation: null, limitations: [] })));
+  assert.equal(restrictedIsNeverAMiss.state, 'UNSUPPORTED_OPERATION');
+  const irrelevantCohortRow = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: lenderName('Rocket Mortgage'), scope: {}, source: {}, candidates: [lenderCandidate({ displayName: 'Totally Unrelated Credit Union', value: 'Totally Unrelated Credit Union', stableKey: 'lender:nmls-inst:9999' })], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  assert.deepEqual([irrelevantCohortRow.state, irrelevantCohortRow.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven'], 'a row sharing nothing with the supplied name is a filter failure, never shown as a match');
 });
 test('R3d. a source-established alias is not discarded for having different words -- and its text is never invented', async () => {
   const base = { contractVersion: MOVE_NETWORK_RESOLVER_VERSION, schemaFingerprint: MOVE_NETWORK_SCHEMA_FINGERPRINT, contractFingerprint: MOVE_NETWORK_CONTRACT_FINGERPRINT, resolutionClass: 'EXACT_PUBLIC_NAME', returnedResultCount: 1, totalMatchingIdentityCount: 1, normalizedQuery: 'zephyr relocation' };
@@ -172,8 +197,10 @@ test('R3d. a source-established alias is not discarded for having different word
   const notAlias = await moveNameAdapter.search('Zephyr Relocation', 1, ctx(jsonFetch({ ...base, results: [row('display_prefix')] })));
   assert.deepEqual([notAlias.state, notAlias.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven']);
   assert.equal(rowRelatesToName('Zephyr', null, 'PREFIX_OR_TOKEN'), false); assert.equal(rowRelatesToName('Zephyr', null, 'DOCUMENTED_ALIAS'), true);
-  const historical = await lenderNameAdapter.search('Quicken Loans', 1, ctx(jsonFetch({ ...LENDER, resultState: 'EXACT_IDENTITY', queryInterpretation: qi('quicken loans'), rows: [], identity: { displayName: 'Rocket Mortgage', nmls: '3030', destination: { url: '/lender/rocket-mortgage' } } })));
-  assert.deepEqual([historical.candidates[0].matchMethod, historical.candidates[0].matchedName], ['DOCUMENTED_ALIAS', null]); assert.match(historical.candidates[0].matchedField, /historical or alternate institution name/);
+  const historical = await lenderNameAdapter.search('Quicken Loans', 1, ctx(jsonFetch({ ...LENDER_V1, resultState: 'CANDIDATES', name: lenderName('Quicken Loans'), scope: {}, source: {}, candidates: [lenderCandidate({ displayName: 'Rocket Mortgage', method: 'DOCUMENTED_HISTORICAL_NAME', field: 'historical_name', value: 'Quicken Loans', sourceLabelText: 'historical name recorded on the published profile', identifiers: [{ label: 'NMLS', value: '3030' }], action: { type: 'PROFILE', url: 'https://www.lendertrusthub.com/lender/rocket-mortgage' } })], pagination: lenderPagination(1), continuation: null, limitations: [] })));
+  // Unlike Move (whose source never returns the alias text), Lender's engine DOES return the actual
+  // historical text -- so it is shown verbatim as matchedName, never the current display name, and never null.
+  assert.deepEqual([historical.candidates[0].matchMethod, historical.candidates[0].matchedName, historical.candidates[0].displayName], ['DOCUMENTED_ALIAS', 'Quicken Loans', 'Rocket Mortgage']); assert.match(historical.candidates[0].matchedField, /historical name recorded/);
 });
 
 // ================================================================ Finding 4
