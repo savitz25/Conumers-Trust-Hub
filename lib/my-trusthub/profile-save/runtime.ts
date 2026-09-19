@@ -31,11 +31,15 @@ export type VerifiedCaller = {
   selectionConfirmed?: boolean;
   /** From the server-held confirmation, not an extra wire/body field. */
   confirmedTransferRef?: string;
+  /** Fresh server-verified reauthentication, scoped to ONE durable operation.
+   * Never copied from request JSON. Read-only; cannot renew a commit grant. */
+  receiptRecovery?: { accountContextRef: string; requestKey: string; verifiedAt: number };
 };
 type Stage = { input: GuestStageInput; browser: string; digest: string; expiresAt: number };
 type Continuation = { stageKey: string; used: boolean; expiresAt: number };
 type Grant = { subject: string; session: string; browser: string; hub: FirstWaveHub; stageKey: string; expiresAt: number };
-type StoredReceipt = { fingerprint: string; receipt: ItemReceipt };
+type StoredReceipt = { fingerprint: string; receipt: ItemReceipt; owner?: string; hub?: FirstWaveHub; recoverUntil?: number };
+export const RECEIPT_RETENTION_MS = 30 * 24 * 60 * 60_000;
 
 /** One serializable transaction. All reads/writes, P13 consume, P12 Save and
  * receipt publication must commit together. No HTTP RPC inside this boundary.
@@ -178,16 +182,24 @@ export class ParentProfileSaveRuntime {
           receipt.parent = { outcome: saved.created || saved.restored ? 'saved' : 'already_saved', savedRef: saved.savedRef };
           if (v.projectRef) receipt.project.outcome = await tx.addProjectP12(v.projectRef, saved.savedRef, who);
         }
-        await tx.put('receipt', key, { fingerprint, receipt } satisfies StoredReceipt);
+        await tx.put('receipt', key, { fingerprint, receipt, owner: requireParent().subject,
+          hub: who.hub, recoverUntil: now + RECEIPT_RETENTION_MS } satisfies StoredReceipt);
         return receipt;
       }
       if (operation === 'getProfileSaveReceipt' || operation === 'verifyProfileSaveReceipt') {
         if (!(operation === 'getProfileSaveReceipt' ? isReceiptLookup(input) : isReceiptVerify(input))) deny('invalid');
         const v = input as import('../contracts/v2-3-profile-transfer.ts').ReceiptVerifyInput;
-        await grantFor(v.accountContextRef);
+        const recovery = who.receiptRecovery;
+        const recovering = !!recovery && recovery.accountContextRef === v.accountContextRef &&
+          recovery.requestKey === v.requestKey && Number.isFinite(recovery.verifiedAt) &&
+          recovery.verifiedAt <= now && now - recovery.verifiedAt < 5 * 60_000;
+        if (!recovering) await grantFor(v.accountContextRef);
+        else requireParent();
         if (operation === 'verifyProfileSaveReceipt') requireScope('receipt:verify');
         const row = await tx.read<StoredReceipt>('receipt', receiptKey(v.accountContextRef, v.requestKey));
         if (!row) return null;
+        if (recovering && (row.owner !== requireParent().subject || row.hub !== who.hub ||
+            !row.recoverUntil || row.recoverUntil <= now)) deny();
         const r = row.receipt;
         if (operation === 'verifyProfileSaveReceipt' && (r.receiptRef !== v.receiptRef || r.manifestDigest !== v.manifestDigest ||
             itemKey(r.item) !== itemKey(v.item) || r.project.projectRef !== v.projectRef)) return null;

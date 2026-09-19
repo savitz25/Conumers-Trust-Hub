@@ -66,7 +66,7 @@ export function safeReturn(value: unknown): string {
     const u = new URL(decoded, PARENT_ORIGIN);
     if (u.origin !== PARENT_ORIGIN) return '/my';
     const path = u.pathname;
-    if (['/my', '/my/saved', '/my/projects', '/my/you'].includes(path)) return path;
+    if (['/my', '/my/saved', '/my/projects', '/my/you', '/my/profile-save'].includes(path)) return path;
     if (/^\/my\/(projects|sessions)\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(path)) return path;
   } catch { /* malformed input is not a destination */ }
   return '/my';

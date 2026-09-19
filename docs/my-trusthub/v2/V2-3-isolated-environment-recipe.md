@@ -72,9 +72,10 @@ No schema has been applied.
 Use ONLY the isolated parent's issuer/JWKS/Auth URL and matching publishable key.
 Verify current user/session server-side; derive canonical subject from verified
 Auth, never browser JSON, email matching or user-editable metadata. Restrict
-admission to internal approved test identities; signup stays disabled. Preserve
-the existing app-metadata canary check and explicit user/email allowlist. Ordinary
-test users remain ordinary database users, not service/admin roles.
+admission to approved ordinary invitation test identities; signup stays disabled.
+Use server-controlled invitation eligibility, not the founder-specific canary
+claim or user-editable metadata. Preserve internal founder policy unchanged.
+Ordinary test users remain ordinary database users, not service/admin roles.
 Use existing approved password login with confirmed test emails and CAPTCHA
 configuration where the account UI requires it; do not weaken CAPTCHA to test.
 No OAuth/SMTP/magic-link setup is needed for the minimum password-login journey.
@@ -85,7 +86,7 @@ Parent Auth is not the legacy Move account; no identity merging or signup openin
 ## E. Ordinary test users
 
 Minimum TWO isolated ordinary confirmed users: A and B. Both are admitted only
-through the existing internal QA mechanism. A owns a Project and pre-existing
+through the existing invitation QA mechanism without founder claims. A owns a Project and pre-existing
 Saved row; B owns a different Project for negative ownership tests. A fresh browser
 context supplies the guest (no anonymous Auth user required). Test denied admission
 with a reversible isolated fixture change or a third ordinary non-admitted user

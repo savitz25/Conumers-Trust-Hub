@@ -141,6 +141,29 @@ test('R07 expired grant and replayed continuation fail closed', async () => {
     f.setTime(601001); await assert.rejects(f.runtime().execute('commitProfileSave', f.commit), /expired/);
   } finally { f.close(); }
 });
+test('R17 exact fresh reauthentication recovers receipt, never renews expired commit authority', async () => {
+  const f = await fixture(); try {
+    const receipt = await f.runtime().execute('commitProfileSave', f.commit);
+    f.setTime(700000);
+    const lookup = {accountContextRef:f.commit.accountContextRef,requestKey:f.commit.requestKey};
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',lookup),/expired/);
+    f.setCaller({parent:{subject:'fixture-consumer-a',sessionBinding:'renewed-session',admitted:true},
+      receiptRecovery:{...lookup,verifiedAt:700000}});
+    assert.deepEqual(await f.runtime().execute('getProfileSaveReceipt',lookup),receipt);
+    await assert.rejects(f.runtime().execute('commitProfileSave',f.commit),/unauthorized/);
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',{...lookup,consumerId:'fixture-consumer-a'}),/invalid/);
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',{...lookup,requestKey:'other-operation'}),/unauthorized/);
+    f.setCaller({parent:{subject:'consumer-b',sessionBinding:'renewed-session',admitted:true}});
+    assert.equal(await f.runtime().execute('getProfileSaveReceipt',lookup),null);
+    f.setCaller({parent:{subject:'fixture-consumer-a',sessionBinding:'renewed-session',admitted:true},hub:'lender'});
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',lookup),/unauthorized/);
+    f.setCaller({hub:'move',receiptRecovery:{...lookup,verifiedAt:0}});
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',lookup),/unauthorized/);
+    f.setTime(31*86400000);f.setCaller({receiptRecovery:{...lookup,verifiedAt:31*86400000}});
+    await assert.rejects(f.runtime().execute('getProfileSaveReceipt',lookup),/unauthorized/);
+    assert.equal(f.backend.count('saves'),1);
+  } finally {f.close();}
+});
 test('R08 receipt verification rejects changed manifest, item, Project and reference', async () => {
   const f = await fixture(); try {
     const r = await f.runtime().execute('commitProfileSave', f.commit) as ItemReceipt;
