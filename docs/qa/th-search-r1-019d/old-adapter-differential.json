@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-09-19T13:55:00Z",
+  "method": "Live, read-only HTTP against production LenderTrustHub. Reproduces the exact request each Ask code path sends for the SAME input.",
+  "input": "rocket mortgage llc",
+  "oldPath": {
+    "endpoint": "POST https://www.lendertrusthub.com/api/specialist-execution/v2",
+    "contract": "trusthub-specialist-execution-v2 (the operation Ask's lenderNameAdapter called BEFORE this change)",
+    "request": {"contract":"trusthub-specialist-execution-v2","queryType":"identity","identityName":"rocket mortgage llc"},
+    "resultState": "NO_CONFIDENT_MATCH",
+    "outcome": "Ask would have reported this as a completed miss -- the exact-only v2 identity operation does not match past a legal suffix."
+  },
+  "newPath": {
+    "endpoint": "POST https://www.lendertrusthub.com/api/specialist-execution/name-candidates/v1",
+    "contract": "lender-name-candidates-v1 (what this PR switches Ask's lenderNameAdapter to call)",
+    "request": {"operation":"name_candidates","name":"rocket mortgage llc"},
+    "resultState": "CANDIDATES",
+    "candidate": {"displayName": "Rocket Mortgage", "identifiers": [{"label":"NMLS","value":"3030"},{"label":"LEI","value":"549300FGXN1K3HLB1R50"}]},
+    "outcome": "Found via LEGAL_SUFFIX_NORMALIZED (mapped to NORMALIZED_NAME)."
+  },
+  "note": "BMO Bank is not used for this differential because it already matches exactly on the old v2 path (both paths find it); this suffix-removed institution is the required differential proof that Ask itself, not just LenderTrustHub's native page, gains new results."
+}

@@ -43,7 +43,9 @@ export type HubNameAdapter = {
 
 const OFFICIAL_ORIGINS: Partial<Record<SpecialistHubId, string[]>> = {
   investor: ['https://adviserinfo.sec.gov'],
-  lender: ['https://www.consumerfinance.gov'],
+  // TH-SEARCH-R1-019D: search.gleif.org is the official LEI registry the released Lender
+  // name-candidates operation cites for a research row that has no LenderTrustHub profile.
+  lender: ['https://www.consumerfinance.gov', 'https://search.gleif.org'],
 };
 
 /** Query params that select WHICH record a hub link opens. */
@@ -52,7 +54,33 @@ const RECORD_IDENTITY_PARAMS = new Set(['selected', 'id', 'slug', 'crd', 'ccn', 
 function text(value: unknown): string | null { return typeof value === 'string' && value.trim() ? value.trim() : null; }
 function record(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function records(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((row) => row && typeof row === 'object' && !Array.isArray(row)) as Record<string, unknown>[] : []; }
-const fold = (value: string) => nameTokens(value).join(' ');
+/**
+ * Collapse a run of consecutive single-LETTER tokens into one initialism token: "v","i","p" -> "vip".
+ * A generic, symmetric name-form equivalence (not hub-specific): "V.I.P." and "VIP" are the same
+ * word once punctuation is stripped by nameTokens, whichever side of a comparison carries the dots.
+ * Digits are never folded into a run: a numeric-leading token ("1st", "3") keeps its own shape --
+ * this is an initialism rule, not a general token-merge.
+ */
+function collapseInitialisms(tokens: string[]): string[] {
+  const out: string[] = []; let run = '';
+  for (const token of tokens) {
+    if (token.length === 1 && /^[a-z]$/.test(token)) { run += token; continue; }
+    if (run) { out.push(run); run = ''; }
+    out.push(token);
+  }
+  if (run) out.push(run);
+  return out;
+}
+/**
+ * TH-SEARCH-R1-019D Astra review 1 (R1): the SAME canonical initialism-collapsed token form must be
+ * used everywhere two names are compared for relevance -- not only inside fold()'s whole-string
+ * containment shortcut. Before this fix, rowRelatesToName recomputed raw (uncollapsed) nameTokens()
+ * for its token-sharing fallback, so a row whose containment check failed for an UNRELATED reason
+ * (e.g. a differing legal suffix: "VIP Mortgage LLC" vs "V.I.P. MORTGAGE, INC.") fell through to a
+ * fallback that could never match "vip" against the still-separate "v","i","p" tokens.
+ */
+function normalizedTokens(value: string): string[] { return collapseInitialisms(nameTokens(value)); }
+const fold = (value: string) => normalizedTokens(value).join(' ');
 /** Separator-insensitive form for ECHO comparison only: hubs differ on whether "Al's" folds to "als" or "al s". */
 const squash = (value: string) => nameTokens(value).join('');
 /** True when the hub's echo of the searched name is the name we sent. */
@@ -95,8 +123,8 @@ export function rowRelatesToName(suppliedName: string, matchedName: string | nul
   // source-established (and the response-level echo proved the filter ran); the CURRENT display name
   // having different words is not grounds to discard it. Only this explicit method is exempt.
   if (matchedName === null) return method === 'DOCUMENTED_ALIAS';
-  const all = nameTokens(suppliedName);
-  const matched = nameTokens(matchedName);
+  const all = normalizedTokens(suppliedName);
+  const matched = normalizedTokens(matchedName);
   if (!all.length || !matched.length) return false;
   // Whole-name containment must fall on WORD boundaries. A hub "contains" match that lands mid-word
   // ("alpha asset management" inside "CLEVERALPHA ASSET MANAGEMENT") is not a name candidate.
@@ -314,35 +342,252 @@ export const insuranceNameAdapter: HubNameAdapter = {
   },
 };
 
-const lenderBase: Base = { hub: 'lender', searchedScope: 'Accepted public lender institutions', matchBreadth: 'EXACT public or historical institution name only -- partial names are not matched by this source' };
+// ---------------------------------------------------------------- Lender (lender-name-candidates-v1, TH-SEARCH-R1-019D)
+// R1-019C released a candidate operation, SEPARATE from and alongside the untouched v2 identity/evidence
+// contract above (still used elsewhere in Ask -- e.g. guided-research -- for exact NMLS/LEI, complaints
+// and HMDA cohorts). This is the only place that dispatches Lender NAME_CANDIDATES; it never falls back
+// to v2 on a miss, restriction or failure.
+export const LENDER_NAME_CANDIDATES_CONTRACT = 'lender-name-candidates-v1';
+export const LENDER_NAME_CANDIDATES_LOCK = {
+  url: process.env.LENDER_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.lendertrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: '09e9764c94ec410bfb6426c890ab85c527004af61bbd958d27767842f3489a4b',
+} as const;
+
+/** The hub's own method vocabulary, mapped honestly -- a search-form rule is never relabeled a documented alias. */
+const LENDER_METHOD: Record<string, MatchMethod> = {
+  EXACT_NORMALIZED_NAME: 'NORMALIZED_NAME',
+  DOCUMENTED_HISTORICAL_NAME: 'DOCUMENTED_ALIAS',
+  LEGAL_SUFFIX_NORMALIZED: 'NORMALIZED_NAME',
+  ABBREVIATION_NORMALIZED: 'NORMALIZED_NAME',
+  DERIVED_SLUG_FORM: 'HUB_NAME_MATCH',
+  WORD_PREFIX: 'PREFIX_OR_TOKEN',
+  DISTINCTIVE_TOKENS: 'PREFIX_OR_TOKEN',
+};
+/** Own-property lookup only (TH-SEARCH-R1-019D Astra review 1, R3-D): a method key must never resolve through the prototype chain. */
+function lenderMethod(key: string): MatchMethod | null { return Object.hasOwn(LENDER_METHOD, key) ? LENDER_METHOD[key] : null; }
+/**
+ * The field a method claims to have matched on, validated against the released engine's OWN
+ * method<->field pairing (lib/name-candidates/engine.ts matchOneName, read-only). DERIVED_SLUG_FORM and
+ * DOCUMENTED_HISTORICAL_NAME are exclusive to their one source field there; every other method may land
+ * on any ordinary catalog name field. A pairing the engine could never produce is a contract defect.
+ */
+const LENDER_ORDINARY_FIELDS = new Set(['canonical_name', 'presentation_name', 'historical_name', 'hmda_reporter_name']);
+const LENDER_METHOD_FIELDS: Record<string, ReadonlySet<string>> = {
+  EXACT_NORMALIZED_NAME: new Set(['canonical_name', 'presentation_name', 'hmda_reporter_name']),
+  DOCUMENTED_HISTORICAL_NAME: new Set(['historical_name']),
+  LEGAL_SUFFIX_NORMALIZED: LENDER_ORDINARY_FIELDS,
+  ABBREVIATION_NORMALIZED: LENDER_ORDINARY_FIELDS,
+  DERIVED_SLUG_FORM: new Set(['derived_slug_form']),
+  WORD_PREFIX: LENDER_ORDINARY_FIELDS,
+  DISTINCTIVE_TOKENS: LENDER_ORDINARY_FIELDS,
+};
+/** Identifier syntax mirroring the released contract's own record checks (lib/ask-lender/identity-lookup.ts) -- never a guessed shape. */
+const LENDER_IDENTIFIER_SYNTAX: Record<string, RegExp> = { NMLS: /^\d{2,12}$/, LEI: /^[A-Z0-9]{20}$/ };
+/**
+ * TH-SEARCH-R1-019D Astra review 2: the complete eligible stable-key family, derived read-only from
+ * the released catalog's OWN upstream stable-key definitions -- not the two examples the review cited.
+ * An eligible PUBLIC PROFILE copies `record.stable_key` verbatim into `institutionKey`
+ * (lib/name-candidates/catalog.ts); across that source's real production data (see
+ * lib/national-profile/cohort.ts's ten-row QA sample, which intentionally spans every eligible shape:
+ * NMLS-keyed banks/credit unions, LEI-keyed nonbank servicers, and an FDIC-cert-keyed small bank with
+ * no NMLS/LEI coverage) that key takes exactly three forms:
+ *   nmls-inst:<NMLS institution id>  -- digits, per lib/ask-lender/identity-lookup.ts's own
+ *                                        record.nmls contract check (2-12 digits).
+ *   gleif-lei:<LEI>                  -- 20-char ISO 17442 LEI, per identity-lookup.ts's record.lei
+ *                                        contract check and lib/identity/namespaces.ts normalizeLeiValue.
+ *   fdic-cert:<FDIC certificate id>  -- digits (confirmed live: "First State Bank" fdic-cert:15663/
+ *                                        12836/22971; cohort.ts fdic-cert:16243).
+ * A standalone HMDA research row (no profile) is synthesized directly in catalog.ts, never copied from
+ * a profile record:
+ *   hmda-lei:<LEI>                   -- 20-char LEI, same syntax as gleif-lei.
+ * Person/branch/MLO stable keys (nmls-branch:, nmls-person:) are excluded upstream by the catalog's own
+ * institution-only publication gate (lib/national-profile/disc-tests.ts asserts neither ever appears in
+ * the discovery feed) and are never a supported namespace here. No other lib/identity/namespaces.ts
+ * IdentifierType (NCUA_CHARTER, RSSD, FHA_ID, HUD_ID, SBA_ID, STATE_LICENSE, OTHER_AUTHORITATIVE) is
+ * ever used as a stable-key prefix anywhere in the released source -- those exist only in a SEPARATE
+ * internal identity-graph representation this operation never exposes.
+ */
+const LENDER_KEY_FAMILY_SYNTAX: Readonly<Record<string, RegExp>> = {
+  'nmls-inst': /^\d{2,12}$/,
+  'gleif-lei': /^[A-Z0-9]{20}$/,
+  'fdic-cert': /^\d{1,10}$/,
+  'hmda-lei': /^[A-Z0-9]{20}$/,
+};
+/** The supplied key is validated, never rewritten: a bank's own fdic-cert/nmls-inst/gleif-lei key is preserved exactly, never merged or re-keyed onto a coincidentally-matching LEI. */
+function validLenderStableKey(stableKey: string): boolean {
+  const m = /^lender:([a-z]+(?:-[a-z]+)?):(.+)$/.exec(stableKey);
+  if (!m) return false;
+  const [, family, suffix] = m;
+  return Object.hasOwn(LENDER_KEY_FAMILY_SYNTAX, family) && (LENDER_KEY_FAMILY_SYNTAX[family]?.test(suffix) ?? false);
+}
+/** The only publication states the released catalog emits (lib/name-candidates/engine.ts PublicationState). */
+const LENDER_PUBLICATION_STATES = new Set(['public_profile', 'unpublished_research_identity', 'identity_hold']);
+
+/**
+ * Structural pagination validation derived from the released engine's own formulas
+ * (lib/name-candidates/engine.ts searchNameCandidates; lib/name-candidates/operation.ts pageCount).
+ * Validates the RELATIONSHIPS the engine guarantees between these fields -- never a specific name's
+ * data counts, and never rejects a genuinely valid, empty out-of-range page solely for being empty.
+ */
+function validLenderPagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const { page, limit, returned, total, reachable, hasMore, truncated, outOfRange, pageCount, window } = pag;
+  if (!int(page) || !int(limit) || !int(returned) || !int(total) || !int(reachable) || !int(pageCount) || !int(window)) return false;
+  if (typeof hasMore !== 'boolean' || typeof truncated !== 'boolean' || typeof outOfRange !== 'boolean') return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (total < 0 || reachable < 0 || reachable > total || window <= 0 || reachable > window || pageCount < 1) return false;
+  if (truncated !== (total > reachable)) return false;
+  if (pageCount !== Math.max(1, Math.ceil(reachable / limit))) return false;
+  const start = (page - 1) * limit;
+  if (outOfRange !== (reachable > 0 && start >= reachable)) return false;
+  if (outOfRange && returned !== 0) return false;
+  if (hasMore !== (!outOfRange && start + limit < reachable)) return false;
+  return true;
+}
+
+/** An https URL's origin, resolved against Lender's own canonical origin -- never constructed, only read. */
+function originOf(raw: unknown): string | null {
+  const value = text(raw); if (!value) return null;
+  try { return new URL(value, CANONICAL_ORIGINS.lender).origin; } catch { return null; }
+}
+
+/**
+ * The one action Ask cannot get from safeHubUrl's generic origin check alone: an
+ * OFFICIAL_IDENTIFIER_VERIFICATION link must land on GLEIF's real record for the returned LEI, not
+ * merely on the GLEIF origin. A link that fails this is dropped -- never rewritten to a generic page.
+ */
+function lenderOfficialAction(raw: unknown, lei: string | null): CandidateAction | null {
+  if (!lei) return null;
+  const safe = safeHubUrl('lender', raw);
+  if (!safe || !safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  if (url.origin !== 'https://search.gleif.org' || url.hash !== `#/record/${lei}`) return null;
+  return { type: 'OFFICIAL_SOURCE', href: safe.href, label: 'Verify with the official source' };
+}
+
+/** TH-SEARCH-R1-019D Astra review 1 (R3-E): the RESEARCH continuation must stay scoped to the name that was actually searched, not merely land on Lender's origin. */
+function lenderResearchAction(name: string, raw: unknown): CandidateAction | null {
+  const safe = safeHubUrl('lender', raw); if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  if (!echoesName(url.searchParams.get('q'), name)) return null;
+  return { type: 'RESEARCH', href: safe.href, label: 'Continue research on LenderTrustHub' };
+}
+
+const lenderBase: Base = {
+  hub: 'lender', searchedScope: 'Published LenderTrustHub institution profiles and public HMDA reporting institutions',
+  matchBreadth: 'Normalized, historical and search-form name matches, then word-prefix and distinctive-word candidates',
+};
 export const lenderNameAdapter: HubNameAdapter = {
-  ...lenderBase, enabled: true, sourceGrain: 'NMLS/LEI lender institution',
+  ...lenderBase, enabled: true, sourceGrain: 'Lender institution name candidate',
   async search(name, page, ctx) {
     const started = Date.now();
-    const r = await v2Identity('lender', lenderBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
-    if ('fail' in r) return r.fail!;
-    const p = r.payload; const qi = record(p.queryInterpretation);
-    if (!echoesName(text(qi.identityName), name)) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
-    const identity = record(p.identity);
-    const rows = records(p.rows).length ? records(p.rows) : Object.keys(identity).length ? [identity] : [];
+    const res = await call(ctx, LENDER_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
+    });
+    if ('failure' in res) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== LENDER_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== LENDER_NAME_CANDIDATES_LOCK.version || text(p.schemaFingerprint) !== LENDER_NAME_CANDIDATES_LOCK.schemaFingerprint) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (state === 'RESTRICTED_SCOPE') {
+      // The upstream operation itself declined this input (identifier/person/branch-shaped). Not
+      // evidence a hidden matching institution exists, and never a completed miss.
+      return outcome(lenderBase, { state: 'UNSUPPORTED_OPERATION', message: 'LenderTrustHub could not search this input as an institution name.' }, started, page);
+    }
+    if (state === 'SOURCE_UNAVAILABLE') return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
+    if (!['CANDIDATES', 'AMBIGUOUS_EXACT_NAME', 'NO_MATCH'].includes(state)) {
+      // Includes INVALID_REQUEST: Ask's own request was malformed. An adapter/contract defect, never a miss.
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    }
+    // TH-SEARCH-R1-019D Astra review 1 (R3-A): a success-shaped body is only trustworthy behind the
+    // status the released contract actually returns it with (200 for every state handled above).
+    if (res.status !== 200) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    // TH-SEARCH-R1-019D Astra review 1 (R3-B): validate the array BEFORE records() can silently drop a
+    // missing/null/string/object payload (or an array of primitives) into an empty, falsely-completed miss.
+    if (!Array.isArray(p.candidates)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    // A contradictory payload -- claims no match yet supplies records -- is a contract failure, never silently admitted.
+    if (state === 'NO_MATCH' && rawCandidates.length > 0) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);
+    }
+    const rows = records(rawCandidates);
     const mapped = rows.flatMap((row): NameCandidate[] => {
-      const display = text(row.displayName) ?? text(row.institutionName); const nmls = text(row.nmls); const lei = text(row.lei);
-      const key = nmls ? `nmls:${nmls}` : lei ? `lei:${lei}` : null;
-      if (!display || !key) return [];
+      const displayName = text(row.displayName);
+      const stableKey = text(row.stableKey);
+      const matchRow = record(row.match);
+      const lenderMethodKey = text(matchRow.method) ?? '';
+      const method = lenderMethod(lenderMethodKey);
+      const rawField = text(matchRow.field);
+      const matchedValue = text(matchRow.value);
+      const matchedField = text(matchRow.sourceLabel);
+      const publicationState = text(row.publicationState);
+      // A row missing any of these, claiming an unrecognized method/namespace/projection, or pairing a
+      // method with a field the released engine could never produce for it, is dropped -- never invented.
+      if (!displayName || !stableKey || !validLenderStableKey(stableKey) || !method || !rawField
+        || !LENDER_METHOD_FIELDS[lenderMethodKey]?.has(rawField) || !matchedValue || !matchedField
+        || !publicationState || !LENDER_PUBLICATION_STATES.has(publicationState)) return [];
+      const seenLabels = new Set<string>();
+      const identifiers = records(row.identifiers).flatMap((id) => {
+        const label = text(id.label); const value = text(id.value);
+        if (!label || !value || (label !== 'NMLS' && label !== 'LEI') || seenLabels.has(label)) return [];
+        if (!LENDER_IDENTIFIER_SYNTAX[label].test(value)) return [];
+        seenLabels.add(label);
+        return [{ label, value }];
+      });
+      const rowAction = record(row.action);
+      const actionType = text(rowAction.type);
+      const lei = identifiers.find((id) => id.label === 'LEI')?.value ?? null;
+      // TH-SEARCH-R1-019D Astra review 1 (R3-E): a URL that resolves to the GLEIF origin ALWAYS takes the
+      // strict LEI-bound path, whatever action type the row declared -- a PROFILE-typed action secretly
+      // pointed at gleif.org must not borrow the generic (weaker) PROFILE check to bypass the LEI binding.
+      const act = originOf(rowAction.url) === 'https://search.gleif.org' ? lenderOfficialAction(rowAction.url, lei)
+        : actionType === 'PROFILE' ? action('lender', rowAction.url, 'PROFILE', 'LenderTrustHub')
+          : actionType === 'OFFICIAL_IDENTIFIER_VERIFICATION' ? lenderOfficialAction(rowAction.url, lei)
+            : null;
+      const clock = record(record(row.source).clock);
       return [{
-        hub: 'lender', sourceGrain: 'NMLS/LEI lender institution', stableKey: `lender:${key}`, displayName: display, entityType: 'Lender institution',
-        // The hub matches EXACT public or historical names. When the returned display name is not what was
-        // entered, the match was on a historical/alternate name the endpoint does not return.
-        matchedName: fold(display) === fold(name) ? display : null,
-        matchedField: fold(display) === fold(name) ? 'accepted public institution name' : 'a historical or alternate institution name (the source does not return that text)',
-        matchMethod: fold(display) === fold(name) ? 'EXACT_SOURCE_NAME' : 'DOCUMENTED_ALIAS', hubMatchExplanation: text(qi.matchMethod)?.replaceAll('_', ' ') ?? null,
-        identifiers: [nmls ? { label: 'NMLS', value: nmls } : null, lei ? { label: 'LEI', value: lei } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: null, locationMeaning: null, sourceAsOf: text(row.sourceFetchedAt), sourceDateLabel: 'Fetched from source on', publicationState: text(row.publicationState),
-        action: action('lender', record(row.destination).url, 'PROFILE', 'LenderTrustHub'),
+        hub: 'lender', sourceGrain: 'Lender institution name candidate', stableKey, displayName,
+        entityType: text(row.entityType),
+        matchedName: matchedValue, matchedField, matchMethod: method, hubMatchExplanation: text(matchRow.explanation),
+        identifiers, recordedLocation: null, locationMeaning: null,
+        sourceAsOf: text(clock.value), sourceDateLabel: text(clock.label) ?? 'Source as-of date',
+        publicationState, action: act,
       }];
     });
-    // Ambiguity continuation: the payload's own hub destination, else the hub's existing public lender directory.
-    return finish(lenderBase, name, mapped, rows.length, {}, started, page, { state: r.state, hubName: 'LenderTrustHub', continuation: r.continuation ?? action('lender', '/lender', 'RESEARCH', 'LenderTrustHub') });
+    const pagination = record(p.pagination);
+    if (!validLenderPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    const continuationRaw = record(p.continuation);
+    // TH-SEARCH-R1-019D Astra review 1 (R2): the hub-supplied, name-scoped native-search continuation
+    // is preserved on EVERY successful page (Lender always returns one -- see operation.ts), independent
+    // of upstream hasMore. Ask's own MAX_CARDS_PER_HUB cap can be reached well before Lender's window is
+    // exhausted; without this, Ask holds no way forward even though the source has more records. It opens
+    // the supported native search on this name, never a claim of resuming exactly where Ask left off.
+    const continuation = lenderResearchAction(name, continuationRaw.url);
+    // TH-SEARCH-R1-019D Astra review 1 (R3-A): CANDIDATES/AMBIGUOUS_EXACT_NAME always carry >=1 record
+    // in the released engine; zero real rows under either state is a contradictory payload, never a miss.
+    const upstream: Upstream | undefined = state === 'AMBIGUOUS_EXACT_NAME' ? { state: 'AMBIGUOUS_IDENTITIES', hubName: 'LenderTrustHub', continuation }
+      : state === 'CANDIDATES' ? { state: 'SUPPORTED_RESULTS', hubName: 'LenderTrustHub', continuation }
+        : undefined;
+    return finish(lenderBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: typeof pagination.total === 'number' ? pagination.total : null,
+      hasMore,
+      // Lender's own 200-candidate window is exhausted, not a hub-side page cursor -- the same
+      // "capped without a usable cursor" shape Insurance already reports.
+      truncatedWithoutCursor: pagination.truncated === true && !hasMore,
+      continuation,
+    }, started, page, upstream);
   },
 };
 
