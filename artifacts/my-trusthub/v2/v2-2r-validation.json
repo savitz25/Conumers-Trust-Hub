@@ -6,7 +6,7 @@
   "branch": "mth-v2-2-account-prep-b4",
   "reviewedHead": "9ad26d54bc19b6bc84d11288575761d02cfd1326",
   "mainAtFetch": "4831532ac799077c6963c7ad54b1562ec5409167",
-  "correctedCodeCommit": "61ffa0ab0dcd15c5ddaa16cda1195eb59646db9d",
+  "correctedCodeCommit": "bd4b98d3d77c4d20012dfa7a13b70802748200f8",
   "deliveryHeadNote": "Subsequent evidence-only commit; exact delivery head and preview recorded on PR #184",
   "findings": [
     { "id": "F1", "issue": "cross-tab legacy bundle rewrite race", "correction": "retain local copies; no runtime setItem/removeItem after import receipt" },
@@ -14,17 +14,19 @@
     { "id": "F3", "issue": "sign-out error ignored", "correction": "no completed sign-out claim on returned/thrown failure" },
     { "id": "F4", "issue": "mutable Auth session-cookie write errors swallowed", "correction": "strict writes for account actions and callback; bounded failure" },
     { "id": "F5", "issue": "CAPTCHA reset could retain completed status", "correction": "fresh-check status restored with reset" },
-    { "id": "F6", "issue": "forgeable URL authentication-completion telemetry", "correction": "ignore browser completion markers; verified completion recorded at server boundary", "analyticsSinkForwarding": "NOT_VERIFIED" }
+    { "id": "F6", "issue": "forgeable URL authentication-completion telemetry", "correction": "ignore browser completion markers; verified completion recorded at server boundary", "analyticsSinkForwarding": "NOT_VERIFIED" },
+    { "id": "F7", "issue": "trailing-dot DNS alias could bypass parent backend textual exclusion", "correction": "reject trailing-dot origin/backend hostnames before isolated-pair validation" }
   ],
   "tests": [
     { "command": "npm run check:my-trusthub-v2-2 before corrections with three new regressions", "result": "EXPECTED_FAIL", "passed": 23, "failed": 3 },
-    { "command": "npm run check:my-trusthub-v2-2 final", "result": "PASS", "passed": 29, "evidence": ["UNIT", "MOCKED_SDK", "SOURCE_ASSERTIONS"] },
+    { "command": "npm run check:my-trusthub-v2-2 final", "result": "PASS", "passed": 30, "evidence": ["UNIT", "MOCKED_SDK", "SOURCE_ASSERTIONS"] },
     { "command": "npm run check:my-trusthub-v2-3", "result": "PASS", "passed": 20, "evidence": ["DETERMINISTIC_SPECIFICATION", "IN_MEMORY_MODEL"], "deployedEndpointTest": false },
     { "command": "npm run check:ath-obs-002de", "result": "PASS", "passed": 54 },
     { "command": "npm run check:my-trusthub-p11-p19", "result": "PASS", "exitCode": 0 },
     { "command": "npm test", "result": "PASS", "exitCode": 0 },
     { "command": "npm run typecheck", "result": "PASS", "exitCode": 0 },
     { "command": "changed-file ESLint", "result": "PASS", "exitCode": 0, "warnings": 0 },
+    { "command": "npm run lint", "result": "PASS_WITH_BASELINE_WARNINGS", "exitCode": 0, "errors": 0, "unrelatedWarnings": 7 },
     { "command": "npm run build final", "result": "PASS", "exitCode": 0 },
     { "command": "git diff --check", "result": "PASS" },
     { "command": "historical Stage 2 and Stage 3 chains", "result": "NOT_RERUN_IN_V2_2R", "priorEvidence": "unchanged historical Watch/navigation inventory failures recorded in V2-2", "scriptsChanged": false }

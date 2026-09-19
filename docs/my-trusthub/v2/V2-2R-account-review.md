@@ -4,7 +4,7 @@ Date: 2026-09-19. Builder 4. PR #184 in `savitz25/Conumers-Trust-Hub`.
 
 Reviewed starting head: `9ad26d54bc19b6bc84d11288575761d02cfd1326`. Fetched main: `4831532ac799077c6963c7ad54b1562ec5409167`; no concurrent source edits in this worktree or remote account branch at baseline. Existing branch retained; no rebase/reset, production merge or activation.
 
-Corrected runtime/contract/test commit: `61ffa0ab0dcd15c5ddaa16cda1195eb59646db9d`. Delivery head may add evidence-only documentation; PR check/preview status belongs to the exact pushed head, not the prior green revision.
+Corrected runtime/contract/test commits: `61ffa0ab0dcd15c5ddaa16cda1195eb59646db9d`, then origin-alias guard `bd4b98d3d77c4d20012dfa7a13b70802748200f8`. Delivery head may add evidence-only documentation; PR check/preview status belongs to the exact pushed head, not the prior green revision.
 
 ## Review method and verdict
 
@@ -22,6 +22,7 @@ Verdict after corrections: **READY FOR ISOLATED PROVIDER QA**, not live-provider
 | F4: mutable session-cookie failures swallowed | Shared SSR helper allows read-only render cookie failures, but account actions/callbacks need write success. Added explicit strict mode for those mutable entry points; failure throws a bounded error and prevents completion reporting. Read-only Server Component behavior retained. | Pure cookie failure/success tests plus strict-caller assertions |
 | F5: stale CAPTCHA completion status | Token reset could leave “complete” status visible. Reset now clears token/widget and restores fresh-check status. No CAPTCHA bypass introduced. | Existing token-lifecycle/source contracts and focused lint; real provider lifecycle remains a release test |
 | F6: forged auth-completion telemetry | `auth=complete` was accepted as authentication evidence by browser analytics. Removed that inference; verified password action/PKCE callback emit bounded server completion events only after verified success. | Two analytics tests now reject forged/bookmarked completion markers; 54-test suite rerun |
+| F7: production DNS alias in nonproduction pairing | A trailing-dot backend hostname could differ textually from the excluded parent project while naming the same DNS host. Reject trailing-dot origin/backend hostnames before pair validation. Custom backend aliases still require operator verification of the full isolated path. | Explicit trailing-dot parent-backend regression; 30 account cases pass |
 
 F1 intentionally trades automatic local cleanup for data preservation; repeated import remains idempotent, and users can retain their local research. This supersedes the earlier V2-2 implementation document's description of automatic retirement. No tests were deleted or assertions weakened to hide a security failure. The three initially added F1/F2/F3 regressions produced **23 pass / 3 fail** against the starting implementation, then passed after corrections.
 
@@ -52,7 +53,7 @@ Required pre-release verification: email confirmation enabled; leaked-password p
 
 ## Tests and evidence interpretation
 
-- Named account suite expanded to 29 cases (mocked SDK/pure helpers/source assertions).
+- Named account suite expanded to 30 cases (mocked SDK/pure helpers/source assertions).
 - Shared V2-3 suite: 20 deterministic in-memory specification cases; no endpoints/DB tests.
 - Analytics suite: 54 cases; the two auth completion expectations change only to reject forged browser evidence.
 - P11–P19 chain retains ownership, RLS, handoff, feature and session contracts.
