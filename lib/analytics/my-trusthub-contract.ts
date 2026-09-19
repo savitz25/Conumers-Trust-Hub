@@ -105,8 +105,9 @@ export function resolveMyTrustHubOutcomes(pathname: string, params: URLSearchPar
     if (params.get('saved') === '1') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { ...saved, action_source: 'my_saved_form' }, ['saved']);
     if (params.get('failed') === 'save') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'my_saved_form', failure_reason: 'unable' }, ['failed', 'error']);
     const imported = params.get('import');
-    if (imported === 'complete') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { ...saved, action_source: 'guest_import', project_context_present: params.get('import_project') === '1' }, ['import', 'import_project']);
-    else if (imported === 'invalid') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'guest_import', failure_reason: 'import_invalid' }, ['import']);
+    // V2-2 cutover: import success is emitted from the durable action receipt,
+    // never from an old/bookmarked/forged import=complete URL.
+    if (imported === 'invalid') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'guest_import', failure_reason: 'import_invalid' }, ['import']);
     else if (imported === 'none') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'guest_import', failure_reason: 'import_none_selected' }, ['import']);
   }
   if (PROJECT_DETAIL.test(path) && params.get('created') === '1') add(MY_TRUSTHUB_EVENTS.PROJECT_CREATED, { ...authed, surface: 'my_project_detail', outcome: 'success' }, ['created']);
@@ -122,7 +123,7 @@ const errorParam = params.get('error');
     const reason = params.get('access') === 'restricted' ? 'access_restricted' : errorParam ? (SIGN_IN_FAILURES[errorParam] ?? 'unable') : null;
     if (reason) add(MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_FAILED, { ...guest, outcome: 'failure', failure_reason: reason }, ['error', 'access']);
   }
-  if (path === '/my' && params.get('auth') === 'complete') {
+  if (['/my', '/my/saved', '/my/projects', '/my/you'].includes(path) && params.get('auth') === 'complete') {
     add(MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_COMPLETED, { ...authed, surface: 'my_home', outcome: 'success', continuation_reason: context.continuationReason === 'save_handoff' ? 'save_handoff' : 'direct' }, ['auth']);
   }
   return outcomes;

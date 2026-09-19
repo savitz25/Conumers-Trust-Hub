@@ -48,15 +48,13 @@ export default async function SavedPage({
       </PageHeading>
       {query.handoff === "failed" ? <p className="myth-warning" role="alert">This handoff is unavailable, expired, or already used. Return to the Contractor profile and try Save again.</p> : null}
       {query.handoff === "saved" ? <p className="myth-notice" role="status">Contractor profile saved to My TrustHub. Existing Saves are kept once. Watching is a separate choice.</p> : null}
-      {importState === "complete" ? <p className="myth-notice" role="status">Guest research restored. Existing Saves were kept once.</p> : null}
       {importState === "invalid" ? <p className="myth-warning" role="alert">That guest research could not be restored safely.</p> : null}
       {error ? <p className="myth-warning" role="alert">That change could not be completed. Refresh and try again.</p> : null}
       {session === "saved" ? <p className="myth-notice" role="status">Research session saved privately.</p> : null}
       {sessionError ? <p className="myth-warning" role="alert">That research session could not be saved safely.</p> : null}
-      {sessionImport === "complete" ? <p className="myth-notice" role="status">Guest research session restored. Existing sessions were kept once.</p> : null}
       {sessionImport === "invalid" ? <p className="myth-warning" role="alert">That guest research session was incompatible or invalid.</p> : null}
-      <GuestRestore projects={activeProjects} importComplete={importState === "complete"} />
-      {canUseSessions ? <GuestSessionRestore projects={activeProjects} importComplete={sessionImport === "complete"} /> : null}
+      <GuestRestore projects={activeProjects} ownerId={user.id} ownerLabel={user.email ?? 'Your signed-in account'} />
+      {canUseSessions ? <GuestSessionRestore projects={activeProjects} ownerId={user.id} ownerLabel={user.email ?? 'Your signed-in account'} /> : null}
       {canUseSessions ? (
         <details className="myth-create">
           <summary>Save a moving inventory session</summary>

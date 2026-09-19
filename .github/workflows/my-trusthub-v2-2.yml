@@ -1,0 +1,20 @@
+name: My TrustHub V2-2 account contracts
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  account-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check:my-trusthub-v2-2
+      - run: npm run check:my-trusthub-p11-p19
+      - run: npm run check:ath-obs-002de
+      - run: npm run typecheck
