@@ -1,48 +1,16 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
-import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
-import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
-
-function safeNext(value: string | null): string {
-  return value === "/my" || value?.startsWith("/my/") ? value : "/my";
-}
+import { NextResponse, type NextRequest } from 'next/server';
+import { accountRuntime, enabled } from '@/lib/my-trusthub/account-policy';
+import { exchangeAccountCode } from '@/lib/my-trusthub/account-callback';
+import { createMyTrustHubSupabaseClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
-  if (!isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ENABLED")) {
-    return new NextResponse(null, { status: 404 });
-  }
-  const code = request.nextUrl.searchParams.get("code");
-  const next = safeNext(request.nextUrl.searchParams.get("next"));
-  const destination = new URL(next, request.nextUrl.origin);
-  if (!code) {
-    console.warn(JSON.stringify({ level: "warn", event: "my_trusthub_auth_callback", outcome: "missing_code", host: request.nextUrl.host, has_verifier: request.cookies.getAll().some((cookie) => cookie.name.includes("code-verifier")) }));
-    return NextResponse.redirect(new URL("/my/sign-in?error=callback_missing_code", request.nextUrl.origin));
-  }
-
+  const runtime = accountRuntime(process.env);
+  const privateHeaders = { 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' };
+  if (!enabled(process.env.MY_TRUSTHUB_ENABLED)) return new NextResponse(null, { status: 404, headers: privateHeaders });
+  if (!runtime || request.nextUrl.origin !== runtime.origin) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
   const client = await createMyTrustHubSupabaseClient();
-  if (!client) {
-    console.error(JSON.stringify({ level: "error", event: "my_trusthub_auth_callback", outcome: "runtime_unavailable", host: request.nextUrl.host }));
-    return NextResponse.redirect(new URL("/my/sign-in?error=callback_unavailable", request.nextUrl.origin));
-  }
-  const { error } = await client.auth.exchangeCodeForSession(code);
-  if (error) {
-    console.warn(JSON.stringify({ level: "warn", event: "my_trusthub_auth_callback", outcome: "exchange_failed", code: error.code ?? "unknown", status: error.status ?? null, host: request.nextUrl.host, has_verifier: request.cookies.getAll().some((cookie) => cookie.name.includes("code-verifier")) }));
-    return NextResponse.redirect(new URL("/my/sign-in?error=callback_exchange", request.nextUrl.origin));
-  }
-
-  const { data } = await client.auth.getUser();
-  if (!data.user) {
-    console.warn(JSON.stringify({ level: "warn", event: "my_trusthub_auth_callback", outcome: "session_validation_failed", host: request.nextUrl.host }));
-    await client.auth.signOut();
-    return NextResponse.redirect(new URL("/my/sign-in?error=callback_session", request.nextUrl.origin));
-  }
-  if (!hasMyTrustHubCanaryAccess(data.user)) {
-    console.warn(JSON.stringify({ level: "warn", event: "my_trusthub_auth_callback", outcome: "entitlement_rejected", host: request.nextUrl.host }));
-    await client.auth.signOut();
-    return NextResponse.redirect(new URL("/my/sign-in?access=restricted", request.nextUrl.origin));
-  }
-  console.info(JSON.stringify({ level: "info", event: "my_trusthub_auth_callback", outcome: "authenticated", host: request.nextUrl.host }));
-  // ATH-OBS-002D: bounded one-shot marker, set only after the session was exchanged AND validated.
-  if (destination.pathname === "/my") destination.searchParams.set("auth", "complete");
-  return NextResponse.redirect(destination);
+  if (!client) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
+  const destination = await exchangeAccountCode(client.auth, request.nextUrl.searchParams.get('code'), request.nextUrl.searchParams.get('next'), process.env, request.nextUrl.searchParams.get('flow') === 'password');
+  console.info(JSON.stringify({ event: 'my_trusthub_auth_callback', outcome: destination.includes('error=') ? 'exchange_failed' : 'authenticated' }));
+  return NextResponse.redirect(new URL(destination, runtime.origin), { headers: privateHeaders });
 }

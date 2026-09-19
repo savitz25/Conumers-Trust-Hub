@@ -1,7 +1,7 @@
 'use client';
 
 import type { FormHTMLAttributes, ReactNode } from 'react';
-import { captureGuestImportSaveIntent, captureProfileSaveIntent, captureSignupStarted } from '@/components/analytics/ask-instrumentation';
+import { captureGuestImportSaveIntent, captureProfileSaveIntent, captureSignupStarted, captureLoginStarted } from '@/components/analytics/ask-instrumentation';
 
 /**
  * Submit-time INTENT events only (ATH-OBS-002D). Success and failure are never emitted from a
@@ -9,6 +9,7 @@ import { captureGuestImportSaveIntent, captureProfileSaveIntent, captureSignupSt
  */
 const EVENTS = {
   account_signup_started: () => captureSignupStarted('my_sign_in'),
+  account_login_started: () => captureLoginStarted(),
   profile_save_intent: () => captureProfileSaveIntent(),
   guest_import_save_intent: (form: HTMLFormElement) => captureGuestImportSaveIntent(Boolean(new FormData(form).get('projectId'))),
 } as const;
