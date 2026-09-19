@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019d.test.ts', 'lib/network/name-candidates/th-search-r1-019d-review1.test.ts', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts'];
+const GATE = ['--experimental-strip-types', '--test', 'lib/network/name-candidates/th-search-r1-019d.test.ts', 'lib/network/name-candidates/th-search-r1-019d-review1.test.ts', 'lib/network/name-candidates/th-search-r1-019d-review2.test.ts', 'lib/network/name-candidates/th-search-r1-019a.test.ts', 'lib/network/name-candidates/th-search-r1-019a-review1.test.ts'];
 const run = () => {
   const r = spawnSync(process.execPath, GATE, { encoding: 'utf8' });
   const out = r.stdout + r.stderr;
@@ -33,6 +33,10 @@ const mutations = [
   { id: 'H_R3_NO_MATCH_CONTRADICTION_UNCHECKED', file: 'lib/network/name-candidates/adapters.ts', why: 'A NO_MATCH result that also supplies candidate rows is silently admitted as real candidates instead of failing as a contradictory payload.',
     find: "    if (state === 'NO_MATCH' && rawCandidates.length > 0) {\n      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);\n    }\n",
     replace: '' },
+  // -------------------------------------------------------------- Astra review 2 (CHANGES_REQUESTED on 7a63e00) repair
+  { id: 'I_R3_KEY_FAMILY_RESTRICTED_TO_THREE', file: 'lib/network/name-candidates/adapters.ts', why: "The stable-key family map is restored to the review 1 restrictive set (nmls-inst/lei/hmda-lei, no fdic-cert, no gleif-lei), so already-approved public-profile records (First State Bank's fdic-cert rows, Select Portfolio Servicing's gleif-lei row) are rejected again.",
+    find: "const LENDER_KEY_FAMILY_SYNTAX: Readonly<Record<string, RegExp>> = {\n  'nmls-inst': /^\\d{2,12}$/,\n  'gleif-lei': /^[A-Z0-9]{20}$/,\n  'fdic-cert': /^\\d{1,10}$/,\n  'hmda-lei': /^[A-Z0-9]{20}$/,\n};",
+    replace: "const LENDER_KEY_FAMILY_SYNTAX: Readonly<Record<string, RegExp>> = {\n  'nmls-inst': /^[A-Za-z0-9]+$/,\n  'lei': /^[A-Za-z0-9]+$/,\n  'hmda-lei': /^[A-Za-z0-9]+$/,\n};" },
 ];
 
 const report = { generatedAt: new Date().toISOString(), cleanBefore: run(), mutations: [], cleanAfter: null };

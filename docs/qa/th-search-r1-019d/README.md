@@ -296,7 +296,79 @@ No parent-owned catalog/matcher, company exception, index, or paid service was a
 source permissions, query budgets, the R1-019A architecture, or the L1-P boundary. `origin/main` did
 not move during this pass (`4831532`); PR #182 stays draft, unmerged.
 
-## 11. Remaining scope (explicitly open, not claimed here)
+## 11. Astra review 2 corrections (CHANGES_REQUESTED on `7a63e00503d48fcd24ed8eab7dfc0ba6a8c2138c`)
+
+One blocker: `LENDER_KEY_NAMESPACE` (`/^lender:(?:nmls-inst|lei|hmda-lei):[A-Za-z0-9]+$/`) was not the
+released source's complete namespace contract. It guessed a bare `lei:` family that is not actually
+produced by this operation, and it was missing `fdic-cert:` entirely -- rejecting already-approved
+public-profile records outright.
+
+**Source-key family inventory (derived read-only, not guessed):** an eligible PUBLIC PROFILE copies
+`record.stable_key` verbatim into `institutionKey` (`lib/name-candidates/catalog.ts`). Across that
+source's real data -- `lib/national-profile/cohort.ts`'s ten-row QA sample, which deliberately spans
+every eligible shape (NMLS-keyed banks/credit unions, LEI-keyed nonbank servicers, an FDIC-cert-keyed
+small bank with no NMLS/LEI coverage), plus two independently-reproduced live probes -- that key takes
+exactly three forms: `nmls-inst:<NMLS id>` (digits, 2-12 per `lib/ask-lender/identity-lookup.ts`'s own
+`record.nmls` contract check), `gleif-lei:<LEI>` (20-char ISO 17442, per that same file's `record.lei`
+check and `lib/identity/namespaces.ts normalizeLeiValue`), and `fdic-cert:<FDIC cert id>` (digits;
+confirmed live on "First State Bank" -- `fdic-cert:15663/12836/22971` -- and in `cohort.ts`'s
+`fdic-cert:16243`). A standalone HMDA research row (no profile) is synthesized directly in
+`catalog.ts`, never copied from a profile record: `hmda-lei:<LEI>` (same 20-char syntax).
+`nmls-branch:`/`nmls-person:` are confirmed EXCLUDED (`lib/national-profile/disc-tests.ts` asserts
+neither ever appears in the discovery feed the catalog reads). `lib/identity/namespaces.ts` lists
+several more `IdentifierType`s (`NCUA_CHARTER`, `RSSD`, `FHA_ID`, `HUD_ID`, `SBA_ID`,
+`STATE_LICENSE`, `OTHER_AUTHORITATIVE`) but none of them is ever used as a stable-key prefix anywhere
+in the released source -- they belong to a separate internal identity-graph representation this
+operation never exposes, so none was added here.
+
+**Fix:** `LENDER_KEY_NAMESPACE` replaced with a table-driven `LENDER_KEY_FAMILY_SYNTAX` map (one regex
+per family) and `validLenderStableKey()`, which parses `lender:<family>:<suffix>` and checks the
+suffix against that family's own syntax. Unknown families, and the confirmed-excluded
+`nmls-branch:`/`nmls-person:`/`nmls-mlo:`, are rejected outright -- not by guessing from the business
+name, and without accepting any arbitrary `lender:` string. The supplied key is preserved exactly
+everywhere else in the row mapping; nothing rewrites a profile's own key onto a different namespace or
+merges records by a coincidental name/identifier match.
+
+**Evidence:**
+- `astra-review2-red-before.txt` / `astra-review2-green-after.txt` -- 3 new tests
+  (`th-search-r1-019d-review2.test.ts`) fail against the exact reviewed head
+  (`7a63e00503d48fcd24ed8eab7dfc0ba6a8c2138c`, `adapters.ts` swapped back byte-for-byte and restored
+  afterward) and pass on the corrected build.
+- `th-search-r1-019d-review2.test.ts`: a table-driven positive/negative matrix (all 4 real families
+  admitted; `nmls-branch`/`nmls-person`/`nmls-mlo`/unknown families/malformed suffixes/missing prefix
+  all rejected with zero substitute records manufactured) plus full-adapter reproductions of both live
+  examples -- "First State Bank" (exact `fdic-cert:15663` target plus the other 4 real records, all
+  distinct, in the source's own order) and "Select Portfolio Servicing" (retains its `gleif-lei` key,
+  LEI identifier, matched name and profile action).
+- `mutation-report.json` -- 9/9 mutations DETECTED (the 8 from review 1 plus one restoring the
+  restrictive three-family regex), all byte-identical restores.
+- `holdout-through-adapter-review2.json` -- the SAME frozen 20-row sample (sha256 `0336a217…`,
+  confirmed unchanged from the review-1 run) re-run once against the review-2-corrected adapter: 20/20
+  present, zero difference from the review-1 run. The sample itself only exercises `nmls-inst`/
+  `hmda-lei` (drawn before this gap was found -- exactly why the live probes, not the frozen sample,
+  caught it). Supplemented, not replaced, with a separate live namespace-family coverage check
+  confirming `fdic-cert` (First State Bank) and `gleif-lei` (Select Portfolio Servicing) both now
+  resolve correctly, and a re-run of the combined initialism+suffix family confirming no regression.
+- `astra-review2-browser.json` -- fresh headless Playwright against the corrected local build and the
+  live endpoint: "First State Bank" renders all 5 real records; "Select Portfolio Servicing" renders
+  with its correct profile link; "VIP Mortgage LLC" still fixed (no review-1 regression); "First"
+  reaches the exact 50-card Ask cap with the native continuation control present and correctly scoped,
+  and the cap's card list now visibly includes the previously-rejected First State Bank family
+  members; a genuine miss stays a genuine miss; "Allied" cross-hub control unaffected; no overflow at
+  320px; only the pre-existing, unrelated Vercel Analytics 404 in console.
+- Full regression: `npm run check:th-search-r1-019d` (28 + 44 + 136 tests, all pass, now also running
+  the review-2 file), `check:ath-guided-001/003`, `check:ath-claim-governance-001`, `check:ath-obs-001`,
+  `check:ath-metrics-r2-06`, `check:ath-neon-001`, `check:ask-lender-execute` (exact-ID/v2 regression,
+  17 tests) all pass. `tsc --noEmit` clean. `eslint` clean on every changed/new file. `next build`
+  succeeds.
+
+Only ONE runtime file changed this round: `lib/network/name-candidates/adapters.ts` (the namespace
+validator). `components/name-candidate-results.tsx` is untouched in review 2 -- across the whole PR,
+exactly two runtime files have ever changed: that adapter and that one card component. No other
+specialist engine, schema, publication permission, or index was touched. `origin/main` did not move
+during this pass. PR #182 stays draft, unmerged.
+
+## 12. Remaining scope (explicitly open, not claimed here)
 
 - Separate exact-head coordinator/Astra review, then merge and deploy authorization.
 - Post-deployment: verify the correct Ask deployment/alias, a small canonical browser smoke on

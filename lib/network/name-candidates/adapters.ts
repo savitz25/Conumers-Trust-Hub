@@ -384,8 +384,43 @@ const LENDER_METHOD_FIELDS: Record<string, ReadonlySet<string>> = {
 };
 /** Identifier syntax mirroring the released contract's own record checks (lib/ask-lender/identity-lookup.ts) -- never a guessed shape. */
 const LENDER_IDENTIFIER_SYNTAX: Record<string, RegExp> = { NMLS: /^\d{2,12}$/, LEI: /^[A-Z0-9]{20}$/ };
-/** Namespaces the released catalog actually assigns (lib/name-candidates/catalog.ts): a public profile's own stable key, its LEI, or a standalone HMDA research row. Person/branch/MLO keys are excluded upstream by the catalog's own publication gate and are never a supported namespace here. */
-const LENDER_KEY_NAMESPACE = /^lender:(?:nmls-inst|lei|hmda-lei):[A-Za-z0-9]+$/;
+/**
+ * TH-SEARCH-R1-019D Astra review 2: the complete eligible stable-key family, derived read-only from
+ * the released catalog's OWN upstream stable-key definitions -- not the two examples the review cited.
+ * An eligible PUBLIC PROFILE copies `record.stable_key` verbatim into `institutionKey`
+ * (lib/name-candidates/catalog.ts); across that source's real production data (see
+ * lib/national-profile/cohort.ts's ten-row QA sample, which intentionally spans every eligible shape:
+ * NMLS-keyed banks/credit unions, LEI-keyed nonbank servicers, and an FDIC-cert-keyed small bank with
+ * no NMLS/LEI coverage) that key takes exactly three forms:
+ *   nmls-inst:<NMLS institution id>  -- digits, per lib/ask-lender/identity-lookup.ts's own
+ *                                        record.nmls contract check (2-12 digits).
+ *   gleif-lei:<LEI>                  -- 20-char ISO 17442 LEI, per identity-lookup.ts's record.lei
+ *                                        contract check and lib/identity/namespaces.ts normalizeLeiValue.
+ *   fdic-cert:<FDIC certificate id>  -- digits (confirmed live: "First State Bank" fdic-cert:15663/
+ *                                        12836/22971; cohort.ts fdic-cert:16243).
+ * A standalone HMDA research row (no profile) is synthesized directly in catalog.ts, never copied from
+ * a profile record:
+ *   hmda-lei:<LEI>                   -- 20-char LEI, same syntax as gleif-lei.
+ * Person/branch/MLO stable keys (nmls-branch:, nmls-person:) are excluded upstream by the catalog's own
+ * institution-only publication gate (lib/national-profile/disc-tests.ts asserts neither ever appears in
+ * the discovery feed) and are never a supported namespace here. No other lib/identity/namespaces.ts
+ * IdentifierType (NCUA_CHARTER, RSSD, FHA_ID, HUD_ID, SBA_ID, STATE_LICENSE, OTHER_AUTHORITATIVE) is
+ * ever used as a stable-key prefix anywhere in the released source -- those exist only in a SEPARATE
+ * internal identity-graph representation this operation never exposes.
+ */
+const LENDER_KEY_FAMILY_SYNTAX: Readonly<Record<string, RegExp>> = {
+  'nmls-inst': /^\d{2,12}$/,
+  'gleif-lei': /^[A-Z0-9]{20}$/,
+  'fdic-cert': /^\d{1,10}$/,
+  'hmda-lei': /^[A-Z0-9]{20}$/,
+};
+/** The supplied key is validated, never rewritten: a bank's own fdic-cert/nmls-inst/gleif-lei key is preserved exactly, never merged or re-keyed onto a coincidentally-matching LEI. */
+function validLenderStableKey(stableKey: string): boolean {
+  const m = /^lender:([a-z]+(?:-[a-z]+)?):(.+)$/.exec(stableKey);
+  if (!m) return false;
+  const [, family, suffix] = m;
+  return Object.hasOwn(LENDER_KEY_FAMILY_SYNTAX, family) && (LENDER_KEY_FAMILY_SYNTAX[family]?.test(suffix) ?? false);
+}
 /** The only publication states the released catalog emits (lib/name-candidates/engine.ts PublicationState). */
 const LENDER_PUBLICATION_STATES = new Set(['public_profile', 'unpublished_research_identity', 'identity_hold']);
 
@@ -497,7 +532,7 @@ export const lenderNameAdapter: HubNameAdapter = {
       const publicationState = text(row.publicationState);
       // A row missing any of these, claiming an unrecognized method/namespace/projection, or pairing a
       // method with a field the released engine could never produce for it, is dropped -- never invented.
-      if (!displayName || !stableKey || !LENDER_KEY_NAMESPACE.test(stableKey) || !method || !rawField
+      if (!displayName || !stableKey || !validLenderStableKey(stableKey) || !method || !rawField
         || !LENDER_METHOD_FIELDS[lenderMethodKey]?.has(rawField) || !matchedValue || !matchedField
         || !publicationState || !LENDER_PUBLICATION_STATES.has(publicationState)) return [];
       const seenLabels = new Set<string>();

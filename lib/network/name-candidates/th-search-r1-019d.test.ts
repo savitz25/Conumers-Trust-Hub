@@ -73,11 +73,11 @@ test('02 BMO and Alliant candidate keys survive mapping; Randolph-Brooks FCU rec
   const alliant = await search('Alliant Credit Union', 1, jsonFetch(() => ({ body: body({ candidates: [candidate({ stableKey: 'lender:nmls-inst:197185', displayName: 'Alliant Credit Union', value: 'Alliant Credit Union', identifiers: [{ label: 'NMLS', value: '197185' }] })], pag: pagination({ total: 1, returned: 1 }) }, 'Alliant Credit Union') })));
   assert.equal(alliant.candidates[0].stableKey, 'lender:nmls-inst:197185');
   const rb = await search('Randolph-Brooks FCU', 1, jsonFetch(() => ({ body: body({ resultState: 'AMBIGUOUS_EXACT_NAME', candidates: [
-    candidate({ stableKey: 'lender:lei:AAAAAAAAAAAAAAAAAAAA', displayName: 'RANDOLPH-BROOKS', value: 'RANDOLPH-BROOKS', identifiers: [], method: 'ABBREVIATION_NORMALIZED', sourceLabel: 'HMDA reporter legal name' }),
+    candidate({ stableKey: 'lender:gleif-lei:AAAAAAAAAAAAAAAAAAAA', displayName: 'RANDOLPH-BROOKS', value: 'RANDOLPH-BROOKS', identifiers: [], method: 'ABBREVIATION_NORMALIZED', sourceLabel: 'HMDA reporter legal name' }),
     candidate({ stableKey: 'lender:nmls-inst:583215', displayName: 'Randolph-Brooks Federal Credit Union', value: 'Randolph-Brooks Federal Credit Union', identifiers: [{ label: 'NMLS', value: '583215' }], method: 'ABBREVIATION_NORMALIZED' }),
   ], pag: pagination({ total: 2, returned: 2 }) }, 'Randolph-Brooks FCU') })));
   assert.equal(rb.state, 'COMPLETED_WITH_CANDIDATES', 'ambiguous-with-records is a candidates state, not a clarification wall');
-  assert.deepEqual(rb.candidates.map((c) => c.stableKey), ['lender:lei:AAAAAAAAAAAAAAAAAAAA', 'lender:nmls-inst:583215'], 'two distinct keys stay two distinct records');
+  assert.deepEqual(rb.candidates.map((c) => c.stableKey), ['lender:gleif-lei:AAAAAAAAAAAAAAAAAAAA', 'lender:nmls-inst:583215'], 'two distinct keys stay two distinct records');
   assert.ok(rb.candidates.every((c) => c.matchMethod === 'NORMALIZED_NAME'), 'ABBREVIATION_NORMALIZED (FCU) maps to a search-form rule, not DOCUMENTED_ALIAS');
 });
 
@@ -115,10 +115,10 @@ test('05 wrong echo/fingerprint, malformed rows and bad GLEIF identifiers are re
   assert.deepEqual([wrongEcho.state, wrongEcho.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven']);
   // Sharing only the generic word "Mortgage" is padding, not a filter failure: the shared platform-wide
   // rule (finish() in adapters.ts) reads this as a genuine completed miss, exactly as it does for every other hub.
-  const categoryOnlyOverlap = await search('Rocket Mortgage', 1, jsonFetch(() => ({ body: body({ candidates: [candidate({ stableKey: 'lender:nmls-inst:9', displayName: 'Generic Mortgage Company', value: 'Generic Mortgage Company' })], pag: pagination({ total: 1, returned: 1 }) }, 'Rocket Mortgage') })));
+  const categoryOnlyOverlap = await search('Rocket Mortgage', 1, jsonFetch(() => ({ body: body({ candidates: [candidate({ stableKey: 'lender:nmls-inst:90', displayName: 'Generic Mortgage Company', value: 'Generic Mortgage Company' })], pag: pagination({ total: 1, returned: 1 }) }, 'Rocket Mortgage') })));
   assert.equal(categoryOnlyOverlap.state, 'COMPLETED_NO_CANDIDATES', 'category-word-only overlap is dropped as padding, read as a genuine miss -- not fabricated into a match, and not a technical failure');
   assert.equal(categoryOnlyOverlap.candidates.length, 0);
-  const unrelatedNormalizedName = await search('Rocket Mortgage', 1, jsonFetch(() => ({ body: body({ candidates: [candidate({ stableKey: 'lender:nmls-inst:9', displayName: 'Totally Unrelated Bank', value: 'Totally Unrelated Bank', method: 'EXACT_NORMALIZED_NAME' })], pag: pagination({ total: 1, returned: 1 }) }, 'Rocket Mortgage') })));
+  const unrelatedNormalizedName = await search('Rocket Mortgage', 1, jsonFetch(() => ({ body: body({ candidates: [candidate({ stableKey: 'lender:nmls-inst:90', displayName: 'Totally Unrelated Bank', value: 'Totally Unrelated Bank', method: 'EXACT_NORMALIZED_NAME' })], pag: pagination({ total: 1, returned: 1 }) }, 'Rocket Mortgage') })));
   assert.deepEqual([unrelatedNormalizedName.state, unrelatedNormalizedName.failureKind], ['TECHNICAL_FAILURE', 'name_filter_not_proven'], 'claiming NORMALIZED_NAME does not exempt a row from the relevance guard');
   const wrongFieldHistorical = await search('Old Dominion Mortgage', 1, jsonFetch(() => ({ body: body({ candidates: [{ ...candidate({ displayName: 'Heritage Home Lending', method: 'DOCUMENTED_HISTORICAL_NAME', value: 'Old Dominion Mortgage' }), match: undefined }], pag: pagination({ total: 1, returned: 1 }) }, 'Old Dominion Mortgage') })));
   assert.deepEqual([wrongFieldHistorical.state, wrongFieldHistorical.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'a row missing its match block is unmappable, not silently dropped into an empty success');

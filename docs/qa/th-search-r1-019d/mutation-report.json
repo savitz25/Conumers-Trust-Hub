@@ -1,7 +1,7 @@
 {
- "generatedAt": "2026-09-19T16:16:05.673Z",
+ "generatedAt": "2026-09-19T17:17:18.825Z",
  "cleanBefore": {
-  "pass": 64,
+  "pass": 67,
   "fail": 0,
   "failing": []
  },
@@ -79,10 +79,22 @@
     "R3-fix A. NO_MATCH with nonempty candidates, and CANDIDATES with zero rows, are contract failures -- never silently accepted"
    ],
    "restoredByteIdentical": true
+  },
+  {
+   "id": "I_R3_KEY_FAMILY_RESTRICTED_TO_THREE",
+   "why": "The stable-key family map is restored to the review 1 restrictive set (nmls-inst/lei/hmda-lei, no fdic-cert, no gleif-lei), so already-approved public-profile records (First State Bank's fdic-cert rows, Select Portfolio Servicing's gleif-lei row) are rejected again.",
+   "detected": true,
+   "failedTests": [
+    "key-family matrix. every discovered eligible namespace family is admitted; excluded projections and malformed keys are dropped, never accepted as any lender: string",
+    "live reproduction: First State Bank -- three fdic-cert public profiles and two hmda-lei research rows all survive together",
+    "live reproduction: Select Portfolio Servicing -- retains its gleif-lei source key, LEI identifier, matched name and profile action",
+    "02 BMO and Alliant candidate keys survive mapping; Randolph-Brooks FCU records stay separate, not merged"
+   ],
+   "restoredByteIdentical": true
   }
  ],
  "cleanAfter": {
-  "pass": 64,
+  "pass": 67,
   "fail": 0,
   "failing": []
  }
