@@ -1,0 +1,26 @@
+name: My TrustHub V2-3 parent runtime
+on:
+  pull_request:
+    paths:
+      - 'lib/my-trusthub/profile-save/**'
+      - 'lib/my-trusthub/contracts/v2-3-*'
+      - 'app/api/my-trusthub/profile-save/**'
+      - 'scripts/qa/v23-*'
+      - 'scripts/qa/node-sqlite.d.ts'
+      - '.github/workflows/my-trusthub-v2-3-runtime.yml'
+      - 'package*.json'
+permissions:
+  contents: read
+jobs:
+  isolated-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.18.0'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check:my-trusthub-v2-3
+      - run: npm run check:my-trusthub-v2-3-runtime
+      - run: npm run typecheck
