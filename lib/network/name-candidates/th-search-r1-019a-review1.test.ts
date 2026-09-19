@@ -132,11 +132,10 @@ test('R2c. multi-page + caps: a cap never claims exhaustion (more available / so
 });
 
 // ================================================================ Finding 3
-const LENDER = { contract: 'trusthub-specialist-execution-v2', contractVersion: '2.1.0', schemaFingerprint: '0da572d08450e68f4f01a4f4b28e2e813503f50b1a84546a29d7eb817db205dd' };
-const qi = (n: string) => ({ queryType: 'identity', entityClass: 'institution', identityName: n, matchMethod: 'exact_public_or_historical_name' });
 // TH-SEARCH-R1-019D: lenderNameAdapter now calls the RELEASED lender-name-candidates-v1 operation.
-// LENDER above (trusthub-specialist-execution-v2) stays reserved for exact identifiers/evidence
-// elsewhere in Ask (untouched by this change); LENDER_V1 is the contract this adapter speaks.
+// trusthub-specialist-execution-v2 (see NAME_SPECIALIST_LOCKS.lender in adapters.ts) stays reserved
+// for exact identifiers/evidence elsewhere in Ask, untouched by this change; LENDER_V1 below is the
+// contract this adapter speaks now.
 const LENDER_V1 = { contract: 'lender-name-candidates-v1', contractVersion: '1.0.0', schemaFingerprint: '09e9764c94ec410bfb6426c890ab85c527004af61bbd958d27767842f3489a4b' };
 const lenderName = (supplied: string) => ({ supplied, normalized: supplied.toLowerCase(), predicateApplied: true });
 const lenderPagination = (n: number) => ({ page: 1, limit: 10, returned: n, total: n, reachable: n, hasMore: false, truncated: false, outOfRange: false, pageCount: 1, window: 200 });

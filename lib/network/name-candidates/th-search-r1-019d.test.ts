@@ -12,9 +12,8 @@ import {
 } from './adapters.ts';
 import { searchNameCandidates } from './orchestrator.ts';
 import { buildNameResultsView, mergeHubPage, moreStateOf } from './view.ts';
-import { createFixtureAdapters, FIVE_ALLIED_FIXTURE, type FixtureBehavior } from './fixtures.ts';
+import { createFixtureAdapters, FIVE_ALLIED_FIXTURE } from './fixtures.ts';
 import { MAX_CARDS_PER_HUB, type HubNameSearchOutcome } from './contract.ts';
-import type { SpecialistHubId } from '../registry.ts';
 
 const jsonFetch = (handler: (url: string, init?: RequestInit) => { status?: number; body: unknown }): typeof fetch =>
   (async (url: string | URL, init?: RequestInit) => {
