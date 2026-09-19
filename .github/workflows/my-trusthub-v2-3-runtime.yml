@@ -6,6 +6,10 @@ on:
       - 'lib/my-trusthub/contracts/v2-3-*'
       - 'app/api/my-trusthub/profile-save/**'
       - 'scripts/qa/v23-*'
+      - 'scripts/qa/v23f-*'
+      - 'supabase/migrations/*my_trusthub_v23*'
+      - 'docs/my-trusthub/v2/V2-3F-rollback.sql'
+      - 'app/my/profile-save/**'
       - 'scripts/qa/node-sqlite.d.ts'
       - '.github/workflows/my-trusthub-v2-3-runtime.yml'
       - 'package*.json'
@@ -23,4 +27,6 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run check:my-trusthub-v2-3
       - run: npm run check:my-trusthub-v2-3-runtime
+      - run: npm run check:my-trusthub-v2-3r
+      - run: npm run check:my-trusthub-v2-3f
       - run: npm run typecheck

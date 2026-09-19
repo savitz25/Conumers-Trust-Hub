@@ -5,10 +5,10 @@ import {TRANSFER_VERSION,manifestDigest,type GuestStageInput} from '../../lib/my
 const identity={hub:'move' as const,nativeId:'fixture-mover',profileClass:'mover'};
 const manifest:GuestStageInput={version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:'fixture-mover',profile:identity}};
 const origin='http://127.0.0.1:4525';
-const c:Confirmation={source:{continuationRef:'c'.repeat(43),transferRef:'t'.repeat(43),manifest,manifestDigest:manifestDigest(manifest),browserProof:'b'.repeat(43),expiresAt:Date.now()+600000},csrf:'x'.repeat(43),expiresAt:Date.now()+600000,requestPrefix:'r'.repeat(43)};
+const c:Confirmation={source:{continuationRef:'c'.repeat(43),transferRef:'t'.repeat(43),manifest,manifestDigest:manifestDigest(manifest),browserProof:'b'.repeat(43),expiresAt:Date.now()+600000,requestPrefix:'r'.repeat(43)},csrf:'x'.repeat(43),expiresAt:Date.now()+600000,requestPrefix:'r'.repeat(43)};
 const b:BrowserBindings={origin,registry:{environment:'isolated',isolatedBackendVerified:true,origins:{move:'http://127.0.0.1:4526',insurance:'http://127.0.0.1:4527',lender:'http://127.0.0.1:4528'}},now:Date.now,
   source:async()=>null,parent:async()=>({subject:'fixture-a',session:'fixture-session',label:'Isolated UI fixture account'}),projects:async()=>[],
-  store:{put:async()=>{throw Error('not used');},withRecord:async(_k,work)=>work(c)},
+  store:{put:async()=>{throw Error('not used');},withRecord:async(_k,work)=>work(c,async()=>{})},
   runtime:async()=>{throw Error('No provider configured: verify honest failure only');},acknowledge:async()=>{throw Error('not used');}};
 createServer(async(req,res)=>{
   const chunks:Buffer[]=[];for await(const chunk of req)chunks.push(Buffer.from(chunk));

@@ -13,9 +13,9 @@ const valid = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9
 const escape = (v: string) => v.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export type BrowserParent = {subject:string;session:string;label:string};
 export type SourceSnapshot = {continuationRef:string;transferRef:string;manifest:GuestStageInput;
-  manifestDigest:string;browserProof:string;expiresAt:number};
+  manifestDigest:string;browserProof:string;expiresAt:number;requestPrefix:string};
 export type Confirmation = {source:SourceSnapshot;csrf:string;expiresAt:number;requestPrefix:string;
-  parent?:BrowserParent;accountContextRef?:string;projectRef?:string;receipts?:ItemReceipt[]};
+  parent?:BrowserParent;contextCandidateRef?:string;accountContextRef?:string;projectRef?:string;receipts?:ItemReceipt[]};
 export interface BrowserBindings {
   origin:string;registry:TrustedOriginRegistry;
   /** Verified scoped specialist channel + P13 browser exchange. Resolve source
@@ -25,7 +25,7 @@ export interface BrowserBindings {
   parent(request:Request):Promise<BrowserParent|null>;
   projects(parent:BrowserParent):Promise<Array<{ref:string;label:string}>>;
   store:{put(key:string,value:Confirmation):Promise<void>;
-    withRecord<T>(key:string,work:(value:Confirmation|null)=>Promise<T>):Promise<T>};
+    withRecord<T>(key:string,work:(value:Confirmation|null,checkpoint:()=>Promise<void>)=>Promise<T>):Promise<T>};
   /** Must derive verified caller, current P13 exchange, selection and confirmed
    * transfer from server state. Posted account IDs are never accepted. */
   runtime(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<ParentProfileSaveRuntime>;
@@ -57,17 +57,17 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
       // Source port verifies actual hub/channel/browser proof, not just this POST.
       const source=await b.source(request,posted.get('continuationRef')!);
       if(!source||source.continuationRef!==posted.get('continuationRef')||!valid(source.transferRef)||
-        !valid(source.browserProof)||!isGuestStageInput(source.manifest)||source.manifestDigest!==manifestDigest(source.manifest)||
+        !valid(source.browserProof)||!valid(source.requestPrefix)||!isGuestStageInput(source.manifest)||source.manifestDigest!==manifestDigest(source.manifest)||
         source.expiresAt<=b.now()||source.expiresAt>b.now()+600000||
         request.headers.get('origin')!==b.registry.origins[source.manifest.sourceHub])throw new RuntimeError('unauthorized');
-      const key=opaque();await b.store.put(key,{source,csrf:opaque(),expiresAt:source.expiresAt,requestPrefix:opaque()});
+      const key=opaque();await b.store.put(key,{source,csrf:opaque(),expiresAt:source.expiresAt,requestPrefix:source.requestPrefix});
       const response=new Response(null,{status:303,headers:{...PRIVATE_HEADERS,Location:PROFILE_CONFIRM_PATH}});
       response.headers.set('Set-Cookie',`${COOKIE}=${key}; Path=${PROFILE_CONFIRM_PATH}; HttpOnly; SameSite=Lax; Max-Age=600${url.protocol==='https:'?'; Secure':''}`);
       return response;
     }
     const key=request.headers.get('cookie')?.split(';').map(v=>v.trim()).find(v=>v.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);
     if(!valid(key))return unavailable();
-    return await b.store.withRecord(key,async c=>{
+    return await b.store.withRecord(key,async(c,checkpoint)=>{
       if(!c||c.expiresAt<=b.now())return html('<h1>This confirmation expired</h1><p>Your local research is unchanged. Start again from the profile.</p>',410);
       const parent=await b.parent(request);
       if(!parent)return html('<h1>Keep profiles in My TrustHub</h1><a href="/my/sign-in?next=%2Fmy%2Fprofile-save">Sign in to continue</a><p>No profiles have been saved to your account by this step.</p>');
@@ -80,11 +80,17 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         const project=posted.get('project')||undefined;
         if(project&&!projects.some(p=>p.ref===project))throw new RuntimeError('unauthorized');
         if(c.accountContextRef&&c.projectRef!==project)throw new RuntimeError('conflict');
+        if(!c.contextCandidateRef){c.contextCandidateRef=opaque();c.projectRef=project;await checkpoint();}
+        if(c.projectRef!==project)throw new RuntimeError('conflict');
         const runtime=await b.runtime(request,c,parent);
         if(!c.accountContextRef){
-          const result=await runtime.execute('consumeProfileSaveContinuation',{continuationRef:c.source.continuationRef,
-            issuer:c.source.manifest.sourceHub,audience:'ask',browserProof:c.source.browserProof}) as {accountContextRef:string};
-          c.accountContextRef=result.accountContextRef;c.projectRef=project;
+          if(await runtime.resumeConfirmedContext(c.contextCandidateRef))c.accountContextRef=c.contextCandidateRef;
+          else{
+            const result=await runtime.execute('consumeProfileSaveContinuation',{continuationRef:c.source.continuationRef,
+              issuer:c.source.manifest.sourceHub,audience:'ask',browserProof:c.source.browserProof}) as {accountContextRef:string};
+            c.accountContextRef=result.accountContextRef;
+          }
+          await checkpoint();
         }
         const receipts:ItemReceipt[]=[];
         for(const [index,item] of c.source.manifest.selected.entries()){
@@ -95,6 +101,7 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         }
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
         c.receipts=receipts;
+        await checkpoint();
         await b.acknowledge(c.source,receipts,parent);
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
       }

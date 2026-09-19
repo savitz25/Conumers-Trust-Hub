@@ -24,10 +24,10 @@ async function fixture(){
   // Source snapshot is obtained by a separate mocked authenticated service, NOT
   // by reading the parent's SQLite tables. Concrete service credentials NOT RUN.
   const records=new Map<string,Confirmation>();let acks=0;
-  const b:BrowserBindings={origin,registry,now:()=>now,source:async()=>({...continuation,...stage,manifest,browserProof:caller.browserBinding}),
+  const b:BrowserBindings={origin,registry,now:()=>now,source:async()=>({...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)}),
     parent:async()=>parent,projects:async()=>[{ref:'p'.repeat(43),label:'Test Project'}],
-    store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null)},
-    runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef};return runtime;},
+    store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null,async()=>{})},
+    runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
     acknowledge:async()=>{acks++;}};
   const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
   const arrival=await handleProfileConfirmation(post(new URLSearchParams({continuationRef:continuation.continuationRef}).toString(),'',sourceOrigin),b);
@@ -66,7 +66,17 @@ test('B04 absent deployment bindings and expired confirmation fail closed',async
 test('B05 retention is bounded metadata-only, never durable Saved research',()=>{
   for(const batch of [retentionBatch(1000),quotaRetentionBatch(1000)]){
     assert.doesNotMatch(batch.sql,/consumer\.|watch|project|notes/i);
-    assert.match(batch.sql,/limit \$2 for update skip locked/);
+    assert.match(batch.sql,/limit \$2/);
+    assert.doesNotMatch(batch.sql,/for update/,'cleanup role has DELETE, not UPDATE authority');
   }
   assert.throws(()=>retentionBatch(0,501));assert.throws(()=>retentionBatch(NaN));
+});
+test('B06 checkpoint gap resumes existing exact P13 context without replay',async()=>{
+  const f=await fixture();try{f.login();assert.equal((await f.confirm()).status,200);
+    const c=[...f.records.values()][0];const original=c.accountContextRef;
+    delete c.accountContextRef;delete c.receipts;
+    assert.equal(c.contextCandidateRef,original);
+    assert.equal((await f.confirm()).status,200);
+    assert.equal(c.accountContextRef,original);assert.equal(f.backend.count('saves'),1);
+  }finally{f.close();}
 });

@@ -1,5 +1,9 @@
 # V2-3 minimum isolated integration environment — approval recipe, NOT execution
 
+V2-3F update: use `V2-3F-isolated-checklist.md` as the single current executable
+approval checklist. Its fourth migration and least-privilege role model supersede
+the earlier permission/storage proposal below. Nothing is authorized to run yet.
+
 Date: 2026-09-19. PR #185 remains draft/open; production HOLD.
 ISOLATED BACKEND = PENDING FOUNDER/LAPTOP VERIFICATION.
 No active approved backend is identified on this computer. This does not establish

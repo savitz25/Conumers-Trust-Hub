@@ -2,12 +2,15 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { deploymentBindings } from './deployment.ts';
 import { handleProfileSave } from './http.ts';
+import {isolatedBrowserBindings} from './isolated-adapters.ts';
 
 test('D01 default OFF and unconditional production deny even when every feature flag is on', async () => {
   assert.equal(deploymentBindings({}).enabled, false);
+  assert.equal(isolatedBrowserBindings({},null),null);
   const env = { VERCEL_ENV: 'production', MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED: 'true', MY_TRUSTHUB_ENABLED: 'true',
     MY_TRUSTHUB_SAVED_ENABLED: 'true', MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED: 'true' };
   assert.equal(deploymentBindings(env).enabled, false);
+  assert.equal(isolatedBrowserBindings(env,null),null);
   const response = await handleProfileSave(new Request('https://www.asktrusthub.com/api/my-trusthub/profile-save', { method: 'POST' }), deploymentBindings(env));
   assert.equal(response.status, 404);
 });

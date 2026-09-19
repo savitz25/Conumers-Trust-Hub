@@ -31,6 +31,8 @@ export type VerifiedCaller = {
   selectionConfirmed?: boolean;
   /** From the server-held confirmation, not an extra wire/body field. */
   confirmedTransferRef?: string;
+  /** Server-persisted random candidate before P13 consume, never browser JSON. */
+  confirmedAccountContextRef?: string;
   /** Fresh server-verified reauthentication, scoped to ONE durable operation.
    * Never copied from request JSON. Read-only; cannot renew a commit grant. */
   receiptRecovery?: { accountContextRef: string; requestKey: string; verifiedAt: number };
@@ -60,9 +62,10 @@ export interface RuntimeTransaction {
 }
 export interface RuntimeBackend {
   /** Committed separately so denied/rolled-back operations also consume quota. */
-  rateLimit(key: string, now: number, maximum: number): Promise<boolean>;
-  transaction<T>(work: (tx: RuntimeTransaction) => Promise<T>): Promise<T>;
+  rateLimit(key: string, now: number, maximum: number, authorization?: RuntimeAuthorization): Promise<boolean>;
+  transaction<T>(work: (tx: RuntimeTransaction) => Promise<T>, authorization?: RuntimeAuthorization): Promise<T>;
 }
+export type RuntimeAuthorization = { caller: VerifiedCaller; operation: Operation; input: unknown };
 export type RuntimeOptions = {
   enabled: boolean;
   registry: TrustedOriginRegistry;
@@ -76,6 +79,22 @@ export class ParentProfileSaveRuntime {
   readonly options: RuntimeOptions;
   constructor(options: RuntimeOptions) { this.options = options; }
 
+  /** Internal crash recovery only. Does NOT consume/replay a handoff or mint a
+   * grant. Confirms an already committed context for the same current session. */
+  async resumeConfirmedContext(ref:string):Promise<boolean>{
+    const who=await this.options.authenticate();
+    if(!this.options.enabled||this.options.registry.environment!=='isolated'||!this.options.registry.isolatedBackendVerified||
+      !who?.parent?.admitted||who.environment!=='isolated'||!who.scopes.includes('saved:write')||!who.selectionConfirmed||who.confirmedAccountContextRef!==ref||
+      !/^[A-Za-z0-9_-]{43}$/.test(ref)||!who.confirmedTransferRef)deny();
+    const caller=structuredClone(who!);
+    return this.options.backend.transaction(async tx=>{
+      const g=await tx.read<Grant>('grant',hash(ref));if(!g)return false;
+      if(g.subject!==caller.parent!.subject||g.session!==hash(caller.parent!.sessionBinding)||g.hub!==caller.hub||
+        g.browser!==hash(caller.browserBinding)||g.stageKey!==hash(caller.confirmedTransferRef!)||g.expiresAt<=(this.options.now??Date.now)())deny();
+      return true;
+    },{caller,operation:'getProfileSaveReceipt',input:{accountContextRef:ref,requestKey:'internal-context-resume'}});
+  }
+
   async execute(operation: Operation, raw: unknown): Promise<unknown> {
     const { registry, backend } = this.options;
     if (!this.options.enabled || registry.environment !== 'isolated' || !registry.isolatedBackendVerified) deny('disabled');
@@ -87,7 +106,8 @@ export class ParentProfileSaveRuntime {
     if (!Number.isFinite(now)) deny('unavailable');
     // Snapshot mutable request/principal objects before crossing async boundaries.
     const input = structuredClone(raw), who = structuredClone(c);
-    if (!await backend.rateLimit(hash(JSON.stringify([who.hub, who.browserBinding, operation])), now, 30)) deny('rate_limited');
+    const authorization = {caller:who,operation,input};
+    if (!await backend.rateLimit(hash(JSON.stringify([who.hub, who.browserBinding, operation])), now, 30, authorization)) deny('rate_limited');
     return backend.transaction(async tx => {
       const requireScope = (scope: string) => { if (!who.scopes.includes(scope)) deny(); };
       const requireParent = () => {
@@ -143,7 +163,8 @@ export class ParentProfileSaveRuntime {
         if (continuation!.expiresAt <= now) deny('expired');
         const exchange = await tx.consumeP13(who.exchange!, who);
         if (exchange.subject !== parent.subject) deny();
-        const accountContextRef = opaque();
+        const accountContextRef = who.confirmedAccountContextRef ?? opaque();
+        if(!/^[A-Za-z0-9_-]{43}$/.test(accountContextRef) || await tx.read<Grant>('grant',hash(accountContextRef)))deny('conflict');
         await tx.put('grant', hash(accountContextRef), { subject: parent.subject, session: hash(parent.sessionBinding),
           browser: hash(who.browserBinding), hub: who.hub, stageKey: continuation!.stageKey,
           expiresAt: now + STAGING_TTL_MS } satisfies Grant);
@@ -206,6 +227,6 @@ export class ParentProfileSaveRuntime {
         return r;
       }
       return deny('invalid');
-    });
+    }, authorization);
   }
 }
