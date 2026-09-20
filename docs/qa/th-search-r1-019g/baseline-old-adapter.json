@@ -1,0 +1,178 @@
+{
+ "capturedAt": "2026-09-20T03:38:57.804Z",
+ "endpoint": "https://www.seniortrusthub.com/api/ask (senior-ask-v1, old free-text adapter)",
+ "results": {
+  "Abbey Delray South": {
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "nameFilterApplied": true,
+   "candidateCount": 1,
+   "message": null,
+   "firstCandidate": {
+    "hub": "senior",
+    "sourceGrain": "CMS certified provider (CCN)",
+    "stableKey": "senior:nursing_home:105411",
+    "displayName": "ABBEY DELRAY SOUTH",
+    "entityType": "Nursing Home",
+    "matchedName": "ABBEY DELRAY SOUTH",
+    "matchedField": "CMS provider name",
+    "matchMethod": "NORMALIZED_NAME",
+    "hubMatchExplanation": "ABBEY DELRAY SOUTH is a bounded provider-name match in the current CMS nursing-home directory (CCN 105411). Name similarity is a research match, not proof that similarly named providers are the same identity.",
+    "identifiers": [
+     {
+      "label": "CMS CCN",
+      "value": "105411"
+     }
+    ],
+    "recordedLocation": "DELRAY BEACH, FL, Palm Beach",
+    "locationMeaning": "Recorded CMS location -- not service availability",
+    "sourceAsOf": null,
+    "sourceDateLabel": "CMS source as-of date",
+    "publicationState": "PUBLIC_PROFILE",
+    "action": {
+     "type": "PROFILE",
+     "href": "https://www.seniortrusthub.com/facility/cms/105411/abbey-delray-south",
+     "label": "Open SeniorTrustHub profile"
+    }
+   }
+  },
+  "Abigail House for Nursing & Rehabilitation": {
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "nameFilterApplied": true,
+   "candidateCount": 1,
+   "message": null,
+   "firstCandidate": {
+    "hub": "senior",
+    "sourceGrain": "CMS certified provider (CCN)",
+    "stableKey": "senior:nursing_home:315267",
+    "displayName": "ABIGAIL HOUSE FOR NURSING & REHABILITATION",
+    "entityType": "Nursing Home",
+    "matchedName": "ABIGAIL HOUSE FOR NURSING & REHABILITATION",
+    "matchedField": "CMS provider name",
+    "matchMethod": "NORMALIZED_NAME",
+    "hubMatchExplanation": "ABIGAIL HOUSE FOR NURSING & REHABILITATION is a bounded provider-name match in the current CMS nursing-home directory (CCN 315267). Name similarity is a research match, not proof that similarly named providers are the same identity.",
+    "identifiers": [
+     {
+      "label": "CMS CCN",
+      "value": "315267"
+     }
+    ],
+    "recordedLocation": "CAMDEN, NJ, Camden",
+    "locationMeaning": "Recorded CMS location -- not service availability",
+    "sourceAsOf": null,
+    "sourceDateLabel": "CMS source as-of date",
+    "publicationState": "PUBLIC_PROFILE",
+    "action": {
+     "type": "PROFILE",
+     "href": "https://www.seniortrusthub.com/facility/cms/315267/abigail-house-for-nursing-and-rehabilitation",
+     "label": "Open SeniorTrustHub profile"
+    }
+   }
+  },
+  "A Holly Patterson Extended Care Facility": {
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "nameFilterApplied": true,
+   "candidateCount": 1,
+   "message": null,
+   "firstCandidate": {
+    "hub": "senior",
+    "sourceGrain": "CMS certified provider (CCN)",
+    "stableKey": "senior:nursing_home:335023",
+    "displayName": "A Holly Patterson Extended Care Facility",
+    "entityType": "Nursing Home",
+    "matchedName": "A Holly Patterson Extended Care Facility",
+    "matchedField": "CMS provider name",
+    "matchMethod": "NORMALIZED_NAME",
+    "hubMatchExplanation": "A Holly Patterson Extended Care Facility is a bounded provider-name match in the current CMS nursing-home directory (CCN 335023). Name similarity is a research match, not proof that similarly named providers are the same identity.",
+    "identifiers": [
+     {
+      "label": "CMS CCN",
+      "value": "335023"
+     }
+    ],
+    "recordedLocation": "UNIONDALE, NY, Nassau",
+    "locationMeaning": "Recorded CMS location -- not service availability",
+    "sourceAsOf": null,
+    "sourceDateLabel": "CMS source as-of date",
+    "publicationState": "PUBLIC_PROFILE",
+    "action": {
+     "type": "PROFILE",
+     "href": "https://www.seniortrusthub.com/facility/cms/335023/a-holly-patterson-extended-care-facility",
+     "label": "Open SeniorTrustHub profile"
+    }
+   }
+  },
+  "FFIII Houston SNF Tenant": {
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "nameFilterApplied": true,
+   "candidateCount": 1,
+   "message": null,
+   "firstCandidate": {
+    "hub": "senior",
+    "sourceGrain": "CMS certified provider (CCN)",
+    "stableKey": "senior:nursing_home:676111",
+    "displayName": "FFIII Houston SNF Tenant LLC",
+    "entityType": "Nursing Home",
+    "matchedName": "FFIII Houston SNF Tenant LLC",
+    "matchedField": "CMS provider name",
+    "matchMethod": "HUB_NAME_MATCH",
+    "hubMatchExplanation": "FFIII Houston SNF Tenant LLC is a bounded provider-name match in the current CMS nursing-home directory (CCN 676111). Name similarity is a research match, not proof that similarly named providers are the same identity.",
+    "identifiers": [
+     {
+      "label": "CMS CCN",
+      "value": "676111"
+     }
+    ],
+    "recordedLocation": "HOUSTON, TX, Harris",
+    "locationMeaning": "Recorded CMS location -- not service availability",
+    "sourceAsOf": null,
+    "sourceDateLabel": "CMS source as-of date",
+    "publicationState": "PUBLIC_PROFILE",
+    "action": {
+     "type": "PROFILE",
+     "href": "https://www.seniortrusthub.com/facility/cms/676111/ffiii-houston-snf-tenant-llc",
+     "label": "Open SeniorTrustHub profile"
+    }
+   }
+  },
+  "ADAMS COUNTY MANOR": {
+   "state": "COMPLETED_WITH_CANDIDATES",
+   "nameFilterApplied": true,
+   "candidateCount": 1,
+   "message": null,
+   "firstCandidate": {
+    "hub": "senior",
+    "sourceGrain": "CMS certified provider (CCN)",
+    "stableKey": "senior:nursing_home:366143",
+    "displayName": "ADAMS COUNTY MANOR",
+    "entityType": "Nursing Home",
+    "matchedName": "ADAMS COUNTY MANOR",
+    "matchedField": "CMS provider name",
+    "matchMethod": "NORMALIZED_NAME",
+    "hubMatchExplanation": "ADAMS COUNTY MANOR is a bounded provider-name match in the current CMS nursing-home directory (CCN 366143). Name similarity is a research match, not proof that similarly named providers are the same identity.",
+    "identifiers": [
+     {
+      "label": "CMS CCN",
+      "value": "366143"
+     }
+    ],
+    "recordedLocation": "WEST UNION, OH, Adams",
+    "locationMeaning": "Recorded CMS location -- not service availability",
+    "sourceAsOf": null,
+    "sourceDateLabel": "CMS source as-of date",
+    "publicationState": "PUBLIC_PROFILE",
+    "action": {
+     "type": "PROFILE",
+     "href": "https://www.seniortrusthub.com/facility/cms/366143/adams-county-manor",
+     "label": "Open SeniorTrustHub profile"
+    }
+   }
+  },
+  "senior care Florida": {
+   "state": "UNSUPPORTED_OPERATION",
+   "nameFilterApplied": false,
+   "candidateCount": 0,
+   "message": "SeniorTrustHub interpreted this text as a care-category question instead of a provider name, so a name search could not be confirmed.",
+   "firstCandidate": null
+  }
+ }
+}

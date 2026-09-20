@@ -188,12 +188,16 @@ test('9. restricted grains stay restricted; no profile URL is ever invented; off
   assert.equal(fixtureModeEnabled({ NAME_CANDIDATES_FIXTURE: 'five-allied', VERCEL_ENV: 'production' }), false, 'fixtures can never be served in production');
   assert.equal(fixtureModeEnabled({}), false);
 });
-test('9b. contract/version drift and the Senior free-text misparse are failures/unsupported, never misses', async () => {
+test('9b. contract/version drift and the Senior category-intent decline are failures/unsupported, never misses', async () => {
   const drift = await lenderNameAdapter.search('Rocket Mortgage', 1, ctx(jsonFetch(() => ({ body: { contract: 'trusthub-specialist-execution-v2', contractVersion: '9.9.9', schemaFingerprint: 'x', resultState: 'NO_CONFIDENT_MATCH', queryInterpretation: { identityName: 'rocket mortgage' } } }))));
   assert.deepEqual([drift.state, drift.failureKind], ['TECHNICAL_FAILURE', 'contract_mismatch']);
-  const misparse = await seniorNameAdapter.search('A Holly Patterson Extended Care Facility', 1, ctx(jsonFetch(() => ({ body: { contract: 'senior-ask-v1', terminalState: 'NEEDS_CLARIFICATION', query: { mode: 'fail_closed' }, results: [] } }))));
+  // TH-SEARCH-R1-019G: seniorNameAdapter now consumes the RELEASED senior-name-candidates-v1
+  // operation (see th-search-r1-019g.test.ts for the full acceptance/negative-control gate) --
+  // the old senior-ask-v1 free-text misparse shape this test used to assert against is retired
+  // for NAME_CANDIDATES.
+  const misparse = await seniorNameAdapter.search('senior care Florida', 1, ctx(jsonFetch(() => ({ status: 422, body: { contract: 'senior-name-candidates-v1', hub: 'senior', resultState: 'UNSUPPORTED_OPERATION', name: { supplied: 'senior care Florida', predicateApplied: false }, message: 'This text was not accepted as a structured provider name.' } }))));
   assert.equal(misparse.state, 'UNSUPPORTED_OPERATION'); assert.equal(misparse.nameFilterApplied, false);
-  const miss = await seniorNameAdapter.search('zzqx', 1, ctx(jsonFetch(() => ({ body: { contract: 'senior-ask-v1', terminalState: 'NO_MATCH', query: { mode: 'entity', identityQuery: 'zzqx' }, results: [] } }))));
+  const miss = await seniorNameAdapter.search('zzqx', 1, ctx(jsonFetch(() => ({ body: { contract: 'senior-name-candidates-v1', hub: 'senior', resultState: 'COMPLETED_NO_CANDIDATES', name: { supplied: 'zzqx', predicateApplied: true }, candidates: [], pagination: { page: 1, hasMore: false }, limitations: [] } }))));
   assert.deepEqual([miss.state, miss.nameFilterApplied], ['COMPLETED_NO_CANDIDATES', true]);
   const timeout = await moveNameAdapter.search('Allied', 1, ctx((async () => { throw Object.assign(new Error('aborted'), { name: 'AbortError' }); }) as typeof fetch));
   assert.deepEqual([timeout.state, timeout.failureKind], ['TECHNICAL_FAILURE', 'timeout']);
