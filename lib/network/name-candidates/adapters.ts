@@ -14,7 +14,6 @@ import { CANONICAL_ORIGINS, type SpecialistHubId } from '../registry.ts';
 import {
   MOVE_NETWORK_CONTRACT_FINGERPRINT, MOVE_NETWORK_RESOLVER_URL, MOVE_NETWORK_RESOLVER_VERSION, MOVE_NETWORK_SCHEMA_FINGERPRINT,
 } from '../move-network-resolver.ts';
-import { SENIOR_ASK_API, SENIOR_ASK_CONTRACT } from '../senior-ask.ts';
 import {
   HUB_PAGE_SIZE, type CandidateAction, type HubNameSearchOutcome, type MatchMethod, type NameCandidate,
 } from './contract.ts';
@@ -591,39 +590,125 @@ export const lenderNameAdapter: HubNameAdapter = {
   },
 };
 
-// ---------------------------------------------------------------- Senior (senior-ask-v1 JSON contract; the same engine as the native site)
+// ---------------------------------------------------------------- Senior (senior-name-candidates-v1, TH-SEARCH-R1-019G)
+// R1-019E released a dedicated candidate operation, SEPARATE from and alongside the untouched
+// senior-ask-v1 free-text engine (senior-ask.ts's SENIOR_ASK_API/SENIOR_ASK_CONTRACT, still used
+// elsewhere in Ask -- ask-plan.ts, federated-ask.ts -- for other Senior surfaces this ticket does not
+// touch, and left untouched here). This
+// is the only place that dispatches Senior NAME_CANDIDATES; it never falls back to the free-text
+// engine on a miss, unsupported result or failure. detectClass()/UNSUPPORTED_SENIOR_CLASSES-style
+// category words (nursing, SNF, hospice, home health, care facility) are the SPECIALIST's classifier
+// vocabulary, not Ask's -- a provider class here comes ONLY from the specialist's own row, never
+// inferred from the supplied name's words.
+export const SENIOR_NAME_CANDIDATES_CONTRACT = 'senior-name-candidates-v1';
+export const SENIOR_NAME_CANDIDATES_LOCK = {
+  url: process.env.SENIOR_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.seniortrusthub.com/api/specialist-execution/name-candidates/v1',
+} as const;
+
+/**
+ * The released operation exposes no contractVersion/schemaFingerprint field (unlike Lender/v2), so a
+ * malformed or drifted payload is caught by strict STRUCTURAL validation instead: an allowlisted
+ * resultState, an HTTP status that matches the exact pairing the route itself implements
+ * (route.ts: TECHNICAL_FAILURE->503, UNSUPPORTED_OPERATION->422, every other state->200 -- confirmed
+ * live 2026-09-20), and per-row/per-pagination shape checks below. Anything outside this is rejected
+ * as TECHNICAL_FAILURE, never silently coerced into a miss.
+ */
+const SENIOR_PROVIDER_CLASSES = new Set(['nursing_home', 'home_health', 'hospice']);
+const SENIOR_RESULT_STATES = new Set(['COMPLETED_WITH_CANDIDATES', 'COMPLETED_NO_CANDIDATES', 'PARTIAL_TRUNCATED', 'UNSUPPORTED_OPERATION', 'TECHNICAL_FAILURE']);
+function seniorExpectedStatus(state: string): number { return state === 'TECHNICAL_FAILURE' ? 503 : state === 'UNSUPPORTED_OPERATION' ? 422 : 200; }
+
+/**
+ * A Senior profile action must resolve on SeniorTrustHub's canonical origin AND, where the URL's own
+ * structure exposes a CMS CCN path segment, that segment must equal the row's own CCN -- a URL
+ * exposing a DIFFERENT CCN than the record it is attached to is dropped, never rewritten.
+ */
+function seniorProfileAction(ccn: string, raw: unknown): CandidateAction | null {
+  const safe = safeHubUrl('senior', raw); if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  const m = /\/cms\/(\d{6})(?:\/|$)/.exec(url.pathname);
+  if (m && m[1] !== ccn) return null;
+  return { type: 'PROFILE', href: safe.href, label: 'Open SeniorTrustHub profile' };
+}
+
+/** Structural pagination validation for the released operation's own (much smaller) {page, hasMore} shape -- never a specific name's counts. */
+function validSeniorPagination(pag: Record<string, unknown>, requestedPage: number): boolean {
+  return typeof pag.page === 'number' && Number.isInteger(pag.page) && pag.page === requestedPage && typeof pag.hasMore === 'boolean';
+}
+
 const seniorBase: Base = { hub: 'senior', searchedScope: 'Current CMS nursing home, home health and hospice directories', matchBreadth: 'Bounded provider-name matches in the CMS directories' };
 export const seniorNameAdapter: HubNameAdapter = {
   ...seniorBase, enabled: true, sourceGrain: 'CMS certified provider (CCN)',
   async search(name, page, ctx) {
     const started = Date.now();
-    const url = new URL(SENIOR_ASK_API); url.searchParams.set('q', name); if (page > 1) url.searchParams.set('page', String(page));
-    const res = await call(ctx, url, { method: 'GET' });
+    const res = await call(ctx, SENIOR_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operation: 'provider_name_candidates', name, page }),
+    });
     if ('failure' in res) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
     const p = res.body;
-    if (text(p.contract) !== SENIOR_ASK_CONTRACT) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
-    if (res.status !== 200) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
-    const query = record(p.query);
-    // This endpoint interprets free text. Unless it PROVES it ran a provider-name search on exactly
-    // our name, its answer is about some other question -- never a name miss.
-    if (text(query.mode) !== 'entity' || !echoesName(text(query.identityQuery), name)) {
-      return outcome(seniorBase, { state: 'UNSUPPORTED_OPERATION', message: 'SeniorTrustHub interpreted this text as a care-category question instead of a provider name, so a name search could not be confirmed.' }, started, page);
+    if (text(p.contract) !== SENIOR_NAME_CANDIDATES_CONTRACT || text(p.hub) !== 'senior') {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
     }
-    const rows = records(p.results);
+    const state = text(p.resultState) ?? '';
+    // Catches BOTH an unrecognized resultState AND the route's own request-validation/execution-error
+    // shapes ({status:"invalid_request"|"execution_unavailable"}), which carry no resultState at all.
+    if (!SENIOR_RESULT_STATES.has(state)) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    if (res.status !== seniorExpectedStatus(state)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_OPERATION') {
+      // The specialist itself declined this input (a care-category/quality-intent phrase, not a
+      // structured provider name). Not evidence a matching provider does not exist, never a miss.
+      return outcome(seniorBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) }, started, page);
+    }
+    if (state === 'TECHNICAL_FAILURE') return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable', message: text(p.message) }, started, page);
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    // A contradictory payload -- claims no candidates yet supplies records -- is a contract failure, never silently admitted.
+    if (state === 'COMPLETED_NO_CANDIDATES' && rawCandidates.length > 0) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no candidates but returned records.' }, started, page);
+    }
+    const rows = records(rawCandidates);
     const mapped = rows.flatMap((row): NameCandidate[] => {
-      const display = text(row.providerName); const ccn = text(row.ccn); const cls = text(row.providerClass);
-      const act = action('senior', row.href, 'PROFILE', 'SeniorTrustHub');
-      if (!display || !ccn || !/^\d{6}$/.test(ccn) || !cls || !act) return [];
+      const cls = text(row.providerClass);
+      const displayName = text(row.displayName);
+      const ccn = text(row.ccn);
+      const locationMeaning = text(row.locationMeaning);
+      const publicationState = text(row.publicationState);
+      // A row missing any of these, or claiming a provider class outside the specialist's own
+      // published trio, is dropped -- never invented, and never inferred from the name's own words.
+      if (!cls || !SENIOR_PROVIDER_CLASSES.has(cls) || !displayName || !ccn || !/^\d{6}$/.test(ccn) || !locationMeaning || publicationState !== 'public_profile') return [];
+      const loc = record(row.recordedLocation);
+      const recordedLocation = [text(loc.city), text(loc.state), text(loc.county)].filter(Boolean).join(', ') || null;
+      const rowAction = record(row.action);
+      const act = text(rowAction.type) === 'PROFILE' ? seniorProfileAction(ccn, rowAction.href) : null;
       return [{
-        hub: 'senior', sourceGrain: 'CMS certified provider (CCN)', stableKey: `senior:${cls}:${ccn}`, displayName: display,
-        entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()), matchedName: display, matchedField: 'CMS provider name',
-        matchMethod: fold(display) === fold(name) ? 'NORMALIZED_NAME' : 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
-        identifiers: [{ label: 'CMS CCN', value: ccn }], recordedLocation: text(row.location), locationMeaning: 'Recorded CMS location -- not service availability',
-        sourceAsOf: text(row.sourceAsOf), sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
+        hub: 'senior', sourceGrain: 'CMS certified provider (CCN)', stableKey: `senior:${cls}:${ccn}`, displayName,
+        entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+        matchedName: displayName, matchedField: 'CMS provider name',
+        matchMethod: fold(displayName) === fold(name) ? 'NORMALIZED_NAME' : 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
+        identifiers: [{ label: 'CMS CCN', value: ccn }],
+        // The specialist's OWN wording is preserved verbatim -- never Ask's own paraphrase of what
+        // "recorded location" means, since that meaning can differ by hub and by row.
+        recordedLocation, locationMeaning,
+        sourceAsOf: null, sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
       }];
     });
     const pagination = record(p.pagination);
-    return finish(seniorBase, name, mapped, rows.length, { hasMore: pagination.hasMore === true || (typeof pagination.totalPages === 'number' && pagination.totalPages > page) }, started, page);
+    if (!validSeniorPagination(pagination, page)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    if (state === 'PARTIAL_TRUNCATED' && !hasMore) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a truncated page without hasMore.' }, started, page);
+    }
+    return finish(seniorBase, name, mapped, rawCandidates.length, { hasMore }, started, page);
   },
 };
 
