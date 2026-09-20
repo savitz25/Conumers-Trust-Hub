@@ -121,9 +121,13 @@ test('05 contract/hub mismatch, non-array candidates, and a status/resultState m
   assert.deepEqual([wrongContract.state, wrongContract.failureKind], ['TECHNICAL_FAILURE', 'contract_mismatch']);
   const wrongHub = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: { ...successBody(), hub: 'lender' } })));
   assert.deepEqual([wrongHub.state, wrongHub.failureKind], ['TECHNICAL_FAILURE', 'contract_mismatch']);
-  const notArray = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: { ...successBody(), candidates: { not: 'an array' } } })));
+  // resultState PARTIAL_TRUNCATED + hasMore:true tolerates any candidate count (including zero), so
+  // these isolate the DEDICATED array-type check from the separate state/count/hasMore consistency
+  // check (TH-SEARCH-R1-019G-R1) -- a non-array `candidates` must never be silently coerced into an
+  // empty array by either check.
+  const notArray = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: { ...successBody({ resultState: 'PARTIAL_TRUNCATED', pag: pagination(1, true) }), candidates: { not: 'an array' } } })));
   assert.deepEqual([notArray.state, notArray.failureKind], ['TECHNICAL_FAILURE', 'invalid_response']);
-  const nullCandidates = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: { ...successBody(), candidates: null } })));
+  const nullCandidates = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: { ...successBody({ resultState: 'PARTIAL_TRUNCATED', pag: pagination(1, true) }), candidates: null } })));
   assert.deepEqual([nullCandidates.state, nullCandidates.failureKind], ['TECHNICAL_FAILURE', 'invalid_response']);
   // Status 200 body claiming UNSUPPORTED_OPERATION (should be 422 per the released route) -- a
   // drifted/mocked transport, not a real specialist answer.
@@ -212,4 +216,47 @@ test('10 the old senior-ask-v1 free-text engine is never called by NAME_CANDIDAT
   assert.equal(NAME_ADAPTERS.investor, investorNameAdapter);
   assert.equal(NAME_ADAPTERS.contractor, contractorNameAdapter);
   assert.equal(contractorNameAdapter.enabled, false, 'Contractor remains in its current (blocked) state -- untouched by this ticket');
+});
+
+// ---------------------------------------------------------------- 11. TH-SEARCH-R1-019G-R1: state/count/hasMore contradictions
+// The released operation has no contractVersion/schemaFingerprint, so these internal relationships
+// (state<->candidate count<->hasMore) ARE the contract-drift defense. A contradiction is always
+// TECHNICAL_FAILURE -- Ask never repairs it into a different, plausible-looking success/miss state.
+test('11 contradictory state/count/hasMore combinations are rejected, never silently repaired into a different outcome', async () => {
+  // A. COMPLETED_WITH_CANDIDATES + [] + hasMore=false -- must not silently become a real miss.
+  const a = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ resultState: 'COMPLETED_WITH_CANDIDATES', candidates: [], pag: pagination(1, false) }) })));
+  assert.deepEqual([a.state, a.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'A: claimed candidates but returned none');
+  // B. COMPLETED_NO_CANDIDATES + [] + hasMore=true -- must not silently become PARTIAL_TRUNCATED.
+  const b = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ resultState: 'COMPLETED_NO_CANDIDATES', candidates: [], pag: pagination(1, true) }) })));
+  assert.deepEqual([b.state, b.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'B: claimed a completed miss but also claimed more pages exist');
+  // C. COMPLETED_WITH_CANDIDATES + a valid candidate + hasMore=true -- Senior's own release uses
+  // PARTIAL_TRUNCATED whenever hasMore=true; Ask must not reinterpret this pairing as partial itself.
+  const c = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ resultState: 'COMPLETED_WITH_CANDIDATES', candidates: [candidate()], pag: pagination(1, true) }) })));
+  assert.deepEqual([c.state, c.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'C: a completed (non-partial) state claiming more pages exist');
+  // D. COMPLETED_NO_CANDIDATES + a real row -- retained from the original gate.
+  const d = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ resultState: 'COMPLETED_NO_CANDIDATES', candidates: [candidate()] }) })));
+  assert.deepEqual([d.state, d.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'D: claimed no candidates but returned one');
+  // PARTIAL_TRUNCATED's own candidate count may legitimately be zero -- not a stricter rule Ask invents.
+  const partialZero = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ resultState: 'PARTIAL_TRUNCATED', candidates: [], pag: pagination(1, true) }) })));
+  assert.equal(partialZero.state, 'PARTIAL_TRUNCATED', 'PARTIAL_TRUNCATED with zero candidates and hasMore=true is a legitimate combination Senior itself publishes');
+});
+
+// ---------------------------------------------------------------- 12. strict per-row structural validation: one bad row fails the whole response
+test('12 a single malformed element inside an otherwise-valid candidate array fails the whole response, never silently dropped alongside the valid rows', async () => {
+  // E. A non-object (primitive string) element mixed with a valid row.
+  const e = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate(), 'bad-row'] }) })));
+  assert.deepEqual([e.state, e.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'E: a primitive element must not be silently filtered out while the valid row is admitted');
+  // F. A structurally incomplete object (missing displayName/ccn/locationMeaning/publicationState) mixed with a valid row.
+  const f = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate(), { providerClass: 'nursing_home' }] }) })));
+  assert.deepEqual([f.state, f.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'F: an incomplete row must not be silently filtered out while the valid row is admitted');
+});
+
+// ---------------------------------------------------------------- 13. action-validation tolerance is preserved despite the new row strictness
+test('13 identity-complete rows are still admitted with action:null when only the action is missing/malformed/off-origin/CCN-mismatched', async () => {
+  for (const badAction of [null, { type: 'RESEARCH', href: 'https://www.seniortrusthub.com/facility/cms/105411/abbey-delray-south' }, { type: 'PROFILE', href: 'https://evil.example.com/x' }, { type: 'PROFILE', href: 'https://www.seniortrusthub.com/facility/cms/999999/x' }]) {
+    const r = await search('Abbey Delray South', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate({ action: badAction as never })] }) })));
+    assert.equal(r.state, 'COMPLETED_WITH_CANDIDATES', JSON.stringify(badAction));
+    assert.equal(r.candidates[0].action, null, JSON.stringify(badAction));
+    assert.equal(r.candidates[0].identifiers[0].value, '105411', 'identity survives even though the action does not');
+  }
 });

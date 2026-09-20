@@ -635,6 +635,48 @@ function validSeniorPagination(pag: Record<string, unknown>, requestedPage: numb
   return typeof pag.page === 'number' && Number.isInteger(pag.page) && pag.page === requestedPage && typeof pag.hasMore === 'boolean';
 }
 
+/**
+ * TH-SEARCH-R1-019G-R1: with no contractVersion/schemaFingerprint to lean on, Ask must also verify
+ * the released operation's OWN internal state<->count<->hasMore relationships (confirmed against
+ * Senior main) instead of letting a contradictory payload get silently REPAIRED into a different
+ * state further down (finish() re-derives COMPLETED_WITH_CANDIDATES/COMPLETED_NO_CANDIDATES/
+ * PARTIAL_TRUNCATED from the mapped candidates + hasMore on its own, which is exactly the mechanism
+ * that would quietly reinterpret an upstream contradiction as a normal outcome). A mismatch here is
+ * always TECHNICAL_FAILURE -- Ask never guesses which side (state vs. count vs. hasMore) was right.
+ */
+function seniorStateConsistent(state: string, candidateCount: number, hasMore: boolean): boolean {
+  if (state === 'COMPLETED_WITH_CANDIDATES') return candidateCount > 0 && !hasMore;
+  if (state === 'COMPLETED_NO_CANDIDATES') return candidateCount === 0 && !hasMore;
+  // PARTIAL_TRUNCATED's own candidate count may be zero or greater per Senior's published contract --
+  // never a stricter rule invented here.
+  return hasMore === true;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Strict per-row structural validation. ANY array element failing this fails the WHOLE response as
+ * TECHNICAL_FAILURE -- never silently dropped alongside valid rows the way records()'s generic
+ * plain-object filter would. Action fields are deliberately EXCLUDED from this check (see
+ * seniorProfileAction): a missing/malformed/off-origin/wrong-CCN action degrades that one row's
+ * action to null, by prior explicit design, and must never fail the row's identity.
+ */
+function isStructurallyValidSeniorRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const cls = text(row.providerClass);
+  if (!cls || !SENIOR_PROVIDER_CLASSES.has(cls)) return false;
+  if (!text(row.displayName)) return false;
+  const ccn = text(row.ccn);
+  if (!ccn || !/^\d{6}$/.test(ccn)) return false;
+  if (!text(row.locationMeaning)) return false;
+  if (text(row.publicationState) !== 'public_profile') return false;
+  // recordedLocation may be absent; if present, it must be an object -- never manufactured fields.
+  if (row.recordedLocation !== undefined && !isPlainObject(row.recordedLocation)) return false;
+  return true;
+}
+
 const seniorBase: Base = { hub: 'senior', searchedScope: 'Current CMS nursing home, home health and hospice directories', matchBreadth: 'Bounded provider-name matches in the CMS directories' };
 export const seniorNameAdapter: HubNameAdapter = {
   ...seniorBase, enabled: true, sourceGrain: 'CMS certified provider (CCN)',
@@ -670,25 +712,34 @@ export const seniorNameAdapter: HubNameAdapter = {
       return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
     }
     const rawCandidates = p.candidates;
-    // A contradictory payload -- claims no candidates yet supplies records -- is a contract failure, never silently admitted.
-    if (state === 'COMPLETED_NO_CANDIDATES' && rawCandidates.length > 0) {
-      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no candidates but returned records.' }, started, page);
+    const pagination = record(p.pagination);
+    if (!validSeniorPagination(pagination, page)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested.' }, started, page);
     }
-    const rows = records(rawCandidates);
-    const mapped = rows.flatMap((row): NameCandidate[] => {
-      const cls = text(row.providerClass);
-      const displayName = text(row.displayName);
-      const ccn = text(row.ccn);
-      const locationMeaning = text(row.locationMeaning);
-      const publicationState = text(row.publicationState);
-      // A row missing any of these, or claiming a provider class outside the specialist's own
-      // published trio, is dropped -- never invented, and never inferred from the name's own words.
-      if (!cls || !SENIOR_PROVIDER_CLASSES.has(cls) || !displayName || !ccn || !/^\d{6}$/.test(ccn) || !locationMeaning || publicationState !== 'public_profile') return [];
+    const hasMore = pagination.hasMore === true;
+    // The released operation's own state<->count<->hasMore relationships must hold BEFORE any mapping
+    // happens -- a contradiction here is never repaired into a different (but plausible-looking)
+    // success/miss state further down.
+    if (!seniorStateConsistent(state, rawCandidates.length, hasMore)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a result state inconsistent with its own candidate count and pagination.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidSeniorRow)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const cls = text(row.providerClass)!;
+      const displayName = text(row.displayName)!;
+      const ccn = text(row.ccn)!;
+      const locationMeaning = text(row.locationMeaning)!;
       const loc = record(row.recordedLocation);
       const recordedLocation = [text(loc.city), text(loc.state), text(loc.county)].filter(Boolean).join(', ') || null;
       const rowAction = record(row.action);
+      // Action validation stays intentionally tolerant: a missing/malformed/off-origin/wrong-CCN
+      // action degrades to null on this one row -- it never invalidates the row's own identity.
       const act = text(rowAction.type) === 'PROFILE' ? seniorProfileAction(ccn, rowAction.href) : null;
-      return [{
+      return {
         hub: 'senior', sourceGrain: 'CMS certified provider (CCN)', stableKey: `senior:${cls}:${ccn}`, displayName,
         entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
         matchedName: displayName, matchedField: 'CMS provider name',
@@ -698,16 +749,8 @@ export const seniorNameAdapter: HubNameAdapter = {
         // "recorded location" means, since that meaning can differ by hub and by row.
         recordedLocation, locationMeaning,
         sourceAsOf: null, sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
-      }];
+      };
     });
-    const pagination = record(p.pagination);
-    if (!validSeniorPagination(pagination, page)) {
-      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested.' }, started, page);
-    }
-    const hasMore = pagination.hasMore === true;
-    if (state === 'PARTIAL_TRUNCATED' && !hasMore) {
-      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a truncated page without hasMore.' }, started, page);
-    }
     return finish(seniorBase, name, mapped, rawCandidates.length, { hasMore }, started, page);
   },
 };

@@ -1,7 +1,7 @@
 {
- "generatedAt": "2026-09-20T04:01:13.494Z",
+ "generatedAt": "2026-09-20T04:36:49.954Z",
  "cleanBefore": {
-  "pass": 34,
+  "pass": 37,
   "fail": 0,
   "failing": []
  },
@@ -58,9 +58,7 @@
    "why": "Every row is forced to nursing_home regardless of the specialist’s own reported class, merging Nursing Home/Home Health/Hospice into one denominator.",
    "detected": true,
    "failedTests": [
-    "02 the six named real providers map with correct class, CCN, recorded location and profile action",
-    "06 a malformed row, an unrecognized provider class, and a non-public-profile row are dropped -- never invented or admitted",
-    "07 nursing home, home health and hospice candidates each keep their own source-recorded class -- never merged"
+    "06 a malformed row, an unrecognized provider class, and a non-public-profile row are dropped -- never invented or admitted"
    ],
    "restoredByteIdentical": true
   },
@@ -80,7 +78,8 @@
    "detected": true,
    "failedTests": [
     "02 the six named real providers map with correct class, CCN, recorded location and profile action",
-    "08 an off-origin, non-PROFILE, or CCN-mismatched action is dropped -- Ask never constructs its own Senior URL"
+    "08 an off-origin, non-PROFILE, or CCN-mismatched action is dropped -- Ask never constructs its own Senior URL",
+    "13 identity-complete rows are still admitted with action:null when only the action is missing/malformed/off-origin/CCN-mismatched"
    ],
    "restoredByteIdentical": true
   },
@@ -101,10 +100,41 @@
     "05 contract/hub mismatch, non-array candidates, and a status/resultState mismatch are TECHNICAL_FAILURE, never a completed miss"
    ],
    "restoredByteIdentical": true
+  },
+  {
+   "id": "K_STATE_CONSISTENCY_CHECK_REMOVED",
+   "why": "COMPLETED_WITH_CANDIDATES/COMPLETED_NO_CANDIDATES/PARTIAL_TRUNCATED can contradict their own candidate count and hasMore (e.g. COMPLETED_WITH_CANDIDATES + zero rows) and finish() silently repairs the contradiction into a different, plausible-looking outcome instead of failing closed.",
+   "detected": true,
+   "failedTests": [
+    "05 contract/hub mismatch, non-array candidates, and a status/resultState mismatch are TECHNICAL_FAILURE, never a completed miss",
+    "09 a page mismatch is rejected, and PARTIAL_TRUNCATED is only accepted together with hasMore",
+    "11 contradictory state/count/hasMore combinations are rejected, never silently repaired into a different outcome"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "L_STATE_CONSISTENCY_RULE_WEAKENED",
+   "why": "seniorStateConsistent() itself is weakened to always return true, disabling the state/count/hasMore contradiction check without removing its call site.",
+   "detected": true,
+   "failedTests": [
+    "05 contract/hub mismatch, non-array candidates, and a status/resultState mismatch are TECHNICAL_FAILURE, never a completed miss",
+    "09 a page mismatch is rejected, and PARTIAL_TRUNCATED is only accepted together with hasMore",
+    "11 contradictory state/count/hasMore combinations are rejected, never silently repaired into a different outcome"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "M_MIXED_MALFORMED_ROWS_SILENTLY_FILTERED",
+   "why": "A malformed element mixed into an otherwise-valid candidates array is silently dropped (records()-style) instead of failing the whole response, weakening the structural contract check.",
+   "detected": true,
+   "failedTests": [
+    "12 a single malformed element inside an otherwise-valid candidate array fails the whole response, never silently dropped alongside the valid rows"
+   ],
+   "restoredByteIdentical": true
   }
  ],
  "cleanAfter": {
-  "pass": 34,
+  "pass": 37,
   "fail": 0,
   "failing": []
  }

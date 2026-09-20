@@ -45,6 +45,16 @@ const mutations = [
   { id: 'J_MALFORMED_ARRAY_BECOMES_ZERO_RESULT_SUCCESS', file: FILE, why: 'A non-array `candidates` field (a malformed payload) is coerced into an empty array and reported as a completed miss instead of a technical failure.',
     find: "    if (!Array.isArray(p.candidates)) {\n      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);\n    }\n    const rawCandidates = p.candidates;",
     replace: '    const rawCandidates = Array.isArray(p.candidates) ? p.candidates : [];' },
+  // -------------------------------------------------------------- TH-SEARCH-R1-019G-R1 (strict-contract consistency)
+  { id: 'K_STATE_CONSISTENCY_CHECK_REMOVED', file: FILE, why: 'COMPLETED_WITH_CANDIDATES/COMPLETED_NO_CANDIDATES/PARTIAL_TRUNCATED can contradict their own candidate count and hasMore (e.g. COMPLETED_WITH_CANDIDATES + zero rows) and finish() silently repairs the contradiction into a different, plausible-looking outcome instead of failing closed.',
+    find: '    if (!seniorStateConsistent(state, rawCandidates.length, hasMore)) {\n      return outcome(seniorBase, { state: \'TECHNICAL_FAILURE\', failureKind: \'invalid_response\', message: \'The specialist reported a result state inconsistent with its own candidate count and pagination.\' }, started, page);\n    }',
+    replace: '' },
+  { id: 'L_STATE_CONSISTENCY_RULE_WEAKENED', file: FILE, why: 'seniorStateConsistent() itself is weakened to always return true, disabling the state/count/hasMore contradiction check without removing its call site.',
+    find: "function seniorStateConsistent(state: string, candidateCount: number, hasMore: boolean): boolean {\n  if (state === 'COMPLETED_WITH_CANDIDATES') return candidateCount > 0 && !hasMore;\n  if (state === 'COMPLETED_NO_CANDIDATES') return candidateCount === 0 && !hasMore;\n  // PARTIAL_TRUNCATED's own candidate count may be zero or greater per Senior's published contract --\n  // never a stricter rule invented here.\n  return hasMore === true;\n}",
+    replace: 'function seniorStateConsistent(): boolean {\n  return true;\n}' },
+  { id: 'M_MIXED_MALFORMED_ROWS_SILENTLY_FILTERED', file: FILE, why: 'A malformed element mixed into an otherwise-valid candidates array is silently dropped (records()-style) instead of failing the whole response, weakening the structural contract check.',
+    find: '    if (!rawCandidates.every(isStructurallyValidSeniorRow)) {\n      return outcome(seniorBase, { state: \'TECHNICAL_FAILURE\', failureKind: \'invalid_response\', message: \'The specialist returned a candidate record in an unexpected shape.\' }, started, page);\n    }\n    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {',
+    replace: '    const mapped: NameCandidate[] = rawCandidates.filter(isStructurallyValidSeniorRow).map((row: Record<string, unknown>) => {' },
 ];
 
 const report = { generatedAt: new Date().toISOString(), cleanBefore: run(), mutations: [], cleanAfter: null };
