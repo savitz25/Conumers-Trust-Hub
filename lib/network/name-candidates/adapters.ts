@@ -549,11 +549,23 @@ export const insuranceNameAdapter: HubNameAdapter = {
     const continuation = outOfRange || refineExhausted
       ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub')
       : null;
-    const message = outOfRange
-      ? 'The requested Insurance candidate page is past the available candidate window. Matching identities exist; this is not a no-match.'
-      : refineExhausted
-        ? 'InsuranceTrustHub reached its source scan bound for this name before finding every possible match. Refine the organization name for a complete result.'
-        : null;
+    // Ask may need to disclose more than one truthful fact about the SAME page at once (e.g. a
+    // publication-policy suppression alongside a refine-exhausted or out-of-range notice) -- these
+    // are composed, never allowed to overwrite one another (ticket's "suppression notice + refine
+    // notice must preserve both facts" requirement).
+    const notices: string[] = [];
+    if (outOfRange) {
+      notices.push('The requested Insurance candidate page is past the available candidate window. Matching identities exist; this is not a no-match.');
+    } else if (refineExhausted) {
+      notices.push('InsuranceTrustHub reached its source scan bound for this name before finding every possible match. Refine the organization name for a complete result.');
+    }
+    const suppressedCount = typeof pagination.suppressedByPublicationPolicy === 'number' ? pagination.suppressedByPublicationPolicy : 0;
+    if (suppressedCount > 0) {
+      // Truthful disclosure only: never "violation"/"bad actor"/"deleted"/"missing data", never a
+      // claim that the withheld identities were added to `candidates`, and matchedCount is untouched.
+      notices.push(`InsuranceTrustHub matched ${suppressedCount} additional source ${suppressedCount === 1 ? 'identity' : 'identities'} on this page that ${suppressedCount === 1 ? 'is' : 'are'} withheld from this network view by its publication policy.`);
+    }
+    const message = notices.length ? notices.join(' ') : null;
     return finish(insuranceBase, name, mapped, rawCandidates.length, {
       hubReportedTotal: pagination.matchedCountIsExact === true && typeof pagination.matchedCount === 'number' ? pagination.matchedCount : null,
       hasMore, truncatedWithoutCursor, continuation, message,

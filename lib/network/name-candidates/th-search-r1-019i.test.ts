@@ -12,6 +12,7 @@ import {
   NAME_ADAPTERS, insuranceNameAdapter, lenderNameAdapter, moveNameAdapter, seniorNameAdapter, investorNameAdapter, contractorNameAdapter,
   INSURANCE_NAME_CANDIDATES_CONTRACT, INSURANCE_NAME_CANDIDATES_LOCK, NAME_SPECIALIST_LOCKS, NAME_SPECIALIST_CONTRACT,
 } from './adapters.ts';
+import { mergeHubPage, buildNameResultsView } from './view.ts';
 
 const jsonFetch = (handler: (url: string, init?: RequestInit) => { status?: number; body: unknown }): typeof fetch =>
   (async (url: string | URL, init?: RequestInit) => {
@@ -381,4 +382,91 @@ test('22 selectionUrl is a required non-empty string on every candidate row -- n
   assert.equal(okResearch.state, 'COMPLETED_WITH_CANDIDATES');
   assert.equal(okResearch.candidates.length, 1);
   assert.equal(okResearch.candidates[0].publicationState, 'RESEARCH_ROW_ONLY');
+});
+
+// ---------------------------------------------------------------- TH-SEARCH-R1-019I-R2: publication suppression disclosure
+
+// 23. (required test 1) suppressedByPublicationPolicy = 4 -> a truthful disclosure naming the count
+test('23 suppressedByPublicationPolicy = 4 produces a truthful HubNameSearchOutcome.message naming the count', async () => {
+  const rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:disc-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 4 }) }) })));
+  assert.ok(r.message?.includes('4'), 'the disclosure must name the actual suppressed count');
+  assert.match(r.message ?? '', /withheld/i);
+  assert.match(r.message ?? '', /publication policy/i);
+  assert.doesNotMatch(r.message ?? '', /violat|bad actor|deleted|missing data/i, 'never framed as a violation, bad actor, deletion, or missing data');
+});
+
+// 24. (required test 2) suppressedByPublicationPolicy = 0 -> no suppression disclosure
+test('24 suppressedByPublicationPolicy = 0 composes no suppression disclosure', async () => {
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate()], pag: pagination({ returned: 1, matchedCount: 1, suppressedByPublicationPolicy: 0 }) }) })));
+  assert.equal(r.message, null);
+});
+
+// 25. (required test 3) returned < limit + suppressed > 0 + hasMore=true -> remains PARTIAL_TRUNCATED / hasMore=true
+test('25 a short page with suppression > 0 and hasMore=true remains PARTIAL_TRUNCATED with hasMore true', async () => {
+  const rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:short-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, limit: 10, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 4 }) }) })));
+  assert.equal(r.state, 'PARTIAL_TRUNCATED');
+  assert.equal(r.hasMore, true);
+  assert.equal(r.candidates.length, 6);
+});
+
+// 26. (required test 4) exact matchedCount unchanged even though visible rows are fewer
+test('26 exact matchedCount (hubReportedTotal) is unchanged by suppression even though fewer rows are visible', async () => {
+  const rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:mc-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, hasMore: true, matchedCount: 46, matchedCountIsExact: true, suppressedByPublicationPolicy: 4 }) }) })));
+  assert.equal(r.hubReportedTotal, 46, 'matchedCount is never reduced because identities were withheld by publication policy');
+  assert.equal(r.candidates.length, 6);
+});
+
+// 27. (required test 5) buildNameResultsView exposes the disclosure as a neutral infoNote
+test('27 buildNameResultsView exposes the suppression disclosure as a neutral infoNote on a successful/partial Insurance group', async () => {
+  const rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:view-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 4 }) }) })));
+  const view = buildNameResultsView({ query: 'allied', name: 'allied', scope: 'all', hubs: [r] });
+  const group = view.groups.find((g) => g.hub === 'insurance');
+  assert.ok(group);
+  assert.ok(group!.infoNote?.includes('4'), 'the neutral infoNote must carry the suppression disclosure');
+  assert.equal(group!.statusNote, null, 'a successful/partial state never uses the red-alert statusNote channel');
+});
+
+// 28. (required test 6) mergeHubPage preserves the fresh page's suppression disclosure
+test('28 mergeHubPage preserves the fresh page\'s suppression disclosure instead of clearing it to null', async () => {
+  const page1Rows = [candidate({ stableKey: 'insurance:agency:merge-a' })];
+  const current = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: page1Rows, pag: pagination({ returned: 1, hasMore: true, matchedCount: 46 }) }) })));
+  const page2Rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:merge-b-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const fresh = await search('allied', 2, jsonFetch(() => ({ body: successBody({ candidates: page2Rows, pag: pagination({ page: 2, returned: 6, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 4 }) }) })));
+  const merged = mergeHubPage(current, fresh);
+  assert.ok(merged.message?.includes('4'), 'the merged outcome must preserve the fresh page\'s suppression disclosure');
+  assert.equal(merged.state, 'PARTIAL_TRUNCATED');
+});
+
+// 29. (required test 7) suppression + PARTIAL_REFINE_REQUIRED preserves BOTH messages/facts
+test('29 suppression + PARTIAL_REFINE_REQUIRED composes BOTH facts into one message, never overwriting either', async () => {
+  const rows = [candidate({ displayName: 'V FINANCIAL LLC', value: 'V FINANCIAL LLC', method: 'normalized_exact_name', field: 'legal_name' }, 'V FINANCIAL LLC')];
+  const r = await search('V FINANCIAL LLC', 1, jsonFetch(() => ({ body: successBody({ resultState: 'PARTIAL_REFINE_REQUIRED', candidates: rows, pag: pagination({ returned: 1, hasMore: false, matchedCount: null, matchedCountIsExact: false, completeness: 'SCAN_BOUND_REACHED', suppressedByPublicationPolicy: 3 }) }, 'V FINANCIAL LLC') })));
+  assert.match(r.message ?? '', /refine/i, 'the refine-exhausted fact must survive');
+  assert.ok(r.message?.includes('3'), 'the suppression fact (with its count) must survive alongside the refine fact');
+  assert.match(r.message ?? '', /withheld/i);
+});
+
+// 30. (required test 8) a technical failure keeps its existing error/status treatment, never the neutral infoNote channel
+test('30 a technical-failure hub state keeps its statusNote error treatment; it never populates the neutral infoNote channel', async () => {
+  const priorRows = [candidate()];
+  const prior = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: priorRows, pag: pagination({ returned: 1, hasMore: true, matchedCount: 1 }) }) })));
+  const failed = await search('allied', 2, jsonFetch(() => ({ status: 503, body: { ...V1, resultState: 'SOURCE_UNAVAILABLE', name: name(null, false), scope: {}, candidates: [], pagination: null, limitations: [], message: 'InsuranceTrustHub is temporarily unavailable.' } })));
+  const merged = mergeHubPage(prior, failed);
+  const view = buildNameResultsView({ query: 'allied', name: 'allied', scope: 'all', hubs: [merged] });
+  const group = view.groups.find((g) => g.hub === 'insurance');
+  assert.ok(group);
+  assert.ok(group!.statusNote, 'a technical-failure hub state must still use the statusNote error channel');
+  assert.equal(group!.infoNote, null, 'a failure state must never populate the neutral publication-disclosure infoNote channel');
+});
+
+// 31. (required test 9) no suppressed identity is reconstructed or added to candidates
+test('31 no suppressed identity is reconstructed or added to candidates -- returned candidates are exactly what the specialist supplied', async () => {
+  const rows = Array.from({ length: 6 }, (_, i) => candidate({ stableKey: `insurance:agency:noadd-${i}`, displayName: `ALLIED ROW ${i}`, value: `ALLIED ROW ${i}` }));
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 40 }) }) })));
+  assert.equal(r.candidates.length, 6, 'exactly the rows the specialist actually returned -- never padded toward matchedCount or returned+suppressed');
+  assert.equal(r.returnedCount, 6);
 });
