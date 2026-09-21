@@ -1,3 +1,4 @@
+import { rewriteMoveSpecialistHref } from './move-origin.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
@@ -337,7 +338,7 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
       capabilityStatus: 'handoff',
       mode: 'auto_transport_handoff',
       structuredFilters: { researchCategory: 'auto_transport', role },
-      destination: MOVE_COMPANY_RESEARCH_ROUTE,
+      destination: rewriteMoveSpecialistHref(MOVE_COMPANY_RESEARCH_ROUTE),
       reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and source-backed Auto Transport qualification. Ask routes to that accepted specialist cohort and does not construct it.',
       whatItCanAnswer: 'Continue on MoveTrustHub to research its source-backed 268-company Auto Transport cohort. The cohort includes carriers, brokers, dual-role identities, and identities with an unknown regulatory role; use the role shown on each result.',
       geographyCapability: 'Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.',

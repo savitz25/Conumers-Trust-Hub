@@ -1,3 +1,5 @@
+import { moveOrigin, PRODUCTION_MOVE_ORIGIN } from '../network/move-origin.ts';
+
 export type SpecialistHubId = 'move' | 'lender' | 'insurance' | 'contractor' | 'senior' | 'investor';
 
 export type AskClickTelemetry = {
@@ -26,6 +28,10 @@ export function specialistHubFromHref(href: string, currentOrigin: string): Spec
     const current = new URL(currentOrigin);
     if (url.origin === current.origin) return null;
     const host = url.hostname.replace(/^www\./, '').toLowerCase();
+    const configuredMove = new URL(moveOrigin()).hostname.toLowerCase();
+    if (configuredMove !== new URL(PRODUCTION_MOVE_ORIGIN).hostname && url.hostname.toLowerCase() === configuredMove) {
+      return 'move';
+    }
     const hub =
       host === 'movetrusthub.com'
         ? 'move'

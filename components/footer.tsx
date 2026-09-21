@@ -6,6 +6,7 @@ import {
   ASK_INDEPENDENCE_LINE,
   ASK_NETWORK_LINKS,
 } from '@/lib/design/ask-design-system';
+import { rewriteMoveSpecialistHref } from '@/lib/network/move-origin';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 import { askStateFooterLinks } from '@/lib/network/published-ask-states';
 
@@ -52,7 +53,7 @@ export function Footer() {
               {ASK_NETWORK_LINKS.map((hub) => (
                 <li key={hub.id}>
                   <a
-                    href={hub.href}
+                    href={hub.id === 'move' ? rewriteMoveSpecialistHref(hub.href) : hub.href}
                     className="transition-colors hover:text-white"
                     rel="noopener noreferrer"
                   >
