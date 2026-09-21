@@ -331,13 +331,15 @@ test('19 the legacy trusthub-specialist-execution-v2 Insurance identity endpoint
 });
 
 // ---------------------------------------------------------------- 20. Move/Lender/Senior/Investor/Contractor unchanged
-test('20 sibling hub adapters/locks are byte-identical to before this ticket; Contractor remains disabled', async () => {
+test('20 sibling hub adapters/locks are byte-identical to before this ticket', async () => {
   assert.equal(NAME_ADAPTERS.move, moveNameAdapter);
   assert.equal(NAME_ADAPTERS.lender, lenderNameAdapter);
   assert.equal(NAME_ADAPTERS.senior, seniorNameAdapter);
   assert.equal(NAME_ADAPTERS.investor, investorNameAdapter);
   assert.equal(NAME_ADAPTERS.contractor, contractorNameAdapter);
-  assert.equal(contractorNameAdapter.enabled, false);
+  // TH-SEARCH-R1-019A-FINAL enabled Contractor (contractor-name-candidates-v1); this ticket's own
+  // Insurance-only scope remains otherwise untouched.
+  assert.equal(contractorNameAdapter.enabled, true);
   assert.deepEqual(NAME_SPECIALIST_LOCKS.lender, { url: 'https://www.lendertrusthub.com/api/specialist-execution/v2', version: '2.1.0', schemaFingerprint: '0da572d08450e68f4f01a4f4b28e2e813503f50b1a84546a29d7eb817db205dd' });
   assert.deepEqual(NAME_SPECIALIST_LOCKS.investor, { url: 'https://www.investortrusthub.com/api/specialist-execution/v2', version: '2.0.0', schemaFingerprint: 'a92b72c4a30de1021ecf25d26decb852b52394f741ac26919b89d14a234ab384' });
 });

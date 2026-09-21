@@ -215,7 +215,9 @@ test('10 the old senior-ask-v1 free-text engine is never called by NAME_CANDIDAT
   assert.equal(NAME_ADAPTERS.insurance, insuranceNameAdapter);
   assert.equal(NAME_ADAPTERS.investor, investorNameAdapter);
   assert.equal(NAME_ADAPTERS.contractor, contractorNameAdapter);
-  assert.equal(contractorNameAdapter.enabled, false, 'Contractor remains in its current (blocked) state -- untouched by this ticket');
+  // TH-SEARCH-R1-019A-FINAL enabled Contractor (contractor-name-candidates-v1); this ticket's own
+  // Senior-only scope remains otherwise untouched.
+  assert.equal(contractorNameAdapter.enabled, true);
 });
 
 // ---------------------------------------------------------------- 11. TH-SEARCH-R1-019G-R1: state/count/hasMore contradictions

@@ -142,9 +142,8 @@ test('7c. a genuine completed miss is distinct from failure and keeps the entere
   assert.equal(view.kind, 'COMPLETED_MISS'); assert.match(view.heading, /zzqx nonexistent 9917/);
   assert.equal(nameCandidateTelemetry(r).reason, 'completed_miss');
 });
-test('7d. an unsupported hub is never counted as searched-and-missed (live adapter set)', () => {
-  assert.equal(NAME_ADAPTERS.contractor.enabled, false); assert.match(NAME_ADAPTERS.contractor.dependency ?? '', /searchContractors/);
-  for (const hub of ['move', 'lender', 'insurance', 'senior', 'investor'] as const) assert.equal(NAME_ADAPTERS[hub].enabled, true, hub);
+test('7d. every live adapter is enabled (TH-SEARCH-R1-019A-FINAL: Contractor released)', () => {
+  for (const hub of ['move', 'lender', 'insurance', 'contractor', 'senior', 'investor'] as const) assert.equal(NAME_ADAPTERS[hub].enabled, true, hub);
 });
 
 // ---------------------------------------------------------------- 8. Pagination, View more, stale exclusion
