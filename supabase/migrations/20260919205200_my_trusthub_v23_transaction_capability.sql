@@ -1,5 +1,6 @@
 -- V2-3F. UNAPPLIED to hosted environments. Requires P11 -> P12 -> P13 only.
--- No login, secret, existing-login membership or broad service_role is created.
+-- No login, secret or broad runtime privilege is created. Owner transfer uses
+-- a transaction-local grantor-specific SET membership, removed before commit.
 begin;
 create role myth_v23_authorizer nologin noinherit nosuperuser nobypassrls;
 create role myth_v23_executor nologin noinherit nosuperuser nobypassrls;
@@ -220,6 +221,10 @@ begin
   insert into v23_private.save_validation values(pg_backend_pid(),txid_current(),r.saved_entity_id);
   return query select r.saved_entity_id,r.created,r.restored;
 end $$;
+-- Hosted PG17 CREATEROLE grants administration, not SET or inherited access.
+-- ALTER OWNER also requires the new owner to have CREATE on this schema.
+grant create on schema v23_private to myth_v23_foundation;
+grant myth_v23_foundation to current_user with admin false, inherit false, set true granted by current_user;
 alter function v23_private.save_profile(uuid) owner to myth_v23_foundation;
 revoke all on function v23_private.save_profile(uuid) from public;
 grant execute on function v23_private.save_profile(uuid) to myth_v23_executor;
@@ -253,6 +258,10 @@ alter function v23_private.consume_context(jsonb) owner to myth_v23_foundation;
 revoke all on function v23_private.consume_context(jsonb) from public;
 grant execute on function v23_private.consume_context(jsonb) to myth_v23_executor;
 
+-- Remove only our grant; preserve the platform's separate admin-only grant.
+revoke create on schema v23_private from myth_v23_foundation;
+revoke myth_v23_foundation from current_user granted by current_user;
+
 grant select,delete on ops.v23_profile_runtime_records,ops.v23_profile_runtime_quota to myth_v23_cleanup;
 create policy v23_cleanup_records on ops.v23_profile_runtime_records to myth_v23_cleanup
   using(created_at<statement_timestamp()-case when kind='receipt' then interval '30 days' else interval '1 hour' end);
@@ -261,5 +270,7 @@ create policy v23_cleanup_quota on ops.v23_profile_runtime_quota to myth_v23_cle
 create index v23_retention on ops.v23_profile_runtime_records(created_at,kind);
 create index v23_quota_retention on ops.v23_profile_runtime_quota(window_start);
 -- Authorizer rows must be deleted before commit; crash/rollback leaves no grant.
--- No role memberships: a later approved isolated parent login must be scoped.
+-- No persistent executor SET/INHERIT membership, LOGIN role or broad runtime
+-- privilege. Hosted administrative membership may remain SET FALSE / INHERIT
+-- FALSE; it is not a runtime privilege path. A later parent login needs review.
 commit;

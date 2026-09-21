@@ -8,6 +8,7 @@ on:
       - 'scripts/qa/v23-*'
       - 'scripts/qa/v23f-*'
       - 'supabase/migrations/*my_trusthub_v23*'
+      - 'supabase/tests/v23_*'
       - 'docs/my-trusthub/v2/V2-3F-rollback.sql'
       - 'app/my/profile-save/**'
       - 'scripts/qa/node-sqlite.d.ts'
