@@ -74,3 +74,27 @@ contracts (34), runtime tests (17 plus the mocked Move transport harness),
 browser-path contract tests (6), V2-2 account contracts (30), both Search
 Reliability suites, full repository `npm test`, typecheck, build and lint
 (zero errors; seven existing warnings). These are not live Auth/browser tests.
+
+### Hosted ACL repair and certification — 2026-09-21
+
+The ACL-only repair committed on `xkkiicsassizmakcvxml` after all three CI
+workflows and Vercel passed at `b2386766f2b22793861d73e63dd7ba74e988ce10`.
+Post-commit catalog checks passed for all three wrappers: foundation owner,
+SECURITY DEFINER, PUBLIC/anon/authenticated EXECUTE false, explicit executor
+EXECUTE true, no unexpected grantee. Executor foundation SET/USAGE and foundation
+schema CREATE remain false. Platform admin-only memberships were preserved.
+
+The first hosted matrix attempt stopped at its BFF negative-test setup because
+the hosted executor lacked SET on `myth_bff_move`. Complete fixture rollback was
+verified. The harness now self-grants that test role with INHERIT FALSE, only
+inside the existing rollback-only transaction. No security assertion changed.
+The corrected hosted run passed all 44 assertions. Post-run catalog checks passed;
+temporary memberships and fixture data were absent. All 27 application tables
+retain ENABLE + FORCE RLS (including all six V2-3 tables). The ledger is unchanged:
+remote baseline + P11/P12/P13 + V2-3 deployed version `20260921172940`.
+
+V2-3 DATABASE = CERTIFIED for this isolated SQL/security gate, not browser/Auth
+or cross-domain certification. No Auth/config overrides, persistent Users A/B,
+Move binding, Builder 3 handoff, production mutation or PR merge was performed.
+See `artifacts/my-trusthub/v2/v2-3f-wrapper-acl-validation.json` for the bounded
+evidence record. The disposable branch remains active for the next authorized step.

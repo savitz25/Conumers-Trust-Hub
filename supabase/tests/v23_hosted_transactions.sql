@@ -1,7 +1,9 @@
 -- Isolated branch ONLY. Synthetic SQL/Auth fixtures, NOT browser/provider QA.
 -- One rollback-only transaction; no persistent user, grant, schema or research.
 begin;
-grant myth_v23_authorizer,myth_v23_executor,myth_v23_browser_store,myth_v23_cleanup
+-- Hosted PG17 auto ADMIN membership is not SET authority. The BFF negative
+-- access check also needs a temporary self-grant; ROLLBACK removes all of these.
+grant myth_v23_authorizer,myth_v23_executor,myth_v23_browser_store,myth_v23_cleanup,myth_bff_move
   to current_user with admin false,inherit false,set true granted by current_user;
 create temporary table v23_results(label text primary key,passed boolean not null);
 grant select,insert on v23_results to anon,authenticated,myth_bff_move,
