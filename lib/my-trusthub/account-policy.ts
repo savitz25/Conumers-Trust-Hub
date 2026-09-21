@@ -11,10 +11,34 @@ export function accessMode(env: AccountEnv): 'internal' | 'invitation' | 'public
   if (!mode) return 'internal'; // No implicit public activation from the legacy canary toggle.
   return mode === 'internal' || mode === 'invitation' || mode === 'public' ? mode : 'closed';
 }
+/**
+ * Password sign-in for an already-approved isolated preview or local dev pair.
+ * Production and an unset VERCEL_ENV ignore the flag. It does not open signup,
+ * email delivery, or the My TrustHub workspace master gate.
+ */
+export function previewAccountAccess(env: AccountEnv): boolean {
+  if (env.VERCEL_ENV !== 'preview' && env.VERCEL_ENV !== 'development') return false;
+  if (!enabled(env.MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS)) return false;
+  return accountRuntime(env) !== null;
+}
+
+export function accountSignInEnabled(env: AccountEnv): boolean {
+  return enabled(env.MY_TRUSTHUB_ENABLED) || previewAccountAccess(env);
+}
+
+/** Login can use preview account access. Every other account form still requires the master gate. */
+export function accountFormAvailable(operation: 'signup' | 'login' | 'link' | 'recovery' | 'password', env: AccountEnv): boolean {
+  if (!accountRuntime(env)) return false;
+  if (operation === 'login') return accountSignInEnabled(env);
+  return enabled(env.MY_TRUSTHUB_ENABLED);
+}
+
 export function admitted(user: AccountUser | null, env: AccountEnv): boolean {
-  if (!enabled(env.MY_TRUSTHUB_ENABLED) || !user?.email_confirmed_at) return false;
+  if (!accountSignInEnabled(env) || !user?.email_confirmed_at) return false;
   const mode = accessMode(env);
-  if (mode === 'public') return true;
+  // Preview account access never widens to every confirmed user. Public admission
+  // still requires the master gate.
+  if (mode === 'public') return enabled(env.MY_TRUSTHUB_ENABLED);
   if (mode === 'closed') return false;
   const prefix = mode === 'internal' ? 'MY_TRUSTHUB_CANARY' : 'MY_TRUSTHUB_INVITED';
   const eligible = list(env[`${prefix}_USER_IDS`]).includes(user.id.toLowerCase()) ||
