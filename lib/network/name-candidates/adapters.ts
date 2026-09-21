@@ -305,7 +305,7 @@ export const investorNameAdapter: HubNameAdapter = {
 };
 
 // ---------------------------------------------------------------- Insurance (insurance-name-candidates-v1, TH-SEARCH-R1-019I)
-// R1-019H released a dedicated candidate operation for Insurance, SEPARATE from and alongside the
+// R1-019F released a dedicated candidate operation for Insurance, SEPARATE from and alongside the
 // untouched v2 identity contract above (NAME_SPECIALIST_LOCKS.insurance / v2Identity -- still used
 // elsewhere in Ask for Insurance identifiers, cohorts, evidence and other specialist execution, and
 // left completely untouched here). This is the only place that dispatches Insurance NAME_CANDIDATES;
@@ -398,7 +398,7 @@ function isStructurallyValidInsuranceRow(row: unknown): row is Record<string, un
   const actType = text(act.type);
   if (!actType || (actType !== 'PROFILE' && actType !== 'RESEARCH') || !text(act.url)) return false;
   if (row.profileUrl !== null && !text(row.profileUrl)) return false;
-  if (row.selectionUrl !== null && !text(row.selectionUrl)) return false;
+  if (!text(row.selectionUrl)) return false;
   if (!text(row.whyMatched)) return false;
   return true;
 }

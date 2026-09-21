@@ -351,3 +351,34 @@ test('21 CITIZENS PROP INS CORP and ocean harbor map as PUBLIC_PROFILE legal ins
   assert.equal(r.candidates[0].sourceAsOf, null, 'the v1 candidate contract does not publish a source clock; Ask never invents an observation date');
   assert.equal(r.hubReportedTotal, 1);
 });
+
+// ---------------------------------------------------------------- 22. selectionUrl is a required non-empty string (TH-SEARCH-R1-019I-R1)
+test('22 selectionUrl is a required non-empty string on every candidate row -- null/missing/empty fails the WHOLE response, never silently admitted', async () => {
+  const pag1 = pagination({ returned: 1, matchedCount: 1 });
+
+  // A. selectionUrl: null
+  const nullSelectionUrl = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate({ selectionUrl: null })], pag: pag1 }) })));
+  assert.deepEqual([nullSelectionUrl.state, nullSelectionUrl.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'selectionUrl: null must fail the whole response, never be silently admitted as identity-less');
+
+  // B. selectionUrl missing/undefined from the row entirely (not merely set to undefined, which the fixture builder treats as "use the default")
+  const rowWithoutSelectionUrl = candidate() as Record<string, unknown>;
+  delete rowWithoutSelectionUrl.selectionUrl;
+  const missingSelectionUrl = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: [rowWithoutSelectionUrl], pag: pag1 }) })));
+  assert.deepEqual([missingSelectionUrl.state, missingSelectionUrl.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'a row with no selectionUrl key at all must fail the whole response');
+
+  // C. selectionUrl: ""
+  const emptySelectionUrl = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate({ selectionUrl: '' })], pag: pag1 }) })));
+  assert.deepEqual([emptySelectionUrl.state, emptySelectionUrl.failureKind], ['TECHNICAL_FAILURE', 'invalid_response'], 'selectionUrl: "" must fail the whole response');
+
+  // D. a valid PUBLIC_PROFILE row with a legitimate selectionUrl still succeeds
+  const okProfile = await search('CITIZENS PROP INS CORP', 1, jsonFetch(() => ({ body: successBody({ candidates: [profileCandidate()], pag: pag1 }, 'CITIZENS PROP INS CORP') })));
+  assert.equal(okProfile.state, 'COMPLETED_WITH_CANDIDATES');
+  assert.equal(okProfile.candidates.length, 1);
+  assert.equal(okProfile.candidates[0].publicationState, 'PUBLIC_PROFILE');
+
+  // E. a valid RESEARCH_ROW_ONLY row with a legitimate selectionUrl still succeeds
+  const okResearch = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: [candidate()], pag: pag1 }) })));
+  assert.equal(okResearch.state, 'COMPLETED_WITH_CANDIDATES');
+  assert.equal(okResearch.candidates.length, 1);
+  assert.equal(okResearch.candidates[0].publicationState, 'RESEARCH_ROW_ONLY');
+});
