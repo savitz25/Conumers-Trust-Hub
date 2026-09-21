@@ -29,6 +29,8 @@ export type HubGroupView = {
   emptyPageNote: string | null;
   /** Set when the hub's LATEST state is a failure/unsupported/restricted/ambiguous while earlier valid cards are kept. */
   statusNote: string | null;
+  /** Neutral, non-alarming disclosure (e.g. publication-suppression or refine notice) on a SUCCESSFUL/partial hub state. Never rendered as an error. */
+  infoNote: string | null;
 };
 export type FilterChipView = { id: NameHubScope; label: string; href: string; active: boolean };
 export type AlternateAction = { label: string; href: string };
@@ -85,7 +87,9 @@ export function mergeHubPage(current: HubNameSearchOutcome, fresh: HubNameSearch
   const more = fresh.hasMore || fresh.truncatedWithoutCursor;
   return {
     ...current, candidates, returnedCount: candidates.length, page: fresh.page, hasMore: fresh.hasMore, truncatedWithoutCursor: fresh.truncatedWithoutCursor,
-    hubReportedTotal: fresh.hubReportedTotal ?? current.hubReportedTotal, continuation: fresh.continuation ?? current.continuation, failureKind: undefined, message: null,
+    // The fresh page's own message (e.g. a publication-suppression or refine disclosure) is preserved,
+    // never cleared -- a successful merge must not silently drop a truthful notice about THIS page.
+    hubReportedTotal: fresh.hubReportedTotal ?? current.hubReportedTotal, continuation: fresh.continuation ?? current.continuation, failureKind: undefined, message: fresh.message,
     state: more ? 'PARTIAL_TRUNCATED' : candidates.length ? 'COMPLETED_WITH_CANDIDATES' : 'COMPLETED_NO_CANDIDATES',
   };
 }
@@ -108,6 +112,7 @@ export function buildNameResultsView(input: { query: string; name: string; scope
       canReveal: shown < hub.candidates.length, canFetchMore: moreState === 'MORE_AVAILABLE', moreState, moreMayExist: moreState !== 'COMPLETE',
       emptyPageNote: isTruncatedEmpty(hub) ? `Nothing on ${NETWORK_PUBLIC_NAMES[hub.hub]}'s page ${hub.page} closely matched this name, but it has more records to check.` : null,
       statusNote: latestIsProblem ? hubStatusLine(hub) : null,
+      infoNote: !latestIsProblem && hub.message ? hub.message : null,
     };
   });
   const total = groups.reduce((n, group) => n + group.returned, 0);

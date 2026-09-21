@@ -304,40 +304,282 @@ export const investorNameAdapter: HubNameAdapter = {
   },
 };
 
-const INSURANCE_METHOD: Record<string, MatchMethod> = { exact_name: 'EXACT_SOURCE_NAME', exact: 'EXACT_SOURCE_NAME', normalized_exact: 'NORMALIZED_NAME', normalized_name: 'NORMALIZED_NAME', alias: 'DOCUMENTED_ALIAS', distinctive_token_candidate: 'PREFIX_OR_TOKEN', token_candidate: 'PREFIX_OR_TOKEN', prefix: 'PREFIX_OR_TOKEN', fuzzy: 'SIMILAR_SPELLING' };
-const insuranceBase: Base = { hub: 'insurance', searchedScope: 'Public-safe insurance agencies and published legal insurers (individual producers are not searched)', matchBreadth: 'Organization names containing every distinctive word entered; capped at 10 per request' };
+// ---------------------------------------------------------------- Insurance (insurance-name-candidates-v1, TH-SEARCH-R1-019I)
+// R1-019F released a dedicated candidate operation for Insurance, SEPARATE from and alongside the
+// untouched v2 identity contract above (NAME_SPECIALIST_LOCKS.insurance / v2Identity -- still used
+// elsewhere in Ask for Insurance identifiers, cohorts, evidence and other specialist execution, and
+// left completely untouched here). This is the only place that dispatches Insurance NAME_CANDIDATES;
+// it never falls back to v2 on a miss, restriction, partial-refine or failure.
+export const INSURANCE_NAME_CANDIDATES_CONTRACT = 'insurance-name-candidates-v1';
+export const INSURANCE_NAME_CANDIDATES_LOCK = {
+  url: process.env.INSURANCE_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.insurancetrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: 'c272675bdde4adab8d6672be7fb3143319ada5ec5e61dcf72dc7cda295b0d62f',
+} as const;
+
+/**
+ * The released operation's own method vocabulary (confirmed live 2026-09-20 against allied/beacon/
+ * summit/V FINANCIAL LLC/CITIZENS PROP INS CORP/ocean harbor): exactly these two methods are ever
+ * emitted. No permissive HUB_NAME_MATCH fallback -- an unrecognized method fails row-structural
+ * validation below (and therefore the whole response), never a silent guess.
+ */
+const INSURANCE_METHOD_V1: Record<string, MatchMethod> = {
+  normalized_exact_name: 'NORMALIZED_NAME',
+  distinctive_token_candidate: 'PREFIX_OR_TOKEN',
+};
+const INSURANCE_ELIGIBLE_ENTITY_CLASSES = new Set(['agency', 'legal_insurer']);
+const INSURANCE_PUBLICATION_STATES = new Set(['PUBLIC_PROFILE', 'RESEARCH_ROW_ONLY']);
+const INSURANCE_RESULT_STATES = new Set([
+  'CANDIDATES', 'NO_MATCH', 'PARTIAL_REFINE_REQUIRED', 'INVALID_REQUEST',
+  'UNSUPPORTED_OPERATION', 'RESTRICTED_SCOPE', 'SOURCE_UNAVAILABLE', 'TIMEOUT',
+]);
+/** The released contract's own published HTTP/state pairing (ticket Section 4) -- a contradiction is always TECHNICAL_FAILURE. */
+function insuranceExpectedStatus(state: string): number {
+  if (state === 'CANDIDATES' || state === 'NO_MATCH' || state === 'PARTIAL_REFINE_REQUIRED') return 200;
+  if (state === 'INVALID_REQUEST') return 400;
+  if (state === 'UNSUPPORTED_OPERATION' || state === 'RESTRICTED_SCOPE') return 422;
+  if (state === 'SOURCE_UNAVAILABLE') return 503;
+  return 504; // TIMEOUT
+}
+
+/**
+ * Strict pagination validation for the released operation's own {page, limit, returned, hasMore,
+ * nextPage, outOfRange, matchedCount, matchedCountIsExact, completeness, suppressedByPublicationPolicy}
+ * shape (confirmed live). Never infers final-page state from returned < limit -- publication
+ * suppression can make a page short while hasMore is still true (ticket Section 13).
+ */
+function validInsurancePagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const {
+    page, limit, returned, hasMore, nextPage, outOfRange, matchedCount, matchedCountIsExact, completeness, suppressedByPublicationPolicy,
+  } = pag;
+  if (!int(page) || !int(limit) || !int(returned)) return false;
+  if (typeof hasMore !== 'boolean' || typeof outOfRange !== 'boolean' || typeof matchedCountIsExact !== 'boolean') return false;
+  if (!int(suppressedByPublicationPolicy) || suppressedByPublicationPolicy < 0) return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (returned > limit || returned < 0) return false;
+  if (hasMore) { if (nextPage !== page + 1) return false; } else if (nextPage !== null) return false;
+  if (outOfRange && returned !== 0) return false;
+  if (completeness === 'COMPLETE') {
+    if (!int(matchedCount) || matchedCount < 0 || matchedCountIsExact !== true) return false;
+  } else if (completeness === 'SCAN_BOUND_REACHED') {
+    if (matchedCount !== null || matchedCountIsExact !== false) return false;
+  } else {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Strict per-row structural validation, mirroring Senior's model (TH-SEARCH-R1-019G): ANY array
+ * element failing this fails the WHOLE response as TECHNICAL_FAILURE -- never silently dropped
+ * alongside otherwise-valid rows (ticket Section 9). This is also where the entity-class allowlist
+ * (agency/legal_insurer only -- never person/producer) and the strict match-method vocabulary
+ * (ticket Section 10) are enforced. Action/profileUrl/selectionUrl are only shape-checked here;
+ * their deeper cross-validation (origin, name-scoping, URL correspondence) happens in the action
+ * builders below and degrades that one row's action to null on failure, never the row's identity.
+ */
+function isStructurallyValidInsuranceRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const entityClass = text(row.entityClass);
+  if (!entityClass || !INSURANCE_ELIGIBLE_ENTITY_CLASSES.has(entityClass)) return false;
+  const stableKey = text(row.stableKey);
+  const prefix = `insurance:${entityClass}:`;
+  if (!stableKey || !stableKey.startsWith(prefix) || stableKey.length <= prefix.length) return false;
+  if (!text(row.displayName)) return false;
+  if (row.npn !== null && !/^\d+$/.test(text(row.npn) ?? '')) return false;
+  if (row.naicCode !== null && !/^\d+$/.test(text(row.naicCode) ?? '')) return false;
+  const match = record(row.match);
+  const method = text(match.method);
+  if (!text(match.field) || !text(match.value) || !method || !Object.hasOwn(INSURANCE_METHOD_V1, method)) return false;
+  const publicationState = text(row.publicationState);
+  if (!publicationState || !INSURANCE_PUBLICATION_STATES.has(publicationState)) return false;
+  const act = record(row.action);
+  const actType = text(act.type);
+  if (!actType || (actType !== 'PROFILE' && actType !== 'RESEARCH') || !text(act.url)) return false;
+  if (row.profileUrl !== null && !text(row.profileUrl)) return false;
+  if (!text(row.selectionUrl)) return false;
+  if (!text(row.whyMatched)) return false;
+  return true;
+}
+
+/** The candidate's own stable identity suffix (after "insurance:<class>:"), used to revalidate a RESEARCH action's `selected` param. */
+function insuranceStableSuffix(stableKey: string): string { return stableKey.split(':').slice(2).join(':'); }
+
+/** PROFILE action requires publicationState === PUBLIC_PROFILE, InsuranceTrustHub's canonical origin, and profileUrl (when supplied) to resolve to the same URL as the action. */
+function insuranceProfileAction(row: Record<string, unknown>): CandidateAction | null {
+  const act = record(row.action);
+  if (text(act.type) !== 'PROFILE') return null;
+  const safe = safeHubUrl('insurance', act.url);
+  if (!safe || safe.official) return null;
+  const profileUrlRaw = text(row.profileUrl);
+  if (profileUrlRaw !== null) {
+    const safeProfile = safeHubUrl('insurance', profileUrlRaw);
+    if (!safeProfile || safeProfile.href !== safe.href) return null;
+  }
+  return { type: 'PROFILE', href: safe.href, label: 'Open InsuranceTrustHub profile' };
+}
+
+/**
+ * RESEARCH action requires publicationState === RESEARCH_ROW_ONLY, InsuranceTrustHub's canonical
+ * origin, a name-scoped `q`, the candidate's own stable identity where the URL exposes `selected`,
+ * and selectionUrl (when supplied) to resolve to the same URL as the action.
+ */
+function insuranceResearchAction(name: string, row: Record<string, unknown>, stableKey: string): CandidateAction | null {
+  const act = record(row.action);
+  if (text(act.type) !== 'RESEARCH') return null;
+  const safe = safeHubUrl('insurance', act.url);
+  if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  // The released operation's own research URL echoes the search as "Find <name>" (confirmed live:
+  // "/ask?q=Find+allied&selected=..."), not the bare name -- strip that fixed prefix before the
+  // generic echo-equivalence check, the same way the shared continuation link is built below.
+  const q = url.searchParams.get('q');
+  if (!echoesName(q?.replace(/^find\s+/i, '') ?? null, name)) return null;
+  const selected = url.searchParams.get('selected');
+  if (selected !== null && selected !== insuranceStableSuffix(stableKey)) return null;
+  const selectionUrlRaw = text(row.selectionUrl);
+  if (selectionUrlRaw !== null) {
+    const safeSel = safeHubUrl('insurance', selectionUrlRaw);
+    if (!safeSel || safeSel.href !== safe.href) return null;
+  }
+  return { type: 'RESEARCH', href: safe.href, label: 'Continue research on InsuranceTrustHub' };
+}
+
+const insuranceBase: Base = {
+  hub: 'insurance',
+  searchedScope: 'Agency identities in the accepted national source graph (research rows) and legal insurers in the published Wave-1 cohort (public profiles); individual producers are not searched',
+  matchBreadth: 'Organization names containing every distinctive word entered, matched before any page window is cut',
+};
 export const insuranceNameAdapter: HubNameAdapter = {
   ...insuranceBase, enabled: true, sourceGrain: 'NIPR/NAIC-sourced insurance organization',
   async search(name, page, ctx) {
     const started = Date.now();
-    const r = await v2Identity('insurance', insuranceBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
-    if ('fail' in r) return r.fail!;
-    const p = r.payload;
-    const echoed = records(record(p.queryInterpretation).interpretation).find((row) => text(row.label) === 'Requested name');
-    if (!echoesName(text(echoed?.value ?? null), name)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
-    const rows = records(p.rows);
-    const mapped = rows.flatMap((row): NameCandidate[] => {
-      const entityClass = text(row.entityClass);
-      // Private-person restriction: only organization grains are ever admitted for name discovery.
-      if (entityClass !== 'agency' && entityClass !== 'legal_insurer') return [];
-      const display = text(row.name); const evidence = record(row.matchEvidence);
-      const npn = text(row.npn); const naic = text(row.naicCode); const key = naic ? `naic:${naic}` : npn ? `npn:${npn}` : text(evidence.entityId) ? `entity:${text(evidence.entityId)}` : null;
-      const matchedName = text(evidence.value); const field = text(evidence.field);
-      if (!display || !key || !matchedName || !field) return [];
-      const isProfile = text(row.publicationState) === 'PUBLIC_PROFILE';
-      return [{
-        hub: 'insurance', sourceGrain: 'NIPR/NAIC-sourced insurance organization', stableKey: `insurance:${key}`, displayName: display,
-        entityType: entityClass === 'legal_insurer' ? 'Legal insurer' : 'Insurance agency', matchedName, matchedField: field.replaceAll('_', ' '),
-        matchMethod: INSURANCE_METHOD[text(evidence.method) ?? ''] ?? 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
-        identifiers: [naic ? { label: 'NAIC Company Code', value: naic } : null, npn ? { label: 'NPN', value: npn } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: text(row.credentialJurisdiction), locationMeaning: text(row.credentialJurisdiction) ? 'Credential jurisdiction -- not office or service area' : null,
-        sourceAsOf: text(row.sourceObservedAt), sourceDateLabel: 'Observed in source on', publicationState: text(row.publicationState),
-        action: isProfile ? action('insurance', row.destination, 'PROFILE', 'InsuranceTrustHub') : action('insurance', row.selectionUrl, 'RESEARCH', 'InsuranceTrustHub'),
-      }];
+    const res = await call(ctx, INSURANCE_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ contract: INSURANCE_NAME_CANDIDATES_CONTRACT, operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
     });
-    // The hub caps identity candidates at 10 with no cursor and asserts no exact total.
-    const capped = rows.length >= HUB_PAGE_SIZE;
-    return finish(insuranceBase, name, mapped, rows.length, { truncatedWithoutCursor: capped, continuation: capped ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub') : null }, started, page, { state: r.state, hubName: 'InsuranceTrustHub', continuation: r.continuation });
+    if ('failure' in res) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== INSURANCE_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== INSURANCE_NAME_CANDIDATES_LOCK.version
+      || text(p.schemaFingerprint) !== INSURANCE_NAME_CANDIDATES_LOCK.schemaFingerprint || text(p.hub) !== 'insurance' || text(p.operation) !== 'name_candidates') {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (!INSURANCE_RESULT_STATES.has(state)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    if (res.status !== insuranceExpectedStatus(state)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_OPERATION') {
+      return outcome(insuranceBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) ?? 'InsuranceTrustHub could not search this input as an organization name.' }, started, page);
+    }
+    if (state === 'RESTRICTED_SCOPE') {
+      return outcome(insuranceBase, { state: 'POLICY_RESTRICTED', message: text(p.message) ?? 'Matching records are not published for name discovery.' }, started, page);
+    }
+    if (state === 'SOURCE_UNAVAILABLE' || state === 'TIMEOUT') {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: state === 'TIMEOUT' ? 'timeout' : 'unavailable', message: text(p.message) }, started, page);
+    }
+    if (state === 'INVALID_REQUEST') {
+      // Ask's own properly-formed request was rejected: an adapter/contract disagreement, never a user no-match.
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported Ask’s own request as invalid.' }, started, page);
+    }
+    // Remaining: CANDIDATES, NO_MATCH, PARTIAL_REFINE_REQUIRED -- all require name-filter proof.
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    if (state === 'NO_MATCH' && rawCandidates.length > 0) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);
+    }
+    const pagination = record(p.pagination);
+    if (!validInsurancePagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidInsuranceRow)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    if (state === 'NO_MATCH') {
+      // Only a completed miss when the operation PROVES it: a completed, exact-zero, no-more-pages scan.
+      const completedMiss = pagination.completeness === 'COMPLETE' && pagination.matchedCount === 0
+        && pagination.matchedCountIsExact === true && rawCandidates.length === 0 && pagination.hasMore === false;
+      if (!completedMiss) {
+        return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match under conditions that do not prove a completed search.' }, started, page);
+      }
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const stableKey = text(row.stableKey)!;
+      const entityClass = text(row.entityClass)!;
+      const displayName = text(row.displayName)!;
+      const npn = row.npn === null ? null : text(row.npn);
+      const naicCode = row.naicCode === null ? null : text(row.naicCode);
+      const match = record(row.match);
+      const matchedName = text(match.value)!;
+      const matchedField = text(match.field)!.replaceAll('_', ' ');
+      const matchMethod = INSURANCE_METHOD_V1[text(match.method)!];
+      const publicationState = text(row.publicationState)!;
+      const act = publicationState === 'PUBLIC_PROFILE' ? insuranceProfileAction(row)
+        : publicationState === 'RESEARCH_ROW_ONLY' ? insuranceResearchAction(name, row, stableKey) : null;
+      return {
+        hub: 'insurance', sourceGrain: 'NIPR/NAIC-sourced insurance organization', stableKey, displayName,
+        entityType: entityClass === 'legal_insurer' ? 'Legal insurer' : 'Insurance agency',
+        matchedName, matchedField, matchMethod, hubMatchExplanation: text(row.whyMatched),
+        identifiers: [naicCode ? { label: 'NAIC Company Code', value: naicCode } : null, npn ? { label: 'NPN', value: npn } : null].filter(Boolean) as NameCandidate['identifiers'],
+        // The released candidate contract does not publish credential-jurisdiction/source-clock fields
+        // (ticket Section 12) -- Ask never carries these over from the old v2 shape or invents a date.
+        recordedLocation: null, locationMeaning: null,
+        sourceAsOf: null, sourceDateLabel: 'Source clock not published by this candidate operation',
+        publicationState, action: act,
+      };
+    });
+    const hasMore = pagination.hasMore === true;
+    const outOfRange = pagination.outOfRange === true;
+    const suppressedCount = typeof pagination.suppressedByPublicationPolicy === 'number' ? pagination.suppressedByPublicationPolicy : 0;
+    // R3 (TH-SEARCH-R1-019I-R3): the released operation determines resultState BEFORE its own
+    // network publication suppression is applied, so an all-suppressed final page arrives as an
+    // otherwise-ordinary CANDIDATES response with an empty visible page (rawCandidates.length === 0)
+    // and hasMore === false. That is NOT a completed miss -- matching source identities exist, they
+    // are just withheld from this network view by publication policy -- so it must not silently
+    // fall through to COMPLETED_NO_CANDIDATES. It is only ever "final page" (not "more pages exist"):
+    // when hasMore is true the existing hasMore-driven truncation already prevents a completed miss,
+    // and forcing this here would incorrectly override real next-page continuation with the source-
+    // capped research one (ticket's "HASMORE CASE").
+    const allSuppressedFinalPage = suppressedCount > 0 && rawCandidates.length === 0 && !hasMore;
+    // PARTIAL_REFINE_REQUIRED: the source scan itself was not exhaustive -- always disclose as
+    // partial coverage, even on a page whose own hasMore is false, because the scanned stream ending
+    // is not the same as every possible matching identity being found (ticket Section 7). An
+    // out-of-range page similarly proves matching identities exist beyond the reachable window --
+    // never a completed miss (ticket Section 8). Neither ever silently substitutes page 1.
+    const truncatedWithoutCursor = state === 'PARTIAL_REFINE_REQUIRED' || outOfRange || allSuppressedFinalPage;
+    const refineExhausted = state === 'PARTIAL_REFINE_REQUIRED' && !hasMore;
+    const continuation = outOfRange || refineExhausted || allSuppressedFinalPage
+      ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub')
+      : null;
+    // Ask may need to disclose more than one truthful fact about the SAME page at once (e.g. a
+    // publication-policy suppression alongside a refine-exhausted or out-of-range notice) -- these
+    // are composed, never allowed to overwrite one another (ticket's "suppression notice + refine
+    // notice must preserve both facts" requirement).
+    const notices: string[] = [];
+    if (outOfRange) {
+      notices.push('The requested Insurance candidate page is past the available candidate window. Matching identities exist; this is not a no-match.');
+    } else if (refineExhausted) {
+      notices.push('InsuranceTrustHub reached its source scan bound for this name before finding every possible match. Refine the organization name for a complete result.');
+    }
+    if (suppressedCount > 0) {
+      // Truthful disclosure only: never "violation"/"bad actor"/"deleted"/"missing data", never a
+      // claim that the withheld identities were added to `candidates`, and matchedCount is untouched.
+      notices.push(`InsuranceTrustHub matched ${suppressedCount} additional source ${suppressedCount === 1 ? 'identity' : 'identities'} on this page that ${suppressedCount === 1 ? 'is' : 'are'} withheld from this network view by its publication policy.`);
+    }
+    const message = notices.length ? notices.join(' ') : null;
+    return finish(insuranceBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: pagination.matchedCountIsExact === true && typeof pagination.matchedCount === 'number' ? pagination.matchedCount : null,
+      hasMore, truncatedWithoutCursor, continuation, message,
+    }, started, page);
   },
 };
 

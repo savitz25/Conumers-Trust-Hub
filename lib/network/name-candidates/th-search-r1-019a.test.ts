@@ -168,15 +168,28 @@ test('8. per-hub pages, View more and revision are preserved; an initial cap nev
 
 // ---------------------------------------------------------------- 9. Policy / URLs
 test('9. restricted grains stay restricted; no profile URL is ever invented; off-origin links are dropped', async () => {
-  const lockBody = { contract: 'trusthub-specialist-execution-v2', contractVersion: '2.0.0', schemaFingerprint: '4aa93bb372aebb45c7028b750000e77be4a847d9a210f3c40d3db1df1f7f637f', resultState: 'AMBIGUOUS_IDENTITIES', queryInterpretation: { interpretation: [{ label: 'Requested name', value: 'allied' }] } };
-  const ev = (value: string) => ({ method: 'distinctive_token_candidate', field: 'display_name', value, entityId: `id-${value}` });
-  const insurance = await insuranceNameAdapter.search('allied', 1, ctx(jsonFetch(() => ({ body: { ...lockBody, rows: [
-    { entityClass: 'producer', name: 'ALLIED JANE PERSON', npn: '111', matchEvidence: ev('ALLIED JANE PERSON'), publicationState: 'RESEARCH_ROW_ONLY', selectionUrl: '/ask?selected=p1' },
-    { entityClass: 'agency', name: 'ALLIED AGENCY', npn: '222', matchEvidence: ev('ALLIED AGENCY'), publicationState: 'RESEARCH_ROW_ONLY', destination: null, selectionUrl: '/ask?q=Find+allied&entity=undefined&state=undefined&selected=a1' },
-    { entityClass: 'agency', name: 'ALLIED EVIL', npn: '333', matchEvidence: ev('ALLIED EVIL'), publicationState: 'PUBLIC_PROFILE', destination: 'https://evil.example/providers/allied' },
-  ] } }))));
-  assert.deepEqual(insurance.candidates.map((c) => c.displayName), ['ALLIED AGENCY', 'ALLIED EVIL'], 'individual producers (private persons) are never admitted');
-  assert.equal(insurance.candidates[0].action?.href, 'https://www.insurancetrusthub.com/ask?q=Find+allied&selected=a1', 'hub-supplied URL kept; only literal-"undefined" params dropped');
+  // TH-SEARCH-R1-019I: insuranceNameAdapter now consumes the RELEASED insurance-name-candidates-v1
+  // operation (see th-search-r1-019i.test.ts for the full acceptance/negative-control gate). The old
+  // v2-shaped mixed producer+agency fixture this test used to assert against is retired for
+  // NAME_CANDIDATES: under the released v1 contract's strict structural validation, a producer/person
+  // row is now a malformed contribution that fails the WHOLE response (never silently dropped
+  // alongside valid rows) -- that behavior has its own dedicated control in th-search-r1-019i.test.ts
+  // ("12. person/producer rejected"). This control keeps the still-relevant "no profile URL invented,
+  // off-origin link dropped" assertions, in the new v1 shape, with no producer row mixed in.
+  const insurance = await insuranceNameAdapter.search('allied', 1, ctx(jsonFetch(() => ({ body: {
+    contract: 'insurance-name-candidates-v1', contractVersion: '1.0.0', schemaFingerprint: 'c272675bdde4adab8d6672be7fb3143319ada5ec5e61dcf72dc7cda295b0d62f',
+    hub: 'insurance', operation: 'name_candidates', resultState: 'CANDIDATES',
+    name: { supplied: 'allied', normalized: 'allied', distinctiveTokens: ['allied'], predicateApplied: true, predicate: 'x' },
+    scope: {},
+    candidates: [
+      { stableKey: 'insurance:agency:a1', entityClass: 'agency', displayName: 'ALLIED AGENCY', npn: '222', naicCode: null, match: { field: 'display_name', value: 'ALLIED AGENCY', method: 'distinctive_token_candidate' }, publicationState: 'RESEARCH_ROW_ONLY', action: { type: 'RESEARCH', url: '/ask?q=Find+allied&selected=a1' }, profileUrl: null, selectionUrl: '/ask?q=Find+allied&selected=a1', whyMatched: 'x' },
+      { stableKey: 'insurance:legal_insurer:e1', entityClass: 'legal_insurer', displayName: 'ALLIED EVIL', npn: null, naicCode: '999', match: { field: 'canonical_legal_name', value: 'ALLIED EVIL', method: 'normalized_exact_name' }, publicationState: 'PUBLIC_PROFILE', action: { type: 'PROFILE', url: 'https://evil.example/providers/allied' }, profileUrl: 'https://evil.example/providers/allied', selectionUrl: '/ask?q=Find+allied&selected=e1', whyMatched: 'x' },
+    ],
+    pagination: { page: 1, limit: 10, returned: 2, hasMore: false, nextPage: null, outOfRange: false, matchedCount: 2, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 0 },
+    limitations: [], message: null,
+  } }))));
+  assert.deepEqual(insurance.candidates.map((c) => c.displayName), ['ALLIED AGENCY', 'ALLIED EVIL']);
+  assert.equal(insurance.candidates[0].action?.href, 'https://www.insurancetrusthub.com/ask?q=Find+allied&selected=a1', 'hub-supplied URL kept, resolved onto the canonical origin');
   assert.equal(insurance.candidates[0].action?.type, 'RESEARCH');
   assert.equal(insurance.candidates[1].action, null, 'an off-origin profile link is dropped, and no replacement URL is fabricated');
   assert.equal(safeHubUrl('move', 'javascript:alert(1)'), null); assert.equal(safeHubUrl('move', 'http://www.movetrusthub.com/x'), null);
