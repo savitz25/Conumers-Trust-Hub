@@ -9,16 +9,20 @@ import { switcherEntries } from './registry.ts';
 
 const PREVIEW = 'https://move-trust-fe65g6tam-savitz25-s-projects.vercel.app';
 
-function withOrigin(value: string | undefined, run: () => void) {
-  const previous = process.env.NEXT_PUBLIC_MOVE_ORIGIN;
-  if (value === undefined) delete process.env.NEXT_PUBLIC_MOVE_ORIGIN;
-  else process.env.NEXT_PUBLIC_MOVE_ORIGIN = value;
+function withEnv(name: string, value: string | undefined, run: () => void) {
+  const previous = process.env[name];
+  if (value === undefined) delete process.env[name];
+  else process.env[name] = value;
   try {
     run();
   } finally {
-    if (previous === undefined) delete process.env.NEXT_PUBLIC_MOVE_ORIGIN;
-    else process.env.NEXT_PUBLIC_MOVE_ORIGIN = previous;
+    if (previous === undefined) delete process.env[name];
+    else process.env[name] = previous;
   }
+}
+
+function withOrigin(value: string | undefined, run: () => void) {
+  withEnv('NEXT_PUBLIC_MOVE_ORIGIN', value, run);
 }
 
 test('unset and production env keep the production Move host', () => {
@@ -41,13 +45,75 @@ test('unset and production env keep the production Move host', () => {
 test('invalid Move origins fall back to production', () => {
   for (const value of [
     'javascript:alert(1)',
+    'data:text/html,hello',
     'http://evil.example',
     'https://evil.example',
     'https://move.example.vercel.app/ask',
+    'https://attacker.vercel.app',
+    'https://move-trust-attacker-savitz25-s-projects.vercel.app',
+    `${PREVIEW}.evil.example`,
+    `${PREVIEW}:444`,
+    `${PREVIEW}/..`,
+    `${PREVIEW}/%2e%2e`,
+    `${PREVIEW}/path/..`,
+    `${PREVIEW}\\`,
+    `${PREVIEW}?origin=https://evil.example`,
+    `${PREVIEW}#fragment`,
+    PREVIEW.replace('https://', '//'),
+    PREVIEW.replace('https://', 'http://'),
+    PREVIEW.replace('https://', 'https://user:password@'),
+    PREVIEW.replace('move-trust', 'move-%74rust'),
+    PREVIEW.replace('move-trust', 'move-\ntrust'),
     'not a url',
   ]) {
     withOrigin(value, () => assert.equal(moveOrigin(), PRODUCTION_MOVE_ORIGIN, value));
   }
+});
+
+test('localhost requires explicit local development and cannot trust lookalike hosts', () => {
+  for (const mode of [undefined, 'test', 'production']) {
+    withEnv('NODE_ENV', mode, () => {
+      for (const origin of ['http://localhost:3001', 'https://127.0.0.1:4312']) {
+        withOrigin(origin, () => assert.equal(moveOrigin(), PRODUCTION_MOVE_ORIGIN));
+      }
+    });
+  }
+  withEnv('NODE_ENV', 'development', () => {
+    for (const origin of ['http://localhost:3001', 'https://127.0.0.1:4312']) {
+      withOrigin(origin, () => assert.equal(moveOrigin(), origin));
+    }
+    for (const origin of ['http://localhost.evil.example:3001', 'http://127.1:3001', 'http://localhost:99999', 'http://localhost:3001/path']) {
+      withOrigin(origin, () => assert.equal(moveOrigin(), PRODUCTION_MOVE_ORIGIN));
+    }
+  });
+});
+
+test('approved origin preserves route/query/hash; query values cannot choose the destination', () => {
+  withOrigin(`${PREVIEW}/`, () => {
+    const source = 'https://www.movetrusthub.com/companies/example-movers?src=ask&journey=relocate&state=FL&intent=buy&from_q=movers+in+Florida&geo=FL&id=1002530&origin=https%3A%2F%2Fevil.example#authority';
+    const target = new URL(rewriteMoveSpecialistHref(source));
+    const original = new URL(source);
+    assert.equal(target.origin, PREVIEW);
+    assert.equal(target.pathname, original.pathname);
+    assert.equal(target.search, original.search);
+    assert.equal(target.hash, original.hash);
+    assert.equal(specialistHubFromHref(`${PREVIEW}:444/companies/example`, 'https://www.asktrusthub.com'), null);
+    assert.equal(specialistHubFromHref(PREVIEW.replace('https:', 'http:'), 'https://www.asktrusthub.com'), null);
+  });
+});
+
+test('other hubs and official external sources remain byte-for-byte unchanged', () => {
+  withOrigin(PREVIEW, () => {
+    for (const href of [
+      'https://www.lendertrusthub.com/florida?q=loans',
+      'https://www.insurancetrusthub.com/providers/example',
+      'https://www.contractortrusthub.com/contractors/example',
+      'https://www.seniortrusthub.com/facility/example',
+      'https://www.investortrusthub.com/firm/example',
+      'https://safer.fmcsa.dot.gov/query.asp?query_param=USDOT&query_string=1002530',
+      'https://data.transportation.gov/resource/az4n-8mr2.json?dot_number=1002530',
+    ]) assert.equal(rewriteMoveSpecialistHref(href), href);
+  });
 });
 
 test('preview Move origin retargets Ask specialist handoffs and keeps handoff context', () => {

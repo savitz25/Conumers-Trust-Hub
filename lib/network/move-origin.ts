@@ -10,25 +10,21 @@
 export const PRODUCTION_MOVE_ORIGIN = 'https://www.movetrusthub.com';
 
 const PRODUCTION_MOVE_HOSTS = new Set(['www.movetrusthub.com', 'movetrusthub.com']);
+// One reviewed deployment, not a trust grant to *.vercel.app or a team suffix.
+const APPROVED_MOVE_PREVIEW_ORIGIN = 'https://move-trust-fe65g6tam-savitz25-s-projects.vercel.app';
 
 function allowlistedMoveOrigin(raw: string | undefined): string | null {
   const value = raw?.trim();
   if (!value) return null;
-  let url: URL;
-  try {
-    url = new URL(value);
-  } catch {
-    return null;
+  // Compare the supplied origin before URL normalization can erase path segments,
+  // backslashes, credentials or encoded hostname characters. One trailing / is OK.
+  const origin = value.endsWith('/') ? value.slice(0, -1) : value;
+  if (origin === PRODUCTION_MOVE_ORIGIN || origin === 'https://movetrusthub.com') return PRODUCTION_MOVE_ORIGIN;
+  if (origin === APPROVED_MOVE_PREVIEW_ORIGIN) return origin;
+  if (process.env.NODE_ENV === 'development'
+    && /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::[0-9]{1,5})?$/.test(origin)) {
+    try { return new URL(origin).origin; } catch { return null; }
   }
-  if (url.username || url.password || url.search || url.hash) return null;
-  if (url.pathname !== '/' && url.pathname !== '') return null;
-  const host = url.hostname.toLowerCase();
-  const local = host === 'localhost' || host === '127.0.0.1';
-  const preview = host.endsWith('.vercel.app');
-  const production = PRODUCTION_MOVE_HOSTS.has(host);
-  if (production && url.protocol === 'https:') return PRODUCTION_MOVE_ORIGIN;
-  if (preview && url.protocol === 'https:') return url.origin;
-  if (local && (url.protocol === 'http:' || url.protocol === 'https:')) return url.origin;
   return null;
 }
 
