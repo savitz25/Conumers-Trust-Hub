@@ -7,6 +7,7 @@
  * Specialist My Move / My Lending / My Insurance remain source of truth.
  */
 
+import { rewriteMoveSpecialistHref } from '@/lib/network/move-origin';
 import {
   buildInsuranceDeepLink,
   buildLenderDeepLink,
@@ -411,7 +412,7 @@ export function specialistContinues(meta: JourneyMetadata): {
     items.push({
       hub,
       label: my.label,
-      href: my.href,
+      href: hub === 'move' ? rewriteMoveSpecialistHref(my.href) : my.href,
       blurb: my.blurb,
     });
   }
