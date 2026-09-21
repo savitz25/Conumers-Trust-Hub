@@ -10,8 +10,10 @@
 export const PRODUCTION_MOVE_ORIGIN = 'https://www.movetrusthub.com';
 
 const PRODUCTION_MOVE_HOSTS = new Set(['www.movetrusthub.com', 'movetrusthub.com']);
-// One reviewed deployment, not a trust grant to *.vercel.app or a team suffix.
-const APPROVED_MOVE_PREVIEW_ORIGIN = 'https://move-trust-fe65g6tam-savitz25-s-projects.vercel.app';
+// This project's Move preview deployments only. A new Vercel deployment id on
+// move-trust-*-savitz25-s-projects.vercel.app stays allowlisted; other teams and
+// arbitrary *.vercel.app hosts do not.
+const MOVE_PROJECT_PREVIEW_ORIGIN = /^https:\/\/move-trust-[a-z0-9-]+-savitz25-s-projects\.vercel\.app$/;
 
 function allowlistedMoveOrigin(raw: string | undefined): string | null {
   const value = raw?.trim();
@@ -20,7 +22,7 @@ function allowlistedMoveOrigin(raw: string | undefined): string | null {
   // backslashes, credentials or encoded hostname characters. One trailing / is OK.
   const origin = value.endsWith('/') ? value.slice(0, -1) : value;
   if (origin === PRODUCTION_MOVE_ORIGIN || origin === 'https://movetrusthub.com') return PRODUCTION_MOVE_ORIGIN;
-  if (origin === APPROVED_MOVE_PREVIEW_ORIGIN) return origin;
+  if (MOVE_PROJECT_PREVIEW_ORIGIN.test(origin)) return origin;
   if (process.env.NODE_ENV === 'development'
     && /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::[0-9]{1,5})?$/.test(origin)) {
     try { return new URL(origin).origin; } catch { return null; }

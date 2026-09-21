@@ -4,10 +4,12 @@ import { specialistHubFromHref } from '../analytics/handoff.ts';
 import { buildMoveDeepLink } from '../orchestration/journey-links.ts';
 import { buildAskResearchRoute } from './ask-research-route.ts';
 import { resolveEntityDestination } from './entity-destination.ts';
+import { orchestrateGuidedResearch } from '../guided-research/orchestrator.ts';
 import { moveOrigin, PRODUCTION_MOVE_ORIGIN, rewriteMoveSpecialistHref } from './move-origin.ts';
 import { switcherEntries } from './registry.ts';
 
-const PREVIEW = 'https://move-trust-fe65g6tam-savitz25-s-projects.vercel.app';
+const PREVIEW = 'https://move-trust-hg9c479w8-savitz25-s-projects.vercel.app';
+const PREVIOUS_PREVIEW = 'https://move-trust-fe65g6tam-savitz25-s-projects.vercel.app';
 
 function withEnv(name: string, value: string | undefined, run: () => void) {
   const previous = process.env[name];
@@ -23,6 +25,18 @@ function withEnv(name: string, value: string | undefined, run: () => void) {
 
 function withOrigin(value: string | undefined, run: () => void) {
   withEnv('NEXT_PUBLIC_MOVE_ORIGIN', value, run);
+}
+
+async function withOriginAsync(value: string | undefined, run: () => Promise<void>) {
+  const previous = process.env.NEXT_PUBLIC_MOVE_ORIGIN;
+  if (value === undefined) delete process.env.NEXT_PUBLIC_MOVE_ORIGIN;
+  else process.env.NEXT_PUBLIC_MOVE_ORIGIN = value;
+  try {
+    await run();
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_MOVE_ORIGIN;
+    else process.env.NEXT_PUBLIC_MOVE_ORIGIN = previous;
+  }
 }
 
 test('unset and production env keep the production Move host', () => {
@@ -50,7 +64,9 @@ test('invalid Move origins fall back to production', () => {
     'https://evil.example',
     'https://move.example.vercel.app/ask',
     'https://attacker.vercel.app',
-    'https://move-trust-attacker-savitz25-s-projects.vercel.app',
+    'https://move-trust-hg9c479w8.vercel.app',
+    'https://move-trust-hg9c479w8-other-team.vercel.app',
+    'https://not-move-trust-hg9c479w8-savitz25-s-projects.vercel.app',
     `${PREVIEW}.evil.example`,
     `${PREVIEW}:444`,
     `${PREVIEW}/..`,
@@ -171,6 +187,83 @@ test('preview Move origin retargets Ask specialist handoffs and keeps handoff co
     assert.equal(specialistHubFromHref(`${PREVIEW}/companies/example-movers`, 'https://conumers-trust-q6b02y81x-savitz25-s-projects.vercel.app'), 'move');
     assert.equal(switcherEntries().find((hub) => hub.id === 'move')?.url, PREVIEW);
   });
+});
+
+test('this project Move preview deployments stay allowlisted across deployment ids', () => {
+  for (const origin of [PREVIEW, PREVIOUS_PREVIEW, 'https://move-trust-attacker-savitz25-s-projects.vercel.app']) {
+    withOrigin(origin, () => {
+      assert.equal(moveOrigin(), origin);
+      const href = rewriteMoveSpecialistHref('https://www.movetrusthub.com/florida?src=ask&state=FL');
+      assert.equal(new URL(href).origin, origin);
+      assert.equal(new URL(href).searchParams.get('src'), 'ask');
+    });
+  }
+});
+
+test('movers in Florida profile and next-action hrefs honor the preview Move origin', async () => {
+  const original = globalThis.fetch;
+  const profile = 'https://www.movetrusthub.com/companies/source-florida-movers?src=ask&from_q=movers+in+Florida&geo=FL';
+  globalThis.fetch = (async () => new Response(JSON.stringify({
+    contract: 'trusthub-specialist-execution-v2',
+    contractVersion: 'move-ask-v1',
+    resultType: 'SUPPORTED_RESULTS',
+    rows: [{
+      publicDisplayName: 'Source Florida Movers LLC',
+      usdot: '1234567',
+      role: 'Carrier',
+      recordedHq: { raw: 'Tampa, FL' },
+      authorityState: 'active',
+      canonicalProfileUrl: profile,
+    }],
+    total: 37,
+    pagination: { page: 1, limit: 10, totalPages: 4 },
+    provenance: {},
+    limitations: [],
+  }), { status: 200, headers: { 'content-type': 'application/json' } })) as typeof fetch;
+  try {
+    await withOriginAsync(PREVIEW, async () => {
+      const response = await orchestrateGuidedResearch({ action: { type: 'START', question: 'movers in Florida' } });
+      const rows = response.result?.rows ?? [];
+      assert.ok(rows.length > 0, 'movers in Florida must return a profile row');
+      for (const row of rows) {
+        const href = row.destination?.href;
+        assert.ok(href, 'profile destination href is required');
+        const url = new URL(href);
+        assert.equal(url.origin, PREVIEW, 'profile href must use NEXT_PUBLIC_MOVE_ORIGIN');
+        assert.equal(url.pathname, '/companies/source-florida-movers');
+        assert.equal(url.searchParams.get('src'), 'ask');
+        assert.equal(url.searchParams.get('from_q'), 'movers in Florida');
+        assert.equal(url.searchParams.get('geo'), 'FL');
+        assert.doesNotMatch(href, /movetrusthub\.com/);
+      }
+      const next = (response.result?.nextActions ?? []).filter((action) => action.href);
+      assert.ok(next.length > 0, 'next-action cards must include Move handoffs');
+      for (const action of next) {
+        const url = new URL(action.href!);
+        if (url.hostname.endsWith('fmcsa.dot.gov') || url.hostname === 'data.transportation.gov') {
+          assert.doesNotMatch(action.href!, /vercel\.app/);
+          continue;
+        }
+        assert.equal(url.origin, PREVIEW, action.id);
+        assert.doesNotMatch(action.href!, /movetrusthub\.com/);
+      }
+      const ask = next.find((action) => new URL(action.href!).pathname === '/ask');
+      assert.ok(ask, 'next actions include the Move ask handoff');
+      assert.equal(new URL(ask.href!).searchParams.get('q'), 'movers in Florida');
+    });
+    await withOriginAsync(undefined, async () => {
+      const response = await orchestrateGuidedResearch({ action: { type: 'START', question: 'movers in Florida' } });
+      assert.match(response.result?.rows[0]?.destination?.href ?? '', /^https:\/\/www\.movetrusthub\.com\/companies\/source-florida-movers/);
+      for (const action of response.result?.nextActions ?? []) {
+        if (!action.href) continue;
+        const host = new URL(action.href).hostname;
+        if (host.endsWith('fmcsa.dot.gov') || host === 'data.transportation.gov') continue;
+        assert.equal(new URL(action.href).origin, PRODUCTION_MOVE_ORIGIN, action.id);
+      }
+    });
+  } finally {
+    globalThis.fetch = original;
+  }
 });
 
 test('clearing the preview origin restores production Move handoffs', () => {
