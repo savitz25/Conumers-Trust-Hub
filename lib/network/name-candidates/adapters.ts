@@ -997,15 +997,229 @@ export const seniorNameAdapter: HubNameAdapter = {
   },
 };
 
-// ---------------------------------------------------------------- Contractor (blocked: no structured name operation)
-const contractorBase: Base = { hub: 'contractor', searchedScope: 'Not searched by name', matchBreadth: 'No structured name operation is available' };
-export const CONTRACTOR_NAME_DEPENDENCY = 'ContractorTrustHub /api/specialist-execution/v2 declares queryType "identity" but rejects any name field (unsupported_field). Its existing searchContractors() engine (behind /verify) already performs name search; a thin v2 wrapper exposing identityName over that engine is required. Owner: ContractorTrustHub.';
+// ---------------------------------------------------------------- Contractor (contractor-name-candidates-v1, TH-SEARCH-R1-019B / TH-SEARCH-R1-019A-FINAL)
+// TH-SEARCH-R1-019B released a dedicated candidate operation, separate from the untouched v2
+// identity contract (which still rejects every name field). This is the only place that dispatches
+// Contractor NAME_CANDIDATES. Confirmed live against Production (2026-09-21, merged main
+// 330dc2ab4bd2db2ec49878633ea6b66c2253dded): this contract NEVER asserts an exact total --
+// pagination.total is always null; hasMore is proven by a one-row probe beyond the page, not a
+// count -- so hubReportedTotal stays null for Contractor by contract design, unlike hubs that assert
+// an exact total when exact.
+export const CONTRACTOR_NAME_CANDIDATES_CONTRACT = 'contractor-name-candidates-v1';
+export const CONTRACTOR_NAME_CANDIDATES_LOCK = {
+  url: process.env.CONTRACTOR_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.contractortrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: 'ac344bfdda58296b163f8ea6737a36b1e44c1af99b3e252e39cae4d08b822fc3',
+} as const;
+
+/**
+ * The released operation's own match-method vocabulary is a literal subset of Ask's shared
+ * MatchMethod enum, so this is an identity map kept explicit (not a fallback) so an unrecognized
+ * method fails row-structural validation below, never a silent HUB_NAME_MATCH guess.
+ */
+const CONTRACTOR_METHOD: Record<string, MatchMethod> = {
+  EXACT_SOURCE_NAME: 'EXACT_SOURCE_NAME', NORMALIZED_NAME: 'NORMALIZED_NAME',
+  DOCUMENTED_ALIAS: 'DOCUMENTED_ALIAS', PREFIX_OR_TOKEN: 'PREFIX_OR_TOKEN',
+};
+/** The released engine's own source name fields (lib/contractors/name-search-core.ts NAME_MATCH_FIELDS), read-only reference. */
+const CONTRACTOR_MATCH_FIELDS = new Set(['display_name', 'legal_name', 'dba_name', 'licensee_name_raw', 'dba_name_raw']);
+const CONTRACTOR_FIELD_LABEL: Record<string, string> = {
+  display_name: 'public display name',
+  legal_name: 'recorded legal/licensee name (in some sources this is the qualifying individual, not the business)',
+  dba_name: 'documented DBA name',
+  licensee_name_raw: 'source licensee name on the credential row',
+  dba_name_raw: 'source DBA name on the credential row',
+};
+/** The only publication state the released operation ever emits (only existing, non-thin public profiles are returned). */
+const CONTRACTOR_PUBLICATION_STATES = new Set(['PUBLIC_PROFILE']);
+const CONTRACTOR_RESULT_STATES = new Set([
+  'COMPLETED_WITH_CANDIDATES', 'COMPLETED_NO_CANDIDATES', 'PARTIAL_TRUNCATED', 'UNSUPPORTED_SCOPE', 'INVALID_QUERY', 'SOURCE_FAILURE',
+]);
+/** The released route's own resultState<->HTTP-status pairing (app/api/specialist-execution/name-candidates/v1/route.ts httpStatus, read-only reference). */
+function contractorExpectedStatus(state: string, failureKind: string | null): number {
+  if (state === 'INVALID_QUERY') return 400;
+  if (state === 'UNSUPPORTED_SCOPE') return 422;
+  if (state === 'SOURCE_FAILURE') return failureKind === 'timeout' ? 504 : 503;
+  return 200;
+}
+
+/**
+ * Strict pagination validation for the released operation's own {page, limit, returned, hasMore,
+ * nextPage, sourceCap, truncated, total, totalMeaning} shape. total is always null by contract
+ * design (see above) -- never a hub-asserted exact count for Contractor.
+ */
+function validContractorPagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const { page, limit, returned, hasMore, nextPage, sourceCap, truncated, total, totalMeaning } = pag;
+  if (!int(page) || !int(limit) || !int(returned) || !int(sourceCap)) return false;
+  if (typeof hasMore !== 'boolean' || typeof truncated !== 'boolean') return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (returned > limit || returned < 0) return false;
+  if (hasMore) { if (nextPage !== page + 1) return false; } else if (nextPage !== null) return false;
+  if (total !== null) return false;
+  if (typeof totalMeaning !== 'string' || !totalMeaning) return false;
+  return true;
+}
+
+/**
+ * The released engine's own resultState<->candidateCount<->truncated/hasMore relationships
+ * (lib/specialist-execution/contractor-name-candidates.ts executeContractorNameCandidates, read-only
+ * reference): resultState is `truncated || tokenTierIncomplete ? PARTIAL_TRUNCATED : candidates.length
+ * > 0 ? COMPLETED_WITH_CANDIDATES : COMPLETED_NO_CANDIDATES`. A contradiction here is always
+ * TECHNICAL_FAILURE -- never silently repaired into a different, plausible-looking outcome.
+ */
+function contractorStateConsistent(state: string, candidateCount: number, hasMore: boolean, truncated: boolean): boolean {
+  if (state === 'COMPLETED_WITH_CANDIDATES') return candidateCount > 0 && !truncated;
+  if (state === 'COMPLETED_NO_CANDIDATES') return candidateCount === 0 && !truncated && !hasMore;
+  // PARTIAL_TRUNCATED's own candidate count may be zero or more, and hasMore may be true (the token
+  // tier did not finish in time, but full pages remain) or false (the source cap was reached).
+  return state === 'PARTIAL_TRUNCATED' && truncated;
+}
+
+/**
+ * Strict per-row structural validation, mirroring Insurance/Lender/Senior's model: ANY array element
+ * failing this fails the WHOLE response as TECHNICAL_FAILURE -- never silently dropped alongside
+ * otherwise-valid rows. Action is only shape-checked here (deeper URL/origin validation happens in
+ * the mapper below and degrades that one row's action to null on failure, never the row's identity).
+ */
+function isStructurallyValidContractorRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const stableKey = text(row.stableKey);
+  if (!stableKey || !/^contractor:profile:.+$/.test(stableKey)) return false;
+  if (!text(row.displayName)) return false;
+  // Entity type is not source-backed at this grain per the released contract -- never a non-null
+  // value of any type Ask did not expect (string or null only).
+  if (row.entityType !== null && typeof row.entityType !== 'string') return false;
+  const match = record(row.match);
+  const field = text(match.field);
+  const method = text(match.method);
+  if (!field || !CONTRACTOR_MATCH_FIELDS.has(field) || !text(match.value) || !method || !Object.hasOwn(CONTRACTOR_METHOD, method)) return false;
+  if (!text(match.explanation)) return false;
+  if (!Array.isArray(row.identifiers) || !row.identifiers.every((id) => isPlainObject(id) && text(id.label) && text(id.value))) return false;
+  const credential = record(row.credential);
+  if (!text(credential.class) || !text(credential.status)) return false;
+  const credJur = record(row.credentialJurisdiction);
+  if (!text(credJur.code) || !text(credJur.label)) return false;
+  const loc = record(row.recordedLocation);
+  if (!text(loc.meaning)) return false;
+  const clock = record(record(row.source).clock);
+  if (!text(clock.label)) return false;
+  if (clock.value !== null && typeof clock.value !== 'string') return false;
+  const publicationState = text(row.publicationState);
+  if (!publicationState || !CONTRACTOR_PUBLICATION_STATES.has(publicationState)) return false;
+  const act = record(row.action);
+  if (text(act.type) !== 'PROFILE' || !text(act.href)) return false;
+  return true;
+}
+
+function contractorRecordedLocation(row: Record<string, unknown>): string | null {
+  const loc = record(row.recordedLocation);
+  return [text(loc.city), text(loc.state), text(loc.county)].filter(Boolean).join(', ') || null;
+}
+
+const contractorBase: Base = {
+  hub: 'contractor',
+  searchedScope: 'Every jurisdiction ContractorTrustHub name search covers (state licensing-board credential sources) -- not nationwide coverage',
+  matchBreadth: 'Exact, normalized, documented-DBA-alias and prefix/contains-token contractor-name matches, applied before any page limit',
+};
 export const contractorNameAdapter: HubNameAdapter = {
-  ...contractorBase, enabled: false, sourceGrain: 'State contractor credential', dependency: CONTRACTOR_NAME_DEPENDENCY,
-  async search(_name, page) {
-    return { ...contractorBase, state: 'UNSUPPORTED_OPERATION', nameFilterApplied: false, candidates: [], returnedCount: 0, hubReportedTotal: null, page, hasMore: false, truncatedWithoutCursor: false,
-      continuation: { type: 'VERIFY', href: `${CANONICAL_ORIGINS.contractor}/verify?q=${encodeURIComponent(_name)}`, label: 'Search this name on ContractorTrustHub Verify' },
-      message: 'ContractorTrustHub cannot yet be searched by name from here. Its own Verify search can.', latencyMs: 0, calls: 0 };
+  ...contractorBase, enabled: true, sourceGrain: 'State contractor credential',
+  async search(name, page, ctx) {
+    const started = Date.now();
+    const res = await call(ctx, CONTRACTOR_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ contract: CONTRACTOR_NAME_CANDIDATES_CONTRACT, operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
+    });
+    if ('failure' in res) return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== CONTRACTOR_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== CONTRACTOR_NAME_CANDIDATES_LOCK.version
+      || text(p.schemaFingerprint) !== CONTRACTOR_NAME_CANDIDATES_LOCK.schemaFingerprint || text(p.hub) !== 'contractor' || text(p.operation) !== 'name_candidates') {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (!CONTRACTOR_RESULT_STATES.has(state)) return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    const failureKindRaw = text(p.failureKind);
+    if (res.status !== contractorExpectedStatus(state, failureKindRaw)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'INVALID_QUERY') {
+      // Ask's own properly-formed request was rejected: an adapter/contract disagreement, never a user no-match.
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported Ask’s own request as invalid.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_SCOPE') {
+      // Ask never supplies a jurisdiction, so this is not expected in practice; if it occurs, the
+      // input's scope genuinely was not supported -- not evidence a matching contractor does not exist.
+      return outcome(contractorBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) ?? 'ContractorTrustHub could not search this input’s scope by name.' }, started, page);
+    }
+    if (state === 'SOURCE_FAILURE') {
+      // A timeout or unavailable dependency is never a miss (this repo's universal rule). This is the
+      // known Allied-scale wall-clock-variance risk already accepted by Contractor's own release
+      // ticket; a cold-cache timeout here is expected residual behavior, not a new defect.
+      const kind = failureKindRaw === 'timeout' || failureKindRaw === 'unavailable' || failureKindRaw === 'invalid_response' ? failureKindRaw : 'unavailable';
+      const errorCode = text(p.errorCode);
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: kind, message: errorCode ? `ContractorTrustHub source failure: ${errorCode}` : null }, started, page);
+    }
+    // Remaining: COMPLETED_WITH_CANDIDATES, COMPLETED_NO_CANDIDATES, PARTIAL_TRUNCATED -- all require name-filter proof.
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    // Ask never supplies a jurisdiction; a response scoped to one anyway is a contract/request mismatch.
+    const scope = record(p.scope);
+    if (scope.requestedJurisdiction !== null) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch', message: 'The specialist reported a jurisdiction-scoped response to an all-jurisdiction request.' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    const pagination = record(p.pagination);
+    if (!validContractorPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    const truncated = pagination.truncated === true;
+    if (!contractorStateConsistent(state, rawCandidates.length, hasMore, truncated)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a result state inconsistent with its own candidate count and pagination.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidContractorRow)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const stableKey = text(row.stableKey)!;
+      const displayName = text(row.displayName)!;
+      const entityType = typeof row.entityType === 'string' ? row.entityType : null;
+      const match = record(row.match);
+      const field = text(match.field)!;
+      const matchedValue = text(match.value)!;
+      const method = CONTRACTOR_METHOD[text(match.method)!];
+      const identifiers = records(row.identifiers).flatMap((id) => {
+        const label = text(id.label); const value = text(id.value);
+        return label && value ? [{ label, value }] : [];
+      });
+      const clock = record(record(row.source).clock);
+      const act = action('contractor', record(row.action).href, 'PROFILE', 'ContractorTrustHub');
+      const publicationState = text(row.publicationState)!;
+      return {
+        hub: 'contractor', sourceGrain: 'State contractor credential', stableKey, displayName, entityType,
+        matchedName: matchedValue, matchedField: CONTRACTOR_FIELD_LABEL[field] ?? field.replaceAll('_', ' '),
+        matchMethod: method, hubMatchExplanation: text(match.explanation),
+        identifiers, recordedLocation: contractorRecordedLocation(row), locationMeaning: text(record(row.recordedLocation).meaning),
+        sourceAsOf: text(clock.value), sourceDateLabel: text(clock.label) ?? 'ContractorTrustHub source clock',
+        publicationState, action: act,
+      };
+    });
+    // This contract never asserts an exact total (pagination.total is always null; hasMore is proven
+    // by a one-row probe beyond the page) -- hubReportedTotal stays null for Contractor by design.
+    const truncatedWithoutCursor = truncated && !hasMore;
+    const continuation = truncatedWithoutCursor
+      ? action('contractor', `/verify?q=${encodeURIComponent(name)}`, 'RESEARCH', 'ContractorTrustHub')
+      : null;
+    return finish(contractorBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: null, hasMore, truncatedWithoutCursor, continuation,
+    }, started, page);
   },
 };
 
