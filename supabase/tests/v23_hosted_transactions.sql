@@ -72,6 +72,13 @@ insert into ops.v23_profile_runtime_records(kind,key_hash,payload)
 select pg_temp.v23_check((select count(*)=1 from ops.v23_profile_runtime_records),'stage current browser visible');
 select pg_temp.v23_authorize('{"browser":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}');
 select pg_temp.v23_check((select count(*)=0 from ops.v23_profile_runtime_records),'other browser stage hidden');
+select pg_temp.v23_authorize('{"operation":"prepareProfileSaveContinuation"}');
+insert into ops.v23_profile_runtime_records(kind,key_hash,payload) values('continuation',repeat('2',64),
+ jsonb_build_object('stageKey',encode(sha256(convert_to(repeat('t',43),'UTF8')),'hex'),'used',false,
+ 'expiresAt',extract(epoch from now()+interval '10 minutes')*1000));
+select pg_temp.v23_check((select count(*)=1 from ops.v23_profile_runtime_records where kind='continuation'),'continuation staged for same browser');
+select pg_temp.v23_authorize('{"operation":"prepareProfileSaveContinuation","hub":"lender","service":"svc:trusthub:lender:bff:v1"}');
+select pg_temp.v23_check((select count(*)=0 from ops.v23_profile_runtime_records),'other hub cannot read stage or continuation');
 select pg_temp.v23_authorize('{"operation":"consumeProfileSaveContinuation"}');
 select pg_temp.v23_check(pg_temp.v23_denied($q$insert into ops.v23_profile_runtime_records(kind,key_hash,payload)
  values('grant',repeat('1',64),'{"subject":"a3230000-0000-4000-8000-000000000001"}')$q$),'grant needs real P13 marker');
@@ -94,6 +101,13 @@ insert into ops.v23_profile_runtime_records(kind,key_hash,payload) values('grant
  jsonb_build_object('subject','a3230000-0000-4000-8000-000000000001','session','fixture-session','browser',repeat('b',64),
  'stageKey',encode(sha256(convert_to(repeat('t',43),'UTF8')),'hex'),'expiresAt',extract(epoch from now()+interval '10 minutes')*1000));
 select pg_temp.v23_check(pg_temp.v23_denied('select v23_private.consume_context((select v from v23_fixture where k=''proof''))'),'P13 replay denied');
+select pg_temp.v23_authorize('{"operation":"commitProfileSave"}');
+select pg_temp.v23_authorize(jsonb_build_object('operation','commitProfileSave','input',
+ (select v||jsonb_build_object('manifestDigest',repeat('0',64)) from v23_fixture where k='input')));
+select pg_temp.v23_check(pg_temp.v23_denied($q$select * from v23_private.save_profile('b3230000-0000-4000-8000-000000000001')$q$),'altered manifest cannot Save');
+select pg_temp.v23_authorize(jsonb_build_object('operation','commitProfileSave','input',
+ (select jsonb_set(v,'{item,revision}','"2"') from v23_fixture where k='input')));
+select pg_temp.v23_check(pg_temp.v23_denied($q$select * from v23_private.save_profile('b3230000-0000-4000-8000-000000000001')$q$),'unselected revision cannot Save');
 select pg_temp.v23_authorize('{"operation":"commitProfileSave"}');
 select pg_temp.v23_check(pg_temp.v23_denied($q$select * from v23_private.save_profile('b3230000-0000-4000-8000-000000000099')$q$),'wrong binding denied');
 select pg_temp.v23_check(pg_temp.v23_denied($q$insert into ops.v23_profile_runtime_records(kind,key_hash,payload)
@@ -146,12 +160,17 @@ select pg_temp.v23_authorize('{"operation":"getProfileSaveReceipt","subject":"a3
 select pg_temp.v23_check((select count(*)=0 from ops.v23_profile_runtime_records where kind='receipt'),'Consumer B cannot recover A receipt');
 select pg_temp.v23_authorize('{"operation":"commitProfileSave","session":"switched-session"}');
 select pg_temp.v23_check(pg_temp.v23_denied($q$select * from v23_private.save_profile('b3230000-0000-4000-8000-000000000001')$q$),'switched session cannot Save');
+-- A stale quota is the only cleanup fixture made eligible; research is not.
+insert into ops.v23_profile_runtime_quota(bucket,window_start,count)
+ values(repeat('f',64),floor(extract(epoch from now())/60)-1441,1);
 reset role; set local role authenticated;
 select set_config('request.jwt.claim.sub','a3230000-0000-4000-8000-000000000002',true);
 select pg_temp.v23_check((select count(*)=0 from consumer.consumer_saved_entities),'Consumer B RLS hides A Save');
 reset role; set local role myth_v23_cleanup;
 select pg_temp.v23_check((select count(*)=0 from ops.v23_profile_runtime_records),'cleanup cannot see fresh receipts');
 select pg_temp.v23_check(pg_temp.v23_denied('delete from consumer.consumer_saved_entities'),'cleanup cannot delete research');
+with d as(delete from ops.v23_profile_runtime_quota returning bucket)
+ select pg_temp.v23_check((select count(*)=1 from d),'cleanup removes only expired quota');
 reset role; set local role myth_v23_browser_store;
 select set_config('v23.confirmation_key',repeat('9',64),true);
 insert into v23_private.browser_confirmations(key_hash,payload) values(repeat('9',64),'{}');
@@ -160,7 +179,7 @@ select pg_temp.v23_check((select count(*)=0 from v23_private.browser_confirmatio
 reset role;
 select pg_temp.v23_check(to_regclass('consumer.consumer_watches') is null,'zero Watch runtime or creation');
 do $$ begin
- if (select count(*) from v23_results)<>39 then raise exception 'matrix assertion count: %',(select count(*) from v23_results); end if;
+ if (select count(*) from v23_results)<>44 then raise exception 'matrix assertion count: %',(select count(*) from v23_results); end if;
 end $$;
 rollback;
-select 'PASS: 39 rollback-only hosted SQL assertions' hosted_transaction_matrix;
+select 'PASS: 44 rollback-only hosted SQL assertions' hosted_transaction_matrix;

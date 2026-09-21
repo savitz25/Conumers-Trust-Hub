@@ -26,8 +26,18 @@ begin
     if p.proowner<>'myth_v23_foundation'::regrole or not p.prosecdef then
       raise exception 'Wrong wrapper owner/security: %',p.proname;
     end if;
-    if not has_function_privilege('myth_v23_executor',p.oid,'EXECUTE') then
-      raise exception 'Missing executor wrapper grant';
+    -- Effective privilege alone can be satisfied accidentally through PUBLIC.
+    if not exists(select 1 from aclexplode(p.proacl) a
+      where a.grantee='myth_v23_executor'::regrole and a.privilege_type='EXECUTE'
+        and not a.is_grantable)
+      or not has_function_privilege('myth_v23_executor',p.oid,'EXECUTE') then
+      raise exception 'Missing explicit executor wrapper grant: %',p.proname;
+    end if;
+    if exists(select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
+      where a.grantee=0 and a.privilege_type='EXECUTE')
+      or has_function_privilege('anon',p.oid,'EXECUTE')
+      or has_function_privilege('authenticated',p.oid,'EXECUTE') then
+      raise exception 'PUBLIC/browser wrapper execute: %',p.proname;
     end if;
     if exists(select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
       where a.grantee not in ('myth_v23_foundation'::regrole,'myth_v23_executor'::regrole)

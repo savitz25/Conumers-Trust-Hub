@@ -47,3 +47,30 @@ V2-3 contracts/runtime/browser tests; V2-2 account contracts; search P0-001 and
 R1-008; repository `npm test`; typecheck; build; lint (seven baseline warnings,
 zero errors); `git diff --check`. SQL fixtures do not send email or authenticate
 browser users. Post-apply hosted outcomes are recorded separately in the handoff.
+
+## Wrapper ACL follow-up
+
+At `2b70c7d7229b7ae6d12406f5b95dbaad14d20685`, hosted owner transfer passed and
+V2-3 was applied only to the isolated branch (deployed ledger version
+`20260921172940`). The exact-ACL assertion then failed: all three wrappers still
+had PUBLIC EXECUTE, without an explicit executor ACL. Effective EXECUTE alone
+was misleading. SET-capable/non-inheriting membership did not let the current
+executor manipulate the new owner's ACLs without actually switching role.
+
+The authorized follow-up sets REVOKE PUBLIC / GRANT executor before each owner
+transfer. A hosted rollback-only proof confirmed exact ACLs survive transfer.
+The already-applied branch uses only `V2-3F-wrapper-acl-repair.sql`, with the
+complete hosted catalog assertions appended before COMMIT. It temporarily SETs
+ROLE to the owner, repairs exactly three ACLs, RESETs ROLE and removes only its
+self-granted membership. No schema CREATE grant or migration replay is needed.
+Catalog checks now demand an explicit, non-grantable executor ACL and deny
+PUBLIC, anon and authenticated EXECUTE. The SQL matrix retains all 39 previous
+checks and adds five continuation/hub/manifest/revision/cleanup checks (44 total).
+Auth settings, persistent test identities and Move bindings remain out of scope.
+
+Follow-up local validation passed: all 44 rollback-only SQL assertions in the
+embedded PostgreSQL fixture, the three static ownership/ACL checks, V2-3
+contracts (34), runtime tests (17 plus the mocked Move transport harness),
+browser-path contract tests (6), V2-2 account contracts (30), both Search
+Reliability suites, full repository `npm test`, typecheck, build and lint
+(zero errors; seven existing warnings). These are not live Auth/browser tests.

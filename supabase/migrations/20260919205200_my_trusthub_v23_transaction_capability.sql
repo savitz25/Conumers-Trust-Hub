@@ -221,13 +221,15 @@ begin
   insert into v23_private.save_validation values(pg_backend_pid(),txid_current(),r.saved_entity_id);
   return query select r.saved_entity_id,r.created,r.restored;
 end $$;
+-- Set exact ACL while the migration executor still owns the new function.
+-- SET-capable but non-inheriting membership does not confer owner ACL rights.
+revoke all on function v23_private.save_profile(uuid) from public;
+grant execute on function v23_private.save_profile(uuid) to myth_v23_executor;
 -- Hosted PG17 CREATEROLE grants administration, not SET or inherited access.
 -- ALTER OWNER also requires the new owner to have CREATE on this schema.
 grant create on schema v23_private to myth_v23_foundation;
 grant myth_v23_foundation to current_user with admin false, inherit false, set true granted by current_user;
 alter function v23_private.save_profile(uuid) owner to myth_v23_foundation;
-revoke all on function v23_private.save_profile(uuid) from public;
-grant execute on function v23_private.save_profile(uuid) to myth_v23_executor;
 create function v23_private.add_project(project_id uuid,saved_id uuid) returns boolean
 language plpgsql security definer set search_path=pg_catalog,v23_private,consumer as $$
 declare c jsonb:=v23_private.authority();
@@ -240,9 +242,9 @@ begin
   perform set_config('request.jwt.claims',jsonb_build_object('sub',c->>'subject')::text,true);
   return consumer.add_saved_entity_to_project(project_id,saved_id,null);
 end $$;
-alter function v23_private.add_project(uuid,uuid) owner to myth_v23_foundation;
 revoke all on function v23_private.add_project(uuid,uuid) from public;
 grant execute on function v23_private.add_project(uuid,uuid) to myth_v23_executor;
+alter function v23_private.add_project(uuid,uuid) owner to myth_v23_foundation;
 create function v23_private.consume_context(proof jsonb) returns uuid
 language plpgsql security definer set search_path=pg_catalog,v23_private,ops as $$
 declare c jsonb:=v23_private.authority(); r record;
@@ -254,9 +256,9 @@ begin
   insert into v23_private.exchange_validation values(pg_backend_pid(),txid_current(),r.canonical_user_id);
   return r.canonical_user_id;
 end $$;
-alter function v23_private.consume_context(jsonb) owner to myth_v23_foundation;
 revoke all on function v23_private.consume_context(jsonb) from public;
 grant execute on function v23_private.consume_context(jsonb) to myth_v23_executor;
+alter function v23_private.consume_context(jsonb) owner to myth_v23_foundation;
 
 -- Remove only our grant; preserve the platform's separate admin-only grant.
 revoke create on schema v23_private from myth_v23_foundation;

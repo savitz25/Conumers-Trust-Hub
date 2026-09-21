@@ -11,7 +11,12 @@ test('hosted owner transfer retains non-login, non-inheriting, non-bypass founda
     assert.ok(sql.includes(`revoke all on function v23_private.${signature} from public;`));
     assert.ok(sql.includes(`grant execute on function v23_private.${signature} to myth_v23_executor;`));
     const name=signature.split('(')[0];
-    const body=sql.slice(sql.indexOf(`create function v23_private.${name}(`),sql.indexOf(`alter function v23_private.${signature}`));
+    const create=sql.indexOf(`create function v23_private.${name}(`);
+    const revoke=sql.indexOf(`revoke all on function v23_private.${signature} from public;`);
+    const grant=sql.indexOf(`grant execute on function v23_private.${signature} to myth_v23_executor;`);
+    const transfer=sql.indexOf(`alter function v23_private.${signature}`);
+    assert.ok(create<revoke && revoke<grant && grant<transfer,'ACLs must be set before owner transfer');
+    const body=sql.slice(create,transfer);
     assert.match(body,/security definer set search_path=pg_catalog,/);
   }
 });
@@ -34,5 +39,7 @@ test('temporary capabilities bracket all owner transfers and are removed before 
 });
 test('post-apply assertions check effective SET/INHERIT and exact wrapper ACLs',()=>{
   const checks=readFileSync('supabase/tests/v23_hosted_security_assertions.sql','utf8');
-  for(const check of ["'SET'","'USAGE'","'CREATE'",'grantor=current_user::regrole','prosecdef','aclexplode','relforcerowsecurity'])assert.ok(checks.includes(check));
+  for(const check of ["'SET'","'USAGE'","'CREATE'",'grantor=current_user::regrole','prosecdef','aclexplode','relforcerowsecurity',
+    "a.grantee='myth_v23_executor'::regrole",'a.grantee=0',"has_function_privilege('anon',p.oid,'EXECUTE')",
+    "has_function_privilege('authenticated',p.oid,'EXECUTE')"])assert.ok(checks.includes(check));
 });
