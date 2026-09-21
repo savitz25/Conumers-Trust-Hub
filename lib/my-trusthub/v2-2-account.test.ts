@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { accessMode, accountRuntime, admitted, captchaState, emailRequestAllowed, PARENT_BACKEND, PARENT_ORIGIN, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
+import { accessMode, accountFormAvailable, accountRuntime, admitted, captchaState, emailRequestAllowed, PARENT_BACKEND, PARENT_ORIGIN, previewAccountAccess, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
 import { EMAIL_MESSAGE, RECOVERY_MESSAGE, runAccountOperation, type AuthApi, type Diagnostic, type AccountResult } from './account-service.ts';
 import { exchangeAccountCode } from './account-callback.ts';
 import { importRequestKey, retireAcknowledged } from './guest-retirement.ts';
@@ -268,6 +268,74 @@ test('V2-2R mutable Auth cookie failures propagate safely; read-only render may 
   for (const path of ['app/my/account-actions.ts', 'app/auth/callback/route.ts']) {
     assert.ok(readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8').includes('createMyTrustHubSupabaseClient(true)'));
   }
+});
+
+const ISOLATED_BACKEND = 'https://xkkiicsassizmakcvxml.supabase.co';
+const PREVIEW_ORIGIN = 'https://conumers-trust-example-savitz25-s-projects.vercel.app';
+function previewAccessEnv(extra: AccountEnv = {}): AccountEnv {
+  return {
+    VERCEL_ENV: 'preview',
+    MY_TRUSTHUB_ENABLED: 'false',
+    MY_TRUSTHUB_SIGNUP_ENABLED: 'false',
+    MY_TRUSTHUB_EMAIL_ENABLED: 'false',
+    MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS: 'true',
+    MY_TRUSTHUB_ACCESS_MODE: 'invitation',
+    MY_TRUSTHUB_INVITED_USER_IDS: user.id,
+    MY_TRUSTHUB_NONPRODUCTION_APPROVED: 'true',
+    NEXT_PUBLIC_SITE_URL: PREVIEW_ORIGIN,
+    NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: ISOLATED_BACKEND,
+    MY_TRUSTHUB_TEST_ORIGIN: PREVIEW_ORIGIN,
+    MY_TRUSTHUB_TEST_SUPABASE_URL: ISOLATED_BACKEND,
+    NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY: 'fixture-key-not-a-provider-token',
+    ...extra,
+  };
+}
+
+test('preview account access signs in an invited confirmed user and keeps signup, mail, and public admission closed', async () => {
+  const policy = previewAccessEnv();
+  assert.equal(previewAccountAccess(policy), true);
+  assert.equal(accountFormAvailable('login', policy), true);
+  for (const operation of ['signup', 'link', 'recovery', 'password'] as const) assert.equal(accountFormAvailable(operation, policy), false);
+  assert.equal(admitted(user, policy), true);
+  assert.equal(admitted({ ...user, email_confirmed_at: undefined }, policy), false);
+  assert.equal(admitted({ ...user, id: '20000000-0000-4000-8000-000000000002' }, policy), false);
+  assert.equal(admitted(user, { ...policy, MY_TRUSTHUB_ACCESS_MODE: 'public' }), false);
+  assert.equal(registrationAllowed(user.email, policy), false);
+  assert.equal(emailRequestAllowed(user.email, policy), false);
+  const sdk = fixture();
+  const login = await runAccountOperation('login', form(), sdk.api, policy, quiet);
+  assert.equal(login.destination, '/my/saved');
+  assert.equal(sdk.current()?.id, user.id);
+  assert.equal(sdk.calls.some(call => call.name === 'signUp' || call.name === 'link' || call.name === 'recovery'), false);
+  for (const operation of ['signup', 'link', 'recovery'] as const) {
+    const blocked = fixture();
+    const result = await runAccountOperation(operation, form(), blocked.api, policy, quiet);
+    assert.equal(result.error, 'Account access is unavailable in this environment.');
+    assert.equal(blocked.calls.length, 0);
+  }
+  const missingCaptcha = fixture();
+  assert.match((await runAccountOperation('login', form({ captchaToken: '' }), missingCaptcha.api, policy, quiet)).error ?? '', /security check/i);
+  assert.equal(missingCaptcha.calls.length, 0);
+});
+
+test('preview account access is ignored in production and without an isolated pair', async () => {
+  const production = { ...env, MY_TRUSTHUB_ENABLED: 'false', MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS: 'true', MY_TRUSTHUB_ACCESS_MODE: 'invitation', MY_TRUSTHUB_INVITED_USER_IDS: user.id };
+  assert.equal(previewAccountAccess(production), false);
+  assert.equal(admitted(user, production), false);
+  assert.equal(accountFormAvailable('login', production), false);
+  const sdk = fixture();
+  assert.equal((await runAccountOperation('login', form(), sdk.api, production, quiet)).error, 'Account access is unavailable in this environment.');
+  assert.equal(sdk.calls.length, 0);
+  const unbound = previewAccessEnv({ NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: PARENT_BACKEND, MY_TRUSTHUB_TEST_SUPABASE_URL: PARENT_BACKEND });
+  assert.equal(accountRuntime(unbound), null);
+  assert.equal(previewAccountAccess(unbound), false);
+  assert.equal((await runAccountOperation('login', form(), fixture().api, unbound, quiet)).error, 'Account access is unavailable in this environment.');
+  const flagOff = previewAccessEnv({ MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS: 'false' });
+  assert.equal(accountFormAvailable('login', flagOff), false);
+  assert.match(readFileSync(new URL('./feature-flags.ts', import.meta.url), 'utf8'), /MY_TRUSTHUB_ENABLED/);
+  assert.doesNotMatch(readFileSync(new URL('./feature-flags.ts', import.meta.url), 'utf8'), /PREVIEW_ACCOUNT_ACCESS/);
+  assert.match(readFileSync(new URL('../../components/my-trusthub/account-entry.tsx', import.meta.url), 'utf8'), /accountFormAvailable/);
+  assert.match(readFileSync(new URL('../../app/auth/callback/route.ts', import.meta.url), 'utf8'), /MY_TRUSTHUB_ENABLED/);
 });
 
 test('V2-2R trailing-dot DNS aliases cannot bypass production backend exclusion', () => {

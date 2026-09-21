@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { accountRuntime, accessMode, admitted, enabled, safeReturn } from '@/lib/my-trusthub/account-policy';
+import { accountFormAvailable, accessMode, admitted, enabled, safeReturn } from '@/lib/my-trusthub/account-policy';
 import type { AccountOperation } from '@/lib/my-trusthub/account-service';
 import { createMyTrustHubSupabaseClient } from '@/lib/supabase/server';
 import { signOutAccountAction } from '@/app/my/account-actions';
@@ -8,8 +8,7 @@ import { AccountForm } from './account-form';
 export type AccountQuery = Record<string, string | string[] | undefined>;
 export async function AccountEntry({ operation, query }: { operation: AccountOperation; query: AccountQuery }) {
   const next = safeReturn(query.next);
-  const runtime = accountRuntime(process.env);
-  const available = enabled(process.env.MY_TRUSTHUB_ENABLED) && Boolean(runtime);
+  const available = accountFormAvailable(operation, process.env);
   const client = available ? await createMyTrustHubSupabaseClient() : null;
   const user = client ? (await client.auth.getUser()).data.user : null;
   const allowed = admitted(user, process.env);
