@@ -13,6 +13,7 @@ import {
   INSURANCE_NAME_CANDIDATES_CONTRACT, INSURANCE_NAME_CANDIDATES_LOCK, NAME_SPECIALIST_LOCKS, NAME_SPECIALIST_CONTRACT,
 } from './adapters.ts';
 import { mergeHubPage, buildNameResultsView } from './view.ts';
+import { summarizeCoverage } from './coverage.ts';
 
 const jsonFetch = (handler: (url: string, init?: RequestInit) => { status?: number; body: unknown }): typeof fetch =>
   (async (url: string | URL, init?: RequestInit) => {
@@ -469,4 +470,120 @@ test('31 no suppressed identity is reconstructed or added to candidates -- retur
   const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: rows, pag: pagination({ returned: 6, hasMore: true, matchedCount: 46, suppressedByPublicationPolicy: 40 }) }) })));
   assert.equal(r.candidates.length, 6, 'exactly the rows the specialist actually returned -- never padded toward matchedCount or returned+suppressed');
   assert.equal(r.returnedCount, 6);
+});
+
+// ---------------------------------------------------------------- TH-SEARCH-R1-019I-R3: prevent all-suppressed Insurance false miss
+// The released operation determines resultState BEFORE its own network publication suppression is
+// applied: resultState CANDIDATES, matchedCount positive+exact, candidates [], returned 0,
+// suppressedByPublicationPolicy > 0, hasMore false, completeness COMPLETE is a valid specialist
+// response. Matching identities DO exist -- every candidate on this page was just withheld from the
+// network view. That must never collapse to a completed miss.
+
+// 32. (required control 1) ALL-SUPPRESSED FINAL PAGE
+test('32 an all-suppressed final page (CANDIDATES, candidates=[], matchedCount=4 exact, suppressed=4, hasMore=false, COMPLETE) is PARTIAL_TRUNCATED, never COMPLETED_NO_CANDIDATES', async () => {
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: false, matchedCount: 4, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 4 }),
+  }) })));
+  assert.equal(r.state, 'PARTIAL_TRUNCATED');
+  assert.notEqual(r.state, 'COMPLETED_NO_CANDIDATES');
+  assert.equal(r.hubReportedTotal, 4);
+  assert.equal(r.candidates.length, 0, 'no suppressed identity is reconstructed or added to candidates');
+  assert.equal(r.truncatedWithoutCursor, true);
+  assert.notEqual(r.continuation, null);
+  assert.equal(r.continuation?.type, 'RESEARCH');
+  assert.ok(r.message?.includes('4'), 'the disclosure must name the actual suppressed count');
+  assert.match(r.message ?? '', /withheld/i);
+  assert.match(r.message ?? '', /publication policy/i);
+});
+
+// 33. (required control 2) COVERAGE
+test('33 summarizeCoverage on the all-suppressed final page: genuineNetworkMiss=false, completedHubsMiss=false, Insurance incomplete not completed', async () => {
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: false, matchedCount: 4, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 4 }),
+  }) })));
+  const coverage = summarizeCoverage([r]);
+  assert.equal(coverage.genuineNetworkMiss, false);
+  assert.equal(coverage.completedHubsMiss, false);
+  assert.ok(coverage.incompleteHubs.includes('insurance'), 'Insurance must appear as incomplete coverage');
+  assert.ok(!coverage.completedHubs.includes('insurance'), 'Insurance must NOT appear as a completed hub for this page');
+});
+
+// 34. (required control 3) VIEW
+test('34 buildNameResultsView renders an Insurance group with the suppression disclosure and continuation, never "No records named" for an Insurance-only all-suppressed case', async () => {
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: false, matchedCount: 4, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 4 }),
+  }) })));
+  const view = buildNameResultsView({ query: 'allied', name: 'allied', scope: 'all', hubs: [r] });
+  const group = view.groups.find((g) => g.hub === 'insurance');
+  assert.ok(group, 'the Insurance group must still render even with zero visible candidates, because a continuation exists');
+  assert.ok(group!.infoNote?.includes('4') || group!.emptyPageNote, 'the neutral disclosure or empty-page note must surface the suppression fact');
+  assert.notEqual(group!.moreState, 'COMPLETE');
+  assert.notEqual(view.heading, 'No records named “allied” were found');
+  assert.doesNotMatch(view.heading, /^No records named/, 'an all-suppressed page is never presented as a completed no-match');
+});
+
+// 35. (required control 4) ALL-SUPPRESSED WITH MORE PAGES
+test('35 all-suppressed with hasMore=true keeps the real page continuation and is not prematurely replaced by a source-capped one', async () => {
+  const r = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: true, matchedCount: 46, matchedCountIsExact: true, suppressedByPublicationPolicy: 6 }),
+  }) })));
+  assert.equal(r.state, 'PARTIAL_TRUNCATED', 'still partial, driven by real hasMore -- not a completed miss');
+  assert.equal(r.hasMore, true);
+  assert.equal(r.continuation, null, 'no source-capped research continuation is forced while a real next page exists');
+  const view = buildNameResultsView({ query: 'allied', name: 'allied', scope: 'all', hubs: [r] });
+  const group = view.groups.find((g) => g.hub === 'insurance');
+  assert.ok(group);
+  assert.equal(group!.moreState, 'MORE_AVAILABLE', 'the real next-page control is preserved, not swapped for SOURCE_CAPPED');
+});
+
+// 36. (required control 5) LATER PAGE
+test('36 page 1 has visible cards; the final all-suppressed page keeps earlier cards, stays non-miss/partial, and surfaces the fresh disclosure with no red error treatment', async () => {
+  const page1Rows = [candidate({ stableKey: 'insurance:agency:later-a' })];
+  const current = await search('allied', 1, jsonFetch(() => ({ body: successBody({ candidates: page1Rows, pag: pagination({ returned: 1, hasMore: true, matchedCount: 5 }) }) })));
+  const fresh = await search('allied', 2, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ page: 2, returned: 0, hasMore: false, matchedCount: 5, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 4 }),
+  }) })));
+  const merged = mergeHubPage(current, fresh);
+  assert.equal(merged.candidates.length, 1, 'the earlier valid card remains');
+  assert.equal(merged.candidates[0].stableKey, 'insurance:agency:later-a');
+  assert.equal(merged.state, 'PARTIAL_TRUNCATED', 'non-miss/partial, never a completed miss');
+  assert.ok(merged.message?.includes('4'), 'the fresh page\'s suppression disclosure remains visible');
+  assert.notEqual(merged.continuation, null, 'the specialist research continuation remains available');
+  const view = buildNameResultsView({ query: 'allied', name: 'allied', scope: 'all', hubs: [merged] });
+  const group = view.groups.find((g) => g.hub === 'insurance');
+  assert.ok(group);
+  assert.equal(group!.statusNote, null, 'never treated as a technical error');
+  assert.ok(group!.infoNote?.includes('4'));
+});
+
+// 37. (required control 6) ZERO SUPPRESSION regression
+test('37 a normal zero-candidate complete NO_MATCH with suppressedByPublicationPolicy=0 still becomes COMPLETED_NO_CANDIDATES', async () => {
+  const r = await search('Zzyxqvortnabble Fictitious Underwriters', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'NO_MATCH', candidates: [],
+    pag: pagination({ matchedCount: 0, matchedCountIsExact: true, completeness: 'COMPLETE', hasMore: false, suppressedByPublicationPolicy: 0 }),
+  }, 'Zzyxqvortnabble Fictitious Underwriters') })));
+  assert.equal(r.state, 'COMPLETED_NO_CANDIDATES');
+  assert.equal(r.truncatedWithoutCursor, false);
+  assert.equal(r.continuation, null);
+  const coverage = summarizeCoverage([r]);
+  assert.equal(coverage.genuineNetworkMiss, true, 'a genuine miss must still be reported as a genuine miss -- this fix never weakens real miss semantics');
+});
+
+// 38. (required control 7) no suppressed identity ever appears in candidates, across all combinations above
+test('38 across all-suppressed combinations (final page, more-pages, and merged later page), candidates never contains a reconstructed/suppressed identity', async () => {
+  const finalPage = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: false, matchedCount: 4, matchedCountIsExact: true, completeness: 'COMPLETE', suppressedByPublicationPolicy: 4 }),
+  }) })));
+  assert.deepEqual(finalPage.candidates, []);
+  const morePages = await search('allied', 1, jsonFetch(() => ({ body: successBody({
+    resultState: 'CANDIDATES', candidates: [],
+    pag: pagination({ returned: 0, hasMore: true, matchedCount: 46, matchedCountIsExact: true, suppressedByPublicationPolicy: 6 }),
+  }) })));
+  assert.deepEqual(morePages.candidates, []);
 });

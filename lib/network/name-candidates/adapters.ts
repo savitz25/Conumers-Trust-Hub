@@ -539,14 +539,25 @@ export const insuranceNameAdapter: HubNameAdapter = {
     });
     const hasMore = pagination.hasMore === true;
     const outOfRange = pagination.outOfRange === true;
+    const suppressedCount = typeof pagination.suppressedByPublicationPolicy === 'number' ? pagination.suppressedByPublicationPolicy : 0;
+    // R3 (TH-SEARCH-R1-019I-R3): the released operation determines resultState BEFORE its own
+    // network publication suppression is applied, so an all-suppressed final page arrives as an
+    // otherwise-ordinary CANDIDATES response with an empty visible page (rawCandidates.length === 0)
+    // and hasMore === false. That is NOT a completed miss -- matching source identities exist, they
+    // are just withheld from this network view by publication policy -- so it must not silently
+    // fall through to COMPLETED_NO_CANDIDATES. It is only ever "final page" (not "more pages exist"):
+    // when hasMore is true the existing hasMore-driven truncation already prevents a completed miss,
+    // and forcing this here would incorrectly override real next-page continuation with the source-
+    // capped research one (ticket's "HASMORE CASE").
+    const allSuppressedFinalPage = suppressedCount > 0 && rawCandidates.length === 0 && !hasMore;
     // PARTIAL_REFINE_REQUIRED: the source scan itself was not exhaustive -- always disclose as
     // partial coverage, even on a page whose own hasMore is false, because the scanned stream ending
     // is not the same as every possible matching identity being found (ticket Section 7). An
     // out-of-range page similarly proves matching identities exist beyond the reachable window --
     // never a completed miss (ticket Section 8). Neither ever silently substitutes page 1.
-    const truncatedWithoutCursor = state === 'PARTIAL_REFINE_REQUIRED' || outOfRange;
+    const truncatedWithoutCursor = state === 'PARTIAL_REFINE_REQUIRED' || outOfRange || allSuppressedFinalPage;
     const refineExhausted = state === 'PARTIAL_REFINE_REQUIRED' && !hasMore;
-    const continuation = outOfRange || refineExhausted
+    const continuation = outOfRange || refineExhausted || allSuppressedFinalPage
       ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub')
       : null;
     // Ask may need to disclose more than one truthful fact about the SAME page at once (e.g. a
@@ -559,7 +570,6 @@ export const insuranceNameAdapter: HubNameAdapter = {
     } else if (refineExhausted) {
       notices.push('InsuranceTrustHub reached its source scan bound for this name before finding every possible match. Refine the organization name for a complete result.');
     }
-    const suppressedCount = typeof pagination.suppressedByPublicationPolicy === 'number' ? pagination.suppressedByPublicationPolicy : 0;
     if (suppressedCount > 0) {
       // Truthful disclosure only: never "violation"/"bad actor"/"deleted"/"missing data", never a
       // claim that the withheld identities were added to `candidates`, and matchedCount is untouched.
