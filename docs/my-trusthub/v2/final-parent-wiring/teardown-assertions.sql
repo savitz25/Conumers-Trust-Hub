@@ -49,7 +49,7 @@ with objects as (
  select 'schema:'||n.nspname,n.nspowner,coalesce(n.nspacl,acldefault('n',n.nspowner))
  from pg_namespace n where n.nspname in ('auth','consumer','ops','network','v23_private','public')
  union all
- select 'defaults:'||d.defaclrole||':'||d.defaclnamespace||':'||d.defaclobjtype,d.defaclrole,d.defaclacl
+ select 'defaults:'||d.defaclrole||':'||d.defaclnamespace||':'||d.defaclobjtype::text,d.defaclrole,d.defaclacl
  from pg_default_acl d
  union all
  select 'database:'||datname,datdba,coalesce(datacl,acldefault('d',datdba))
@@ -57,7 +57,7 @@ with objects as (
 ), inventory as (
  select object_key,jsonb_build_object('owner',owner_id,'acl',coalesce(
    (select jsonb_agg(to_jsonb(a) order by a.grantor,a.grantee,a.privilege_type,a.is_grantable)
-     from aclexplode(acl) a),'[]'::jsonb)) state from objects
+     from aclexplode(nullif(acl,'{}'::aclitem[])) a),'[]'::jsonb)) state from objects
  union all
  select 'membership:'||m.roleid||':'||m.member||':'||m.grantor,
    jsonb_build_object('admin',m.admin_option,'inherit',m.inherit_option,'set',m.set_option)

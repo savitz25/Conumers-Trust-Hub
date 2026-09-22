@@ -36,6 +36,7 @@ export async function assertionFailureCases(db) {
   const cases = [
     ['missing binding', `delete from network.network_entity_bindings where id=${bid}`, /query returned no rows/],
     ['wrong approved entity ID', "select set_config('v23.network_entity_id',gen_random_uuid()::text,true)", /query returned no rows/],
+    ['binding points to another entity', `with e as (insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction) values('organization','Wrong binding target','move','US') returning id) update network.network_entity_bindings set network_entity_id=(select id from e) where id=${bid}`, /Exact current accepted forward binding/],
     ['missing forward provenance', "set local v23.binding_provenance_ref='different'", /Exact current accepted forward binding/],
     ...['hub','specialist_entity_type','specialist_entity_id','identifier_namespace','source_identifier','jurisdiction','binding_status'].map((field, i) =>
       ['binding ' + field, `update network.network_entity_bindings set ${field}='${['insurance','carrier','usdot-other','other.id','2002530','CA','review_required'][i]}' where id=${bid}`, /Exact current accepted forward binding/]),
@@ -52,6 +53,7 @@ export async function assertionFailureCases(db) {
     ['nested membership', 'grant myth_v23_cleanup to myth_v23_authorizer', /Unexpected nested membership/],
     ['direct column grant', 'grant select(id) on auth.users to myth_v23_parent_preview', /Unexpected direct runtime grants/],
     ['PUBLIC raw column access', 'grant select(id) on auth.users to public', /Raw table\/column access/],
+    ['PUBLIC raw sequence access', 'grant select on sequence network.identity_governance_events_id_seq to public', /Raw sequence access/],
     ['public private wrapper', 'grant execute on function v23_private.preview_confirmation(text,text,jsonb) to public', /Public private-preview wrapper execution/],
     ['authenticated private wrapper', 'grant execute on function v23_private.preview_saved(uuid,uuid) to authenticated', /Public private-preview wrapper execution/],
     ['wrong pin', "update v23_private.preview_deployment_pin set ask_origin='https://wrong.invalid'", /Exact deployment pin/],

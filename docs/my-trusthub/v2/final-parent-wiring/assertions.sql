@@ -34,22 +34,24 @@ begin
    raise exception 'Unexpected nested membership'; end if;
  -- Direct ACLs are forbidden even when schema USAGE currently masks them.
  if exists(
-   select 1 from pg_class c cross join lateral aclexplode(c.relacl) a where a.grantee=r.oid
-   union all select 1 from pg_attribute c cross join lateral aclexplode(c.attacl) a where a.grantee=r.oid
-   union all select 1 from pg_proc c cross join lateral aclexplode(c.proacl) a where a.grantee=r.oid
-   union all select 1 from pg_namespace c cross join lateral aclexplode(c.nspacl) a where a.grantee=r.oid
-   union all select 1 from pg_database c cross join lateral aclexplode(c.datacl) a where a.grantee=r.oid
-   union all select 1 from pg_default_acl c cross join lateral aclexplode(c.defaclacl) a where a.grantee=r.oid
+   select 1 from pg_class c cross join lateral aclexplode(nullif(c.relacl,'{}'::aclitem[])) a where a.grantee=r.oid
+   union all select 1 from pg_attribute c cross join lateral aclexplode(nullif(c.attacl,'{}'::aclitem[])) a where a.grantee=r.oid
+   union all select 1 from pg_proc c cross join lateral aclexplode(nullif(c.proacl,'{}'::aclitem[])) a where a.grantee=r.oid
+   union all select 1 from pg_namespace c cross join lateral aclexplode(nullif(c.nspacl,'{}'::aclitem[])) a where a.grantee=r.oid
+   union all select 1 from pg_database c cross join lateral aclexplode(nullif(c.datacl,'{}'::aclitem[])) a where a.grantee=r.oid
+   union all select 1 from pg_default_acl c cross join lateral aclexplode(nullif(c.defaclacl,'{}'::aclitem[])) a where a.grantee=r.oid
  ) then raise exception 'Unexpected direct runtime grants'; end if;
  if exists(select 1 from pg_namespace where nspowner=r.oid) or exists(select 1 from pg_proc where proowner=r.oid)
    or exists(select 1 from pg_class where relowner=r.oid) then raise exception 'Runtime login owns an object'; end if;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
    where n.nspname not like 'pg_%' and n.nspname<>'information_schema' and c.relkind in ('r','p','v','m','f')
-   and (has_table_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
-     or has_any_column_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,REFERENCES'))) then
+   and case when c.relkind in ('r','p','v','m','f') then
+     (has_table_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+       or has_any_column_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,REFERENCES')) else false end) then
    raise exception 'Raw table/column access without SET ROLE'; end if;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
-   where n.nspname not like 'pg_%' and c.relkind='S' and has_sequence_privilege(r.oid,c.oid,'USAGE,SELECT,UPDATE')) then
+   where n.nspname not like 'pg_%' and c.relkind='S'
+   and case when c.relkind='S' then has_sequence_privilege(r.oid,c.oid,'USAGE,SELECT,UPDATE') else false end) then
    raise exception 'Raw sequence access without SET ROLE'; end if;
  foreach f in array array[
    'v23_private.preview_ports_ready()','v23_private.preview_confirmation(text,text,jsonb)',
@@ -62,7 +64,7 @@ begin
  if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname='v23_private' and p.proname like 'preview_%'
    and (has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE')
-     or exists(select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a where a.grantee=0 and a.privilege_type='EXECUTE'))) then
+     or exists(select 1 from aclexplode(nullif(coalesce(p.proacl,acldefault('f',p.proowner)),'{}'::aclitem[])) a where a.grantee=0 and a.privilege_type='EXECUTE'))) then
    raise exception 'Public private-preview wrapper execution'; end if;
  if (select count(*) from v23_private.preview_deployment_pin)<>1 or not exists(
    select 1 from v23_private.preview_deployment_pin where singleton and project_ref='xkkiicsassizmakcvxml'

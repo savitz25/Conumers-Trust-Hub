@@ -4,7 +4,7 @@ Base: `4fca808a823101f2ad88e039634676b92e10cc2d`; PR #185. This closeout changes
 
 The two reported gaps are addressed in prepared files: [exact steward retirement](move-binding-teardown.sql) and [fail-closed activation assertions](assertions.sql). [Teardown preconditions](teardown-preconditions.sql) retain same-session preservation evidence; [post-teardown assertions](teardown-assertions.sql) compare the resulting state against it. No hosted SQL, role, binding, Supabase/Vercel configuration, production operation or merge is authorized by this preparation.
 
-**Verification status: BLOCKED pending clarification of local SQL execution.** The ticket prohibits executing any SQL and separately requests disposable local PostgreSQL tests. SQL has not been executed during this closeout. JavaScript syntax/static checks alone cannot establish SQL correctness or readiness for isolated authorization.
+**Verification status: PASS for disposable local PostgreSQL; packet ready for isolated SQL authorization review.** The clarified ticket explicitly permits disposable local SQL execution and prohibits every hosted/non-disposable database operation. Starting from local commit `65148f7513ff8892e7fc60bd341c7e5dc6e30582`, the complete packet was executed and corrected only in fresh, ephemeral PGlite instances running PostgreSQL 17.5. No database URL, hosted credentials, Supabase client, or remote database was used. Hosted application and runtime activation remain BLOCKED pending separate authorization and the ordered gates below.
 
 ## Schema and lifecycle basis
 
@@ -45,13 +45,31 @@ Never merge #185/#157 or promote production under this packet. Local test succes
 
 Use `teardown-preconditions.sql` -> `move-binding-teardown.sql` -> `teardown.sql` -> `teardown-assertions.sql`, with one independently pinned operator session, writers quiescent and connections drained. Require the separate retirement/teardown GUCs documented in [preview-env.md](preview-env.md), plus exact forward IDs/provenance. Preserve stop-on-error. Never reconstruct the original research baseline after failed cleanup.
 
-## Local test preparation
+## Disposable local PostgreSQL verification
 
 `scripts/qa/v23-sql-closeout-cases.mjs` extends the existing `scripts/qa/v23-parent-wiring-postgres.mjs` disposable PGlite harness. The harness loads the actual certified PostgreSQL migrations and packet files, not SQLite or mocked SQL. It now uses the exact forward binding file and retained returned IDs, tests duplicate rejection and activation negatives, exercises the real P13/P12 Save/receipt path, and tests lifecycle retirement/full teardown/post-teardown failures while preserving research.
 
-The intended local command is `npm run check:my-trusthub-v2-3-final-parent`. **Not run for this closeout while the SQL-execution instruction is unresolved.** No hosted connection or supplied QA credentials are used by the local fixture harness. No partial result is READY.
+The local command `node --experimental-strip-types scripts/qa/v23-parent-wiring-postgres.mjs` (the command behind `npm run check:my-trusthub-v2-3-final-parent`) passed with exit code 0. Every rerun started a fresh ephemeral PostgreSQL database and closed/discarded it afterward. The existing hosted-matrix SQL file was exercised only inside that disposable local database; no hosted matrix execution is claimed. Source/Auth HTTP are fixtures, and local publication evidence is explicitly synthetic. The real hosted source must still be freshly reverified before any separately authorized binding application.
 
-Static validation completed: Node syntax checks for both edited test modules, targeted ESLint (zero errors/warnings), and `git diff --check` passed. These checks did not execute SQL. The prepared local test includes Project membership and an additional consumer FK with cascading delete semantics to check that lifecycle cleanup preserves both relational and JSON receipt references. Dynamic PostgreSQL and concurrency behavior remain unverified for this closeout.
+The first executions exposed three SQL defects: `operator is not unique: text || "char"` in the catalog snapshot, `ACL arrays must be one-dimensional` for empty ACLs, and `"information_schema_catalog_name" is not a sequence` when the planner evaluated a sequence privilege function before a relation-kind filter. Corrections add an explicit catalog-type cast, normalize empty ACLs to no privilege rows, and use CASE guards so object-specific privilege checks run only on valid object kinds. No authorization, identity, privilege, or preservation condition was weakened. A PUBLIC sequence-grant negative case verifies the corrected sequence check still rejects access.
+
+| Disposable local check | Result |
+|---|---|
+| Clean certified baseline, ports-forward, runtime-role-forward | PASS |
+| Actual Move binding forward SQL and duplicate rejection | PASS |
+| Activation assertions and 46 negative cases | PASS; includes wrong binding/entity, a binding redirected to another entity, competing lifetimes, ports, resolver, origins, role/ACL and PUBLIC-access cases |
+| Actual P13/P12 Save and durable receipt fixture | PASS |
+| Nine retirement guard negatives plus repeat-retirement rejection | PASS |
+| Exact binding lifetime closure and same-entity retirement | PASS; resolver returns zero current bindings afterward |
+| Full parent teardown and post-teardown assertions | PASS |
+| Eleven post-teardown failure cases | PASS; including missing/changed research, deleted receipts, residual roles/functions/tables/grants, wrong origins and reopened lifecycle |
+| Zero residual preview roles/wrappers/tables/policies; original role/ACL/origin baseline restored | PASS |
+| Zero Watch/Alert relations | PASS locally |
+| Existing five parent wiring unit cases | PASS |
+
+Preservation is non-vacuous: **1 Saved row -> 1; 1 durable receipt -> 1; 2 Projects -> 2; 1 Project membership -> 1; 1 additional consumer FK reference -> 1**. Full Saved/receipt query results and all protected row fingerprints remained equal. The extra FK deliberately uses ON DELETE CASCADE, so accidental identity deletion would fail preservation. Same-count research edits and receipt deletion were separately injected and correctly rejected by post-teardown assertions.
+
+Targeted ESLint (zero errors/warnings) and `git diff --check` passed. Local evidence is `C:\Users\Michael.Savitsky\.codex\tmp\v23-sql-closeout-local.log`. The local packet harness is separate from the existing PR CI workflows; CI results for the exact pushed head are reported with publication. Embedded single-session PostgreSQL does not certify hosted managed-schema ownership, native multi-session concurrency, TCP/password login, or the browser journey. No runtime application code or hosted configuration was changed.
 
 The implementation report below is historical evidence from the base commit. Its old local test PASS results do not validate this closeout's edited SQL.
 

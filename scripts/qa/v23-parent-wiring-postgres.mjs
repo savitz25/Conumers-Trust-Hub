@@ -17,6 +17,7 @@ import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save
 import { createPacketBinding, assertionFailureCases, closeoutPacket } from './v23-sql-closeout-cases.mjs';
 const db = new PGlite({ extensions: { btree_gist, pgcrypto } });
 try {
+  console.log('Disposable embedded PostgreSQL:', (await db.query('select version() version')).rows[0].version);
   await db.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin;
     create schema auth; create table auth.users(id uuid primary key);
     create table auth.sessions(id uuid primary key,user_id uuid references auth.users,not_after timestamptz);
@@ -159,10 +160,22 @@ try {
       current_setting('v23.network_entity_id')::uuid,current_setting('v23.binding_id')::uuid);`);
   const research = await db.query('select * from consumer.consumer_saved_entities');
   const receipts = await db.query("select * from ops.v23_profile_runtime_records where kind='receipt'");
+  assert.equal(research.rows.length, 1, 'preservation proof must include a real Saved row');
+  assert.equal(receipts.rows.length, 1, 'preservation proof must include a durable receipt');
+  const references = await db.query(`select
+    (select count(*)::int from consumer.consumer_projects) projects,
+    (select count(*)::int from consumer.consumer_project_saved_entities) memberships,
+    (select count(*)::int from consumer.packet_reference_fixture) other_references`);
+  assert.deepEqual(references.rows, [{ projects: 2, memberships: 1, other_references: 1 }]);
   await closeoutPacket(db);
   assert.deepEqual(await db.query('select * from consumer.consumer_saved_entities'), research);
   assert.deepEqual(await db.query("select * from ops.v23_profile_runtime_records where kind='receipt'"), receipts);
+  assert.deepEqual(await db.query(`select
+    (select count(*)::int from consumer.consumer_projects) projects,
+    (select count(*)::int from consumer.consumer_project_saved_entities) memberships,
+    (select count(*)::int from consumer.packet_reference_fixture) other_references`), references);
   assert.equal((await db.query('select count(*)::int n from pg_roles where rolname=$1', [PARENT_LOGIN])).rows[0].n, 0);
   console.log('PASS local PostgreSQL: role/ACL assertions and teardown preserve Saved research and durable receipts');
+  console.log('PRESERVATION PASS: Saved 1 -> 1; durable receipts 1 -> 1; Projects 2 -> 2; memberships 1 -> 1; other consumer FK references 1 -> 1; protected row fingerprints unchanged');
 } catch (error) { console.error('LOCAL WIRING SQL FAIL', error.message, error.code, error.where); process.exitCode = 1; }
 finally { await db.close(); }
