@@ -229,12 +229,23 @@ const NC_CITY_RE =
 const NC_CITY_DETECT_RE =
   /\b(charlotte|raleigh|durham|greensboro|winston-salem|asheville|wilmington|fayetteville|cary)\b/i;
 const NC_COUNTY_RE = /\b(mecklenburg|wake|guilford|forsyth|buncombe)\s+county\b/i;
+// POST-R1-ASK-INTENT-001 Problem E: Fort Bragg (renamed Fort Liberty 2023-2025,
+// renamed back to Fort Bragg) is a well-known, unambiguous US Army installation
+// immediately adjacent to Fayetteville, NC (Cumberland County) -- not a
+// speculative or judgment-call mapping. Recognized here the same way this file
+// already special-cases named places (e.g. specific cities), so "near fort
+// bragg nc" resolves to North Carolina instead of silently losing all
+// geography. No county/service-territory claim is made beyond that.
+export const FORT_BRAGG_RE = /\bfort\s+(?:bragg|liberty)\b/i;
 
 export function detectNcCity(query: string): string | undefined {
   const city = query.match(NC_CITY_DETECT_RE);
-  if (!city) return undefined;
-  const raw = city[1].toLowerCase();
-  return raw.replace(/\b\w/g, (letter) => letter.toUpperCase());
+  if (city) {
+    const raw = city[1].toLowerCase();
+    return raw.replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+  if (FORT_BRAGG_RE.test(query)) return 'Fayetteville (Fort Bragg / Fort Liberty)';
+  return undefined;
 }
 
 export function detectRequestedInsuranceProducts(query: string): string[] {
@@ -247,6 +258,7 @@ export function detectRequestedInsuranceProducts(query: string): string[] {
 export function queryLooksLikeNorthCarolina(query: string): boolean {
   if (/\bnorth carolina\b/i.test(query)) return true;
   if (NC_CITY_RE.test(query) || NC_COUNTY_RE.test(query)) return true;
+  if (FORT_BRAGG_RE.test(query)) return true;
   if (/\b(nclbgc|nccob|ncuc|dhsr|ncdoi|nchfa|ncbee?c|phfs)\b/i.test(query)) return true;
   if (/\bin nc\b/i.test(query) || /\bNC\s+(registered|contractor|mover|lender|insur|senior|advis|broker|nursing|mortgage|securities)/.test(query)) {
     return true;

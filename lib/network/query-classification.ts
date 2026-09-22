@@ -78,6 +78,31 @@ function classMatch(query: string): GenericEntityClass | undefined {
   return undefined;
 }
 
+/**
+ * POST-R1-ASK-INTENT-001 Problem A/F: "is X legit", "is X licensed in Y", "can
+ * I trust X" wrap a real entity name in trust/credential qualifier language.
+ * Left unstripped, the whole sentence became the "entity" (WHOLE_SENTENCE_AS_ENTITY),
+ * and Ask must never produce a "legit/trusted/safe" verdict itself -- only route
+ * to sourced evidence about the named entity. This strips the wrapper down to
+ * the entity phrase before classification; it does not decide what the entity
+ * IS (no company database), only removes the qualifier language around it.
+ */
+const QUALIFIER_TAIL =
+  '(?:medicare[\\s-]certified|medicaid[\\s-]certified|legit|legitimate|real|trustworthy|reputable|a\\s+scam|scam|licensed|certified|accredited|registered|in\\s+good\\s+standing)';
+const IS_ARE_QUALIFIER_RE = new RegExp(
+  `^(?:is|are|was|were)\\s+(.+?)\\s+(?:really\\s+)?${QUALIFIER_TAIL}(?:\\s+in\\s+[a-z .]+)?\\??$`,
+  'i',
+);
+const CAN_TRUST_RE = /^can\s+i\s+trust\s+(.+?)\??$/i;
+
+function stripTrustQualifierWrapper(query: string): string {
+  const isAre = query.match(IS_ARE_QUALIFIER_RE);
+  if (isAre) return isAre[1].trim();
+  const canTrust = query.match(CAN_TRUST_RE);
+  if (canTrust) return canTrust[1].trim();
+  return query;
+}
+
 function removeOnce(value: string, phrase: string): string {
   const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
   return value.replace(new RegExp(`\\b${escaped}\\b`, 'i'), ' ');
@@ -107,9 +132,13 @@ export function classifyUniversalQuery(input: {
   if (input.intentHint === 'journey') return { type: 'LIFE_SITUATION', consumed: [] };
   if (/\b(?:what is|what does|define|definition|difference between|mean)\b/i.test(query)) return { type: 'DEFINITION', consumed: [] };
 
-  const entityClass = classMatch(query);
-  let residual = query;
+  const coreQuery = stripTrustQualifierWrapper(query);
+  const qualifierStripped = coreQuery !== query;
+
+  const entityClass = classMatch(coreQuery);
+  let residual = coreQuery;
   const consumed: string[] = [];
+  if (qualifierStripped) consumed.push('trust/credential qualifier language');
   if (entityClass) {
     residual = removeOnce(residual, entityClass.matchedText);
     consumed.push(entityClass.matchedText);
