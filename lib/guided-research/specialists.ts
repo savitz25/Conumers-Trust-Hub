@@ -574,7 +574,7 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
   // afterChoice() (orchestrator.ts) replaces session.geography with the approved state-level
   // geography but has no insurance-specific knowledge to also clear insuranceResearchMode, so
   // without this check the broadened request would loop straight back into the same handoff.
-  if(session.insuranceResearchMode==='local_directory_handoff'&&(session.geography?.type==='zip'||session.geography?.type==='city')){
+  if(session.insuranceResearchMode==='local_directory_handoff'&&(session.geography?.type==='zip'||session.geography?.type==='city'||session.geography?.type==='county')){
     // TH-DISCOVERY-002B: InsuranceTrustHub's real, already-live public-directory query
     // (getProviders/searchProviders, the same source that backs its own /directory page -- proven
     // live for ZIP 33431) is now wired into specialist-execution/v2 under the OFFICE_LOCATION
@@ -584,11 +584,13 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
     // separately scoped and unaffected capability gaps and fall straight through to the
     // broadening offer below.
     const zip=session.geography.type==='zip'?session.geography.value:undefined;
-    // A bare city request never carries county on session.geography itself (only Summit, NJ is
-    // hardcoded there) -- session.executionScope.normalizedRequestedGeography already resolved a
-    // FL city to its county via the existing florida-municipality-crosswalk.ts (unconditional on
-    // Insurance's capability list), so reuse that instead of duplicating a city resolver here.
-    const county=!zip?session.executionScope.normalizedRequestedGeography?.county:undefined;
+    // POST-R1-INS-LOCAL-001: an explicit county phrasing ("insurance agent in broward county")
+    // now reaches this branch with session.geography.type==='county' and carries its own county
+    // directly -- a bare city request still never carries county on session.geography itself
+    // (only Summit, NJ is hardcoded there), so that case still falls back to
+    // session.executionScope.normalizedRequestedGeography, which the existing FL municipality
+    // crosswalk already resolved (unconditional on Insurance's capability list).
+    const county=!zip?(session.geography.type==='county'?session.geography.county:session.executionScope.normalizedRequestedGeography?.county):undefined;
     if(session.insuranceEntityClass==='agency'&&(zip||county)){
       const localBody={contract:SPECIALIST_EXECUTION_CONTRACT,queryType:'cohort',entityClass:'agency',geography:{zip,county,stateCode:session.geography.stateCode,intent:'OFFICE_LOCATION'},page:1,limit:10};
       const localOutcome=await specialistFetch('insurance',localBody);
@@ -604,7 +606,9 @@ async function executeInsurance(session:GuidedResearchSession):Promise<GuidedExe
         const isGenuineLocalGrain=geographyGrain==='RECORDED_ZIP'||geographyGrain==='RECORDED_COUNTY';
         if(isGenuineLocalGrain&&validateFinancialContract('insurance',localPayload)){
           const localState=financialState(localPayload,localOutcome.status);
-          const place=zip?`ZIP ${zip}`:`${county} County, Florida`;
+          // POST-R1-INS-LOCAL-001: this hardcoded ", Florida" unconditionally, mislabeling any
+          // non-FL county directory result. Use the actual detected state.
+          const place=zip?`ZIP ${zip}`:`${county} County${session.geography.stateName?`, ${session.geography.stateName}`:''}`;
           if(localState==='SUPPORTED_RESULTS'){
             const rows=mapInsuranceRows(localPayload);
             const result=supported(session,localPayload,rows,localOutcome.latencyMs,normalizeRefinements(localPayload.availableRefinements));
