@@ -15,7 +15,13 @@ import { ASK_PREVIEW, MOVE_PREVIEW, API_PATH, PARENT_LOGIN } from '../../lib/my-
 import { fixtureEnv, A, B, keys } from '../../lib/my-trusthub/profile-save/final-wiring.test.ts';
 import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save/interface.ts';
 import { createPacketBinding, assertionFailureCases, closeoutPacket } from './v23-sql-closeout-cases.mjs';
-const db = new PGlite({ extensions: { btree_gist, pgcrypto } });
+import { platformAclCases } from './v23-platform-acl-cases.mjs';
+// PGlite's initial bootstrap session uses template1. Reopen the fresh cluster
+// explicitly on postgres before applying fixtures; hosted identity guards stay exact.
+const bootstrap = new PGlite();
+const emptyCluster = await bootstrap.dumpDataDir();
+await bootstrap.close();
+const db = new PGlite({ database: 'postgres', loadDataDir: emptyCluster, extensions: { btree_gist, pgcrypto } });
 try {
   console.log('Disposable embedded PostgreSQL:', (await db.query('select version() version')).rows[0].version);
   await db.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin;
@@ -167,6 +173,7 @@ try {
     (select count(*)::int from consumer.consumer_project_saved_entities) memberships,
     (select count(*)::int from consumer.packet_reference_fixture) other_references`);
   assert.deepEqual(references.rows, [{ projects: 2, memberships: 1, other_references: 1 }]);
+  await platformAclCases(db);
   await closeoutPacket(db);
   assert.deepEqual(await db.query('select * from consumer.consumer_saved_entities'), research);
   assert.deepEqual(await db.query("select * from ops.v23_profile_runtime_records where kind='receipt'"), receipts);

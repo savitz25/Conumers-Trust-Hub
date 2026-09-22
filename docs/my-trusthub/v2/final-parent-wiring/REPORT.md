@@ -1,5 +1,13 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Supabase PUBLIC ACL hardening — prepared only
+
+Base `3f9c4f5e9bd720b6c49beb180add71edf1a5bfc0`. [Exact review, audit, ACL matrix and operator order](platform-public-review.md) documents the separately authorized [net schema hardening](platform-public-hardening.sql) and [rollback](platform-public-rollback.sql). Hosted read-only catalog inspection found no pg_net application trigger/webhook dependency and confirmed the exact platform ACL. No hosted mutation occurred; current hosted net access remains exposed until authorized apply.
+
+Activation assertions now distinguish schema USAGE from object privileges, retain strict latent-grant checks on TrustHub schemas, and require the exact hardened net ACL. Disposable PostgreSQL ACL cases A–H, 20 hardening negatives, 15 activation negatives, 10 rollback guards, and the unchanged identity/lifecycle/receipt preservation suites passed. Full teardown restores the original platform ACL exactly after runtime removal. No runtime code, Move binding, or hosted Phases 1–4 were changed.
+
+The sections below retain earlier ticket evidence; their readiness statements predate this newly required hardening gate.
+
 ## Hosted reverse-membership compatibility patch
 
 Base: `e2369b812533892c084ef088c3327cf9030bbe7b`. The activation assertion now permits zero reverse memberships (disposable PostgreSQL) or exactly one with member `postgres`, granted role `myth_v23_parent_preview`, grantor `supabase_admin`, ADMIN true, INHERIT false, SET false. Any different member/grantor/flag or additional reverse row fails. The exact two outgoing memberships and their ADMIN false / INHERIT false / SET true requirements are unchanged.

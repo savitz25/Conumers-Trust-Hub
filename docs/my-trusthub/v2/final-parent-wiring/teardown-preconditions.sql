@@ -22,6 +22,14 @@ create temp table v23_closeout_security on commit preserve rows as
  select * from v23_private.preview_security_before;
 create temp table v23_closeout_origins on commit preserve rows as
  select * from v23_private.preview_registry_before;
+-- Retain platform presence/object ACLs across the separately authorized rollback.
+create temp table v23_closeout_platform_acl on commit preserve rows as
+ select to_regnamespace('net') is not null net_present,(select jsonb_agg(to_jsonb(x) order by kind,object_id) from (
+ select 'relation' kind,c.oid object_id,c.relowner owner_id,c.relacl::text acl
+ from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='net'
+ union all
+ select 'function',p.oid,p.proowner,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='net'
+) x) net_objects;
 create temp table v23_closeout_identity on commit preserve rows as
  select to_jsonb(b) binding_before,to_jsonb(e) entity_before
  from network.network_entity_bindings b join network.network_entities e on e.id=b.network_entity_id
@@ -55,6 +63,7 @@ do $$ declare t record; total bigint; fingerprint text; begin
 end $$;
 revoke all on pg_temp.v23_closeout_security,pg_temp.v23_closeout_origins,
  pg_temp.v23_closeout_identity,pg_temp.v23_closeout_research from public,anon,authenticated;
+revoke all on pg_temp.v23_closeout_platform_acl from public,anon,authenticated;
 commit;
 -- Locks end at commit. Keep writers quiescent throughout the entire closeout.
 -- Any concurrent change makes post-teardown assertions fail; do not recapture

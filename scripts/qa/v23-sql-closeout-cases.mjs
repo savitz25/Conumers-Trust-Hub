@@ -36,7 +36,7 @@ export async function createPacketBinding(db) {
 // only inside a separate disposable PGlite clone; never change a
 // hosted role or manufacture pg_auth_members rows with catalog DML.
 async function reverseMembershipCases(originalDb) {
-  const db = new PGlite({ loadDataDir:await originalDb.dumpDataDir(),extensions:{ btree_gist,pgcrypto } });
+  const db = new PGlite({ database:'postgres',loadDataDir:await originalDb.dumpDataDir(),extensions:{ btree_gist,pgcrypto } });
   const pin = (await originalDb.query("select current_setting('v23.binding_id') binding_id,current_setting('v23.network_entity_id') entity_id,current_setting('v23.binding_provenance_ref') provenance")).rows[0];
   await db.query("select set_config('v23.approved_project','xkkiicsassizmakcvxml',false),set_config('v23.binding_id',$1,false),set_config('v23.network_entity_id',$2,false),set_config('v23.binding_provenance_ref',$3,false)",[pin.binding_id,pin.entity_id,pin.provenance]);
   const outgoingQuery = `select g.rolname,m.admin_option,m.inherit_option,m.set_option
@@ -170,6 +170,9 @@ export async function closeoutPacket(db) {
   await assert.rejects(db.exec(sql('move-binding-teardown.sql')), /Exact live forward binding/);
   await db.exec('rollback');
   await db.exec(sql('teardown.sql'));
+  if ((await db.query("select to_regnamespace('net') is not null present")).rows[0].present) {
+    await db.exec(sql('platform-public-rollback.sql'));
+  }
   await db.exec(sql('teardown-assertions.sql'));
   const postCases = [
     ['create role myth_v23_parent_preview login', /Preview login\/reader role remains/],

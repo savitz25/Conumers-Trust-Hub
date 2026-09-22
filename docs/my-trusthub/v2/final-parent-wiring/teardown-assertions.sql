@@ -4,7 +4,7 @@
 begin isolation level serializable read only;
 set local row_security=off;
 do $$
-declare security_now jsonb; t record; total bigint; fingerprint text;
+declare security_now jsonb; t record; total bigint; fingerprint text; actual_acl jsonb; net_objects jsonb;
  b jsonb; e jsonb; prior record; retired record;
 begin
  if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml'
@@ -13,10 +13,42 @@ begin
    raise exception 'Separate isolated closeout authorization required'; end if;
  if to_regclass('pg_temp.v23_closeout_security') is null or to_regclass('pg_temp.v23_closeout_origins') is null
    or to_regclass('pg_temp.v23_closeout_research') is null or to_regclass('pg_temp.v23_closeout_identity') is null
-   or to_regclass('pg_temp.v23_closeout_retirement') is null then
+   or to_regclass('pg_temp.v23_closeout_retirement') is null
+   or to_regclass('pg_temp.v23_closeout_platform_acl') is null then
    raise exception 'Same-session before/retirement evidence missing'; end if;
  if exists(select 1 from pg_roles where rolname in ('myth_v23_parent_preview','myth_v23_preview_reader')) then
    raise exception 'Preview login/reader role remains'; end if;
+ if (select count(*) from pg_temp.v23_closeout_platform_acl)<>1
+   or (select net_present from pg_temp.v23_closeout_platform_acl) is distinct from (to_regnamespace('net') is not null) then
+   raise exception 'Platform ACL preservation baseline/presence differs'; end if;
+ select (select jsonb_agg(to_jsonb(x) order by kind,object_id) from (
+ select 'relation' kind,c.oid object_id,c.relowner owner_id,c.relacl::text acl
+ from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='net'
+ union all
+ select 'function',p.oid,p.proowner,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='net'
+) x) into net_objects;
+ if net_objects is distinct from (select p.net_objects from pg_temp.v23_closeout_platform_acl p) then
+   raise exception 'Platform object ACLs/ownership changed during teardown'; end if;
+ if to_regnamespace('net') is not null or exists(select 1 from pg_extension where extname='pg_net') then
+ if (select pg_get_userbyid(nspowner) from pg_namespace where nspname='net') is distinct from 'supabase_admin'
+   or (select count(*) from pg_extension where extname='pg_net' and extversion='0.20.4'
+     and pg_get_userbyid(extowner)='supabase_admin')<>1 then
+   raise exception 'Unreviewed pg_net schema owner/extension baseline'; end if;
+ if (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   join pg_depend d on d.classid='pg_class'::regclass and d.objid=c.oid and d.objsubid=0
+     and d.refclassid='pg_extension'::regclass and d.deptype='e'
+   join pg_extension ext on ext.oid=d.refobjid
+   where n.nspname='net' and c.relname in ('_http_response','http_request_queue')
+     and c.relkind='r' and pg_get_userbyid(c.relowner)='supabase_admin' and ext.extname='pg_net')<>2 then
+   raise exception 'Required pg_net table ownership/extension membership differs'; end if;
+ -- Exact reviewed 2026-09-22 ACL: owner supabase_admin; no grant options.
+ select jsonb_agg(jsonb_build_array(case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,
+   pg_get_userbyid(a.grantor),a.privilege_type,a.is_grantable) order by
+   case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type)
+ into actual_acl from pg_namespace n cross join lateral aclexplode(n.nspacl) a where n.nspname='net';
+ if actual_acl is distinct from '[["PUBLIC","supabase_admin","USAGE",false],["anon","supabase_admin","USAGE",false],["authenticated","supabase_admin","USAGE",false],["postgres","supabase_admin","USAGE",false],["service_role","supabase_admin","USAGE",false],["supabase_admin","supabase_admin","CREATE",false],["supabase_admin","supabase_admin","USAGE",false],["supabase_functions_admin","supabase_admin","USAGE",false]]'::jsonb then
+   raise exception 'Original platform PUBLIC net ACL not restored exactly'; end if;
+ end if;
  if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname='v23_private' and p.proname like 'preview_%') then
    raise exception 'Preview-specific wrapper remains'; end if;

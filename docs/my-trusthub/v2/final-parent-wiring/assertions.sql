@@ -5,7 +5,7 @@
 begin isolation level serializable read only;
 set local row_security=off;
 do $$
-declare r record; b network.network_entity_bindings%rowtype; e network.network_entities%rowtype; f text;
+declare r record; b network.network_entity_bindings%rowtype; e network.network_entities%rowtype; f text; actual_acl jsonb;
 begin
  if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml' then
    raise exception 'Independently pinned isolated project required'; end if;
@@ -56,14 +56,50 @@ begin
    or exists(select 1 from pg_class where relowner=r.oid) then raise exception 'Runtime login owns an object'; end if;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
    where n.nspname not like 'pg_%' and n.nspname<>'information_schema' and c.relkind in ('r','p','v','m','f')
+   -- Preserve latent PUBLIC grants as failures in our security-sensitive schemas.
+   -- Elsewhere an object ACL is reachable only through schema USAGE.
+   and (n.nspname in ('auth','consumer','network','ops','v23_private','public')
+     or has_schema_privilege(r.oid,n.oid,'USAGE'))
    and case when c.relkind in ('r','p','v','m','f') then
      (has_table_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
        or has_any_column_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,REFERENCES')) else false end) then
    raise exception 'Raw table/column access without SET ROLE'; end if;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
    where n.nspname not like 'pg_%' and c.relkind='S'
+   and (n.nspname in ('auth','consumer','network','ops','v23_private','public')
+     or has_schema_privilege(r.oid,n.oid,'USAGE'))
    and case when c.relkind='S' then has_sequence_privilege(r.oid,c.oid,'USAGE,SELECT,UPDATE') else false end) then
    raise exception 'Raw sequence access without SET ROLE'; end if;
+ if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info'))
+   and has_schema_privilege(r.oid,'extensions','USAGE') then
+   raise exception 'Runtime pg_stat schema access'; end if;
+ -- Local PostgreSQL may have no pg_net. If either component is present the
+ -- complete reviewed, hardened baseline is mandatory; this is no allowlist.
+ if to_regnamespace('net') is not null or exists(select 1 from pg_extension where extname='pg_net') then
+ if (select pg_get_userbyid(nspowner) from pg_namespace where nspname='net') is distinct from 'supabase_admin'
+   or (select count(*) from pg_extension where extname='pg_net' and extversion='0.20.4'
+     and pg_get_userbyid(extowner)='supabase_admin')<>1 then
+   raise exception 'Unreviewed pg_net schema owner/extension baseline'; end if;
+ if (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   join pg_depend d on d.classid='pg_class'::regclass and d.objid=c.oid and d.objsubid=0
+     and d.refclassid='pg_extension'::regclass and d.deptype='e'
+   join pg_extension ext on ext.oid=d.refobjid
+   where n.nspname='net' and c.relname in ('_http_response','http_request_queue')
+     and c.relkind='r' and pg_get_userbyid(c.relowner)='supabase_admin' and ext.extname='pg_net')<>2 then
+   raise exception 'Required pg_net table ownership/extension membership differs'; end if;
+ -- Exact reviewed 2026-09-22 ACL: owner supabase_admin; no grant options.
+ select jsonb_agg(jsonb_build_array(case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,
+   pg_get_userbyid(a.grantor),a.privilege_type,a.is_grantable) order by
+   case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type)
+ into actual_acl from pg_namespace n cross join lateral aclexplode(n.nspacl) a where n.nspname='net';
+ if actual_acl is distinct from '[["anon","supabase_admin","USAGE",false],["authenticated","supabase_admin","USAGE",false],["postgres","supabase_admin","USAGE",false],["service_role","supabase_admin","USAGE",false],["supabase_admin","supabase_admin","CREATE",false],["supabase_admin","supabase_admin","USAGE",false],["supabase_functions_admin","supabase_admin","USAGE",false]]'::jsonb then
+   raise exception 'Unreviewed net schema ACL baseline'; end if;
+ if has_schema_privilege(r.oid,'net','USAGE') then raise exception 'Runtime net schema access'; end if;
+ if exists(select 1 from unnest(array['supabase_admin','supabase_functions_admin','postgres','anon','authenticated','service_role']) role_name
+   where not has_schema_privilege(role_name,'net','USAGE')) then
+   raise exception 'Explicit platform role net USAGE lost'; end if;
+ end if;
  foreach f in array array[
    'v23_private.preview_ports_ready()','v23_private.preview_confirmation(text,text,jsonb)',
    'v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',
@@ -122,6 +158,9 @@ begin
  if exists(select 1 from information_schema.tables where table_schema in ('consumer','ops','network','v23_private')
    and table_name ~* '(watch|alert)') then raise exception 'Unexpected Watch/Alert relations'; end if;
 end $$;
+-- Actual runtime denial probes run separately in platform-runtime-probes.sql
+-- through a fresh runtime LOGIN connection. The inspector's platform-managed
+-- reverse membership intentionally has SET=false; do not broaden it.
 set local role myth_v23_authorizer;
 set local row_security=on;
 do $$ declare resolved record; begin

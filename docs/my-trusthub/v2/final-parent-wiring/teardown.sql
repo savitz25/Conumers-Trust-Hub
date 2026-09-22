@@ -55,6 +55,9 @@ drop table v23_private.preview_registry_before;
 drop table v23_private.preview_security_before;
 drop table v23_private.preview_deployment_pin;
 commit;
--- Run teardown-assertions.sql in this same operator session. No success claim
+-- If pg_net is installed, run separately authorized platform-public-rollback.sql
+-- now (runtime login must be absent), then teardown-assertions.sql in this same
+-- operator session. Do not restore PUBLIC net USAGE while the runtime exists.
+-- No success claim
 -- until its machine-enforced PASS. Binding lifecycle is separately authorized
 -- in move-binding-teardown.sql; no identity or consumer research is deleted.
