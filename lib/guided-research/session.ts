@@ -136,7 +136,7 @@ export function parseGuidedGeography(raw: string): GuidedGeography | null {
   return { type: 'city', value, city: value, meaning: 'Recorded city/address geography where supported; not service territory.' };
 }
 
-function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): GuidedGeography | undefined {
+export function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): GuidedGeography | undefined {
   const geography = parsed.geography;
   if (!geography) return undefined;
   const stateSuffix = geography.stateName ? `, ${geography.stateName}` : '';
