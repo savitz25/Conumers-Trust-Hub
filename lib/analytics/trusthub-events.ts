@@ -10,6 +10,7 @@ export const TRUSTHUB_EVENTS = {
   PROFILE_VIEWED: 'profile_viewed',
   PROFILE_SAVED: MY_TRUSTHUB_EVENTS.PROFILE_SAVED,
   ACCOUNT_SIGNUP_STARTED: 'account_signup_started',
+  ACCOUNT_LOGIN_STARTED: 'account_login_started',
   ACCOUNT_CREATED: 'account_created',
   PROJECT_CREATED: MY_TRUSTHUB_EVENTS.PROJECT_CREATED,
   // ATH-OBS-002D canonical My TrustHub journey events (contract: lib/analytics/my-trusthub-contract.ts)

@@ -66,15 +66,15 @@ test('SAVE FAILURE via guest handoff: an expired/consumed/tampered handoff never
   assert.equal(o.properties.failure_reason, 'handoff_unavailable');
 });
 
-test('SAVE via guest research import: success, failure and "nothing selected" are distinguished', () => {
-  assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=complete'))).event, MY_TRUSTHUB_EVENTS.PROFILE_SAVED);
+test('V2-2: guest import success requires a receipt, while legacy failure markers stay bounded', () => {
+  none('/my/saved', 'import=complete');
   assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=invalid'))).properties.failure_reason, 'import_invalid');
   assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=none'))).properties.failure_reason, 'import_none_selected');
 });
 
-test('project_context_present reflects whether the guest import targeted a project', () => {
-  assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=complete&import_project=1'))).properties.project_context_present, true);
-  assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=complete'))).properties.project_context_present, false);
+test('V2-2: a project marker cannot manufacture a durable import outcome', () => {
+  none('/my/saved', 'import=complete&import_project=1');
+  none('/my/saved', 'import=complete');
 });
 
 test('no outcome fires for a plain page view of /my/saved with no marker', () => none('/my/saved', ''));
@@ -86,14 +86,12 @@ test('AUTH CONTINUATION START: guest Save routed to sign-in carries the reason, 
   assert.deepEqual(o.properties, { surface: 'my_sign_in', auth_state: 'guest', outcome: 'intent', continuation_reason: 'save_handoff' });
 });
 
-test('AUTH CONTINUATION COMPLETE: fires only from the callback-set ?auth=complete marker on /my', () => {
-  const o = only(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'), { continuationReason: 'save_handoff' }));
-  assert.equal(o.event, MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_COMPLETED);
-  assert.equal(o.properties.continuation_reason, 'save_handoff');
+test('V2-2R forged auth completion marker is not a verified authentication receipt', () => {
+  assert.deepEqual(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'), { continuationReason: 'save_handoff' }), []);
 });
 
-test('AUTH CONTINUATION COMPLETE defaults to "direct" when no continuation reason was recorded', () => {
-  assert.equal(only(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete'))).properties.continuation_reason, 'direct');
+test('V2-2R bookmarked completion marker cannot manufacture a direct login event', () => {
+  assert.deepEqual(resolveMyTrustHubOutcomes('/my', new URLSearchParams('auth=complete')), []);
 });
 
 test('AUTH CONTINUATION FAILED covers every sign-in and callback failure code, and access rejection', () => {

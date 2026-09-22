@@ -1,0 +1,71 @@
+{
+  "ticket": "V2-3C",
+  "date": "2026-09-19",
+  "askReviewedBase": "de75f8755ccd44f5995fe907e7e86a404a98b288",
+  "askBranch": "mth-v2-2-account-prep-b4",
+  "askPR": 184,
+  "contractVerdict": "READY_FOR_RUNTIME_IMPLEMENTATION_NOT_ACTIVATION",
+  "productionMutations": "NONE",
+  "runtimeEndpointsOrAdaptersAdded": false,
+  "appliedMigrations": [],
+  "newPermissionsCredentialsOrScopes": false,
+  "localRetirement": "KEEP_LOCAL_COPY",
+  "checks": [
+    {"name": "check:my-trusthub-v2-3", "result": "PASS", "tests": 34},
+    {"name": "check:my-trusthub-v2-2", "result": "PASS", "tests": 30, "existingTestsChanged": false},
+    {"name": "check:my-trusthub-p11-p19", "result": "PASS", "entireChain": true},
+    {"name": "check:ath-obs-002de", "result": "PASS", "tests": 54},
+    {"name": "typecheck", "result": "PASS"},
+    {"name": "changed-file ESLint", "result": "PASS", "note": "Initial fixture-module naming lint error corrected; rerun clean"},
+    {"name": "build", "result": "PASS", "staticPages": 102},
+    {"name": "full npm test", "result": "PASS", "exitCode": 0, "entireChain": true},
+    {"name": "git diff --check", "result": "PASS"},
+    {"name": "historical Stage 2/3 chains", "result": "NOT_RERUN", "note": "No orchestration/security assertions changed; prior Watch/navigation assumptions remain historical evidence"},
+    {"name": "SQL proposal execution/RLS/provider integration", "result": "NOT_RUN"}
+  ],
+  "move": {
+    "head": "35a83ca97f98fb5ee46bb849569808fd5e962a90",
+    "verdict": "PASS_LOCAL_SCOPE",
+    "focusedTests": 15,
+    "browserGroups": 12,
+    "independentReloadAndAccessibleName": "PASS",
+    "ownerConfirmedAccountFixture": "PASS_MOCKED",
+    "finding": "QA-M9_CLOSED",
+    "receipt": "https://github.com/savitz25/Move-trust-Hub/pull/156#issuecomment-5744273847"
+  },
+  "insurance": {
+    "head": "426ad49b91d0fdc65b54e4ce515c45c7732910a5",
+    "verdict": "FAIL",
+    "focusedTests": 5,
+    "existingBrowserMatrix": "PASS_ON_INDEPENDENT_RERUN",
+    "independentResearchPreservation": "PASS",
+    "independentReloadDisclosure": "FAIL_B4_I1",
+    "receipt": "https://github.com/savitz25/Insurance-trust-hub/pull/55#issuecomment-5744273933"
+  },
+  "lender": {
+    "head": "315093be109796c9dd170e80a936ecd10e9cff7d",
+    "verdict": "FAIL",
+    "focusedTests": 3,
+    "existingBrowserMatrixAndProviderMode": "PASS_ON_INDEPENDENT_RERUN",
+    "independentResearchPreservation": "PASS",
+    "queuedPushCanceledBeforeDispatchOnSignout": "PASS",
+    "independentReloadDisclosure": "FAIL_B4_L1",
+    "inFlightPushOwnerRecheck": "FAIL_B4_L2_RETURNS_OK_AFTER_OWNER_CHANGE",
+    "crossAccountDatabaseWriteDemonstrated": false,
+    "receipt": "https://github.com/savitz25/Lender-Trust-Hub/pull/52#issuecomment-5744274016"
+  },
+  "independentScripts": {
+    "scripts/qa-v2-3c-independent.mjs": "EXIT_1_TWO_RELOAD_DISCLOSURE_FAILURES",
+    "scripts/qa-v2-3c-lender-sync.test.mjs": "EXIT_1_STALE_COMPLETION_FAILURE",
+    "includedInAskContractCI": false,
+    "fixtureCorrections": ["Compare original saved item by slug, not sorted array position", "Compare normalized pre-action tool state, including derived planId"]
+  },
+  "evidenceClasses": ["BROWSER_LOOPBACK_REAL_CONTROL_AND_LOCALSTORAGE", "LOCAL_INTEGRATION_REAL_PROVIDER_OR_SYNC_MODULE", "MOCKED_AUTH_CLOUD", "DETERMINISTIC_CONTRACT_MODEL"],
+  "viewports": [1440, 390, 320],
+  "fullDeployedPageCSS": "NOT_RUN",
+  "realAuthenticatedProviderJourney": "NOT_RUN_NO_VERIFIED_ISOLATED_BACKEND",
+  "threeHubLegacySaveQA": "NOT_CLOSED",
+  "parentAccount": "READY_FOR_ISOLATED_PROVIDER_QA",
+  "production": "HOLD",
+  "networkWideV2": "NOT_YET_CERTIFIED"
+}

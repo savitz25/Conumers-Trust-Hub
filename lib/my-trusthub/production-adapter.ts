@@ -584,6 +584,20 @@ export class ProductionMyTrustHubAdapter {
     );
   }
 
+  async guestImportReceiptItems(importId: string, sessions = false): Promise<string[]> {
+    // Existing browser SELECT grants and owner RLS; no privileged credential or new RPC.
+    const table = sessions ? 'consumer_guest_session_import_items' : 'consumer_guest_import_items';
+    const result = await this.client.schema('consumer').from(table)
+      .select('client_item_id,selected,result_status').eq('import_id', importId);
+    if (result.error) fail(result.error);
+    return rows<{ client_item_id: string; selected: boolean; result_status: string }>(result.data)
+      // A pre-existing duplicate may have older session content. Keep that local
+      // item unless this exact request's receipt proves it was imported. Replays
+      // of a successful request retain the original 'imported' receipt status.
+      .filter(row => row.selected && row.result_status === 'imported')
+      .map(row => row.client_item_id);
+  }
+
   async commitGuestImport(input: {
     payload: Record<string, unknown>;
     selectedItemIds: string[];

@@ -38,6 +38,7 @@ export default async function MyTrustHubHome() {
             Sign in to My TrustHub
             <ArrowRight aria-hidden="true" size={18} />
           </Link>
+          <Link className="myth-secondary" href="/my/create-account">Create account</Link>
           <p className="myth-disclosure">
             TrustHub organizes research. It does not approve, rank, or recommend
             your selection.
