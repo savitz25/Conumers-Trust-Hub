@@ -1,5 +1,19 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Hosted reverse-membership compatibility patch
+
+Base: `e2369b812533892c084ef088c3327cf9030bbe7b`. The activation assertion now permits zero reverse memberships (disposable PostgreSQL) or exactly one with member `postgres`, granted role `myth_v23_parent_preview`, grantor `supabase_admin`, ADMIN true, INHERIT false, SET false. Any different member/grantor/flag or additional reverse row fails. The exact two outgoing memberships and their ADMIN false / INHERIT false / SET true requirements are unchanged.
+
+This is a read-only assertion compatibility change, not a privilege change. Do not revoke the platform-managed reverse row. Runtime application code, grant/role creation SQL, the Move binding, and Phases 1–4 are unchanged by this patch. No hosted SQL or hosted inspection was performed; the hosted observation is the operator-provided input to this patch.
+
+Disposable PostgreSQL 17.5 regression passed: the exact hosted tuple reaches `V23_PARENT_PACKET_ASSERTIONS_PASS`; zero reverse rows also pass; eleven altered reverse/outgoing cases fail. The test uses actual GRANT records in a separate disposable PGlite clone and no catalog DML. It temporarily names the local bootstrap administrator `supabase_admin`, matching PostgreSQL's grantor rules, then discards that entire clone. The original local database's roles/outgoing memberships remain unchanged. Negatives cover a different member/grantor, SET true, INHERIT true, ADMIN false, an additional reverse row, an extra/missing outgoing role, and each altered outgoing flag.
+
+The full existing local packet suite also passed: 46 activation negatives, lifecycle teardown, 11 post-teardown negatives, and unchanged Saved/receipt/Project/FK preservation. Evidence: `C:\Users\Michael.Savitsky\.codex\tmp\v23-reverse-membership-local.log`. This patch is ready for the operator to resume Phase 5; it does not certify the hosted database or resume activation itself. PR #185 and production remain HOLD.
+
+The remaining report records the earlier local closeout; its activation-status descriptions are historical, not a new observation of hosted state.
+
+## Earlier local SQL closeout
+
 Base: `4fca808a823101f2ad88e039634676b92e10cc2d`; PR #185. This closeout changes only the SQL packet, its documentation, and disposable local test coverage. Application/runtime code is unchanged.
 
 The two reported gaps are addressed in prepared files: [exact steward retirement](move-binding-teardown.sql) and [fail-closed activation assertions](assertions.sql). [Teardown preconditions](teardown-preconditions.sql) retain same-session preservation evidence; [post-teardown assertions](teardown-assertions.sql) compare the resulting state against it. No hosted SQL, role, binding, Supabase/Vercel configuration, production operation or merge is authorized by this preparation.

@@ -3,6 +3,9 @@
 // PostgreSQL harness; never execute this harness without local-test authorization.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { PGlite } from '@electric-sql/pglite';
+import { btree_gist } from '@electric-sql/pglite/contrib/btree_gist';
+import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 const packet = 'docs/my-trusthub/v2/final-parent-wiring/';
 const sql = name => readFileSync(packet + name, 'utf8');
 const body = name => sql(name).replace(/^begin(?: isolation level serializable)?(?: read only)?;$/gm, '').replace(/^commit;$/gm, '');
@@ -29,8 +32,75 @@ export async function createPacketBinding(db) {
   assert.equal(counts.rows[0].n, 1);
   console.log('PASS packet: exact forward creation and duplicate rejection');
 }
+// Supabase's grantor is its bootstrap administrator. Reproduce that identity
+// only inside a separate disposable PGlite clone; never change a
+// hosted role or manufacture pg_auth_members rows with catalog DML.
+async function reverseMembershipCases(originalDb) {
+  const db = new PGlite({ loadDataDir:await originalDb.dumpDataDir(),extensions:{ btree_gist,pgcrypto } });
+  const pin = (await originalDb.query("select current_setting('v23.binding_id') binding_id,current_setting('v23.network_entity_id') entity_id,current_setting('v23.binding_provenance_ref') provenance")).rows[0];
+  await db.query("select set_config('v23.approved_project','xkkiicsassizmakcvxml',false),set_config('v23.binding_id',$1,false),set_config('v23.network_entity_id',$2,false),set_config('v23.binding_provenance_ref',$3,false)",[pin.binding_id,pin.entity_id,pin.provenance]);
+  const outgoingQuery = `select g.rolname,m.admin_option,m.inherit_option,m.set_option
+    from pg_auth_members m join pg_roles g on g.oid=m.roleid
+    where m.member=(select oid from pg_roles where rolname='myth_v23_parent_preview') order by g.rolname`;
+  const before = (await db.query(outgoingQuery)).rows;
+  assert.deepEqual(before, [
+    { rolname:'myth_v23_authorizer',admin_option:false,inherit_option:false,set_option:true },
+    { rolname:'myth_v23_executor',admin_option:false,inherit_option:false,set_option:true },
+  ]);
+  await db.exec('begin');
+  try {
+    await db.exec(`create role v23_fixture_admin superuser nologin;
+      set session authorization v23_fixture_admin;
+      alter role postgres rename to supabase_admin;
+      create role postgres nologin noinherit nosuperuser nobypassrls;
+      grant myth_v23_parent_preview to postgres with admin true,inherit false,set false granted by supabase_admin;`);
+    const reverse = (await db.query(`select member_role.rolname member,granted_role.rolname granted_role,
+      grantor_role.rolname grantor,m.admin_option,m.inherit_option,m.set_option
+      from pg_auth_members m join pg_roles member_role on member_role.oid=m.member
+      join pg_roles granted_role on granted_role.oid=m.roleid join pg_roles grantor_role on grantor_role.oid=m.grantor
+      where granted_role.rolname='myth_v23_parent_preview'`)).rows;
+    assert.deepEqual(reverse, [{ member:'postgres',granted_role:'myth_v23_parent_preview',
+      grantor:'supabase_admin',admin_option:true,inherit_option:false,set_option:false }]);
+    const passed = await db.exec(body('assertions.sql'));
+    assert.ok(passed.some(result => result.rows?.some(row => row.result==='V23_PARENT_PACKET_ASSERTIONS_PASS')));
+    assert.deepEqual((await db.query(outgoingQuery)).rows, before);
+    const cases = [
+      ['other member', `revoke myth_v23_parent_preview from postgres granted by supabase_admin;
+        grant myth_v23_parent_preview to anon with admin true,inherit false,set false granted by supabase_admin;`, /Unexpected reverse membership/],
+      ['other grantor', `alter role supabase_admin rename to v23_fixture_wrong_grantor;
+        create role supabase_admin nologin;`, /Unexpected reverse membership/],
+      ['reverse SET true', 'grant myth_v23_parent_preview to postgres with set true granted by supabase_admin', /Unexpected reverse membership/],
+      ['reverse INHERIT true', 'grant myth_v23_parent_preview to postgres with inherit true granted by supabase_admin', /Unexpected reverse membership/],
+      ['reverse ADMIN false', 'grant myth_v23_parent_preview to postgres with admin false granted by supabase_admin', /Unexpected reverse membership/],
+      ['additional reverse row', 'grant myth_v23_parent_preview to anon with admin true,inherit false,set false granted by supabase_admin', /Unexpected reverse membership/],
+      ['extra outgoing membership', 'grant myth_v23_cleanup to myth_v23_parent_preview with admin false,inherit false,set true', /Unexpected runtime memberships/],
+      ['outgoing ADMIN true', 'grant myth_v23_authorizer to myth_v23_parent_preview with admin true', /Unexpected runtime memberships/],
+      ['outgoing INHERIT true', 'grant myth_v23_authorizer to myth_v23_parent_preview with inherit true', /Unexpected runtime memberships/],
+      ['outgoing SET false', 'grant myth_v23_authorizer to myth_v23_parent_preview with set false', /Unexpected runtime memberships/],
+      ['missing outgoing membership', 'revoke myth_v23_executor from myth_v23_parent_preview', /Unexpected runtime memberships/],
+    ];
+    for (const [label, mutation, expected] of cases) {
+      await db.exec('savepoint reverse_membership_case');
+      try {
+        await db.exec(mutation);
+        await assert.rejects(db.exec(body('assertions.sql')), expected);
+      } catch (error) { throw new Error('Reverse membership case: ' + label + ': ' + error.message, { cause:error }); }
+      finally { await db.exec('rollback to savepoint reverse_membership_case;release savepoint reverse_membership_case'); }
+    }
+    const restored = await db.exec(body('assertions.sql'));
+    assert.ok(restored.some(result => result.rows?.some(row => row.result==='V23_PARENT_PACKET_ASSERTIONS_PASS')));
+    assert.deepEqual((await db.query(outgoingQuery)).rows, before);
+    console.log('PASS reverse membership: exact hosted row permitted; ' + cases.length + ' altered reverse/outgoing cases rejected; outgoing memberships unchanged');
+  } finally { await db.close(); }
+  assert.equal((await originalDb.query("select count(*)::int n from pg_auth_members where roleid=(select oid from pg_roles where rolname='myth_v23_parent_preview')")).rows[0].n,0);
+  assert.equal((await originalDb.query("select count(*)::int n from pg_roles where rolname in ('supabase_admin','v23_fixture_admin','v23_fixture_wrong_grantor')")).rows[0].n,0);
+  assert.deepEqual((await originalDb.query(outgoingQuery)).rows, before);
+  await originalDb.exec(sql('assertions.sql'));
+  console.log('PASS reverse membership: zero-row local case; separate fixture database discarded');
+}
 export async function assertionFailureCases(db) {
   await db.exec(sql('assertions.sql')); // A positive control must pass FIRST.
+  await reverseMembershipCases(db);
   const bid = "(current_setting('v23.binding_id')::uuid)";
   const eid = "(current_setting('v23.network_entity_id')::uuid)";
   const cases = [

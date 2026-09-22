@@ -21,8 +21,19 @@ begin
    or exists(select 1 from pg_auth_members m join pg_roles g on g.oid=m.roleid where m.member=r.oid and
      (g.rolname not in ('myth_v23_authorizer','myth_v23_executor') or m.admin_option or m.inherit_option or not m.set_option)) then
    raise exception 'Unexpected runtime memberships'; end if;
- if exists(select 1 from pg_auth_members where roleid=r.oid) then
-   raise exception 'Unexpected membership in runtime login'; end if;
+ -- Supabase may administer the login through one reverse membership. This
+ -- does not grant the runtime any additional outgoing membership. Local
+ -- PostgreSQL may have no such row. Never revoke this platform-managed grant.
+ if (select count(*) from pg_auth_members where roleid=r.oid)>1
+   or exists(select 1 from pg_auth_members m
+     left join pg_roles member_role on member_role.oid=m.member
+     left join pg_roles grantor_role on grantor_role.oid=m.grantor
+     where m.roleid=r.oid and (member_role.rolname is distinct from 'postgres'
+       or grantor_role.rolname is distinct from 'supabase_admin'
+       or m.admin_option is distinct from true
+       or m.inherit_option is distinct from false
+       or m.set_option is distinct from false)) then
+   raise exception 'Unexpected reverse membership in runtime login'; end if;
  if (select count(*) from pg_roles where rolname in ('myth_v23_authorizer','myth_v23_executor',
      'myth_v23_preview_reader','myth_v23_foundation','myth_v23_browser_store'))<>5
    or exists(select 1 from pg_roles where rolname in ('myth_v23_authorizer','myth_v23_executor',
