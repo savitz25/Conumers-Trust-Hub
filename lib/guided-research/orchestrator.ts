@@ -1,5 +1,7 @@
-import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult } from './contract.ts';
-import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult, GuidedPilotHub } from './contract.ts';
+import { GUIDED_PILOT_HUBS } from './contract.ts';
+import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, CARE_CHOICES, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, MOVE_CHOICES, parseGuidedGeography, geographyFromParsed, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import { parseNetworkAsk } from '../network/ask-parse.ts';
 import {careLocation,initialCareRatingFilters,type CareSetting} from '../network/care-task.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {validateAskQuestion} from '../network/ask-request.ts';
@@ -42,6 +44,37 @@ function validateSelectedFilters(session: GuidedResearchSession): void {
   for (const [field, value] of Object.entries(session.selectedFilters)) validateFilter(session, field, value);
 }
 
+// POST-R1-ASK-MULTIHUB-001: continuation for a validated `hub:${hubId}` selection out of the
+// multi-hub CLARIFY state. Deliberately reuses each hub's own existing, already-shipped
+// "which research mode?" entry prompt (the exact choice constants and nextAction text
+// afterChoice's *_mode:explain branches already return) rather than re-deriving new routing --
+// the session then continues through those same, already-tested branches for every subsequent
+// click. Geography already resolved for the original question is carried over so a state/county
+// the user already typed is not asked for a second time; nothing about a specific entity/trade/
+// class is guessed, so an unexecutable request still correctly reaches the existing honest
+// unsupported/clarification state via the normal downstream path.
+function enterChosenHub(session: GuidedResearchSession, hubId: GuidedPilotHub): GuidedResearchSession {
+  const parsed = parseNetworkAsk(session.originalQuestion);
+  const geography = geographyFromParsed(parsed);
+  const base = { ...session, hub: hubId, geography: geography ?? session.geography, availableChoices: [] as GuidedResearchSession['availableChoices'] };
+  if (hubId === 'senior') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
+  }
+  if (hubId === 'contractor') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'Tell us what kind of work you need.' };
+  }
+  if (hubId === 'move') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['moveMode'], availableChoices: MOVE_CHOICES, nextAction: 'What would you like to research?' };
+  }
+  if (hubId === 'investor') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['investorResearchMode'], availableChoices: INVESTOR_CHOICES, nextAction: 'Choose firm research, a CRD, or a specific firm name. Individual representatives are not published.' };
+  }
+  if (hubId === 'insurance') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['insuranceEntityClass'], availableChoices: INSURANCE_CHOICES, nextAction: 'Choose agency, legal insurer, producer, or an exact identifier.' };
+  }
+  return { ...base, phase: 'CLARIFY', missingFields: ['lenderResearchMode'], availableChoices: LENDER_CHOICES, nextAction: 'Choose property-market activity, a lender name, an identifier, or complaint evidence.' };
+}
+
 function afterChoice(session: GuidedResearchSession, value: string): GuidedResearchSession {
   const next = pushHistory(session);
   if(value.startsWith('scope_state:')){
@@ -59,6 +92,26 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
     return touch({...next,executionScope,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_SELECTED_REGION_COMPONENT']},geography:selected,availableChoices:[],missingFields:[],phase:'EXECUTE',nextAction:'execute'});
   }
   if(value==='scope_other')return touch({...next,availableChoices:[],missingFields:['geography'],phase:'COLLECT',nextAction:'Enter another city or county in the requested area.'});
+  // POST-R1-ASK-MULTIHUB-001: session.ts's candidateHubs.length>1 branch (base(), pre-existing
+  // since commit 0b0b767, unrelated to Post-R1 intent work) renders SELECT_CHOICE options shaped
+  // `hub:${hubId}` whenever a query touches more than one specialist area (e.g. "is state farm
+  // licensed in texas", "electrician mortgage lender New Jersey") -- but no branch here ever
+  // consumed that value format. Every hub-specific branch below requires session.hub to already
+  // be set, which is never true in this multi-hub CLARIFY state (session.hub stays undefined by
+  // design), so execution fell through to the catch-all `throw new Error('invalid_hub')` at the
+  // bottom of this function, surfaced to the user as "The Guided Research action or session was
+  // invalid." This is the fix: the chosen hub must be one this exact session actually offered
+  // (session.researchPlan.candidateHubs, not just "some known hub id" and not just "some string
+  // in availableChoices" -- both are checked) before the session is allowed to commit to it.
+  if (value.startsWith('hub:')) {
+    if (session.hub !== undefined) throw new Error('invalid_hub_selection');
+    const hubId = value.slice('hub:'.length);
+    const isKnownPilotHub = (GUIDED_PILOT_HUBS as readonly string[]).includes(hubId);
+    const wasOfferedThisSession = (session.researchPlan.candidateHubs as readonly string[]).includes(hubId);
+    const matchesAdvertisedChoice = session.availableChoices.some((c) => c.value === value);
+    if (!isKnownPilotHub || !wasOfferedThisSession || !matchesAdvertisedChoice) throw new Error('invalid_hub_selection');
+    return touch(enterChosenHub(next, hubId as GuidedPilotHub));
+  }
   if (session.hub === 'senior') {
     if(session.researchPlan.reasonCodes.includes('CARE_TASK')){
       if(!session.availableChoices.some(c=>c.value===value))throw new Error('stale_or_invalid_choice');
@@ -66,6 +119,24 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
       return touch(refreshCareSession({...clearExecutionState(next),selectedFilters:initialCareRatingFilters(session.originalQuestion,value as CareSetting),identifier:undefined,identityName:undefined},value as CareSetting,session.geography));
     }
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
+    // POST-R1-ASK-INTENT-001 Section G: CARE_CHOICES (session.ts) has always rendered
+    // "Assisted living" and "Memory care" as clickable options here, but this non-CARE_TASK
+    // branch only ever accepted nursing_home/home_health/hospice -- clicking a choice the
+    // system itself just offered threw invalid_choice, which is exactly the "a valid
+    // generated action invalidates its own session" defect. SeniorTrustHub's CMS Care
+    // Compare source genuinely does not cover these two classes (same limitation already
+    // encoded in senior-ask.ts's SENIOR_UNSOURCED_PROVIDER_CLASSES/seniorFailClosedReason),
+    // so the fix is an honest terminal CLARIFY, not silently accepting an unexecutable class.
+    if (value === 'assisted_living' || value === 'memory_care') {
+      const label = value === 'assisted_living' ? 'Assisted Living' : 'Memory Care';
+      return touch({
+        ...next,
+        phase: 'CLARIFY',
+        missingFields: ['providerClass'],
+        availableChoices: next.availableChoices.filter((c) => c.value !== 'assisted_living' && c.value !== 'memory_care'),
+        nextAction: `${label} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available. Choose a supported care setting, or search elsewhere for ${label.toLowerCase()}.`,
+      });
+    }
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
     return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
   }
