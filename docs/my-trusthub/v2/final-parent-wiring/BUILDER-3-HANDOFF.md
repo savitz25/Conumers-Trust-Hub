@@ -1,5 +1,7 @@
 # V2-3 final parent wiring — isolated transport v1
 
+Prior Move #156/#157 browser and release evidence is retired for final V2-3 composition. This remains the Ask-side transport target; Builder 3 must implement and certify it from current Move main before Journey QA.
+
 Prepared from Ask `307da0b6f80f0b1635811f2b91f39b737b9f0afc`, in branch `mth-v2-3-final-parent-wiring`. The implementation is local and unapplied. No deployed/browser PASS is asserted. Builder 3 can implement against this packet; coordinated activation still needs the SQL, secrets and both preview deployments.
 
 The parent now assembles `AuthorizedPostgresBackend` and `ParentProfileSaveRuntime` with real PostgreSQL state. `/my/profile-save` uses durable confirmations, verified admitted parent Auth, actual P13 issuance/consume, exact network binding, P12 Save, receipt persistence and authenticated source acknowledgment. `/my/saved` has a Save-only isolated view so missing Sessions/Watch schemas cannot block the saved-list read. The six-operation parent wire envelope and vendored contracts are unchanged.

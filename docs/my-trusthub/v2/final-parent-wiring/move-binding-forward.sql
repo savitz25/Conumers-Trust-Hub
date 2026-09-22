@@ -1,4 +1,8 @@
 -- PREPARED, NOT AUTHORIZED TO EXECUTE. Only xkkiicsassizmakcvxml.
+-- The operator's SET-capable myth_identity_governor membership is temporary for
+-- this Phase-4 transaction and must be revoked immediately after COMMIT. Phase
+-- 5 accepts only the known platform bookkeeping row with SET/INHERIT false (or
+-- zero such rows on local PostgreSQL).
 -- Live preview recheck 2026-09-22T13:39:03.154Z: HTTP 200, Vercel MISS, age 0,
 -- exactly one Company: usdot-1002530, USDOT 1002530, MC 421784, PUBLISHABLE.
 -- This evidence EXPIRES. Repeat the documented read within two minutes of apply.

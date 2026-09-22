@@ -1,4 +1,4 @@
--- PREPARED ONLY. Fresh direct TLS connection as myth_v23_parent_preview ONLY.
+-- PREPARED ONLY. Fresh validated DIRECT or proven SUPAVISOR_SESSION connection.
 -- Independently pin xkkiicsassizmakcvxml outside SQL. No admin SET ROLE workaround.
 -- Run AFTER authorized hardening, with ON_ERROR_STOP, before certifying Phase 5.
 begin isolation level serializable read only;
@@ -7,32 +7,19 @@ do $$ declare target record; statement text; begin
    or current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml'
    or session_user<>'myth_v23_parent_preview' or current_user<>session_user then
    raise exception 'Fresh independently pinned runtime login required'; end if;
- if has_schema_privilege(current_user,'net','USAGE')
+ if to_regnamespace('net') is not null or exists(select 1 from pg_extension where extname='pg_net')
    or has_schema_privilege(current_user,'extensions','USAGE') then
    raise exception 'Runtime platform schema USAGE remains'; end if;
  if (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
-   where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info')
-     or n.nspname='net' and c.relname in ('_http_response','http_request_queue'))<>4 then
+   where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info'))<>2 then
    raise exception 'Reviewed platform probe targets missing'; end if;
  for target in select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace
-   where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info')
-     or n.nspname='net' and c.relname in ('_http_response','http_request_queue') loop
+   where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info') loop
    begin
      execute format('select 1 from %I.%I limit 0',target.nspname,target.relname);
    exception when insufficient_privilege then continue;
    end;
    raise exception 'Unexpected schema-qualified runtime access: %.%',target.nspname,target.relname;
- end loop;
- -- No network endpoint is supplied. READ ONLY is an additional guard. The
- -- schema boundary must reject before any HTTP function can be entered.
- foreach statement in array array[
-   'select net.http_get(null::text,null::jsonb,null::jsonb,1)',
-   'select net.http_post(null::text,null::jsonb,null::jsonb,null::jsonb,1)',
-   'select net.http_delete(null::text,null::jsonb,null::jsonb,1,null::jsonb)'] loop
-   begin execute statement;
-   exception when insufficient_privilege then continue;
-   end;
-   raise exception 'Unexpected runtime HTTP function entry';
  end loop;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
    where n.nspname in ('auth','consumer','network','ops','v23_private','public')

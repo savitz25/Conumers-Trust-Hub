@@ -5,7 +5,7 @@
 begin isolation level serializable read only;
 set local row_security=off;
 do $$
-declare r record; b network.network_entity_bindings%rowtype; e network.network_entities%rowtype; f text; actual_acl jsonb;
+declare r record; b network.network_entity_bindings%rowtype; e network.network_entities%rowtype; f text;
 begin
  if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml' then
    raise exception 'Independently pinned isolated project required'; end if;
@@ -43,6 +43,21 @@ begin
  if exists(select 1 from pg_auth_members where member in (select oid from pg_roles where rolname in
      ('myth_v23_authorizer','myth_v23_executor','myth_v23_preview_reader','myth_v23_foundation','myth_v23_browser_store'))) then
    raise exception 'Unexpected nested membership'; end if;
+ -- Phase 4 requires an operator to SET ROLE myth_identity_governor. That
+ -- SET-capable grant must be revoked after binding creation. Supabase may keep
+ -- one reverse bookkeeping row (postgres administered by supabase_admin) that
+ -- has ADMIN but explicitly has neither SET nor INHERIT authority.
+ if (select count(*) from pg_auth_members m join pg_roles g on g.oid=m.roleid
+       where g.rolname='myth_identity_governor')>1
+   or exists(select 1 from pg_auth_members m join pg_roles g on g.oid=m.roleid
+       left join pg_roles member_role on member_role.oid=m.member
+       left join pg_roles grantor_role on grantor_role.oid=m.grantor
+       where g.rolname='myth_identity_governor' and
+       (member_role.rolname is distinct from 'postgres' or grantor_role.rolname is distinct from 'supabase_admin'
+        or m.admin_option is distinct from true or m.inherit_option is distinct from false or m.set_option is distinct from false))
+   or exists(select 1 from pg_auth_members m join pg_roles member_role on member_role.oid=m.member
+       where member_role.rolname='myth_identity_governor') then
+   raise exception 'Unexpected SET/ADMIN/INHERIT authority for identity governor'; end if;
  -- Direct ACLs are forbidden even when schema USAGE currently masks them.
  if exists(
    select 1 from pg_class c cross join lateral aclexplode(nullif(c.relacl,'{}'::aclitem[])) a where a.grantee=r.oid
@@ -74,32 +89,12 @@ begin
    where n.nspname='extensions' and c.relname in ('pg_stat_statements','pg_stat_statements_info'))
    and has_schema_privilege(r.oid,'extensions','USAGE') then
    raise exception 'Runtime pg_stat schema access'; end if;
- -- Local PostgreSQL may have no pg_net. If either component is present the
- -- complete reviewed, hardened baseline is mandatory; this is no allowlist.
- if to_regnamespace('net') is not null or exists(select 1 from pg_extension where extname='pg_net') then
- if (select pg_get_userbyid(nspowner) from pg_namespace where nspname='net') is distinct from 'supabase_admin'
-   or (select count(*) from pg_extension where extname='pg_net' and extversion='0.20.4'
-     and pg_get_userbyid(extowner)='supabase_admin')<>1 then
-   raise exception 'Unreviewed pg_net schema owner/extension baseline'; end if;
- if (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
-   join pg_depend d on d.classid='pg_class'::regclass and d.objid=c.oid and d.objsubid=0
-     and d.refclassid='pg_extension'::regclass and d.deptype='e'
-   join pg_extension ext on ext.oid=d.refobjid
-   where n.nspname='net' and c.relname in ('_http_response','http_request_queue')
-     and c.relkind='r' and pg_get_userbyid(c.relowner)='supabase_admin' and ext.extname='pg_net')<>2 then
-   raise exception 'Required pg_net table ownership/extension membership differs'; end if;
- -- Exact reviewed 2026-09-22 ACL: owner supabase_admin; no grant options.
- select jsonb_agg(jsonb_build_array(case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,
-   pg_get_userbyid(a.grantor),a.privilege_type,a.is_grantable) order by
-   case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type)
- into actual_acl from pg_namespace n cross join lateral aclexplode(n.nspacl) a where n.nspname='net';
- if actual_acl is distinct from '[["anon","supabase_admin","USAGE",false],["authenticated","supabase_admin","USAGE",false],["postgres","supabase_admin","USAGE",false],["service_role","supabase_admin","USAGE",false],["supabase_admin","supabase_admin","CREATE",false],["supabase_admin","supabase_admin","USAGE",false],["supabase_functions_admin","supabase_admin","USAGE",false]]'::jsonb then
-   raise exception 'Unreviewed net schema ACL baseline'; end if;
- if has_schema_privilege(r.oid,'net','USAGE') then raise exception 'Runtime net schema access'; end if;
- if exists(select 1 from unnest(array['supabase_admin','supabase_functions_admin','postgres','anon','authenticated','service_role']) role_name
-   where not has_schema_privilege(role_name,'net','USAGE')) then
-   raise exception 'Explicit platform role net USAGE lost'; end if;
- end if;
+ -- Isolated-preview policy is extension absence. It does not depend on PUBLIC
+ -- ACL shape and deliberately does not impose this policy on production.
+ if exists(select 1 from pg_extension where extname='pg_net') or to_regnamespace('net') is not null
+   or exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+       where n.nspname='net' and p.proname in ('http_get','http_post','http_delete')) then
+   raise exception 'Isolated V2-3 requires pg_net and schema net absent'; end if;
  foreach f in array array[
    'v23_private.preview_ports_ready()','v23_private.preview_confirmation(text,text,jsonb)',
    'v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',

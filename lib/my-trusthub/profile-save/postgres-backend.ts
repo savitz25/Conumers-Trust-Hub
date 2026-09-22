@@ -2,7 +2,7 @@
  * service-role fallback, role switching or schema/permission creation here. */
 import type { RuntimeBackend, RuntimeTransaction } from './runtime.ts';
 import type { FoundationSql } from './p12-p13.ts';
-export interface TransactionConnection extends FoundationSql { release(): void }
+export interface TransactionConnection extends FoundationSql { release(destroy?: boolean): void }
 export interface TransactionPool { connect(): Promise<TransactionConnection> }
 type Foundations = Pick<RuntimeTransaction, 'resolveProfile' | 'resolveReturnTask' | 'consumeP13' | 'saveP12' | 'addProjectP12'>;
 type RecordKind = Parameters<RuntimeTransaction['put']>[0];

@@ -1,8 +1,35 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Post-Fable Gate 1 / Gate 2 remediation — prepared only
+
+The PUBLIC net-schema revocation design described later in this historical
+report is superseded. [The current review](platform-public-review.md) and
+[Bot Team handoff](BOT-TEAM-HANDOFF.md) require pg_net and schema net to be
+absent on the isolated preview. The packet supplies a read-only dependency and
+queue preflight, disable without CASCADE, exact postcheck, and separately
+authorized re-enable lifecycle. Re-enabling platform defaults deliberately makes
+V2-3 Phase 5 fail. This branch-only rule is not a production architecture claim.
+
+The runtime now models `DIRECT` and `SUPAVISOR_SESSION` explicitly. Transaction
+pooling, port 6543, wrong pooler/project/user/database identity, URL options and
+production fallback fail closed. Direct remains unsuitable for Vercel because
+the branch endpoint is IPv6-only. Session mode stays inactive until the hosted
+parity harness passes. The application pool maximum is two.
+
+Phase 5 and closeout now account for temporary `myth_identity_governor` SET
+authority and permit only the exact non-SET Supabase bookkeeping row after Phase
+4. The confirmation login return canonicalizes only the bounded `auth=complete`
+marker back to the bare cookie-bound path. Existing Move #156/#157 and immutable
+preview browser evidence below are historical observations, not current
+composition proof. Builder 3 must rebuild Move from current Move main. No hosted
+mutation, Vercel change, stack rebase, merge or production action occurred.
+
+The following PUBLIC ACL section is retained only as superseded historical
+evidence and is not an activation procedure.
+
 ## Supabase PUBLIC ACL hardening — prepared only
 
-Base `3f9c4f5e9bd720b6c49beb180add71edf1a5bfc0`. [Exact review, audit, ACL matrix and operator order](platform-public-review.md) documents the separately authorized [net schema hardening](platform-public-hardening.sql) and [rollback](platform-public-rollback.sql). Hosted read-only catalog inspection found no pg_net application trigger/webhook dependency and confirmed the exact platform ACL. No hosted mutation occurred; current hosted net access remains exposed until authorized apply.
+At base `3f9c4f5e9bd720b6c49beb180add71edf1a5bfc0`, the packet proposed PUBLIC schema-USAGE revocation. That proposal was never successfully applied and is now retired; its deleted SQL must not be reconstructed or used.
 
 Activation assertions now distinguish schema USAGE from object privileges, retain strict latent-grant checks on TrustHub schemas, and require the exact hardened net ACL. Disposable PostgreSQL ACL cases A–H, 20 hardening negatives, 15 activation negatives, 10 rollback guards, and the unchanged identity/lifecycle/receipt preservation suites passed. Full teardown restores the original platform ACL exactly after runtime removal. No runtime code, Move binding, or hosted Phases 1–4 were changed.
 

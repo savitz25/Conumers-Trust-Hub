@@ -170,9 +170,6 @@ export async function closeoutPacket(db) {
   await assert.rejects(db.exec(sql('move-binding-teardown.sql')), /Exact live forward binding/);
   await db.exec('rollback');
   await db.exec(sql('teardown.sql'));
-  if ((await db.query("select to_regnamespace('net') is not null present")).rows[0].present) {
-    await db.exec(sql('platform-public-rollback.sql'));
-  }
   await db.exec(sql('teardown-assertions.sql'));
   const postCases = [
     ['create role myth_v23_parent_preview login', /Preview login\/reader role remains/],

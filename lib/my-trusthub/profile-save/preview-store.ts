@@ -65,7 +65,7 @@ export class PreviewConfirmationStore implements ConfirmationStore {
   }
   async withRecord<T>(ref: string, work: (c: Confirmation | null, checkpoint: () => Promise<void>) => Promise<T>): Promise<T> {
     if (!opaque(ref)) throw new RuntimeError('invalid');
-    const db = await this.pool.connect(), key = hash(ref); let locked = false;
+    const db = await this.pool.connect(), key = hash(ref); let locked = false, destroy = false;
     try {
       locked = (await db.query<{ locked: boolean }>('select pg_try_advisory_lock(hashtextextended($1,0)) as locked', ['v23-browser:' + key])).rows[0]?.locked === true;
       if (!locked) throw new RuntimeError('conflict');
@@ -74,8 +74,12 @@ export class PreviewConfirmationStore implements ConfirmationStore {
       try { const result = await work(c, checkpoint); await checkpoint(); return result; }
       catch (e) { await checkpoint(); throw e; }
     } finally {
-      if (locked) await db.query('select pg_advisory_unlock(hashtextextended($1,0))', ['v23-browser:' + key]).catch(() => {});
-      db.release();
+      if (locked) {
+        try { destroy = (await db.query<{ unlocked: boolean }>('select pg_advisory_unlock(hashtextextended($1,0)) as unlocked', ['v23-browser:' + key])).rows[0]?.unlocked !== true; }
+        catch { destroy = true; }
+      }
+      // A failed unlock never returns a stateful session to another borrower.
+      db.release(destroy);
     }
   }
 }

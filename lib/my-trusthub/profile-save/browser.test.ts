@@ -34,7 +34,7 @@ async function fixture(){
   assert.equal(arrival.status,303);const cookie=arrival.headers.get('set-cookie')!.split(';')[0];
   const get=()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie}}),b);
   const confirm=async(project='')=>{const page=await (await get()).text();const csrf=/name="csrf" value="([^"]+)"/.exec(page)?.[1];return handleProfileConfirmation(post(new URLSearchParams({csrf:csrf??'',confirm:'yes',project}).toString(),cookie),b);};
-  return {b,backend,get,confirm,post,cookie,records,get acks(){return acks;},
+  return {b,backend,get,confirm,post,cookie,records,origin,get acks(){return acks;},
     login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
 }
 test('B01 concrete target: sign-in continuation -> explicit confirmation -> real runtime receipt -> bounded return',async()=>{
@@ -62,6 +62,15 @@ test('B03 optional Project failure keeps one Save; receipt retry is idempotent',
 test('B04 absent deployment bindings and expired confirmation fail closed',async()=>{
   assert.equal((await handleProfileConfirmation(new Request('http://127.0.0.1/my/profile-save'),null)).status,503);
   const f=await fixture();try{f.login();f.expire();assert.equal((await f.get()).status,410);assert.equal(f.backend.count('saves'),0);}finally{f.close();}
+});
+
+test('B05 verified auth marker canonicalizes without exposing confirmation state',async()=>{
+  const f=await fixture();try{
+    const resumed=await handleProfileConfirmation(new Request(f.origin+PROFILE_CONFIRM_PATH+'?auth=complete',{headers:{cookie:f.cookie}}),f.b);
+    assert.equal(resumed.status,303);assert.equal(resumed.headers.get('location'),PROFILE_CONFIRM_PATH);
+    assert.equal((await handleProfileConfirmation(new Request(f.origin+PROFILE_CONFIRM_PATH+'?auth=complete&continuationRef=secret',{headers:{cookie:f.cookie}}),f.b)).status,400);
+    assert.equal((await handleProfileConfirmation(new Request(f.origin+PROFILE_CONFIRM_PATH+'?auth=expired',{headers:{cookie:f.cookie}}),f.b)).status,400);
+  }finally{f.close();}
 });
 test('B05 retention is bounded metadata-only, never durable Saved research',()=>{
   for(const batch of [retentionBatch(1000),quotaRetentionBatch(1000)]){

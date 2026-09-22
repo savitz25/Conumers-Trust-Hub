@@ -13,6 +13,16 @@ do $$ begin
    raise exception 'Explicit isolated retirement/teardown and drained-writer attestations required'; end if;
  if exists(select 1 from pg_stat_activity where usename='myth_v23_parent_preview') then
    raise exception 'Drain runtime login first'; end if;
+ if exists(select 1 from pg_extension where extname='pg_net') or to_regnamespace('net') is not null then
+   raise exception 'Isolated pg_net-absent baseline must hold through closeout'; end if;
+ if (select count(*) from pg_auth_members m join pg_roles g on g.oid=m.roleid where g.rolname='myth_identity_governor')>1
+   or exists(select 1 from pg_auth_members m join pg_roles g on g.oid=m.roleid
+     left join pg_roles mr on mr.oid=m.member left join pg_roles gr on gr.oid=m.grantor
+     where g.rolname='myth_identity_governor' and (mr.rolname is distinct from 'postgres'
+       or gr.rolname is distinct from 'supabase_admin' or m.admin_option is distinct from true
+       or m.inherit_option is distinct from false or m.set_option is distinct from false))
+   or exists(select 1 from pg_auth_members m join pg_roles mr on mr.oid=m.member where mr.rolname='myth_identity_governor') then
+   raise exception 'Lingering identity-governor authority after Phase 4'; end if;
  if (select count(*) from v23_private.preview_registry_before)<>2
    or (select count(distinct hub_key) from v23_private.preview_registry_before where hub_key in ('ask','move'))<>2
    or not exists(select 1 from v23_private.preview_security_before where object_key='role:myth_v23_authorizer') then

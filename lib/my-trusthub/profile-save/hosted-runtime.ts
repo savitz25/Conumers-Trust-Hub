@@ -5,6 +5,7 @@ import { PreviewAssembly } from './preview-assembly.ts';
 import { PreviewStore, randomRef } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { ISOLATED_PROJECT, PARENT_LOGIN, isolatedConfig, type Env } from './isolated-config.ts';
+import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
 import { hash } from './runtime.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -24,20 +25,18 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
       const parts = publishable.split('.');
       if (parts.length !== 3 || JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')).role !== 'anon') return null;
     }
-    const raw = env.MY_TRUSTHUB_V23_PARENT_DATABASE_URL, ca = env.MY_TRUSTHUB_V23_DATABASE_CA_PEM;
+    const raw = env.MY_TRUSTHUB_V23_PARENT_DATABASE_URL;
+    const connection = databaseConnectionConfig(env);
     const key = { kid: env.MY_TRUSTHUB_V23_ASK_KEY_ID ?? '', pem: env.MY_TRUSTHUB_V23_ASK_SIGNING_PRIVATE_KEY_PEM ?? '' };
     const moveKey = { kid: env.MY_TRUSTHUB_V23_MOVE_KEY_ID ?? '', pem: env.MY_TRUSTHUB_V23_MOVE_VERIFY_PUBLIC_KEY_PEM ?? '' };
-    if (!raw || !ca || !/^[A-Za-z0-9_-]{1,64}$/.test(key.kid) || !/^[A-Za-z0-9_-]{1,64}$/.test(moveKey.kid)) return null;
-    const url = new URL(raw), host = `db.${ISOLATED_PROJECT}.supabase.co`;
-    if (!['postgres:', 'postgresql:'].includes(url.protocol) || url.hostname !== host ||
-      url.port !== '5432' || url.pathname !== '/postgres' || url.username !== PARENT_LOGIN || !url.password || url.search || url.hash) return null;
+    if (!raw || !connection || !/^[A-Za-z0-9_-]{1,64}$/.test(key.kid) || !/^[A-Za-z0-9_-]{1,64}$/.test(moveKey.kid)) return null;
     const askPrivate = createPrivateKey(key.pem), movePublic = createPublicKey(moveKey.pem);
     if (askPrivate.asymmetricKeyType !== 'ed25519' || movePublic.asymmetricKeyType !== 'ed25519' ||
       createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' }) === movePublic.export({ type: 'spki', format: 'pem' })) return null;
-    const fingerprint = hash(raw + '\0' + ca);
+    const fingerprint = hash(raw + '\0' + connection.ca + '\0' + connection.mode);
     if (cached && cached.fingerprint !== fingerprint) { await cached.pool.end(); cached = undefined; }
-    if (!cached) cached = { fingerprint, pool: new Pool({ host, port: 5432, database: 'postgres', user: PARENT_LOGIN,
-      password: decodeURIComponent(url.password), ssl: { ca, rejectUnauthorized: true, servername: host }, max: 6,
+    if (!cached) cached = { fingerprint, pool: new Pool({ host: connection.host, port: connection.port, database: connection.database, user: connection.user,
+      password: connection.password, ssl: { ca: connection.ca, rejectUnauthorized: true, servername: connection.host }, max: RUNTIME_POOL_MAX,
       connectionTimeoutMillis: 5000, idleTimeoutMillis: 10000, application_name: 'v23-parent-isolated' }) };
     pool = cached.pool;
     const db = await pool.connect();
@@ -51,9 +50,10 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         memberships.some(r => r.admin_option || r.inherit_option || !r.set_option)) return null;
       const permissions = (await db.query(`select exists(select 1 from information_schema.role_table_grants where grantee=session_user) as table_grants,
         exists(select 1 from pg_auth_members m where m.member in (select oid from pg_roles where rolname in ('myth_v23_authorizer','myth_v23_executor'))) as nested_roles,
+        (exists(select 1 from pg_extension where extname='pg_net') or to_regnamespace('net') is not null) as pg_net_present,
         exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname in ('auth','consumer','ops','network','v23_private')
           and (has_table_privilege(session_user,c.oid,'SELECT') or has_table_privilege(session_user,c.oid,'INSERT') or has_table_privilege(session_user,c.oid,'UPDATE') or has_table_privilege(session_user,c.oid,'DELETE'))) as raw_access`)).rows[0];
-      if (permissions.table_grants || permissions.nested_roles || permissions.raw_access) return null;
+      if (permissions.table_grants || permissions.nested_roles || permissions.pg_net_present || permissions.raw_access) return null;
     } finally { db.release(); }
     const scoped = pool as unknown as TransactionPool, store = new PreviewStore(scoped);
     const pin = await store.authorized(async db => (await db.query<{ project_ref: string; version: string; ask_origin: string; move_origin: string }>('select * from v23_private.preview_deployment_pin where singleton', [])).rows[0]);

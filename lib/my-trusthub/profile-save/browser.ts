@@ -49,7 +49,15 @@ async function form(request:Request){
 export async function handleProfileConfirmation(request:Request,b:BrowserBindings|null):Promise<Response>{
   if(!b || b.registry.environment!=='isolated'||!b.registry.isolatedBackendVerified)return unavailable();
   const url=new URL(request.url);
-  if(url.origin!==b.origin||url.pathname!==PROFILE_CONFIRM_PATH||url.search)return html('<h1>Invalid request</h1>',400);
+  if(url.origin!==b.origin||url.pathname!==PROFILE_CONFIRM_PATH)return html('<h1>Invalid request</h1>',400);
+  // A verified email/PKCE callback may add this bounded outcome marker. Strip it
+  // before rendering; the server-bound confirmation cookie remains authority.
+  if(url.search){
+    if(request.method==='GET'&&url.searchParams.size===1&&url.searchParams.get('auth')==='complete'){
+      return new Response(null,{status:303,headers:{...PRIVATE_HEADERS,Location:PROFILE_CONFIRM_PATH}});
+    }
+    return html('<h1>Invalid request</h1>',400);
+  }
   try{
     const posted=request.method==='POST'?await form(request):null;
     if(request.method!=='GET'&&request.method!=='POST')return html('<h1>Method not allowed</h1>',405);
