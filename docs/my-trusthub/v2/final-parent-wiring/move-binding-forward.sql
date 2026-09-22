@@ -20,8 +20,8 @@ end $$;
 set local role myth_identity_governor;
 lock table network.network_entities,network.network_entity_bindings in share row exclusive mode;
 do $$ begin
- if exists(select 1 from network.network_entity_bindings where hub='move' and
-    (specialist_entity_id='usdot-1002530' or identifier_namespace='fmcsa.usdot' and source_identifier_normalized='1002530'))
+ if exists(select 1 from network.network_entity_bindings where
+    (hub='move' and specialist_entity_id='usdot-1002530' or identifier_namespace='fmcsa.usdot' and source_identifier_normalized='1002530'))
     or exists(select 1 from network.network_entities where primary_hub='move' and
       (canonical_name='HINDMAN & ISAACS MOVING & STORAGE INC' or canonical_public_profile_ref='/companies/hindman-isaacs-moving-storage-inc')) then
    raise exception 'Existing identity requires steward review; no upsert or inferred merge'; end if;
@@ -34,5 +34,7 @@ insert into network.network_entity_bindings(network_entity_id,hub,specialist_ent
  identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref,resolution_note)
 select id,'move','mover','usdot-1002530','fmcsa.usdot','1002530','US','accepted',transaction_timestamp(),
  current_setting('v23bind.evidence_ref'),'V2-3 isolated test only; canonical organization, Move mover, exact USDOT 1002530 / MC 421784. Fresh PUBLISHABLE proof checked by approved runner.' from entity
-returning id as binding_id,network_entity_id;
+returning id as binding_id,network_entity_id,provenance_ref;
 commit;
+-- Retain these exact returned IDs and provenance in the approved operator
+-- record. Supply them to assertions/retirement; never rediscover by name alone.

@@ -38,8 +38,29 @@ Server-only connection variable `MY_TRUSTHUB_V23_PARENT_DATABASE_URL` must use l
 
 The role creation SQL starts with `PASSWORD NULL`, so it is not usable until an authorized operator provisions its password through a local secure channel such as interactive `psql \password`. Do not put password/URL/private key/bypass values into SQL, CLI output, screenshots, Git, Slack, GitHub or reports. [Builder 3 handoff](BUILDER-3-HANDOFF.md) gives all key IDs and secret variable names.
 
-Activation order after authorization: pin isolated host and reviewed base objects; apply private ports; create the restricted login and set its server-only password; freshly reverify PUBLISHABLE and separately create the exact approved binding; run assertions and the authorized hosted matrix; provision the two preview service key pairs and peer public keys; wire Builder 3 source nonce/store/callback/current-grant bridge; apply branch-scoped preview env; deploy only the reviewed preview branches; verify SHAs at the exact aliases; rerun the whole A/B journey from the beginning. Never merge #185/#157 or promote production as part of this packet.
+Activation is strictly ordered, after separate founder authorization. Every failed or missing gate stops activation; partial success is **BLOCKED**, never READY.
+
+1. Independently pin project `xkkiicsassizmakcvxml` and its actual TLS database host outside SQL.
+2. Verify clean preconditions: reviewed P11/P12/P13/V2-3 certified objects, exactly two Ask/Move registry rows, no prior preview login/reader/wrappers/tables or preview-only grants, and the approved isolated operator. The guards at the start of `ports-forward.sql` enforce the catalog portion; a GUC does not authenticate the host.
+3. Apply `ports-forward.sql`. It retains the original registry arrays and a private, non-secret ACL/role baseline before changing preview grants.
+4. Create `myth_v23_parent_preview` with `runtime-role-forward.sql`.
+5. Securely provision its password locally; keep all password/connection material server-only and out of SQL/output/reports.
+6. Freshly reverify the exact Move identity is PUBLISHABLE within two minutes of binding apply.
+7. Apply `move-binding-forward.sql`. Retain its returned `binding_id`, `network_entity_id`, and `provenance_ref` in the approved operator record.
+8. Set `v23.binding_id`, `v23.network_entity_id`, and `v23.binding_provenance_ref` from that exact forward result, then run fail-closed `assertions.sql` with stop-on-error. Require `V23_PARENT_PACKET_ASSERTIONS_PASS`; inspect nothing into a PASS manually.
+9. Run the separately authorized hosted V2-3 matrix. Preserve its exact evidence and cleanup boundaries.
+10. Only after all prior gates pass, configure branch-scoped preview secrets/env and deploy the reviewed previews. No Production/all-preview defaults.
+11. Complete Builder 3 final composition and verify both reviewed SHAs at the exact stable aliases.
+12. Run the full Journey QA from the beginning, including real A/B login, consent, Save, receipt, isolation and zero Watch.
+
+Never merge #185/#157 or promote production under this packet. Local test success does not certify hosted privileges or the browser journey.
 
 Runtime returns unavailable if the exact config, login flags/memberships, raw-table denial, private-port readiness marker, isolated Auth service, source assertion/publication or approved binding cannot be verified. It has no SQLite, memory, legacy Auth or admin credential fallback.
 
-Operational cleanup, after separate authorization, may use the existing nonlogin `myth_v23_cleanup` role to delete a bounded batch of expired `v23_private.preview_transport_records` older than one hour. Do not remove P12 Saved/Project rows or durable receipts. No job, cron, configuration or hosted cleanup was installed here. Teardown requires disabled ingress, drained connections and unchanged staging-origin preconditions; it preserves original research and restores the recorded staging origin arrays.
+Operational cleanup, after separate authorization, may use the existing nonlogin `myth_v23_cleanup` role to delete a bounded batch of expired `v23_private.preview_transport_records` older than one hour. Do not remove P12 Saved/Project rows or durable receipts. No job, cron, configuration or hosted cleanup was installed here.
+
+Full closeout is a separate steward-approved operation. Independently pin the isolated host, disable ingress and other writers/cleanup jobs, and drain the runtime connections. Use one operator session with stop-on-error throughout: `teardown-preconditions.sql` -> `move-binding-teardown.sql` -> `teardown.sql` -> `teardown-assertions.sql`. Require `v23.binding_retirement_authorized=true`, `v23.parent_teardown_authorized=true`, `v23.closeout_writers_drained=true`, the approved project GUC, and exact retained forward IDs/provenance. No script supplies authorization on the operator's behalf.
+
+The first script privately captures original permissions/origins, exact identity, and row-count/SHA-256 fingerprints of research and receipt tables in session-local tables. The binding script closes the existing accepted lifetime with `valid_to` and marks the same entity `retired`. It does not delete, supersede into a successor, redirect, or merge anything. The parent teardown removes only preview ports/roles/tables/grants and restores original origin arrays. The final script requires exact baseline equality and the authorized historical lifecycle before emitting `V23_PARENT_PACKET_TEARDOWN_ASSERTIONS_PASS`.
+
+Keep all writers quiescent until verification completes. The independently authorized operator must already have the owner/lock privileges needed for SHARE locks on redirects and protected research; SELECT-only access is insufficient. Missing privileges stop this packet, without any new grants. Baseline locks end with their transaction; concurrent edits cause the final comparison to fail. Do not recapture baselines after a failure or delete research to make assertions pass. A lost operator session loses its temporary preservation proof: stop for steward review. Reopening a retired lifetime requires a separate reviewed operation with fresh collision/lifecycle checks; there is no automatic undo/merge fallback.

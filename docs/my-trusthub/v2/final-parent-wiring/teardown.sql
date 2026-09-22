@@ -3,10 +3,22 @@
 -- registry changed since this packet. Preserves ALL P12 research and receipts.
 begin;
 do $$ begin
- if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml' then raise exception 'isolated authorization required'; end if;
+ if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml'
+   or current_setting('v23.parent_teardown_authorized',true) is distinct from 'true' then
+   raise exception 'Separate isolated parent teardown authorization required'; end if;
+ if to_regclass('pg_temp.v23_closeout_research') is null
+   or to_regclass('pg_temp.v23_closeout_security') is null
+   or to_regclass('pg_temp.v23_closeout_origins') is null
+   or to_regclass('pg_temp.v23_closeout_retirement') is null then
+   raise exception 'Same-session preservation baseline and completed steward retirement required'; end if;
  if exists(select 1 from pg_stat_activity where usename='myth_v23_parent_preview') then raise exception 'drain parent login first'; end if;
- if exists(select 1 from ops.consumer_hub_registry r join v23_private.preview_deployment_pin p on true
-   where r.hub_key in ('ask','move') and r.staging_origins<>array[case r.hub_key when 'ask' then p.ask_origin else p.move_origin end]) then raise exception 'concurrent registry change; review teardown'; end if;
+ if (select count(*) from v23_private.preview_deployment_pin)<>1
+   or (select count(*) from ops.consumer_hub_registry where hub_key in ('ask','move'))<>2
+   or (select count(*) from v23_private.preview_registry_before)<>2
+   or exists(select 1 from ops.consumer_hub_registry r join v23_private.preview_deployment_pin p on true
+     where r.hub_key in ('ask','move') and r.staging_origins is distinct from
+       array[case r.hub_key when 'ask' then p.ask_origin else p.move_origin end]) then
+   raise exception 'Concurrent/missing registry state; review teardown'; end if;
 end $$;
 alter role myth_v23_parent_preview nologin password null;
 revoke myth_v23_authorizer,myth_v23_executor from myth_v23_parent_preview;
@@ -40,8 +52,9 @@ drop role myth_v23_preview_reader;
 -- Existing browser confirmations and ops runtime receipts are left intact.
 drop table v23_private.preview_transport_records;
 drop table v23_private.preview_registry_before;
+drop table v23_private.preview_security_before;
 drop table v23_private.preview_deployment_pin;
 commit;
--- Binding lifecycle is a separate steward operation; do not delete its identity
--- or any Saved research. Retire only the exact IDs returned by the approved
--- creation, with fresh preconditions and a separate authorization.
+-- Run teardown-assertions.sql in this same operator session. No success claim
+-- until its machine-enforced PASS. Binding lifecycle is separately authorized
+-- in move-binding-teardown.sql; no identity or consumer research is deleted.

@@ -14,6 +14,7 @@ import { ASSERTION_HEADER, signAssertion, verifyAssertion } from '../../lib/my-t
 import { ASK_PREVIEW, MOVE_PREVIEW, API_PATH, PARENT_LOGIN } from '../../lib/my-trusthub/profile-save/isolated-config.ts';
 import { fixtureEnv, A, B, keys } from '../../lib/my-trusthub/profile-save/final-wiring.test.ts';
 import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save/interface.ts';
+import { createPacketBinding, assertionFailureCases, closeoutPacket } from './v23-sql-closeout-cases.mjs';
 const db = new PGlite({ extensions: { btree_gist, pgcrypto } });
 try {
   await db.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin;
@@ -26,6 +27,13 @@ try {
     '20260907220000_my_trusthub_cross_hub_handoffs.sql','20260919205200_my_trusthub_v23_transaction_capability.sql']) await db.exec(readFileSync('supabase/migrations/' + f, 'utf8'));
   // Execute the existing hosted transaction matrix only inside LOCAL PGlite.
   await db.exec(readFileSync('supabase/tests/v23_hosted_transactions.sql', 'utf8'));
+  // Additional consumer FK contract: a careless identity DELETE would cascade.
+  // It exists before the permission baseline and must survive closeout unchanged.
+  await db.exec(`create table consumer.packet_reference_fixture(id uuid primary key,
+    entity_id uuid references network.network_entities on delete cascade,
+    binding_id uuid references network.network_entity_bindings on delete cascade);
+    alter table consumer.packet_reference_fixture enable row level security;
+    alter table consumer.packet_reference_fixture force row level security;`);
   await db.exec("set v23.approved_project='xkkiicsassizmakcvxml'");
   const root = 'docs/my-trusthub/v2/final-parent-wiring/';
   await db.exec(readFileSync(root + 'ports-forward.sql', 'utf8'));
@@ -38,10 +46,8 @@ try {
   const sidA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', sidB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
   await db.query('insert into auth.users values($1),($2)', [A, B]);
   await db.query('insert into auth.sessions values($1,$2,null),($3,$4,null)', [sidA, A, sidB, B]);
-  await db.exec(`with e as (insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction)
-    values('organization','HINDMAN & ISAACS MOVING & STORAGE INC','move','US') returning id)
-    insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
-    select id,'move','mover','usdot-1002530','fmcsa.usdot','1002530','US','accepted',now()-interval '1 day','local-test-only' from e;`);
+  await createPacketBinding(db);
+  await assertionFailureCases(db);
   const pool = { connect: async () => ({ query: (sql, values) => db.query(sql, values), release() {} }) };
   const store = new PreviewStore(pool), confirmations = new PreviewConfirmationStore(pool);
   assert.equal(await store.authorized(async d => (await d.query('select v23_private.preview_ports_ready() ready', [])).rows[0].ready), true);
@@ -147,9 +153,13 @@ try {
   assert.equal((await db.query('select count(*)::int n from v23_private.transaction_authority')).rows[0].n, 0);
   console.log('PASS local PostgreSQL: durable nonce replay denial, zero Watch/Alert relations and zero leaked transaction authority');
   await db.exec(readFileSync(root + 'assertions.sql', 'utf8'));
+  await db.exec(`insert into consumer.consumer_project_saved_entities(project_id,saved_entity_id)
+    select p.id,s.id from consumer.consumer_projects p join consumer.consumer_saved_entities s on p.user_id=s.user_id;
+    insert into consumer.packet_reference_fixture values(gen_random_uuid(),
+      current_setting('v23.network_entity_id')::uuid,current_setting('v23.binding_id')::uuid);`);
   const research = await db.query('select * from consumer.consumer_saved_entities');
   const receipts = await db.query("select * from ops.v23_profile_runtime_records where kind='receipt'");
-  await db.exec(readFileSync(root + 'teardown.sql', 'utf8'));
+  await closeoutPacket(db);
   assert.deepEqual(await db.query('select * from consumer.consumer_saved_entities'), research);
   assert.deepEqual(await db.query("select * from ops.v23_profile_runtime_records where kind='receipt'"), receipts);
   assert.equal((await db.query('select count(*)::int n from pg_roles where rolname=$1', [PARENT_LOGIN])).rows[0].n, 0);

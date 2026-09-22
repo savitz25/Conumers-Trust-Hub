@@ -8,6 +8,72 @@ do $$ begin
   end if;
 end $$;
 
+-- Snapshot BEFORE any preview grant/role changes. Contains ACLs/attributes only,
+-- never passwords. Dropped by teardown after copying into the operator session.
+do $$ begin
+ if (select count(*) from ops.consumer_hub_registry where hub_key in ('ask','move'))<>2
+   or exists(select 1 from pg_roles where rolname in ('myth_v23_parent_preview','myth_v23_preview_reader'))
+   or exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+     where n.nspname='v23_private' and p.proname like 'preview_%')
+   or exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+     where n.nspname='v23_private' and c.relname like 'preview_%') then
+   raise exception 'Clean preview packet preconditions required'; end if;
+ if has_any_column_privilege('myth_v23_foundation','auth.sessions','SELECT')
+   or has_schema_privilege('myth_v23_foundation','v23_private','CREATE')
+   or has_schema_privilege('myth_v23_browser_store','v23_private','CREATE')
+   or has_function_privilege('myth_v23_foundation','consumer.list_cross_hub_project_summaries(integer)','EXECUTE')
+   or has_function_privilege('myth_v23_foundation','consumer.list_saved_entities()','EXECUTE')
+   or has_function_privilege('myth_v23_foundation','ops.create_browser_handoff_intent(text,text,text,text,text,text,text,text,text)','EXECUTE')
+   or has_function_privilege('myth_v23_foundation','ops.create_consumer_auth_handoff(text,uuid,text,text,text,uuid,text)','EXECUTE') then
+   raise exception 'Preview grant already present; reviewed clean base required'; end if;
+end $$;
+create table v23_private.preview_security_before as
+with objects as (
+ select 'relation:'||n.nspname||'.'||c.relname object_key,c.relowner owner_id,
+   coalesce(c.relacl,acldefault(case when c.relkind='S' then 'S'::"char" else 'r'::"char" end,c.relowner)) acl
+ from pg_class c join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname in ('auth','consumer','ops','network','v23_private','public') and c.relkind in ('r','p','v','m','f','S')
+   and not (n.nspname='v23_private' and c.relname like 'preview_%')
+ union all
+ select 'column:'||n.nspname||'.'||c.relname||'.'||a.attname,c.relowner,coalesce(a.attacl,'{}'::aclitem[])
+ from pg_attribute a join pg_class c on c.oid=a.attrelid join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname in ('auth','consumer','ops','network','v23_private','public') and c.relkind in ('r','p','v','m','f')
+   and a.attnum>0 and not a.attisdropped and not (n.nspname='v23_private' and c.relname like 'preview_%')
+ union all
+ select 'function:'||n.nspname||'.'||p.proname||'('||pg_get_function_identity_arguments(p.oid)||')',
+   p.proowner,coalesce(p.proacl,acldefault('f',p.proowner))
+ from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+ where n.nspname in ('auth','consumer','ops','network','v23_private','public')
+   and not (n.nspname='v23_private' and p.proname like 'preview_%')
+ union all
+ select 'schema:'||n.nspname,n.nspowner,coalesce(n.nspacl,acldefault('n',n.nspowner))
+ from pg_namespace n where n.nspname in ('auth','consumer','ops','network','v23_private','public')
+ union all
+ select 'defaults:'||d.defaclrole||':'||d.defaclnamespace||':'||d.defaclobjtype,d.defaclrole,d.defaclacl
+ from pg_default_acl d
+ union all
+ select 'database:'||datname,datdba,coalesce(datacl,acldefault('d',datdba))
+ from pg_database where datname=current_database()
+), inventory as (
+ select object_key,jsonb_build_object('owner',owner_id,'acl',coalesce(
+   (select jsonb_agg(to_jsonb(a) order by a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+     from aclexplode(acl) a),'[]'::jsonb)) state from objects
+ union all
+ select 'membership:'||m.roleid||':'||m.member||':'||m.grantor,
+   jsonb_build_object('admin',m.admin_option,'inherit',m.inherit_option,'set',m.set_option)
+ from pg_auth_members m where m.roleid in (select oid from pg_roles where rolname like 'myth_v23_%')
+   or m.member in (select oid from pg_roles where rolname like 'myth_v23_%')
+ union all
+ select 'role:'||rolname,jsonb_build_object('login',rolcanlogin,'inherit',rolinherit,'super',rolsuper,
+   'bypass',rolbypassrls,'createdb',rolcreatedb,'createrole',rolcreaterole,'replication',rolreplication,
+   'limit',rolconnlimit,'valid_until',rolvaliduntil,'config',rolconfig)
+ from pg_roles where rolname like 'myth_v23_%'
+)
+select object_key,state from inventory;
+revoke all on v23_private.preview_security_before from public,anon,authenticated;
+alter table v23_private.preview_security_before enable row level security;
+alter table v23_private.preview_security_before force row level security;
+
 create table v23_private.preview_deployment_pin (
   singleton boolean primary key default true check(singleton),
   project_ref text not null check(project_ref='xkkiicsassizmakcvxml'),

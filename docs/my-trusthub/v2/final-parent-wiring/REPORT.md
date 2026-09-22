@@ -1,4 +1,63 @@
-# V2-3-FINAL-PARENT-WIRING — Builder 4
+# V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
+
+Base: `4fca808a823101f2ad88e039634676b92e10cc2d`; PR #185. This closeout changes only the SQL packet, its documentation, and disposable local test coverage. Application/runtime code is unchanged.
+
+The two reported gaps are addressed in prepared files: [exact steward retirement](move-binding-teardown.sql) and [fail-closed activation assertions](assertions.sql). [Teardown preconditions](teardown-preconditions.sql) retain same-session preservation evidence; [post-teardown assertions](teardown-assertions.sql) compare the resulting state against it. No hosted SQL, role, binding, Supabase/Vercel configuration, production operation or merge is authorized by this preparation.
+
+**Verification status: BLOCKED pending clarification of local SQL execution.** The ticket prohibits executing any SQL and separately requests disposable local PostgreSQL tests. SQL has not been executed during this closeout. JavaScript syntax/static checks alone cannot establish SQL correctness or readiness for isolated authorization.
+
+## Schema and lifecycle basis
+
+The committed certified schema in `supabase/migrations/20260907160000_my_trusthub_identity_foundation.sql` defines binding `valid_from/valid_to`, accepted-lifetime exclusions, canonical entity `retired` status, and audit triggers. It gives the identity governor SELECT/INSERT/UPDATE on identities/bindings, SELECT on redirects, and an explicit redirect function. There is no need for new privileges or a delete/merge path.
+
+P12 in `20260907190000_my_trusthub_saved_projects_guest_import.sql` restricts entity deletion, but binding deletion would SET NULL on Saved `source_binding_id`. Project memberships and notes also have cascading dependencies on research rows. Durable V2-3 receipts retain identity/Save references in JSON as well as relational context. The retirement therefore performs no DELETE anywhere: it preserves the binding ID, entity ID, accepted historical provenance, Saved/Project links, browser confirmations and receipts. The entity becomes retired, so P12's existing eligibility check also refuses new Saves through it.
+
+The steward must supply both exact IDs and provenance from approved forward output. The SERIALIZABLE retirement locks identity tables and exact rows, freezes redirects, rechecks the complete tuple/profile, rejects competing identities/other uses/redirects and closes the lifetime with a generated timestamp. Table locks precede the first snapshot-bearing read. The operator must already hold the required owner/lock privileges: the governor's SELECT-only redirect grant is insufficient for SHARE locking. No new grant is introduced to bypass this requirement. Reopening is a separately reviewed lifecycle action; this file does not automatically reverse retirement.
+
+[PostgreSQL SET ROLE](https://www.postgresql.org/docs/17/sql-set-role.html) supplies the execution-context rules used by the authorizer check. [PostgreSQL locking](https://www.postgresql.org/docs/17/explicit-locking.html) supplies the lock semantics. The SQL project GUC remains only an operator attestation; independently authenticated host pinning is mandatory.
+
+## Enforcing checks and preserved evidence
+
+Activation assertions require exact forward IDs/provenance, one current accepted binding, one canonical profile/name, full tuple/status equality, no competing accepted lifetime (including class/jurisdiction/hub variations), no redirect, and exact agreement with `preview_move_binding()`. Missing private ports, unsafe login settings/memberships, direct or PUBLIC-derived raw table/column/sequence access, public wrapper execution, and wrong/missing origin pins fail the transaction. `preview_ports_ready()` must return true under `SET LOCAL ROLE myth_v23_authorizer`, followed by `RESET ROLE`. Only successful assertions emit the machine PASS marker.
+
+The forward ports retain a private ACL/role baseline before modifications. Before cleanup, the same operator session captures that baseline, original origin arrays, exact identity rows and SHA-256 fingerprints/counts of every consumer table, protected ops tables and original browser confirmations. The post-check requires absence of preview login/reader/functions/tables/policies; equality with original ACLs, role attributes and memberships; exact restored origins; unchanged protected row contents/counts; and the exact recorded retirement without redirection or reassignment. Missing evidence or concurrency drift blocks success. No credentials are included in these baselines.
+
+## Authorized activation order
+
+Activation is strictly ordered, after separate founder authorization. Every failed or missing gate stops activation; partial success is **BLOCKED**, never READY.
+
+1. Independently pin project `xkkiicsassizmakcvxml` and its actual TLS database host outside SQL.
+2. Verify clean preconditions: reviewed P11/P12/P13/V2-3 certified objects, exactly two Ask/Move registry rows, no prior preview login/reader/wrappers/tables or preview-only grants, and the approved isolated operator. The guards at the start of `ports-forward.sql` enforce the catalog portion; a GUC does not authenticate the host.
+3. Apply `ports-forward.sql`. It retains the original registry arrays and a private, non-secret ACL/role baseline before changing preview grants.
+4. Create `myth_v23_parent_preview` with `runtime-role-forward.sql`.
+5. Securely provision its password locally; keep all password/connection material server-only and out of SQL/output/reports.
+6. Freshly reverify the exact Move identity is PUBLISHABLE within two minutes of binding apply.
+7. Apply `move-binding-forward.sql`. Retain its returned `binding_id`, `network_entity_id`, and `provenance_ref` in the approved operator record.
+8. Set `v23.binding_id`, `v23.network_entity_id`, and `v23.binding_provenance_ref` from that exact forward result, then run fail-closed `assertions.sql` with stop-on-error. Require `V23_PARENT_PACKET_ASSERTIONS_PASS`; inspect nothing into a PASS manually.
+9. Run the separately authorized hosted V2-3 matrix. Preserve its exact evidence and cleanup boundaries.
+10. Only after all prior gates pass, configure branch-scoped preview secrets/env and deploy the reviewed previews. No Production/all-preview defaults.
+11. Complete Builder 3 final composition and verify both reviewed SHAs at the exact stable aliases.
+12. Run the full Journey QA from the beginning, including real A/B login, consent, Save, receipt, isolation and zero Watch.
+
+Never merge #185/#157 or promote production under this packet. Local test success does not certify hosted privileges or the browser journey.
+
+## Separate authorized closeout
+
+Use `teardown-preconditions.sql` -> `move-binding-teardown.sql` -> `teardown.sql` -> `teardown-assertions.sql`, with one independently pinned operator session, writers quiescent and connections drained. Require the separate retirement/teardown GUCs documented in [preview-env.md](preview-env.md), plus exact forward IDs/provenance. Preserve stop-on-error. Never reconstruct the original research baseline after failed cleanup.
+
+## Local test preparation
+
+`scripts/qa/v23-sql-closeout-cases.mjs` extends the existing `scripts/qa/v23-parent-wiring-postgres.mjs` disposable PGlite harness. The harness loads the actual certified PostgreSQL migrations and packet files, not SQLite or mocked SQL. It now uses the exact forward binding file and retained returned IDs, tests duplicate rejection and activation negatives, exercises the real P13/P12 Save/receipt path, and tests lifecycle retirement/full teardown/post-teardown failures while preserving research.
+
+The intended local command is `npm run check:my-trusthub-v2-3-final-parent`. **Not run for this closeout while the SQL-execution instruction is unresolved.** No hosted connection or supplied QA credentials are used by the local fixture harness. No partial result is READY.
+
+Static validation completed: Node syntax checks for both edited test modules, targeted ESLint (zero errors/warnings), and `git diff --check` passed. These checks did not execute SQL. The prepared local test includes Project membership and an additional consumer FK with cascading delete semantics to check that lifecycle cleanup preserves both relational and JSON receipt references. Dynamic PostgreSQL and concurrency behavior remain unverified for this closeout.
+
+The implementation report below is historical evidence from the base commit. Its old local test PASS results do not validate this closeout's edited SQL.
+
+---
+
+# V2-3-FINAL-PARENT-WIRING — Builder 4 (historical base report)
 
 Parent implementation and Builder 3 transport handoff are prepared on local branch `mth-v2-3-final-parent-wiring`, based on Ask `307da0b6f80f0b1635811f2b91f39b737b9f0afc`. Runtime activation remains blocked by unapplied SQL/secrets and unwired Move ports. No configuration, Supabase data/schema, Vercel environment, deployment, remote branch or PR was changed. Main and the original Ask/Move worktrees were untouched. No production database operation, production deployment or merge was performed.
 
