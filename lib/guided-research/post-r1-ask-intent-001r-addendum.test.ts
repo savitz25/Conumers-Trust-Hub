@@ -52,7 +52,7 @@ test('CONTRACTOR CASE 1: sanity -- the timeout budget for this call site was act
   assert.ok(CONTRACTOR_SPECIALIST_TIMEOUT_MS > 8_000, `expected the addendum fix to raise CONTRACTOR_SPECIALIST_TIMEOUT_MS above the old 8000ms value; got ${CONTRACTOR_SPECIALIST_TIMEOUT_MS}`);
 });
 
-test('CONTRACTOR CASE 1: the real documented 8.21s Miami-Dade/general warm-retry latency (POST-R1-CON-LOCAL-001S) now succeeds instead of timing out', async () => {
+test('CONTRACTOR CASE 1: the real documented 8.21s Miami-Dade/general warm-retry latency (POST-R1-CON-LOCAL-001S) now succeeds instead of timing out', { timeout: 20_000 }, async () => {
   const original = globalThis.fetch;
   // 8210ms mirrors the exact real Production latency measured for the immediate retry in the
   // immediately-prior ticket -- past the OLD 8000ms budget (would have aborted) and comfortably
@@ -64,9 +64,9 @@ test('CONTRACTOR CASE 1: the real documented 8.21s Miami-Dade/general warm-retry
     assert.equal(r.result?.total, 3767);
     assert.notEqual(r.result?.consumerHeading, 'This research request took too long');
   } finally { globalThis.fetch = original; }
-}, { timeout: 20_000 });
+});
 
-test('CONTRACTOR CASE 1: a genuine timeout beyond the new budget still fails closed, but now with a working direct link to ContractorTrustHub', async () => {
+test('CONTRACTOR CASE 1: a genuine timeout beyond the new budget still fails closed, but now with a working direct link to ContractorTrustHub', { timeout: 20_000 }, async () => {
   const original = globalThis.fetch;
   // Beyond the new CONTRACTOR_SPECIALIST_TIMEOUT_MS (10000ms) -- simulates the residual, rarer,
   // still out-of-scope full cold-miss (documented as CONTRACTOR_LOCAL_COLD_CACHE_STATS_FOLLOWUP,
@@ -81,4 +81,4 @@ test('CONTRACTOR CASE 1: a genuine timeout beyond the new budget still fails clo
     assert.ok(directory, 'a genuine timeout must still hand the consumer a working direct link to ContractorTrustHub, not a dead end');
     assert.match(directory!.href, /^https:\/\/www\.contractortrusthub\.com\/ask\?q=/);
   } finally { globalThis.fetch = original; }
-}, { timeout: 20_000 });
+});
