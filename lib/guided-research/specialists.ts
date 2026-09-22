@@ -17,7 +17,21 @@ export const CONTRACTOR_CONTRACT_VERSION = '2.1.0';
 export const CONTRACTOR_SCHEMA_FINGERPRINT = '4c22013742744eab394f6d644ab1ffc4a287d9205a73545815e8a1619a0f79b5';
 export const CONTRACTOR_CONTRACT_FINGERPRINT = '441f0e7c1f62bc4c5f9ed3720c56095d2b10748dcb9ff9130ad7eb62ea2f5eb7';
 export const SPECIALIST_TIMEOUT_MS = 5_000;
-export const CONTRACTOR_SPECIALIST_TIMEOUT_MS = 8_000;
+// POST-R1-ASK-INTENT-001R ADDENDUM (Case 1): the largest single FL cohort -- general/building
+// contractor x Miami-Dade, the broadest trade x the largest county in the whole system (~3.3k+
+// rows) -- has a documented, real one-time cold-start in ContractorTrustHub (see
+// CONTRACTOR_LOCAL_COLD_CACHE_STATS_FOLLOWUP from POST-R1-CON-LOCAL-001S: first-ever touch hit a
+// full 15.25s miss; the immediate retry succeeded but took 8.21s, just over the previous 8000ms
+// value here; every request after that was sub-second). Fixing the underlying Postgres planner gap
+// needs CREATE STATISTICS -- a Contractor schema/DDL change explicitly out of scope for Ask to make.
+// This client (components/guided-research.tsx) already waits up to 12000ms for the whole
+// /api/guided-research round trip and tolerates that fine today, so raising only this call site's
+// budget to 10000ms uses headroom that already exists and is already proven safe, comfortably covers
+// the observed 8.21s warm-retry case with ~1.8s margin, and still leaves ~2s of margin under the
+// client's own abort for JSON encode/decode and Ask's own request overhead. It does not, and cannot
+// safely, cover the rarer full ~15s cold-miss -- that residual gap is the still-open, still
+// out-of-scope CONTRACTOR_LOCAL_COLD_CACHE_STATS_FOLLOWUP, not something this timeout number can fix.
+export const CONTRACTOR_SPECIALIST_TIMEOUT_MS = 10_000;
 export const FINANCIAL_SPECIALIST_LOCKS = {
   investor:{version:'2.0.0',schemaFingerprint:'a92b72c4a30de1021ecf25d26decb852b52394f741ac26919b89d14a234ab384',contractFingerprint:'13c6d3a8e573b65490d50c88534bfcf604dfdeaed64fc0522ff7ef9c4b2b7efa',timeoutMs:6_000},
   insurance:{version:'2.0.0',schemaFingerprint:'4aa93bb372aebb45c7028b750000e77be4a847d9a210f3c40d3db1df1f7f637f',contractFingerprint:'1292fd1ee4ce13a4d934dcb8c3deb21208d4e1e59049cbb8eb22793b310c1071',timeoutMs:8_000},
@@ -324,7 +338,18 @@ async function executeContractor(session: GuidedResearchSession): Promise<Guided
     credentialStatus:session.selectedFilters.credentialStatus??'active_current',page:1,limit:10,
   };
   const outcome = await specialistFetch('contractor', body);
-  if ('error' in outcome) return failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
+  if ('error' in outcome) {
+    const result = failure(session, outcome.error, outcome.latencyMs, outcome.error.toLowerCase());
+    // POST-R1-ASK-INTENT-001R ADDENDUM (Case 1): a raw fetch-level TIMEOUT/BACKEND_UNAVAILABLE here
+    // means Ask never got a payload to read a destination from, so this previously left the
+    // consumer with zero destinations even though consumerMessage (see failure() above) already
+    // promises "Retry, or continue directly with the specialist Trust Hub." This is the deterministic
+    // bounded fallback for that promise: ContractorTrustHub's own /ask surface, given the identical
+    // original question, which real Production testing already proved resolves this exact request
+    // (e.g. "general contractor in miami") successfully and directly.
+    result.destinations = [{ type: 'DIRECTORY', href: `https://www.contractortrusthub.com/ask?q=${encodeURIComponent(session.originalQuestion)}`, label: 'Continue directly with ContractorTrustHub' }];
+    return result;
+  }
   const payload = outcome.body;
   if (text(payload.contract) !== SPECIALIST_EXECUTION_CONTRACT) return failure(session, 'BACKEND_UNAVAILABLE', outcome.latencyMs, 'contract_mismatch');
   // TH-SEARCH-R1-018 BLOCKER-CONTRACTOR-01: require an exact match on contractVersion and
