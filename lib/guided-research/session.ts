@@ -299,10 +299,27 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     // returns the entire ~82k-agency population). A ZIP or bare city request must never fall
     // through to that unscoped cohort; hand off to InsuranceTrustHub's own certified ZIP/local
     // directory /ask flow instead, which does support it.
+    // POST-R1-INS-LOCAL-001: this gate only ever recognized zip/city geography, so an explicit
+    // county phrasing ("insurance agent in broward county") never set local_directory_handoff at
+    // all -- it fell straight through to the generic cohort branch below and silently returned
+    // the full unscoped statewide population as if it were a real, successful result, with no
+    // disclosure that the requested county scope was never applied. specialists.ts's
+    // executeInsurance already reads a county off session.executionScope.normalizedRequestedGeography
+    // for exactly this case (it was only ever reachable via a bare-city request that then also
+    // carried a county, e.g. "insurance agent in miami"); this just lets an explicit county
+    // phrasing reach that same, already-existing code path instead of silently mislabeling
+    // CREDENTIAL_JURISDICTION geography as if it were a county-scoped directory result.
     if(!session.identityName&&!session.identifier){
       const zip=q.match(/\bzip\s*(?:code)?\s*#?\s*(\d{5})\b/i)?.[1];
       const zipGeography=zip?parseGuidedGeography(zip)??session.geography:session.geography;
-      if(zip||session.geography?.type==='zip'||session.geography?.type==='city'){
+      // POST-R1-INS-LOCAL-001: county is only routed into local_directory_handoff for the
+      // 'agency' entity class -- that is the only class the real local-directory fetch below
+      // (specialists.ts's executeInsurance) can ever attempt. Producer/legal_insurer + county
+      // must keep going through the normal cohort path so the existing automatic state-broadening
+      // (and the genuine, geography-independent producer mass-listing restriction it then hits)
+      // still runs -- routing them here too would divert them into a dead-end local-directory
+      // message for a fetch they were never going to attempt, silently skipping that broadening.
+      if(zip||session.geography?.type==='zip'||session.geography?.type==='city'||(session.geography?.type==='county'&&session.insuranceEntityClass==='agency')){
         return {...session,geography:zipGeography,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute',insuranceResearchMode:'local_directory_handoff'};
       }
     }
