@@ -32,6 +32,7 @@ export interface BrowserBindings {
   /** Publish owner-bound receipt/request mapping through narrow source BFF.
    * Durable parent outcome stands even if delivery fails; allow safe retry. */
   acknowledge(source:SourceSnapshot,receipts:ItemReceipt[],parent:BrowserParent):Promise<void>;
+  confirmed?(confirmation:Confirmation,parent:BrowserParent):Promise<void>;
   now():number;
 }
 function html(body:string,status=200){return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Keep profiles in My TrustHub</title><style>body{font:1rem system-ui;margin:1rem;overflow-wrap:anywhere}main{max-width:42rem;margin:auto}button,select{font:inherit;padding:.7rem;max-width:100%}label{display:block;margin:1rem 0}:focus-visible{outline:3px solid #165cba}</style><main>${body}</main></html>`,{status,headers:{...PRIVATE_HEADERS,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});}
@@ -102,10 +103,13 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
         c.receipts=receipts;
         await checkpoint();
-        await b.acknowledge(c.source,receipts,parent);
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
       }
       if(c.receipts){
+        if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
+        await b.confirmed?.(c,parent);
+        await b.acknowledge(c.source,c.receipts,parent);
+        if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
         const destination=profileReturnDestination(c.source.manifest.returnTask,b.registry);
         const all=c.receipts.every(r=>['saved','already_saved'].includes(r.parent.outcome));
         return html(`<h1>${all?'Saved to My TrustHub':'Some profiles could not be saved'}</h1><p role="status">${c.receipts.some(r=>r.project.outcome==='failed')?'Project assignment failed; successful profile Saves are retained. ':''}Your device copy is retained. Save does not start a Watch.</p><a href="/my/saved">View your saved profiles</a>${destination?` <a href="${escape(destination)}">Return to Move profile</a>`:''}`);

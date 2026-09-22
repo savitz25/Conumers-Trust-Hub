@@ -29,8 +29,14 @@ export function accountSignInEnabled(env: AccountEnv): boolean {
 /** Login can use preview account access. Every other account form still requires the master gate. */
 export function accountFormAvailable(operation: 'signup' | 'login' | 'link' | 'recovery' | 'password', env: AccountEnv): boolean {
   if (!accountRuntime(env)) return false;
+  if (isolatedSaveAccount(env) && operation !== 'login') return false;
   if (operation === 'login') return accountSignInEnabled(env);
   return enabled(env.MY_TRUSTHUB_ENABLED);
+}
+/** The isolated V2-3 packet admits existing password users only. In particular,
+ * the workspace master flag must not activate Auth-provider email operations. */
+export function isolatedSaveAccount(env: AccountEnv): boolean {
+  return env.VERCEL_ENV === 'preview' && env.MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED === 'true';
 }
 
 export function admitted(user: AccountUser | null, env: AccountEnv): boolean {

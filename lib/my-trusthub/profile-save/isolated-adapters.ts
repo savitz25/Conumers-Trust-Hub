@@ -5,7 +5,7 @@ import {PostgresConfirmationStore} from './confirmation-store.ts';
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import type {BrowserBindings,Confirmation,BrowserParent} from './browser.ts';
 import type {TrustedOriginRegistry} from '../contracts/v2-3-profile-transfer.ts';
-import {deploymentBindings} from './deployment.ts';
+import {deploymentEnabled} from './isolated-config.ts';
 export type IsolatedAdapterPorts={
   approvedParentOrigin:string;
   registry:TrustedOriginRegistry;
@@ -18,13 +18,14 @@ export type IsolatedAdapterPorts={
   projects:BrowserBindings['projects'];
   acknowledge:BrowserBindings['acknowledge'];
   authenticate(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<VerifiedCaller|null>;
+  store?: BrowserBindings['store'];
 };
 export function isolatedBrowserBindings(env:Record<string,string|undefined>,p:IsolatedAdapterPorts|null):BrowserBindings|null{
-  if(!p||!deploymentBindings(env).enabled||p.registry.environment!=='isolated'||!p.registry.isolatedBackendVerified||
+  if(!p||!deploymentEnabled(env)||p.registry.environment!=='isolated'||!p.registry.isolatedBackendVerified||
     p.approvedParentOrigin!==env.MY_TRUSTHUB_TEST_ORIGIN||p.sessionAffinity!=='dedicated')return null;
   const backend=new AuthorizedPostgresBackend(p.postgres);
   return {origin:p.approvedParentOrigin,registry:p.registry,source:p.source,parent:p.parent,projects:p.projects,
-    acknowledge:p.acknowledge,store:new PostgresConfirmationStore(p.postgres.pool,p.sessionAffinity),now:Date.now,
+    acknowledge:p.acknowledge,store:p.store??new PostgresConfirmationStore(p.postgres.pool,p.sessionAffinity),now:Date.now,
     runtime:async(request,c,parent)=>new ParentProfileSaveRuntime({enabled:true,backend,registry:p.registry,
       authenticate:async()=>{
         const current=await p.parent(request);
