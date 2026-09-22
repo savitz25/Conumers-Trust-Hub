@@ -95,7 +95,7 @@ const IS_ARE_QUALIFIER_RE = new RegExp(
 );
 const CAN_TRUST_RE = /^can\s+i\s+trust\s+(.+?)\??$/i;
 
-function stripTrustQualifierWrapper(query: string): string {
+export function stripTrustQualifierWrapper(query: string): string {
   const isAre = query.match(IS_ARE_QUALIFIER_RE);
   if (isAre) return isAre[1].trim();
   const canTrust = query.match(CAN_TRUST_RE);
