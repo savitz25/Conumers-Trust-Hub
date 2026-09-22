@@ -8,7 +8,12 @@ export const SENIOR_ASK_CONTRACT = 'senior-ask-v1' as const;
 export const SENIOR_ASK_ROUTE = 'https://www.seniortrusthub.com/ask';
 export const SENIOR_ASK_API = 'https://www.seniortrusthub.com/api/ask';
 
-export type SeniorProviderClass = 'nursing_home' | 'home_health' | 'hospice';
+export type SeniorProviderClass =
+  | 'nursing_home'
+  | 'home_health'
+  | 'hospice'
+  | 'memory_care'
+  | 'assisted_living';
 
 export type SeniorAskMode =
   | 'entity'
@@ -35,7 +40,24 @@ export const SENIOR_PROVIDER_CLASS_LABEL: Record<SeniorProviderClass, string> = 
   nursing_home: 'Nursing Home',
   home_health: 'Home Health',
   hospice: 'Hospice',
+  memory_care: 'Memory Care',
+  assisted_living: 'Assisted Living',
 };
+
+/**
+ * POST-R1-ASK-INTENT-001: CMS Care Compare (SeniorTrustHub's current
+ * source) certifies nursing homes, home health agencies, and hospices --
+ * it does not cover memory care or assisted living, which are licensed
+ * per-state outside the Medicare-certified provider types CMS tracks. A
+ * different, state-specific source would be required. Recognize the
+ * vocabulary so routing/topic labeling is accurate (Problem C/F), but this
+ * is exactly the "should remain honest" case from Section H -- never claim
+ * class-specific results this source cannot actually back.
+ */
+export const SENIOR_UNSOURCED_PROVIDER_CLASSES: ReadonlySet<SeniorProviderClass> = new Set([
+  'memory_care',
+  'assisted_living',
+]);
 
 export type SeniorAskPayload = {
   contract: string;
@@ -73,6 +95,8 @@ export function detectSeniorProviderClass(q: string): SeniorProviderClass | unde
   if (/\bhome\s*health\b/i.test(q)) return 'home_health';
   if (/\bhospice\b/i.test(q)) return 'hospice';
   if (/\bnursing\s*homes?\b/i.test(q)) return 'nursing_home';
+  if (/\bmemory\s*care\b/i.test(q)) return 'memory_care';
+  if (/\bassisted\s*living\b/i.test(q)) return 'assisted_living';
   return undefined;
 }
 
@@ -80,7 +104,12 @@ export function isSeniorClassQuery(q: string): boolean {
   return Boolean(
     detectSeniorProviderClass(q) ||
       /\b(?:cms\s+)?ccn\s*#?\s*\d{6}\b/i.test(q) ||
-      /\b(senior\s+providers?|senior care|aging parent|assisted living|memory care|grandma|grandmother|grandpa|grandfather|nana|nursing home)\b/i.test(q)
+      /\b(senior\s+providers?|senior care|aging parent|assisted living|memory care|grandma|grandmother|grandpa|grandfather|nana|nursing home)\b/i.test(q) ||
+      // POST-R1-ASK-INTENT-001: "medicare certified" is CMS Care Compare's own
+      // vocabulary (the certification CMS grants nursing homes/home health/hospice) --
+      // without this, "is <facility> medicare certified" matched no hub at all and
+      // silently returned zero routing (query #9 in the ticket's 13 reproduction cases).
+      /\bmedicare[\s-]certified\b/i.test(q)
   );
 }
 
@@ -130,7 +159,15 @@ export function seniorGeographyMeaning(q: string, cls?: SeniorProviderClass): st
 
 export function seniorAskMode(q: string, opts?: { identifier?: boolean }): SeniorAskMode {
   if (opts?.identifier) return 'identifier';
-  if (isCombinedSeniorCountQuery(q) || isRankingQuery(q) || isHospiceOverallStarQuery(q) || isHomeHealthCountyQuery(q) || isUnsupportedChowQuery(q)) {
+  const cls = detectSeniorProviderClass(q);
+  if (
+    isCombinedSeniorCountQuery(q) ||
+    isRankingQuery(q) ||
+    isHospiceOverallStarQuery(q) ||
+    isHomeHealthCountyQuery(q) ||
+    isUnsupportedChowQuery(q) ||
+    (cls && SENIOR_UNSOURCED_PROVIDER_CLASSES.has(cls))
+  ) {
     return 'fail_closed';
   }
   if (/\b(how many|count of|number of)\b/i.test(q)) return 'count';
@@ -142,6 +179,10 @@ export function seniorAskMode(q: string, opts?: { identifier?: boolean }): Senio
 }
 
 export function seniorFailClosedReason(q: string): string | undefined {
+  const cls = detectSeniorProviderClass(q);
+  if (cls && SENIOR_UNSOURCED_PROVIDER_CLASSES.has(cls)) {
+    return `${SENIOR_PROVIDER_CLASS_LABEL[cls]} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available.`;
+  }
   if (isCombinedSeniorCountQuery(q)) {
     return 'Counts require a provider class. Nursing Home, Home Health, and Hospice must stay separate — Ask will not sum them into one “senior providers” total.';
   }

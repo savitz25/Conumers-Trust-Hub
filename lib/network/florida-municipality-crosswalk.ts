@@ -77,6 +77,27 @@ export function resolveFlCountyFips(county: string | undefined): string | undefi
   return FL_COUNTY_FIPS[county.toLowerCase().trim()];
 }
 
+// POST-R1-ASK-INTENT-001R: single authority for turning a raw, user-typed FL county name
+// ("miami dade", "st johns", ...) into its canonical display form, reused by any caller that
+// needs to recognize an EXPLICIT county mention (as opposed to a bare city resolved via the
+// municipality crosswalk above). Scoped to the same 67-county FL_COUNTY_FIPS list so a county
+// is only ever recognized when it is a real Florida county.
+const FL_COUNTY_DISPLAY_OVERRIDES: Record<string, string> = {
+  'miami-dade': 'Miami-Dade',
+  'miami dade': 'Miami-Dade',
+  'st. johns': 'St. Johns',
+  'st johns': 'St. Johns',
+  'saint johns': 'St. Johns',
+  'st. lucie': 'St. Lucie',
+  'st lucie': 'St. Lucie',
+  'saint lucie': 'St. Lucie',
+};
+export function resolveFlCountyDisplayName(raw: string): string | undefined {
+  const key = raw.toLowerCase().trim();
+  if (!(key in FL_COUNTY_FIPS)) return undefined;
+  return FL_COUNTY_DISPLAY_OVERRIDES[key] ?? key.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 // TH-DISCOVERY-003: free-text detector reused by lib/network/ask-parse.ts so every hub's shared
 // geography parser recognizes every crosswalk municipality (not just a hardcoded 3-city allowlist
 // of Tampa/Miami/Boca Raton). Longest keys are checked first so a multi-word city is never

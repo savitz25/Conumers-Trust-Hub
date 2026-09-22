@@ -66,6 +66,24 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
       return touch(refreshCareSession({...clearExecutionState(next),selectedFilters:initialCareRatingFilters(session.originalQuestion,value as CareSetting),identifier:undefined,identityName:undefined},value as CareSetting,session.geography));
     }
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
+    // POST-R1-ASK-INTENT-001 Section G: CARE_CHOICES (session.ts) has always rendered
+    // "Assisted living" and "Memory care" as clickable options here, but this non-CARE_TASK
+    // branch only ever accepted nursing_home/home_health/hospice -- clicking a choice the
+    // system itself just offered threw invalid_choice, which is exactly the "a valid
+    // generated action invalidates its own session" defect. SeniorTrustHub's CMS Care
+    // Compare source genuinely does not cover these two classes (same limitation already
+    // encoded in senior-ask.ts's SENIOR_UNSOURCED_PROVIDER_CLASSES/seniorFailClosedReason),
+    // so the fix is an honest terminal CLARIFY, not silently accepting an unexecutable class.
+    if (value === 'assisted_living' || value === 'memory_care') {
+      const label = value === 'assisted_living' ? 'Assisted Living' : 'Memory Care';
+      return touch({
+        ...next,
+        phase: 'CLARIFY',
+        missingFields: ['providerClass'],
+        availableChoices: next.availableChoices.filter((c) => c.value !== 'assisted_living' && c.value !== 'memory_care'),
+        nextAction: `${label} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available. Choose a supported care setting, or search elsewhere for ${label.toLowerCase()}.`,
+      });
+    }
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
     return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
   }

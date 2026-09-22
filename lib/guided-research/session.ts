@@ -7,6 +7,7 @@ import { resolveResearchScope } from '../network/research-scope.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
 import { NETWORK_PUBLIC_NAMES } from '../network/registry.ts';
 import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
+import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
 
 /**
  * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
@@ -119,8 +120,16 @@ export function parseGuidedGeography(raw: string): GuidedGeography | null {
   };
   if (/^\d{5}$/.test(value)) return { type: 'zip', value, meaning: 'Recorded ZIP in the specialist source; not service availability.' };
   const parsed = parseNetworkAsk(`providers in ${value}`);
+  // POST-R1-ASK-INTENT-001 Problem E: ask-parse.ts's generic Florida branch now surfaces the
+  // crosswalk county (countyName) for every known city, not just Broward/Palm Beach, so a bare
+  // "Boca Raton" now also carries a countyName. Checking countyName before city here would flip
+  // this to type:'county' for every FL crosswalk city, silently breaking every existing consumer
+  // gated on type==='city' (e.g. specialists.ts executeInsurance's local-directory handoff, which
+  // reads the resolved county off a still-city-typed geography, mirroring the pre-existing Summit/
+  // NJ city+county case above). Keep type:'city' whenever a specific city is known; still expose
+  // the resolved county via the `county` field rather than dropping it.
+  if (parsed.geography?.city) return { type: 'city', value: parsed.geography.city, city: parsed.geography.city, county: parsed.geography.countyName?.replace(/ County$/i, ''), stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded city/address geography; not service territory.' };
   if (parsed.geography?.countyName) return { type: 'county', value: parsed.geography.countyName.replace(/ County$/i, ''), county: parsed.geography.countyName.replace(/ County$/i, ''), stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded county geography; not service territory.' };
-  if (parsed.geography?.city) return { type: 'city', value: parsed.geography.city, city: parsed.geography.city, stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded city/address geography; not service territory.' };
   if (parsed.geography?.stateCode) return { type: 'state', value: parsed.geography.stateCode, stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded state geography; not service territory.' };
   if (/broward/i.test(value)) return { type: 'county', value: 'Broward', county: 'Broward', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Broward County geography; not service territory.' };
   if (/palm\s*beach/i.test(value)) return { type: 'county', value: 'Palm Beach', county: 'Palm Beach', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Palm Beach County geography; not service territory.' };
@@ -353,6 +362,23 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   if (parsed.geography) session.geography = parsedGeography;
 
   if (hub === 'senior') {
+    // POST-R1-ASK-INTENT-001: parsed.seniorProviderClass may now be memory_care/assisted_living
+    // (Problem C/F vocabulary), but GuidedResearchSession.providerClass stays contractually
+    // limited to the 3 classes SeniorTrustHub's specialist can actually execute (contract.ts) --
+    // assigning an unsourced class here would either fail TypeScript or silently claim a
+    // capability that does not exist. Route those two classes to an honest terminal CLARIFY
+    // instead (mirrors Section H / senior-ask.ts's seniorFailClosedReason).
+    if (parsed.seniorProviderClass === 'memory_care' || parsed.seniorProviderClass === 'assisted_living') {
+      const label = SENIOR_PROVIDER_CLASS_LABEL[parsed.seniorProviderClass];
+      return {
+        ...session,
+        entityClass: parsed.seniorProviderClass,
+        phase: 'CLARIFY',
+        missingFields: ['providerClass'],
+        availableChoices: CARE_CHOICES.filter((c) => c.value !== 'assisted_living' && c.value !== 'memory_care'),
+        nextAction: `${label} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available. Choose a supported care setting, or search elsewhere for ${label.toLowerCase()}.`,
+      };
+    }
     session.providerClass = parsed.seniorProviderClass;
     session.entityClass = parsed.seniorProviderClass;
     if (session.identifier || session.providerClass && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };

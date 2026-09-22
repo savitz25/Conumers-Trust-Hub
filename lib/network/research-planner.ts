@@ -2,7 +2,7 @@ import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
-import type { UniversalQueryType } from './query-classification.ts';
+import { stripTrustQualifierWrapper, type UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 
 export const ASK_RESEARCH_INTENTS = [
@@ -78,7 +78,14 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
     ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
     ['lender', /\b(?:lender|mortgage|refinance|refinancing|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
-    ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare|star\s+ratings?)\b/i],
+    // POST-R1-ASK-INTENT-001R: bare "Medicare" matched "medicare supplement agent in ohio",
+    // adding 'senior' alongside 'insurance' to candidateHubs and surfacing SeniorTrustHub as a
+    // multi-hub choice -- the exact "Do NOT route 'Medicare supplement agent' to SeniorTrustHub
+    // merely because it contains Medicare" case the original ticket named explicitly. "Medicare
+    // supplement"/"Medigap" are insurance products (mirrors insurance-ask.ts's own
+    // MEDICARE_SUPPLEMENT_RE guard); everything else containing "Medicare" (e.g. "Medicare
+    // certified") stays senior vocabulary.
+    ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare(?!\s+supplement)|star\s+ratings?)\b/i],
     // TH-ARCH-P0-001: plural forms ("locksmiths", "electricians") previously fell outside these
     // \b-bounded singular patterns, which starved the intent==='place'&&explicit.length narrowing
     // below of a match and let the generic multi-hub geography fallback leak in as a false
@@ -208,6 +215,20 @@ function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'
   if (introduced) return introduced;
   const evidenceSubject = query.match(/\b(?:complaints?\s+(?:about|against)|research|look\s+up|check)\s+([a-z0-9&.' -]+?)(?=[?.!,]|$)/i)?.[1]?.trim();
   if (evidenceSubject && !/^(?:a|an|the|this|that|my)\b/i.test(evidenceSubject)) return evidenceSubject;
+  // POST-R1-ASK-INTENT-001R (browser QA finding): "is rocket mortgage legit" and "is abbey
+  // delray south medicare certified" never reached any branch below -- lowercase, no quotes/
+  // LLC suffix/"named X" phrasing, and (for the first) no entity class matched at all -- so
+  // this returned undefined and the guided-research UI asked the consumer to re-type the name
+  // it had just been given ("NMLS number or lender name"), contradicting the ticket's explicit
+  // "Rocket Mortgage is extracted as the entity" requirement. Reuse the same trust-qualifier
+  // stripper ask-parse.ts's query-classification.ts already applies, and treat what's left as
+  // the entity name whenever stripping actually removed a wrapper (a narrow, specific trigger,
+  // not a general lowercase-name heuristic).
+  const trustStripped = stripTrustQualifierWrapper(query);
+  if (trustStripped !== query) {
+    const trimmedStripped = trustStripped.replace(/[?.!]+$/g, '').trim();
+    if (trimmedStripped && trimmedStripped.split(/\s+/).length <= 6) return trimmedStripped;
+  }
   if (/\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|LLP|L\.P\.)\b/i.test(query)) return query.replace(/[?.!]+$/g, '').trim();
   if (!entity && /^[A-Z][A-Z0-9&.-]{2,40}$/.test(query.trim())) return query.trim();
   if (entity && !geography && !/\b(?:in|near|nearby|around|within|how|which|what|is\s+this|is\s+my|show|find|need|serving|headquartered)\b/i.test(query)) {

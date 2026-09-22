@@ -1,6 +1,11 @@
 import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, IDENTIFIER_FILLER_SOURCE, type IdentifierFamily } from './identifiers.ts';
 import type { SpecialistHubId } from './registry.ts';
-import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
+import {
+  detectSeniorProviderClass,
+  isSeniorClassQuery,
+  SENIOR_PROVIDER_CLASS_LABEL,
+  type SeniorProviderClass,
+} from './senior-ask.ts';
 import { detectInvestorFirmType, isInvestorClassQuery, type InvestorFirmType } from './investor-ask.ts';
 import {
   detectInsuranceEntityClass,
@@ -306,13 +311,23 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
   if (florida) {
+    // POST-R1-ASK-INTENT-001 Problem E: flCity already carries an authoritative
+    // county (florida-municipality-crosswalk.ts, sourced from the FL Dept of
+    // State city/county list) for every crosswalk city, not just Broward/Palm
+    // Beach -- e.g. Miami -> Miami-Dade, Tampa -> Hillsborough, Orlando -> Orange.
+    // This branch previously dropped that county entirely and returned city-only,
+    // losing the county grain the ticket asks for ("Miami -> Miami-Dade County FL").
+    const county = flCity?.county;
     return {
       stateCode: 'FL',
       stateName: 'Florida',
+      countyName: county ? `${county} County` : undefined,
       city,
-      meaning: city
-        ? `${city}, Florida. Recorded/address geography is not service territory.`
-        : 'Florida. State licensing is not physical location; principal office is not client geography.',
+      meaning: county
+        ? `${city}, ${county} County, Florida. Recorded/address geography is not service territory.`
+        : city
+          ? `${city}, Florida. Recorded/address geography is not service territory.`
+          : 'Florida. State licensing is not physical location; principal office is not client geography.',
     };
   }
 
@@ -584,6 +599,24 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
       return { family, raw: `MC ${digits}`, ambiguous: false, note: family.note };
     }
   }
+  // POST-R1-ASK-INTENT-001 Problem B: "verify contractor license CBC015082" carries
+  // the license code inside a full sentence, not as the whole query -- the FL
+  // CBC/CGC/CCC pattern below only ever matched when the code WAS the entire
+  // trimmed query. Extract it in-sentence, mirroring the NMLS/LEI/CCN/CRD/NPN/NAIC
+  // in-sentence matches above, so an embedded identifier takes precedence over
+  // fuzzy name/vocabulary interpretation per the ticket's explicit requirement.
+  const contractorLicenseInSentence = trimmed.match(/\b(cbc|cgc|ccc)\s*[-#]?\s*(\d{5,8})\b/i);
+  if (contractorLicenseInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'state_contractor_license');
+    if (family) {
+      return {
+        family,
+        raw: `${contractorLicenseInSentence[1].toUpperCase()}${contractorLicenseInSentence[2]}`,
+        ambiguous: false,
+        note: family.note,
+      };
+    }
+  }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
@@ -629,7 +662,11 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida|about new jersey|research in new jersey|research new jersey/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|builder|remodeler|dbpr|cilb/i.test(query);
-  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate/i.test(query);
+  const lender =
+    isLenderClassQuery(query) ||
+    /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate|\bhelocs?\b|home equity line/i.test(
+      query,
+    );
   const mover = isMoveClassQuery(query);
   const moveResearchCategory = isAutoTransportQuery(query) ? 'auto_transport' as const : undefined;
   const insurance =
@@ -686,7 +723,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     intent = 'entity';
     hubs.push('senior');
     topic = seniorProviderClass
-      ? `${seniorProviderClass === 'nursing_home' ? 'Nursing Home' : seniorProviderClass === 'home_health' ? 'Home Health' : 'Hospice'} research`
+      ? `${SENIOR_PROVIDER_CLASS_LABEL[seniorProviderClass]} research`
       : 'Senior-care research';
   } else if (contractor) {
     intent = 'entity';
@@ -741,7 +778,17 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   } else if (geo) {
     intent = 'place';
     hubs.push('contractor', 'lender', 'insurance', 'move');
-    topic = geo.countyName ? `${geo.countyName} research` : 'Florida research';
+    // POST-R1-ASK-INTENT-001: this was hardcoded to "Florida research" for
+    // every non-county geography, mislabeling every other state (Texas,
+    // Ohio, ...) -- almost certainly a leftover from when this branch only
+    // ever saw Florida queries. Use the actual detected state/city.
+    topic = geo.countyName
+      ? `${geo.countyName} research`
+      : geo.city
+        ? `${geo.city} research`
+        : geo.stateName
+          ? `${geo.stateName} research`
+          : 'Location research';
   }
 
   const queryClassification = classifyUniversalQuery({
@@ -812,14 +859,19 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     } else if (/\bdomicile\b/i.test(geoMeaning) && geo?.stateName) {
       interpretationLines.push({ label: 'regulatory domicile', value: geo.stateName });
     } else if (geo?.countyName) {
-      interpretationLines.push({ label: 'Geography (not service territory)', value: `${geo.countyName}, Florida` });
+      // POST-R1-ASK-INTENT-001: same hardcoded ", Florida" bug as the global
+      // Location line below -- fixed the same way (use the detected state).
+      interpretationLines.push({
+        label: 'Geography (not service territory)',
+        value: geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName,
+      });
     } else if (geo?.stateName) {
       interpretationLines.push({ label: 'Geography', value: geo.stateName });
     }
   } else if (lenderOnly && intent !== 'identifier') {
     interpretationLines.push({
       label: 'Geography (HMDA property, not HQ)',
-      value: geo?.countyName ? `${geo.countyName}, Florida` : geo?.stateName ?? 'See specialist result',
+      value: geo?.countyName ? (geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName) : geo?.stateName ?? 'See specialist result',
     });
     interpretationLines.push({
       label: 'Does not mean',
@@ -829,20 +881,23 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     if (/rate|denominator/i.test(geoMeaning)) {
       interpretationLines.push({ label: 'Limitation', value: geoMeaning });
     }
-  } else if (geo?.countyName) interpretationLines.push({ label: 'Location', value: `${geo.countyName}, Florida` });
-  else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });
+  } else if (geo?.countyName) {
+    // POST-R1-ASK-INTENT-001: this appended ", Florida" unconditionally,
+    // mislabeling every non-Florida county (e.g. NJ counties elsewhere in
+    // this same file support Monmouth/Middlesex/Somerset/Union). Use the
+    // geography's own detected state.
+    interpretationLines.push({
+      label: 'Location',
+      value: geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName,
+    });
+  } else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });
   if (trade) interpretationLines.push({ label: 'Trade', value: trade });
   if (credentialStatus) interpretationLines.push({ label: 'Credential status', value: credentialStatus });
   if (id && !id.ambiguous) interpretationLines.push({ label: 'Identifier', value: `${id.family.label}: ${id.raw}` });
   if (seniorProviderClass) {
     interpretationLines.push({
       label: 'Provider class',
-      value:
-        seniorProviderClass === 'nursing_home'
-          ? 'Nursing Home'
-          : seniorProviderClass === 'home_health'
-            ? 'Home Health'
-            : 'Hospice',
+      value: SENIOR_PROVIDER_CLASS_LABEL[seniorProviderClass],
     });
   }
   if (hubs[0] === 'investor' && hubs.length === 1) {
