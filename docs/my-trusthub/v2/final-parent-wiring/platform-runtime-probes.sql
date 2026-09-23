@@ -1,6 +1,7 @@
--- PREPARED ONLY. Fresh validated DIRECT or proven SUPAVISOR_SESSION connection.
+-- PREPARED ONLY. Fresh myth_v23_parent_preview login on a pinned preview session.
 -- Independently pin xkkiicsassizmakcvxml outside SQL. No admin SET ROLE workaround.
--- Run AFTER authorized hardening, with ON_ERROR_STOP, before certifying Phase 5.
+-- postgres must not run this file and must not be granted myth_v23_authorizer to reach it.
+-- Supply retained Phase 4 v23.binding_id and v23.network_entity_id before execution.
 begin isolation level serializable read only;
 do $$ declare target record; statement text; begin
  if current_database()<>'postgres'
@@ -35,9 +36,19 @@ do $$ declare target record; statement text; begin
  raise exception 'Runtime directly executed authorizer wrapper';
 end $$;
 set local role myth_v23_authorizer;
-do $$ begin
+do $$ declare resolved record; begin
  if v23_private.preview_ports_ready() is distinct from true then
-   raise exception 'Authorizer ports not ready'; end if;
+   raise exception 'Required private ports are not ready as authorizer'; end if;
+ if nullif(current_setting('v23.binding_id',true),'') is null
+   or nullif(current_setting('v23.network_entity_id',true),'') is null then
+   raise exception 'Retained Phase 4 binding inputs required'; end if;
+ if (select count(*) from v23_private.preview_move_binding())<>1 then
+   raise exception 'Private resolver must return exactly one binding'; end if;
+ select * into strict resolved from v23_private.preview_move_binding();
+ if resolved.id is distinct from nullif(current_setting('v23.binding_id',true),'')::uuid
+   or resolved.network_entity_id is distinct from nullif(current_setting('v23.network_entity_id',true),'')::uuid
+   or resolved.binding_status is distinct from 'accepted' then
+   raise exception 'Private resolver disagrees with approved forward identity'; end if;
 end $$;
 reset role;
 set local role myth_v23_executor;

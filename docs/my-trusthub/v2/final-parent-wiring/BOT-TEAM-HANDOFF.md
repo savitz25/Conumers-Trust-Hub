@@ -15,10 +15,29 @@ print environment variables or connection strings.
    session and run `pg-net-disable.sql`. It uses no CASCADE. Require
    `V23_PG_NET_DISABLE_PASS`, then run `pg-net-postcheck.sql` and require
    `V23_PG_NET_ABSENT_PASS`.
-4. Phase 5 inputs remain `v23.approved_project`, `v23.binding_id`,
-   `v23.network_entity_id`, and `v23.binding_provenance_ref`. Use retained exact
-   Phase 4 outputs and require `V23_PARENT_PACKET_ASSERTIONS_PASS`. The assertion
-   also proves no SET-capable identity-governor grant remains.
+4. Phase 5 uses two separate authenticated contexts. Markers 1–3 below are
+   already earned on the hosted preview and must not be rerun. Markers 4 and 5
+   are both required before Gate 1 is complete. The operator must not
+   `SET ROLE myth_v23_authorizer` and must not receive runtime-role privileges.
+
+   Phase 5A, operator/inspector. Connect as `postgres.xkkiicsassizmakcvxml`.
+   Set `v23.approved_project`, `v23.binding_id`, `v23.network_entity_id`, and
+   `v23.binding_provenance_ref` from the retained exact Phase 4 outputs. Run
+   `assertions.sql` with `ON_ERROR_STOP=1`. Require
+   `V23_PARENT_PACKET_ASSERTIONS_PASS`. That marker certifies the
+   inspector/catalog packet only, including that no SET-capable
+   identity-governor grant remains. It does not certify runtime SET ROLE.
+
+   Phase 5B, runtime login. Open a fresh connection whose `session_user` and
+   `current_user` are exactly `myth_v23_parent_preview`. Set
+   `v23.approved_project`, `v23.binding_id`, and `v23.network_entity_id` from
+   the same retained Phase 4 outputs. Run `platform-runtime-probes.sql` with
+   `ON_ERROR_STOP=1`. Require `V23_PLATFORM_RUNTIME_PROBES_PASS`.
+
+   Gate 1 requires all five markers: `V23_PG_NET_PREFLIGHT_PASS`,
+   `V23_PG_NET_DISABLE_PASS`, `V23_PG_NET_ABSENT_PASS`,
+   `V23_PARENT_PACKET_ASSERTIONS_PASS`, and
+   `V23_PLATFORM_RUNTIME_PROBES_PASS`.
 
 Phase 4 authority accounting is exact. Supabase's durable bookkeeping row is
 member `postgres`, role `myth_identity_governor`, grantor `supabase_admin`, ADMIN

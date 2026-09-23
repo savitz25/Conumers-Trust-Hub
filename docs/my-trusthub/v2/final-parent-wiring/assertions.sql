@@ -153,22 +153,9 @@ begin
  if exists(select 1 from information_schema.tables where table_schema in ('consumer','ops','network','v23_private')
    and table_name ~* '(watch|alert)') then raise exception 'Unexpected Watch/Alert relations'; end if;
 end $$;
--- Actual runtime denial probes run separately in platform-runtime-probes.sql
--- through a fresh runtime LOGIN connection. The inspector's platform-managed
--- reverse membership intentionally has SET=false; do not broaden it.
-set local role myth_v23_authorizer;
-set local row_security=on;
-do $$ declare resolved record; begin
- if v23_private.preview_ports_ready() is distinct from true then
-   raise exception 'Required private ports are not ready as authorizer'; end if;
- if (select count(*) from v23_private.preview_move_binding())<>1 then
-   raise exception 'Private resolver must return exactly one binding'; end if;
- select * into strict resolved from v23_private.preview_move_binding();
- if resolved.id is distinct from nullif(current_setting('v23.binding_id',true),'')::uuid
-   or resolved.network_entity_id is distinct from nullif(current_setting('v23.network_entity_id',true),'')::uuid
-   or resolved.binding_status is distinct from 'accepted' then
-   raise exception 'Private resolver disagrees with approved forward identity'; end if;
-end $$;
-reset role;
+-- V23_PARENT_PACKET_ASSERTIONS_PASS certifies this inspector/catalog packet only.
+-- It does not certify runtime SET ROLE behavior. That proof is a fresh
+-- myth_v23_parent_preview login running platform-runtime-probes.sql.
+-- postgres must not be granted myth_v23_authorizer merely to run this file.
 select 'V23_PARENT_PACKET_ASSERTIONS_PASS' as result;
 commit;

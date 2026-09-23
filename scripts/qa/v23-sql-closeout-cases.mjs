@@ -129,21 +129,100 @@ export async function assertionFailureCases(db) {
     ['wrong pin', "update v23_private.preview_deployment_pin set ask_origin='https://wrong.invalid'", /Exact deployment pin/],
     ['wrong staging origins', "update ops.consumer_hub_registry set staging_origins=array['https://wrong.invalid'] where hub_key='move'", /Exact Ask\/Move staging origins/],
     ['missing registry row', "delete from ops.consumer_hub_registry where hub_key='ask'", /Exact Ask\/Move staging origins/],
-    ['ready false', "create or replace function v23_private.preview_ports_ready() returns boolean language sql as $$select false$$", /Required private ports are not ready/],
-    ['wrong resolver ID', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select gen_random_uuid(),gen_random_uuid(),'accepted'::text$$", /Private resolver disagrees/],
-    ['empty resolver', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select null::uuid,null::uuid,'accepted'::text where false$$", /Private resolver must return exactly one/],
-    ['duplicate resolver', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select gen_random_uuid(),gen_random_uuid(),'accepted'::text from generate_series(1,2)$$", /Private resolver must return exactly one/],
   ];
   const ports = ['preview_ports_ready()','preview_confirmation(text,text,jsonb)','preview_session_live(uuid,uuid)',
     'preview_move_binding()','preview_projects(uuid,uuid)','preview_saved(uuid,uuid)','preview_issue_context(jsonb,uuid,uuid)'];
   for (const port of ports) cases.push(['missing ' + port, `alter function v23_private.${port} rename to hidden_packet_port`, /Required private port missing/]);
-  cases.push(['authorizer missing EXECUTE', 'revoke execute on function v23_private.preview_saved(uuid,uuid) from myth_v23_authorizer', /Required private ports are not ready/]);
   for (const [label, mutation, expected] of cases) {
     try { await rejected(db, mutation, 'assertions.sql', expected); }
     catch (error) { throw new Error('Assertion negative case: ' + label, { cause: error }); }
   }
   await db.exec(sql('assertions.sql'));
   console.log('PASS packet: ' + cases.length + ' fail-closed assertion negative cases and positive controls');
+  await phase5ContextCases(db);
+}
+async function resetOperator(db) {
+  try { await db.exec('rollback'); } catch { /* no open transaction */ }
+  await db.exec('set session authorization postgres');
+}
+async function phase5ContextCases(db) {
+  const pin = (await db.query("select current_setting('v23.approved_project') approved, current_setting('v23.binding_id') binding_id, current_setting('v23.network_entity_id') entity_id")).rows[0];
+  await db.exec(`create schema if not exists extensions;
+    create table if not exists extensions.pg_stat_statements(id int);
+    create table if not exists extensions.pg_stat_statements_info(id int);
+    revoke all on schema extensions from public;
+    revoke all on all tables in schema extensions from public;
+    create role v23_packet_operator noinherit nosuperuser bypassrls nologin;
+    grant usage on schema network, ops, v23_private, auth, consumer, public to v23_packet_operator;
+    grant select on all tables in schema network, ops, v23_private, auth, consumer, public to v23_packet_operator;`);
+  await db.exec('set session authorization v23_packet_operator');
+  try {
+    const passed = await db.exec(sql('assertions.sql'));
+    assert.ok(passed.some(result => result.rows?.some(row => row.result==='V23_PARENT_PACKET_ASSERTIONS_PASS')));
+    console.log('PASS operator regression: inspector marker without runtime authority');
+    await assert.rejects(db.exec('set role myth_v23_authorizer'), error => error.code==='42501' || /permission denied to set role/i.test(error.message));
+    console.log('PASS operator SET ROLE denial');
+  } finally { await resetOperator(db); }
+  await db.exec('grant myth_v23_authorizer to v23_packet_operator with admin false, inherit false, set true');
+  await db.exec('set session authorization v23_packet_operator');
+  try {
+    await db.exec('set role myth_v23_authorizer');
+    assert.equal((await db.query('select current_user u')).rows[0].u, 'myth_v23_authorizer');
+    await db.exec('reset role');
+  } finally { await resetOperator(db); }
+  await db.exec('revoke myth_v23_authorizer from v23_packet_operator');
+  await db.exec('set session authorization v23_packet_operator');
+  try {
+    await assert.rejects(db.exec('set role myth_v23_authorizer'), error => error.code==='42501' || /permission denied to set role/i.test(error.message));
+  } finally { await resetOperator(db); }
+  async function asRuntime(fn) {
+    await db.exec('set session authorization myth_v23_parent_preview');
+    await db.query("select set_config('v23.approved_project',$1,false),set_config('v23.binding_id',$2,false),set_config('v23.network_entity_id',$3,false)", [pin.approved, pin.binding_id, pin.entity_id]);
+    try { return await fn(); }
+    finally { await resetOperator(db); }
+  }
+  const runtime = await asRuntime(() => db.exec(sql('platform-runtime-probes.sql')));
+  assert.ok(runtime.some(result => result.rows?.some(row => row.result==='V23_PLATFORM_RUNTIME_PROBES_PASS')));
+  console.log('PASS runtime authorizer SET, executor SET, cleanup denial, and binding resolver match');
+  await db.exec('set session authorization v23_packet_operator');
+  try {
+    await assert.rejects(db.exec(sql('platform-runtime-probes.sql')), /Fresh independently pinned runtime login required/);
+  } finally { await resetOperator(db); }
+  await db.exec('set session authorization myth_v23_parent_preview');
+  try {
+    await db.exec('set role myth_v23_authorizer');
+    await assert.rejects(db.exec(body('platform-runtime-probes.sql')), /Fresh independently pinned runtime login required/);
+    await db.exec('reset role');
+  } finally { await resetOperator(db); }
+  console.log('PASS wrong-principal runtime probe negatives');
+  const runtimeNegatives = [
+    ['runtime cannot SET authorizer', 'revoke myth_v23_authorizer from myth_v23_parent_preview', /permission denied to set role "myth_v23_authorizer"/],
+    ['runtime cannot SET executor', 'revoke myth_v23_executor from myth_v23_parent_preview', /permission denied to set role "myth_v23_executor"/],
+    ['runtime can SET cleanup', 'grant myth_v23_cleanup to myth_v23_parent_preview with admin false, inherit false, set true', /Unrelated SET ROLE accepted/],
+    ['wrong resolver ID', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select gen_random_uuid(),gen_random_uuid(),'accepted'::text$$", /Private resolver disagrees/],
+    ['wrong resolver entity', `create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select '${pin.binding_id}'::uuid,gen_random_uuid(),'accepted'::text$$`, /Private resolver disagrees/],
+    ['resolver status not accepted', `create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select '${pin.binding_id}'::uuid,'${pin.entity_id}'::uuid,'review_required'::text$$`, /Private resolver disagrees/],
+    ['empty resolver', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select null::uuid,null::uuid,'accepted'::text where false$$", /Private resolver must return exactly one/],
+    ['duplicate resolver', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select gen_random_uuid(),gen_random_uuid(),'accepted'::text from generate_series(1,2)$$", /Private resolver must return exactly one/],
+    ['ready false', 'create or replace function v23_private.preview_ports_ready() returns boolean language sql as $$select false$$', /Required private ports are not ready/],
+    ['authorizer missing EXECUTE', 'revoke execute on function v23_private.preview_saved(uuid,uuid) from myth_v23_authorizer', /Required private ports are not ready/],
+  ];
+  for (const [label, mutation, expected] of runtimeNegatives) {
+    await db.exec('begin');
+    try {
+      await db.exec(mutation);
+      await db.exec('set session authorization myth_v23_parent_preview');
+      await db.query("select set_config('v23.approved_project',$1,true),set_config('v23.binding_id',$2,true),set_config('v23.network_entity_id',$3,true)", [pin.approved, pin.binding_id, pin.entity_id]);
+      await assert.rejects(db.exec(body('platform-runtime-probes.sql')), expected);
+    } catch (error) { throw new Error('Runtime negative case: ' + label, { cause: error }); }
+    finally { await resetOperator(db); }
+  }
+  const restored = await asRuntime(() => db.exec(sql('platform-runtime-probes.sql')));
+  assert.ok(restored.some(result => result.rows?.some(row => row.result==='V23_PLATFORM_RUNTIME_PROBES_PASS')));
+  await db.exec(`drop owned by v23_packet_operator;
+    drop role v23_packet_operator;
+    drop table if exists extensions.pg_stat_statements, extensions.pg_stat_statements_info;`);
+  console.log('PASS runtime negative cases: ' + runtimeNegatives.length);
 }
 export async function closeoutPacket(db) {
   await db.exec(`set v23.binding_retirement_authorized='true';
