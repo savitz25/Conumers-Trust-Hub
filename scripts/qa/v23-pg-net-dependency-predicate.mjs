@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite';
 
 const root = 'docs/my-trusthub/v2/final-parent-wiring/';
 const readSql = (name) => readFileSync(root + name, 'utf8');
-const guard = "case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\\s*\\.|pg_net|supabase_functions\\s*\\.\\s*http_request)' else false end";
+const guard = "case when p.prokind in ('f','p','w') then pg_get_functiondef(p.oid) ~* '(net\\s*\\.|pg_net|supabase_functions\\s*\\.\\s*http_request)' else false end";
 const ownedEdges = [
   ['column method of table net.http_request_queue', 'type net.http_method'],
   ['column response of composite type net.http_response_result', 'type net.http_response'],
@@ -77,6 +77,17 @@ function closureSlice(sql) {
   return match[1].replaceAll('\r\n', '\n');
 }
 
+/** The trigger/webhook, cron and application-routine predicates must be textually
+ * identical in preflight and disable; only exception wording may differ. */
+function dependencyPredicates(sql) {
+  const text = sql.replaceAll('\r\n', '\n');
+  const trigger = text.match(/if exists\((select 1 from pg_trigger[\s\S]*?)\) then\n\s*raise exception 'Database webhook/);
+  const cron = text.match(/(if to_regclass\('cron\.job'\) is not null then\n[\s\S]*?end if;)/);
+  const routine = text.match(/if exists\((select 1 from pg_proc p join pg_namespace n on n\.oid=p\.pronamespace\n\s*where n\.nspname in \('public'[\s\S]*?)\) then\n\s*raise exception 'Application-owned function depends on pg_net'/);
+  assert.ok(trigger && cron && routine, 'Gate 1 dependency predicates missing');
+  return [trigger[1], cron[1], routine[1]].map((p) => p.replace(/\s+/g, ' ').trim());
+}
+
 function checkOnly(sql) {
   const cut = sql.search(/\r?\ndrop extension pg_net;/);
   return cut === -1 ? sql : sql.slice(0, cut) + '\nrollback;\n';
@@ -116,6 +127,10 @@ export async function assertPgNetDependencyPredicate() {
   assert.equal(preflightClosure, disableClosure);
   assert.equal(preflight.split(guard).length - 1, 2);
   assert.equal(disable.split(guard).length - 1, 2);
+  assert.equal(preflight.includes("prokind in ('f','p')"), false);
+  assert.equal(disable.includes("prokind in ('f','p')"), false);
+  assert.deepEqual(dependencyPredicates(preflight), dependencyPredicates(disable));
+  assert.equal(dependencyPredicates(preflight).length, 3);
   assert.match(preflightClosure, /deptype in \('i','a','x','P','S'\)/);
   assert.match(preflightClosure, /while expand_at<=c_n/);
   assert.match(preflightClosure, /d\.refobjsubid=c_sub\[expand_at\]/);
@@ -207,7 +222,7 @@ export async function assertPgNetDependencyPredicate() {
         and d.deptype='n') as recorded`);
     assert.equal(catalogEdge.rows[0].recorded, true);
     const catalogScript = preflight.replace(
-      /if exists\(select 1 from pg_proc p join pg_namespace n on n\.oid=p\.pronamespace\r?\n\s*where n\.nspname in \('public','auth','consumer','network','ops','v23_private'\)\r?\n\s*and case when p\.prokind in \('f','p'\) then pg_get_functiondef\(p\.oid\) ~\* '\(net\\s\*\\\.\|pg_net\|supabase_functions\\s\*\\\.\\s\*http_request\)' else false end\) then\r?\n\s*raise exception 'Application-owned function depends on pg_net'; end if;\r?\n/,
+      /if exists\(select 1 from pg_proc p join pg_namespace n on n\.oid=p\.pronamespace\r?\n\s*where n\.nspname in \('public','auth','consumer','network','ops','v23_private'\)\r?\n\s*and case when p\.prokind in \('f','p','w'\) then pg_get_functiondef\(p\.oid\) ~\* '\(net\\s\*\\\.\|pg_net\|supabase_functions\\s\*\\\.\\s\*http_request\)' else false end\) then\r?\n\s*raise exception 'Application-owned function depends on pg_net'; end if;\r?\n/,
       '',
     );
     assert.notEqual(catalogScript, preflight);
@@ -225,6 +240,74 @@ export async function assertPgNetDependencyPredicate() {
     await expectBlock(db, preflight, /Application-owned function depends on pg_net/);
     await db.exec('drop function public.plpgsql_mentions_net()');
     console.log('PASS C scanned-schema PL/pgSQL body blocked');
+
+    // Hosted 42809 reproduction: the guarded scan must run over aggregates in a
+    // watched schema without raising and without a false dependency, while the
+    // same scan still finds a real routine body. The raw call proves the guard is
+    // necessary rather than an error being swallowed.
+    await assert.rejects(
+      db.query("select pg_get_functiondef(p.oid) from pg_proc p where p.pronamespace='public'::regnamespace and p.prokind='a'"),
+      (error) => error.code === '42809' || /aggregate function/i.test(String(error.message)),
+    );
+    const publicAggregates = await db.query(`select count(*)::int aggregates, count(*) filter (where ${guard})::int hits
+      from pg_proc p where p.pronamespace='public'::regnamespace and p.prokind='a'`);
+    assert.ok(publicAggregates.rows[0].aggregates > 0);
+    assert.equal(publicAggregates.rows[0].hits, 0);
+    console.log('PASS J aggregate in watched schema: no 42809, no false dependency');
+
+    await db.exec(`create function public.net_sfunc(state integer, value integer) returns integer
+      language sql immutable as $fn$ select coalesce(state, 0) + coalesce(value, 0) + length('net.http_post') $fn$;
+      create aggregate public.net_total(integer) (sfunc = public.net_sfunc, stype = integer)`);
+    await expectBlock(db, preflight, /Application-owned function depends on pg_net/);
+    await expectBlock(db, checkOnly(disable), /Application-owned function depends on pg_net/);
+    await db.exec('drop aggregate public.net_total(integer); drop function public.net_sfunc(integer, integer)');
+    console.log('PASS K aggregate transition function body still blocked');
+
+    await db.exec(`create procedure public.proc_mentions_net() language plpgsql as $fn$
+      begin raise notice 'net.http_post'; end $fn$`);
+    await expectBlock(db, preflight, /Application-owned function depends on pg_net/);
+    await expectBlock(db, checkOnly(disable), /Application-owned function depends on pg_net/);
+    await db.exec('drop procedure public.proc_mentions_net()');
+    console.log('PASS L procedure body blocked');
+
+    await db.exec("create function public.window_fixture() returns bigint language internal window as 'window_row_number'");
+    const windowRows = await db.query(`select p.prokind, ${guard} as hit, pg_get_functiondef(p.oid) is not null as inspected
+      from pg_proc p where p.pronamespace='public'::regnamespace and p.prokind='w'`);
+    assert.equal(windowRows.rows.length, 1);
+    assert.equal(windowRows.rows[0].hit, false);
+    assert.equal(windowRows.rows[0].inspected, true);
+    const withWindow = await db.exec(preflight);
+    assert.ok(withWindow.some((result) => result.rows?.some((row) => row.result === 'V23_PG_NET_PREFLIGHT_PASS')));
+    await db.exec('drop function public.window_fixture()');
+    console.log('PASS M window function inspected without error or false dependency');
+
+    await db.exec(`create table public.trigger_target(id int);
+      create function public.trigger_mentions_net() returns trigger language plpgsql as $fn$
+      begin perform 'net.http_post'; return null; end $fn$;
+      create trigger trigger_target_net after insert on public.trigger_target
+      for each row execute function public.trigger_mentions_net()`);
+    await expectBlock(db, preflight, /Database webhook or non-internal trigger depends on pg_net/);
+    await expectBlock(db, checkOnly(disable), /Database webhook or trigger depends on pg_net/);
+    await db.exec('drop trigger trigger_target_net on public.trigger_target; drop function public.trigger_mentions_net()');
+    await db.exec(`create schema supabase_functions;
+      create function supabase_functions.http_request() returns trigger language plpgsql as $fn$
+      begin return null; end $fn$;
+      create trigger trigger_target_webhook after insert on public.trigger_target
+      for each row execute function supabase_functions.http_request()`);
+    await expectBlock(db, preflight, /Database webhook or non-internal trigger depends on pg_net/);
+    await expectBlock(db, checkOnly(disable), /Database webhook or trigger depends on pg_net/);
+    await db.exec('drop trigger trigger_target_webhook on public.trigger_target; drop schema supabase_functions cascade; drop table public.trigger_target');
+    console.log('PASS N trigger body and webhook entry point blocked');
+
+    await db.exec(`create schema cron; create table cron.job(jobid bigint, command text);
+      insert into cron.job values (1, 'select net.http_post(''https://example.invalid'')')`);
+    await expectBlock(db, preflight, /Scheduled job depends on pg_net/);
+    await expectBlock(db, checkOnly(disable), /Scheduled job depends on pg_net/);
+    await db.exec("update cron.job set command='select 1'");
+    const cronClean = await db.exec(preflight);
+    assert.ok(cronClean.some((result) => result.rows?.some((row) => row.result === 'V23_PG_NET_PREFLIGHT_PASS')));
+    await db.exec('drop schema cron cascade');
+    console.log('PASS O scheduled job dependency blocked');
 
     await db.exec('create table net.user_owned(id int)');
     await expectBlock(db, preflight, /table net\.user_owned/);

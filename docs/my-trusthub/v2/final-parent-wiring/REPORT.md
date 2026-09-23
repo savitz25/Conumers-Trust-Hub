@@ -1,5 +1,24 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Gate 1B 42809 hotfix — second pass (2026-09-23)
+
+Hosted Gate 1B stopped at `pg-net-preflight.sql` with SQLSTATE 42809
+(`"array_agg" is an aggregate function`): the routine dependency scans called
+`pg_get_functiondef` for every `pg_proc` row. A first patch guarded the calls with
+`CASE WHEN p.prokind IN ('f','p')` but excluded window functions on the incorrect
+premise that they also raise; on PostgreSQL 17 `pg_get_functiondef` raises only for
+aggregates. The guard is now `('f','p','w')` in both `pg-net-preflight.sql` and
+`pg-net-disable.sql` (trigger scan and application-routine scan), so window
+routines remain inspected. `scripts/qa/v23-pg-net-dependency-predicate.mjs` now
+also proves: an aggregate in a watched schema produces neither 42809 nor a false
+dependency while a raw call still raises; an aggregate transition function body,
+a procedure body, a trigger function body, the `supabase_functions.http_request`
+webhook entry point and a `cron.job` command referencing pg_net each fail closed in
+preflight and in the disable pre-check; a window function is inspected without a
+false hit; and the three dependency predicates are textually identical across the
+two files. Mutation checks: narrowing the guard to `('f','p')` or removing the
+`CASE` makes the script fail. No hosted SQL was executed under this hotfix.
+
 ## Post-Fable Gate 1 / Gate 2 remediation — prepared only
 
 The PUBLIC net-schema revocation design described later in this historical

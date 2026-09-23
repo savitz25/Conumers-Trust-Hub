@@ -22,10 +22,12 @@ begin
    or to_regclass('net.http_request_queue') is null or to_regclass('net._http_response') is null then
    raise exception 'Expected installed pg_net baseline differs'; end if;
  if (select count(*) from net.http_request_queue)<>0 then raise exception 'Pending pg_net requests must drain'; end if;
- -- pg_get_functiondef raises 42809 for aggregates and window functions. CASE calls it
- -- only for ordinary functions and procedures, whose bodies this gate can inspect.
+ -- pg_get_functiondef raises 42809 (wrong object type) for aggregates (prokind a),
+ -- which have no inspectable body. CASE evaluates it only for ordinary functions,
+ -- procedures and window functions (prokind f, p, w); CASE arms with non-constant
+ -- arguments are never pre-evaluated by the planner, unlike WHERE-clause order.
  if exists(select 1 from pg_trigger t join pg_proc p on p.oid=t.tgfoid join pg_namespace n on n.oid=p.pronamespace
-   where not t.tgisinternal and (case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end
+   where not t.tgisinternal and (case when p.prokind in ('f','p','w') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end
      or n.nspname='supabase_functions' and p.proname='http_request')) then
    raise exception 'Database webhook or trigger depends on pg_net'; end if;
  if to_regclass('cron.job') is not null then
@@ -35,7 +37,7 @@ begin
    raise exception 'Scheduled job depends on pg_net'; end if;
  if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname in ('public','auth','consumer','network','ops','v23_private')
-   and case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end) then
+   and case when p.prokind in ('f','p','w') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end) then
    raise exception 'Application-owned function depends on pg_net'; end if;
  -- V23_PG_NET_OWNERSHIP_CLOSURE_START
  -- Catalog identity is (classid, objid, objsubid). Seed direct pg_net members

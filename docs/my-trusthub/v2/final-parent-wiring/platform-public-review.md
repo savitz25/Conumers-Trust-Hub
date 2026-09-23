@@ -25,3 +25,13 @@ The repository audit found no application call to `net.http_get`,
 `supabase_functions.http_request`. That does not establish hosted webhook,
 trigger, cron, or dynamically constructed function safety. The hosted preflight
 checks those database surfaces at execution time.
+
+The routine and trigger body scans call `pg_get_functiondef` only through a
+`CASE` arm limited to `prokind` `f`, `p` and `w` (ordinary, procedure and window
+routines). Aggregates (`prokind` `a`) have no inspectable body and make
+`pg_get_functiondef` raise SQLSTATE 42809, which stopped Gate 1B hosted; they are
+skipped, while an aggregate's transition function is still scanned as an ordinary
+function. `scripts/qa/v23-pg-net-dependency-predicate.mjs` reproduces the 42809
+case and proves aggregate, procedure, window, trigger, webhook, cron and
+application-routine handling on disposable PostgreSQL, and asserts the three
+dependency predicates are textually identical in preflight and disable.
