@@ -2,7 +2,19 @@
 -- Requires ON_ERROR_STOP. No CASCADE is permitted.
 begin isolation level serializable;
 set local row_security=off;
-do $$ declare cron_dep boolean:=false; begin
+do $$ declare
+ cron_dep boolean:=false;
+ ext_oid oid;
+ c_class oid[]:=array[]::oid[];
+ c_obj oid[]:=array[]::oid[];
+ c_sub integer[]:=array[]::integer[];
+ c_n integer:=0;
+ expand_at integer;
+ scan_at integer;
+ seen boolean;
+ rec record;
+ blocker text;
+begin
  if current_setting('v23.approved_project',true) is distinct from 'xkkiicsassizmakcvxml'
    or current_setting('v23.pg_net_disable_authorized',true) is distinct from 'true' then
    raise exception 'Separate isolated pg_net-disable authorization required'; end if;
@@ -25,43 +37,95 @@ do $$ declare cron_dep boolean:=false; begin
    where n.nspname in ('public','auth','consumer','network','ops','v23_private')
    and case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end) then
    raise exception 'Application-owned function depends on pg_net'; end if;
- -- Ownership is catalog membership, not the net schema name. A pg_class column
- -- (objsubid > 0) is owned when its parent relation (objsubid 0) is a direct member.
- -- A composite type's backing pg_class is internal to that member type, so its
- -- columns are owned too. A pg_attrdef is owned only when it is the automatic or
- -- internal default of one of those relations. Any other normal dependency remains fatal.
- if exists(select 1 from pg_extension ext
-   join pg_depend member on member.refclassid='pg_extension'::regclass and member.refobjid=ext.oid and member.deptype='e'
-   join pg_depend dependent on dependent.refclassid=member.classid and dependent.refobjid=member.objid and dependent.deptype='n'
-   where ext.extname='pg_net'
-     and not (
-       exists(select 1 from pg_depend owned_parent
-         where owned_parent.classid=dependent.classid and owned_parent.objid=dependent.objid and owned_parent.objsubid=0
-           and owned_parent.refclassid='pg_extension'::regclass and owned_parent.refobjid=ext.oid and owned_parent.deptype='e')
-       or (dependent.classid='pg_class'::regclass and exists(select 1 from pg_depend internal_rel
-         join pg_type composite_type on composite_type.oid=internal_rel.refobjid and composite_type.typtype='c'
-         join pg_depend type_member on type_member.classid='pg_type'::regclass and type_member.objid=composite_type.oid
-           and type_member.objsubid=0 and type_member.refclassid='pg_extension'::regclass
-           and type_member.refobjid=ext.oid and type_member.deptype='e'
-         where internal_rel.classid='pg_class'::regclass and internal_rel.objid=dependent.objid and internal_rel.objsubid=0
-           and internal_rel.refclassid='pg_type'::regclass and internal_rel.deptype='i'))
-       or (dependent.classid='pg_attrdef'::regclass and exists(select 1 from pg_depend attr_column
-         where attr_column.classid=dependent.classid and attr_column.objid=dependent.objid and attr_column.objsubid=0
-           and attr_column.refclassid='pg_class'::regclass and attr_column.refobjsubid>0 and attr_column.deptype in ('a','i')
-           and (
-             exists(select 1 from pg_depend owned_parent
-               where owned_parent.classid='pg_class'::regclass and owned_parent.objid=attr_column.refobjid and owned_parent.objsubid=0
-                 and owned_parent.refclassid='pg_extension'::regclass and owned_parent.refobjid=ext.oid and owned_parent.deptype='e')
-             or exists(select 1 from pg_depend internal_rel
-               join pg_type composite_type on composite_type.oid=internal_rel.refobjid and composite_type.typtype='c'
-               join pg_depend type_member on type_member.classid='pg_type'::regclass and type_member.objid=composite_type.oid
-                 and type_member.objsubid=0 and type_member.refclassid='pg_extension'::regclass
-                 and type_member.refobjid=ext.oid and type_member.deptype='e'
-               where internal_rel.classid='pg_class'::regclass and internal_rel.objid=attr_column.refobjid and internal_rel.objsubid=0
-                 and internal_rel.refclassid='pg_type'::regclass and internal_rel.deptype='i')
-           )))
-     )) then
-   raise exception 'External catalog dependency would make DROP EXTENSION unsafe'; end if;
+ -- V23_PG_NET_OWNERSHIP_CLOSURE_START
+ -- Catalog identity is (classid, objid, objsubid). Seed direct pg_net members
+ -- (deptype e). Expand, until a fixed point, dependents reached by i, a, x, P, or S
+ -- when the referenced identity is already owned. Honor refobjsubid. A pg_class
+ -- column (objsubid > 0) is owned only when that same relation at objsubid 0 is owned.
+ -- Schema net is located by name and then every occupant outside this closure fails.
+ select oid into ext_oid from pg_extension where extname='pg_net';
+ for rec in
+   select m.classid, m.objid, m.objsubid
+   from pg_depend m
+   where m.refclassid='pg_extension'::regclass and m.refobjid=ext_oid and m.deptype='e'
+ loop
+   seen:=false;
+   for scan_at in 1..c_n loop
+     if c_class[scan_at]=rec.classid and c_obj[scan_at]=rec.objid and c_sub[scan_at]=rec.objsubid then
+       seen:=true; exit; end if;
+   end loop;
+   if not seen then
+     c_n:=c_n+1; c_class:=c_class||rec.classid; c_obj:=c_obj||rec.objid; c_sub:=c_sub||rec.objsubid;
+   end if;
+ end loop;
+ expand_at:=1;
+ while expand_at<=c_n loop
+   if c_n>100000 then raise exception 'pg_net ownership closure did not reach a fixed point'; end if;
+   for rec in
+     select d.classid, d.objid, d.objsubid
+     from pg_depend d
+     where d.refclassid=c_class[expand_at] and d.refobjid=c_obj[expand_at]
+       and d.deptype in ('i','a','x','P','S')
+       and (d.refobjsubid=c_sub[expand_at]
+         or (c_class[expand_at]='pg_class'::regclass and c_sub[expand_at]=0 and d.refobjsubid>0))
+   loop
+     seen:=false;
+     for scan_at in 1..c_n loop
+       if c_class[scan_at]=rec.classid and c_obj[scan_at]=rec.objid and c_sub[scan_at]=rec.objsubid then
+         seen:=true; exit; end if;
+     end loop;
+     if not seen then
+       c_n:=c_n+1; c_class:=c_class||rec.classid; c_obj:=c_obj||rec.objid; c_sub:=c_sub||rec.objsubid;
+     end if;
+   end loop;
+   expand_at:=expand_at+1;
+ end loop;
+ select string_agg(item, '; ' order by item) into blocker from (
+   select format('%s depends on %s',
+     pg_describe_object(d.classid, d.objid, d.objsubid),
+     pg_describe_object(d.refclassid, d.refobjid, d.refobjsubid)) as item
+   from pg_depend d
+   where d.deptype='n'
+     and exists(select 1 from generate_series(1, c_n) g(i)
+       where c_class[g.i]=d.refclassid and c_obj[g.i]=d.refobjid
+         and (c_sub[g.i]=d.refobjsubid
+           or (d.refclassid='pg_class'::regclass and c_class[g.i]='pg_class'::regclass
+             and c_sub[g.i]=0 and d.refobjsubid>0)))
+     and not exists(select 1 from generate_series(1, c_n) g(i)
+       where c_class[g.i]=d.classid and c_obj[g.i]=d.objid
+         and (c_sub[g.i]=d.objsubid
+           or (d.classid='pg_class'::regclass and c_class[g.i]='pg_class'::regclass
+             and c_sub[g.i]=0 and d.objsubid>0)))
+ ) blockers;
+ if blocker is not null then
+   raise exception 'External catalog dependency would make DROP EXTENSION unsafe: %', blocker; end if;
+ select string_agg(item, '; ' order by item) into blocker from (
+   select pg_describe_object(occupant.classid, occupant.objid, occupant.objsubid) as item
+   from (
+     select 'pg_class'::regclass as classid, c.oid as objid, 0 as objsubid
+       from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='net'
+     union all
+     select 'pg_proc'::regclass, p.oid, 0
+       from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='net'
+     union all
+     select 'pg_type'::regclass, t.oid, 0
+       from pg_type t join pg_namespace n on n.oid=t.typnamespace where n.nspname='net'
+     union all
+     select 'pg_operator'::regclass, o.oid, 0
+       from pg_operator o join pg_namespace n on n.oid=o.oprnamespace where n.nspname='net'
+     union all
+     select 'pg_opclass'::regclass, oc.oid, 0
+       from pg_opclass oc join pg_namespace n on n.oid=oc.opcnamespace where n.nspname='net'
+     union all
+     select 'pg_opfamily'::regclass, opf.oid, 0
+       from pg_opfamily opf join pg_namespace n on n.oid=opf.opfnamespace where n.nspname='net'
+   ) occupant
+   where not exists(select 1 from generate_series(1, c_n) g(i)
+     where c_class[g.i]=occupant.classid and c_obj[g.i]=occupant.objid and c_sub[g.i]=occupant.objsubid)
+ ) occupants;
+ if blocker is not null then
+   raise exception 'Object in schema net is outside pg_net ownership closure: %', blocker; end if;
+ -- V23_PG_NET_OWNERSHIP_CLOSURE_END
 end $$;
 drop extension pg_net;
 do $$ begin
