@@ -17,7 +17,7 @@ import { one, type SqlClient } from './sql.ts';
 import { validateBusinessProfile, type BusinessProfileInput } from './business-profile.ts';
 import { businessFreshness, oldestConfirmation } from './freshness.ts';
 import { isLifecycleQaOperator } from './lifecycle-qa-auth.ts';
-import { ageBucket, buildHealth, completeHubRows, type LaunchOpsSnapshot } from './launch-ops.ts';
+import { OWNER_ACTIVATION_ACTIONS, ageBucket, buildHealth, completeHubRows, type LaunchOpsSnapshot } from './launch-ops.ts';
 import { PUBLIC_BUSINESS_FIELD_KEYS, type PublicBusinessProfile } from './public-profile.ts';
 import { CUSTOMER_TRANSITIONS, RECORD_ISSUE_TYPES, STAFF_TRANSITIONS, RecordIssueError, validateRecordIssue, type RecordIssueStatus } from './record-issues.ts';
 import { BUSINESS_REPLY_STATUSES, BusinessReplyError, STAFF_REPLY_TRANSITIONS, validateBusinessReply, type BusinessReplyStatus } from './business-replies.ts';
@@ -38,6 +38,13 @@ import { customerHub } from './hub-registry.ts';
 import { invalidatePublicContractorRead } from './public-read-invalidate.ts';
 import { customerLifecycleEmail, type CustomerLifecycleEmail, type CustomerEmailType } from './customer-emails.ts';
 import { AUTHORITY_EVIDENCE,CLAIM_DECISION_CATEGORIES,evaluateAuthority,validateGovernanceText,type AuthorityEvidenceCode,type ClaimDecisionCategory } from './claim-governance.ts';
+import { claimAcquisitionSourceV2, type ClaimAcquisitionSourceV2 } from './claim-v2-funnel.ts';
+import { REVIEW_SESSION_IDLE_EXPIRY_SECONDS, capReviewSession, computeReviewCapacity, type ReviewCapacityClaimRow } from './review-capacity.ts';
+import { reviewSlaState } from './review-sla.ts';
+
+function profileHrefOf(profile: { slug: string } & Record<string, unknown>): string {
+  return 'canonicalUrl' in profile ? String(profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${profile.slug}`;
+}
 
 const MAGIC_TTL_MS = 30 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -330,8 +337,13 @@ export class CustomerPlatform {
     );
   }
 
-  async acceptHandoff(token: string, ctx?: RequestContext): Promise<{
-    intentId: string;
+  /**
+   * ATH-CLAIM-V2-001 — PASSIVE RECEIPT. Authenticates a signed specialist handoff and revalidates the exact
+   * profile WITHOUT creating durable claim state. A crawler, a link preview, a refresh, or a bot opening
+   * /claim/continue reaches this and nothing is written except the durable per-IP rate event. A token whose
+   * nonce has already become an intent fails closed (reused_nonce).
+   */
+  async receiveHandoff(token: string, ctx?: RequestContext): Promise<{
     payload: HandoffPayload;
     displayName: string;
     profileHref: string;
@@ -367,32 +379,105 @@ export class CustomerPlatform {
       customerLog('handoff_adapter_rejected', { code: adapter.code }, 'warn');
       throw new ClaimError(adapter.code);
     }
+    // Precise terminology: a receipt is not claim intent. No audit row, no intent row.
+    customerLog('claim_handoff_received', { hub: payload.hub_id, durable: false });
+    return { payload, displayName: adapter.profile.displayName, profileHref: profileHrefOf(adapter.profile) };
+  }
 
-    const intent = await one<{ id: string }>(
+  /**
+   * ATH-CLAIM-V2-001 — EXPLICIT CONTINUE. The only path that creates a durable ath_claim_intents row.
+   * Rate limited, exact-profile bound, nonce/replay protected, expiry aware, audited, and idempotent for the
+   * same browser receipt (double-click / retry). A different receipt presenting the same nonce fails closed.
+   */
+  async confirmClaimIntent(input: {
+    token: string;
+    receiptId: string;
+    acquisitionSource?: ClaimAcquisitionSourceV2 | string;
+    ctx?: RequestContext;
+  }): Promise<{ intentId: string; payload: HandoffPayload; displayName: string; profileHref: string; created: boolean }> {
+    if (input.ctx?.ip) {
+      try {
+        await this.hitRateLimit('claim_continue_ip', input.ctx.ip, 10, 15 * 60 * 1000);
+      } catch {
+        throw new ClaimError('rate_limited');
+      }
+    }
+    if (typeof input.receiptId !== 'string' || input.receiptId.length < 16) throw new ClaimError('missing_receipt');
+    let payload: HandoffPayload;
+    try {
+      payload = parseAndAuthenticateHandoff(this.deps.handoffSecret, input.token, this.now());
+    } catch (e) {
+      const code = e instanceof HandoffError ? e.code : 'malformed';
+      customerLog('claim_continue_rejected', { code }, 'warn');
+      throw e;
+    }
+    const receiptHash = hashToken(input.receiptId);
+    const sameReceiptIntent = async () => one<{ id: string; consumed: boolean; receipt_hash: string | null }>(
       this.deps.sql,
-      `INSERT INTO ath_claim_intents (nonce, payload, expires_at)
-       VALUES ($1, $2::jsonb, to_timestamp($3))
-       RETURNING id`,
-      [payload.nonce, JSON.stringify(payload), payload.exp]
+      `SELECT id, (consumed_at IS NOT NULL) AS consumed, receipt_hash FROM ath_claim_intents WHERE nonce = $1`,
+      [payload.nonce]
     );
+    const existing = await sameReceiptIntent();
+    const adapter = await loadAndValidateProfile(this.deps.cth, payload);
+    if (!adapter.ok) {
+      customerLog('claim_continue_adapter_rejected', { code: adapter.code }, 'warn');
+      throw new ClaimError(adapter.code);
+    }
+    const identity = { payload, displayName: adapter.profile.displayName, profileHref: profileHrefOf(adapter.profile) };
+    if (existing) {
+      if (existing.receipt_hash && existing.receipt_hash === receiptHash && !existing.consumed) {
+        customerLog('claim_continue_idempotent', { hub: payload.hub_id });
+        return { intentId: existing.id, created: false, ...identity };
+      }
+      customerLog('claim_continue_rejected', { code: 'reused_nonce' }, 'warn');
+      throw new HandoffError('reused_nonce');
+    }
+    const source = claimAcquisitionSourceV2(input.acquisitionSource);
+    const inserted = await one<{ id: string }>(
+      this.deps.sql,
+      `INSERT INTO ath_claim_intents (nonce, payload, expires_at, intent_origin, acquisition_source, confirmed_at, receipt_hash)
+       VALUES ($1, $2::jsonb, to_timestamp($3), 'explicit_continue', $4, $5, $6)
+       ON CONFLICT (nonce) DO NOTHING
+       RETURNING id`,
+      [payload.nonce, JSON.stringify(payload), payload.exp, source, this.now().toISOString(), receiptHash]
+    );
+    if (!inserted) {
+      const raced = await sameReceiptIntent();
+      if (raced && raced.receipt_hash === receiptHash && !raced.consumed) return { intentId: raced.id, created: false, ...identity };
+      throw new HandoffError('reused_nonce');
+    }
     await this.audit({
       actorKind: 'system',
-      action: 'handoff_accepted',
+      action: 'claim_continue_confirmed',
       objectType: 'ath_claim_intents',
-      objectId: intent!.id,
+      objectId: inserted.id,
       after: {
+        hub_id: payload.hub_id,
         native_profile_id: payload.native_profile_id,
         slug: payload.slug,
         external_key: payload.external_key,
+        acquisition_source: source,
       },
-      ctx,
+      ctx: input.ctx,
     });
-    return {
-      intentId: intent!.id,
-      payload,
-      displayName: adapter.profile.displayName,
-      profileHref: 'canonicalUrl' in adapter.profile ? String(adapter.profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
-    };
+    customerLog('claim_continue_confirmed', { hub: payload.hub_id, source });
+    return { intentId: inserted.id, created: true, ...identity };
+  }
+
+  /**
+   * Legacy composition (receipt + immediate Continue). Retained so existing launch/platform gates and proof
+   * scripts keep their semantics; public routes no longer call this. Second call with the same token fails
+   * closed with reused_nonce exactly as before.
+   */
+  async acceptHandoff(token: string, ctx?: RequestContext): Promise<{
+    intentId: string;
+    payload: HandoffPayload;
+    displayName: string;
+    profileHref: string;
+  }> {
+    await this.receiveHandoff(token, ctx);
+    const confirmed = await this.confirmClaimIntent({ token, receiptId: randomToken(24), acquisitionSource: 'unknown', ctx });
+    return { intentId: confirmed.intentId, payload: confirmed.payload, displayName: confirmed.displayName, profileHref: confirmed.profileHref };
   }
 
   async intentPreview(intentId: string): Promise<{
@@ -400,10 +485,13 @@ export class CustomerPlatform {
     displayName: string;
     profileHref: string;
     consumed: boolean;
+    acquisitionSource: ClaimAcquisitionSourceV2;
+    intentOrigin: 'legacy_passive' | 'explicit_continue';
   } | null> {
-    const row = await one<{ payload: HandoffPayload; consumed_at: string | null; expires_at: string }>(
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(intentId)) return null;
+    const row = await one<{ payload: HandoffPayload; consumed_at: string | null; expires_at: string; acquisition_source: string; intent_origin: string }>(
       this.deps.sql,
-      `SELECT payload, consumed_at::text, expires_at::text FROM ath_claim_intents WHERE id = $1 FOR UPDATE`,
+      `SELECT payload, consumed_at::text, expires_at::text, acquisition_source, intent_origin FROM ath_claim_intents WHERE id = $1 FOR UPDATE`,
       [intentId]
     );
     if (!row) return null;
@@ -416,8 +504,10 @@ export class CustomerPlatform {
     return {
       payload,
       displayName: adapter.profile.displayName,
-      profileHref: 'canonicalUrl' in adapter.profile ? String(adapter.profile.canonicalUrl) : `https://www.contractortrusthub.com/contractors/${adapter.profile.slug}`,
+      profileHref: profileHrefOf(adapter.profile),
       consumed: Boolean(row.consumed_at),
+      acquisitionSource: claimAcquisitionSourceV2(row.acquisition_source),
+      intentOrigin: row.intent_origin === 'explicit_continue' ? 'explicit_continue' : 'legacy_passive',
     };
   }
 
@@ -529,12 +619,14 @@ export class CustomerPlatform {
     const workType = competing ? 'competing_claim' : 'claim_review';
     const risk = competing ? 'competing' : freeEmail ? 'free_email' : 'standard';
 
+    // ATH-CLAIM-V2-001: the acquisition source survives from claim start (intent) to the submitted claim.
+    const acquisitionSource = intent.acquisitionSource;
     const claim = await one<{ id: string }>(
       this.deps.sql,
       `INSERT INTO ath_claims
         (org_id, hub_profile_id, claimant_user_id, status, verification_method,
-         relationship_type, free_email, attestation)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
+         relationship_type, free_email, attestation, acquisition_source)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9)
        RETURNING id`,
       [
         org!.id,
@@ -552,7 +644,10 @@ export class CustomerPlatform {
           expected_external_key: adapter.profile.externalKey,
           competing,
           document_upload: 'deferred',
+          acquisition_source: acquisitionSource,
+          intent_origin: intent.intentOrigin,
         }),
+        acquisitionSource,
       ]
     );
 
@@ -575,10 +670,10 @@ export class CustomerPlatform {
       objectType: 'ath_claims',
       objectId: claim!.id,
       action: 'claim_created',
-      after: { status, competing, free_email: freeEmail },
+      after: { status, competing, free_email: freeEmail, acquisition_source: acquisitionSource },
       ctx: input.ctx,
     });
-    customerLog('claim_submitted', { claimId: claim!.id, competing, freeEmail });
+    customerLog('claim_submitted', { claimId: claim!.id, competing, freeEmail, acquisitionSource });
 
     await this.sendLifecycle({emailType:'CLAIM_STARTED',recipient:user.email,recipientUserId:user.id,objectType:'ath_claims',objectId:claim!.id,stateVersion:status,orgId:org!.id,message:customerLifecycleEmail({type:'CLAIM_STARTED',profileName:adapter.profile.displayName,hub:intent.payload.hub_id,detail:'Your request is awaiting review. Approval has not yet been granted.',actionPath:`/claim/status/${claim!.id}`,actionLabel:'View claim status'},this.deps.siteUrl)});
 
@@ -725,6 +820,7 @@ export class CustomerPlatform {
         `UPDATE ath_claims SET status = 'needs_info', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
         [claim.id, this.now().toISOString(), staff.id, claimantMessage]
       );
+      await this.stampReviewTiming(claim.id, staff.id, false);
       await this.audit({
         actorUserId: staff.id,
         actorKind: 'staff',
@@ -748,6 +844,7 @@ export class CustomerPlatform {
         `UPDATE ath_claims SET status = 'rejected', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
         [claim.id, this.now().toISOString(), staff.id, claimantMessage]
       );
+      await this.stampReviewTiming(claim.id, staff.id, true);
       await this.deps.sql.query(
         `UPDATE ath_review_queue SET status = 'resolved', resolved_at = $2
           WHERE object_id = $1 AND object_type = 'ath_claims' AND status IN ('open','in_progress')`,
@@ -803,6 +900,7 @@ export class CustomerPlatform {
       `UPDATE ath_claims SET status = 'approved', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
       [claim.id, this.now().toISOString(), staff.id, claimantMessage]
     );
+    await this.stampReviewTiming(claim.id, staff.id, true);
     await this.deps.sql.query(
       `UPDATE ath_memberships SET status = 'active', role = 'owner'
         WHERE org_id = $1 AND user_id = $2`,
@@ -863,6 +961,164 @@ export class CustomerPlatform {
     }
     if (profile?.native_profile_id) invalidatePublicContractorRead(profile.native_profile_id);
     return { grantId: grant!.id };
+  }
+
+  // ---------------------------------------------------------------------------------------------------
+  // ATH-CLAIM-V2-001 — review capacity instrumentation (Section 7). Human time = reviewer-declared sessions.
+  // ---------------------------------------------------------------------------------------------------
+
+  /** Close every open session of this reviewer on this claim (capped), then refresh the claim aggregate. */
+  private async closeReviewSessions(claimId: string, reviewerId: string, reason: 'decision' | 'manual_stop' | 'expired'): Promise<number> {
+    const open = await this.deps.sql.query<{ id: string; started_at: string }>(
+      `SELECT id, started_at::text FROM ath_claim_review_sessions WHERE claim_id=$1 AND reviewer_user_id=$2 AND ended_at IS NULL FOR UPDATE`,
+      [claimId, reviewerId]
+    );
+    const now = this.now();
+    let closed = 0;
+    for (const session of open.rows) {
+      const started = new Date(session.started_at);
+      const idle = (now.getTime() - started.getTime()) / 1000 > REVIEW_SESSION_IDLE_EXPIRY_SECONDS;
+      await this.deps.sql.query(
+        `UPDATE ath_claim_review_sessions SET ended_at=$2, active_seconds=$3, end_reason=$4 WHERE id=$1`,
+        [session.id, now.toISOString(), capReviewSession(started, now), idle ? 'expired' : reason]
+      );
+      closed += 1;
+    }
+    await this.deps.sql.query(
+      `UPDATE ath_claims SET human_review_active_seconds=(SELECT COALESCE(sum(active_seconds),0)::int FROM ath_claim_review_sessions WHERE claim_id=$1) WHERE id=$1`,
+      [claimId]
+    );
+    return closed;
+  }
+
+  private async stampReviewTiming(claimId: string, staffId: string, decided: boolean): Promise<void> {
+    await this.closeReviewSessions(claimId, staffId, 'decision');
+    const now = this.now().toISOString();
+    await this.deps.sql.query(
+      `UPDATE ath_claims SET review_started_at=COALESCE(review_started_at,$2::timestamptz), review_decided_at=CASE WHEN $3 THEN $2::timestamptz ELSE review_decided_at END WHERE id=$1`,
+      [claimId, now, decided]
+    );
+  }
+
+  /**
+   * Explicit reviewer timer start. Idempotent: an open session for the same reviewer is returned, not duplicated.
+   * The reviewer declares whether the evidence was ready at first review (EVIDENCE_READY_AT_FIRST_REVIEW).
+   */
+  async startReviewSession(input: { sessionToken: string; claimId: string; evidenceReady?: boolean | null; ctx?: RequestContext }): Promise<{ sessionId: string; startedAt: string; created: boolean }> {
+    const staff = await this.requireStaff(input.sessionToken);
+    try { await this.hitRateLimit('review_session_staff', staff.id, 120, 60 * 60 * 1000); } catch { throw new AuthError('rate_limited'); }
+    const claim = await one<{ id: string; status: ClaimStatus; org_id: string; review_started_at: string | null }>(
+      this.deps.sql, `SELECT id, status, org_id, review_started_at::text FROM ath_claims WHERE id=$1 FOR UPDATE`, [input.claimId]
+    );
+    if (!claim) throw new ClaimError('missing_intent');
+    if (!['submitted', 'needs_info', 'in_review'].includes(claim.status)) throw new ClaimError('invalid_transition');
+    const existing = await one<{ id: string; started_at: string }>(
+      this.deps.sql, `SELECT id, started_at::text FROM ath_claim_review_sessions WHERE claim_id=$1 AND reviewer_user_id=$2 AND ended_at IS NULL`, [claim.id, staff.id]
+    );
+    if (existing && (this.now().getTime() - new Date(existing.started_at).getTime()) / 1000 <= REVIEW_SESSION_IDLE_EXPIRY_SECONDS) {
+      return { sessionId: existing.id, startedAt: existing.started_at, created: false };
+    }
+    if (existing) await this.closeReviewSessions(claim.id, staff.id, 'expired');
+    const now = this.now().toISOString();
+    const session = await one<{ id: string }>(
+      this.deps.sql, `INSERT INTO ath_claim_review_sessions (claim_id, reviewer_user_id, started_at) VALUES ($1,$2,$3) RETURNING id`, [claim.id, staff.id, now]
+    );
+    const evidenceReady = typeof input.evidenceReady === 'boolean' ? input.evidenceReady : null;
+    await this.deps.sql.query(
+      `UPDATE ath_claims SET review_started_at=COALESCE(review_started_at,$2::timestamptz),
+         evidence_ready_at_first_review=COALESCE(evidence_ready_at_first_review,$3::boolean),
+         status=CASE WHEN status='submitted' THEN 'in_review' ELSE status END WHERE id=$1`,
+      [claim.id, now, evidenceReady]
+    );
+    if (claim.status === 'submitted') {
+      await this.deps.sql.query(`UPDATE ath_review_queue SET status='in_progress' WHERE object_type='ath_claims' AND object_id=$1 AND status='open'`, [claim.id]);
+    }
+    await this.audit({
+      actorUserId: staff.id, actorKind: 'staff', orgId: claim.org_id, objectType: 'ath_claims', objectId: claim.id,
+      action: 'claim_review_started', before: { status: claim.status },
+      after: { status: claim.status === 'submitted' ? 'in_review' : claim.status, first_review: !claim.review_started_at, evidence_ready_at_first_review: evidenceReady, session_id: session!.id },
+      ctx: input.ctx,
+    });
+    customerLog('claim_review_started', { claimId: claim.id, firstReview: !claim.review_started_at });
+    return { sessionId: session!.id, startedAt: now, created: true };
+  }
+
+  async stopReviewSession(input: { sessionToken: string; claimId: string; ctx?: RequestContext }): Promise<{ closed: number; humanReviewActiveSeconds: number }> {
+    const staff = await this.requireStaff(input.sessionToken);
+    const claim = await one<{ id: string; org_id: string }>(this.deps.sql, `SELECT id, org_id FROM ath_claims WHERE id=$1 FOR UPDATE`, [input.claimId]);
+    if (!claim) throw new ClaimError('missing_intent');
+    const closed = await this.closeReviewSessions(claim.id, staff.id, 'manual_stop');
+    const total = await one<{ n: number }>(this.deps.sql, `SELECT human_review_active_seconds AS n FROM ath_claims WHERE id=$1`, [claim.id]);
+    if (closed) {
+      await this.audit({ actorUserId: staff.id, actorKind: 'staff', orgId: claim.org_id, objectType: 'ath_claims', objectId: claim.id, action: 'claim_review_session_stopped', after: { sessions_closed: closed, human_review_active_seconds: Number(total?.n || 0) }, ctx: input.ctx });
+    }
+    return { closed, humanReviewActiveSeconds: Number(total?.n || 0) };
+  }
+
+  async reviewTiming(sessionToken: string, claimId: string) {
+    await this.requireStaff(sessionToken);
+    const claim = await one<{ submitted_at: string; review_started_at: string | null; review_decided_at: string | null; evidence_ready_at_first_review: boolean | null; human_review_active_seconds: number; acquisition_source: string; status: string }>(
+      this.deps.sql,
+      `SELECT created_at::text AS submitted_at, review_started_at::text, review_decided_at::text, evidence_ready_at_first_review, human_review_active_seconds, acquisition_source, status FROM ath_claims WHERE id=$1`,
+      [claimId]
+    );
+    if (!claim) throw new ClaimError('missing_intent');
+    const sessions = await this.deps.sql.query<{ id: string; started_at: string; ended_at: string | null; active_seconds: number; end_reason: string | null }>(
+      `SELECT id, started_at::text, ended_at::text, active_seconds, end_reason FROM ath_claim_review_sessions WHERE claim_id=$1 ORDER BY started_at DESC LIMIT 50`, [claimId]
+    );
+    const sla = reviewSlaState({ submittedAt: new Date(claim.submitted_at), decidedAt: claim.review_decided_at ? new Date(claim.review_decided_at) : null, now: this.now() });
+    return {
+      submittedAt: claim.submitted_at,
+      reviewStartedAt: claim.review_started_at,
+      reviewDecidedAt: claim.review_decided_at,
+      evidenceReadyAtFirstReview: claim.evidence_ready_at_first_review,
+      humanReviewActiveSeconds: Number(claim.human_review_active_seconds || 0),
+      acquisitionSource: claimAcquisitionSourceV2(claim.acquisition_source),
+      openSession: sessions.rows.some((s) => !s.ended_at),
+      sla,
+      sessions: sessions.rows,
+    };
+  }
+
+  /**
+   * Section 8 — bounded internal staff reminder for open claims over the 48 business-hour target.
+   * Uses the existing notification tables + mailer only (no new external service). At most one reminder per
+   * claim per UTC day, at most `limit` claims per run. Never emails a claimant.
+   */
+  async reviewQueueReminders(input: { dryRun?: boolean; limit?: number } = {}): Promise<{ candidates: number; created: number; emailed: number; suppressed: number }> {
+    const limit = Math.min(Math.max(Number(input.limit ?? 20), 1), 50);
+    const rows = await this.deps.sql.query<{ id: string; created_at: string; status: string; hub_id: string; acquisition_source: string }>(
+      `SELECT c.id::text, c.created_at::text, c.status, p.hub_id, c.acquisition_source FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id
+        WHERE c.status IN ('submitted','needs_info','in_review') ORDER BY c.created_at ASC LIMIT 200`
+    );
+    const now = this.now();
+    const over = rows.rows.filter((r) => reviewSlaState({ submittedAt: new Date(r.created_at), decidedAt: null, now }).state === 'OVER_TARGET').slice(0, limit);
+    const result = { candidates: over.length, created: 0, emailed: 0, suppressed: 0 };
+    if (input.dryRun || !this.deps.staffEmails.length) return result;
+    for (const claim of over) {
+      const day = now.toISOString().slice(0, 10);
+      const digest = createHash('sha256').update(['ath-claim-review-reminder-v1', claim.id, day].join('|')).digest('hex');
+      const notificationId = `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-8${digest.slice(17, 20)}-${digest.slice(20, 32)}`;
+      const inserted = await one<{ id: string }>(
+        this.deps.sql,
+        `INSERT INTO ath_notifications(id,event_key,title,body,payload) VALUES($1,'claim_review_over_target','Open claim over 48 business-hour target','An open claim has exceeded the internal review target.',$2::jsonb) ON CONFLICT(id) DO NOTHING RETURNING id`,
+        [notificationId, JSON.stringify({ claim_id: claim.id, hub: claim.hub_id, status: claim.status, acquisition_source: claim.acquisition_source, day })]
+      );
+      if (!inserted) { result.suppressed += 1; continue; }
+      result.created += 1;
+      const delivery = await one<{ id: string }>(this.deps.sql, `INSERT INTO ath_notification_deliveries(notification_id,channel,status) VALUES($1,'email','PENDING') ON CONFLICT(notification_id,channel) DO NOTHING RETURNING id`, [notificationId]);
+      let sent = false;
+      for (const to of this.deps.staffEmails) {
+        try {
+          const r = await this.deps.mailer({ to, subject: `[Ask Trust Hub] Open claim over 48 business-hour target (${claim.hub_id})`, html: `<p>An open ${claim.hub_id} claim (status ${claim.status}) has exceeded the internal 48 business-hour review target.</p><p><a href="${this.deps.siteUrl.replace(/\/$/, '')}/admin/operations/claims/${claim.id}">Open the claim in Claim Operations</a></p><p>This is an internal operating reminder, not a customer message.</p>`, text: `An open ${claim.hub_id} claim (status ${claim.status}) has exceeded the internal 48 business-hour review target. ${this.deps.siteUrl.replace(/\/$/, '')}/admin/operations/claims/${claim.id}` });
+          sent = sent || r.sent;
+        } catch { /* provider failure is recorded below */ }
+      }
+      if (delivery) await this.deps.sql.query(`UPDATE ath_notification_deliveries SET status=$2,attempts=attempts+1,sent_at=CASE WHEN $2='SENT' THEN $3::timestamptz ELSE sent_at END,last_error_code=CASE WHEN $2='FAILED' THEN 'provider_failed' ELSE NULL END,updated_at=$3 WHERE id=$1`, [delivery.id, sent ? 'SENT' : 'FAILED', now.toISOString()]);
+      if (sent) result.emailed += 1;
+      await this.audit({ actorKind: 'system', objectType: 'ath_claims', objectId: claim.id, action: 'claim_review_reminder_sent', after: { notification_id: notificationId, emailed: sent } });
+    }
+    return result;
   }
 
   async revokeGrant(input: {
@@ -1685,9 +1941,9 @@ export class CustomerPlatform {
         (SELECT count(*)::int FROM ath_monitoring_subscriptions) AS monitoring_eligible,
         (SELECT count(*)::int FROM ath_monitoring_subscriptions WHERE enabled) AS monitoring_enabled
         FROM ath_claims c`),
-      this.deps.sql.query<Record<string, unknown>>(`SELECT c.id::text AS claim_id,COALESCE(p.display_name_snapshot,p.native_slug) AS display_name,p.hub_id,COALESCE(p.entity_class,'unknown') AS entity_class,p.native_credential_key,p.home_state,c.status,c.created_at::text,COALESCE(c.updated_at,c.created_at)::text AS last_activity_at,extract(epoch FROM (now()-c.created_at))/3600 AS age_hours,COALESCE(c.attestation->>'acquisition_source','unknown') AS acquisition_source FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id ORDER BY CASE c.status WHEN 'needs_info' THEN 0 WHEN 'submitted' THEN 1 WHEN 'in_review' THEN 2 ELSE 3 END,c.created_at ASC LIMIT 100`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT c.id::text AS claim_id,COALESCE(p.display_name_snapshot,p.native_slug) AS display_name,p.hub_id,COALESCE(p.entity_class,'unknown') AS entity_class,p.native_credential_key,p.home_state,c.status,c.created_at::text,COALESCE(c.updated_at,c.created_at)::text AS last_activity_at,extract(epoch FROM (now()-c.created_at))/3600 AS age_hours,COALESCE(NULLIF(c.acquisition_source,'unknown'),c.attestation->>'acquisition_source','unknown') AS acquisition_source FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id ORDER BY CASE c.status WHEN 'needs_info' THEN 0 WHEN 'submitted' THEN 1 WHEN 'in_review' THEN 2 ELSE 3 END,c.created_at ASC LIMIT 100`),
       this.deps.sql.query<Record<string, unknown>>(`SELECT p.hub_id,count(*)::int AS started,count(*) FILTER(WHERE c.status='approved')::int AS approved,count(*) FILTER(WHERE c.status IN ('submitted','needs_info','in_review'))::int AS awaiting FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id GROUP BY p.hub_id`),
-      this.deps.sql.query<Record<string, unknown>>(`SELECT CASE WHEN c.attestation->>'acquisition_source' IN ('organic','manual_outreach','email_campaign','internal_test') THEN c.attestation->>'acquisition_source' ELSE 'unknown' END AS source,count(*)::int AS count FROM ath_claims c GROUP BY 1`),
+      this.deps.sql.query<Record<string, unknown>>(`SELECT CASE WHEN COALESCE(NULLIF(c.acquisition_source,'unknown'),c.attestation->>'acquisition_source') IN ('organic','manual_outreach','email_campaign','internal_test') THEN COALESCE(NULLIF(c.acquisition_source,'unknown'),c.attestation->>'acquisition_source') ELSE 'unknown' END AS source,count(*)::int AS count FROM ath_claims c GROUP BY 1`),
       this.deps.sql.query<Record<string, unknown>>(`SELECT COALESCE(after_state->>'recovery_code',after_state->>'reason','unknown') AS reason,count(*)::int AS count FROM ath_audit_events WHERE action IN ('claim_validation_failed','claim_recovery_viewed','claim_handoff_failed') GROUP BY 1 ORDER BY count(*) DESC LIMIT 20`),
       this.deps.sql.query<Record<string, unknown>>(`SELECT status,count(*)::int AS count FROM ath_notification_deliveries WHERE created_at>=now()-interval '30 days' GROUP BY status ORDER BY status`),
     ]);
@@ -1697,7 +1953,17 @@ export class CustomerPlatform {
       medianReviewHours:raw.median_review_hours==null?null:Number(raw.median_review_hours),oldestUnresolvedHours:raw.oldest_unresolved_hours==null?null:Number(raw.oldest_unresolved_hours),approvedOwners:Number(raw.approved_owners||0),activations7d:Number(raw.activations_7d||0),recordIssuesOpen:Number(raw.record_issues_open||0),repliesAwaiting:Number(raw.replies_awaiting||0),mailFailures24h:Number(raw.mail_failures_24h||0),monitoringEligible:Number(raw.monitoring_eligible||0),monitoringEnabled:Number(raw.monitoring_enabled||0),
     };
     const claims = claimsResult.rows.map((row) => { const hours=Number(row.age_hours||0),status=String(row.status); return {claimId:String(row.claim_id),displayName:String(row.display_name),hub:String(row.hub_id) as CustomerHubId,entityClass:String(row.entity_class),identifier:String(row.native_credential_key),homeState:row.home_state?String(row.home_state):null,status,source:['organic','manual_outreach','email_campaign','internal_test'].includes(String(row.acquisition_source))?String(row.acquisition_source):'unknown',ageHours:hours,ageBucket:ageBucket(hours),lastActivityAt:String(row.last_activity_at),nextAction:status==='needs_info'?'Review information needed':status==='submitted'?'Start review':status==='in_review'?'Continue review':'View claim'}; });
-    const snapshot: LaunchOpsSnapshot = { generatedAt:now.toISOString(),summary,claims,byHub:completeHubRows(hubsResult.rows.map(row=>({hub:String(row.hub_id),started:Number(row.started),approved:Number(row.approved),awaiting:Number(row.awaiting)}))),bySource:['organic','manual_outreach','email_campaign','internal_test','unknown'].map(source=>({source,count:Number(sourcesResult.rows.find(row=>row.source===source)?.count||0)})),recoveries:recoveriesResult.rows.map(row=>({reason:String(row.reason),count:Number(row.count)})),mail:mailResult.rows.map(row=>({status:String(row.status),count:Number(row.count)})),health:buildHealth(summary)};
+    const capacityRows = await this.deps.sql.query<Record<string, unknown>>(
+      `SELECT c.status,c.created_at::text AS submitted_at,c.review_started_at::text,c.review_decided_at::text,c.evidence_ready_at_first_review,c.human_review_active_seconds,c.acquisition_source,
+              (SELECT min(a.created_at)::text FROM ath_audit_events a WHERE a.org_id=c.org_id AND c.reviewed_at IS NOT NULL AND a.created_at>=c.reviewed_at AND a.action=ANY($1::text[])) AS first_useful_action_at,
+              (SELECT round(extract(epoch FROM (g.revoked_at-g.granted_at))/86400)::int FROM ath_management_grants g WHERE g.granted_from_claim_id=c.id AND g.status='revoked' AND g.revocation_reason ~* '(wrong|mis-?grant|incorrect|erroneous)' LIMIT 1) AS grant_revoked_within_days
+         FROM ath_claims c`, [[...OWNER_ACTIVATION_ACTIONS]]);
+    const capacity = computeReviewCapacity(capacityRows.rows.map((row): ReviewCapacityClaimRow => ({
+      status:String(row.status),submittedAt:String(row.submitted_at),reviewStartedAt:row.review_started_at?String(row.review_started_at):null,reviewDecidedAt:row.review_decided_at?String(row.review_decided_at):null,
+      evidenceReadyAtFirstReview:typeof row.evidence_ready_at_first_review==='boolean'?row.evidence_ready_at_first_review:null,humanReviewActiveSeconds:Number(row.human_review_active_seconds||0),
+      acquisitionSource:claimAcquisitionSourceV2(row.acquisition_source),firstUsefulActionAt:row.first_useful_action_at?String(row.first_useful_action_at):null,grantRevokedWithinDays:row.grant_revoked_within_days==null?null:Number(row.grant_revoked_within_days),
+    })), now);
+    const snapshot: LaunchOpsSnapshot = { generatedAt:now.toISOString(),summary,claims,byHub:completeHubRows(hubsResult.rows.map(row=>({hub:String(row.hub_id),started:Number(row.started),approved:Number(row.approved),awaiting:Number(row.awaiting)}))),bySource:['organic','manual_outreach','email_campaign','internal_test','unknown'].map(source=>({source,count:Number(sourcesResult.rows.find(row=>row.source===source)?.count||0)})),recoveries:recoveriesResult.rows.map(row=>({reason:String(row.reason),count:Number(row.count)})),mail:mailResult.rows.map(row=>({status:String(row.status),count:Number(row.count)})),health:buildHealth(summary),capacity};
     return snapshot;
   }
 }

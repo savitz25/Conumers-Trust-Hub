@@ -5,7 +5,8 @@ import { cthReadDirectory } from './cth-read';
 import { compositeCustomerDirectory } from './specialist-read';
 import { resendMailer } from './mail';
 import { CustomerPlatform, combineStaffEmails } from './store';
-import { INTENT_COOKIE, SESSION_COOKIE, sessionCookieOptions } from './cookies';
+import { INTENT_COOKIE, RECEIPT_COOKIE, SESSION_COOKIE, sessionCookieOptions } from './cookies';
+import { decodeClaimReceipt, encodeClaimReceipt, type ClaimReceipt } from './claim-receipt';
 import type { RequestContext } from './types';
 import type { PoolClient } from 'pg';
 import type { SqlClient } from './sql';
@@ -56,6 +57,21 @@ export async function clearSessionCookie(): Promise<void> {
 export async function setIntentCookie(intentId: string): Promise<void> {
   const jar = await cookies();
   jar.set(INTENT_COOKIE, intentId, sessionCookieOptions(15 * 60));
+}
+
+export async function readClaimReceipt(): Promise<ClaimReceipt | null> {
+  const jar = await cookies();
+  return decodeClaimReceipt(jar.get(RECEIPT_COOKIE)?.value);
+}
+
+export async function setClaimReceiptCookie(receipt: ClaimReceipt): Promise<void> {
+  const jar = await cookies();
+  jar.set(RECEIPT_COOKIE, encodeClaimReceipt(receipt), sessionCookieOptions(15 * 60));
+}
+
+export async function clearClaimReceiptCookie(): Promise<void> {
+  const jar = await cookies();
+  jar.set(RECEIPT_COOKIE, '', sessionCookieOptions(0));
 }
 
 export async function currentContext(): Promise<RequestContext> {

@@ -125,21 +125,20 @@ async function main() {
       const attestedSource = String(r.attested_source ?? '');
       const attributionSource = attributionByClaim.get(String(r.claim_id)) ?? null;
       const reasons: string[] = [];
-      let classification: 'INTERNAL_TEST_CONFIRMED' | 'LIKELY_INTERNAL_TEST' | 'POTENTIAL_REAL_CLAIM' | 'UNKNOWN' = 'UNKNOWN';
-      if (isStaffEmail) reasons.push('claimant account is a configured staff/QA operator account');
-      if (attestedSource === 'internal_test' || attributionSource === 'INTERNAL_TEST') reasons.push('claim is labelled internal_test');
-      if (nameMarker) reasons.push('profile or organization name carries a synthetic fixture marker');
-      if (isStaffEmail || attestedSource === 'internal_test' || attributionSource === 'INTERNAL_TEST' || nameMarker) classification = 'INTERNAL_TEST_CONFIRMED';
-      else {
+      type Classification = 'INTERNAL_TEST_CONFIRMED' | 'LIKELY_INTERNAL_TEST' | 'POTENTIAL_REAL_CLAIM' | 'UNKNOWN';
+      const classify = (): Classification => {
+        if (isStaffEmail) reasons.push('claimant account is a configured staff/QA operator account');
+        if (attestedSource === 'internal_test' || attributionSource === 'INTERNAL_TEST') reasons.push('claim is labelled internal_test');
+        if (nameMarker) reasons.push('profile or organization name carries a synthetic fixture marker');
+        if (reasons.length) return 'INTERNAL_TEST_CONFIRMED';
         if (Number(r.grants_ever_for_user) > 0) reasons.push('same claimant previously held a grant that was part of the historical proof/QA cohort');
         if (r.shares_ip_with_staff === true) reasons.push('claimant network address also appears on staff audit events');
         if (localMarker) reasons.push('claimant address local-part uses a qa/test/proof tag');
-        if (reasons.length >= 1) classification = 'LIKELY_INTERNAL_TEST';
-        else {
-          reasons.push('no internal-test marker found in audit history, metadata, attribution, or surrounding records');
-          classification = 'POTENTIAL_REAL_CLAIM';
-        }
-      }
+        if (reasons.length) return 'LIKELY_INTERNAL_TEST';
+        reasons.push('no internal-test marker found in audit history, metadata, attribution, or surrounding records');
+        return 'POTENTIAL_REAL_CLAIM';
+      };
+      const classification: Classification = classify();
       return {
         claim_id: r.claim_id,
         status: r.status,

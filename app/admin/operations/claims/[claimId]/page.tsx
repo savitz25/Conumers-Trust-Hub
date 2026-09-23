@@ -4,6 +4,8 @@ import { withAdminSecurity } from "@/lib/control-plane/server";
 import { ClaimOperationsService } from "@/lib/control-plane/claim-operations";
 import { hasAdminPermission } from "@/lib/control-plane/rbac";
 import { ClaimDecisionForm } from "./claim-decision-form";
+import { ReviewTimer } from "./review-timer";
+import { REVIEW_SLA_LABEL } from "@/lib/customer/review-sla";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Claim Review | Ask Trust Hub",
@@ -19,8 +21,10 @@ export default async function Page({
   try {
     data = await withAdminSecurity(async (s, t, c, sql) => {
       const staff = await s.require(t, "ADMIN_VIEW");
-      const detail = await new ClaimOperationsService(sql, s, t, c).detail(id);
-      return { staff, detail };
+      const service = new ClaimOperationsService(sql, s, t, c);
+      const detail = await service.detail(id);
+      const timing = await service.timing(id);
+      return { staff, detail, timing };
     });
   } catch {
     redirect("/admin/operations/claims");
@@ -28,6 +32,7 @@ export default async function Page({
   const d = data.detail,
     c = d.claim,
     q = d.queue,
+    timing = data.timing,
     canWrite = hasAdminPermission(data.staff.role, "CLAIM_OPS");
   return (
     <AdminShell staff={data.staff}>
@@ -40,9 +45,22 @@ export default async function Page({
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Claim status: {String(c.status)} · Policy: {q.policy.result} · Case:{" "}
-          {q.workflowState}
+          {q.workflowState} · Source: {q.acquisitionSource}
         </p>
+        {q.isOpen ? (
+          <p className={`mt-2 inline-block rounded-full border px-3 py-1 text-sm font-semibold ${timing.sla.state === "OVER_TARGET" ? "border-amber-600 bg-amber-50 text-amber-800" : "border-border"}`}>
+            {REVIEW_SLA_LABEL[timing.sla.state]} · {Math.round(timing.sla.businessHoursOpen)} business hours open
+          </p>
+        ) : null}
       </header>
+      <ReviewTimer
+        claimId={id}
+        openSession={timing.openSession}
+        humanReviewActiveSeconds={timing.humanReviewActiveSeconds}
+        evidenceReady={timing.evidenceReadyAtFirstReview}
+        firstReview={!timing.reviewStartedAt}
+        canWrite={canWrite && q.isOpen}
+      />
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Exact specialist identity">
           <Fact label="Hub / class" value={`${q.hub} / ${q.profileClass}`} />
@@ -89,6 +107,14 @@ export default async function Page({
               "None"
             }
           />
+        </Panel>
+        <Panel title="Review timing (capacity instrumentation)">
+          <Fact label="Submitted" value={new Date(timing.submittedAt).toISOString()} />
+          <Fact label="Review started" value={timing.reviewStartedAt ? new Date(timing.reviewStartedAt).toISOString() : "Not started"} />
+          <Fact label="Decided" value={timing.reviewDecidedAt ? new Date(timing.reviewDecidedAt).toISOString() : "No final decision"} />
+          <Fact label="Evidence ready at first review" value={timing.evidenceReadyAtFirstReview === null ? "Not recorded" : timing.evidenceReadyAtFirstReview ? "Yes" : "No"} />
+          <Fact label="Human review time" value={`${Math.round((timing.humanReviewActiveSeconds / 60) * 10) / 10} min across ${timing.sessions.length} session(s)`} />
+          <Fact label="Elapsed (wall clock, not labor)" value={`${Math.round(q.ageHours)} h`} />
         </Panel>
         <Panel title="Authority constraints">
           <Fact

@@ -11,7 +11,8 @@ import type { NameCandidateResponse } from '@/lib/network/name-candidates/contra
 import { nameCandidateTelemetry } from '@/lib/network/name-candidates/telemetry';
 
 export const FIRST_PARTY_CLIENT_EVENTS = [
-  'claim_cta_clicked','claim_handoff_received','claim_auth_required','claim_auth_returned',
+  'claim_cta_clicked','claim_cta_viewed','claim_cta_activated','claim_continue_confirmed',
+  'claim_handoff_received','claim_auth_required','claim_auth_returned',
   'claim_validation_started','claim_validation_failed','claim_started','claim_completed',
   'claim_recovery_viewed','claim_review_requested','manage_business_opened',
   'business_info_saved','business_info_reconfirmed','record_issue_submitted',

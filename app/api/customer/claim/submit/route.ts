@@ -34,7 +34,9 @@ export async function POST(request: Request) {
       })
     );
     const attribution=(await cookies()).get('ath_campaign_attribution')?.value;
-    if(attribution)try{await withAskTx(sql=>attributeClaim(sql,result.claimId,attribution));}catch(error){customerLog('claim_attribution_failed',{errorClass:error instanceof Error?error.name:'unknown'},'error')}
+    if(attribution)try{await withAskTx(async sql=>{const attributed=await attributeClaim(sql,result.claimId,attribution);
+      // ATH-CLAIM-V2-001: a campaign-attributed claim is deterministically email_campaign in the V2 source column too.
+      if(attributed)await sql.query(`UPDATE ath_claims SET acquisition_source='email_campaign' WHERE id=$1 AND acquisition_source IN ('unknown','organic')`,[result.claimId]);});}catch(error){customerLog('claim_attribution_failed',{errorClass:error instanceof Error?error.name:'unknown'},'error')}
     return NextResponse.json({ ok: true, ...result });
   } catch (e) {
     if (e instanceof AuthError) {
