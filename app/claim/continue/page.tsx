@@ -102,7 +102,7 @@ export default async function ClaimContinuePage({
           <p className="mt-2 text-sm text-muted-foreground">Confirm this is the profile you represent before continuing. Nothing is recorded until you continue.</p>
         </header>
         <IdentityCard identity={identity} capability={capability} />
-        <ClaimContinueConfirm profileHref={identity.profileHref} />
+        <ClaimContinueConfirm profileHref={identity.profileHref} confirmationKey={receipt!.receiptId} />
       </section>
     );
   }

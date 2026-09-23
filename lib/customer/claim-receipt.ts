@@ -17,6 +17,16 @@ export function encodeClaimReceipt(receipt: ClaimReceipt): string {
   return Buffer.from(JSON.stringify({ t: receipt.token, r: receipt.receiptId, s: receipt.source, a: receipt.receivedAt }), 'utf8').toString('base64url');
 }
 
+/**
+ * ATH-CLAIM-V2-001R — multi-tab binding. The Continue form carries the receipt id of the identity it rendered;
+ * the confirm route only acts when that id equals the receipt currently held by the browser. A tab that still
+ * shows an earlier profile after a newer handoff replaced the cookie is sent back to re-render, never confirmed
+ * against the wrong identity. Comparison is exact and case-sensitive.
+ */
+export function receiptMatchesConfirmation(receipt: ClaimReceipt | null, submitted: unknown): boolean {
+  return Boolean(receipt) && typeof submitted === 'string' && RECEIPT_ID_SHAPE.test(submitted) && submitted === receipt!.receiptId;
+}
+
 export function decodeClaimReceipt(raw: string | undefined | null): ClaimReceipt | null {
   if (!raw || raw.length > 4096) return null;
   try {

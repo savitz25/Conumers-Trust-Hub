@@ -5,6 +5,7 @@ import { clearClaimReceiptCookie, currentContext, readClaimReceipt, setIntentCoo
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
 import { checkSameOrigin } from '@/lib/customer/request-origin';
+import { receiptMatchesConfirmation } from '@/lib/customer/claim-receipt';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,13 @@ export async function POST(request: Request) {
   const ctx = await currentContext();
   if (!receipt) {
     return NextResponse.redirect(new URL('/claim/continue?auth_error=HANDOFF_INVALID', url.origin), { status: 303, headers: NO_STORE });
+  }
+  // ATH-CLAIM-V2-001R: the form names the identity it rendered. If another tab has since received a different
+  // handoff, the cookie no longer matches and this Continue is not applied; the page re-renders the current one.
+  const form = await request.formData().catch(() => null);
+  if (!receiptMatchesConfirmation(receipt, form?.get('confirmation'))) {
+    customerLog('claim_continue_rejected', { code: 'receipt_mismatch' }, 'warn');
+    return NextResponse.redirect(new URL('/claim/continue', url.origin), { status: 303, headers: NO_STORE });
   }
   try {
     const confirmed = await withPlatform((p) => p.confirmClaimIntent({ token: receipt.token, receiptId: receipt.receiptId, acquisitionSource: receipt.source, ctx }));

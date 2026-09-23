@@ -385,6 +385,28 @@ export class CustomerPlatform {
   }
 
   /**
+   * ATH-CLAIM-V2-001R — deployment-order guard. Every V2 path that reads or writes a migration-019 column
+   * fails closed with `schema_not_ready` if the code is running ahead of the migration, instead of throwing a
+   * raw SQL error mid-flow or writing a partial row. Checked once per platform instance.
+   */
+  private v2SchemaReady = false;
+  private async assertClaimV2Schema(): Promise<void> {
+    if (this.v2SchemaReady) return;
+    const row = await one<{ intents: string; claims: string; sessions: string }>(
+      this.deps.sql,
+      `SELECT
+         (SELECT count(*)::text FROM information_schema.columns WHERE table_name='ath_claim_intents' AND column_name IN ('intent_origin','acquisition_source','confirmed_at','receipt_hash')) AS intents,
+         (SELECT count(*)::text FROM information_schema.columns WHERE table_name='ath_claims' AND column_name IN ('acquisition_source','review_started_at','review_decided_at','evidence_ready_at_first_review','human_review_active_seconds')) AS claims,
+         (SELECT count(*)::text FROM information_schema.tables WHERE table_name='ath_claim_review_sessions') AS sessions`
+    );
+    if (row?.intents !== '4' || row?.claims !== '5' || row?.sessions !== '1') {
+      customerLog('claim_v2_schema_not_ready', { intents: row?.intents, claims: row?.claims, sessions: row?.sessions }, 'error');
+      throw new ClaimError('schema_not_ready');
+    }
+    this.v2SchemaReady = true;
+  }
+
+  /**
    * ATH-CLAIM-V2-001 — EXPLICIT CONTINUE. The only path that creates a durable ath_claim_intents row.
    * Rate limited, exact-profile bound, nonce/replay protected, expiry aware, audited, and idempotent for the
    * same browser receipt (double-click / retry). A different receipt presenting the same nonce fails closed.
@@ -395,6 +417,7 @@ export class CustomerPlatform {
     acquisitionSource?: ClaimAcquisitionSourceV2 | string;
     ctx?: RequestContext;
   }): Promise<{ intentId: string; payload: HandoffPayload; displayName: string; profileHref: string; created: boolean }> {
+    await this.assertClaimV2Schema();
     if (input.ctx?.ip) {
       try {
         await this.hitRateLimit('claim_continue_ip', input.ctx.ip, 10, 15 * 60 * 1000);
@@ -489,6 +512,7 @@ export class CustomerPlatform {
     intentOrigin: 'legacy_passive' | 'explicit_continue';
   } | null> {
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(intentId)) return null;
+    await this.assertClaimV2Schema();
     const row = await one<{ payload: HandoffPayload; consumed_at: string | null; expires_at: string; acquisition_source: string; intent_origin: string }>(
       this.deps.sql,
       `SELECT payload, consumed_at::text, expires_at::text, acquisition_source, intent_origin FROM ath_claim_intents WHERE id = $1 FOR UPDATE`,
@@ -992,6 +1016,7 @@ export class CustomerPlatform {
   }
 
   private async stampReviewTiming(claimId: string, staffId: string, decided: boolean): Promise<void> {
+    await this.assertClaimV2Schema();
     await this.closeReviewSessions(claimId, staffId, 'decision');
     const now = this.now().toISOString();
     await this.deps.sql.query(
@@ -1005,6 +1030,7 @@ export class CustomerPlatform {
    * The reviewer declares whether the evidence was ready at first review (EVIDENCE_READY_AT_FIRST_REVIEW).
    */
   async startReviewSession(input: { sessionToken: string; claimId: string; evidenceReady?: boolean | null; ctx?: RequestContext }): Promise<{ sessionId: string; startedAt: string; created: boolean }> {
+    await this.assertClaimV2Schema();
     const staff = await this.requireStaff(input.sessionToken);
     try { await this.hitRateLimit('review_session_staff', staff.id, 120, 60 * 60 * 1000); } catch { throw new AuthError('rate_limited'); }
     const claim = await one<{ id: string; status: ClaimStatus; org_id: string; review_started_at: string | null }>(
@@ -1044,6 +1070,7 @@ export class CustomerPlatform {
   }
 
   async stopReviewSession(input: { sessionToken: string; claimId: string; ctx?: RequestContext }): Promise<{ closed: number; humanReviewActiveSeconds: number }> {
+    await this.assertClaimV2Schema();
     const staff = await this.requireStaff(input.sessionToken);
     const claim = await one<{ id: string; org_id: string }>(this.deps.sql, `SELECT id, org_id FROM ath_claims WHERE id=$1 FOR UPDATE`, [input.claimId]);
     if (!claim) throw new ClaimError('missing_intent');
@@ -1056,6 +1083,7 @@ export class CustomerPlatform {
   }
 
   async reviewTiming(sessionToken: string, claimId: string) {
+    await this.assertClaimV2Schema();
     await this.requireStaff(sessionToken);
     const claim = await one<{ submitted_at: string; review_started_at: string | null; review_decided_at: string | null; evidence_ready_at_first_review: boolean | null; human_review_active_seconds: number; acquisition_source: string; status: string }>(
       this.deps.sql,
@@ -1086,6 +1114,7 @@ export class CustomerPlatform {
    * claim per UTC day, at most `limit` claims per run. Never emails a claimant.
    */
   async reviewQueueReminders(input: { dryRun?: boolean; limit?: number } = {}): Promise<{ candidates: number; created: number; emailed: number; suppressed: number }> {
+    await this.assertClaimV2Schema();
     const limit = Math.min(Math.max(Number(input.limit ?? 20), 1), 50);
     const rows = await this.deps.sql.query<{ id: string; created_at: string; status: string; hub_id: string; acquisition_source: string }>(
       `SELECT c.id::text, c.created_at::text, c.status, p.hub_id, c.acquisition_source FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id
@@ -1920,6 +1949,7 @@ export class CustomerPlatform {
   }
 
   async launchOpsSnapshot(sessionToken: string): Promise<LaunchOpsSnapshot> {
+    await this.assertClaimV2Schema();
     await this.requireStaff(sessionToken);
     const now = this.now();
     const [summaryResult, claimsResult, hubsResult, sourcesResult, recoveriesResult, mailResult] = await Promise.all([

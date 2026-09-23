@@ -85,7 +85,9 @@ export const CLAIM_V2_HUB_ASSESSMENTS: readonly HubReadinessAssessment[] = [
       R5_REVOCATION_CERTIFIED: { level: 'CERTIFIED', evidence: 'Revoked grant removes public projection (ath-claim-publish-001, ath-claim-v2-001 R).' },
       R6_PUBLICATION_RESPONSE_CONTRACT: { level: 'CERTIFIED', evidence: 'BusinessSuppliedProfile + BusinessResponses contracts with provenance labels (test_ath_claim_publish_001).' },
       R7_ABUSE_RESISTANT_START: { level: 'CERTIFIED', evidence: '1,000 GET → 0 mints; POST + origin + rate limit (test_ath_claim_v2_001); Ask 1,000 receipts → 0 intents (ath-claim-v2-001).' },
-      R8_REAL_OWNER_CANARY: { level: 'CERTIFIED', evidence: 'PENDING_FOUNDER_CANARY: no real non-Founder organization has completed the flow. Historical approvals were proof claims with revoked grants.' },
+      // ATH-CLAIM-V2-001R: the level must describe reality. The flow is implemented and technically certified,
+      // but no real non-Founder organization has completed it, so the requirement itself is not CERTIFIED.
+      R8_REAL_OWNER_CANARY: { level: 'IMPLEMENTED', evidence: 'PENDING_FOUNDER_CANARY: no real non-Founder organization has completed the flow. Historical approvals were proof claims with revoked grants.' },
       R9_REVIEW_CAPACITY: { level: 'IMPLEMENTED', evidence: 'Timer, evidence-ready flag, SLA state exist; no real external claim measured yet.' },
     },
   },

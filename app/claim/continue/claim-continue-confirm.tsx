@@ -7,7 +7,7 @@ import { useState } from 'react';
  * JavaScript the button disables itself after the first activation so a double-click sends one request.
  * The server is idempotent for the same receipt anyway.
  */
-export function ClaimContinueConfirm({ profileHref }: { profileHref: string }) {
+export function ClaimContinueConfirm({ profileHref, confirmationKey }: { profileHref: string; confirmationKey: string }) {
   const [pending, setPending] = useState(false);
   return (
     <form
@@ -19,6 +19,7 @@ export function ClaimContinueConfirm({ profileHref }: { profileHref: string }) {
         setPending(true);
       }}
     >
+      <input type="hidden" name="confirmation" value={confirmationKey} />
       <h2 className="text-base font-semibold">Continue to request management access</h2>
       <p className="text-sm text-muted-foreground">
         Continuing records that you intend to request management access for this exact profile. You will then
