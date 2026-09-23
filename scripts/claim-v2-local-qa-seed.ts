@@ -50,11 +50,13 @@ async function seedCth() {
 async function main() {
   await seedCth();
   const client = new Client({ connectionString: ASK_URL }); await client.connect();
-  const sql: SqlClient = { query: async (text, params) => ({ rows: (await client.query(text, params ?? [])).rows }) };
+  const sql: SqlClient = { query: async (text, params) => ({ rows: (await client.query(text, params ?? [])).rows }), exec: async (text) => { await client.query(text); } };
   await applyCustomerMigrations(sql);
   await client.query('BEGIN'); await enableAppRole(sql);
   const links: string[] = [];
-  const platform = new CustomerPlatform({ sql, cth, mailer: async (m) => { const url = m.text.match(/https?:\/\/\S+/)?.[0]; if (url) links.push(`${m.to} -> ${url}`); return { sent: true, preview: m.text }; }, handoffSecret: SECRET, staffEmails: ['staff@qa.local'], siteUrl: SITE });
+  // Lifecycle mail requires the production origin as siteUrl (customer-emails.ts guard); printed links are rewritten to the local origin.
+  const CANON = 'https://www.asktrusthub.com';
+  const platform = new CustomerPlatform({ sql, cth, mailer: async (m) => { const url = m.text.match(/https?:\/\/\S+/)?.[0]; if (url) links.push(`${m.to} -> ${url.replace(CANON, SITE)}`); return { sent: true, preview: m.text }; }, handoffSecret: SECRET, staffEmails: ['staff@qa.local'], siteUrl: CANON });
   const signIn = async (email: string) => { const sent = await platform.requestMagicLink({ email, nextPath: '/manage' }); const token = decodeURIComponent(sent.preview?.match(/token=([^&\s]+)/)?.[1] ?? ''); return platform.consumeMagicLink(token); };
 
   // Staff (named admin) — session used by the seed only; the browser signs in with its own fresh link below.

@@ -61,14 +61,17 @@ export default async function ClaimContinuePage({
   const signInMessage = claimSignInErrorMessage(intentError);
   const justConfirmed = sp.confirmed === '1';
   const existing = await readIntentId();
-  const receipt = existing ? null : await readClaimReceipt();
+  const receipt = await readClaimReceipt();
 
   const result = await withPlatform(async (p) => {
     const user = await p.sessionUser(sessionToken);
     if (existing) {
       const intent = await p.intentPreview(existing);
-      const organizations = user ? await p.claimOrganizations(sessionToken || '') : [];
-      return { intent, receiptIdentity: null as Identity | null, receiptError: null as string | null, user, organizations };
+      // A live, unconsumed intent wins. A missing/expired/consumed intent never hides a newer receipt.
+      if (intent && !intent.consumed || (intent && !receipt)) {
+        const organizations = user ? await p.claimOrganizations(sessionToken || '') : [];
+        return { intent, receiptIdentity: null as Identity | null, receiptError: null as string | null, user, organizations };
+      }
     }
     if (receipt) {
       // Passive re-validation on refresh: authenticate + revalidate only. No intent, no audit row.

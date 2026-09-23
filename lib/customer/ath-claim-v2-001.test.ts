@@ -285,6 +285,11 @@ test('U: claim/token routes are noindex + no-store and GET never confirms; the r
   assert.match(confirm, /export async function POST/); assert.doesNotMatch(confirm, /export async function GET/);
   assert.match(confirm, /checkSameOrigin\(/); assert.match(confirm, /confirmClaimIntent\(/); assert.match(confirm, /noindex, nofollow/);
   assert.match(layout, /noIndex: true/);
+  // Browser QA finding: a new handoff must supersede a stale/consumed intent cookie, never be hidden by it.
+  assert.match(accept, /clearIntentCookie\(\)/);
+  const page = readFileSync('app/claim/continue/page.tsx', 'utf8');
+  assert.match(page, /const receipt = await readClaimReceipt\(\)/);
+  assert.match(page, /intent && !intent\.consumed/);
   const encoded = encodeClaimReceipt({ token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 });
   assert.deepEqual(decodeClaimReceipt(encoded), { token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 });
   assert.equal(decodeClaimReceipt('not-base64-json'), null);

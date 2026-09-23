@@ -59,6 +59,11 @@ export async function setIntentCookie(intentId: string): Promise<void> {
   jar.set(INTENT_COOKIE, intentId, sessionCookieOptions(15 * 60));
 }
 
+export async function clearIntentCookie(): Promise<void> {
+  const jar = await cookies();
+  jar.set(INTENT_COOKIE, '', sessionCookieOptions(0));
+}
+
 export async function readClaimReceipt(): Promise<ClaimReceipt | null> {
   const jar = await cookies();
   return decodeClaimReceipt(jar.get(RECEIPT_COOKIE)?.value);

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { HandoffError } from '@/lib/customer/handoff';
 import { ClaimError } from '@/lib/customer/store';
-import { currentContext, setClaimReceiptCookie, withPlatform } from '@/lib/customer/server';
+import { clearIntentCookie, currentContext, setClaimReceiptCookie, withPlatform } from '@/lib/customer/server';
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
 import { randomToken } from '@/lib/customer/crypto';
@@ -26,6 +26,8 @@ export async function GET(request: Request) {
   const ctx = await currentContext();
   try {
     await withPlatform((p) => p.receiveHandoff(token, ctx));
+    // A new handoff supersedes any earlier (possibly consumed) intent context in this browser.
+    await clearIntentCookie();
     await setClaimReceiptCookie({ token, receiptId: randomToken(24), source, receivedAt: Date.now() });
     return NextResponse.redirect(new URL('/claim/continue', url.origin), { headers: NO_STORE });
   } catch (e) {
