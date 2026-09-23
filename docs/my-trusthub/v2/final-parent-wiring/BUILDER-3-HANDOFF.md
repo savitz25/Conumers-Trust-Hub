@@ -11,7 +11,7 @@ The parent now assembles `AuthorizedPostgresBackend` and `ParentProfileSaveRunti
 | Side | Canonical origin |
 |---|---|
 | Ask | `https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app` |
-| Move | `https://move-trust-hub-git-mth-v2-3-move-par-71a0b3-savitz25-s-projects.vercel.app` |
+| Move | `https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app` |
 
 Ask uses the user-specified stable branch alias. This packet proposes the existing Move branch alias as its sole counterpart, for the same rebuild-stability reason. Builder 3 must use this exact pair in the eventual isolated packet and verify the intended SHAs behind both aliases before JQA. The prior immutable Move deployment remains the provenance of the fresh publication observation; it is not an additional trusted transport origin. No wildcard, suffix allowlist, arbitrary return origin, production origin or production database is accepted. No alias or deployment has been changed by this work.
 

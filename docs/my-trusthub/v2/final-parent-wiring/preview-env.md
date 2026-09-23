@@ -4,7 +4,7 @@ Scope changes to the reviewed Ask V2-3 preview branch only. No Production or all
 
 ```dotenv
 NEXT_PUBLIC_SITE_URL=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
-NEXT_PUBLIC_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-par-71a0b3-savitz25-s-projects.vercel.app
+NEXT_PUBLIC_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app
 MY_TRUSTHUB_TEST_ORIGIN=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
 NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL=https://xkkiicsassizmakcvxml.supabase.co
 MY_TRUSTHUB_TEST_SUPABASE_URL=https://xkkiicsassizmakcvxml.supabase.co
@@ -15,7 +15,7 @@ MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED=true
 MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED=true
 MY_TRUSTHUB_V23_ISOLATED_PROJECT=xkkiicsassizmakcvxml
 MY_TRUSTHUB_V23_PARENT_ORIGIN=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
-MY_TRUSTHUB_V23_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-par-71a0b3-savitz25-s-projects.vercel.app
+MY_TRUSTHUB_V23_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app
 MY_TRUSTHUB_V23_SESSION_AFFINITY=dedicated
 MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE=SUPAVISOR_SESSION
 MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST=<exact-reviewed-session-pooler-hostname>
@@ -31,6 +31,8 @@ MY_TRUSTHUB_EXPORT_ENABLED=false
 MY_TRUSTHUB_DELETE_ENABLED=false
 MY_TRUSTHUB_AUTH_SECURITY_READY=false
 ```
+
+`NEXT_PUBLIC_MOVE_ORIGIN` and `MY_TRUSTHUB_V23_MOVE_ORIGIN` in this list name the reviewed current-main Move preview alias. This document change does not modify Vercel, does not supply signing-key or database values, and does not activate runtime. Reciprocal signing names remain `MY_TRUSTHUB_V23_ASK_KEY_ID`, `MY_TRUSTHUB_V23_ASK_SIGNING_PRIVATE_KEY_PEM`, `MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM`, `MY_TRUSTHUB_V23_MOVE_KEY_ID`, `MY_TRUSTHUB_V23_MOVE_SIGNING_PRIVATE_KEY_PEM`, `MY_TRUSTHUB_V23_MOVE_VERIFY_PUBLIC_KEY_PEM`, and `MTH_MOVE_PARENT_SAVE_PARENT_PROTECTION_BYPASS`. Isolated Move source approval names are `MTH_V23_MOVE_ISOLATED_SOURCE` and `MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`. No values are recorded here. The hosted deployment-pin SQL still names the previous Move alias until a separate authorization.
 
 `VERCEL_ENV` must be Vercel's actual `preview`; do not override it. The only invited IDs must be the existing isolated QA A/B UUIDs, loaded locally into server-only `MY_TRUSTHUB_INVITED_USER_IDS` through the approved credential/config channel. Clear `MY_TRUSTHUB_INVITED_EMAILS`: email matching must not broaden admission. No user IDs, emails or passwords are included here. The secure file is never changed or copied. Existing optional Projects may be listed and assigned during consent; this packet does not open the Projects creation workspace.
 

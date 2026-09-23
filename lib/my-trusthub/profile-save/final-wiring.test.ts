@@ -23,6 +23,7 @@ export function keys() { const pair = generateKeyPairSync('ed25519'); return {
 
 test('F01 exact stable branch origin, A/B-only admission, production and unsafe flags denied', () => {
   assert.ok(isolatedConfig(fixtureEnv)); assert.equal(accountRuntime(fixtureEnv)?.origin, ASK_PREVIEW);
+  assert.equal(MOVE_PREVIEW, 'https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app');
   for (const id of [A, B]) assert.ok(admittedPreviewUser({ id, email_confirmed_at: '2026-09-01' }, fixtureEnv));
   assert.equal(admittedPreviewUser({ id: '33333333-3333-4333-8333-333333333333', email_confirmed_at: '2026-09-01' }, fixtureEnv), false);
   assert.equal(admittedPreviewUser({ id: A }, fixtureEnv), false);

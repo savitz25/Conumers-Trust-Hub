@@ -2,7 +2,7 @@ import { accountRuntime, admitted, type AccountUser } from '../account-policy.ts
 
 export const ISOLATED_PROJECT = 'xkkiicsassizmakcvxml';
 export const ASK_PREVIEW = 'https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app';
-export const MOVE_PREVIEW = 'https://move-trust-hub-git-mth-v2-3-move-par-71a0b3-savitz25-s-projects.vercel.app';
+export const MOVE_PREVIEW = 'https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app';
 export const PARENT_LOGIN = 'myth_v23_parent_preview';
 export const API_PATH = '/api/my-trusthub/profile-save';
 export const SOURCE_PATH = API_PATH + '/source';
