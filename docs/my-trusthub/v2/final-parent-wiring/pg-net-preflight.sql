@@ -11,8 +11,10 @@ do $$ declare cron_dep boolean:=false; begin
    raise exception 'Expected pg_net queue/response relations missing'; end if;
  if (select count(*) from net.http_request_queue)<>0 then
    raise exception 'Pending pg_net requests must drain before disable'; end if;
+ -- pg_get_functiondef raises 42809 for aggregates and window functions. CASE calls it
+ -- only for ordinary functions and procedures, whose bodies this gate can inspect.
  if exists(select 1 from pg_trigger t join pg_proc p on p.oid=t.tgfoid join pg_namespace n on n.oid=p.pronamespace
-   where not t.tgisinternal and (pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)'
+   where not t.tgisinternal and (case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end
      or n.nspname='supabase_functions' and p.proname='http_request')) then
    raise exception 'Database webhook or non-internal trigger depends on pg_net'; end if;
  if to_regclass('cron.job') is not null then
@@ -22,7 +24,7 @@ do $$ declare cron_dep boolean:=false; begin
    raise exception 'Scheduled job depends on pg_net'; end if;
  if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname in ('public','auth','consumer','network','ops','v23_private')
-   and pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)') then
+   and case when p.prokind in ('f','p') then pg_get_functiondef(p.oid) ~* '(net\s*\.|pg_net|supabase_functions\s*\.\s*http_request)' else false end) then
    raise exception 'Application-owned function depends on pg_net'; end if;
  if exists(select 1 from pg_extension ext
    join pg_depend member on member.refclassid='pg_extension'::regclass and member.refobjid=ext.oid and member.deptype='e'
