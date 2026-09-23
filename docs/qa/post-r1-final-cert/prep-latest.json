@@ -1,13 +1,12 @@
 {
-  "schema": "post-r1-final-cert-v1",
+  "schema": "post-r1-final-cert-v2",
   "mode": "prep",
-  "askSha": "06a4c614db32348869a5d9c5bd255e2b54aa97a9",
-  "startedAt": "2026-09-23T01:15:50.893Z",
-  "finishedAt": "2026-09-23T01:16:48.812Z",
+  "askSha": "26466fd043fafcbd3373c43c313242db1949d268",
+  "startedAt": "2026-09-23T01:35:41.390Z",
+  "finishedAt": "2026-09-23T01:35:59.355Z",
   "counts": {
-    "PASS": 24,
+    "PASS": 28,
     "KNOWN_LIMITATION": 0,
-    "PENDING_RELEASE": 4,
     "FAIL": 0
   },
   "matrix": [
@@ -19,7 +18,6 @@
       "localGeographyStatus": "PASS (MOV-02:SOURCE_BACKED_RESULT)",
       "handoffStatus": "SAFE (allowlisted https, query context preserved)",
       "knownLimitations": [],
-      "pendingReleases": [],
       "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     },
     {
@@ -30,7 +28,6 @@
       "localGeographyStatus": "PASS (LEN-02:HONEST_UNSUPPORTED_WITH_NEXT_ACTION; LEN-03:SOURCE_BACKED_RESULT)",
       "handoffStatus": "SAFE (allowlisted https, query context preserved)",
       "knownLimitations": [],
-      "pendingReleases": [],
       "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     },
     {
@@ -43,24 +40,21 @@
       "knownLimitations": [
         "INSURANCE_JACKSONVILLE_CROSSWALK_GAP"
       ],
-      "pendingReleases": [],
       "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     },
     {
       "hub": "contractor",
-      "specialistStatus": "TIMEOUT on CON-01,CON-02,CON-03,CON-04",
+      "specialistStatus": "RESPONDING",
       "askRoutingStatus": "CORRECT",
-      "identityStatus": "PENDING_RELEASE (CON-04:TECHNICAL_TIMEOUT)",
-      "localGeographyStatus": "PENDING_RELEASE (CON-01:TECHNICAL_TIMEOUT; CON-02:TECHNICAL_TIMEOUT; CON-03:TECHNICAL_TIMEOUT; CON-05:HONEST_UNSUPPORTED_WITH_NEXT_ACTION)",
+      "identityStatus": "PASS (CON-04:SOURCE_BACKED_RESULT)",
+      "localGeographyStatus": "PASS (CON-01:SOURCE_BACKED_RESULT; CON-02:SOURCE_BACKED_RESULT; CON-03:SOURCE_BACKED_RESULT; CON-05:SOURCE_BACKED_RESULT)",
       "handoffStatus": "SAFE (allowlisted https, query context preserved)",
       "knownLimitations": [
+        "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY",
         "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP",
         "FL_ELECTRICAL_SOURCE_GAP"
       ],
-      "pendingReleases": [
-        "CONTRACTOR_COLD_PATH_STABILIZATION"
-      ],
-      "verdict": "NOT CERTIFIED (prep run; would be BLOCKED)"
+      "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     },
     {
       "hub": "senior",
@@ -74,7 +68,6 @@
         "HOME_HEALTH_COUNTY_SERVICE_AREA",
         "AVANTE_SIX_CHARACTER_AMBIGUITY"
       ],
-      "pendingReleases": [],
       "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     },
     {
@@ -85,7 +78,6 @@
       "localGeographyStatus": "PASS (INV-03:SOURCE_BACKED_RESULT)",
       "handoffStatus": "SAFE (allowlisted https, query context preserved)",
       "knownLimitations": [],
-      "pendingReleases": [],
       "verdict": "NOT CERTIFIED (prep run; would be GREEN)"
     }
   ],
@@ -96,8 +88,8 @@
       "hub": "lender",
       "kind": "identity",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:51.382Z",
-      "latencyMs": 479,
+      "checkedAt": "2026-09-23T01:35:42.125Z",
+      "latencyMs": 730,
       "surface": "GUIDED",
       "vertical": "lender",
       "offeredHubs": [
@@ -156,8 +148,8 @@
       "hub": "lender",
       "kind": "cohort_state",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:51.410Z",
-      "latencyMs": 16,
+      "checkedAt": "2026-09-23T01:35:42.134Z",
+      "latencyMs": 8,
       "surface": "GUIDED",
       "vertical": "lender",
       "offeredHubs": [
@@ -205,8 +197,8 @@
       "hub": "lender",
       "kind": "product_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:51.756Z",
-      "latencyMs": 345,
+      "checkedAt": "2026-09-23T01:35:42.460Z",
+      "latencyMs": 324,
       "surface": "GUIDED",
       "vertical": "lender",
       "offeredHubs": [
@@ -300,8 +292,8 @@
       "hub": "insurance",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:51.772Z",
-      "latencyMs": 15,
+      "checkedAt": "2026-09-23T01:35:42.472Z",
+      "latencyMs": 10,
       "surface": "GUIDED",
       "vertical": "insurance",
       "offeredHubs": [
@@ -380,8 +372,8 @@
       "hub": "insurance",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:53.786Z",
-      "latencyMs": 2013,
+      "checkedAt": "2026-09-23T01:35:45.086Z",
+      "latencyMs": 2613,
       "surface": "GUIDED",
       "vertical": "insurance",
       "offeredHubs": [
@@ -475,7 +467,7 @@
       "hub": "insurance",
       "kind": "product_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:53.792Z",
+      "checkedAt": "2026-09-23T01:35:45.093Z",
       "latencyMs": 6,
       "surface": "GUIDED",
       "vertical": "insurance",
@@ -524,8 +516,8 @@
       "hub": "insurance",
       "kind": "multi_hub",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:15:53.800Z",
-      "latencyMs": 7,
+      "checkedAt": "2026-09-23T01:35:45.099Z",
+      "latencyMs": 6,
       "surface": "GUIDED",
       "vertical": null,
       "offeredHubs": [
@@ -575,8 +567,8 @@
       "hub": "contractor",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:01.837Z",
-      "latencyMs": 8035,
+      "checkedAt": "2026-09-23T01:35:48.346Z",
+      "latencyMs": 3245,
       "surface": "GUIDED",
       "vertical": "contractor",
       "offeredHubs": [
@@ -612,15 +604,11 @@
         "resolutionState": "DETERMINISTIC_EQUIVALENT"
       },
       "capability": "guided:contractor:general",
-      "resultState": "TIMEOUT",
-      "resultShape": "ZERO",
-      "total": 0,
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 5535,
       "choices": [],
       "nextActions": [
-        {
-          "type": "RETRY",
-          "label": "Try again"
-        },
         {
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Research contractors",
@@ -630,33 +618,53 @@
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Explore Florida contractor research",
           "href": "https://www.contractortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
         }
       ],
-      "destinations": [],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cgc1518044-the-certified-general-contractors-group",
+        "https://www.contractortrusthub.com/contractors/cgc1516482-the-combined-group-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1541484-09-build",
+        "https://www.contractortrusthub.com/contractors/cgc1538335-1-thousand-blocks-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1518724-1-up-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1525907-10x-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1514585-180-production-management-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1536356-1nsg-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1515544-1st-united-companies-of-south-fla-l-l-c",
+        "https://www.contractortrusthub.com/contractors/cgc1512538-2-scale-inc"
+      ],
       "failure": {
-        "kind": "timeout",
-        "code": "timeout",
-        "message": "Retry, or continue directly with the specialist Trust Hub."
+        "kind": null
       },
       "disclosures": [
-        "This research request took too long",
-        "Retry, or continue directly with the specialist Trust Hub.",
+        "Contractor credential research results",
+        "5,535 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
         "Specialist: ContractorTrustHub",
         "Trade: general",
         "Recorded geography: Miami-Dade",
         "You asked: Miami, Florida",
         "Research executed: Miami-Dade County, Florida",
-        "Review the limitation and choose a useful next action.",
+        "Narrow these results or open a specialist profile.",
         "CREDENTIAL_GEOGRAPHY",
         "You asked for Miami, Florida. Research is executed using Miami-Dade County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
-        "limitation code: timeout"
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
       ],
-      "outcomeClass": "TECHNICAL_TIMEOUT",
-      "classDetail": "TIMEOUT after 8020ms",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
       "violations": [],
-      "status": "PENDING_RELEASE",
-      "statusReason": "TECHNICAL_TIMEOUT tolerated in prep mode pending CONTRACTOR_COLD_PATH_STABILIZATION",
-      "pendingRelease": "CONTRACTOR_COLD_PATH_STABILIZATION"
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
     },
     {
       "id": "CON-02",
@@ -664,8 +672,8 @@
       "hub": "contractor",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:09.863Z",
-      "latencyMs": 8025,
+      "checkedAt": "2026-09-23T01:35:48.948Z",
+      "latencyMs": 601,
       "surface": "GUIDED",
       "vertical": "contractor",
       "offeredHubs": [
@@ -700,15 +708,11 @@
         "resolutionState": "EXACT"
       },
       "capability": "guided:contractor:roofing",
-      "resultState": "TIMEOUT",
-      "resultShape": "ZERO",
-      "total": 0,
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 924,
       "choices": [],
       "nextActions": [
-        {
-          "type": "RETRY",
-          "label": "Try again"
-        },
         {
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Explore Broward credential research",
@@ -718,33 +722,53 @@
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Research contractors",
           "href": "https://www.contractortrusthub.com/ask?q=roofers+in+broward"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida contractor research",
+          "href": "https://www.contractortrusthub.com/florida"
         }
       ],
-      "destinations": [],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/rc29027885-123-roofing-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1337629-2r-builders-corp",
+        "https://www.contractortrusthub.com/contractors/ccc1335340-360-home-improvements",
+        "https://www.contractortrusthub.com/contractors/ccc1337078-360-roofing-llc",
+        "https://www.contractortrusthub.com/contractors/ccc1330448-360-roofing-services-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1328233-3d-environmental-industries-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1331212-3j-construction",
+        "https://www.contractortrusthub.com/contractors/ccc1335094-4-all-roofing-llc",
+        "https://www.contractortrusthub.com/contractors/ccc1327664-4-roofers-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1326632-50-50-roofing-consultant-service-inc"
+      ],
       "failure": {
-        "kind": "timeout",
-        "code": "timeout",
-        "message": "Retry, or continue directly with the specialist Trust Hub."
+        "kind": null
       },
       "disclosures": [
-        "This research request took too long",
-        "Retry, or continue directly with the specialist Trust Hub.",
+        "Contractor credential research results",
+        "924 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
         "Specialist: ContractorTrustHub",
         "Trade: roofing",
         "Recorded geography: Broward",
         "You asked: Broward County, Florida",
         "Research executed: Broward County, Florida",
-        "Review the limitation and choose a useful next action.",
+        "Narrow these results or open a specialist profile.",
         "CREDENTIAL_GEOGRAPHY",
         "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
-        "limitation code: timeout"
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
       ],
-      "outcomeClass": "TECHNICAL_TIMEOUT",
-      "classDetail": "TIMEOUT after 8016ms",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
       "violations": [],
-      "status": "PENDING_RELEASE",
-      "statusReason": "TECHNICAL_TIMEOUT tolerated in prep mode pending CONTRACTOR_COLD_PATH_STABILIZATION",
-      "pendingRelease": "CONTRACTOR_COLD_PATH_STABILIZATION"
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
     },
     {
       "id": "CON-03",
@@ -752,8 +776,8 @@
       "hub": "contractor",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:17.896Z",
-      "latencyMs": 8033,
+      "checkedAt": "2026-09-23T01:35:49.471Z",
+      "latencyMs": 523,
       "surface": "GUIDED",
       "vertical": "contractor",
       "offeredHubs": [
@@ -789,15 +813,11 @@
         "resolutionState": "DETERMINISTIC_EQUIVALENT"
       },
       "capability": "guided:contractor:plumbing",
-      "resultState": "TIMEOUT",
-      "resultShape": "ZERO",
-      "total": 0,
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 1134,
       "choices": [],
       "nextActions": [
-        {
-          "type": "RETRY",
-          "label": "Try again"
-        },
         {
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Research contractors",
@@ -807,33 +827,53 @@
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Explore Florida contractor research",
           "href": "https://www.contractortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
         }
       ],
-      "destinations": [],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cfc1428587-a-rooter-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1429608-1-a-backflow-and-services-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1430177-1st-choice-plumbing-and-renovation-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1429225-2-bros-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432751-21-construction-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1431661-24-seven-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432399-360-plumbing-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1430764-3rd-rock-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1430896-4-d-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432444-4tress-construction-llc"
+      ],
       "failure": {
-        "kind": "timeout",
-        "code": "timeout",
-        "message": "Retry, or continue directly with the specialist Trust Hub."
+        "kind": null
       },
       "disclosures": [
-        "This research request took too long",
-        "Retry, or continue directly with the specialist Trust Hub.",
+        "Contractor credential research results",
+        "1,134 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
         "Specialist: ContractorTrustHub",
         "Trade: plumbing",
         "Recorded geography: Miami-Dade",
         "You asked: Miami, Florida",
         "Research executed: Miami-Dade County, Florida",
-        "Review the limitation and choose a useful next action.",
+        "Narrow these results or open a specialist profile.",
         "CREDENTIAL_GEOGRAPHY",
         "You asked for Miami, Florida. Research is executed using Miami-Dade County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
-        "limitation code: timeout"
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
       ],
-      "outcomeClass": "TECHNICAL_TIMEOUT",
-      "classDetail": "TIMEOUT after 8014ms",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
       "violations": [],
-      "status": "PENDING_RELEASE",
-      "statusReason": "TECHNICAL_TIMEOUT tolerated in prep mode pending CONTRACTOR_COLD_PATH_STABILIZATION",
-      "pendingRelease": "CONTRACTOR_COLD_PATH_STABILIZATION"
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
     },
     {
       "id": "CON-04",
@@ -841,8 +881,8 @@
       "hub": "contractor",
       "kind": "identifier",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:25.920Z",
-      "latencyMs": 8024,
+      "checkedAt": "2026-09-23T01:35:52.070Z",
+      "latencyMs": 2598,
       "surface": "GUIDED",
       "vertical": "contractor",
       "offeredHubs": [
@@ -860,15 +900,11 @@
         "resolutionState": "EXACT"
       },
       "capability": "guided:contractor",
-      "resultState": "TIMEOUT",
-      "resultShape": "ZERO",
-      "total": 0,
+      "resultState": "EXACT_IDENTITY",
+      "resultShape": "ROWS",
+      "total": 1,
       "choices": [],
       "nextActions": [
-        {
-          "type": "RETRY",
-          "label": "Try again"
-        },
         {
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Verify a contractor credential",
@@ -878,28 +914,36 @@
           "type": "OPEN_TRUSTHUB_DESTINATION",
           "label": "Research contractors",
           "href": "https://www.contractortrusthub.com/ask?q=verify+contractor+license+CBC015082"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
         }
       ],
-      "destinations": [],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cbc015082-worsham-construction-company-inc"
+      ],
       "failure": {
-        "kind": "timeout",
-        "code": "timeout",
-        "message": "Retry, or continue directly with the specialist Trust Hub."
+        "kind": null
       },
       "disclosures": [
-        "This research request took too long",
-        "Retry, or continue directly with the specialist Trust Hub.",
+        "Exact regulatory identity",
+        "1 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
         "Specialist: ContractorTrustHub",
-        "Review the limitation and choose a useful next action.",
-        "limitation code: timeout"
+        "Narrow these results or open a specialist profile.",
+        "Matched the selected undefined source-owned trade, status, and recorded-geography filters."
       ],
-      "outcomeClass": "TECHNICAL_TIMEOUT",
-      "classDetail": "TIMEOUT after 8007ms",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "EXACT_IDENTITY rows=1",
       "violations": [],
-      "status": "PENDING_RELEASE",
-      "statusReason": "TECHNICAL_TIMEOUT tolerated in prep mode pending CONTRACTOR_COLD_PATH_STABILIZATION",
-      "knownLimitation": "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP",
-      "pendingRelease": "CONTRACTOR_COLD_PATH_STABILIZATION"
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP honestly disclosed",
+      "knownLimitation": "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP"
     },
     {
       "id": "CON-05",
@@ -907,8 +951,8 @@
       "hub": "contractor",
       "kind": "product_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.129Z",
-      "latencyMs": 8207,
+      "checkedAt": "2026-09-23T01:35:52.876Z",
+      "latencyMs": 805,
       "surface": "GUIDED",
       "vertical": "contractor",
       "offeredHubs": [
@@ -945,17 +989,10 @@
         "resolutionState": "DETERMINISTIC_EQUIVALENT"
       },
       "capability": "guided:contractor:electrical",
-      "resultState": "UNSUPPORTED_TRADE_CAPABILITY",
-      "resultShape": "ZERO",
-      "total": 0,
-      "choices": [
-        "contractor_trade:general",
-        "contractor_trade:building",
-        "contractor_trade:roofing",
-        "contractor_trade:hvac",
-        "contractor_trade:mechanical",
-        "contractor_trade:plumbing"
-      ],
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 594,
+      "choices": [],
       "nextActions": [
         {
           "type": "OPEN_TRUSTHUB_DESTINATION",
@@ -973,34 +1010,48 @@
           "href": "https://www.contractortrusthub.com"
         }
       ],
-      "destinations": [],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cgc1537119-1211-illinois-st-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1534821-24hr-sliding-door-repair",
+        "https://www.contractortrusthub.com/contractors/cgc1530668-5-point-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1511854-561-roofing-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1524051-a-h-home-improvements-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1505864-a-m-total-maintenance-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1521022-a-n-housing-group-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1521025-a-n-housing-group-llc",
+        "https://www.contractortrusthub.com/contractors/cgc061108-a-g-builders-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1535480-a-zitta-company-llc"
+      ],
       "failure": {
-        "kind": "unsupported",
-        "code": "unsupported_florida_electrical_source",
-        "message": "We understood Florida electrical-contractor research. The accepted Florida construction source does not include the separately regulated electrical credentials."
+        "kind": null
       },
       "disclosures": [
-        "This source does not currently support that credential class",
-        "We understood Florida electrical-contractor research. The accepted Florida construction source does not include the separately regulated electrical credentials.",
-        "The accepted Florida CILB construction source does not contain Florida electrical credentials; no New Jersey or other-state class is substituted.",
+        "Broader Florida contractor options (electrical-specific data not available)",
+        "Electrical-specific Florida credential data is not available in this source. Here are 594 general/building contractor records with recorded Boca Raton credential geography you can research instead.",
+        "Electrical-specific Florida credential data is not available in this source; these are broader general/building contractor records, not electricians specifically.",
+        "No electrical trade class was substituted or relabeled -- the underlying credential class remains general/building contractor.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
         "Specialist: ContractorTrustHub",
         "Trade: electrical",
         "Recorded geography: Boca Raton",
         "You asked: Boca Raton, Florida",
         "Research executed: Palm Beach County, Florida",
-        "Source geography: Boca Raton, Palm Beach, FL",
-        "Choose a source-backed research option.",
+        "Narrow these results or open a specialist profile.",
         "Recorded city/address geography; not service territory.",
         "You asked for Boca Raton, Florida. Research is executed using Palm Beach County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
-        "limitation code: unsupported_florida_electrical_source"
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
       ],
-      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
-      "classDetail": "UNSUPPORTED_TRADE_CAPABILITY (unsupported_florida_electrical_source)",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
       "violations": [],
       "status": "PASS",
-      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION); known limitation FL_ELECTRICAL_SOURCE_GAP honestly disclosed",
-      "knownLimitation": "FL_ELECTRICAL_SOURCE_GAP",
-      "pendingRelease": "CONTRACTOR_COLD_PATH_STABILIZATION"
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation FL_ELECTRICAL_SOURCE_GAP honestly disclosed",
+      "knownLimitation": "FL_ELECTRICAL_SOURCE_GAP"
     },
     {
       "id": "SEN-01",
@@ -1008,8 +1059,8 @@
       "hub": "senior",
       "kind": "identity",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.137Z",
-      "latencyMs": 7,
+      "checkedAt": "2026-09-23T01:35:52.888Z",
+      "latencyMs": 10,
       "surface": "GUIDED",
       "vertical": "senior",
       "offeredHubs": [
@@ -1052,8 +1103,8 @@
       "hub": "senior",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.526Z",
-      "latencyMs": 388,
+      "checkedAt": "2026-09-23T01:35:53.264Z",
+      "latencyMs": 375,
       "surface": "GUIDED",
       "vertical": "senior",
       "offeredHubs": [
@@ -1148,8 +1199,8 @@
       "hub": "senior",
       "kind": "unsupported_source",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.540Z",
-      "latencyMs": 13,
+      "checkedAt": "2026-09-23T01:35:53.271Z",
+      "latencyMs": 6,
       "surface": "GUIDED",
       "vertical": "senior",
       "offeredHubs": [
@@ -1225,7 +1276,7 @@
       "hub": "senior",
       "kind": "unsupported_source",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.550Z",
+      "checkedAt": "2026-09-23T01:35:53.280Z",
       "latencyMs": 9,
       "surface": "GUIDED",
       "vertical": "senior",
@@ -1299,8 +1350,8 @@
       "hub": "senior",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:34.559Z",
-      "latencyMs": 9,
+      "checkedAt": "2026-09-23T01:35:53.288Z",
+      "latencyMs": 7,
       "surface": "GUIDED",
       "vertical": "senior",
       "offeredHubs": [
@@ -1382,8 +1433,8 @@
       "hub": "move",
       "kind": "identity",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:40.834Z",
-      "latencyMs": 6274,
+      "checkedAt": "2026-09-23T01:35:54.365Z",
+      "latencyMs": 1076,
       "surface": "NAME_CANDIDATES",
       "vertical": "move",
       "offeredHubs": [
@@ -1426,8 +1477,8 @@
       "hub": "move",
       "kind": "cohort_local",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:41.401Z",
-      "latencyMs": 565,
+      "checkedAt": "2026-09-23T01:35:54.868Z",
+      "latencyMs": 502,
       "surface": "GUIDED",
       "vertical": "move",
       "offeredHubs": [
@@ -1528,8 +1579,8 @@
       "hub": "move",
       "kind": "identifier",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:42.124Z",
-      "latencyMs": 722,
+      "checkedAt": "2026-09-23T01:35:55.717Z",
+      "latencyMs": 848,
       "surface": "GUIDED",
       "vertical": "move",
       "offeredHubs": [
@@ -1600,8 +1651,8 @@
       "hub": "investor",
       "kind": "identity",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:44.670Z",
-      "latencyMs": 2545,
+      "checkedAt": "2026-09-23T01:35:56.584Z",
+      "latencyMs": 866,
       "surface": "NAME_CANDIDATES",
       "vertical": "investor",
       "offeredHubs": [
@@ -1644,8 +1695,8 @@
       "hub": "investor",
       "kind": "identifier",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:44.844Z",
-      "latencyMs": 172,
+      "checkedAt": "2026-09-23T01:35:56.749Z",
+      "latencyMs": 164,
       "surface": "GUIDED",
       "vertical": "investor",
       "offeredHubs": [
@@ -1727,8 +1778,8 @@
       "hub": "investor",
       "kind": "cohort_state",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:45.127Z",
-      "latencyMs": 282,
+      "checkedAt": "2026-09-23T01:35:57.025Z",
+      "latencyMs": 276,
       "surface": "GUIDED",
       "vertical": "investor",
       "offeredHubs": [
@@ -1839,8 +1890,8 @@
       "hub": "network",
       "kind": "ambiguous_name",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:46.186Z",
-      "latencyMs": 1057,
+      "checkedAt": "2026-09-23T01:35:57.863Z",
+      "latencyMs": 836,
       "surface": "NAME_CANDIDATES",
       "vertical": "insurance+contractor+investor",
       "offeredHubs": [
@@ -1925,7 +1976,7 @@
       "hub": "network",
       "kind": "multi_hub",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:46.191Z",
+      "checkedAt": "2026-09-23T01:35:57.867Z",
       "latencyMs": 4,
       "surface": "GUIDED",
       "vertical": null,
@@ -1974,8 +2025,8 @@
       "hub": "network",
       "kind": "no_result",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:46.526Z",
-      "latencyMs": 335,
+      "checkedAt": "2026-09-23T01:35:58.146Z",
+      "latencyMs": 279,
       "surface": "GUIDED",
       "vertical": "insurance",
       "offeredHubs": [
@@ -2053,8 +2104,8 @@
       "hub": "network",
       "kind": "unsupported_source",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:46.532Z",
-      "latencyMs": 6,
+      "checkedAt": "2026-09-23T01:35:58.150Z",
+      "latencyMs": 3,
       "surface": "GUIDED",
       "vertical": null,
       "offeredHubs": [
@@ -2106,8 +2157,8 @@
       "hub": "network",
       "kind": "identity",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:48.762Z",
-      "latencyMs": 2229,
+      "checkedAt": "2026-09-23T01:35:58.917Z",
+      "latencyMs": 766,
       "surface": "NAME_CANDIDATES",
       "vertical": null,
       "offeredHubs": [
@@ -2142,15 +2193,15 @@
       "limitationHub": "insurance"
     }
   ],
-  "observations": [
+  "backlog": [
     {
-      "id": "OBS-01",
+      "id": "OBS-F2",
       "query": "I need a mover and a mortgage lender in New Jersey",
       "hub": "network",
       "kind": "multi_hub",
       "mode": "prep",
-      "checkedAt": "2026-09-23T01:16:48.772Z",
-      "latencyMs": 10,
+      "checkedAt": "2026-09-23T01:35:58.922Z",
+      "latencyMs": 5,
       "surface": "GUIDED",
       "vertical": null,
       "offeredHubs": [],
@@ -2185,6 +2236,150 @@
       "violations": [],
       "status": "FAIL",
       "statusReason": "BROKEN_HANDOFF not in accepted [DETERMINISTIC_CLARIFICATION]"
+    },
+    {
+      "id": "OBS-F6",
+      "query": "restaurant health inspections in miami",
+      "hub": "network",
+      "kind": "unsupported_source",
+      "mode": "prep",
+      "checkedAt": "2026-09-23T01:35:58.926Z",
+      "latencyMs": 3,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [
+        "contractor",
+        "lender",
+        "insurance",
+        "move"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "hub:contractor",
+        "hub:lender",
+        "hub:insurance",
+        "hub:move"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "This question touches more than one specialist area. Which would you like to research first?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: hub",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "OBS-F4",
+      "query": "research adviser Edward Jones",
+      "hub": "investor",
+      "kind": "identity",
+      "mode": "prep",
+      "checkedAt": "2026-09-23T01:35:59.335Z",
+      "latencyMs": 409,
+      "surface": "GUIDED",
+      "vertical": "investor",
+      "offeredHubs": [
+        "investor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "investorFirmClass": "ria_and_era",
+        "entityClass": "ria_and_era",
+        "researchMode": "firm_cohort"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:investor:firm_cohort",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 23622,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment adviser firms",
+          "href": "https://www.investortrusthub.com/firms"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment advisers",
+          "href": "https://www.investortrusthub.com/ask?q=research+adviser+Edward+Jones"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open InvestorTrustHub",
+          "href": "https://www.investortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://adviserinfo.sec.gov/firm/summary/160657",
+        "https://adviserinfo.sec.gov/firm/summary/160241",
+        "https://adviserinfo.sec.gov/firm/summary/3767",
+        "https://adviserinfo.sec.gov/firm/summary/149136",
+        "https://adviserinfo.sec.gov/firm/summary/301237",
+        "https://adviserinfo.sec.gov/firm/summary/302097",
+        "https://adviserinfo.sec.gov/firm/summary/328334",
+        "https://adviserinfo.sec.gov/firm/summary/332097",
+        "https://adviserinfo.sec.gov/firm/summary/328626",
+        "https://adviserinfo.sec.gov/firm/summary/115948"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Investment adviser firm research results",
+        "23,622 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used.",
+        "Specialist: InvestorTrustHub",
+        "Firm class: RIA_AND_ERA",
+        "Narrow these results or open a specialist profile.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
     }
   ],
   "flows": {
@@ -2221,49 +2416,6 @@
       ],
       "sessionValid": true,
       "deadEnd": false
-    },
-    "stateFarmLegalInsurer": {
-      "steps": [
-        {
-          "action": "START",
-          "ok": true,
-          "phase": "CLARIFY",
-          "choices": [
-            "hub:contractor",
-            "hub:lender",
-            "hub:insurance",
-            "hub:move"
-          ],
-          "nextActions": [],
-          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
-        },
-        {
-          "action": "SELECT_CHOICE hub:insurance",
-          "ok": true,
-          "hub": "insurance",
-          "phase": "CLARIFY",
-          "choices": [
-            "insurance_class:agency",
-            "insurance_class:legal_insurer",
-            "insurance_class:producer",
-            "insurance_mode:identifier",
-            "insurance_mode:explain"
-          ],
-          "nextActions": [],
-          "nextAction": "Choose agency, legal insurer, producer, or an exact identifier."
-        },
-        {
-          "action": "SELECT_CHOICE insurance_class:legal_insurer",
-          "ok": true,
-          "hub": "insurance",
-          "phase": "CLARIFY",
-          "choices": [],
-          "nextActions": [],
-          "nextAction": "The requested scope cannot be executed safely."
-        }
-      ],
-      "sessionValid": true,
-      "deadEnd": true
     },
     "electricianLender": {
       "steps": [
@@ -2331,6 +2483,49 @@
       ],
       "sessionValid": true,
       "deadEnd": false
+    },
+    "backlogF3": {
+      "steps": [
+        {
+          "action": "START",
+          "ok": true,
+          "phase": "CLARIFY",
+          "choices": [
+            "hub:contractor",
+            "hub:lender",
+            "hub:insurance",
+            "hub:move"
+          ],
+          "nextActions": [],
+          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
+        },
+        {
+          "action": "SELECT_CHOICE hub:insurance",
+          "ok": true,
+          "hub": "insurance",
+          "phase": "CLARIFY",
+          "choices": [
+            "insurance_class:agency",
+            "insurance_class:legal_insurer",
+            "insurance_class:producer",
+            "insurance_mode:identifier",
+            "insurance_mode:explain"
+          ],
+          "nextActions": [],
+          "nextAction": "Choose agency, legal insurer, producer, or an exact identifier."
+        },
+        {
+          "action": "SELECT_CHOICE insurance_class:legal_insurer",
+          "ok": true,
+          "hub": "insurance",
+          "phase": "CLARIFY",
+          "choices": [],
+          "nextActions": [],
+          "nextAction": "The requested scope cannot be executed safely."
+        }
+      ],
+      "sessionValid": true,
+      "deadEnd": true
     }
   },
   "knownLimitations": {
@@ -2341,10 +2536,7 @@
     "HOME_HEALTH_COUNTY_SERVICE_AREA": "Home Health county-grain execution is unsupported by the specialist contract; office geography is not patient service area, and the state-level broadening is offered as an explicit consent action.",
     "INSURANCE_JACKSONVILLE_CROSSWALK_GAP": "Jacksonville is not in the Florida municipality crosswalk; \"brightway insurance jacksonville\" is searched whole as a name (entity + location are not decomposed) and reports an honest network miss rather than a fabricated match.",
     "LENDER_MISSING_PUBLIC_DESTINATION": "Some Lender rows have no deterministic public LenderTrustHub profile mapping; Ask omits the destination rather than name-matching loosely.",
-    "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP": "Contractor exact-identifier lookups can exceed Ask's specialist budget on a cold Contractor path; tracked separately (Contractor cold-path stabilization)."
-  },
-  "pendingReleases": {
-    "CONTRACTOR_COLD_PATH_STABILIZATION": "ContractorTrustHub cold-path stabilization (Builder 2). First-touch Contractor requests can exceed Ask's specialist budget and surface as TIMEOUT.",
-    "ASK_PR_194_TIMEOUT_FALLBACK": "Ask PR #194 -- raise the internal Contractor budget 8000ms->10000ms and add a direct-Contractor fallback link on timeout."
+    "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP": "Contractor exact-identifier lookups can exceed Ask's specialist budget on a genuinely cold Contractor path. Deferred; not fixed in this sprint.",
+    "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY": "Some large supported Contractor cohorts can exceed the normal response budget on a genuinely cold first access because thousands of physically scattered pages must be read (~15-22s measured; covering-index and set-based hydration work did not remove the physical I/O). Known, deliberately deferred performance limitation. Accepted ONLY under the strict Section 3 cold-retry rule."
   }
 }

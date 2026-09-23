@@ -1,5 +1,5 @@
 /**
- * POST-R1-FINAL-CERT-PREP-001 -- page-order certification runner.
+ * POST-R1-FINAL-CERT -- page-order certification runner.
  *
  * Reproduces exactly what `app/ask/page.tsx` decides for a query, in the same order the page does:
  *   1. buildAskResearchRoute + decideAskExecution
@@ -9,7 +9,11 @@
  *      chosen setting and nothing missing)
  *   5. federated NetworkAskResult / route card only
  * and then records the structural facts of the outcome and classifies it into exactly one outcome
- * class. It never retries, never mutates search behavior, and never asserts dynamic counts.
+ * class. It never mutates search behavior and never asserts dynamic counts.
+ *
+ * The ONLY retry it ever performs is the Section 3 Contractor cold first-touch contract
+ * (`evaluateColdRetry`): one bounded "Try again" (the client's EXECUTE) after a first-touch TIMEOUT on
+ * a supported Contractor query whose interpretation is already proven correct.
  */
 import { buildAskResearchRoute } from '../ask-research-route.ts';
 import { decideAskExecution } from '../execution-decision.ts';
@@ -20,13 +24,34 @@ import { orchestrateGuidedResearch } from '../../guided-research/orchestrator.ts
 import type { GuidedExecutionResult, GuidedResearchSession } from '../../guided-research/contract.ts';
 import type { SpecialistHubId } from '../registry.ts';
 import {
-  DESTINATION_HOST_ALLOWLIST, FORBIDDEN_CLAIMS, OUTCOME_CLASSES, SOURCE_GRAIN_RULES, certMode,
+  COLD_RETRY_LIMITATIONS, DESTINATION_HOST_ALLOWLIST, FORBIDDEN_CLAIMS, OUTCOME_CLASSES, SOURCE_GRAIN_RULES, certMode,
   type AcceptableOutcomeClass, type CertMode, type OutcomeClass, type PackEntry,
 } from './pack.ts';
 
 export type CertSurface = 'NAME_CANDIDATES' | 'GUIDED' | 'JOURNEY' | 'ROUTE_CARD_ONLY' | 'NETWORK_ASK' | 'SECURITIES_REFUSAL' | 'THREW';
-export type CertStatus = 'PASS' | 'KNOWN_LIMITATION' | 'PENDING_RELEASE' | 'FAIL';
+export type CertStatus = 'PASS' | 'KNOWN_LIMITATION' | 'FAIL';
 export type CertGeography = { kind?: string; display?: string; stateCode?: string; county?: string; city?: string; meaning?: string };
+
+/** One observed attempt (the first touch, or the single bounded retry). */
+export type CertAttempt = {
+  attempt: number;
+  latencyMs: number;
+  outcomeClass: OutcomeClass;
+  classDetail: string;
+  resultState: string | null;
+  resultShape: 'ROWS' | 'ZERO' | 'NONE';
+  total: number | null;
+  vertical: string | null;
+  product: Record<string, string>;
+  identifier: { type: string; value: string } | null;
+  geography: { requested?: CertGeography; executed?: CertGeography; session?: CertGeography };
+  nextActionTypes: string[];
+  /** The UI heading/message pair the consumer sees for this attempt. */
+  consumerHeading: string;
+  consumerMessage: string;
+  failureCode: string | null;
+  violations: string[];
+};
 
 export type CertRecord = {
   id: string; query: string; hub: PackEntry['hub']; kind: PackEntry['kind']; mode: CertMode; checkedAt: string; latencyMs: number;
@@ -53,7 +78,8 @@ export type CertRecord = {
   statusReason: string;
   knownLimitation?: PackEntry['knownLimitation'];
   limitationHub?: PackEntry['limitationHub'];
-  pendingRelease?: PackEntry['pendingRelease'];
+  /** Present only when the Section 3 Contractor cold-retry contract was exercised. */
+  attempts?: CertAttempt[];
 };
 
 const GRAIN: Record<string, number> = { zip: 4, city: 3, county: 2, state: 1, region: 0 };
@@ -61,6 +87,7 @@ const A: AcceptableOutcomeClass = 'SOURCE_BACKED_RESULT', B: AcceptableOutcomeCl
 
 const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const isAcceptable = (cls: OutcomeClass) => (OUTCOME_CLASSES as readonly string[]).includes(cls);
 
 function geo(g: { kind?: string; type?: string; display?: string; value?: string; stateCode?: string; county?: string; city?: string; meaning?: string } | undefined): CertGeography | undefined {
   if (!g) return undefined;
@@ -151,28 +178,128 @@ function classifyName(n: NameCandidateResponse): { cls: OutcomeClass; detail: st
   return { cls: C, detail: `NAME_CANDIDATES zero with unsupported/restricted hubs: ${[...n.coverage.unsupportedHubs, ...n.coverage.policyRestrictedHubs].join(',')}` };
 }
 
+type Described = {
+  cls: OutcomeClass; detail: string; violations: string[]; disclosures: string[]; hrefs: string[];
+  vertical: string | null; offeredHubs: string[]; entity: string | null; identifier: CertRecord['identifier']; product: Record<string, string>;
+  geography: CertRecord['geography']; capability: string; resultState: string | null; resultShape: CertRecord['resultShape']; total: number | null;
+  choices: string[]; nextActions: CertRecord['nextActions']; destinations: string[]; failure: CertRecord['failure'];
+  consumerHeading: string; consumerMessage: string;
+};
+
+/** Everything the harness records about one guided session/result pair, plus all overlay detectors. */
+function describeGuided(entry: PackEntry, s: GuidedResearchSession, r: GuidedExecutionResult | undefined, routeDestinations: string[]): Described {
+  const violations: string[] = [];
+  const disclosures: string[] = [];
+  const hrefs: string[] = [...routeDestinations];
+  let { cls, detail } = classifyGuided(s, r, routeDestinations);
+  const vertical = s.hub ?? null;
+  const offeredHubs = s.hub ? [s.hub] : s.availableChoices.filter((c) => c.value.startsWith('hub:')).map((c) => c.value.slice(4));
+  const entity = s.identityName ?? null; const identifier = s.identifier ?? null;
+  const capability = `guided:${s.hub ?? 'multi-hub'}${s.insuranceResearchMode ? ':' + s.insuranceResearchMode : s.lenderResearchMode ? ':' + s.lenderResearchMode : s.investorResearchMode ? ':' + s.investorResearchMode : s.moveMode ? ':' + s.moveMode : s.providerClass ? ':' + s.providerClass : s.trade ? ':' + s.trade : ''}`;
+  const resultState = r?.resultState ?? null; const resultShape: CertRecord['resultShape'] = r ? (r.rows.length ? 'ROWS' : 'ZERO') : 'NONE'; const total = r ? r.total : null;
+  const choices = s.availableChoices.map((c) => c.value);
+  const nextActions = (r?.nextActions ?? s.nextActions).map((a) => ({ type: a.type, label: a.label, href: a.href, value: a.value }));
+  const destinations = r?.destinations.map((d) => d.href) ?? [];
+  hrefs.push(...destinations, ...nextActions.map((a) => a.href).filter((h): h is string => Boolean(h)), ...(r?.rows ?? []).map((row) => row.destination?.href).filter((h): h is string => Boolean(h)));
+  const geography: CertRecord['geography'] = {
+    requested: geo(s.executionScope.normalizedRequestedGeography ?? s.executionScope.requestedGeography),
+    executed: geo(s.executionScope.executionGeography),
+    session: geo(s.geography),
+    resolutionState: s.executionScope.resolutionState,
+  };
+  const failure: CertRecord['failure'] = { kind: null };
+  if (r?.error) { failure.code = r.error.code; failure.kind = r.resultState === 'TIMEOUT' ? 'timeout' : r.resultState === 'BACKEND_UNAVAILABLE' ? 'unavailable' : 'unsupported'; failure.message = r.consumerMessage; }
+  disclosures.push(text(r?.consumerHeading), text(r?.consumerMessage), ...(r?.limitations ?? []), ...(r?.interpretation ?? []).map((i) => `${i.label}: ${i.value}`), text(s.nextAction), text(s.geography?.meaning), text(s.executionScope.disclosure), ...(r?.rows ?? []).slice(0, 3).map((row) => row.whyShown), r?.error?.code ? `limitation code: ${r.error.code}` : '');
+
+  // WRONG_VERTICAL
+  if (typeof entry.expectedVertical === 'string' && s.hub && s.hub !== entry.expectedVertical) { cls = 'WRONG_VERTICAL'; detail = `expected ${entry.expectedVertical}, routed to ${s.hub}`; }
+  if (Array.isArray(entry.expectedVertical) && !s.hub && !entry.expectedVertical.every((h) => offeredHubs.includes(h))) { cls = 'WRONG_VERTICAL'; detail = `multi-hub picker must offer ${entry.expectedVertical.join('+')}, offered ${offeredHubs.join('+')}`; }
+  if (typeof entry.expectedVertical === 'string' && !s.hub && cls === B && !offeredHubs.includes(entry.expectedVertical)) { cls = 'WRONG_VERTICAL'; detail = `expected ${entry.expectedVertical} to be a single hub or among offered hubs (${offeredHubs.join('+')})`; }
+  // WHOLE_SENTENCE_AS_ENTITY
+  if (entity && norm(entity) === norm(entry.query) && /^(?:is|are|was|were|verify|check|find|research|who|what|does|do|can|should)\b/i.test(entry.query)) { cls = 'WHOLE_SENTENCE_AS_ENTITY'; detail = `entity "${entity}" is the whole sentence`; }
+  if (entry.expectedEntityContains && !(entity ?? '').toLowerCase().includes(entry.expectedEntityContains)) violations.push(`ENTITY: expected entity to contain "${entry.expectedEntityContains}", got "${entity ?? ''}"`);
+  // WRONG_IDENTIFIER_CLASS
+  if (entry.expectedIdentifierType && (identifier?.type ?? '').toLowerCase() !== entry.expectedIdentifierType.toLowerCase()) { cls = 'WRONG_IDENTIFIER_CLASS'; detail = `expected identifier type ${entry.expectedIdentifierType}, got ${identifier?.type ?? 'none'}`; }
+  // FALSE_NO_MATCH: only a genuine source-backed zero counts -- a timeout/outage/unsupported state is its own class.
+  if (entry.expectMatch && r && resultShape === 'ZERO' && (r.resultState === 'ZERO_MATCHING_ROWS' || r.resultState === 'NO_CONFIDENT_MATCH')) { cls = 'FALSE_NO_MATCH'; detail = `known entity/identifier returned ${r.resultState} with zero rows`; }
+  // FABRICATED_LOCAL_SCOPE: executed grain coarser than requested must be disclosed as such.
+  const req = geography.requested, exe = geography.executed;
+  if (r && resultShape === 'ROWS' && req?.kind && exe?.kind && (GRAIN[req.kind] ?? 0) > (GRAIN[exe.kind] ?? 0)) {
+    const labels = (r.interpretation ?? []).map((i) => i.label.toLowerCase());
+    const disclosed = (labels.some((l) => /you asked/.test(l)) && labels.some((l) => /research executed|selected research scope/.test(l))) || (req.display ? r.consumerMessage.includes(req.display) : false) || r.limitations.some((l) => req.display ? l.includes(req.display) : false);
+    if (!disclosed) { cls = 'FABRICATED_LOCAL_SCOPE'; detail = `requested ${req.kind} (${req.display}) but executed ${exe.kind} (${exe.display}) without disclosure`; }
+  }
+  if (s.hub === 'insurance' && s.insuranceResearchMode === 'local_directory_handoff' && r?.resultState === 'SUPPORTED_RESULTS' && !/recorded (?:directory )?address|not a confirmed service area/i.test(r.consumerMessage)) { cls = 'FABRICATED_LOCAL_SCOPE'; detail = 'insurance local-directory rows without the recorded-address disclosure'; }
+  // Geography expectations (structural, on the plan/session -- execution may legitimately broaden).
+  const g = geography.requested ?? geography.session;
+  if (entry.expectedGeography?.stateCode && g?.stateCode !== entry.expectedGeography.stateCode) violations.push(`GEOGRAPHY: expected state ${entry.expectedGeography.stateCode}, got ${g?.stateCode ?? 'none'}`);
+  if (entry.expectedGeography?.county && ![geography.requested?.county, geography.session?.county].includes(entry.expectedGeography.county)) violations.push(`GEOGRAPHY: expected county ${entry.expectedGeography.county}, got ${geography.requested?.county ?? geography.session?.county ?? 'none'}`);
+  if (entry.expectedGeography?.city && ![geography.requested?.city, geography.session?.city].includes(entry.expectedGeography.city)) violations.push(`GEOGRAPHY: expected city ${entry.expectedGeography.city}, got ${geography.requested?.city ?? geography.session?.city ?? 'none'}`);
+  const product = productOf(s);
+  for (const [k, v] of Object.entries(entry.expectedProduct ?? {})) if (product[k] !== v) violations.push(`PRODUCT: expected ${k}=${v}, got ${product[k] ?? 'none'}`);
+  // Section 4 source-grain rules apply whenever the hub returned rows.
+  if (s.hub && resultShape === 'ROWS') for (const rule of SOURCE_GRAIN_RULES[s.hub as SpecialistHubId] ?? []) if (!disclosures.some((d) => rule.pattern.test(d))) violations.push(`SOURCE_GRAIN: ${s.hub} rows shown without "${rule.rule}" disclosure`);
+
+  return { cls, detail, violations, disclosures, hrefs, vertical, offeredHubs, entity, identifier, product, geography, capability, resultState, resultShape, total, choices, nextActions, destinations, failure, consumerHeading: text(r?.consumerHeading), consumerMessage: text(r?.consumerMessage) };
+}
+
+function toAttempt(attempt: number, latencyMs: number, d: Described): CertAttempt {
+  return { attempt, latencyMs, outcomeClass: d.cls, classDetail: d.detail, resultState: d.resultState, resultShape: d.resultShape, total: d.total, vertical: d.vertical, product: d.product, identifier: d.identifier, geography: { requested: d.geography.requested, executed: d.geography.executed, session: d.geography.session }, nextActionTypes: d.nextActions.map((a) => a.type), consumerHeading: d.consumerHeading, consumerMessage: d.consumerMessage, failureCode: d.failure.code ?? null, violations: d.violations };
+}
+
+/**
+ * Section 3 -- the Contractor cold first-touch acceptance rule. Pure so it can be unit-tested.
+ *
+ * A first-touch TIMEOUT on a supported Contractor query may be KNOWN_LIMITATION -- and still permit
+ * GREEN -- only if ALL hold: (1) vertical is contractor, (2) trade/identifier interpretation correct,
+ * (3) geography correct, (4) the timeout was not converted into a zero-result, (5) the UI explicitly
+ * reports the timeout, (6) a RETRY (or equivalent safe next action) is present, (7) the single bounded
+ * retry succeeds, (8) the retry's result semantics/source grain are correct, (9) no invalid session or
+ * broken handoff occurred. Two consecutive failures, a zero-result conversion, or a wrong
+ * trade/geography are FAIL.
+ */
+export function evaluateColdRetry(entry: PackEntry, first: CertAttempt, retry: CertAttempt | null): { status: CertStatus; reason: string } {
+  const fail = (reason: string) => ({ status: 'FAIL' as const, reason: `cold-retry contract: ${reason}` });
+  if (entry.hub !== 'contractor' || !entry.knownLimitation || !COLD_RETRY_LIMITATIONS.has(entry.knownLimitation)) return fail('exception is limited to Contractor entries frozen under the cold first-touch / identifier cold-timeout limitations');
+  if (first.outcomeClass !== 'TECHNICAL_TIMEOUT') return fail(`first attempt was ${first.outcomeClass}, not a TIMEOUT`);
+  if (first.vertical !== 'contractor') return fail(`(1) vertical was ${first.vertical ?? 'none'}`);
+  const interpretationViolations = first.violations.filter((v) => /^(?:PRODUCT|GEOGRAPHY|ENTITY):/.test(v));
+  if (interpretationViolations.length) return fail(`(2/3) interpretation wrong before the timeout: ${interpretationViolations.join(' | ')}`);
+  if (entry.expectedIdentifierType && (first.identifier?.type ?? '').toLowerCase() !== entry.expectedIdentifierType.toLowerCase()) return fail(`(2) identifier not recognized as ${entry.expectedIdentifierType}`);
+  if (first.resultState !== 'TIMEOUT' || first.total !== 0 && first.total !== null) return fail(`(4) timeout state was reported as ${first.resultState} total=${first.total}`);
+  if (first.resultState === 'TIMEOUT' && first.resultShape === 'ROWS') return fail('(4) timeout carried rows');
+  if (!/timeout|took too long|timed out/i.test(`${first.consumerHeading} ${first.consumerMessage} ${first.failureCode ?? ''}`)) return fail('(5) UI does not explicitly report a technical timeout');
+  if (!first.nextActionTypes.includes('RETRY') && !first.nextActionTypes.includes('OPEN_TRUSTHUB_DESTINATION')) return fail('(6) no RETRY / safe next action offered');
+  if (!retry) return fail('(7) no bounded retry was possible');
+  if (retry.outcomeClass === 'TECHNICAL_TIMEOUT') return fail('(7) two consecutive bounded attempts timed out');
+  if (retry.outcomeClass === 'INVALID_GUIDED_SESSION' || retry.outcomeClass === 'BROKEN_HANDOFF') return fail(`(9) retry produced ${retry.outcomeClass}: ${retry.classDetail}`);
+  if (retry.resultShape === 'ZERO' && (retry.resultState === 'ZERO_MATCHING_ROWS' || retry.resultState === 'NO_CONFIDENT_MATCH')) return fail(`(4) retry converted the cold path into a zero-result (${retry.resultState})`);
+  if (!isAcceptable(retry.outcomeClass) || !entry.accept.includes(retry.outcomeClass as AcceptableOutcomeClass)) return fail(`(7) retry ended in ${retry.outcomeClass} (${retry.classDetail}), not in accepted [${entry.accept.join(', ')}]`);
+  if (retry.violations.length) return fail(`(8) retry violations: ${retry.violations.join(' | ')}`);
+  if (retry.vertical !== 'contractor') return fail(`(1) retry vertical was ${retry.vertical ?? 'none'}`);
+  return { status: 'KNOWN_LIMITATION', reason: `${entry.knownLimitation}: first touch TIMEOUT after ${first.latencyMs}ms with explicit timeout disclosure + RETRY; bounded retry succeeded (${retry.outcomeClass}: ${retry.classDetail}) in ${retry.latencyMs}ms with correct interpretation and source grain` };
+}
+
+function decideStatus(entry: PackEntry, cls: OutcomeClass, violations: string[]): { status: CertStatus; reason: string } {
+  if (isAcceptable(cls) && entry.accept.includes(cls as AcceptableOutcomeClass) && !violations.length) return { status: 'PASS', reason: entry.knownLimitation ? `acceptable (${cls}); known limitation ${entry.knownLimitation} honestly disclosed` : `acceptable (${cls})` };
+  if ((entry.tolerate as readonly OutcomeClass[] | undefined)?.includes(cls) && !violations.length) return { status: 'KNOWN_LIMITATION', reason: `${cls} tolerated under ${entry.knownLimitation}` };
+  return { status: 'FAIL', reason: violations.length ? violations.join(' | ') : `${cls} not in accepted [${entry.accept.join(', ')}]` };
+}
+
 export async function runCertQuery(entry: PackEntry, options: { mode?: CertMode } = {}): Promise<CertRecord> {
   const mode = options.mode ?? certMode();
   const raw = await runPageOrder(entry.query);
   const s = raw.session, r = raw.result, n = raw.name;
-  const violations: string[] = [];
-  const disclosures: string[] = [];
-  const hrefs: string[] = [...raw.routeDestinations];
-  let cls: OutcomeClass, detail: string;
-  let vertical: string | null = null, offeredHubs: string[] = [], entity: string | null = null, identifier: CertRecord['identifier'] = null;
-  let capability: string = raw.surface, resultState: string | null = null, resultShape: CertRecord['resultShape'] = 'NONE', total: number | null = null;
-  let choices: string[] = [], nextActions: CertRecord['nextActions'] = [], destinations: string[] = [];
-  const geography: CertRecord['geography'] = {};
-  const failure: CertRecord['failure'] = { kind: null };
+  let d: Described;
+  let attempts: CertAttempt[] | undefined;
 
   if (raw.surface === 'NAME_CANDIDATES' && n) {
-    ({ cls, detail } = classifyName(n));
+    const { cls: cls0, detail: detail0 } = classifyName(n);
+    let cls = cls0, detail = detail0;
+    const violations: string[] = [], disclosures: string[] = [], hrefs: string[] = [...raw.routeDestinations], destinations: string[] = [];
     const withCandidates = n.hubs.filter((h) => h.candidates.length).map((h) => h.hub);
-    vertical = withCandidates.join('+') || null; offeredHubs = n.coverage.searchedHubs; entity = n.request.name;
-    capability = `name-candidates:${n.request.hubScope}`; resultState = 'NAME_CANDIDATES'; resultShape = n.candidateCount ? 'ROWS' : 'ZERO'; total = n.candidateCount;
     for (const h of n.hubs) {
       if (h.message) disclosures.push(`${h.hub}: ${h.message}`);
-      if (h.state === 'TECHNICAL_FAILURE') failure.kind = h.failureKind === 'timeout' ? 'timeout' : 'unavailable';
       for (const c of h.candidates) {
         if (c.action) { hrefs.push(c.action.href); destinations.push(c.action.href); }
         if (c.locationMeaning) disclosures.push(`${h.hub}: ${c.locationMeaning}`);
@@ -182,94 +309,61 @@ export async function runCertQuery(entry: PackEntry, options: { mode?: CertMode 
     }
     if (typeof entry.expectedVertical === 'string' && n.candidateCount > 0 && !withCandidates.includes(entry.expectedVertical)) { cls = 'WRONG_VERTICAL'; detail = `expected ${entry.expectedVertical} among candidate hubs, got ${withCandidates.join('+') || 'none'}`; }
     if (entry.expectMatch && n.candidateCount === 0) { cls = 'FALSE_NO_MATCH'; detail = 'a known entity returned zero name candidates'; }
+    const failed = n.hubs.find((h) => h.state === 'TECHNICAL_FAILURE');
+    d = { cls, detail, violations, disclosures, hrefs, vertical: withCandidates.join('+') || null, offeredHubs: n.coverage.searchedHubs, entity: n.request.name, identifier: null, product: {}, geography: {}, capability: `name-candidates:${n.request.hubScope}`, resultState: 'NAME_CANDIDATES', resultShape: n.candidateCount ? 'ROWS' : 'ZERO', total: n.candidateCount, choices: [], nextActions: [], destinations, failure: { kind: failed ? (failed.failureKind === 'timeout' ? 'timeout' : 'unavailable') : null }, consumerHeading: '', consumerMessage: '' };
   } else if (raw.surface === 'JOURNEY') {
-    offeredHubs = raw.journeyHubs ?? []; capability = 'journey';
-    ({ cls, detail } = raw.routeDestinations.length ? { cls: B, detail: `JOURNEY ${offeredHubs.join('>')}` } : { cls: 'BROKEN_HANDOFF', detail: 'journey with no step destinations' });
-    destinations = raw.routeDestinations;
-  } else if (raw.surface === 'SECURITIES_REFUSAL') {
-    ({ cls, detail } = { cls: C, detail: 'securities-advice refusal' }); destinations = raw.routeDestinations;
-  } else if (raw.surface === 'NETWORK_ASK' || raw.surface === 'ROUTE_CARD_ONLY') {
-    destinations = raw.routeDestinations;
-    ({ cls, detail } = raw.routeDestinations.length ? { cls: raw.surface === 'NETWORK_ASK' ? B : C, detail: `${raw.surface}: ${raw.routeStatus}` } : { cls: 'BROKEN_HANDOFF', detail: `${raw.surface} with no destinations` });
+    const offeredHubs = raw.journeyHubs ?? [];
+    const c = raw.routeDestinations.length ? { cls: B, detail: `JOURNEY ${offeredHubs.join('>')}` } : { cls: 'BROKEN_HANDOFF' as const, detail: 'journey with no step destinations' };
+    d = { ...c, violations: [], disclosures: [], hrefs: [...raw.routeDestinations], vertical: null, offeredHubs, entity: null, identifier: null, product: {}, geography: {}, capability: 'journey', resultState: null, resultShape: 'NONE', total: null, choices: [], nextActions: [], destinations: raw.routeDestinations, failure: { kind: null }, consumerHeading: '', consumerMessage: '' };
+  } else if (raw.surface === 'SECURITIES_REFUSAL' || raw.surface === 'NETWORK_ASK' || raw.surface === 'ROUTE_CARD_ONLY') {
+    const c = raw.surface === 'SECURITIES_REFUSAL' ? { cls: C, detail: 'securities-advice refusal' } : raw.routeDestinations.length ? { cls: raw.surface === 'NETWORK_ASK' ? B : C, detail: `${raw.surface}: ${raw.routeStatus}` } : { cls: 'BROKEN_HANDOFF' as const, detail: `${raw.surface} with no destinations` };
+    d = { ...c, violations: [], disclosures: [], hrefs: [...raw.routeDestinations], vertical: null, offeredHubs: [], entity: null, identifier: null, product: {}, geography: {}, capability: raw.surface, resultState: null, resultShape: 'NONE', total: null, choices: [], nextActions: [], destinations: raw.routeDestinations, failure: { kind: null }, consumerHeading: '', consumerMessage: '' };
   } else if (raw.surface === 'THREW' || !s) {
-    ({ cls, detail } = { cls: 'INVALID_GUIDED_SESSION', detail: `threw ${raw.thrown ?? 'unknown'}` }); failure.kind = 'thrown'; failure.message = raw.thrown;
+    d = { cls: 'INVALID_GUIDED_SESSION', detail: `threw ${raw.thrown ?? 'unknown'}`, violations: [], disclosures: [], hrefs: [], vertical: null, offeredHubs: [], entity: null, identifier: null, product: {}, geography: {}, capability: 'THREW', resultState: null, resultShape: 'NONE', total: null, choices: [], nextActions: [], destinations: [], failure: { kind: 'thrown', message: raw.thrown }, consumerHeading: '', consumerMessage: '' };
   } else {
-    ({ cls, detail } = classifyGuided(s, r, raw.routeDestinations));
-    vertical = s.hub ?? null; offeredHubs = s.hub ? [s.hub] : s.availableChoices.filter((c) => c.value.startsWith('hub:')).map((c) => c.value.slice(4));
-    entity = s.identityName ?? null; identifier = s.identifier ?? null;
-    capability = `guided:${s.hub ?? 'multi-hub'}${s.insuranceResearchMode ? ':' + s.insuranceResearchMode : s.lenderResearchMode ? ':' + s.lenderResearchMode : s.investorResearchMode ? ':' + s.investorResearchMode : s.moveMode ? ':' + s.moveMode : s.providerClass ? ':' + s.providerClass : s.trade ? ':' + s.trade : ''}`;
-    resultState = r?.resultState ?? null; resultShape = r ? (r.rows.length ? 'ROWS' : 'ZERO') : 'NONE'; total = r ? r.total : null;
-    choices = s.availableChoices.map((c) => c.value);
-    nextActions = (r?.nextActions ?? s.nextActions).map((a) => ({ type: a.type, label: a.label, href: a.href, value: a.value }));
-    destinations = r?.destinations.map((d) => d.href) ?? [];
-    hrefs.push(...destinations, ...nextActions.map((a) => a.href).filter((h): h is string => Boolean(h)), ...(r?.rows ?? []).map((row) => row.destination?.href).filter((h): h is string => Boolean(h)));
-    geography.requested = geo(s.executionScope.normalizedRequestedGeography ?? s.executionScope.requestedGeography);
-    geography.executed = geo(s.executionScope.executionGeography);
-    geography.session = geo(s.geography);
-    geography.resolutionState = s.executionScope.resolutionState;
-    if (r?.error) { failure.code = r.error.code; failure.kind = r.resultState === 'TIMEOUT' ? 'timeout' : r.resultState === 'BACKEND_UNAVAILABLE' ? 'unavailable' : 'unsupported'; failure.message = r.consumerMessage; }
-    disclosures.push(text(r?.consumerHeading), text(r?.consumerMessage), ...(r?.limitations ?? []), ...(r?.interpretation ?? []).map((i) => `${i.label}: ${i.value}`), text(s.nextAction), text(s.geography?.meaning), text(s.executionScope.disclosure), ...(r?.rows ?? []).slice(0, 3).map((row) => row.whyShown), r?.error?.code ? `limitation code: ${r.error.code}` : '');
-
-    // WRONG_VERTICAL
-    if (typeof entry.expectedVertical === 'string' && s.hub && s.hub !== entry.expectedVertical) { cls = 'WRONG_VERTICAL'; detail = `expected ${entry.expectedVertical}, routed to ${s.hub}`; }
-    if (Array.isArray(entry.expectedVertical) && !s.hub && !entry.expectedVertical.every((h) => offeredHubs.includes(h))) { cls = 'WRONG_VERTICAL'; detail = `multi-hub picker must offer ${entry.expectedVertical.join('+')}, offered ${offeredHubs.join('+')}`; }
-    if (typeof entry.expectedVertical === 'string' && !s.hub && cls === B && !offeredHubs.includes(entry.expectedVertical)) { cls = 'WRONG_VERTICAL'; detail = `expected ${entry.expectedVertical} to be a single hub or among offered hubs (${offeredHubs.join('+')})`; }
-    // WHOLE_SENTENCE_AS_ENTITY
-    if (entity && norm(entity) === norm(entry.query) && /^(?:is|are|was|were|verify|check|find|research|who|what|does|do|can|should)\b/i.test(entry.query)) { cls = 'WHOLE_SENTENCE_AS_ENTITY'; detail = `entity "${entity}" is the whole sentence`; }
-    if (entry.expectedEntityContains && !(entity ?? '').toLowerCase().includes(entry.expectedEntityContains)) violations.push(`ENTITY: expected entity to contain "${entry.expectedEntityContains}", got "${entity ?? ''}"`);
-    // WRONG_IDENTIFIER_CLASS
-    if (entry.expectedIdentifierType && (identifier?.type ?? '').toLowerCase() !== entry.expectedIdentifierType.toLowerCase()) { cls = 'WRONG_IDENTIFIER_CLASS'; detail = `expected identifier type ${entry.expectedIdentifierType}, got ${identifier?.type ?? 'none'}`; }
-    // FALSE_NO_MATCH: only a genuine source-backed zero counts -- a timeout/outage/unsupported state is its own class.
-    if (entry.expectMatch && r && resultShape === 'ZERO' && (r.resultState === 'ZERO_MATCHING_ROWS' || r.resultState === 'NO_CONFIDENT_MATCH')) { cls = 'FALSE_NO_MATCH'; detail = `known entity/identifier returned ${r.resultState} with zero rows`; }
-    // FABRICATED_LOCAL_SCOPE: executed grain coarser than requested must be disclosed as such.
-    const req = geography.requested, exe = geography.executed;
-    if (r && resultShape === 'ROWS' && req?.kind && exe?.kind && (GRAIN[req.kind] ?? 0) > (GRAIN[exe.kind] ?? 0)) {
-      const labels = (r.interpretation ?? []).map((i) => i.label.toLowerCase());
-      const disclosed = (labels.some((l) => /you asked/.test(l)) && labels.some((l) => /research executed|selected research scope/.test(l))) || (req.display ? r.consumerMessage.includes(req.display) : false) || r.limitations.some((l) => req.display ? l.includes(req.display) : false);
-      if (!disclosed) { cls = 'FABRICATED_LOCAL_SCOPE'; detail = `requested ${req.kind} (${req.display}) but executed ${exe.kind} (${exe.display}) without disclosure`; }
+    d = describeGuided(entry, s, r, raw.routeDestinations);
+    // Section 3: exactly one bounded retry, only on a supported Contractor first-touch TIMEOUT.
+    if (d.cls === 'TECHNICAL_TIMEOUT' && entry.hub === 'contractor' && entry.knownLimitation && COLD_RETRY_LIMITATIONS.has(entry.knownLimitation) && r) {
+      const first = toAttempt(1, raw.latencyMs, d);
+      const started = performance.now();
+      let second: Described | null = null;
+      try {
+        const retried = await orchestrateGuidedResearch({ session: s, action: { type: 'EXECUTE' } });
+        second = describeGuided(entry, retried.session, retried.result, raw.routeDestinations);
+      } catch (error) {
+        second = { ...d, cls: 'INVALID_GUIDED_SESSION', detail: `retry threw ${error instanceof Error ? error.message : String(error)}`, violations: [] };
+      }
+      attempts = [first, toAttempt(2, Math.round(performance.now() - started), second)];
+      d = second;
     }
-    if (s.hub === 'insurance' && s.insuranceResearchMode === 'local_directory_handoff' && r?.resultState === 'SUPPORTED_RESULTS' && !/recorded (?:directory )?address|not a confirmed service area/i.test(r.consumerMessage)) { cls = 'FABRICATED_LOCAL_SCOPE'; detail = 'insurance local-directory rows without the recorded-address disclosure'; }
-    // Geography expectations (structural, on the plan/session -- execution may legitimately broaden).
-    const g = geography.requested ?? geography.session;
-    if (entry.expectedGeography?.stateCode && g?.stateCode !== entry.expectedGeography.stateCode) violations.push(`GEOGRAPHY: expected state ${entry.expectedGeography.stateCode}, got ${g?.stateCode ?? 'none'}`);
-    if (entry.expectedGeography?.county && ![geography.requested?.county, geography.session?.county].includes(entry.expectedGeography.county)) violations.push(`GEOGRAPHY: expected county ${entry.expectedGeography.county}, got ${geography.requested?.county ?? geography.session?.county ?? 'none'}`);
-    if (entry.expectedGeography?.city && ![geography.requested?.city, geography.session?.city].includes(entry.expectedGeography.city)) violations.push(`GEOGRAPHY: expected city ${entry.expectedGeography.city}, got ${geography.requested?.city ?? geography.session?.city ?? 'none'}`);
-    const product = productOf(s);
-    for (const [k, v] of Object.entries(entry.expectedProduct ?? {})) if (product[k] !== v) violations.push(`PRODUCT: expected ${k}=${v}, got ${product[k] ?? 'none'}`);
-    // Section 4 source-grain rules apply whenever the hub returned rows.
-    if (s.hub && resultShape === 'ROWS') for (const rule of SOURCE_GRAIN_RULES[s.hub as SpecialistHubId] ?? []) if (!disclosures.some((d) => rule.pattern.test(d))) violations.push(`SOURCE_GRAIN: ${s.hub} rows shown without "${rule.rule}" disclosure`);
   }
 
-  const joined = disclosures.filter(Boolean).join('\n');
+  const joined = d.disclosures.filter(Boolean).join('\n');
   // Forbidden claims are AFFIRMATIVE claims: a sentence that negates them ("does not mean this agency
   // serves every customer", "missing evidence is not a clean history") is exactly the disclosure we want.
   const affirmative = joined.split(/(?<=[.;!?])\s+|\n/).filter((sentence) => !/\b(?:not|never|no|isn'?t|doesn'?t|don'?t|cannot|can'?t|rather than|instead of)\b/i.test(sentence));
   for (const claim of FORBIDDEN_CLAIMS) {
     const hit = affirmative.find((sentence) => claim.pattern.test(sentence));
     if (!hit) continue;
-    if (claim.code) { cls = claim.code; detail = `${claim.rule}: "${hit.match(claim.pattern)?.[0]}"`; } else violations.push(`SOURCE_GRAIN: ${claim.rule} -- "${hit.match(claim.pattern)?.[0]}"`);
+    if (claim.code) { d.cls = claim.code; d.detail = `${claim.rule}: "${hit.match(claim.pattern)?.[0]}"`; } else d.violations.push(`SOURCE_GRAIN: ${claim.rule} -- "${hit.match(claim.pattern)?.[0]}"`);
   }
-  const handoff = hrefViolations([...new Set(hrefs)]);
-  violations.push(...handoff);
-  if (handoff.length && (OUTCOME_CLASSES as readonly string[]).includes(cls)) { cls = 'BROKEN_HANDOFF'; detail = handoff[0]; }
-  if (entry.requiredDisclosure && !entry.requiredDisclosure.test(joined) && !(entry.knownLimitation === 'CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP')) {
-    // A known limitation only stays "known" while it is honestly disclosed on the surface.
-    if (cls === 'TECHNICAL_TIMEOUT' && entry.pendingRelease) { /* timeout pre-empted the disclosure; pending-release handling decides */ }
-    else violations.push(`DISCLOSURE: known limitation ${entry.knownLimitation} is no longer disclosed (expected ${entry.requiredDisclosure})`);
-  }
+  const handoff = hrefViolations([...new Set(d.hrefs)]);
+  d.violations.push(...handoff);
+  if (handoff.length && isAcceptable(d.cls)) { d.cls = 'BROKEN_HANDOFF'; d.detail = handoff[0]; }
+  // A known limitation only stays "known" while it is honestly disclosed on the surface.
+  if (entry.requiredDisclosure && !entry.requiredDisclosure.test(joined)) d.violations.push(`DISCLOSURE: known limitation ${entry.knownLimitation} is no longer disclosed (expected ${entry.requiredDisclosure})`);
 
-  const acceptable = (OUTCOME_CLASSES as readonly string[]).includes(cls);
-  let status: CertStatus, statusReason: string;
-  if (acceptable && entry.accept.includes(cls as AcceptableOutcomeClass) && !violations.length) { status = 'PASS'; statusReason = entry.knownLimitation ? `acceptable (${cls}); known limitation ${entry.knownLimitation} honestly disclosed` : `acceptable (${cls})`; }
-  else if (entry.tolerate?.includes(cls) && !violations.length) { status = 'KNOWN_LIMITATION'; statusReason = `${cls} tolerated under ${entry.knownLimitation}`; }
-  else if (mode === 'prep' && entry.tolerateUntilRelease?.includes(cls) && !violations.filter((v) => !v.startsWith('DISCLOSURE')).length) { status = 'PENDING_RELEASE'; statusReason = `${cls} tolerated in prep mode pending ${entry.pendingRelease}`; }
-  else { status = 'FAIL'; statusReason = violations.length ? violations.join(' | ') : `${cls} not in accepted [${entry.accept.join(', ')}]`; }
+  const decided = attempts ? evaluateColdRetry(entry, attempts[0], attempts[1]) : decideStatus(entry, d.cls, d.violations);
+  const status: CertStatus = attempts && d.violations.length && decided.status !== 'FAIL' ? 'FAIL' : decided.status;
+  const statusReason = status === decided.status ? decided.reason : `${decided.reason}; but retry violations: ${d.violations.join(' | ')}`;
 
   return {
-    id: entry.id, query: entry.query, hub: entry.hub, kind: entry.kind, mode, checkedAt: new Date().toISOString(), latencyMs: raw.latencyMs,
-    surface: raw.surface, vertical, offeredHubs, entity, identifier, product: productOf(s), geography, capability, resultState, resultShape, total,
-    choices, nextActions, destinations, failure, disclosures: disclosures.filter(Boolean), outcomeClass: cls, classDetail: detail, violations, status, statusReason,
-    knownLimitation: entry.knownLimitation, limitationHub: entry.limitationHub, pendingRelease: entry.pendingRelease,
+    id: entry.id, query: entry.query, hub: entry.hub, kind: entry.kind, mode, checkedAt: new Date().toISOString(), latencyMs: raw.latencyMs + (attempts?.[1]?.latencyMs ?? 0),
+    surface: raw.surface, vertical: d.vertical, offeredHubs: d.offeredHubs, entity: d.entity, identifier: d.identifier, product: d.product, geography: d.geography, capability: d.capability,
+    resultState: d.resultState, resultShape: d.resultShape, total: d.total, choices: d.choices, nextActions: d.nextActions, destinations: d.destinations,
+    failure: attempts ? { kind: 'timeout', code: attempts[0].failureCode ?? 'timeout', message: `first touch ${attempts[0].consumerHeading}; retry ${attempts[1].outcomeClass}` } : d.failure,
+    disclosures: d.disclosures.filter(Boolean), outcomeClass: d.cls, classDetail: d.detail, violations: d.violations, status, statusReason,
+    knownLimitation: entry.knownLimitation, limitationHub: entry.limitationHub, attempts,
   };
 }
 

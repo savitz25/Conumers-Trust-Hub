@@ -3,10 +3,13 @@
  *
  * Every query here is a real consumer phrasing observed during Founder production testing or an
  * already-certified R1 control; none is a synthetic developer-only case. Each must end in exactly
- * one ACCEPTABLE outcome class (see OUTCOME_CLASSES). Known honest limitations (Section 5 of the
- * ticket) are tolerated in every mode as long as they remain honestly disclosed; items that are
- * pending a release (Contractor cold-path / Ask PR #194) are tolerated ONLY in `prep` mode and
- * become blocking in `final` mode.
+ * one ACCEPTABLE outcome class (see OUTCOME_CLASSES). Known honest limitations are tolerated only
+ * while they remain honestly disclosed; a known limitation never makes false evidence acceptable.
+ *
+ * POST-R1-FINAL-CERT-001: the two "pending release" dependencies the prep pack carried
+ * (Contractor cold-path stabilization, Ask PR #194) were deliberately CLOSED WITHOUT RELEASE. The
+ * Contractor cold first-touch behavior is now a frozen known limitation governed by the strict
+ * Section 3 acceptance rule in runner.ts (`evaluateColdRetry`), not a blanket tolerance.
  *
  * Counts are recorded, never asserted -- the pack is structural on purpose.
  */
@@ -34,6 +37,7 @@ export const UNACCEPTABLE_CLASSES = [
 export type UnacceptableOutcomeClass = (typeof UNACCEPTABLE_CLASSES)[number];
 export type OutcomeClass = AcceptableOutcomeClass | UnacceptableOutcomeClass;
 
+/** `prep` = dry run (identical gate, but the matrix verdict is never GREEN); `final` = certification run. */
 export const CERT_MODES = ['prep', 'final'] as const;
 export type CertMode = (typeof CERT_MODES)[number];
 export function certMode(): CertMode {
@@ -50,16 +54,13 @@ export const KNOWN_LIMITATIONS = {
   HOME_HEALTH_COUNTY_SERVICE_AREA: 'Home Health county-grain execution is unsupported by the specialist contract; office geography is not patient service area, and the state-level broadening is offered as an explicit consent action.',
   INSURANCE_JACKSONVILLE_CROSSWALK_GAP: 'Jacksonville is not in the Florida municipality crosswalk; "brightway insurance jacksonville" is searched whole as a name (entity + location are not decomposed) and reports an honest network miss rather than a fabricated match.',
   LENDER_MISSING_PUBLIC_DESTINATION: 'Some Lender rows have no deterministic public LenderTrustHub profile mapping; Ask omits the destination rather than name-matching loosely.',
-  CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP: 'Contractor exact-identifier lookups can exceed Ask\'s specialist budget on a cold Contractor path; tracked separately (Contractor cold-path stabilization).',
+  CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP: 'Contractor exact-identifier lookups can exceed Ask\'s specialist budget on a genuinely cold Contractor path. Deferred; not fixed in this sprint.',
+  CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY: 'Some large supported Contractor cohorts can exceed the normal response budget on a genuinely cold first access because thousands of physically scattered pages must be read (~15-22s measured; covering-index and set-based hydration work did not remove the physical I/O). Known, deliberately deferred performance limitation. Accepted ONLY under the strict Section 3 cold-retry rule.',
 } as const;
 export type KnownLimitationId = keyof typeof KNOWN_LIMITATIONS;
 
-/** Work still pending release when this pack was frozen. Tolerated in `prep` mode only. */
-export const PENDING_RELEASES = {
-  CONTRACTOR_COLD_PATH_STABILIZATION: 'ContractorTrustHub cold-path stabilization (Builder 2). First-touch Contractor requests can exceed Ask\'s specialist budget and surface as TIMEOUT.',
-  ASK_PR_194_TIMEOUT_FALLBACK: 'Ask PR #194 -- raise the internal Contractor budget 8000ms->10000ms and add a direct-Contractor fallback link on timeout.',
-} as const;
-export type PendingReleaseId = keyof typeof PENDING_RELEASES;
+/** The only limitations under which a Contractor first-touch TIMEOUT may be evaluated by the Section 3 cold-retry rule. */
+export const COLD_RETRY_LIMITATIONS: ReadonlySet<KnownLimitationId> = new Set<KnownLimitationId>(['CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY', 'CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP']);
 
 export type PackHub = SpecialistHubId | 'network';
 export type PackKind =
@@ -85,18 +86,19 @@ export type PackEntry = {
   knownLimitation?: KnownLimitationId;
   /** Hub the known limitation belongs to when the entry itself is a network-level query (matrix attribution only). */
   limitationHub?: SpecialistHubId;
-  /** Outcome classes tolerated (status KNOWN_LIMITATION) while the known limitation stays honestly disclosed. */
-  tolerate?: OutcomeClass[];
-  pendingRelease?: PendingReleaseId;
-  /** Outcome classes tolerated in `prep` mode only (status PENDING_RELEASE); blocking in `final` mode. */
-  tolerateUntilRelease?: OutcomeClass[];
+  /**
+   * Outcome classes tolerated (status KNOWN_LIMITATION) while the known limitation stays honestly disclosed.
+   * TECHNICAL_TIMEOUT is never listed here: a Contractor first-touch timeout is only ever evaluated by
+   * runner.ts's `evaluateColdRetry`, which requires a successful bounded retry.
+   */
+  tolerate?: Exclude<OutcomeClass, 'TECHNICAL_TIMEOUT' | 'FALSE_NO_MATCH' | 'FABRICATED_LOCAL_SCOPE' | 'SERVICE_TERRITORY_INFERENCE' | 'WRONG_VERTICAL' | 'INVALID_GUIDED_SESSION' | 'BROKEN_HANDOFF' | 'WRONG_IDENTIFIER_CLASS' | 'WHOLE_SENTENCE_AS_ENTITY'>[];
   /** Disclosure text that must be present for the known limitation to count as honestly disclosed. */
   requiredDisclosure?: RegExp;
   notes?: string;
 };
 
 const A = 'SOURCE_BACKED_RESULT', B = 'DETERMINISTIC_CLARIFICATION', C = 'HONEST_UNSUPPORTED_WITH_NEXT_ACTION', D = 'SOURCE_UNAVAILABLE_WITH_FAIL_CLOSED_NEXT_ACTION';
-const CONTRACTOR_PENDING = { pendingRelease: 'CONTRACTOR_COLD_PATH_STABILIZATION' as const, tolerateUntilRelease: ['TECHNICAL_TIMEOUT' as const] };
+const CONTRACTOR_COLD = { knownLimitation: 'CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY' as const };
 /** Pre-execution wording ("state-specific sources … not a CMS directory") or executed wording ("not supported by the accepted source … no provider cohort was substituted"). */
 const CMS_GAP_DISCLOSURE = /state-specific sources|not (?:a |part of the )?CMS|not supported by the accepted source|no (?:nursing-home|provider)[^.]*substituted/i;
 
@@ -111,11 +113,11 @@ export const QUERY_PACK: readonly PackEntry[] = [
   { id: 'INS-03', hub: 'insurance', kind: 'product_local', query: 'medicare supplement agent in ohio', expectedVertical: 'insurance', expectedGeography: { stateCode: 'OH' }, accept: [B, C], notes: 'Must stay Insurance-only ("Medicare" alone must never add SeniorTrustHub).' },
   { id: 'INS-04', hub: 'insurance', kind: 'multi_hub', query: 'is state farm licensed in texas', expectedVertical: ['insurance'], expectedGeography: { stateCode: 'TX' }, accept: [B], notes: 'Brand name with no vocabulary word: deterministic multi-hub picker (POST-R1-ASK-MULTIHUB-001). Choosing InsuranceTrustHub must not invalidate the session.' },
   // CONTRACTOR
-  { id: 'CON-01', hub: 'contractor', kind: 'cohort_local', query: 'general contractor in miami', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Miami-Dade' }, accept: [A], ...CONTRACTOR_PENDING },
-  { id: 'CON-02', hub: 'contractor', kind: 'cohort_local', query: 'roofers in broward', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Broward' }, accept: [A], ...CONTRACTOR_PENDING },
-  { id: 'CON-03', hub: 'contractor', kind: 'cohort_local', query: 'plumber in miami', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Miami-Dade' }, accept: [A], ...CONTRACTOR_PENDING },
-  { id: 'CON-04', hub: 'contractor', kind: 'identifier', query: 'verify contractor license CBC015082', expectedVertical: 'contractor', expectedIdentifierType: 'state_contractor_license', expectMatch: true, accept: [A], ...CONTRACTOR_PENDING, knownLimitation: 'CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP' },
-  { id: 'CON-05', hub: 'contractor', kind: 'product_local', query: 'licensed electrician in boca raton', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', city: 'Boca Raton' }, expectedProduct: { trade: 'electrical' }, accept: [A, B, C], knownLimitation: 'FL_ELECTRICAL_SOURCE_GAP', requiredDisclosure: /electrical-specific (?:florida )?(?:credential )?data is not available|unsupported_florida_electrical_source|does not include the separately regulated electrical credentials|no florida electrical source/i, ...CONTRACTOR_PENDING, notes: 'Two live variants, both honest: (i) clearly-labeled broader general/building rows when the fallback fetch completes, (ii) UNSUPPORTED_TRADE_CAPABILITY with supported trade choices when it does not.' },
+  { id: 'CON-01', hub: 'contractor', kind: 'cohort_local', query: 'general contractor in miami', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Miami-Dade' }, expectedProduct: { trade: 'general' }, accept: [A], ...CONTRACTOR_COLD },
+  { id: 'CON-02', hub: 'contractor', kind: 'cohort_local', query: 'roofers in broward', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Broward' }, expectedProduct: { trade: 'roofing' }, accept: [A], ...CONTRACTOR_COLD },
+  { id: 'CON-03', hub: 'contractor', kind: 'cohort_local', query: 'plumber in miami', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', county: 'Miami-Dade' }, expectedProduct: { trade: 'plumbing' }, accept: [A], ...CONTRACTOR_COLD },
+  { id: 'CON-04', hub: 'contractor', kind: 'identifier', query: 'verify contractor license CBC015082', expectedVertical: 'contractor', expectedIdentifierType: 'state_contractor_license', expectMatch: true, accept: [A], knownLimitation: 'CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP' },
+  { id: 'CON-05', hub: 'contractor', kind: 'product_local', query: 'licensed electrician in boca raton', expectedVertical: 'contractor', expectedGeography: { stateCode: 'FL', city: 'Boca Raton' }, expectedProduct: { trade: 'electrical' }, accept: [A, B, C], knownLimitation: 'FL_ELECTRICAL_SOURCE_GAP', requiredDisclosure: /electrical-specific (?:florida )?(?:credential )?data is not available|unsupported_florida_electrical_source|does not include the separately regulated electrical credentials|no florida electrical source/i, notes: 'Two live variants, both honest: (i) clearly-labeled broader general/building rows when the fallback fetch completes, (ii) UNSUPPORTED_TRADE_CAPABILITY with supported trade choices when it does not. Not under the cold-retry rule: a timeout here is a plain TECHNICAL_TIMEOUT.' },
   // SENIOR
   { id: 'SEN-01', hub: 'senior', kind: 'identity', query: 'is abbey delray south medicare certified', expectedVertical: 'senior', expectedEntityContains: 'abbey delray south', accept: [A, B], notes: 'Entity carried (never the whole sentence); care-class clarification precedes execution.' },
   { id: 'SEN-02', hub: 'senior', kind: 'cohort_local', query: 'hospice care for my mom in tampa', expectedVertical: 'senior', expectedGeography: { stateCode: 'FL' }, expectedProduct: { providerClass: 'hospice' }, accept: [A] },
@@ -139,11 +141,19 @@ export const QUERY_PACK: readonly PackEntry[] = [
 ];
 
 /**
- * Non-gating observations: recorded on every run for Founder triage, never asserted. These are
- * pre-existing behaviors noticed while freezing the pack that are NOT part of any released ticket.
+ * POST-R1 BACKLOG observations: recorded on every run for Founder triage, never asserted, no
+ * implementation tickets opened. Pre-existing behaviors outside every released Post-R1 ticket.
  */
 export const OBSERVATION_QUERIES: readonly PackEntry[] = [
-  { id: 'OBS-01', hub: 'network', kind: 'multi_hub', query: 'I need a mover and a mortgage lender in New Jersey', accept: [B], notes: 'MULTI_HUB_JOURNEY plan whose journey planner returns null; guided session lands in CLARIFY with no choices and no next actions.' },
+  { id: 'OBS-F2', hub: 'network', kind: 'multi_hub', query: 'I need a mover and a mortgage lender in New Jersey', accept: [B], notes: 'F2 -- MULTI_HUB_JOURNEY plan whose journey planner returns null; guided session lands in CLARIFY with no choices and no next actions.' },
+  { id: 'OBS-F6', hub: 'network', kind: 'unsupported_source', query: 'restaurant health inspections in miami', accept: [B, C], notes: 'F6 -- no TrustHub vertical owns this source; the deterministic hub picker is honest but not an explicit "unsupported" disclosure.' },
+];
+/** F3 (State Farm -> Insurance -> Legal insurer weak next action) and F4 (Investor guided identity wording) are exercised by the reporter's flow/observation sections. */
+export const BACKLOG_FLOWS = {
+  F3: { query: 'is state farm licensed in texas', selections: ['hub:insurance', 'insurance_class:legal_insurer'] },
+} as const;
+export const BACKLOG_GUIDED_QUERIES: readonly PackEntry[] = [
+  { id: 'OBS-F4', hub: 'investor', kind: 'identity', query: 'research adviser Edward Jones', accept: [A], notes: 'F4 -- sentence-shaped Investor name bypasses the network name-candidate search and the guided layer only recognizes "named X"; executes as an unscoped firm cohort.' },
 ];
 
 /** Hosts a destination / next action / candidate action may point at. Anything else is BROKEN_HANDOFF. */

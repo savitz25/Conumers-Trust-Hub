@@ -1,11 +1,11 @@
-# POST-R1-FINAL-CERT-PREP-001 — Cross-Hub Closeout Pack
+# POST-R1 FINAL CERT — Cross-Hub Closeout Pack
 
-**Status:** PREPARED — not yet executed as final certification
+**Prepared by:** POST-R1-FINAL-CERT-PREP-001 (PR #197) · **Acceptance contract approved by:** POST-R1-FINAL-CERT-001
 **Scope:** AskTrustHub (`savitz25/Conumers-Trust-Hub`) certification harness + frozen query pack for closing the Post-R1 consistency sprint
 **Harness:** `lib/network/post-r1-final-cert/pack.ts`, `lib/network/post-r1-final-cert/runner.ts`, `lib/network/post-r1-final-cert.test.ts`, `scripts/cert-post-r1-final.mjs`
 **Evidence output:** `docs/qa/post-r1-final-cert/<mode>-latest.{json,md}`
 
-This pack does **not** certify anything GREEN. It is run for real only after Ask PR #194 (Contractor timeout/fallback) and Contractor cold-path stabilization are released (§7).
+**Founder decisions since prep.** The two "pending release" dependencies the prep pack carried — Contractor cold-path stabilization and Ask PR #194 (8s→10s budget + fallback link) — were deliberately **closed without release**: bounded investigation proved genuinely cold large Contractor cohorts take ~15–22 s (extended statistics fixed cardinality estimation but not physical I/O; a covering index achieved Index Only Scan / zero heap fetches but stayed ~14.9 s cold; set-based hydration stayed ~16.8 s cold; deeper cache/materialization/partitioning work was deferred; the ineffective covering index was removed; `licenses_geo_trade_status_stats` stays). PR #194 is closed unmerged. The behavior is frozen as the known limitation `CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY` and accepted **only** under the strict Section 3 rule (§3a below).
 
 ---
 
@@ -22,10 +22,10 @@ All queries are real Founder-testing phrasings or already-certified R1 controls.
 | INS-02 | Insurance | cohort_local | insurance agency in broward county | A, C, D | — |
 | INS-03 | Insurance | product_local | medicare supplement agent in ohio | B, C | — |
 | INS-04 | Insurance | multi_hub | is state farm licensed in texas | B | — |
-| CON-01 | Contractor | cohort_local | general contractor in miami | A | pending: CONTRACTOR_COLD_PATH_STABILIZATION |
-| CON-02 | Contractor | cohort_local | roofers in broward | A | pending: CONTRACTOR_COLD_PATH_STABILIZATION |
-| CON-03 | Contractor | cohort_local | plumber in miami | A | pending: CONTRACTOR_COLD_PATH_STABILIZATION |
-| CON-04 | Contractor | identifier | verify contractor license CBC015082 | A | pending: CONTRACTOR_COLD_PATH_STABILIZATION; known: CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP |
+| CON-01 | Contractor | cohort_local | general contractor in miami | A | known: CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY (Section 3 rule) |
+| CON-02 | Contractor | cohort_local | roofers in broward | A | known: CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY (Section 3 rule) |
+| CON-03 | Contractor | cohort_local | plumber in miami | A | known: CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY (Section 3 rule) |
+| CON-04 | Contractor | identifier | verify contractor license CBC015082 | A | known: CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP (Section 3 rule) |
 | CON-05 | Contractor | product_local | licensed electrician in boca raton | A, B, C | known: FL_ELECTRICAL_SOURCE_GAP |
 | SEN-01 | Senior | identity | is abbey delray south medicare certified | A, B | — |
 | SEN-02 | Senior | cohort_local | hospice care for my mom in tampa | A | — |
@@ -44,7 +44,7 @@ All queries are real Founder-testing phrasings or already-certified R1 controls.
 | NET-04 | Network | unsupported_source | restaurant health inspections in miami | B, C | — |
 | NET-05 | Network | identity | brightway insurance jacksonville | A (zero), C | known: INSURANCE_JACKSONVILLE_CROSSWALK_GAP |
 
-Non-gating observations (recorded every run, never asserted): `OBS-01` "I need a mover and a mortgage lender in New Jersey"; the deeper multi-hub step `is state farm licensed in texas → hub:insurance → insurance_class:legal_insurer`.
+POST-R1 backlog observations (recorded every run, never asserted, no implementation tickets): `OBS-F2` "I need a mover and a mortgage lender in New Jersey"; `OBS-F3` `is state farm licensed in texas → hub:insurance → insurance_class:legal_insurer`; `OBS-F4` "research adviser Edward Jones"; `OBS-F6` "restaurant health inspections in miami" (also gated as NET-04 in class B/C).
 
 Why Move/Investor use these specific queries: Founder testing produced no Move/Investor phrasings, so the pack takes the already-certified R1 controls (`Senior Moving Services LLC`, `USDOT 3244649`, `CRD 105958`) plus the shortest real consumer forms that exercise the remaining path (`movers in broward county`, `Fisher Investments`, `investment advisers in california`). `Vanguard Advisers` was rejected: at the guided layer it becomes an unscoped `firm_cohort` of the whole IARD roster (see §9, finding F3).
 
@@ -75,7 +75,25 @@ Unacceptable (each maps to a concrete detector in `runner.ts`):
 | BROKEN_HANDOFF | dead-end with no choices and no next action; any href that is not https on an allowlisted TrustHub/official host; a specialist `/ask` handoff with no `q` |
 | WRONG_IDENTIFIER_CLASS | `session.identifier.type` ≠ expected family |
 
-Status per record: `PASS` (acceptable, disclosed), `KNOWN_LIMITATION` (tolerated under §5 while disclosed), `PENDING_RELEASE` (prep mode only), `FAIL`.
+Status per record: `PASS` (acceptable, disclosed), `KNOWN_LIMITATION` (tolerated under §5 while disclosed — never for false evidence), `FAIL`. There is no pending-release status.
+
+---
+
+## 3a. Contractor final acceptance rule (Section 3 of POST-R1-FINAL-CERT-001)
+
+Contractor timeouts are never simply ignored. `runner.ts#evaluateColdRetry` (pure, unit-tested offline) may classify a **first-touch TIMEOUT on a supported Contractor query** as `KNOWN_LIMITATION` — still permitting GREEN — only if **all** hold:
+
+1. vertical is Contractor;
+2. trade / identifier interpretation is correct (no `PRODUCT:`/`ENTITY:` violation, identifier family recognized);
+3. geography is correct (no `GEOGRAPHY:` violation);
+4. the timeout was **not** converted into a zero-result (`resultState` stays `TIMEOUT`, no rows, and the retry is not `ZERO_MATCHING_ROWS`/`NO_CONFIDENT_MATCH`);
+5. the UI explicitly reports the technical timeout ("took too long" / `timeout`);
+6. `RETRY` (or an equivalent safe specialist next action) is present;
+7. the single bounded retry (the client's "Try again" → `EXECUTE`) succeeds;
+8. the retry's result semantics and source grain are correct (all §4 disclosures present, no violations);
+9. no invalid session or broken handoff occurs on either attempt.
+
+Two consecutive bounded attempts failing → **FAIL / BLOCKED**. Timeout converted to zero results → **FAIL / BLOCKED**. Wrong trade / geography → **FAIL / BLOCKED**. The exception is limited to Contractor entries frozen under `CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY` or `CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP`; every other timeout anywhere is a plain `TECHNICAL_TIMEOUT` failure. Both attempts are recorded (`attempts[]`) and printed in the reporter's "Contractor first-touch certification" table.
 
 ---
 
@@ -90,10 +108,10 @@ Counts (`total`) are recorded for evidence but never asserted.
 Commands:
 
 ```
-npm run check:post-r1-final-cert            # gate, prep mode (default)
-POST_R1_CERT_MODE=final npm run check:post-r1-final-cert   # gate, final mode
-npm run cert:post-r1-final:prep             # reporter -> docs/qa/post-r1-final-cert/prep-latest.{json,md}
-npm run cert:post-r1-final                  # reporter, final mode (exit 1 on FAIL or any PENDING_RELEASE)
+npm run check:post-r1-final-cert            # gate (prep = dry run; identical assertions)
+POST_R1_CERT_MODE=final npm run check:post-r1-final-cert   # gate, certification run
+npm run cert:post-r1-final:prep             # reporter -> docs/qa/post-r1-final-cert/prep-latest.{json,md} (verdict never GREEN)
+npm run cert:post-r1-final                  # reporter, final mode (exit 1 on any FAIL)
 ```
 
 ---
@@ -126,9 +144,10 @@ Name-candidate cards additionally require a `locationMeaning` grain disclosure w
 | HOME_HEALTH_COUNTY_SERVICE_AREA | County unsupported; state broadening offered as consent | "not patient service availability" |
 | INSURANCE_JACKSONVILLE_CROSSWALK_GAP | Name searched whole; honest network miss | (genuine network miss, all six hubs completed) |
 | LENDER_MISSING_PUBLIC_DESTINATION | Destination omitted rather than loosely matched | (absence of href is allowed; presence must be allowlisted) |
-| CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP | Tracked separately — **not** tolerated in final mode because the final pack explicitly targets Contractor supported paths (§7 step 6) | — |
+| CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP | Exact-identifier lookup can time out on a genuinely cold Contractor path; deferred, not fixed this sprint | §3a rule: explicit timeout + RETRY, bounded retry must succeed with the exact identity |
+| CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY | Large supported Contractor cohorts can exceed the budget on a genuinely cold first access (thousands of scattered pages); deferred performance limitation | §3a rule: explicit timeout + RETRY, bounded retry must succeed with correct trade/geography/grain |
 
-Pending releases (prep-mode tolerance only): `CONTRACTOR_COLD_PATH_STABILIZATION`, `ASK_PR_194_TIMEOUT_FALLBACK`.
+Known limitation never means false evidence is acceptable: a wrong vertical, false no-match, fabricated local scope, service-territory claim, invalid session or broken handoff fails regardless of any limitation tag. There are no pending-release tolerances.
 
 ---
 
@@ -149,16 +168,16 @@ Allowlisted hosts (anything else is BROKEN_HANDOFF): the six `www.*trusthub.com`
 
 ---
 
-## 7. Final Production certification procedure (run only after PR #194 is released)
+## 7. Final Production certification procedure
 
 1. **Confirm Ask main SHA.** `git fetch origin main && git rev-parse origin/main`; confirm the Vercel production status for that SHA is `success` (`gh api repos/savitz25/Conumers-Trust-Hub/commits/<sha>/status --jq '.statuses[] | select(.context=="Vercel")'`). Record it as `askSha`.
-2. **Confirm Contractor production SHA / index state.** `git -C ~/contractor-trust-hub fetch origin main && git rev-parse origin/main`; confirm its Vercel production deployment; confirm the Contractor cold-path stabilization commit is included; record the live index/source clock shown on a `https://www.contractortrusthub.com/contractors/<slug>` page.
-3. **Run the machine certification pack in final mode.** `POST_R1_CERT_MODE=final npm run check:post-r1-final-cert` then `npm run cert:post-r1-final`. Exit code must be 0: no FAIL, no PENDING_RELEASE. Commit `docs/qa/post-r1-final-cert/final-latest.{json,md}` as evidence.
-4. **Browser spot checks (Production, `https://www.asktrusthub.com/ask`).** At minimum: LEN-01, INS-02, CON-04, SEN-02, MOV-01, INV-02, NET-01, plus one query per frozen limitation (CON-05, SEN-03, SEN-05, NET-05). Verify the rendered class matches the machine record.
+2. **Confirm Contractor production SHA / index state.** `git -C ~/contractor-trust-hub fetch origin main && git rev-parse origin/main`; confirm its Vercel production deployment; record the live source clock shown on a `https://www.contractortrusthub.com/contractors/<slug>` page. (No cold-path release is expected — see the Founder decisions above.)
+3. **Run the machine certification pack in final mode.** `POST_R1_CERT_MODE=final npm run check:post-r1-final-cert` then `npm run cert:post-r1-final`. Exit code must be 0: no FAIL. Every query is reported; no silent exclusions. Commit `docs/qa/post-r1-final-cert/final-latest.{json,md}` as evidence.
+4. **Browser spot checks (Production, `https://www.asktrusthub.com/ask`).** One strong representative success per hub (e.g. MOV-01, LEN-01, INS-02, CON-03, SEN-02, INV-02) plus one multi-hub guided choice (INS-04), one identifier flow (CON-04 or INV-02), one honest unsupported query (SEN-03 or INS-01) and one no-result query (NET-03). Verify routing, result evidence, handoff, query context, no invalid guided session, no false locality/service-area claim.
 5. **Multi-hub choice flow.** `is state farm licensed in texas` → choose InsuranceTrustHub → choose an entity class; `electrician mortgage lender New Jersey` → choose each offered hub. No invalid-session error at any step; geography retained.
-6. **Contractor supported-path first-touch checks.** With a cold Contractor path (first request after ≥15 minutes idle): `general contractor in miami`, `roofers in broward`, `plumber in miami`, `verify contractor license CBC015082`. Each must complete within Ask's specialist budget on first touch (class A) — if any returns TIMEOUT, the on-timeout state must show the direct-Contractor fallback link (PR #194) and the hub is BLOCKED, not GREEN. Repeat once warm and record both latencies.
+6. **Contractor first-touch certification (§3a).** Explicitly run `general contractor in miami`, `roofers in broward`, `plumber in miami`: attempt 1, then attempt 2 only if attempt 1 timed out. Record elapsed/result state, timeout yes/no, correct interpretation, safe next action, retry result. Apply §3a exactly — two consecutive failures, a zero-result conversion, or a wrong trade/geography is BLOCKED.
 7. **Confirm no console errors.** `read_console_messages` (errors only) after a fresh page load plus one query per hub. Zero attributable errors.
-8. **Produce the final six-hub matrix** (§8) from `final-latest.md`, adding browser and first-touch evidence, and close the sprint only if all six rows are GREEN.
+8. **Produce the final six-hub matrix** (§8) from `final-latest.md`, adding browser, handoff and first-touch evidence, and close the sprint only if all six rows are GREEN (Contractor may be GREEN WITH KNOWN PERFORMANCE LIMITATION only under §3a).
 
 ---
 
@@ -173,23 +192,21 @@ Allowlisted hosts (anything else is BROKEN_HANDOFF): the six `www.*trusthub.com`
 | SENIOR | | | | | | CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP, HOME_HEALTH_COUNTY_SERVICE_AREA, AVANTE_SIX_CHARACTER_AMBIGUITY | |
 | INVESTOR | | | | | | — | |
 
-Column semantics: *Specialist status* = RESPONDING / TIMEOUT / UNAVAILABLE from the machine records; *Ask routing* = CORRECT or the WRONG_VERTICAL ids; *Identity* = worst status across identity+identifier entries; *Local / geography* = worst status across cohort/product entries; *Handoff* = SAFE or the BROKEN ids; *GREEN* only when every gating record for the hub is PASS or KNOWN_LIMITATION in a **final**-mode run **and** §7 steps 4–7 are clean.
+Column semantics: *Specialist status* = RESPONDING / cold first-touch TIMEOUT recovered by bounded retry / TIMEOUT (unrecovered) / UNAVAILABLE from the machine records; *Ask routing* = CORRECT or the WRONG_VERTICAL ids; *Identity* = worst status across identity+identifier entries; *Local / geography* = worst status across cohort/product entries; *Handoff* = SAFE or the BROKEN ids; *GREEN* only when every gating record for the hub is PASS or KNOWN_LIMITATION in a **final**-mode run **and** §7 steps 4–7 are clean. Contractor reads **GREEN WITH KNOWN PERFORMANCE LIMITATION** when its only KNOWN_LIMITATION records are §3a cold-retry recoveries.
 
 The reporter prints this matrix automatically; in prep mode the verdict column always reads `NOT CERTIFIED (prep; would be …)`.
 
 ---
 
-## 9. Prep-run snapshot and findings (informational — nothing fixed here)
+## 9. POST-R1 backlog (observations only — no implementation tickets, nothing fixed)
 
-`docs/qa/post-r1-final-cert/prep-latest.md` / `.json` hold the committed prep run against Ask `06a4c614` and live production specialists. Across three prep runs the only non-PASS records were Contractor first-touch timeouts (PENDING_RELEASE); every other query landed in an acceptable class with its source-grain and handoff rules intact.
+`docs/qa/post-r1-final-cert/final-latest.md` / `.json` hold the certification run; `prep-latest.*` the earlier dry run. Pre-existing behaviors outside every released Post-R1 ticket, recorded by the reporter on every run and never asserted:
 
-Findings observed while freezing the pack (pre-existing behavior, outside every released Post-R1 ticket, recorded for Founder triage):
-
-| # | Finding | Where | Class today | Blocking? |
+| # | Observation | Where | Class today | Disposition |
 |---|---|---|---|---|
-| F1 | Contractor first-touch requests exceed Ask's 8000 ms specialist budget (`general contractor in miami`, `roofers in broward`, `verify contractor license CBC015082` → `TIMEOUT`); the same queries complete in 3–6 s once warm. | `lib/guided-research/specialists.ts` budget; ContractorTrustHub cold path | TECHNICAL_TIMEOUT (PENDING_RELEASE in prep) | Yes for final cert — covered by PR #194 + Contractor cold-path work. |
-| F2 | `I need a mover and a mortgage lender in New Jersey` plans as `MULTI_HUB_JOURNEY` but the journey planner returns null, so the guided session lands in CLARIFY with **no choices and no next actions** ("The requested local scope is not executable by this specialist."). | `lib/network/ask-multi-hub-journey.ts` / `lib/guided-research/session.ts` | BROKEN_HANDOFF (observation, non-gating) | No — not in the frozen pack; recommend a bounded follow-up ticket. |
-| F3 | `is state farm licensed in texas` → InsuranceTrustHub → *Legal insurer* ends in CLARIFY "The requested scope cannot be executed safely." with **no choices and no next actions** (Texas is outside Insurance's supported jurisdictions, but no handoff/official-source action is offered). | `lib/guided-research/orchestrator.ts` scope gate | dead end after the released multi-hub fix (observation) | No — the released MULTIHUB-001 step (hub choice) is valid; recommend adding the standard specialist/official next actions to this state. |
-| F4 | At the guided layer an Investor firm name only becomes `identity_name` via the literal form "… named X"; `Vanguard Advisers Inc` / `research adviser Edward Jones` execute as an unscoped `firm_cohort` returning the whole IARD roster (23,622). The live page pre-empts this with the network name-candidate search for name-shaped input, so exposure is limited to `interpret=category` and sentence-shaped names. | `lib/guided-research/session.ts` investorIntent | not in pack (INV-01 uses `Fisher Investments`, which resolves via name candidates) | No — recommend a bounded follow-up mirroring the Lender/Insurance `plan.entityName` precedent. |
-| F5 | InsuranceTrustHub's OFFICE_LOCATION directory backend flaps: INS-02 returned 7,936 RECORDED_COUNTY rows in one run and the fail-closed local-directory-unavailable state minutes later. Both are honest (A / C). | InsuranceTrustHub backend | A or C | No — already tracked as INSURANCE_OFFICE_LOCATION_BACKEND_UNAVAILABLE. |
-| F6 | `restaurant health inspections in miami` yields the deterministic four-hub picker rather than an explicit "no TrustHub source owns this" disclosure. Nothing is fabricated. | `lib/guided-research/session.ts` multi-hub branch | B | No — Founder call whether class C wording is preferred. |
+| F1 | Contractor first-touch requests exceed Ask's 8000 ms specialist budget on a genuinely cold path; the same queries complete in 3–6 s once warm. | ContractorTrustHub cold I/O | frozen `CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY` | Closed without release (Founder decision); certified only under §3a. |
+| F2 | `I need a mover and a mortgage lender in New Jersey` plans as `MULTI_HUB_JOURNEY` but the journey planner returns null, so the guided session lands in CLARIFY with **no choices and no next actions**. | `lib/network/ask-multi-hub-journey.ts` / `lib/guided-research/session.ts` | dead end (OBS-F2) | POST-R1 backlog. Not a supported core workflow; does not block closeout. |
+| F3 | `is state farm licensed in texas` → InsuranceTrustHub → *Legal insurer* ends in CLARIFY "The requested scope cannot be executed safely." with a weak next action (no specialist/official handoff offered). Session stays valid. | `lib/guided-research/orchestrator.ts` scope gate | honest but weak (OBS-F3) | POST-R1 backlog. The released hub-choice step is valid and gated (INS-04). |
+| F4 | At the guided layer an Investor firm name only becomes `identity_name` via "… named X"; sentence-shaped names such as `research adviser Edward Jones` execute as an unscoped firm cohort. The live page pre-empts this with the network name-candidate search for name-shaped input. | `lib/guided-research/session.ts` investorIntent | wording limitation (OBS-F4) | POST-R1 backlog. INV-01 (`Fisher Investments`) is the gated identity path. |
+| F5 | InsuranceTrustHub's OFFICE_LOCATION directory backend flaps between RECORDED_COUNTY rows and the fail-closed local-directory-unavailable state. Both honest (A / C). | InsuranceTrustHub backend | A or C | Already tracked as INSURANCE_OFFICE_LOCATION_BACKEND_UNAVAILABLE. |
+| F6 | `restaurant health inspections in miami` yields the deterministic four-hub picker rather than an explicit "no TrustHub source owns this" disclosure. Nothing is fabricated. | `lib/guided-research/session.ts` multi-hub branch | B (NET-04 / OBS-F6) | POST-R1 backlog; Founder call on wording. |
