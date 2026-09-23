@@ -63,3 +63,27 @@ and 5, applied only to traffic that has already tripped a bound.
   Continue → 1; double-click → 1; replay → `reused_nonce`; expired / tampered / wrong audience / thin /
   mismatched / cross-hub → fail closed; receipt 30/15m and Continue 10/15m limits; historical legacy rows
   byte-identical.
+
+## R addendum — abuse gate verdicts (ATH-CLAIM-V2-001R, 2026-09-23)
+
+Independently re-audited this session (curl battery against a paired local stack, DB verification, and a full
+staff-review browser walkthrough), with no code changes to the gate itself beyond the schema-order guard.
+
+- **CANARY_ABUSE_GATE = CONDITIONAL.** Acceptable for the current, Founder-controlled canary allow-list
+  (`ATH_CLAIM_CANARY_PROFILE_IDS`) with active monitoring. Conditions: (1) the Contractor start gate remains
+  honestly labelled per-isolate/non-durable in this doc and in code comments; (2) Ask's durable backstops
+  (`ath_rate_events` — 30/15m on receipt, 10/15m on Continue) stay in place, which they do; (3) the Founder adds
+  a Vercel WAF rate rule on `POST /api/claim/handoff/*` as a durable network-layer backstop — no new vendor, no
+  code change, a platform config the Founder already has access to.
+- **ALL_ABUSE_GATE = BLOCKED.** No durable Contractor-side gate exists today; the in-memory
+  `MemoryRateLimitStore` resets on every redeploy/scale event and is per-isolate under concurrency, which is
+  fine for a small, watched canary but not for unrestricted traffic across all six hubs. Unblocking requires one
+  of: (a) the Vercel WAF rule made mandatory rather than optional, (b) a small durable rate table added to the
+  Contractor evidence Postgres (an architectural exception — new schema on a DB this ticket was told not to
+  expand casually — needs explicit Founder sign-off), or (c) moving the pre-flight rate check to Ask before the
+  handoff is even requested. No option was implemented; this ticket only documents them for the Founder to pick.
+- **Acquisition source integrity.** The canonical source set is enforced server-side; `email_campaign` is not
+  self-declarable (requires the attribution cookie). `internal_test` and `manual_outreach` remain
+  self-declarable by editing the Continue URL/form — this can only game a labelling metric, never grant
+  authority or bypass eligibility/rate limits, since acquisition source is not read by any gate. Flagged
+  CONDITIONAL, not blocking.

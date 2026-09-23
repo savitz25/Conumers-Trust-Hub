@@ -110,6 +110,23 @@ BEHAVIORAL = privacy-safe browser/product telemetry with allow-listed low-cardin
 browser analytics: profile UUID, licence number, claimant name, company name, email, claim/org/grant id, magic
 link, signed token, free text, raw URLs containing any of these.
 
+## 9b. R addendum (ATH-CLAIM-V2-001R, 2026-09-23)
+
+- **Multi-tab receipt binding.** The Continue form now carries a hidden `confirmation` field bound to the
+  receipt id that rendered it (`receiptMatchesConfirmation` in `lib/customer/claim-receipt.ts`). A stale tab
+  holding an older receipt cannot confirm a newer one issued by a later handoff; the confirm route 303s back to
+  `/claim/continue` with no intent created on mismatch.
+- **Auth-return-after-expiry.** If the consumer takes the 15-minute handoff token past its window (e.g. a slow
+  email round-trip), `intentPreview` returns `null` and `submitClaim` fails closed with `expired`/
+  `missing_intent` rather than resuming a stale identity. Pressing Continue again with the same expired
+  token/receipt also fails closed (`HANDOFF_EXPIRED`), never silently re-mints.
+- **Schema-order guard.** Every V2 write path (`confirmClaimIntent`, `intentPreview`, review-session start/stop,
+  `reviewTiming`, `reviewQueueReminders`, `stampReviewTiming`, `launchOpsSnapshot`) checks migration 019's
+  columns/table exist before touching them and throws `schema_not_ready` (surfaced to consumers as
+  `SPECIALIST_VALIDATION_UNAVAILABLE`, a bounded/retryable state) if code deploys ahead of the migration. This
+  makes the known ordering requirement (migrate before deploy) fail closed instead of throwing an unhandled SQL
+  error.
+
 ## 10. Portability checklist for the next Hub
 
 1. Replace the GET mint with a POST start using `handleClaimStart`-equivalent logic (origin, gate, rollout,

@@ -76,3 +76,27 @@ external claim. Open ATH-CLAIM-V2-002 (10–20 business handheld cohort) only af
 - The CTA link or the Ask page exposes a token in analytics or logs → stop, rotate `ATH_HANDOFF_SECRET`.
 - The claim is competing with another open claim or an active grant → follow governance (HOLD), do not force.
 - Any step requires editing a customer row by hand → stop; use the admin surface or file a ticket.
+
+## R addendum — dry run on a local, synthetic stack (ATH-CLAIM-V2-001R, 2026-09-23)
+
+The full sequence in this runbook (staff review with governed evidence → active grant → owner saves a
+business-supplied field → Contractor renders the business-supplied layer → staff revokes with a mandatory
+reason → the layer is withheld while official evidence is untouched) was walked end-to-end this session against
+a **local, synthetic** profile (Worsham, seeded fixture data) on an isolated Postgres — not against any real
+customer, real claim, or Production database. This is a dry run of the mechanism, not the real-owner canary
+itself: R8 stays IMPLEMENTED, not `REAL_OWNER_CANARY_COMPLETE`, until a real external owner completes this with
+staff deciding through the normal queue.
+
+Findings from the dry run:
+
+- The policy engine correctly blocked approval on weak-only evidence (email-domain control +
+  public-credential knowledge alone) with `policy_blocks_approval` and no grant created, then approved cleanly
+  once a STRONG signal (corporate-officer/authorized-person match) plus a SUPPORTING signal (domain email
+  control) were both present.
+- Revoke closed the grant, dropped the profile from the owner's "Managed profiles" count, 404'd the owner's
+  direct `/manage/[id]` route, and withheld the business-supplied layer on the very next read — no lag observed
+  on revoke (see the caching-asymmetry note in `ATH-CLAIM-V2-001-HUB-READINESS.md`, which does apply to the
+  *first* approval making a profile public).
+- Expect the first post-approval public read to possibly show stale "no business layer" data for a real canary
+  run if the process has been warm for a while; a redeploy or an explicit second invalidation clears it. Budget
+  for this in the runbook rather than treating it as a canary failure.

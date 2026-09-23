@@ -74,3 +74,13 @@ _pending_
 
 customer rows changed = 0 · claims changed = 0 · grants changed = 0 · rollout flags changed = 0 ·
 production schema changed = 0 · real emails sent = 0 · production reads performed = 0 (blocked).
+
+## R addendum (ATH-CLAIM-V2-001R, 2026-09-23)
+
+Migration 019 verdict: **READY_TO_APPLY**, and it applied cleanly this session — twice (idempotency proof), plus
+a full down/re-up cycle — on real Postgres 16 (local `ask_qa`, not Production) and on PGlite in the lifecycle
+test. It must be applied to Production **before** PR #199 deploys: the R schema-order guard now makes premature
+deploy fail closed with `schema_not_ready` / `SPECIALIST_VALIDATION_UNAVAILABLE` rather than an unhandled SQL
+error, but the funnel is still unusable until the migration lands. No production database was touched to reach
+this verdict. Production mutations by this ticket remain unchanged at all-zero (see above); everything in this
+addendum ran against local `ask_qa`/`cth_qa` and PGlite only.
