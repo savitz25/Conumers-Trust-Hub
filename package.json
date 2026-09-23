@@ -4,7 +4,7 @@
   "description": "AskTrustHub.com — thin parent brand for the independent consumer research network",
   "private": true,
   "scripts": {
-    "check:my-trusthub-v2-3-final-parent": "node --experimental-strip-types --test lib/my-trusthub/profile-save/database-config.test.ts lib/my-trusthub/profile-save/browser.test.ts && node --experimental-strip-types scripts/qa/v23-parent-wiring-postgres.mjs",
+    "check:my-trusthub-v2-3-final-parent": "node scripts/qa/v23-pg-net-dependency-predicate.mjs && node --experimental-strip-types --test lib/my-trusthub/profile-save/database-config.test.ts lib/my-trusthub/profile-save/browser.test.ts && node --experimental-strip-types scripts/qa/v23-parent-wiring-postgres.mjs",
     "probe:my-trusthub-v2-3-supavisor-session": "node --experimental-strip-types scripts/qa/v23-supavisor-session-parity.mjs",
     "check:move-origin": "node --experimental-strip-types --test lib/network/move-origin.test.ts",
     "check:my-trusthub-v2-3f": "node --test scripts/qa/v23f-owner-transfer.test.mjs && node --experimental-strip-types scripts/qa/v23f-postgres.mjs",
