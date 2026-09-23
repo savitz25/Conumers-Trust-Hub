@@ -23,7 +23,7 @@ const SYNTHETIC_NAME = /\b(test|qa|sample|demo|fixture|synthetic|harbor test)\b/
 
 function staffSet(): Set<string> {
   return new Set(
-    [process.env.ATH_STAFF_EMAILS, process.env.ATH_STAFF_EMAILS_EXTRA, process.env.ATH_LIFECYCLE_QA_OPERATOR_EMAIL, process.env.ATH_LIFECYCLE_QA_EMAIL]
+    [process.env.ATH_STAFF_EMAILS, process.env.ATH_STAFF_EMAILS_EXTRA]
       .flatMap((raw) => (raw || '').split(','))
       .map((s) => normalizeEmail(s.trim()))
       .filter(Boolean),
