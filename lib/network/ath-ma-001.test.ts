@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { buildNetworkAskPlan } from './ask-plan.ts';
 import { parseNetworkAsk } from './ask-parse.ts';
+import { planAskResearch } from './research-planner.ts';
+import { decideNameCandidateSearch } from './name-candidates/decision.ts';
 import {
   MA_NETWORK_CONTRACT,
   MA_PUBLICATION_MANIFEST,
@@ -102,6 +104,8 @@ test('Massachusetts routing preserves grains and does not intercept identifiers'
   assert.equal(routeMaAsk('MA-PD drug plan'), undefined);
   assert.equal(routeMaAsk('nursing homes Springfield'), undefined);
   assert.equal(classifyMaHub('how many businesses in Massachusetts'), undefined);
+  assert.equal(planAskResearch('DPU certificate 32011').primaryHub, 'move');
+  assert.equal(decideNameCandidateSearch('DPU certificate 32011').operation, 'NOT_NAME_SEARCH');
   const plan = buildNetworkAskPlan('best mortgage lender Massachusetts');
   assert.equal(plan.hubs[0]?.hubId, 'lender');
   assert.match(plan.hubs[0]?.destination ?? '', /lendertrusthub.com\/massachusetts/);

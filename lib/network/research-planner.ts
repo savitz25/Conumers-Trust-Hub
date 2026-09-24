@@ -75,7 +75,7 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
   const hubs = [...parsed.suggestedHubs];
   const explicit: SpecialistHubId[] = [];
   const patterns: Array<[SpecialistHubId, RegExp]> = [
-    ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
+    ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|DPU\s+certificate|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
     ['lender', /\b(?:lender|mortgage|refinance|refinancing|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
     // POST-R1-ASK-INTENT-001R: bare "Medicare" matched "medicare supplement agent in ohio",
@@ -108,6 +108,7 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   // leaving the category words un-stripped and falsely read as a literal company name.
   if (classified) return { id: classified.id, label: classified.label, matchedText: classified.matchedText };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
+  if (/\bdpu\s+certificate\b/i.test(query)) return { id: 'mover', label: 'Moving company', matchedText: 'DPU certificate' };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   // TH-DISCOVERY-003: "moving brokers in florida" fell through every branch here (matches neither
   // "moving compan(y|ies)" nor bare "movers?"), landing on ENTITY_LOOKUP_MISSING_IDENTITY -- a

@@ -696,7 +696,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate|\bhelocs?\b|home equity line/i.test(
       query,
     );
-  const mover = isMoveClassQuery(query);
+  const mover = isMoveClassQuery(query) || /\bdpu\s+certificate\b/i.test(query);
   const moveResearchCategory = isAutoTransportQuery(query) ? 'auto_transport' as const : undefined;
   const insurance =
     isInsuranceClassQuery(query) ||
