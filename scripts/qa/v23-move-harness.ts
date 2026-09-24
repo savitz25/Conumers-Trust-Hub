@@ -38,7 +38,7 @@ const server = createServer(async (req, res) => {
         ...(signedIn ? { parent: { subject: 'fixture-consumer-a', sessionBinding: 'fixture-session', admitted: true as const },
           exchange: 'fixture-exchange', selectionConfirmed: true, confirmedTransferRef } : {}) };
       return new ParentProfileSaveRuntime({ enabled: true, backend, registry: { environment: 'isolated', isolatedBackendVerified: true,
-        origins: { move: 'http://127.0.0.1:4421', insurance: 'http://127.0.0.1:4422', lender: 'http://127.0.0.1:4423' } }, authenticate: async () => caller });
+        origins: { move: 'http://127.0.0.1:4421', insurance: 'http://127.0.0.1:4422', lender: 'http://127.0.0.1:4423', contractor: 'http://127.0.0.1:4424', senior: 'http://127.0.0.1:4425', investor: 'http://127.0.0.1:4426' } }, authenticate: async () => caller });
     } });
     res.writeHead(result.status, Object.fromEntries(result.headers)); res.end(await result.text());
   } catch { res.writeHead(500); res.end('Fixture failure'); }

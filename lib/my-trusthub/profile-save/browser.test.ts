@@ -12,7 +12,7 @@ import {retentionBatch,quotaRetentionBatch} from './retention.ts';
 async function fixture(){
   let now=1000,parent:BrowserParent|null=null;
   const origin='http://127.0.0.1:4520',sourceOrigin='http://127.0.0.1:4521';
-  const registry={environment:'isolated' as const,isolatedBackendVerified:true,origins:{move:sourceOrigin,insurance:'http://127.0.0.1:4522',lender:'http://127.0.0.1:4523'}};
+  const registry={environment:'isolated' as const,isolatedBackendVerified:true,origins:{move:sourceOrigin,insurance:'http://127.0.0.1:4522',lender:'http://127.0.0.1:4523',contractor:'http://127.0.0.1:4524',senior:'http://127.0.0.1:4525',investor:'http://127.0.0.1:4529'}};
   const identity={hub:'move' as const,nativeId:'fixture-mover',profileClass:'mover'};
   const manifest:GuestStageInput={version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:'fixture-mover',profile:identity}};
   const backend=new SqliteHarnessBackend(join(mkdtempSync(join(tmpdir(),'b4-browser-')),'qa.sqlite'));

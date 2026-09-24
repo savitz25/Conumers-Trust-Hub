@@ -60,7 +60,7 @@ async function fixture() {
   let caller: VerifiedCaller = { hub: 'move', browserBinding: 'b'.repeat(43), environment: 'isolated', scopes: ['transfer:stage', 'saved:write', 'receipt:verify'] };
   let now = 1000;
   const runtime = () => new ParentProfileSaveRuntime({ enabled: true, backend,
-    registry: { environment: 'isolated', isolatedBackendVerified: true, origins: { move: 'http://127.0.0.1:4421', insurance: 'http://127.0.0.1:4422', lender: 'http://127.0.0.1:4423' } },
+    registry: { environment: 'isolated', isolatedBackendVerified: true, origins: { move: 'http://127.0.0.1:4421', insurance: 'http://127.0.0.1:4422', lender: 'http://127.0.0.1:4423', contractor: 'http://127.0.0.1:4424', senior: 'http://127.0.0.1:4425', investor: 'http://127.0.0.1:4426' } },
     authenticate: async () => caller, now: () => now });
   const staged = await runtime().execute('prepareGuestProfileTransfer', stage) as GuestStageRef;
   const continuation = await runtime().execute('prepareProfileSaveContinuation', { sourceHub: 'move', audience: 'ask', ...staged, expiresAt: undefined }).catch(() => null);

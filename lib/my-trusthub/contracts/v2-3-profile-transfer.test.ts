@@ -5,7 +5,7 @@ import { ProfileTransferModel } from './v2-3-profile-transfer.model.ts';
 import { TRANSFER_VERSION, TRANSFER_VERSION_V2, TRANSFER_VERSION_V3, KEEP_LOCAL_COPY, PRODUCTION_ORIGINS, APPROVED_PROFILE_CLASS,
   isGuestStageInput, isGuestStageInputV2, isGuestStageInputV3, isContinuationInput, isConsumeInput,
   isCommitInput, isReceiptLookup, isReceiptVerify, manifestDigest, profileKey, profileReturnDestination, validateProfileReturn, v3ReturnPath,
-  type GuestStageInput, type GuestStageInputV3, type TrustedOriginRegistry, type AuthorizedSpecialist, type VerifiedParentContext, type TrustedCommitAdapter,
+  type GuestStageInput, type GuestStageInputV3, type ProfileReturnTaskV2, type TrustedOriginRegistry, type AuthorizedSpecialist, type VerifiedParentContext, type TrustedCommitAdapter,
 } from './v2-3-profile-transfer.ts';
 import type { SpecialistHub, TrustedProfile } from './v2-3-profile-save.ts';
 
@@ -17,7 +17,8 @@ const item = { localItemId: 'local-a', revision: 'revision-2', digest: 'a'.repea
 const stage: GuestStageInput = { version: TRANSFER_VERSION, sourceHub: 'insurance', audience: 'ask', selected: [item],
   returnTask: { kind: 'profile', hub: 'insurance', canonicalSlug: 'agency-profile', profile: identity } };
 const registry: TrustedOriginRegistry = { environment: 'isolated', isolatedBackendVerified: true,
-  origins: { move: 'http://localhost:3001', insurance: 'http://localhost:3003', lender: 'http://localhost:3002' } };
+  origins: { move: 'http://localhost:3001', insurance: 'http://localhost:3003', lender: 'http://localhost:3002',
+    contractor: 'http://localhost:3004', senior: 'http://localhost:3005', investor: 'http://localhost:3006' } };
 const bff: AuthorizedSpecialist = { hub: 'insurance', browserBinding: ref('b'), environment: 'isolated', scopes: ['transfer:stage', 'receipt:verify'] };
 const ctx: VerifiedParentContext = { admitted: true, subject: 'consumer-a', authenticatedHub: 'insurance', browserBinding: ref('b'),
   environment: 'isolated', accountContextRef: ref('c'), scopes: ['saved:write'] };
@@ -49,7 +50,7 @@ test('C02 no arbitrary providers paths or normalized traversal/backslash/externa
 });
 test('C03 Move and Lender keep distinct reviewed routes, identity-bound destination', () => {
   for (const [hub, prefix] of [['move', 'companies'], ['lender', 'lenders']] as const) {
-    const task = { ...stage.returnTask, hub, profile: { ...identity, hub } };
+    const task: ProfileReturnTaskV2 = { kind: 'profile', hub, canonicalSlug: 'agency-profile', profile: { hub, nativeId: identity.nativeId, profileClass: identity.profileClass } };
     assert.equal(validateProfileReturn(`/${prefix}/agency-profile`, task, registry), `${registry.origins[hub]}/${prefix}/agency-profile`);
     assert.equal(validateProfileReturn('/providers/agency-profile', task, registry), null);
   }
