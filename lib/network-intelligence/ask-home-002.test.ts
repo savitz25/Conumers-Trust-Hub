@@ -68,7 +68,7 @@ test('twelve-state routing metadata preserves asymmetric specialist coverage', (
   assert.equal(coverage.jurisdictions['US-NC'].askPath, '/north-carolina');
   assert.equal(coverage.jurisdictions['US-OH'].askPath, '/ohio');
   assert.match(source, /askStateExplorerEyebrow/);
-  assert.match(askStateExplorerEyebrow(), /Fourteen-state network explorer/);
+  assert.match(askStateExplorerEyebrow(), /Fifteen-state network explorer/);
 });
 
 test('consumer semantic firewalls and limitations are visible', () => {
