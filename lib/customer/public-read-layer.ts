@@ -1,12 +1,23 @@
 /**
  * Cheap public existence gate for contractor Ask state.
  * Unknown IDs never touch Neon once the existence set is warm.
+ *
+ * Layers (ATH-CLAIM-V2-001R4):
+ *  - Neon is protected by the shared Next data cache (tag-expired by every publication-affecting write,
+ *    SHARED_REVALIDATE_S as the backstop if an invalidation is ever lost).
+ *  - This in-process layer is a short memo over the shared cache. Writes on another instance cannot reach it,
+ *    so its TTL is the cross-instance staleness bound; it is NOT the Neon guard.
+ *  - Unknown IDs are answered from the in-memory existence set and are never stored per-ID, so a first approval
+ *    is never shadowed by a cached "none" payload and random UUIDs cannot grow memory.
  */
 
-export const PUBLIC_READ_S_MAXAGE = 21600;
-export const PUBLIC_READ_SWR = 86400;
-export const EXISTENCE_TTL_MS = PUBLIC_READ_S_MAXAGE * 1000;
-export const PAYLOAD_TTL_MS = PUBLIC_READ_S_MAXAGE * 1000;
+export const PUBLIC_READ_S_MAXAGE = 60;
+export const PUBLIC_READ_SWR = 60;
+export const SHARED_REVALIDATE_S = 3600;
+export const EXISTENCE_TTL_MS = 30_000;
+export const PAYLOAD_TTL_MS = 30_000;
+/** Worst-case publish/withdraw visibility at the Ask edge: in-process memo + CDN max-age + SWR. */
+export const PUBLIC_VISIBILITY_WORST_CASE_S = EXISTENCE_TTL_MS / 1000 + PUBLIC_READ_S_MAXAGE + PUBLIC_READ_SWR;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -58,35 +69,48 @@ export function createPublicContractorReadLayer(deps: {
     | { ids: Set<string>; expiresAt: number }
     | null = null;
   const payloads = new Map<string, { state: PublicContractorTrustState; expiresAt: number }>();
+  let inflight: Promise<Set<string>> | null = null;
+  let generation = 0;
   let listCalls = 0;
   let loadCalls = 0;
 
   async function existenceSet(): Promise<Set<string>> {
     if (existence && existence.expiresAt > now()) return existence.ids;
+    // Single-flight: a burst of cold reads shares one list call instead of each touching the shared cache/Neon.
+    if (inflight) return inflight;
+    const started = generation;
     listCalls += 1;
-    const ids = new Set(await deps.listPublicIds());
-    existence = { ids, expiresAt: now() + existenceTtl };
-    return ids;
+    inflight = (async () => {
+      try {
+        const ids = new Set(await deps.listPublicIds());
+        // An invalidation that raced this refresh wins; don't pin the pre-write set.
+        if (started === generation) existence = { ids, expiresAt: now() + existenceTtl };
+        return ids;
+      } finally {
+        inflight = null;
+      }
+    })();
+    return inflight;
   }
 
   async function read(contractorId: string): Promise<PublicReadResult> {
     if (!isPublicContractorId(contractorId)) {
       return { state: emptyPublicContractorState(contractorId), source: 'invalid', neonQueries: 0 };
     }
-    const cached = payloads.get(contractorId);
-    if (cached && cached.expiresAt > now()) {
-      return { state: cached.state, source: 'payload_hit', neonQueries: 0 };
-    }
     const beforeList = listCalls;
     const ids = await existenceSet();
     if (!ids.has(contractorId)) {
-      const state = emptyPublicContractorState(contractorId);
-      payloads.set(contractorId, { state, expiresAt: now() + payloadTtl });
+      // Negative answers live only in the existence set (never per-ID), so they expire with it.
+      payloads.delete(contractorId);
       return {
-        state,
+        state: emptyPublicContractorState(contractorId),
         source: 'existence_miss',
         neonQueries: listCalls - beforeList,
       };
+    }
+    const cached = payloads.get(contractorId);
+    if (cached && cached.expiresAt > now()) {
+      return { state: cached.state, source: 'payload_hit', neonQueries: listCalls - beforeList };
     }
     loadCalls += 1;
     const loaded = await deps.loadPublishedState(contractorId);
@@ -108,10 +132,25 @@ export function createPublicContractorReadLayer(deps: {
     };
   }
 
-  function invalidate(contractorId?: string) {
-    existence = null;
-    if (contractorId) payloads.delete(contractorId);
-    else payloads.clear();
+  /**
+   * R4: incremental. `granted`/`revoked` patch this instance's existence set for the one profile (no global
+   * flush); `content` only drops that profile's payload. No `change` = full local reset (tests/tools).
+   */
+  function invalidate(contractorId?: string, change?: 'granted' | 'revoked' | 'content') {
+    if (!contractorId || !change) {
+      generation += 1;
+      existence = null;
+      if (contractorId) payloads.delete(contractorId);
+      else payloads.clear();
+      return;
+    }
+    payloads.delete(contractorId);
+    if (change === 'content') return;
+    generation += 1; // an in-flight refresh started before this change must not overwrite the patched set
+    if (existence) {
+      if (change === 'granted') existence.ids.add(contractorId);
+      else existence.ids.delete(contractorId);
+    }
   }
 
   function stats() {

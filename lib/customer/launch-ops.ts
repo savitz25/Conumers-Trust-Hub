@@ -37,6 +37,8 @@ export type LaunchOpsSnapshot = {
   recoveries: Array<{ reason: string; count: number }>;
   mail: Array<{ status: string; count: number }>;
   health: Array<{ label: string; status: 'OK' | 'Needs attention' | 'Unavailable'; reason: string }>;
+  /** ATH-CLAIM-V2-001 review capacity metrics (internal_test excluded). */
+  capacity?: import('./review-capacity.ts').ReviewCapacityMetrics;
 };
 
 export function ageBucket(hours: number): string {

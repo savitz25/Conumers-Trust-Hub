@@ -12,8 +12,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
     return NextResponse.json(result.state.profile, { headers });
   } catch {
     return NextResponse.json(
-      { error: 'not_found' },
-      { status: 404, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=21600, stale-while-revalidate=86400', 'X-Robots-Tag': 'noindex, nofollow' } },
+      { error: 'unavailable' },
+      { status: 503, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } },
     );
   }
 }

@@ -1,12 +1,13 @@
 import 'server-only';
-import { revalidateTag, unstable_cache } from 'next/cache';
-import { registerPublicReadInvalidator } from './public-read-invalidate';
+import { unstable_cache } from 'next/cache';
+import { PUBLIC_EXISTENCE_TAG, publicStateTag, registerPublicReadInvalidator } from './public-read-invalidate';
 import { withPlatform } from './server';
 import {
   createPublicContractorReadLayer,
   emptyPublicContractorState,
   isPublicContractorId,
   PUBLIC_CACHE_CONTROL,
+  SHARED_REVALIDATE_S,
   type PublicContractorTrustState,
   type PublicReadSource,
 } from './public-read-layer';
@@ -14,37 +15,36 @@ import {
 export { PUBLIC_CACHE_CONTROL, emptyPublicContractorState, isPublicContractorId };
 export type { PublicContractorTrustState, PublicReadSource };
 
-const EXISTENCE_TAG = 'public-contractor-existence';
-const stateTag = (id: string) => `public-contractor-state:${id}`;
-
+// Shared across instances; the Next tag invalidator registered in ./server expires these on every
+// publication-affecting write. SHARED_REVALIDATE_S only bounds staleness if an invalidation is lost.
 const cachedList = unstable_cache(
   async () => withPlatform((p) => p.listPublicContractorNativeIds()),
-  ['public-contractor-existence-v1'],
-  { revalidate: 21600, tags: [EXISTENCE_TAG] },
+  ['public-contractor-existence-v2'],
+  { revalidate: SHARED_REVALIDATE_S, tags: [PUBLIC_EXISTENCE_TAG] },
 );
+
+const cachedState = (id: string) =>
+  unstable_cache(
+    async () =>
+      withPlatform(async (p) => {
+        const [profile, replies] = await Promise.all([p.publicBusinessProfile(id), p.publicBusinessReplies(id)]);
+        return { profile, replies: replies.replies };
+      }),
+    ['public-contractor-state-v2', id],
+    { revalidate: SHARED_REVALIDATE_S, tags: [publicStateTag(id)] },
+  )();
 
 const layer = createPublicContractorReadLayer({
   listPublicIds: cachedList,
-  loadPublishedState: async (id) =>
-    withPlatform(async (p) => {
-      const [profile, replies] = await Promise.all([p.publicBusinessProfile(id), p.publicBusinessReplies(id)]);
-      return { profile, replies: replies.replies };
-    }),
+  loadPublishedState: cachedState,
 });
 
 export async function readPublicContractorState(contractorId: string) {
   return layer.read(contractorId);
 }
 
-registerPublicReadInvalidator((nativeProfileId) => {
-  layer.invalidate(nativeProfileId);
-  try {
-    revalidateTag(EXISTENCE_TAG, 'max');
-    revalidateTag(stateTag(nativeProfileId), 'max');
-  } catch {
-    // Preview/tests without the Next cache runtime still clear memory.
-  }
-});
+// Same-instance memo clear. Other instances converge within EXISTENCE_TTL_MS via the shared cache.
+registerPublicReadInvalidator((nativeProfileId, change) => layer.invalidate(nativeProfileId, change));
 
 export function publicReadHeaders(source: PublicReadSource) {
   return {

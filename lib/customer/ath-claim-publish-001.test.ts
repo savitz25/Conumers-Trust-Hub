@@ -14,7 +14,9 @@ test('Contractor V1 profile projection is explicit, public-only, and drift-prote
   for (const privateKey of ['claimId','grantId','orgId','userId','claimantEmail','authorityEvidence','internalRationale']) assert.equal(JSON.stringify(fixture).includes(privateKey), false);
   assert.match(profileRoute, /readPublicContractorState/);
   assert.match(replyRoute, /readPublicContractorState/);
-  assert.match(profileRoute, /s-maxage=21600/); assert.match(profileRoute, /noindex/);
+  // R4: success responses carry PUBLIC_CACHE_CONTROL via publicReadHeaders; an outage must never be edge-cached.
+  assert.match(profileRoute, /publicReadHeaders/); assert.match(profileRoute, /noindex/);
+  assert.doesNotMatch(profileRoute, /s-maxage=21600/); assert.match(profileRoute, /status: 503, headers: \{ 'Cache-Control': 'no-store'/);
 });
 
 test('active authority gates both profile and response publication', () => {

@@ -7,6 +7,6 @@ export async function GET(_r: Request, { params }: { params: Promise<{ profileId
     const result = await readPublicContractorState(profileId);
     return NextResponse.json(result.state.replies, { headers: publicReadHeaders(result.source) });
   } catch {
-    return NextResponse.json({ error: 'not_found' }, { status: 404, headers: publicReadHeaders('invalid') });
+    return NextResponse.json({ error: 'unavailable' }, { status: 503, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
   }
 }

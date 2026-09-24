@@ -4,6 +4,7 @@ import { customerLog } from './log';
 import { applyCustomerMigrations as applyMigrations, enableAppRole } from './migrate';
 import type { SqlClient } from './sql';
 import { selectAskDatabaseUrl } from './database-selection';
+import { withDeferredPublicReadInvalidation } from './public-read-invalidate';
 
 export type { SqlClient };
 export { applyMigrations as applyCustomerMigrations, enableAppRole };
@@ -42,6 +43,10 @@ function getPool(): Pool {
 }
 
 export async function withAskTx<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+  return withDeferredPublicReadInvalidation(() => runAskTx(fn));
+}
+
+async function runAskTx<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await getPool().connect();
   try {
     await client.query('BEGIN');
