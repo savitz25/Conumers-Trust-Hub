@@ -10,6 +10,7 @@ import {
   organizationMembershipEmail,
 } from './copy.ts';
 import { isFreeEmail } from './free-email.ts';
+import { safeInternalNextPath } from './safe-next-path.ts';
 import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
 import { customerLog } from './log.ts';
 import { askFromEmail, type Mailer } from './mail.ts';
@@ -247,7 +248,8 @@ export class CustomerPlatform {
       ]
     );
 
-    const next = input.nextPath && input.nextPath.startsWith('/') ? input.nextPath : '/claim/continue';
+    // ATH-CLAIM-V2-001R5-P1-AUTH-REDIRECT: the emailed link only ever carries a validated same-origin path.
+    const next = safeInternalNextPath(input.nextPath);
     const magicUrl = `${this.deps.siteUrl.replace(/\/$/, '')}/api/customer/auth/verify?token=${encodeURIComponent(token)}&next=${encodeURIComponent(next)}`;
     const mail = loginEmail(magicUrl);
     customerLog('auth_challenge_created', { purpose: input.purpose ?? 'login' });
