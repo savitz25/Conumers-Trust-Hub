@@ -254,6 +254,17 @@ Production).
 
 Measured windows on this stack: publish ≤ 40 s, withdraw ≤ ~35 s (bound: 210 s).
 
+**Re-run at the final combined heads** (Ask `d06039b`, Contractor `4fb78d2`, fresh builds, fresh DB): GET 405 /
+POST 303 from an IPv6 client; receipt → 0 intents; Continue → 1 intent (`explicit_continue`/`organic`,
+**60-min lifetime from Continue**); magic-link sign-in; submit; staff timer + governed approve → ACTIVE grant
+(no schema banner, 019 present); owner saves website + Mon–Fri hours → Ask `public-state` true immediately,
+Contractor page **+62 s** (its cached entry had just been refreshed by earlier polls, so the full 60 s window
+applied); synthetic revoke → Ask false immediately, Contractor page withdrawn **+45 s**. Admin queue and claim
+review re-checked at 1440/390/320: no overflow.
+
+**CACHE_FIRST_PUBLICATION_WINDOW = ≤ 210 s worst case (measured 40–62 s). CACHE_REVOCATION_WINDOW = ≤ 210 s
+worst case (measured 35–45 s).**
+
 Browser QA (1440 / 390 / 320): Contractor profile, Ask claim landing / invalid-link state, claim status,
 admin queue, claim review, My Trust Hub, revoked manage route — **no page-level horizontal overflow** at any
 width; CTA 262×44 (1440/390) and 198×44 (320). Back/refresh create no new state. Notes: (a) the automation tab
