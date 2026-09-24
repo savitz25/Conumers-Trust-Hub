@@ -149,6 +149,17 @@ export function parseAndAuthenticateHandoff(
   return payload;
 }
 
+/**
+ * ATH-CLAIM-V2-FLNJ-001R1 (double-intent P1) — identity peek WITHOUT authentication. Only ever applied to a token
+ * that came out of an HMAC-signed receipt cookie, and only to compare hub/profile ids; never to grant anything.
+ */
+export function peekHandoffIdentity(token: string): { hub_id: string; native_profile_id: string } | null {
+  if (typeof token !== 'string' || token.length === 0 || token.length > MAX_HANDOFF_TOKEN_LENGTH) return null;
+  const payload = decodePayload(token.split('.')[0] ?? '');
+  if (!payload || typeof payload.hub_id !== 'string' || typeof payload.native_profile_id !== 'string') return null;
+  return { hub_id: payload.hub_id, native_profile_id: payload.native_profile_id.toLowerCase() };
+}
+
 export function mutateHandoffToken(
   token: string,
   mutator: (payload: HandoffPayload) => HandoffPayload,

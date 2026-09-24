@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { HandoffError } from '@/lib/customer/handoff';
 import { ClaimError } from '@/lib/customer/store';
-import { clearIntentCookie, currentContext, setClaimReceiptCookie, withPlatform } from '@/lib/customer/server';
+import { clearIntentCookie, currentContext, readClaimReceipt, readIntentId, setClaimReceiptCookie, withPlatform } from '@/lib/customer/server';
+import { peekHandoffIdentity } from '@/lib/customer/handoff';
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
 import { randomToken } from '@/lib/customer/crypto';
@@ -26,10 +27,26 @@ export async function GET(request: Request) {
   // a browser could otherwise navigate straight to this URL with any `source=` it likes.
   const ctx = await currentContext();
   try {
-    const received = await withPlatform((p) => p.receiveHandoff(token, ctx));
-    // A new handoff supersedes any earlier (possibly consumed) intent context in this browser.
-    await clearIntentCookie();
-    await setClaimReceiptCookie({ token, receiptId: randomToken(24), source: received.acquisitionSource, receivedAt: Date.now() });
+    const priorReceipt = await readClaimReceipt();
+    const priorIntentId = (await readIntentId()) || null;
+    const { received, keepIntent } = await withPlatform(async (p) => {
+      const received = await p.receiveHandoff(token, ctx);
+      // ATH-CLAIM-V2-FLNJ-001R1 (double-intent P1): an open intent this browser already holds for the SAME exact
+      // profile survives a fresh handoff (the specialist may have minted twice for one click); anything else is
+      // superseded as before.
+      let keepIntent = false;
+      if (priorIntentId) {
+        const preview = await p.intentPreview(priorIntentId).catch(() => null);
+        keepIntent = Boolean(preview && !preview.consumed && preview.payload.hub_id === received.payload.hub_id && preview.payload.native_profile_id.toLowerCase() === received.payload.native_profile_id.toLowerCase());
+      }
+      return { received, keepIntent };
+    });
+    if (!keepIntent) await clearIntentCookie();
+    // Same browser + same exact profile keeps its receipt id, so a second mint for one click shares the idempotency key.
+    const prior = priorReceipt ? peekHandoffIdentity(priorReceipt.token) : null;
+    const sameProfile = Boolean(prior && prior.hub_id === received.payload.hub_id && prior.native_profile_id === received.payload.native_profile_id.toLowerCase());
+    const receiptId = sameProfile && priorReceipt ? priorReceipt.receiptId : randomToken(24);
+    await setClaimReceiptCookie({ token, receiptId, source: received.acquisitionSource, receivedAt: Date.now() });
     return NextResponse.redirect(new URL('/claim/continue', url.origin), { headers: NO_STORE });
   } catch (e) {
     const internalCode =

@@ -52,3 +52,49 @@ and redeploy — the CTA and the POST start both fail closed for that state imme
 
 Contractor monitoring is a Florida DBPR feed. NJ DCA profiles: My Trust Hub shows "Unavailable", the profile
 workspace shows the monitoring-unavailable card, and `saveMonitoring` refuses (`forbidden`).
+
+## R1 addendum — durable cross-isolate claim-start gate
+
+- **Endpoint:** `POST /api/internal/claim/start-preflight` (Ask). Body signed by the Contractor specialist with
+  `ATH_HANDOFF_SECRET` under the domain `ATH_CLAIM_START_PREFLIGHT_V1` (HMAC over the raw body, verified BEFORE parse,
+  min secret 32 chars, body ≤ 1024 bytes, `ts` within ±60 s, `rid` replay window 2 min).
+- **Privacy:** the specialist never sends an IP. It sends `bucket = HMAC(secret, "ATH_CLAIM_START_BUCKET_V1:" + abuseBucket)`
+  (IPv4 full address, IPv6 /64) and Ask stores only `opaqueRateKey(...)` of that digest in `ath_rate_events`.
+- **Policy (durable, shared by every isolate/region):** 5 / 15 min per bucket, 3 / 15 min per bucket+profile,
+  20 / rolling 60 min per bucket. Evaluated under `pg_advisory_xact_lock(hashtext('ath_claim_start:'||digest))`, so
+  concurrent starts cannot over-admit (proven on real PostgreSQL 16: 24 concurrent → exactly 5).
+- **Client (`lib/claim/preflight-client.ts`):** fixed Production Ask origin, 2.5 s timeout, no retry, never throws.
+  Anything other than `200 {allowed:true, reason:"ok"}` or `429 {allowed:false}` is `unavailable` → the specialist
+  answers **503** and mints nothing (fail closed). `limited` → **429** + `Retry-After`.
+- **Ordering in `runClaimStart`:** same-origin → local memory limiter → profile load/eligibility → rollout state →
+  **durable preflight** → mint. The memory limiter stays as defense in depth; the Vercel firewall rule stays the outer backstop.
+- **Readiness honesty:** `DURABLE_ABUSE_GATE = PASS` (code + tests). `ALL_ABUSE_GATE` stays **BLOCKED** until infra
+  confirms the firewall rule is active in Production. R9 remains **NOT_MET** until that confirmation.
+
+## R1 addendum — explicit Continue idempotency (double-intent P1)
+
+**Observed:** a real-owner canary produced two `ath_claim_intents` ~0.7 s apart from one Continue. The nonce UNIQUE
+already collapses a double post of the *same* token; two rows therefore mean the specialist minted **two tokens** for
+one click (double form submit), each accepted with a fresh receipt id, and each Continue creating its own intent.
+
+**Fix (DB / idempotency boundary, not UI-only):**
+1. `confirmClaimIntent` takes `pg_advisory_xact_lock(hashtext('claim_continue:' || receipt_hash))` so every Continue
+   for one browser receipt is serialized inside its transaction — concurrent requests cannot both insert.
+2. Before inserting, it looks for an **open, unexpired, `explicit_continue`** intent for the **same hub + exact
+   profile** that either carries the same `receipt_hash` or is the intent id the browser already holds (httpOnly
+   intent cookie, passed by the confirm route). If found it is reused (`created:false`); the new token's nonce is
+   **never recorded**, so token expiry and replay protection are unchanged.
+3. The accept route keeps the **same receipt id** when a fresh handoff is for the same exact profile as the receipt
+   already in the browser, and keeps an open same-profile intent cookie instead of clearing it. Different profile →
+   new receipt id and the intent cookie is cleared, exactly as before.
+4. Contractor `ManageProfileCta` adds a synchronous DOM double-submit guard (defense in depth only).
+
+**Unchanged security contract:** same token from a *different* receipt → `reused_nonce`; different browser with its
+own token → its own intent (competing-claim path); different profile in the same browser → separate intent; forged
+`existingIntentId` cannot hijack (must match receipt or be the same-profile held id); passive receipt still creates 0
+intents; consumed intents are never reused; expired tokens still fail with `expired`.
+
+**Tests:** `lib/customer/ath-claim-v2-flnj-001r1-continue.test.ts` — sequential double-click, identical network retry,
+6 concurrent Continues (PGlite), two-mint P1 shape → one intent → exactly one claim on submit, security-contract
+matrix, wiring assertions, and a real-PostgreSQL proof (8 concurrent same-token and 8 concurrent *different-token*
+Continues on separate connections → exactly one intent; different browsers not collapsed).
