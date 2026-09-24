@@ -1,0 +1,414 @@
+{
+  "state_code": "MA",
+  "state_name": "Massachusetts",
+  "ask_path": "/massachusetts",
+  "ask_canonical": "https://www.asktrusthub.com/massachusetts",
+  "version": "ath-ma-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_boston_routes": false,
+  "massachusetts_local_phase": "NO",
+  "massachusetts_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PUBLICATION_CONTRACT",
+  "ask_production": null,
+  "conceptual_statement": "Massachusetts research stays in six specialist products: DPU mover certificates, DOB mortgage license files, contractor discipline and debarment, DOI company and designation files, DPH and AGE care classes beside CMS, and separate Massachusetts adviser registration lenses. Ask routes to those pages. It does not copy their records or add them into one Massachusetts total.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /massachusetts pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /massachusetts is indexable. Any one specialist failure fails the gate.",
+    "verified_at": "2026-09-24T18:54:03.654Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "move",
+      "display": "308 distinct Massachusetts DPU certificate numbers",
+      "grain": "Intrastate DPU household-goods certificate identity, not USDOT and not MC. 309 regulated-mover rows. Exact USDOT joins: 0. Exact MC joins: 0. Listing is not an invented Active status."
+    },
+    {
+      "hub_id": "lender",
+      "display": "298 distinct mortgage-lender company NMLS IDs",
+      "grain": "Company licenses on the mortgage-lender file only. Broker company NMLS IDs, MLO persons, and branch NMLS IDs are separate grains. HMDA is federal activity, not licensing."
+    },
+    {
+      "hub_id": "contractor",
+      "display": "518 DOL construction-trade discipline rows",
+      "grain": "Discipline evidence from 364 complaints, not a contractor census. HIC and CSL lookups are known. Both bulk rosters were not acquired."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "1,693 distinct NAIC identities on the DOI licensed/approved company source",
+      "grain": "Legal-company identity. Designation lists, 1,000 non-NAIC research rows, and enforcement indexes are separate. Agency and producer bulk rosters were not acquired."
+    },
+    {
+      "hub_id": "senior",
+      "display": "347 Massachusetts DPH Nursing Homes",
+      "grain": "One DPH facility class. Rest Homes, assisted living residences, home health, hospice, and CMS counts are separate. Proven exact state-to-CMS bridges: 0, which is not zero real-world overlap."
+    },
+    {
+      "hub_id": "investor",
+      "display": "773 APPROVED Massachusetts state IA firms",
+      "grain": "State registration only. ERA filings, federal notice filings, and the principal-office roster are separate lenses. 794 state IA rows also include CONDREST and TERMREQUEST."
+    }
+  ],
+  "what_makes_massachusetts_different": [
+    "Move: the public identity is a DPU intrastate mover certificate and a filed tariff, not a USDOT or MC number.",
+    "Lender: the Division of Banks publishes downloadable company and MLO licensing files. Broker, branch, and person rows stay separate.",
+    "Contractor: HIC, CSL, and the professional trades are separate regulatory systems. The acquired statewide evidence is discipline and debarment, not a license census.",
+    "Insurance: the Division of Insurance publishes a legal-company universe plus separate designation files.",
+    "Senior: DPH facility classes and AGE assisted living residences sit beside CMS. They are not one senior-facility total.",
+    "Investor: state IA, ERA, notice, and principal-office lenses are separately available through accepted IAPD feeds."
+  ],
+  "hub_expansion_ledgers": {
+    "move": {
+      "MA_DPU_HHG_LISTING_ROWS": 309,
+      "MA_DPU_HHG_DISTINCT_CERTIFICATES": 308,
+      "MA_DPU_TARIFF_POSTED_ROWS": 300,
+      "MA_DPU_TARIFF_PENDING_ROWS": 9,
+      "EXACT_USDOT_JOINS": 0,
+      "EXACT_MC_JOINS": 0,
+      "TARIFF_EFFECTIVE_DATES": "NOT_ACQUIRED",
+      "COMPLAINT_OUTCOMES": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "lender": {
+      "MORTGAGE_LENDER_ROWS": 1614,
+      "MORTGAGE_LENDER_DISTINCT_COMPANY_NMLS": 298,
+      "MORTGAGE_BROKER_ROWS": 1669,
+      "MORTGAGE_BROKER_DISTINCT_COMPANY_NMLS": 453,
+      "COMPANIES_HOLDING_BOTH": 192,
+      "DISTINCT_COMPANY_NMLS_ACROSS_COMPANY_FILES": 559,
+      "MLO_ROWS": 10397,
+      "MLO_DISTINCT_INDIVIDUAL_NMLS": 10395,
+      "DISTINCT_BRANCH_NMLS": 1265,
+      "DOB_MORTGAGE_ENFORCEMENT_ROWS": 33,
+      "OLDER_ENFORCEMENT_OUTSIDE_ACQUIRED_WINDOW": "INCOMPLETE",
+      "COMPLAINT_ROWS": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "contractor": {
+      "HIC_LOOKUP": "KNOWN",
+      "HIC_BULK_ROSTER": "NOT_ACQUIRED",
+      "CSL_LOOKUP": "KNOWN",
+      "CSL_BULK_ROSTER": "NOT_ACQUIRED",
+      "TRADE_ROSTERS": "NOT_ACQUIRED",
+      "DOL_DISCIPLINE_ROWS": 518,
+      "DOL_DISTINCT_COMPLAINTS": 364,
+      "DOL_AFTER_2025_Q1": "UNKNOWN",
+      "DCAMM_DEBARMENT_PARTIES": 7,
+      "AG_FAIR_LABOR_DEBARMENT_ROWS": 464,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "insurance": {
+      "LICENSED_OR_APPROVED_ROWS": 2716,
+      "DISTINCT_NAIC": 1693,
+      "NON_NAIC_RESEARCH_ROWS": 1000,
+      "AUTO_6G": 587,
+      "WORKERS_COMP_6E": 486,
+      "HEALTH_6B": 566,
+      "ELIGIBLE_SURPLUS_LINES": 212,
+      "DOMESTIC_LIFE": 16,
+      "DOMESTIC_PC": 49,
+      "FIDELITY_SURETY_4": 514,
+      "ADMINISTRATIVE_ACTIONS_2015_2026": 319,
+      "HEARING_DECISION_INDEX": 325,
+      "MARKET_CONDUCT_INDEX": 107,
+      "AGENCY_PRODUCER_BULK": "NOT_ACQUIRED",
+      "PRE_2015_ENFORCEMENT": "REQUEST_ONLY",
+      "COMPANY_COMPLAINT_COUNTS": "REQUEST_ONLY",
+      "FINANCIAL_RECEIVERSHIP": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "senior": {
+      "CMS_NURSING_HOMES": 341,
+      "CMS_HOME_HEALTH": 287,
+      "CMS_HOSPICE": 77,
+      "DPH_NURSING_HOMES": 347,
+      "DPH_REST_HOMES": 58,
+      "DPH_CERTIFIED_HOME_HEALTH": 325,
+      "DPH_HOSPICE": 93,
+      "DPH_HOSPICE_INPATIENT_SATELLITES": 6,
+      "DPH_ADULT_DAY_HEALTH": 162,
+      "AGE_ASSISTED_LIVING_RESIDENCES": 272,
+      "AGE_UNITS": 19300,
+      "AGE_TRADITIONAL_UNITS": 13904,
+      "AGE_SPECIAL_CARE_UNITS": 5396,
+      "EXACT_DPH_CMS_BRIDGES": 0,
+      "EXACT_DPH_CMS_JOIN": "UNKNOWN",
+      "SURVEY_BULK": "NOT_ACQUIRED",
+      "COMPLAINTS": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "investor": {
+      "STATE_IA_ROWS": 794,
+      "STATE_IA_APPROVED": 773,
+      "STATE_IA_CONDREST": 10,
+      "STATE_IA_TERMREQUEST": 11,
+      "ERA_ACTIVE": 351,
+      "FEDERAL_NOTICE_FILINGS": 3272,
+      "PRINCIPAL_OFFICE_ROSTER": 803,
+      "STATE_IA_WITH_MASSACHUSETTS_MAIN_OFFICE": 259,
+      "APPROVED_STATE_IA_NOTICE_EXACT_CRD_OVERLAP": 6,
+      "ENFORCEMENT_ANNOUNCEMENTS": 144,
+      "ENFORCEMENT_DOCUMENTS": 181,
+      "ALLEGATION_DOCUMENTS": 85,
+      "ORDERS": 85,
+      "SUPPORTING_DOCUMENTS": 11,
+      "EXACT_CRD_ADVERSE_ATTACHMENTS": 0,
+      "IAR_POPULATION": "NOT_ACQUIRED",
+      "STATE_BD_AGENT_BULK": "NOT_ACQUIRED",
+      "PRE_2012_ACTIONS": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Massachusetts evidence uses incompatible grains: mover certificate identities, tariff rows, mortgage company licenses, branches, MLO persons, contractor discipline events, debarment parties, insurance legal companies, insurance designations, enforcement events, nursing homes, rest homes, assisted living residences, home health agencies, hospice programs, investment adviser firms, ERA filings, notice filings, and enforcement documents. Those grains cannot be summed into Massachusetts businesses, providers, licensed professionals, or Trust Hub records."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_WORK_NEEDED_NOW": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/massachusetts",
+      "snapshot_version": "move-ma-state-intel-v1",
+      "fingerprint": "4d716b593ec05ba56cdf69c87a33d307aa941ead0bf3967074b8dacc1a7d92ff",
+      "certified_release_sha": "2e7424b3b8610f08d17721a7d1ae08a74d686ca5",
+      "source_clocks": {
+        "source_as_of": "2026-06-16",
+        "retrieved_at": "2026-09-24T14:37:20Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T14:45:43Z"
+      },
+      "plain_question": "Who is on the Massachusetts DPU household-goods mover list?",
+      "research_topics": [
+        "DPU certificate",
+        "Filed tariff",
+        "Intrastate household goods"
+      ],
+      "coverage_summary": "308 distinct DPU certificates from 309 listing rows.",
+      "coverage_limitation": "A DPU certificate is not USDOT or MC. Tariff effective dates and complaint outcomes were not acquired.",
+      "verified_facts": [
+        "309 listing rows",
+        "308 distinct certificates",
+        "0 USDOT joins",
+        "0 MC joins"
+      ],
+      "routing_intents": [
+        "movers Massachusetts",
+        "Massachusetts DPU mover",
+        "Massachusetts moving tariff",
+        "DPU certificate 32011"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lending",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/massachusetts",
+      "snapshot_version": "lender-ma-state-intel-v1",
+      "fingerprint": "efd41b02e75a7a0891bc433b50ddd19b5ba3c4095b96521739f20012188aaebe",
+      "certified_release_sha": "158f3017563257a490d8192ea0a9e30c3f699587",
+      "source_clocks": {
+        "license_source_as_of": "2026-06-30",
+        "license_retrieved_at": "2026-09-24T14:43:49Z",
+        "enforcement_retrieved_at": "2026-09-24T14:45:46Z",
+        "generated_at": "2026-09-24T15:07:00Z",
+        "hmda": "HMDA 2025"
+      },
+      "plain_question": "Which mortgage-lender companies are on the Massachusetts DOB file?",
+      "research_topics": [
+        "Mortgage lender company NMLS",
+        "Mortgage broker file",
+        "MLO file",
+        "DOB enforcement"
+      ],
+      "coverage_summary": "298 distinct mortgage-lender company NMLS IDs. Broker, MLO, and branch grains stay separate.",
+      "coverage_limitation": "Company, person, and branch are not one mortgage total. Provider complaint rows are request-only. Enforcement outside the acquired window is incomplete.",
+      "verified_facts": [
+        "1,614 lender-file rows",
+        "298 lender company NMLS IDs",
+        "33 mortgage enforcement rows in the acquired window"
+      ],
+      "routing_intents": [
+        "mortgage lender Massachusetts",
+        "mortgage broker Massachusetts",
+        "mortgage loan originator Massachusetts",
+        "Massachusetts mortgage enforcement"
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/massachusetts",
+      "snapshot_version": "contractor-ma-state-intel-v1",
+      "fingerprint": "d40024ca5490514a33c5c6f0329b16be8f0f05bb8802f5a1997730fb368fba94",
+      "certified_release_sha": "af0b7da0527b97249f81a3c3d0943be811dc6e74",
+      "source_clocks": {
+        "generated_at": "2026-09-24T16:00:00Z",
+        "dcamm_retrieved_at": "2026-09-24T15:47:00Z",
+        "dol_window": "2021 through 2025 Q1; later discipline UNKNOWN"
+      },
+      "plain_question": "What Massachusetts contractor discipline is on the public record?",
+      "research_topics": [
+        "DOL construction-trade discipline",
+        "DCAMM debarment",
+        "AG Fair Labor debarment",
+        "HIC and CSL lookup"
+      ],
+      "coverage_summary": "518 DOL discipline rows. HIC and CSL bulk rosters were not acquired.",
+      "coverage_limitation": "Discipline evidence is not a contractor census. Trade rosters were not acquired. Later DOL discipline is unknown. No name-only profile attachment.",
+      "verified_facts": [
+        "518 DOL rows",
+        "7 DCAMM parties",
+        "464 AG Fair Labor rows",
+        "0 name attachments"
+      ],
+      "routing_intents": [
+        "contractor Massachusetts",
+        "HIC Massachusetts",
+        "CSL Massachusetts",
+        "Massachusetts contractor discipline",
+        "contractor debarment Massachusetts"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/massachusetts",
+      "snapshot_version": "insurance-ma-state-intel-v1",
+      "fingerprint": "fe08b5e2b602f9a7b3af61ea1986b678fda98d53e00e1efbdaf060e4b4d88f17",
+      "certified_release_sha": "86e1d4b5425a9ba7455b1c57d607c1d42e1549a6",
+      "source_clocks": {
+        "source_as_of": "2026-09-01",
+        "retrieved_at": "2026-09-24T15:49:22Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T17:55:01Z"
+      },
+      "plain_question": "Which legal insurance companies does Massachusetts DOI list?",
+      "research_topics": [
+        "Licensed or approved companies",
+        "NAIC identities",
+        "Designation files",
+        "Administrative actions"
+      ],
+      "coverage_summary": "1,693 distinct NAIC identities on the licensed/approved company source.",
+      "coverage_limitation": "Company identity is not an agency or producer census. Designation lists are not added to the company count. Pre-2015 enforcement and company complaint counts are request-only.",
+      "verified_facts": [
+        "2,716 licensed/approved rows",
+        "1,693 distinct NAIC codes",
+        "1,000 non-NAIC research rows"
+      ],
+      "routing_intents": [
+        "insurance companies Massachusetts",
+        "NAIC Massachusetts",
+        "auto insurers Massachusetts",
+        "insurance enforcement Massachusetts"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/massachusetts",
+      "snapshot_version": "senior-ma-state-intel-v1",
+      "fingerprint": "b8cb397f6bb0ecdb9f58a09ff7e6a7ce720d7a37c1906cf16e68deac39586ccf",
+      "certified_release_sha": "49fb6d8bfab5c8d09da13b039ad0356da0966d59",
+      "source_clocks": {
+        "dph_source_as_of": "2026-09-08",
+        "alr_list_source_as_of": "2026-06-25",
+        "retrieved_at": "2026-09-24T16:37:44Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T17:00:00Z"
+      },
+      "plain_question": "Which Massachusetts DPH nursing homes are listed?",
+      "research_topics": [
+        "DPH nursing homes",
+        "Rest homes",
+        "AGE assisted living",
+        "CMS care settings"
+      ],
+      "coverage_summary": "347 DPH Nursing Homes. Other DPH classes, AGE assisted living, and CMS stay separate.",
+      "coverage_limitation": "There is no combined senior-facility total. Survey bulk was not acquired. Complaints are request-only. An exact DPH-to-CMS join is unknown.",
+      "verified_facts": [
+        "347 DPH nursing homes",
+        "272 assisted living residences",
+        "0 proven exact state-to-CMS bridges"
+      ],
+      "routing_intents": [
+        "nursing homes Massachusetts",
+        "assisted living Massachusetts",
+        "rest homes Massachusetts",
+        "senior care Massachusetts"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Professionals",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/massachusetts",
+      "snapshot_version": "investor-ma-state-intel-v1",
+      "fingerprint": "014fb959166d135153618b9781fd099322e0f1d4eec38d3bd3470dd282ee1930",
+      "certified_release_sha": "c33a82f85121f162799b9a5b33dbbce5204acc25",
+      "source_clocks": {
+        "iapd_source_as_of": "2026-09-17",
+        "enforcement_retrieved_at": "2026-09-24T16:58:59Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T17:12:05Z"
+      },
+      "plain_question": "Which firms are APPROVED Massachusetts state investment advisers?",
+      "research_topics": [
+        "State IA",
+        "ERA",
+        "Federal notice",
+        "Principal office",
+        "Securities archive"
+      ],
+      "coverage_summary": "773 APPROVED state IA firms. ERA, notice, and principal office stay separate.",
+      "coverage_limitation": "State registration is not headquarters and not a notice filing. IAR and broker-dealer populations were not acquired. Exact enforcement CRD attachments were not acquired. Pre-2012 actions are request-only.",
+      "verified_facts": [
+        "773 APPROVED",
+        "351 ACTIVE ERA",
+        "3,272 notice filings",
+        "0 exact CRD adverse attachments"
+      ],
+      "routing_intents": [
+        "investment adviser Massachusetts",
+        "Massachusetts RIA",
+        "ERA Massachusetts",
+        "securities enforcement Massachusetts"
+      ]
+    }
+  ]
+}

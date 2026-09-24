@@ -1,0 +1,20 @@
+{
+  "ticket": "ATH-MA-001",
+  "version": "ath-ma-network-release-v1",
+  "contract": "ath-ma-network-release-v1",
+  "state_code": "MA",
+  "state_name": "Massachusetts",
+  "ask_canonical": "https://www.asktrusthub.com/massachusetts",
+  "scope": "STATE_LEVEL_ONLY",
+  "required_hubs": ["contractor", "move", "senior", "lender", "insurance", "investor"],
+  "local_work_needed_now": "NO",
+  "trust_score": false,
+  "paid_ranking": false,
+  "cross_hub_record_total": { "status": "REJECTED", "value": null },
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false,
+  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "release_gate_passed": true,
+  "ask_fingerprint": "49555f9e05d93fa0d8c31aeecb8c990c50efd1bc26fce1e101204f942589fadc",
+  "ask_production": null
+}

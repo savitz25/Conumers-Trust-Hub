@@ -1,0 +1,25 @@
+{
+  "ticket": "ATH-MA-001",
+  "state": "MA",
+  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "note": "Massachusetts Ask publication contract is ready. Production certificate is recorded only after Production runs the merge SHA and live /massachusetts checks pass. Publication semantic fingerprint stays on the publication manifest.",
+  "contract": "ath-ma-network-release-v1",
+  "network_contract": "ath-ma-network-release-v1",
+  "ask_path": "/massachusetts",
+  "ask_route": "/massachusetts",
+  "ask_canonical": "https://www.asktrusthub.com/massachusetts",
+  "scope": "STATE_LEVEL_ONLY",
+  "local_work_needed_now": "NO",
+  "local_work_decision": "NO",
+  "cross_hub_record_total": null,
+  "cross_hub_record_total_status": "REJECTED",
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false,
+  "publication_manifest_fingerprint": "49555f9e05d93fa0d8c31aeecb8c990c50efd1bc26fce1e101204f942589fadc",
+  "ask_production": null,
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-24T18:54:03.654Z"
+  }
+}

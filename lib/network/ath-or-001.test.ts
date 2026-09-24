@@ -224,7 +224,7 @@ test('claim eligibility surfaces are unchanged', () => {
 test('state page inventory adds Oregon once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'OR').length, 1);
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.slug === 'oregon').length, 1);
-  assert.equal(ASK_NETWORK_STATES.length, 15);
+  assert.equal(ASK_NETWORK_STATES.length, 16);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/oregon'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/oregon/portland'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Oregon network gateway/);
