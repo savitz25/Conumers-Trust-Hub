@@ -56,8 +56,12 @@ test('auth return after expiration: an expired token cannot be confirmed and an 
   await platform.receiveHandoff(token);
   const confirmed = await platform.confirmClaimIntent({ token, receiptId: 'receipt-expiry-0123456789abcdef', acquisitionSource: 'organic' });
   assert.ok(await platform.intentPreview(confirmed.intentId));
-  // The consumer went to email and came back after the 15-minute handoff window.
+  // ATH-CLAIM-V2-001R4 (#11): after an explicit Continue the durable intent lives 60 min from Continue, so a
+  // return at +16 min (past the 15-min handoff token) is still valid...
   clock.now = new Date(clock.now.getTime() + 16 * 60 * 1000);
+  assert.ok(await platform.intentPreview(confirmed.intentId), 'intent survives the 15-min token inside the continuation window');
+  // ...but it is bounded: past the continuation window the intent is expired and fails closed.
+  clock.now = new Date(clock.now.getTime() + 45 * 60 * 1000);
   assert.equal(await platform.intentPreview(confirmed.intentId), null, 'expired intent is not previewed');
   const user = await signup(platform, 'owner@acme-roofing.example');
   await assert.rejects(() => platform.submitClaim({ sessionToken: user.sessionToken, intentId: confirmed.intentId, relationshipType: 'owner', credentialAttestation: CONTRACTOR.externalKey, authorized: true }), (e: unknown) => e instanceof Error && /expired|missing_intent/.test((e as { code?: string }).code ?? e.message));
@@ -83,6 +87,9 @@ test('schema guard is wired into every V2 write path and the queue snapshot', ()
     const at = store.indexOf(fn);
     assert.ok(at > 0, fn);
     const body = store.slice(at, at + 900);
-    assert.match(body, /assertClaimV2Schema\(\)/, `${fn} guards on migration 019`);
+    // R4 (#7): stampReviewTiming guards with the non-throwing probe so a pre-019 staff decision degrades to legacy
+    // mode instead of failing; every other V2 path still fails closed.
+    const guard = fn === 'private async stampReviewTiming(' ? /claimV2SchemaReady\(\)/ : /assertClaimV2Schema\(\)/;
+    assert.match(body, guard, `${fn} guards on migration 019`);
   }
 });
