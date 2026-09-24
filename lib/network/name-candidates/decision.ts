@@ -48,7 +48,7 @@ const PROTECTED_REASON_CODES = new Set([
   'UNSUPPORTED_SECURITIES_ADVICE', 'CARE_TASK', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
 ]);
 
-const IDENTIFIER_LABEL = /\b(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)\b\s*#?\s*[A-Z0-9-]*\d/i;
+const IDENTIFIER_LABEL = /\b(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN|DPU(?:\s+certificate)?)\b\s*#?\s*[A-Z0-9-]*\d/i;
 /** A phrase LED by an identifier-family label ("NAIC ABCD") is a malformed identifier attempt, not a name -- mirrors the planner's own protection. */
 const LEADING_IDENTIFIER_LABEL = /^(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)\b/i;
 const SENTENCE_START = /^(?:show|find|list|which|what|who|whom|whose|where|when|why|how|is|are|was|were|does|do|did|can|could|should|would|will|i|i'm|im|we|my|need|looking|search|get|give|tell|help|compare|verify|check|research|look|please|any|are\s+there)\b/i;
