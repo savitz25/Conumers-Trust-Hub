@@ -13,8 +13,23 @@
   "cross_hub_record_total": { "status": "REJECTED", "value": null },
   "ask_graph_writes": 0,
   "ask_claim_eligibility_broadened": false,
-  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
   "release_gate_passed": true,
   "ask_fingerprint": "49555f9e05d93fa0d8c31aeecb8c990c50efd1bc26fce1e101204f942589fadc",
-  "ask_production": null
+  "ask_production": {
+    "verified_at": "2026-09-24T19:22:20Z",
+    "merge_sha": "3afeb9d8e9d3fb8ca3de2d636dfcc4f7221eb36d",
+    "gateway_pr": 202,
+    "routing_pr": 203,
+    "pr": 203,
+    "deployment_id": 6646186023,
+    "environment": "Production",
+    "deployed_sha": "3afeb9d8e9d3fb8ca3de2d636dfcc4f7221eb36d",
+    "unique_deployment_url": "https://conumers-trust-fewzv6qk4-savitz25-s-projects.vercel.app",
+    "live_route": "https://www.asktrusthub.com/massachusetts",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/massachusetts",
+    "robots": "index, follow",
+    "sso": false
+  }
 }

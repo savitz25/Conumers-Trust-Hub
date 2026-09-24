@@ -156,14 +156,14 @@ test('production certificate stays outside the publication manifest until Produc
   assert.equal(gaps.cross_hub_record_total.value, null);
   assert.equal(gaps.local_work_needed_now, 'NO');
   assert.ok(gaps.remaining_gaps.length >= 6);
-  if (closeout.status === 'CLOSED_PRODUCTION_VERIFIED') {
-    assert.equal(release.status, 'CLOSED_PRODUCTION_VERIFIED');
-    assert.equal(closeout.ask_production.http_status, 200);
-    assert.equal(closeout.ask_production.sso, false);
-    assert.equal(closeout.ask_production.canonical, 'https://www.asktrusthub.com/massachusetts');
-    assert.equal(MA_PUBLICATION_MANIFEST.ask_production, null);
-  } else {
-    assert.equal(closeout.status, 'AWAITING_PRODUCTION_CERTIFICATE');
-    assert.equal(closeout.ask_production, null);
-  }
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(release.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(closeout.ask_production.merge_sha, '3afeb9d8e9d3fb8ca3de2d636dfcc4f7221eb36d');
+  assert.equal(closeout.ask_production.deployment_id, 6646186023);
+  assert.equal(closeout.ask_production.http_status, 200);
+  assert.equal(closeout.ask_production.sso, false);
+  assert.equal(closeout.ask_production.canonical, 'https://www.asktrusthub.com/massachusetts');
+  assert.equal(release.ask_production.deployed_sha, closeout.ask_production.merge_sha);
+  assert.equal(MA_PUBLICATION_MANIFEST.status, 'ASK_PUBLICATION_CONTRACT');
+  assert.equal(MA_PUBLICATION_MANIFEST.ask_production, null);
 });
