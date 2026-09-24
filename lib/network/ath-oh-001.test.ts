@@ -252,8 +252,8 @@ test('claim eligibility surfaces are unchanged', () => {
 
 test('state page inventory adds Ohio once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'OH').length, 1);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'ohio');
-  assert.equal(ASK_NETWORK_STATES.length, 14);
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'georgia');
+  assert.equal(ASK_NETWORK_STATES.length, 15);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/ohio'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/ohio/columbus'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Ohio network gateway/);

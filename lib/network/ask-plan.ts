@@ -72,6 +72,7 @@ import { orCaveatForHub, orSpecialistUrl, routeOrAsk } from './or-network.ts';
 import { paCaveatForHub, paSpecialistUrl, routePaAsk } from './pa-network.ts';
 import { ncCaveatForHub, ncSpecialistUrl, routeNcAsk } from './nc-network.ts';
 import { ohCaveatForHub, ohSpecialistUrl, routeOhAsk } from './oh-network.ts';
+import { gaCaveatForHub, gaSpecialistUrl, routeGaAsk } from './ga-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -1297,6 +1298,43 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0]) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateOh(h, ohCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'GA') {
+    const gaRoute = routeGaAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateGa = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : gaSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? gaSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (gaRoute) {
+      const already = hubs.some((h) => h.hubId === gaRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: gaRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[gaRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: gaRoute.destination,
+            reason: gaRoute.caveat,
+            whatItCanAnswer: `Georgia research on ${NETWORK_PUBLIC_NAMES[gaRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Georgia',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === gaRoute.hubId ? annotateGa(h, gaRoute.caveat) : h));
+      }
+    } else if (parsed.suggestedHubs[0] && !/\b(usdot|crd|nmls|naic|npn|ccn)\b/i.test(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateGa(h, gaCaveatForHub(primary)) : h));
     }
   }
 

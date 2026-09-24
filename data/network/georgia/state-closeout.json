@@ -1,0 +1,11 @@
+{
+  "ticket": "ATH-GA-001",
+  "contract": "ath-ga-network-release-v1",
+  "ask_path": "/georgia",
+  "scope": "STATE_LEVEL_ONLY",
+  "local_work_needed_now": "NO",
+  "cross_hub_record_total": null,
+  "cross_hub_record_total_status": "REJECTED",
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false
+}
