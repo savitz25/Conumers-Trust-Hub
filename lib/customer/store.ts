@@ -78,6 +78,12 @@ export class AuthError extends Error {
 /** ATH-CLAIM-V2-001R4 — bounded lifetime of a durable intent after explicit Continue (see confirmClaimIntent). */
 export const CLAIM_INTENT_CONTINUATION_SECONDS = 60 * 60;
 
+/** ATH-CLAIM-V2-FLNJ-001 — which specialist sources have a monitoring feed. Contractor: Florida DBPR only. */
+export function monitoringSourceSupported(hubId: string, nativeSourceSystem: string | null | undefined): boolean {
+  if (hubId !== 'contractor') return true;
+  return nativeSourceSystem === 'fl_dbpr';
+}
+
 export class ClaimError extends Error {
   readonly code: string;
   constructor(code: string) {
@@ -1677,6 +1683,8 @@ export class CustomerPlatform {
   async saveMonitoring(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}) {
     const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
     if(customerHub(access.hub_id)?.monitoring!=='SUPPORTED') throw new MonitoringError('forbidden');
+    // ATH-CLAIM-V2-FLNJ-001: the Contractor feed is Florida DBPR only; NJ DCA profiles cannot enable it (fail closed).
+    if(!monitoringSourceSupported(access.hub_id,access.native_source_system)) throw new MonitoringError('forbidden');
     const data=validateMonitoringSettings(input.body),now=this.now().toISOString();
     const existing=await one<{id:string;enabled:boolean;version:number;baseline_at:string|null}>(this.deps.sql,
       `SELECT id,enabled,version,baseline_at::text FROM ath_monitoring_subscriptions
@@ -1811,7 +1819,7 @@ export class CustomerPlatform {
          FROM ath_organization_invitations WHERE org_id=$1 AND status='PENDING' ORDER BY created_at DESC`,[orgId]);
     const profiles=await this.deps.sql.query<Record<string,unknown>>(
         `SELECT g.id grant_id,g.status grant_status,g.granted_at::text,p.hub_id,p.native_profile_id::text,p.native_slug,
-                p.native_credential_key,p.display_name_snapshot,s.enabled monitoring_enabled
+                p.native_credential_key,p.display_name_snapshot,p.native_source_system,s.enabled monitoring_enabled
          FROM ath_management_grants g JOIN ath_hub_profiles p ON p.id=g.hub_profile_id
          LEFT JOIN ath_monitoring_subscriptions s ON s.org_id=g.org_id AND s.hub_profile_id=g.hub_profile_id
          WHERE g.org_id=$1 AND g.status='active' ORDER BY p.hub_id,p.display_name_snapshot,p.native_profile_id`,[orgId]);
@@ -2013,7 +2021,7 @@ export class CustomerPlatform {
     if (!user) throw new AuthError('missing_session');
     const profiles = await this.deps.sql.query<Record<string, unknown>>(
       `SELECT g.id AS grant_id,g.status AS grant_status,o.id AS org_id,o.display_name AS organization_name,
-              p.hub_id,p.native_profile_id::text,p.native_credential_key,p.display_name_snapshot,p.canonical_url,p.entity_class,
+              p.hub_id,p.native_profile_id::text,p.native_credential_key,p.display_name_snapshot,p.canonical_url,p.entity_class,p.native_source_system,
               m.role,COALESCE(s.enabled,false) AS monitoring_enabled,
               (SELECT count(*)::int FROM ath_business_profile_fields f WHERE f.org_id=o.id AND f.hub_profile_id=p.id AND btrim(f.value_text)<>'') AS business_field_count,
               (SELECT count(DISTINCT i.category)::int FROM ath_business_profile_items i WHERE i.org_id=o.id AND i.hub_profile_id=p.id) AS business_item_category_count,

@@ -8,6 +8,24 @@ export const CUSTOMER_HUBS = [HUB_CONTRACTOR, HUB_MOVE, HUB_LENDER, HUB_SENIOR, 
 export type CustomerHubId = (typeof CUSTOMER_HUBS)[number];
 export const SOURCE_FL_DBPR = 'fl_dbpr' as const;
 export const HOME_STATE_FL = 'FL' as const;
+export const SOURCE_NJ_DCA = 'nj_dca' as const;
+export const HOME_STATE_NJ = 'NJ' as const;
+/**
+ * ATH-CLAIM-V2-FLNJ-001 — Contractor claimable credential sources by claim state. Mirrors Contractor's
+ * lib/claim/eligibility.ts exactly; Ask never accepts a (source, state) pair outside this table.
+ */
+export const CONTRACTOR_CLAIMABLE_CREDENTIALS: Readonly<Record<'FL' | 'NJ', readonly string[]>> = { FL: [SOURCE_FL_DBPR], NJ: [SOURCE_NJ_DCA] };
+export type ContractorClaimState = keyof typeof CONTRACTOR_CLAIMABLE_CREDENTIALS;
+export function contractorClaimState(sourceSystem: string | null | undefined): ContractorClaimState | null {
+  for (const state of Object.keys(CONTRACTOR_CLAIMABLE_CREDENTIALS) as ContractorClaimState[]) {
+    if (CONTRACTOR_CLAIMABLE_CREDENTIALS[state].includes(String(sourceSystem ?? ''))) return state;
+  }
+  return null;
+}
+export function contractorCredentialPairAllowed(sourceSystem: string | null | undefined, homeState: string | null | undefined): boolean {
+  const state = contractorClaimState(sourceSystem);
+  return state !== null && state === homeState;
+}
 export const HANDOFF_AUDIENCE = 'asktrusthub' as const;
 export const HANDOFF_TTL_SECONDS = 15 * 60;
 

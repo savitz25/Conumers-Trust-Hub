@@ -4,6 +4,7 @@ import {
   HOME_STATE_FL,
   HUB_CONTRACTOR,
   SOURCE_FL_DBPR,
+  contractorCredentialPairAllowed,
   type CustomerHubId,
   type HandoffPayload,
 } from './types.ts';
@@ -54,10 +55,10 @@ function isCompleteV2(payload: HandoffPayload): boolean {
     ? { namespace: 'credential', entityClass: 'contractor' }
     : null;
   if (!capability) return true;
+  // ATH-CLAIM-V2-FLNJ-001: FL (fl_dbpr) unchanged; NJ accepted only as (nj_dca, NJ). Any other pair is malformed.
   return payload.identifier_namespace === capability.namespace
     && payload.entity_class === capability.entityClass
-    && payload.source_system === SOURCE_FL_DBPR
-    && payload.home_state === HOME_STATE_FL
+    && contractorCredentialPairAllowed(payload.source_system, payload.home_state)
     && typeof payload.canonical_profile_url === 'string'
     && payload.canonical_profile_url.length > 0
     && typeof payload.display_name === 'string'

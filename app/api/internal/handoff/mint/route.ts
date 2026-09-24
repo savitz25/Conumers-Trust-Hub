@@ -7,7 +7,7 @@ import { customerHub } from '@/lib/customer/hub-registry';
 import { resolveProfileForHandoffMint } from '@/lib/customer/handoff-mint-resolution';
 import { customerLog } from '@/lib/customer/log';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
-import { HOME_STATE_FL, SOURCE_FL_DBPR, type HandoffPayload } from '@/lib/customer/types';
+import { SOURCE_FL_DBPR, contractorClaimState, type HandoffPayload } from '@/lib/customer/types';
 import { contractorMintIdentity } from '@/lib/customer/contractor-handoff';
 
 export const runtime = 'nodejs';
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       v:2,aud:'asktrusthub' as const,
       hub_id: capability.hubId,
       native_profile_id: body.nativeProfileId,
-      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':capability.hubId==='insurance'?'naic':'cms'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
+      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':capability.hubId==='insurance'?'naic':'cms'),home_state:capability.hubId==='contractor'?contractorClaimState(body.sourceSystem||SOURCE_FL_DBPR):null,
       identifier_namespace:capability.identifierNamespace,entity_class:capability.hubId==='senior'?body.providerClass:capability.identityClass,provider_class:body.providerClass,canonical_profile_url:canonicalProfileUrl,display_name:undefined,iat:0,exp:0,nonce:''
     };
   const directory=compositeCustomerDirectory(cthReadDirectory);
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     nativeProfileId: profile.id,
     slug: profile.slug,
     externalKey: profile.externalKey,
-    sourceSystem:profile.sourceSystem,homeState:profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:('entityClass' in profile?profile.entityClass:'contractor') as HandoffPayload['entity_class'],providerClass:body.providerClass,canonicalProfileUrl:'canonicalUrl' in profile?String(profile.canonicalUrl):undefined,displayName:profile.displayName,
+    sourceSystem:profile.sourceSystem,homeState:capability.hubId==='contractor'?contractorClaimState(profile.sourceSystem):profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:('entityClass' in profile?profile.entityClass:'contractor') as HandoffPayload['entity_class'],providerClass:body.providerClass,canonicalProfileUrl:'canonicalUrl' in profile?String(profile.canonicalUrl):undefined,displayName:profile.displayName,
     acquisitionSource: operatorSource,
   });
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com';
