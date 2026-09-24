@@ -7,6 +7,7 @@ import {
   GA_PUBLICATION_MANIFEST,
   GA_SEMANTIC_GUARDRAILS,
   classifyGaHub,
+  gaPublicationSemanticFingerprint,
   gaReleaseGatePassed,
   routeGaAsk,
 } from './ga-network.ts';
@@ -93,4 +94,24 @@ test('release gate is evidence-backed when verification is present', () => {
   } else {
     assert.equal(gaReleaseGatePassed(), false);
   }
+});
+
+test('Ask production certification is recorded without changing the publication manifest', () => {
+  const closeout = JSON.parse(readFileSync('data/network/georgia/state-closeout.json', 'utf8'));
+  const release = JSON.parse(readFileSync('data/releases/georgia-network-release.json', 'utf8'));
+  assert.equal(closeout.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(release.status, 'CLOSED_PRODUCTION_VERIFIED');
+  assert.equal(GA_PUBLICATION_MANIFEST.status, 'ASK_PREVIEW_READY');
+  assert.equal(GA_PUBLICATION_MANIFEST.ask_production, null);
+  assert.equal(closeout.ask_production.merge_sha, 'f478b2f43beecaa564571ff4124f2c122b7ba2b3');
+  assert.equal(closeout.ask_production.deployment_id, 6638655763);
+  assert.equal(closeout.ask_production.http_status, 200);
+  assert.equal(closeout.ask_production.sso, false);
+  assert.equal(release.ask_production.deployed_sha, closeout.ask_production.merge_sha);
+  assert.deepEqual(release.required_hubs, ['contractor', 'move', 'senior', 'lender', 'insurance', 'investor']);
+  assert.equal(closeout.network_release_gate.passed, true);
+  assert.equal(closeout.network_release_gate.required_hubs, 6);
+  assert.equal(closeout.publication_manifest_fingerprint, 'd7e748dda20762d39b49750777950b5a6e3ed653681fa3ae778f99e3f69263dd');
+  assert.equal(release.ask_fingerprint, closeout.publication_manifest_fingerprint);
+  assert.equal(gaPublicationSemanticFingerprint(), closeout.publication_manifest_fingerprint);
 });
