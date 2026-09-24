@@ -45,6 +45,7 @@ import { detectPaCity, queryLooksLikePennsylvania } from './pa-network.ts';
 import { detectNcCity, queryLooksLikeNorthCarolina } from './nc-network.ts';
 import { detectOhCity, queryLooksLikeOhio } from './oh-network.ts';
 import { detectGaCity, queryLooksLikeGeorgia } from './ga-network.ts';
+import { detectMaCity, queryLooksLikeMassachusetts } from './ma-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -125,12 +126,14 @@ function geography(q: string): ParsedGeography | undefined {
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
-  const ilNamedEarly = queryLooksLikeIllinois(q);
+  const ilNamedEarly =
+    queryLooksLikeIllinois(q) && !(/\bmassachusetts\b/i.test(q) && !/\billinois\b/i.test(q));
   const orNamedEarly = queryLooksLikeOregon(q);
   const paNamedEarly = queryLooksLikePennsylvania(q);
   const ncNamedEarly = queryLooksLikeNorthCarolina(q);
   const ohNamedEarly = queryLooksLikeOhio(q);
   const gaNamedEarly = queryLooksLikeGeorgia(q) && !ohNamedEarly;
+  const maNamedEarly = queryLooksLikeMassachusetts(q) && !ohNamedEarly && !gaNamedEarly;
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -511,6 +514,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: gaCity
         ? `${gaCity}, Georgia. Georgia research is statewide. Atlanta is not a separate regulatory system and has no Ask city route.`
         : 'Georgia. State licensing is not physical location. Georgia city and county Ask pages are not published.',
+    };
+  }
+
+  if (maNamedEarly) {
+    const maCity = detectMaCity(q);
+    return {
+      stateCode: 'MA',
+      stateName: 'Massachusetts',
+      city: maCity,
+      meaning: maCity
+        ? `${maCity}, Massachusetts. Massachusetts research is statewide. Boston is not a separate regulatory system and has no Ask city route.`
+        : 'Massachusetts. State licensing is not physical location. Massachusetts city and county Ask pages are not published.',
     };
   }
 

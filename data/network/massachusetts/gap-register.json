@@ -1,0 +1,14 @@
+{
+  "state": "MA",
+  "boston_phase": { "status": "NOT_STARTED", "note": "No Ask city or county Massachusetts intelligence routes." },
+  "cross_hub_record_total": { "status": "REJECTED", "value": null },
+  "local_work_needed_now": "NO",
+  "remaining_gaps": [
+    "Move: tariff effective dates NOT_ACQUIRED. Complaint outcomes REQUEST_ONLY. No DPU-to-FMCSA exact USDOT or MC joins.",
+    "Lender: company, person, and branch remain separate. Complaint data REQUEST_ONLY. Enforcement outside the acquired DOB window is incomplete, not zero.",
+    "Contractor: HIC bulk NOT_ACQUIRED. CSL bulk NOT_ACQUIRED. Trade rosters NOT_ACQUIRED. DOL discipline after 2025 Q1 UNKNOWN.",
+    "Insurance: agency and producer bulk NOT_ACQUIRED. Pre-2015 enforcement REQUEST_ONLY. Company complaint counts REQUEST_ONLY. Financial and receivership evidence NOT_ACQUIRED.",
+    "Senior: survey bulk NOT_ACQUIRED. Complaints REQUEST_ONLY. Exact DPH-to-CMS join UNKNOWN. Zero proven bridges is not zero real-world overlap.",
+    "Investor: IAR population NOT_ACQUIRED. State broker-dealer and agent bulk NOT_ACQUIRED. Exact enforcement CRD attachments NOT_ACQUIRED. Pre-2012 actions REQUEST_ONLY."
+  ]
+}
