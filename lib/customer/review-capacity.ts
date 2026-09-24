@@ -21,6 +21,9 @@ export type ReviewCapacityClaimRow = {
   acquisitionSource: string;
   firstUsefulActionAt?: string | null;
   grantRevokedWithinDays?: number | null;
+  /** Q5: needed so a WAITING_ON_CLAIMANT claim is never counted as an OVER_TARGET staff-caused breach. */
+  needsInfoEnteredAt?: string | null;
+  needsInfoPausedBusinessHours?: number;
 };
 
 export type ReviewCapacityMetrics = {
@@ -61,7 +64,13 @@ export function computeReviewCapacity(rows: ReviewCapacityClaimRow[], now: Date)
   const approved = external.filter((r) => r.status === 'approved');
   const evidenceKnown = reviewed.filter((r) => r.evidenceReadyAtFirstReview !== null);
   const open = external.filter((r) => !DECIDED.has(r.status) && !['withdrawn', 'superseded'].includes(r.status));
-  const overSla = open.filter((r) => reviewSlaState({ submittedAt: new Date(r.submittedAt), decidedAt: null, now }).state === 'OVER_TARGET');
+  const overSla = open.filter((r) => reviewSlaState({
+    submittedAt: new Date(r.submittedAt),
+    decidedAt: null,
+    now,
+    pausedBusinessHours: r.needsInfoPausedBusinessHours ?? 0,
+    needsInfoEnteredAt: r.needsInfoEnteredAt ? new Date(r.needsInfoEnteredAt) : null,
+  }).state === 'OVER_TARGET');
   return {
     window: 'all',
     externalClaims: external.length,

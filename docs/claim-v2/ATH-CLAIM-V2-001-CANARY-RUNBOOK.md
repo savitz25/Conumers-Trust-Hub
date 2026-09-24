@@ -38,7 +38,7 @@ executes it after the two draft PRs are reviewed, merged, and migration 019 is a
 2. Business enters a work email, receives the magic link, returns to `/claim/continue`, chooses relationship
    (`owner` / `officer` / `qualifying_agent` / …), confirms the credential, ticks the authorization box, submits.
 3. Expected: `/claim/status/<id>` shows "Submitted"; the claim appears at the top of
-   `/admin/operations/claims` (filter `pending`) with Source = organic and SLA = "Within 48 business-hour target".
+   `/admin/operations/claims` (filter `pending`) with Source = organic and SLA = "Within the 2-business-day review target".
 
 ## Step 3 — Staff review (the Founder / TRUST_OPS reviewer does this)
 

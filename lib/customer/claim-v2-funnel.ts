@@ -10,18 +10,16 @@ import type { CustomerHubId } from './types.ts';
 export const CLAIM_ACQUISITION_SOURCES_V2 = ['organic', 'manual_outreach', 'email_campaign', 'internal_test', 'unknown'] as const;
 export type ClaimAcquisitionSourceV2 = (typeof CLAIM_ACQUISITION_SOURCES_V2)[number];
 
-/** Sources a specialist may declare out-of-band at claim start. email_campaign is only ever set by Ask campaign attribution. */
-export const SPECIALIST_DECLARABLE_SOURCES = ['organic', 'manual_outreach', 'internal_test'] as const;
-
 /** Deterministic: unknown or missing input never becomes a known bucket. */
 export function claimAcquisitionSourceV2(value: unknown): ClaimAcquisitionSourceV2 {
   return typeof value === 'string' && (CLAIM_ACQUISITION_SOURCES_V2 as readonly string[]).includes(value) ? (value as ClaimAcquisitionSourceV2) : 'unknown';
 }
 
-/** Specialist → Ask query-string value. Only allow-listed specialist-declarable values are honoured; anything else is `unknown`. */
-export function specialistDeclaredSource(value: unknown): ClaimAcquisitionSourceV2 {
-  return typeof value === 'string' && (SPECIALIST_DECLARABLE_SOURCES as readonly string[]).includes(value) ? (value as ClaimAcquisitionSourceV2) : 'unknown';
-}
+// ATH-CLAIM-V2-001R2 (Q2): there is deliberately no `specialistDeclaredSource(queryStringValue)` helper here
+// any more. Acquisition source is trusted ONLY when it comes from inside a signed handoff payload, verified by
+// `parseAndAuthenticateHandoff`/`receiveHandoff` (see handoff.ts, store.ts). A query string or POST body value
+// must never be sanitized-and-trusted this way again — sanitizing an untrusted input is not the same as
+// authenticating it, and that gap was exactly the vulnerability this ticket closes.
 
 export function toAttributionEnum(source: ClaimAcquisitionSourceV2): 'ORGANIC' | 'MANUAL_OUTREACH' | 'EMAIL_CAMPAIGN' | 'INTERNAL_TEST' | 'UNKNOWN' {
   return source.toUpperCase() as ReturnType<typeof toAttributionEnum>;

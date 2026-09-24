@@ -76,6 +76,9 @@ export function mintHandoffToken(
     canonicalProfileUrl?: string;
     displayName?: string;
     version?: 1 | 2;
+    /** ATH-CLAIM-V2-001R2 (Q2) — trusted-server-only. The public Contractor route never sets this to anything
+     * but "organic"; other values are only ever produced by direct, non-public calls to this function. */
+    acquisitionSource?: string;
   }
 ): { token: string; payload: HandoffPayload } {
   if (!secret || secret.length < 32) {
@@ -102,6 +105,7 @@ export function mintHandoffToken(
     provider_class: input.providerClass,
     canonical_profile_url: input.canonicalProfileUrl,
     display_name: input.displayName,
+    acquisition_source: input.acquisitionSource,
     iat: Math.floor(now.getTime() / 1000),
     exp: Math.floor(now.getTime() / 1000) + ttl,
     nonce: input.nonce ?? randomToken(24),

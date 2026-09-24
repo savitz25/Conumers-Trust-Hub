@@ -58,6 +58,12 @@ export type HandoffPayload = {
   provider_class?: SeniorProviderClass;
   canonical_profile_url?: string;
   display_name?: string;
+  /**
+   * ATH-CLAIM-V2-001R2 (Q2) — the ONLY trusted channel for acquisition source. It is inside the signed
+   * payload, so a specialist's minting code (never a browser) is the sole author. Absent (a hub that hasn't
+   * adopted this field, or v1 tokens) means `unknown`, never a default of `organic`. See claim-v2-funnel.ts.
+   */
+  acquisition_source?: string;
   iat: number;
   exp: number;
   nonce: string;

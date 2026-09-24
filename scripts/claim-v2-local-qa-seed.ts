@@ -76,7 +76,7 @@ async function main() {
   await platform.saveBusinessProfile({ sessionToken: owner.sessionToken, nativeProfileId: PROFILES[0].id, body: { version: 0, fields: { website: 'https://harbor-test-builders.example', description: 'Synthetic QA business description.' }, services: ['Roofing'], serviceAreas: ['Hillsborough County'], languages: ['English'], hours: [{ weekday: 1, closed: false, opensAt: '09:00', closesAt: '17:00' }] } });
   const revoked = await approve(PROFILES[1], owner);
   await platform.revokeGrant({ sessionToken: staff.sessionToken, grantId: revoked.grantId, reason: 'Synthetic QA fixture: revoked grant for the local browser QA stack (revocation behaviour).' });
-  // Open claims for the staff queue: one fresh (WITHIN), one aged 6 days (OVER 48 business hours), one needs_info.
+  // Open claims for the staff queue: one fresh (WITHIN), one aged 6 days (OVER the 2-business-day target), one needs_info.
   const openFor = async (profile: CthProfileRecord, user: { sessionToken: string }, ageDays: number) => {
     const intent = await platform.confirmClaimIntent({ token: mintHandoffToken(SECRET, { nativeProfileId: profile.id, slug: profile.slug, externalKey: profile.externalKey }).token, receiptId: `seed-open-${profile.externalKey}`, acquisitionSource: 'internal_test' });
     const claim = await platform.submitClaim({ sessionToken: user.sessionToken, intentId: intent.intentId, relationshipType: 'officer', credentialAttestation: profile.externalKey, authorized: true });

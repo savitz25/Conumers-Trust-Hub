@@ -11,8 +11,8 @@ import { CustomerPlatform, AuthError, ClaimError, ManagementError } from './stor
 import { HandoffError, mintHandoffToken, mutateHandoffToken } from './handoff.ts';
 import { checkSameOrigin } from './request-origin.ts';
 import { decodeClaimReceipt, encodeClaimReceipt } from './claim-receipt.ts';
-import { CLAIM_V2_BROWSER_EVENTS, CLAIM_V2_FUNNEL, claimAcquisitionSourceV2, specialistDeclaredSource } from './claim-v2-funnel.ts';
-import { businessHoursBetween, reviewSlaState, openClaimPriority } from './review-sla.ts';
+import { CLAIM_V2_BROWSER_EVENTS, CLAIM_V2_FUNNEL, claimAcquisitionSourceV2 } from './claim-v2-funnel.ts';
+import { businessHoursBetween, reviewSlaState, openClaimPriority, REVIEW_SLA_LABEL } from './review-sla.ts';
 import { computeReviewCapacity, capReviewSession, REVIEW_SESSION_CAP_SECONDS } from './review-capacity.ts';
 import { CLAIM_V2_REQUIREMENTS, evaluateHubReadiness, sixHubReadinessReport } from './claim-v2-readiness.ts';
 import { evaluateAuthority } from './claim-governance.ts';
@@ -153,8 +153,6 @@ test('auth return preserves the explicit intent; submission carries acquisition_
   const snapshot = await platform.launchOpsSnapshot(staff.sessionToken);
   assert.equal(snapshot.claims[0]?.source, 'manual_outreach');
   assert.equal(snapshot.bySource.find((s) => s.source === 'manual_outreach')?.count, 1);
-  assert.equal(specialistDeclaredSource('email_campaign'), 'unknown', 'specialists cannot self-declare email_campaign');
-  assert.equal(specialistDeclaredSource('internal_test'), 'internal_test');
   assert.equal(claimAcquisitionSourceV2('anything-else'), 'unknown');
   await db.close();
 });
@@ -216,7 +214,7 @@ test('review timer: explicit sessions measure human minutes (capped); decision s
   await db.close();
 });
 
-test('review SLA: 48 business hours counts weekdays only; queue priority is needs_info, submitted, in_review', () => {
+test('review SLA: 2-business-day target counts weekdays only; queue priority is needs_info, submitted, in_review', () => {
   assert.equal(businessHoursBetween(new Date('2026-09-25T12:00:00Z'), new Date('2026-09-28T12:00:00Z')), 24, 'Friday noon to Monday noon = 24 business hours');
   assert.equal(businessHoursBetween(new Date('2026-09-26T00:00:00Z'), new Date('2026-09-27T23:00:00Z')), 0, 'weekend only');
   assert.equal(reviewSlaState({ submittedAt: new Date('2026-09-21T09:00:00Z'), now: new Date('2026-09-21T20:00:00Z') }).state, 'WITHIN_TARGET');
@@ -224,6 +222,31 @@ test('review SLA: 48 business hours counts weekdays only; queue priority is need
   assert.equal(reviewSlaState({ submittedAt: new Date('2026-09-18T09:00:00Z'), now: new Date('2026-09-22T10:00:00Z') }).state, 'OVER_TARGET');
   assert.equal(reviewSlaState({ submittedAt: new Date('2026-09-01T09:00:00Z'), decidedAt: new Date('2026-09-02T09:00:00Z'), now: new Date('2026-09-22T10:00:00Z') }).state, 'RESOLVED');
   assert.deepEqual(['approved', 'in_review', 'submitted', 'needs_info'].sort((a, b) => openClaimPriority(a) - openClaimPriority(b)), ['needs_info', 'submitted', 'in_review', 'approved']);
+  assert.doesNotMatch(JSON.stringify(REVIEW_SLA_LABEL), /48/, 'Q6: no label may claim a false 48-hour precision');
+});
+
+test('Q5: an open needs_info pause freezes the reported elapsed time and reports WAITING_ON_CLAIMANT, never OVER_TARGET', () => {
+  // Submitted Friday 09:00; needs_info sent 4 business hours later, same day. The pause then stays open for
+  // nearly a full week of wall-clock time (which would read OVER_TARGET if it counted), before staff resumes.
+  const submittedAt = new Date('2026-09-18T09:00:00Z'); // Friday
+  const needsInfoEnteredAt = new Date('2026-09-18T13:00:00Z'); // same Friday, 4 business hours in
+  const stillWaitingNow = new Date('2026-09-23T13:00:00Z'); // the following Wednesday: raw elapsed would be OVER_TARGET
+  const paused = reviewSlaState({ submittedAt, now: stillWaitingNow, needsInfoEnteredAt });
+  assert.equal(paused.state, 'WAITING_ON_CLAIMANT');
+  assert.equal(paused.businessHoursOpen, 4, 'frozen at the elapsed time when the pause began, not at stillWaitingNow');
+  // Staff resumes at stillWaitingNow: the pause closes, folding in the time spent waiting.
+  const closedPauseHours = businessHoursBetween(needsInfoEnteredAt, stillWaitingNow);
+  const resumedNow = new Date('2026-09-23T14:00:00Z'); // one business hour after resuming
+  const resumed = reviewSlaState({ submittedAt, now: resumedNow, pausedBusinessHours: closedPauseHours });
+  const rawIfUnpaused = businessHoursBetween(submittedAt, resumedNow);
+  assert.equal(resumed.businessHoursOpen, Math.round((rawIfUnpaused - closedPauseHours) * 100) / 100);
+  assert.equal(resumed.businessHoursOpen, 5, '4 pre-pause hours + 1 post-resume hour; days spent waiting are excluded');
+  assert.equal(resumed.state, 'WITHIN_TARGET', 'time spent waiting on the claimant never counts against the staff target');
+  // A decision resolved right after resuming also excludes the paused time.
+  const decidedAt = resumedNow;
+  const resolved = reviewSlaState({ submittedAt, decidedAt, now: decidedAt, pausedBusinessHours: closedPauseHours });
+  assert.equal(resolved.state, 'RESOLVED');
+  assert.equal(resolved.businessHoursOpen, Math.round((businessHoursBetween(submittedAt, decidedAt) - closedPauseHours) * 100) / 100);
 });
 
 test('Section 8: staff reminder is bounded, idempotent per claim per day, and never targets a claimant', async () => {
@@ -290,12 +313,13 @@ test('U: claim/token routes are noindex + no-store and GET never confirms; the r
   const page = readFileSync('app/claim/continue/page.tsx', 'utf8');
   assert.match(page, /const receipt = await readClaimReceipt\(\)/);
   assert.match(page, /intent && !intent\.consumed/);
-  const encoded = encodeClaimReceipt({ token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 });
-  assert.deepEqual(decodeClaimReceipt(encoded), { token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 });
-  assert.equal(decodeClaimReceipt('not-base64-json'), null);
-  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'no-dot', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 })), null);
-  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'a.b', receiptId: 'short', source: 'organic', receivedAt: 1 })), null);
-  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'a.b', receiptId: 'r'.repeat(24), source: 'bogus' as never, receivedAt: 1 }))?.source, 'unknown');
+  const secret = 'ath-claim-v2-001-receipt-test-secret-32-chars-min';
+  const encoded = encodeClaimReceipt({ token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 }, secret);
+  assert.deepEqual(decodeClaimReceipt(encoded, secret), { token: 'abc.def', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 });
+  assert.equal(decodeClaimReceipt('not-base64-json', secret), null);
+  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'no-dot', receiptId: 'r'.repeat(24), source: 'organic', receivedAt: 1 }, secret), secret), null);
+  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'a.b', receiptId: 'short', source: 'organic', receivedAt: 1 }, secret), secret), null);
+  assert.equal(decodeClaimReceipt(encodeClaimReceipt({ token: 'a.b', receiptId: 'r'.repeat(24), source: 'bogus' as never, receivedAt: 1 }, secret), secret)?.source, 'unknown');
 });
 
 test('V: no secret or raw identifier reaches browser analytics; V2 browser events are on the product-event allow-list', () => {

@@ -5,7 +5,6 @@ import { clearIntentCookie, currentContext, setClaimReceiptCookie, withPlatform 
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
 import { randomToken } from '@/lib/customer/crypto';
-import { specialistDeclaredSource } from '@/lib/customer/claim-v2-funnel';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,13 +21,15 @@ const NO_STORE = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofoll
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const token = url.searchParams.get('handoff') || '';
-  const source = specialistDeclaredSource(url.searchParams.get('source'));
+  // ATH-CLAIM-V2-001R2 (Q2): acquisition source comes ONLY from the authenticated payload inside the signed
+  // handoff token. The `source` query string (if a specialist's redirect still includes one) is never read —
+  // a browser could otherwise navigate straight to this URL with any `source=` it likes.
   const ctx = await currentContext();
   try {
-    await withPlatform((p) => p.receiveHandoff(token, ctx));
+    const received = await withPlatform((p) => p.receiveHandoff(token, ctx));
     // A new handoff supersedes any earlier (possibly consumed) intent context in this browser.
     await clearIntentCookie();
-    await setClaimReceiptCookie({ token, receiptId: randomToken(24), source, receivedAt: Date.now() });
+    await setClaimReceiptCookie({ token, receiptId: randomToken(24), source: received.acquisitionSource, receivedAt: Date.now() });
     return NextResponse.redirect(new URL('/claim/continue', url.origin), { headers: NO_STORE });
   } catch (e) {
     const internalCode =

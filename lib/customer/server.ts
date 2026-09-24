@@ -64,14 +64,19 @@ export async function clearIntentCookie(): Promise<void> {
   jar.set(INTENT_COOKIE, '', sessionCookieOptions(0));
 }
 
+/** Same underlying secret as handoff signing, but never the same signed message — see claim-receipt.ts. */
+function receiptSecret(): string {
+  return process.env.ATH_HANDOFF_SECRET || '';
+}
+
 export async function readClaimReceipt(): Promise<ClaimReceipt | null> {
   const jar = await cookies();
-  return decodeClaimReceipt(jar.get(RECEIPT_COOKIE)?.value);
+  return decodeClaimReceipt(jar.get(RECEIPT_COOKIE)?.value, receiptSecret());
 }
 
 export async function setClaimReceiptCookie(receipt: ClaimReceipt): Promise<void> {
   const jar = await cookies();
-  jar.set(RECEIPT_COOKIE, encodeClaimReceipt(receipt), sessionCookieOptions(15 * 60));
+  jar.set(RECEIPT_COOKIE, encodeClaimReceipt(receipt, receiptSecret()), sessionCookieOptions(15 * 60));
 }
 
 export async function clearClaimReceiptCookie(): Promise<void> {

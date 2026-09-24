@@ -24,7 +24,7 @@ const directory: CustomerProfileDirectory = { async getExact(p) { return p.hub_i
 const UP = readFileSync('schema/migrations/019_ath_claim_v2_foundation.sql', 'utf8');
 const DOWN = readFileSync('schema/migrations/019_ath_claim_v2_foundation.down.sql', 'utf8');
 const V2_INTENT_COLUMNS = ['intent_origin', 'acquisition_source', 'confirmed_at', 'receipt_hash'];
-const V2_CLAIM_COLUMNS = ['acquisition_source', 'review_started_at', 'review_decided_at', 'evidence_ready_at_first_review', 'human_review_active_seconds'];
+const V2_CLAIM_COLUMNS = ['acquisition_source', 'review_started_at', 'review_decided_at', 'evidence_ready_at_first_review', 'human_review_active_seconds', 'needs_info_entered_at', 'needs_info_paused_business_hours'];
 
 function asSql(db: PGlite): SqlClient { return { async query(text, params) { const r = await db.query(text, params ?? []); return { rows: (r.rows ?? []) as Record<string, unknown>[] }; }, async exec(text) { await db.exec(text); } }; }
 /** Same application path production tooling and the V2 suite use (whole file through exec; pgcrypto tolerated). */
@@ -97,10 +97,13 @@ test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> 
   const first = await v2Flow(sql, clock, 'first');
   const sessions = (await sql.query<{ n: string }>(`SELECT count(*)::text n FROM ath_claim_review_sessions WHERE claim_id=$1`, [first.claimId])).rows[0].n;
   assert.equal(sessions, '1');
-  // one open session per reviewer per claim is enforced by the partial unique index
+  // Q7: ONE open session TOTAL per claim (not per reviewer) is enforced by the partial unique index.
   const reviewer = (await sql.query<{ id: string }>(`SELECT reviewer_user_id AS id FROM ath_claim_review_sessions LIMIT 1`)).rows[0].id;
+  const otherUser = (await sql.query<{ id: string }>(`SELECT id FROM ath_users WHERE email_normalized=$1`, [`first-owner@acme-roofing.example`])).rows[0].id;
   await sql.query(`INSERT INTO ath_claim_review_sessions (claim_id, reviewer_user_id) VALUES ($1,$2)`, [first.claimId, reviewer]);
-  await assert.rejects(() => sql.query(`INSERT INTO ath_claim_review_sessions (claim_id, reviewer_user_id) VALUES ($1,$2)`, [first.claimId, reviewer]), /unique|duplicate/i);
+  await assert.rejects(() => sql.query(`INSERT INTO ath_claim_review_sessions (claim_id, reviewer_user_id) VALUES ($1,$2)`, [first.claimId, reviewer]), /unique|duplicate/i, 'same reviewer, same claim: blocked');
+  await assert.rejects(() => sql.query(`INSERT INTO ath_claim_review_sessions (claim_id, reviewer_user_id) VALUES ($1,$2)`, [first.claimId, otherUser]), /unique|duplicate/i, 'Q7: a DIFFERENT reviewer is also blocked while any session on this claim is open');
+  await sql.query(`UPDATE ath_claim_review_sessions SET ended_at=now() WHERE claim_id=$1 AND ended_at IS NULL`, [first.claimId]);
 
   // --- rollback (documented data loss: V2 columns + the review-session table; nothing else)
   await apply(sql, DOWN);

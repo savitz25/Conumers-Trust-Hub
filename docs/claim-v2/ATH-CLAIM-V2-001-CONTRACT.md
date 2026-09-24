@@ -98,7 +98,9 @@ every external capacity metric. Historical claims keep `unknown`; nothing is inf
 - `review_started_at`, `review_decided_at`, `evidence_ready_at_first_review`, `human_review_active_seconds`
   on `ath_claims`; `ath_claim_review_sessions` is the explicit reviewer timer (capped at 45 min per session,
   idle-expired at 4 h, closed automatically by a decision).
-- SLA: 48 business hours (Mon–Fri, UTC), states WITHIN / APPROACHING / OVER / RESOLVED. Internal trial target.
+- SLA: 2-business-day internal review target (Mon–Fri, UTC; holidays not modeled), states WITHIN / APPROACHING /
+  OVER / WAITING_ON_CLAIMANT / RESOLVED. The clock pauses for the entire time a claim is `needs_info` and
+  resumes (never restarts) when a reviewer re-engages. Internal trial target, not a public or legal SLA.
 - Metrics (`computeReviewCapacity`): evidence-ready rate, median human review minutes, needs-info rate,
   approval rate, median elapsed submission→decision, first-useful-action rate, wrong-grant incidents,
   unresolved / over-SLA counts. No Trust Score, no business quality score.

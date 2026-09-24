@@ -61,7 +61,7 @@ export default async function Page({
             <p className="mt-1 text-3xl font-semibold text-navy">{data.rows.filter((r) => r.isOpen).length}</p>
           </div>
           <div className={`rounded-xl border p-4 ${data.rows.some((r) => r.isOpen && r.slaState === "OVER_TARGET") ? "border-amber-500 bg-amber-50" : "border-border"}`}>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Over 48 business-hour target</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Over the 2-business-day target</p>
             <p className="mt-1 text-3xl font-semibold text-navy">{data.rows.filter((r) => r.isOpen && r.slaState === "OVER_TARGET").length}</p>
           </div>
           <div className="rounded-xl border border-border p-4">
@@ -178,8 +178,9 @@ export default async function Page({
         ) : null}
       </div>
       <p className="text-xs text-muted-foreground">
-        Open claims are ordered needs-information first, then oldest submitted, then in review. The 48
-        business-hour (Mon–Fri) target is an internal trial operating target, not a public or legal SLA.
+        Open claims are ordered needs-information first, then oldest submitted, then in review. The
+        2-business-day (Mon–Fri, no holiday model) target is an internal trial operating target, not a public
+        or legal SLA, and pauses while a claim is waiting on the claimant.
         Rows labelled internal_test are synthetic QA and are excluded from external funnel metrics.
       </p>
     </AdminShell>

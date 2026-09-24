@@ -87,7 +87,7 @@ export class ClaimOperationsService {
     const rows = (
       await this.sql.query<
         Record<string, unknown>
-      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,c.created_at::text submitted_at,c.acquisition_source,c.review_started_at::text,c.review_decided_at::text,c.human_review_active_seconds,c.evidence_ready_at_first_review,p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key identifier,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
+      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,c.created_at::text submitted_at,c.acquisition_source,c.review_started_at::text,c.review_decided_at::text,c.human_review_active_seconds,c.evidence_ready_at_first_review,c.needs_info_entered_at::text,c.needs_info_paused_business_hours,p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key identifier,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
     EXISTS(SELECT 1 FROM ath_management_grants g WHERE g.hub_profile_id=c.hub_profile_id AND g.status='active') existing_grant,(SELECT count(*)::int FROM ath_claims x WHERE x.hub_profile_id=c.hub_profile_id AND x.id<>c.id AND x.status IN('submitted','needs_info','in_review')) competing_claims
     FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id JOIN ath_ops_cases oc ON oc.target_ref=c.id LEFT JOIN ath_admin_staff s ON s.staff_id=oc.assigned_staff_id ORDER BY CASE WHEN c.status IN('submitted','needs_info','in_review') THEN 0 ELSE 1 END,c.created_at ASC LIMIT 250`)
     ).rows;
@@ -146,7 +146,13 @@ export class ClaimOperationsService {
     const h = Number(r.age_hours);
     const claimStatus = String(r.claim_status);
     const isOpen = ["submitted", "needs_info", "in_review"].includes(claimStatus);
-    const sla = reviewSlaState({ submittedAt: new Date(String(r.submitted_at)), decidedAt: r.review_decided_at ? new Date(String(r.review_decided_at)) : isOpen ? null : new Date(String(r.submitted_at)), now: new Date() });
+    const sla = reviewSlaState({
+      submittedAt: new Date(String(r.submitted_at)),
+      decidedAt: r.review_decided_at ? new Date(String(r.review_decided_at)) : isOpen ? null : new Date(String(r.submitted_at)),
+      now: new Date(),
+      pausedBusinessHours: Number(r.needs_info_paused_business_hours ?? 0),
+      needsInfoEnteredAt: r.needs_info_entered_at ? new Date(String(r.needs_info_entered_at)) : null,
+    });
     return {
       acquisitionSource: claimAcquisitionSourceV2(r.acquisition_source),
       relationshipType: String(r.relationship_type ?? "unknown"),

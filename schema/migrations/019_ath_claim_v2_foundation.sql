@@ -34,6 +34,12 @@ ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS review_started_at TIMESTAMPTZ;
 ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS review_decided_at TIMESTAMPTZ;
 ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS evidence_ready_at_first_review BOOLEAN;
 ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS human_review_active_seconds INTEGER NOT NULL DEFAULT 0;
+-- ATH-CLAIM-V2-001R2 (Q5) — the internal review-target clock pauses while responsibility sits with the
+-- claimant (status=needs_info). needs_info_entered_at is set while the pause is open and cleared when
+-- responsibility returns to staff; needs_info_paused_business_hours accumulates every CLOSED pause so the
+-- target clock (lib/customer/review-sla.ts) can subtract total time spent waiting on the claimant.
+ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS needs_info_entered_at TIMESTAMPTZ;
+ALTER TABLE ath_claims ADD COLUMN IF NOT EXISTS needs_info_paused_business_hours NUMERIC NOT NULL DEFAULT 0;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='ath_claims_acquisition_source_check') THEN
@@ -43,6 +49,10 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='ath_claims_human_review_seconds_check') THEN
     ALTER TABLE ath_claims ADD CONSTRAINT ath_claims_human_review_seconds_check
       CHECK (human_review_active_seconds >= 0);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='ath_claims_needs_info_paused_check') THEN
+    ALTER TABLE ath_claims ADD CONSTRAINT ath_claims_needs_info_paused_check
+      CHECK (needs_info_paused_business_hours >= 0);
   END IF;
 END $$;
 
@@ -61,8 +71,12 @@ CREATE TABLE IF NOT EXISTS ath_claim_review_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS ath_claim_review_sessions_claim_idx ON ath_claim_review_sessions (claim_id, started_at DESC);
-CREATE UNIQUE INDEX IF NOT EXISTS ath_claim_review_sessions_one_open_per_reviewer
-  ON ath_claim_review_sessions (claim_id, reviewer_user_id) WHERE ended_at IS NULL;
+-- ATH-CLAIM-V2-001R2 (Q7): the invariant is ONE open session TOTAL per claim, not one per (claim, reviewer).
+-- Migration 019 was still unapplied when this was found, so the constraint is fixed here rather than patched
+-- by a follow-on migration. If an older index name from a prior draft exists, drop it first (idempotent).
+DROP INDEX IF EXISTS ath_claim_review_sessions_one_open_per_reviewer;
+CREATE UNIQUE INDEX IF NOT EXISTS ath_claim_review_sessions_one_open_per_claim
+  ON ath_claim_review_sessions (claim_id) WHERE ended_at IS NULL;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE ath_claim_review_sessions ENABLE ROW LEVEL SECURITY';
