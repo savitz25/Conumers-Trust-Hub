@@ -48,6 +48,11 @@ used it. `recommendedRolloutState` stays `CANARY`; `blocking` still lists `R8_RE
 `R9_REVIEW_CAPACITY`. Only a real external owner's canary claim, decided by staff through the normal queue,
 may move R8 to `REAL_OWNER_CANARY_COMPLETE` — see the addendum to `ATH-CLAIM-V2-001-CANARY-RUNBOOK.md`.
 
+**Resolved in ATH-CLAIM-V2-001R4** — see `ATH-CLAIM-V2-001R4-FINAL-RECONCILIATION.md` §2 (root cause was
+wider than described below: the invalidator was never registered in writer instances, and revocation lagged
+too on warm readers/CDN/Contractor cache). Publish and withdraw are now bounded at ≤ 210 s end to end. The
+original R-era note is kept for history:
+
 A caching asymmetry worth the Founder's attention before that canary: Ask's public-read layer
 (`lib/customer/public-read-layer.ts`) caches "this profile has no public business layer" for up to 6h
 in-process once observed, and the underlying `unstable_cache` existence list uses stale-while-revalidate

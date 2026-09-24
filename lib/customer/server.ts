@@ -1,5 +1,6 @@
 import 'server-only';
 import { cookies, headers } from 'next/headers';
+import { revalidateTag } from 'next/cache';
 import { withAskTx } from './db';
 import { cthReadDirectory } from './cth-read';
 import { compositeCustomerDirectory } from './specialist-read';
@@ -10,6 +11,19 @@ import { decodeClaimReceipt, encodeClaimReceipt, type ClaimReceipt } from './cla
 import type { RequestContext } from './types';
 import type { PoolClient } from 'pg';
 import type { SqlClient } from './sql';
+import { PUBLIC_EXISTENCE_TAG, publicStateTag, registerPublicReadInvalidator } from './public-read-invalidate';
+
+// Every writer route reaches the store through this module, so the shared-cache invalidator is always registered
+// in the instance that performs the write (ATH-CLAIM-V2-001R4). `expire: 0` = expire now; the next public read
+// blocks on fresh data instead of being served the pre-write value once (the old 'max' SWR profile).
+registerPublicReadInvalidator((nativeProfileId) => {
+  try {
+    revalidateTag(PUBLIC_EXISTENCE_TAG, { expire: 0 });
+    revalidateTag(publicStateTag(nativeProfileId), { expire: 0 });
+  } catch {
+    // Outside a Next request scope (scripts/tests) there is no shared cache to expire.
+  }
+});
 
 function asSql(client: PoolClient): SqlClient {
   return {

@@ -4,13 +4,16 @@
  *   pre-019 fixture (legacy intent + legacy claim) → apply 019 → V2 flow → apply 019.down → legacy rows
  *   byte-identical, V2 columns gone → re-apply 019 → V2 flow again.
  *
- * Runs on in-memory PGlite only. Never touches a real database.
+ * Runs on in-memory PGlite always. ATH-CLAIM-V2-001R4 (Section 5) also runs the identical lifecycle on a REAL
+ * isolated Postgres when ATH_019_REAL_PG_URL points at a localhost server (a throwaway database is created and
+ * dropped); any non-localhost URL is refused. Never touches a shared or production database.
  */
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
+import pg from 'pg';
 import { enableAppRole } from './migrate.ts';
 import { CustomerPlatform, ClaimError } from './store.ts';
 import { mintHandoffToken } from './handoff.ts';
@@ -62,8 +65,16 @@ async function v2Flow(sql: SqlClient, clock: { now: Date }, label: string) {
   return { claimId: claim.claimId, intentId: confirmed.intentId };
 }
 
-test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> V2 flow; legacy rows never change', async () => {
-  const db = new PGlite(); const sql = asSql(db);
+const LEGACY_CLAIM_SNAPSHOT = `SELECT id,org_id,hub_profile_id,claimant_user_id,status,verification_method,relationship_type,free_email,attestation::text,submitted_at::text,reviewed_at,decision_reason,created_at::text,updated_at::text FROM ath_claims WHERE id='c1a10000-0000-4000-8000-000000000019'`;
+/** A pre-019 submitted claim exactly as production holds them (the two historical Contractor claims are this shape). */
+async function insertLegacyClaim(sql: SqlClient) {
+  await sql.query(`INSERT INTO ath_users (id,email,email_normalized,status) VALUES ('a1a10000-0000-4000-8000-000000000019','legacy-owner@example.test','legacy-owner@example.test','active')`);
+  await sql.query(`INSERT INTO ath_organizations (id,display_name) VALUES ('b1a10000-0000-4000-8000-000000000019','Legacy Org 019')`);
+  await sql.query(`INSERT INTO ath_hub_profiles (id,hub_id,native_profile_id,native_slug,native_credential_key,native_source_system,home_state,display_name_snapshot) VALUES ('d1a10000-0000-4000-8000-000000000019','contractor','44444444-4444-4444-8444-444444444444','legacy-roofing','CBC000019','fl_dbpr','FL','Legacy Roofing')`);
+  await sql.query(`INSERT INTO ath_claims (id,org_id,hub_profile_id,claimant_user_id,status,verification_method,relationship_type,free_email,submitted_at,created_at,updated_at) VALUES ('c1a10000-0000-4000-8000-000000000019','b1a10000-0000-4000-8000-000000000019','d1a10000-0000-4000-8000-000000000019','a1a10000-0000-4000-8000-000000000019','submitted','manual_review','owner',false,'2026-09-10T15:00:00Z','2026-09-10T15:00:00Z','2026-09-10T15:00:00Z')`);
+}
+
+async function lifecycle(sql: SqlClient) {
   await applyThrough018(sql);
   await enableAppRole(sql);
   // --- pre-migration fixture: a legacy passive intent and a legacy claim row, exactly as production holds them.
@@ -72,6 +83,9 @@ test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> 
   const legacyColumnsBefore = [...await columns(sql, 'ath_claim_intents')].sort();
   const snapshot = async () => (await sql.query<Record<string, unknown>>(`SELECT id,nonce,payload::text,expires_at::text,consumed_at,created_at::text FROM ath_claim_intents WHERE nonce='legacy-1'`)).rows[0];
   const legacyBefore = await snapshot();
+  await insertLegacyClaim(sql);
+  const legacyClaimBefore = (await sql.query<Record<string, unknown>>(LEGACY_CLAIM_SNAPSHOT)).rows[0];
+  assert.ok(legacyClaimBefore, 'pre-019 legacy submitted claim fixture');
   // --- pre-019 behaviour of the V2 code: the passive receipt (which reads no V2 column) still works; the durable
   //     Continue and everything after it fails closed on the missing schema instead of writing partial rows.
   const clock = { now: new Date('2026-09-23T14:00:00Z') };
@@ -89,6 +103,12 @@ test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> 
   const legacyAfterUp = (await sql.query<Record<string, unknown>>(`SELECT intent_origin,acquisition_source,confirmed_at,receipt_hash FROM ath_claim_intents WHERE nonce='legacy-1'`)).rows[0];
   assert.deepEqual(legacyAfterUp, { intent_origin: 'legacy_passive', acquisition_source: 'unknown', confirmed_at: null, receipt_hash: null }, 'historical intent gets honest defaults, never an invented source');
   assert.deepEqual(await snapshot(), legacyBefore, 'historical intent columns byte-identical after up');
+  // Existing claims stay valid with honest V2 defaults: unknown source, no review timestamps, no fake clock.
+  const legacyClaimV2 = (await sql.query<Record<string, unknown>>(`SELECT acquisition_source,review_started_at,review_decided_at,evidence_ready_at_first_review,human_review_active_seconds,needs_info_entered_at,needs_info_paused_business_hours::text AS paused FROM ath_claims WHERE id='c1a10000-0000-4000-8000-000000000019'`)).rows[0];
+  assert.deepEqual(legacyClaimV2, { acquisition_source: 'unknown', review_started_at: null, review_decided_at: null, evidence_ready_at_first_review: null, human_review_active_seconds: 0, needs_info_entered_at: null, paused: '0' });
+  assert.deepEqual((await sql.query<Record<string, unknown>>(LEGACY_CLAIM_SNAPSHOT)).rows[0], legacyClaimBefore, 'legacy claim byte-identical after up');
+  assert.equal((await sql.query<{ n: string }>(`SELECT count(*)::text n FROM ath_claims WHERE acquisition_source<>'unknown'`)).rows[0].n, '0', 'no fake source attribution on historical claims');
+  assert.equal((await sql.query<{ n: string }>(`SELECT count(*)::text n FROM ath_claim_intents WHERE acquisition_source<>'unknown' OR intent_origin<>'legacy_passive'`)).rows[0].n, '0', 'no fake source/origin on historical intents');
   // constraints are real
   await assert.rejects(() => sql.query(`UPDATE ath_claim_intents SET acquisition_source='affiliate' WHERE nonce='legacy-1'`), /check|violates/i);
   await assert.rejects(() => sql.query(`UPDATE ath_claim_intents SET intent_origin='bot' WHERE nonce='legacy-1'`), /check|violates/i);
@@ -112,6 +132,7 @@ test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> 
   for (const c of V2_CLAIM_COLUMNS) assert.equal((await columns(sql, 'ath_claims')).has(c), false, `${c} removed`);
   assert.deepEqual([...await columns(sql, 'ath_claim_intents')].sort(), legacyColumnsBefore, 'schema returns to the pre-019 column set');
   assert.deepEqual(await snapshot(), legacyBefore, 'historical intent byte-identical after down');
+  assert.deepEqual((await sql.query<Record<string, unknown>>(LEGACY_CLAIM_SNAPSHOT)).rows[0], legacyClaimBefore, 'legacy claim byte-identical after down');
   assert.equal((await sql.query<{ n: string }>(`SELECT count(*)::text n FROM ath_claims WHERE id=$1`, [first.claimId])).rows[0].n, '1', 'claims created under V2 survive rollback (only the added columns are dropped)');
   assert.equal((await sql.query<{ n: string }>(`SELECT count(*)::text n FROM ath_claim_intents WHERE id=$1`, [first.intentId])).rows[0].n, '1', 'V2 intents survive rollback');
 
@@ -120,5 +141,36 @@ test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> 
   assert.equal((await sql.query<{ o: string }>(`SELECT intent_origin AS o FROM ath_claim_intents WHERE id=$1`, [first.intentId])).rows[0].o, 'legacy_passive', 'after a rollback the re-applied default is honest: origin of pre-existing rows is unknown, so legacy_passive');
   await v2Flow(sql, clock, 'second');
   assert.deepEqual(await snapshot(), legacyBefore, 'historical intent byte-identical after re-apply and a second V2 flow');
+  assert.deepEqual((await sql.query<Record<string, unknown>>(LEGACY_CLAIM_SNAPSHOT)).rows[0], legacyClaimBefore, 'legacy claim byte-identical after re-apply and a second V2 flow');
+  assert.equal((await sql.query<{ s: string }>(`SELECT acquisition_source AS s FROM ath_claims WHERE id='c1a10000-0000-4000-8000-000000000019'`)).rows[0].s, 'unknown');
+  assert.equal((await sql.query<{ n: string }>(`SELECT count(*)::text n FROM pg_indexes WHERE indexname='ath_claim_review_sessions_one_open_per_claim'`)).rows[0].n, '1', 'exactly one one-open-session index after re-apply');
+}
+
+test('Section 4: pre-019 fixture -> apply 019 -> V2 flow -> down -> re-apply -> V2 flow; legacy rows never change', async () => {
+  const db = new PGlite();
+  await lifecycle(asSql(db));
   await db.close();
+});
+
+const REAL_PG = process.env.ATH_019_REAL_PG_URL;
+test('R4 Section 5: the same lifecycle on a REAL isolated Postgres (throwaway database)', { skip: REAL_PG ? false : 'set ATH_019_REAL_PG_URL=postgres://user@127.0.0.1:<port>/postgres to run' }, async () => {
+  const admin = new URL(REAL_PG!);
+  assert.ok(['127.0.0.1', 'localhost', '::1', '[::1]'].includes(admin.hostname), 'refusing a non-localhost database');
+  const dbName = `ath019_r4_${Date.now()}`;
+  const adminClient = new pg.Client({ connectionString: admin.toString() });
+  await adminClient.connect();
+  await adminClient.query(`CREATE DATABASE ${dbName}`);
+  const target = new URL(admin.toString()); target.pathname = `/${dbName}`;
+  const client = new pg.Client({ connectionString: target.toString() });
+  await client.connect();
+  try {
+    const version = (await client.query<{ v: string }>(`SELECT current_setting('server_version') AS v`)).rows[0].v;
+    assert.ok(Number(version.split('.')[0]) >= 14, `real Postgres ${version}`);
+    const sql: SqlClient = { async query(text, params) { const r = await client.query(text, params ?? []); return { rows: r.rows as Record<string, unknown>[] }; }, async exec(text) { await client.query(text); } };
+    await lifecycle(sql);
+  } finally {
+    await client.end();
+    await adminClient.query(`DROP DATABASE IF EXISTS ${dbName}`);
+    await adminClient.end();
+  }
 });

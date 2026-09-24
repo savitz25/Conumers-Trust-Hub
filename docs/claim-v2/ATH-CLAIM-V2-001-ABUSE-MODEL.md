@@ -92,3 +92,12 @@ staff-review browser walkthrough), with no code changes to the gate itself beyon
   are now reachable exclusively through a trusted server-side caller minting a token directly — never through
   any public, browser-facing path. `email_campaign` remains attribution-cookie-only, unchanged. Nothing here is
   self-declarable by a browser any more.
+
+## R4 addendum — exact durable CANARY backstop (ATH-CLAIM-V2-001R4, 2026-09-24)
+
+No code change to the gate. The Founder-applied Vercel Firewall rule `claim-start-canary-backstop`
+(POST, path prefix `/api/claim/handoff/`, fixed window 600 s, 6 requests per IP, Deny; Log mode first; disable
+to roll back) is specified field-by-field in `ATH-CLAIM-V2-001R4-FINAL-RECONCILIATION.md` §4 and is a
+precondition (P5) of the canary runbook. CANARY_ABUSE_GATE stays **CONDITIONAL** until that rule is active;
+ALL_ABUSE_GATE stays **BLOCKED**. A per-profile global cap was considered and rejected: without a durable store
+it adds no fleet-wide protection and would let an attacker lock the canary owner out.

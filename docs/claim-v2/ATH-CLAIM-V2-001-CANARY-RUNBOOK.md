@@ -1,102 +1,104 @@
 # ATH-CLAIM-V2-001 — Contractor Real-Owner Canary Runbook (Founder-executed)
 
-Purpose: turn Contractor's R8 (real-owner canary) from PENDING_FOUNDER_CANARY to COMPLETE with one
-legitimate, consenting Florida contractor. Nothing in this runbook is automated by the ticket; the Founder
-executes it after the two draft PRs are reviewed, merged, and migration 019 is applied.
+Purpose: move Contractor `R8_REAL_OWNER_CANARY` to `REAL_OWNER_CANARY_COMPLETE` with ONE legitimate, consenting
+Florida contractor. Nothing here is automated. Revised in ATH-CLAIM-V2-001R4 (first-approval latency fixed;
+exact abuse backstop; executable checks). Roles: **Founder** (config + checks), **Reviewer** (TRUST_OPS staff),
+**Owner** (the consenting business).
 
-## Preconditions (all must be true)
+## 0. Preconditions — every box must be checked before inviting the owner
 
-1. Ask PR merged and deployed; **migration 019 applied** to the Ask customer database (additive; reversal file
-   exists). Verify: `SELECT column_name FROM information_schema.columns WHERE table_name='ath_claims' AND
-   column_name='acquisition_source'` returns a row.
-2. Contractor PR merged and deployed. Verify from a browser (not curl): opening
-   `https://www.contractortrusthub.com/api/claim/handoff/<any-uuid>` shows the 405 JSON, never a redirect.
-3. `ATH_HANDOFF_SECRET` identical on both apps (unchanged by this ticket).
-4. Contractor `ATH_CLAIM_CTA_MODE=canary` with `ATH_CLAIM_CANARY_PROFILE_IDS=<the canary contractor's UUID>`
-   (a Founder-only production env change; this ticket did not touch it).
-5. Staff account for the reviewer exists in `ath_admin_staff` with `TRUST_OPS` or `SUPER_ADMIN`.
-6. The canary business has consented in writing to participate and knows claiming is free, is not an
-   endorsement, and changes no evidence.
+| # | Precondition | How to verify |
+| --- | --- | --- |
+| P1 | Ask PR #199 merged and deployed to Production | Vercel Ask project → Production deployment = merge commit, status Ready |
+| P2 | **Migration 019 applied** to the Ask customer DB | `SELECT count(*) FROM information_schema.columns WHERE table_name='ath_claims' AND column_name IN ('acquisition_source','review_started_at','needs_info_entered_at');` → `3`, and `SELECT to_regclass('public.ath_claim_review_sessions');` not null |
+| P3 | Ask healthy | `https://www.asktrusthub.com/api/public/contractor-profiles/00000000-0000-4000-8000-000000000000/public-state` → 200 JSON, `hasPublicBusinessProfile:false`, header `cache-control: public, max-age=0, s-maxage=60, stale-while-revalidate=60`. Staff sign-in at `/admin/login` works (Neon quota incident resolved) |
+| P4 | Contractor PR #92 merged and deployed | Browser `GET https://www.contractortrusthub.com/api/claim/handoff/<any-uuid>` → 405 JSON "…does not start a claim", never a redirect |
+| P5 | **Contractor CANARY abuse backstop present** | Vercel Contractor project → Firewall → rule `claim-start-canary-backstop` (POST `/api/claim/handoff/*`, 6 / 600 s / IP, Deny) is **Active** (not Log) — exact spec in `ATH-CLAIM-V2-001R4-FINAL-RECONCILIATION.md` §4 |
+| P6 | Exact canary profile allow-listed | Contractor env `ATH_CLAIM_CTA_MODE=canary`, `ATH_CLAIM_CANARY_PROFILE_IDS=<that one UUID>`; redeployed. The CTA appears on that profile and on **no other** FL profile (spot-check one neighbour) |
+| P7 | `ATH_HANDOFF_SECRET` identical in both projects (≥32 chars) | Unchanged since R1; confirm in both env panels |
+| P8 | Reviewer ready | Staff user exists with `TRUST_OPS` or `SUPER_ADMIN`; can open `/admin/operations/claims`; has read `docs/claim-governance/reviewer-runbook.md`; blocks ~30 min within 2 business days of submission |
+| P9 | Transactional email healthy | Resend dashboard: domain verified, no bounces in 24 h. Founder requests a magic link to their own address and receives it within 2 min |
+| P10 | Consent | Owner consented in writing; knows claiming is free, is not an endorsement, changes no official evidence, and that they will enter website + hours |
+| P11 | Historical claims untouched | The two historical submitted Contractor claims are not acted on as part of this canary (C-B2 owns their audit) |
 
-## Step 1 — Public profile → claim start (the business does this)
+Do not proceed on any unchecked box.
 
-1. Business opens its own Trust Report `https://www.contractortrusthub.com/contractors/<slug>`.
-2. Confirms the profile shows official DBPR evidence only and the CTA reads
-   "Is this your business? Claim or manage this profile — free".
-3. Presses the button. Expected: browser lands on
-   `https://www.asktrusthub.com/claim/continue` showing the exact business name, credential, "Recorded state:
-   FL", "what claiming means", and a **Continue** button. Nothing has been recorded yet.
-   - Founder check (optional): `SELECT count(*) FROM ath_claim_intents WHERE intent_origin='explicit_continue'`
-     is unchanged at this point.
+## 1. Public profile → explicit start (Owner)
 
-## Step 2 — Explicit Continue → account → submission
+1. Owner opens `https://www.contractortrusthub.com/contractors/<slug>`.
+2. **Check:** only official DBPR evidence; no "Profile managed by an authorized representative" section yet;
+   CTA button reads **"Claim or manage this profile — free"** with the free / not-an-endorsement note.
+3. Owner presses the button (a same-origin POST; no link is ever minted by merely viewing the page).
+4. **Expected:** lands on `https://www.asktrusthub.com/claim/continue` showing the exact business name,
+   credential, "Recorded state: FL", what claiming means, and **Continue**.
+5. **Founder check (receipt ≠ intent):** `SELECT count(*) FROM ath_claim_intents WHERE intent_origin='explicit_continue' AND created_at > now() - interval '10 minutes';` → `0`.
 
-1. Business presses **Continue**. Expected: same page, now asking for a work email.
-   - Founder check: one new `ath_claim_intents` row with `intent_origin='explicit_continue'`,
-     `acquisition_source='organic'` (or `manual_outreach` if you sent them the link by hand — ask them to use
-     the profile button anyway so the funnel is measured as organic).
-2. Business enters a work email, receives the magic link, returns to `/claim/continue`, chooses relationship
-   (`owner` / `officer` / `qualifying_agent` / …), confirms the credential, ticks the authorization box, submits.
-3. Expected: `/claim/status/<id>` shows "Submitted"; the claim appears at the top of
-   `/admin/operations/claims` (filter `pending`) with Source = organic and SLA = "Within the 2-business-day review target".
+## 2. Continue → authentication → submission (Owner)
 
-## Step 3 — Staff review (the Founder / TRUST_OPS reviewer does this)
+1. Owner presses **Continue**. **Founder check:** the query above → `1`; row has `acquisition_source='organic'`.
+2. Owner enters a work email, opens the magic link (same browser), returns to the claim, selects relationship
+   (owner / officer / qualifying agent …), confirms the credential, ticks authorization, submits.
+3. **Expected:** `/claim/status/<id>` shows **Submitted**. The claim is at the top of `/admin/operations/claims`
+   (pending), Source = organic, target = "Within the 2-business-day review target".
 
-1. Open the claim. Answer "Was the evidence ready at first review?" and press **Start review timer**.
-2. Verify authority independently (Sunbiz officer, DBPR qualifier, callback through a pre-existing public
-   number). Select the matching evidence codes. Do not rely on the company-domain email alone.
-3. If something is missing: `needs_info` with a claimant message. The timer closes automatically.
-4. When evidence is GREEN: `approve` with `AUTHORITY_VERIFIED`. Expected: an ACTIVE grant, `CLAIM_APPROVED`
-   and `FIRST_CLAIM_ONBOARDING` emails, review timing stamped (`review_decided_at`,
-   `human_review_active_seconds`), audit `claim_approved` + `grant_created`.
+## 3. Review with authority evidence (Reviewer)
 
-## Step 4 — Business-supplied publication (the business does this)
+1. Open the claim; answer "Evidence ready at first review?"; press **Start review timer**.
+2. Verify authority **independently**: Sunbiz officer/authorized person or DBPR qualifier match, plus
+   control/contact (callback on a pre-existing public number, or verified business-domain control). Select the
+   matching evidence codes. Company-domain email alone or licence knowledge alone is never enough; a free
+   email address means enhanced review; any conflict or competing claim = HOLD.
+3. Missing something → **needs_info** with a claimant message (target clock pauses). Otherwise **approve**
+   with `AUTHORITY_VERIFIED`.
+4. **Expected:** ACTIVE grant; `CLAIM_APPROVED` + `FIRST_CLAIM_ONBOARDING` emails received by the owner;
+   `review_decided_at` and `human_review_active_seconds` stamped; audit `claim_approved`, `grant_created`.
 
-1. Business opens `/manage/<profileId>` → Business information → saves **website** and **hours** (minimum).
-2. Founder verifies on the public Trust Report: a section labelled "Profile managed by an authorized
-   representative" / "Information supplied by the business" appears **below** the official DBPR evidence;
-   JSON-LD is unchanged; ranking/search ordering is unchanged; the discipline section (if any) is unchanged.
-3. Optional: if there is a factual, non-marketing context the business wants to add, it may submit one
-   business response; staff moderates it. Skip if not appropriate.
+## 4. My Trust Hub → business information (Owner)
 
-## Step 5 — Leave the grant active
+1. Owner opens **My Trust Hub** (`/manage`) → the profile → **Business information**.
+2. Saves **website** and **hours** (weekday opening times). Save succeeds with version 1.
 
-Do **not** revoke the canary's grant for ceremony. Revocation was certified historically and is re-certified by
-the automated suites (`ath-claim-v2-001` R). Leave the legitimate owner managing their profile.
+## 5. Public layer appears (Founder)
 
-## Step 6 — Record the canary
+1. Wait **3–4 minutes** after the save (worst case 210 s: Ask edge ≤150 s + Contractor cache ≤60 s), then
+   open the public profile. If the first load still shows the prior state, **refresh once** (a single
+   stale-while-revalidate render is expected by design) — this is not a failure.
+2. **Check, all must hold:**
+   - Section headed **"Profile managed by an authorized representative"** / **"Information supplied by the
+     business"** appears **below** the official evidence, with "Provided by the business" on contact info and
+     "Availability provided by the business" showing the hours; "Visit business website" links to the saved URL.
+   - Official DBPR evidence (licence, status, dates, discipline if any), JSON-LD, and search ordering are
+     **unchanged** versus step 1.
+   - No "verified owner", "verified business" or score language anywhere.
+3. Optional cross-check: `…/api/public/contractor-profiles/<uuid>/public-state` shows
+   `hasPublicBusinessProfile:true` with the saved website.
 
-Update `lib/customer/claim-v2-readiness.ts` (Contractor `R8_REAL_OWNER_CANARY` → `REAL_OWNER_CANARY_COMPLETE`
-with the claim id as evidence) and `R9_REVIEW_CAPACITY` once `/admin` capacity metrics show at least one
-external claim. Open ATH-CLAIM-V2-002 (10–20 business handheld cohort) only after this.
+## 6. Leave the grant active
+
+No real-owner revocation for ceremony. Revocation is certified by the synthetic suites and the R4 two-instance
+test; leave the legitimate owner managing their profile.
+
+## 7. Founder success criteria (all required)
+
+1. 0 durable intents before Continue; exactly 1 after.
+2. Claim submitted and decided by a human reviewer with independent authority evidence recorded; decision
+   within the 2-business-day internal target (needs_info time excluded).
+3. ACTIVE grant; owner reached My Trust Hub from the approval email.
+4. Website + hours visible on the public Contractor profile, correctly labelled as business-supplied by an
+   authorized representative, within 4 minutes of saving (one refresh allowed).
+5. Official DBPR evidence byte-for-byte unchanged in presentation; no endorsement language.
+6. No token, email address or raw IP in analytics or logs; no abuse-rule false positive for the owner.
+7. Owner confirms (informally) the flow was understandable without Founder hand-holding.
+
+Then record: `lib/customer/claim-v2-readiness.ts` Contractor `R8_REAL_OWNER_CANARY` →
+`REAL_OWNER_CANARY_COMPLETE` (evidence: claim id), `R9_REVIEW_CAPACITY` once capacity metrics show the claim.
+Only then open ATH-CLAIM-V2-002 (10–20 business handheld cohort).
 
 ## Abort conditions
 
-- The public profile shows anything other than official evidence before approval → stop, investigate.
-- The CTA link or the Ask page exposes a token in analytics or logs → stop, rotate `ATH_HANDOFF_SECRET`.
-- The claim is competing with another open claim or an active grant → follow governance (HOLD), do not force.
-- Any step requires editing a customer row by hand → stop; use the admin surface or file a ticket.
-
-## R addendum — dry run on a local, synthetic stack (ATH-CLAIM-V2-001R, 2026-09-23)
-
-The full sequence in this runbook (staff review with governed evidence → active grant → owner saves a
-business-supplied field → Contractor renders the business-supplied layer → staff revokes with a mandatory
-reason → the layer is withheld while official evidence is untouched) was walked end-to-end this session against
-a **local, synthetic** profile (Worsham, seeded fixture data) on an isolated Postgres — not against any real
-customer, real claim, or Production database. This is a dry run of the mechanism, not the real-owner canary
-itself: R8 stays IMPLEMENTED, not `REAL_OWNER_CANARY_COMPLETE`, until a real external owner completes this with
-staff deciding through the normal queue.
-
-Findings from the dry run:
-
-- The policy engine correctly blocked approval on weak-only evidence (email-domain control +
-  public-credential knowledge alone) with `policy_blocks_approval` and no grant created, then approved cleanly
-  once a STRONG signal (corporate-officer/authorized-person match) plus a SUPPORTING signal (domain email
-  control) were both present.
-- Revoke closed the grant, dropped the profile from the owner's "Managed profiles" count, 404'd the owner's
-  direct `/manage/[id]` route, and withheld the business-supplied layer on the very next read — no lag observed
-  on revoke (see the caching-asymmetry note in `ATH-CLAIM-V2-001-HUB-READINESS.md`, which does apply to the
-  *first* approval making a profile public).
-- Expect the first post-approval public read to possibly show stale "no business layer" data for a real canary
-  run if the process has been warm for a while; a redeploy or an explicit second invalidation clears it. Budget
-  for this in the runbook rather than treating it as a canary failure.
+- Business-supplied content visible before approval, or official evidence changed → stop, investigate.
+- Public layer not visible 10 minutes after save (well beyond the bound) → stop; capture the `public-state`
+  response headers (`x-ath-public-read`, `age`, `x-vercel-cache`) before retrying anything.
+- A token, email or raw IP appears in analytics/logs → stop; rotate `ATH_HANDOFF_SECRET`.
+- Competing claim or existing grant → governance HOLD; never force.
+- Any step needs a hand-edited customer row → stop; use the admin surface or file a ticket.
