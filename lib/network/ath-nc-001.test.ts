@@ -258,7 +258,7 @@ test('claim eligibility surfaces are unchanged', () => {
 test('state page inventory adds North Carolina once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'NC').length, 1);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'north-carolina'));
-  assert.equal(ASK_NETWORK_STATES.length, 14);
+  assert.equal(ASK_NETWORK_STATES.length, 15);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/north-carolina'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/north-carolina/charlotte'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /North Carolina network gateway/);

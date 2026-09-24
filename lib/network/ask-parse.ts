@@ -44,6 +44,7 @@ import { detectOrCity, queryLooksLikeOregon } from './or-network.ts';
 import { detectPaCity, queryLooksLikePennsylvania } from './pa-network.ts';
 import { detectNcCity, queryLooksLikeNorthCarolina } from './nc-network.ts';
 import { detectOhCity, queryLooksLikeOhio } from './oh-network.ts';
+import { detectGaCity, queryLooksLikeGeorgia } from './ga-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -129,6 +130,7 @@ function geography(q: string): ParsedGeography | undefined {
   const paNamedEarly = queryLooksLikePennsylvania(q);
   const ncNamedEarly = queryLooksLikeNorthCarolina(q);
   const ohNamedEarly = queryLooksLikeOhio(q);
+  const gaNamedEarly = queryLooksLikeGeorgia(q) && !ohNamedEarly;
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -497,6 +499,18 @@ function geography(q: string): ParsedGeography | undefined {
       meaning: ohCity
         ? `${ohCity}, Ohio. Ohio research is statewide; a city or county name is not a local Ask route. Columbus and Cleveland Ask pages are not published.`
         : 'Ohio. State licensing is not physical location; specialist geography meaning differs by hub. Ohio city and county Ask pages are not published.',
+    };
+  }
+
+  if (gaNamedEarly) {
+    const gaCity = detectGaCity(q);
+    return {
+      stateCode: 'GA',
+      stateName: 'Georgia',
+      city: gaCity,
+      meaning: gaCity
+        ? `${gaCity}, Georgia. Georgia research is statewide. Atlanta is not a separate regulatory system and has no Ask city route.`
+        : 'Georgia. State licensing is not physical location. Georgia city and county Ask pages are not published.',
     };
   }
 

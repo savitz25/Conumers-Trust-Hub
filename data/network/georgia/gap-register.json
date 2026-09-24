@@ -1,0 +1,14 @@
+{
+  "state": "GA",
+  "atlanta_phase": { "status": "NOT_STARTED", "note": "No Ask city or county Georgia intelligence routes." },
+  "cross_hub_record_total": { "status": "REJECTED", "value": null },
+  "local_work_needed_now": "NO",
+  "remaining_gaps": [
+    "Move complaint dispositions and an official MCA to USDOT crosswalk were not acquired",
+    "Contractor paid statewide license rosters and specialty enforcement were not acquired",
+    "Lender Georgia-only DBF roster, final-order extract, and provider complaint rows were not acquired",
+    "Insurance agency, producer, and company rosters, parity company-level orders, and the complaint dataset were not acquired",
+    "Senior DCH state rosters, GaMap2Care bulk, HFRD inspection index, enforcement, and provider complaints were not acquired",
+    "Investor historical order PDFs, offering census, complaint dataset, and state adviser or broker-dealer rosters were not acquired"
+  ]
+}

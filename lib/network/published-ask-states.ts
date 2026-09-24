@@ -19,6 +19,7 @@ import { orReleaseGatePassed } from './or-network.ts';
 import { paReleaseGatePassed } from './pa-network.ts';
 import { ncReleaseGatePassed } from './nc-network.ts';
 import { ohReleaseGatePassed } from './oh-network.ts';
+import { gaReleaseGatePassed } from './ga-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -42,6 +43,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'PA', slug: 'pennsylvania', name: 'Pennsylvania', gate: paReleaseGatePassed },
   { code: 'NC', slug: 'north-carolina', name: 'North Carolina', gate: ncReleaseGatePassed },
   { code: 'OH', slug: 'ohio', name: 'Ohio', gate: ohReleaseGatePassed },
+  { code: 'GA', slug: 'georgia', name: 'Georgia', gate: gaReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
