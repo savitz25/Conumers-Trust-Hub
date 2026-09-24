@@ -82,8 +82,13 @@ staff-review browser walkthrough), with no code changes to the gate itself beyon
   Contractor evidence Postgres (an architectural exception — new schema on a DB this ticket was told not to
   expand casually — needs explicit Founder sign-off), or (c) moving the pre-flight rate check to Ask before the
   handoff is even requested. No option was implemented; this ticket only documents them for the Founder to pick.
-- **Acquisition source integrity.** The canonical source set is enforced server-side; `email_campaign` is not
-  self-declarable (requires the attribution cookie). `internal_test` and `manual_outreach` remain
-  self-declarable by editing the Continue URL/form — this can only game a labelling metric, never grant
-  authority or bypass eligibility/rate limits, since acquisition source is not read by any gate. Flagged
-  CONDITIONAL, not blocking.
+- **Acquisition source integrity — superseded by R2 (Q2), 2026-09-24.** At the time this line was first written,
+  `internal_test`/`manual_outreach` were self-declarable by editing the Continue URL/form (a labelling-only gap,
+  never a rate-limit or authority bypass, since no gate read the value). **That is no longer true and this
+  statement was stale.** ATH-CLAIM-V2-001R2 moved `acquisition_source` inside the *signed* handoff payload
+  (`AthHandoffPayload.acquisition_source` / `HandoffPayload.acquisition_source`); the public Contractor route
+  never reads a source from the request at all and always signs `organic`, and Ask's accept route trusts only
+  the authenticated value from `receiveHandoff()`, never a query string. `internal_test` and `manual_outreach`
+  are now reachable exclusively through a trusted server-side caller minting a token directly — never through
+  any public, browser-facing path. `email_campaign` remains attribution-cookie-only, unchanged. Nothing here is
+  self-declarable by a browser any more.

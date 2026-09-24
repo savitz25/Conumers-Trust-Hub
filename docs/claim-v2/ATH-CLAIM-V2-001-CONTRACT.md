@@ -74,14 +74,23 @@ verified with constant-time comparison · never logged (Ask `customerLog` redact
 Contractor logs event names only) · `no-store` + `noindex, nofollow` on every claim route · exact profile
 identity (hub, native id, slug, identifier, class, canonical URL) · replay resistant at the durable boundary.
 
-## 6. Acquisition source
+## 6. Acquisition source (current behavior — updated by R2/Q2, 2026-09-24)
 
-Allow-list: `organic`, `manual_outreach`, `email_campaign`, `internal_test`, `unknown`. Specialists may declare
-`organic | manual_outreach | internal_test` in the POST body; Ask reads it from the redirect query string
-(unsigned, allow-listed, defaults to `unknown` when absent). `email_campaign` is set only by Ask campaign
-attribution (`ath_claim_attribution`). The value is stored on the intent, copied to `ath_claims.acquisition_source`
-and `attestation.acquisition_source`, shown in `/admin/operations/claims`, and `internal_test` is excluded from
+Allow-list: `organic`, `manual_outreach`, `email_campaign`, `internal_test`, `unknown`. The value travels
+**inside the signed handoff payload** (`AthHandoffPayload.acquisition_source` on the Contractor side,
+`HandoffPayload.acquisition_source` on the Ask side) — it is authenticated by the same HMAC as the rest of the
+token, never read from an unsigned redirect query string and never parsed out of a browser POST body. The
+public Contractor claim-start route accepts no source input from the request at all and always signs `organic`;
+only a trusted server-side caller minting a token directly (never a public HTTP path) can set
+`manual_outreach` or `internal_test`. `email_campaign` is set only by Ask campaign attribution
+(`ath_claim_attribution`). On the Ask side, `receiveHandoff()` extracts and sanitizes the signed value
+(`claimAcquisitionSourceV2`); a token/hub that signs nothing at all gets `unknown`, never `organic` by default.
+The value is stored on the intent, copied to `ath_claims.acquisition_source` and
+`attestation.acquisition_source`, shown in `/admin/operations/claims`, and `internal_test` is excluded from
 every external capacity metric. Historical claims keep `unknown`; nothing is inferred.
+
+*(Historical note: before R2/Q2, specialists declared a source in the POST body and Ask read it back from an
+unsigned redirect query string. That channel is gone — see Section 9b.)*
 
 ## 7. Governance, publication, revocation (unchanged and re-certified)
 

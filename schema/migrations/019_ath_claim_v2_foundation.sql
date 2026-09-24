@@ -90,4 +90,4 @@ END $$;
 
 COMMENT ON COLUMN ath_claim_intents.intent_origin IS 'legacy_passive = created by the pre-V2 accept-on-GET path. explicit_continue = created by an explicit human Continue action (V2).';
 COMMENT ON COLUMN ath_claims.human_review_active_seconds IS 'Sum of reviewer-declared review sessions. Never wall-clock claim age.';
-COMMENT ON TABLE ath_claim_review_sessions IS 'Bounded explicit reviewer timer. One open session per reviewer per claim. Sessions are capped when closed.';
+COMMENT ON TABLE ath_claim_review_sessions IS 'Bounded explicit reviewer timer. ONE open session per claim (not per reviewer) — see ath_claim_review_sessions_one_open_per_claim. Sessions are capped when closed.';

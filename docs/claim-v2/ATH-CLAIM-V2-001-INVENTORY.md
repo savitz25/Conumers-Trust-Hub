@@ -93,8 +93,10 @@ implemented for Contractor only in this ticket and becomes a portable requiremen
 ## 7. Things that would make the proposed V2 design unsafe (and how the design avoids them)
 
 1. **Bumping the wire contract.** Not needed: the passive-receipt/explicit-Continue split lives entirely on the
-   Ask side after signature verification. Acquisition source travels out-of-band (allow-listed query string,
-   never inside the signed body). No `v: 3`.
+   Ask side after signature verification. No `v: 3`. *(This bullet originally continued "Acquisition source
+   travels out-of-band, never inside the signed body" — that was the initial design and is no longer true.
+   ATH-CLAIM-V2-001R2/Q2 moved acquisition source **inside** the signed body precisely because the out-of-band
+   query-string channel was unauthenticated and browser-editable. See Contract §6.)*
 2. **Treating an in-memory limiter as durable.** Contractor has no durable store. The Contractor gate is shipped
    as an explicitly bounded, per-isolate, fail-closed-on-error limiter with a pluggable store interface, and the
    durable network backstop is Ask's `ath_rate_events` on receipt/confirm. A proposed (unapplied) Contractor
