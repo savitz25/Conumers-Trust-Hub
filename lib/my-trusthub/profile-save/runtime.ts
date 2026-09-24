@@ -1,12 +1,11 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { profileCapability } from '../contracts/v2-3-profile-save.ts';
-import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-save.ts';
+import { SPECIALIST_HUBS, profileCapability } from '../contracts/v2-3-profile-save.ts';
+import type { ProfileIdentity, SpecialistHub, TrustedProfile } from '../contracts/v2-3-profile-save.ts';
 import {
   STAGING_TTL_MS, isGuestStageInput, isContinuationInput, isConsumeInput,
   isCommitInput, isReceiptLookup, isReceiptVerify, itemKey, manifestDigest,
   profileKey, profileReturnDestination,
   type GuestStageInput, type ItemReceipt, type ProfileReturnTask, type TrustedOriginRegistry,
-  type FirstWaveHub,
 } from '../contracts/v2-3-profile-transfer.ts';
 import type { Operation } from './interface.ts';
 
@@ -23,7 +22,7 @@ const opaque = () => randomBytes(32).toString('base64url');
  * sessionBinding changes on logout/account/session switch, not token refresh.
  */
 export type VerifiedCaller = {
-  hub: FirstWaveHub; browserBinding: string; environment: 'isolated';
+  hub: SpecialistHub; browserBinding: string; environment: 'isolated';
   scopes: readonly string[];
   parent?: { subject: string; sessionBinding: string; admitted: true };
   /** Server-side reference to a fresh P13 exchange, not the guest continuation. */
@@ -39,8 +38,8 @@ export type VerifiedCaller = {
 };
 type Stage = { input: GuestStageInput; browser: string; digest: string; expiresAt: number };
 type Continuation = { stageKey: string; used: boolean; expiresAt: number };
-type Grant = { subject: string; session: string; browser: string; hub: FirstWaveHub; stageKey: string; expiresAt: number };
-type StoredReceipt = { fingerprint: string; receipt: ItemReceipt; owner?: string; hub?: FirstWaveHub; recoverUntil?: number };
+type Grant = { subject: string; session: string; browser: string; hub: SpecialistHub; stageKey: string; expiresAt: number };
+type StoredReceipt = { fingerprint: string; receipt: ItemReceipt; owner?: string; hub?: SpecialistHub; recoverUntil?: number };
 export const RECEIPT_RETENTION_MS = 30 * 24 * 60 * 60_000;
 
 /** One serializable transaction. All reads/writes, P13 consume, P12 Save and
@@ -99,7 +98,7 @@ export class ParentProfileSaveRuntime {
     const { registry, backend } = this.options;
     if (!this.options.enabled || registry.environment !== 'isolated' || !registry.isolatedBackendVerified) deny('disabled');
     const caller = await this.options.authenticate();
-    if (!caller || caller.environment !== 'isolated' || !['move', 'insurance', 'lender'].includes(caller.hub) ||
+    if (!caller || caller.environment !== 'isolated' || !SPECIALIST_HUBS.includes(caller.hub) ||
         !/^[A-Za-z0-9_-]{43}$/.test(caller.browserBinding)) deny();
     const c = caller!;
     const now = (this.options.now ?? Date.now)();
@@ -135,9 +134,10 @@ export class ParentProfileSaveRuntime {
         if (!isGuestStageInput(input) || input.sourceHub !== who.hub) deny('invalid');
         const value = input as GuestStageInput;
         const task = await tx.resolveReturnTask(value.returnTask.profile);
+        const trustedDestination = task && profileReturnDestination(task, registry);
         if (!task || profileKey(task.profile) !== profileKey(value.returnTask.profile) ||
             task.hub !== value.returnTask.hub || task.canonicalSlug !== value.returnTask.canonicalSlug ||
-            !profileReturnDestination(task, registry)) deny('invalid');
+            !trustedDestination || trustedDestination !== profileReturnDestination(value.returnTask, registry)) deny('invalid');
         const transferRef = opaque(), digest = manifestDigest(value), expiresAt = now + STAGING_TTL_MS;
         await tx.put('stage', hash(transferRef), { input: value, browser: hash(who.browserBinding), digest, expiresAt } satisfies Stage);
         return { transferRef, manifestDigest: digest, expiresAt };

@@ -30,7 +30,7 @@ export function isolatedConfig(env: Env) {
   if (ids.length !== 2 || new Set(ids).size !== 2 || !ids.every(uuid) || env.MY_TRUSTHUB_INVITED_EMAILS?.trim()) return null;
   return { project: ISOLATED_PROJECT, parentOrigin: ASK_PREVIEW, moveOrigin: MOVE_PREVIEW,
     registry: { environment: 'isolated' as const, isolatedBackendVerified: true,
-      origins: { move: MOVE_PREVIEW, insurance: '', lender: '' } }, admittedIds: ids };
+      origins: { move: MOVE_PREVIEW, insurance: '', lender: '', contractor: '', senior: '', investor: '' } }, admittedIds: ids };
 }
 export const uuid = (v: unknown): v is string => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 export const opaque = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9_-]{43}$/.test(v);

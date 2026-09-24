@@ -82,7 +82,7 @@ export class PreviewAssembly {
         await this.source.publication(browser);
         return { ...TEST_PROFILE, published: true, supportedClass: true, binding: await this.binding(db) };
       },
-      returnTask: async identity => exactTestProfile(identity) ? { kind: 'profile', hub: 'move', profile: TEST_PROFILE, canonicalSlug: TEST_SLUG } : null,
+      returnTask: async identity => exactTestProfile(identity) ? { kind: 'profile', hub: 'move', profile: TEST_PROFILE, canonicalSlug: TEST_SLUG, returnPath: `/companies/${TEST_SLUG}` } : null,
       project: async (ref, a) => {
         const p = a.caller.parent; if (!p) return null;
         const items = await this.projects({ subject: p.subject, session: p.sessionBinding, label: '' });
