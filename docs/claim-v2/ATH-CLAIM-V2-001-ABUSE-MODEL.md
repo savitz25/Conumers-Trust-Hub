@@ -101,3 +101,7 @@ to roll back) is specified field-by-field in `ATH-CLAIM-V2-001R4-FINAL-RECONCILI
 precondition (P5) of the canary runbook. CANARY_ABUSE_GATE stays **CONDITIONAL** until that rule is active;
 ALL_ABUSE_GATE stays **BLOCKED**. A per-profile global cap was considered and rejected: without a durable store
 it adds no fleet-wide protection and would let an attacker lock the canary owner out.
+Also in R4 (C-B2 P1-2): the Contractor store takes structured keys and buckets IPv6 by /64 (IPv4 unchanged,
+IPv4-mapped collapses to IPv4) — see `ATH-CLAIM-V2-001R4-FINAL-RECONCILIATION.md` §9. Ask handoff/Continue now
+authenticate the token before any durable rate accounting, and Ask derives rate-limit IPs from the trusted
+Vercel header only (§11).

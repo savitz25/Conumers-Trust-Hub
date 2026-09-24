@@ -74,6 +74,9 @@ export class AuthError extends Error {
   }
 }
 
+/** ATH-CLAIM-V2-001R4 — bounded lifetime of a durable intent after explicit Continue (see confirmClaimIntent). */
+export const CLAIM_INTENT_CONTINUATION_SECONDS = 60 * 60;
+
 export class ClaimError extends Error {
   readonly code: string;
   constructor(code: string) {
@@ -365,13 +368,8 @@ export class CustomerPlatform {
      * query string; a hub/token that doesn't sign this field yields 'unknown', never 'organic' by default. */
     acquisitionSource: ClaimAcquisitionSourceV2;
   }> {
-    if (ctx?.ip) {
-      try {
-        await this.hitRateLimit('handoff_ip', ctx.ip, 30, 15 * 60 * 1000, { redactKey: true });
-      } catch {
-        throw new ClaimError('rate_limited');
-      }
-    }
+    // ATH-CLAIM-V2-001R4: cryptographic rejection first (size, secret, HMAC, expiry) — garbage tokens cost no DB
+    // transaction and create no rate rows. Durable abuse accounting then applies to authenticated tokens.
     let payload: HandoffPayload;
     try {
       payload = parseAndAuthenticateHandoff(this.deps.handoffSecret, token, this.now());
@@ -379,6 +377,13 @@ export class CustomerPlatform {
       const code = e instanceof HandoffError ? e.code : 'malformed';
       customerLog('handoff_rejected', { code }, 'warn');
       throw e;
+    }
+    if (ctx?.ip) {
+      try {
+        await this.hitRateLimit('handoff_ip', ctx.ip, 30, 15 * 60 * 1000, { redactKey: true });
+      } catch {
+        throw new ClaimError('rate_limited');
+      }
     }
 
     const existingNonce = await one<{ consumed: boolean }>(
@@ -409,6 +414,20 @@ export class CustomerPlatform {
    * raw SQL error mid-flow or writing a partial row. Checked once per platform instance.
    */
   private v2SchemaReady = false;
+  /**
+   * ATH-CLAIM-V2-001R4 — non-throwing readiness probe (information_schema only, so it can never abort the
+   * surrounding transaction). Staff surfaces use it to run in legacy mode when code deploys before migration 019.
+   */
+  async claimV2SchemaReady(): Promise<boolean> {
+    try {
+      await this.assertClaimV2Schema();
+      return true;
+    } catch (e) {
+      if (e instanceof ClaimError && e.code === 'schema_not_ready') return false;
+      throw e;
+    }
+  }
+
   private async assertClaimV2Schema(): Promise<void> {
     if (this.v2SchemaReady) return;
     const row = await one<{ intents: string; claims: string; sessions: string }>(
@@ -436,14 +455,6 @@ export class CustomerPlatform {
     acquisitionSource?: ClaimAcquisitionSourceV2 | string;
     ctx?: RequestContext;
   }): Promise<{ intentId: string; payload: HandoffPayload; displayName: string; profileHref: string; created: boolean }> {
-    await this.assertClaimV2Schema();
-    if (input.ctx?.ip) {
-      try {
-        await this.hitRateLimit('claim_continue_ip', input.ctx.ip, 10, 15 * 60 * 1000, { redactKey: true });
-      } catch {
-        throw new ClaimError('rate_limited');
-      }
-    }
     if (typeof input.receiptId !== 'string' || input.receiptId.length < 16) throw new ClaimError('missing_receipt');
     let payload: HandoffPayload;
     try {
@@ -452,6 +463,14 @@ export class CustomerPlatform {
       const code = e instanceof HandoffError ? e.code : 'malformed';
       customerLog('claim_continue_rejected', { code }, 'warn');
       throw e;
+    }
+    await this.assertClaimV2Schema();
+    if (input.ctx?.ip) {
+      try {
+        await this.hitRateLimit('claim_continue_ip', input.ctx.ip, 10, 15 * 60 * 1000, { redactKey: true });
+      } catch {
+        throw new ClaimError('rate_limited');
+      }
     }
     const receiptHash = hashToken(input.receiptId);
     const sameReceiptIntent = async () => one<{ id: string; consumed: boolean; receipt_hash: string | null }>(
@@ -481,7 +500,10 @@ export class CustomerPlatform {
        VALUES ($1, $2::jsonb, to_timestamp($3), 'explicit_continue', $4, $5, $6)
        ON CONFLICT (nonce) DO NOTHING
        RETURNING id`,
-      [payload.nonce, JSON.stringify(payload), payload.exp, source, this.now().toISOString(), receiptHash]
+      // ATH-CLAIM-V2-001R4: an explicit Continue gets a bounded continuation window from the moment of Continue
+      // (not the 15-min token exp), so a Continue at minute 14 still leaves time for the email round trip. The
+      // signed handoff itself stays short-lived and single-use (nonce UNIQUE); the intent is never indefinite.
+      [payload.nonce, JSON.stringify(payload), Math.floor(this.now().getTime() / 1000) + CLAIM_INTENT_CONTINUATION_SECONDS, source, this.now().toISOString(), receiptHash]
     );
     if (!inserted) {
       const raced = await sameReceiptIntent();
@@ -861,9 +883,13 @@ export class CustomerPlatform {
     if (input.decision === 'needs_info') {
       // Q5: open the staff-target pause. COALESCE preserves the original pause-start if this claim was already
       // waiting on the claimant (a repeat needs_info never restarts or hides prior timing history).
+      // ATH-CLAIM-V2-001R4: pre-019 (deploy-order mistake) the decision still records; only the V2 pause marker
+      // is skipped because its column does not exist yet.
       await this.deps.sql.query(
-        `UPDATE ath_claims SET status = 'needs_info', reviewed_at = $2, reviewed_by = $3, decision_reason = $4,
-           needs_info_entered_at = COALESCE(needs_info_entered_at, $2::timestamptz) WHERE id = $1`,
+        (await this.claimV2SchemaReady())
+          ? `UPDATE ath_claims SET status = 'needs_info', reviewed_at = $2, reviewed_by = $3, decision_reason = $4,
+           needs_info_entered_at = COALESCE(needs_info_entered_at, $2::timestamptz) WHERE id = $1`
+          : `UPDATE ath_claims SET status = 'needs_info', reviewed_at = $2, reviewed_by = $3, decision_reason = $4 WHERE id = $1`,
         [claim.id, this.now().toISOString(), staff.id, claimantMessage]
       );
       // Q7: a decision always closes any open review timer, for whichever reviewer holds it.
@@ -1010,7 +1036,7 @@ export class CustomerPlatform {
       await this.sendLifecycle({emailType:'CLAIM_APPROVED',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_claims',objectId:claim.id,stateVersion:'approved',orgId:claim.org_id,message:customerLifecycleEmail({type:'CLAIM_APPROVED',profileName:profile.display_name_snapshot||profile.native_slug,hub:hubRow?.hub_id,detail:'You may now manage business-supplied information and approved responses.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
       if(Number(prior?.n||0)===0)await this.sendLifecycle({emailType:'FIRST_CLAIM_ONBOARDING',recipient:claimant.email,recipientUserId:claim.claimant_user_id,objectType:'ath_users',objectId:claim.claimant_user_id,stateVersion:'first-managed-profile',orgId:claim.org_id,message:customerLifecycleEmail({type:'FIRST_CLAIM_ONBOARDING',profileName:profile.display_name_snapshot||profile.native_slug,detail:'Review public evidence, complete business information, request corrections, publish approved responses, manage team access, and enable monitoring where available.',actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
     }
-    if (profile?.native_profile_id) invalidatePublicContractorRead(profile.native_profile_id);
+    if (profile?.native_profile_id) invalidatePublicContractorRead(profile.native_profile_id, 'granted');
     return { grantId: grant!.id };
   }
 
@@ -1054,6 +1080,7 @@ export class CustomerPlatform {
    * returns to staff: a new/resumed review session, or a direct decision made from needs_info.
    */
   private async closeNeedsInfoPauseIfOpen(claimId: string): Promise<void> {
+    if (!(await this.claimV2SchemaReady())) return; // R4: pre-019 there is no pause state to close.
     const row = await one<{ needs_info_entered_at: string | null }>(
       this.deps.sql, `SELECT needs_info_entered_at::text FROM ath_claims WHERE id=$1 FOR UPDATE`, [claimId]
     );
@@ -1066,7 +1093,8 @@ export class CustomerPlatform {
   }
 
   private async stampReviewTiming(claimId: string, staffId: string, decided: boolean): Promise<void> {
-    await this.assertClaimV2Schema();
+    // R4: pre-019 a staff decision must still work (legacy mode); V2 timing simply is not recorded yet.
+    if (!(await this.claimV2SchemaReady())) return;
     void staffId; // Q7: closeReviewSessions closes whichever session is open for the claim, not just this staffer's.
     await this.closeReviewSessions(claimId, 'decision');
     const now = this.now().toISOString();
@@ -1187,7 +1215,10 @@ export class CustomerPlatform {
     const limit = Math.min(Math.max(Number(input.limit ?? 20), 1), 50);
     const rows = await this.deps.sql.query<{ id: string; created_at: string; status: string; hub_id: string; acquisition_source: string; needs_info_entered_at: string | null; needs_info_paused_business_hours: number }>(
       `SELECT c.id::text, c.created_at::text, c.status, p.hub_id, c.acquisition_source, c.needs_info_entered_at::text, c.needs_info_paused_business_hours FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id
-        WHERE c.status IN ('submitted','needs_info','in_review') ORDER BY c.created_at ASC LIMIT 200`
+        WHERE c.status IN ('submitted','needs_info','in_review')
+          -- ATH-CLAIM-V2-001R4: synthetic QA claims never page staff.
+          AND c.acquisition_source <> 'internal_test'
+        ORDER BY c.created_at ASC LIMIT 200`
     );
     const now = this.now();
     // Q5: a WAITING_ON_CLAIMANT claim (open needs_info pause) never reports OVER_TARGET, so it is never
@@ -1198,13 +1229,22 @@ export class CustomerPlatform {
       now,
       pausedBusinessHours: Number(r.needs_info_paused_business_hours || 0),
       needsInfoEnteredAt: r.needs_info_entered_at ? new Date(r.needs_info_entered_at) : null,
-    }).state === 'OVER_TARGET').slice(0, limit);
-    const result = { candidates: over.length, created: 0, emailed: 0, suppressed: 0 };
+    }).state === 'OVER_TARGET');
+    const day = now.toISOString().slice(0, 10);
+    const reminderId = (claimId: string) => {
+      const digest = createHash('sha256').update(['ath-claim-review-reminder-v1', claimId, day].join('|')).digest('hex');
+      return `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-8${digest.slice(17, 20)}-${digest.slice(20, 32)}`;
+    };
+    // R4: drop claims already reminded today BEFORE applying the per-run cap, so a backlog larger than the cap
+    // cannot starve claims 21+ for the rest of the day.
+    const already = over.length
+      ? new Set((await this.deps.sql.query<{ id: string }>(`SELECT id::text FROM ath_notifications WHERE id = ANY($1::uuid[])`, [over.map((c) => reminderId(c.id))])).rows.map((r) => r.id))
+      : new Set<string>();
+    const due = over.filter((c) => !already.has(reminderId(c.id))).slice(0, limit);
+    const result = { candidates: over.length, created: 0, emailed: 0, suppressed: over.length - over.filter((c) => !already.has(reminderId(c.id))).length };
     if (input.dryRun || !this.deps.staffEmails.length) return result;
-    for (const claim of over) {
-      const day = now.toISOString().slice(0, 10);
-      const digest = createHash('sha256').update(['ath-claim-review-reminder-v1', claim.id, day].join('|')).digest('hex');
-      const notificationId = `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-8${digest.slice(17, 20)}-${digest.slice(20, 32)}`;
+    for (const claim of due) {
+      const notificationId = reminderId(claim.id);
       const inserted = await one<{ id: string }>(
         this.deps.sql,
         `INSERT INTO ath_notifications(id,event_key,title,body,payload) VALUES($1,'claim_review_over_target','Open claim over the 2-business-day review target','An open claim has exceeded the internal review target.',$2::jsonb) ON CONFLICT(id) DO NOTHING RETURNING id`,
@@ -1269,7 +1309,7 @@ export class CustomerPlatform {
     const affected=await one<{email:string;user_id:string;display_name_snapshot:string}>(this.deps.sql,`SELECT u.email,u.id user_id,p.display_name_snapshot FROM ath_management_grants g JOIN ath_claims c ON c.id=g.granted_from_claim_id JOIN ath_users u ON u.id=c.claimant_user_id JOIN ath_hub_profiles p ON p.id=g.hub_profile_id WHERE g.id=$1`,[grant.id]);
     if(affected)await this.sendLifecycle({emailType:'ACCESS_REMOVED',recipient:affected.email,recipientUserId:affected.user_id,objectType:'ath_management_grants',objectId:grant.id,stateVersion:'revoked',orgId:grant.org_id,message:customerLifecycleEmail({type:'ACCESS_REMOVED',profileName:affected.display_name_snapshot,detail:accountFacingReason,actionPath:'/manage',actionLabel:'Open My Trust Hub'},this.deps.siteUrl)});
     const native = await one<{ native_profile_id: string }>(this.deps.sql, `SELECT native_profile_id::text FROM ath_hub_profiles WHERE id=$1`, [grant.hub_profile_id]);
-    if (native?.native_profile_id) invalidatePublicContractorRead(native.native_profile_id);
+    if (native?.native_profile_id) invalidatePublicContractorRead(native.native_profile_id, 'revoked');
     customerLog('grant_revoked', { grantId: grant.id });
   }
 

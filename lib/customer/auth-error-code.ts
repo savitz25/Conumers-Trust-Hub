@@ -23,6 +23,8 @@ const HANDOFF_ERROR_MAP: Record<string, CustomerClaimErrorCode> = {
   unavailable: 'SPECIALIST_VALIDATION_UNAVAILABLE', specialist_unavailable: 'SPECIALIST_VALIDATION_UNAVAILABLE',
   // ATH-CLAIM-V2-001R: V2 code running ahead of migration 019 fails closed as a temporary unavailability.
   schema_not_ready: 'SPECIALIST_VALIDATION_UNAVAILABLE',
+  // ATH-CLAIM-V2-001R4: an absent/short ATH_HANDOFF_SECRET is a server fault, never the user's link.
+  misconfigured: 'SPECIALIST_VALIDATION_UNAVAILABLE',
 };
 
 const isKnown = (value: unknown): value is ClaimAuthErrorCode => typeof value === 'string' && (CLAIM_AUTH_ERROR_CODES as readonly string[]).includes(value);

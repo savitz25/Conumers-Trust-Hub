@@ -44,7 +44,7 @@ export async function readPublicContractorState(contractorId: string) {
 }
 
 // Same-instance memo clear. Other instances converge within EXISTENCE_TTL_MS via the shared cache.
-registerPublicReadInvalidator((nativeProfileId) => layer.invalidate(nativeProfileId));
+registerPublicReadInvalidator((nativeProfileId, change) => layer.invalidate(nativeProfileId, change));
 
 export function publicReadHeaders(source: PublicReadSource) {
   return {

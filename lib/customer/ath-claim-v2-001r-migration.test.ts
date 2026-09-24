@@ -174,3 +174,22 @@ test('R4 Section 5: the same lifecycle on a REAL isolated Postgres (throwaway da
     await adminClient.end();
   }
 });
+
+test('R4 Section 6: narrow 019 apply path — verify absent, rehearse rolls back, apply commits + verifies, idempotent, hash-pinned', async () => {
+  const { verify019, run019, read019, MIGRATION_019_SHA256 } = await import('../../scripts/claim-v2-019-apply.ts');
+  assert.equal(read019().sha256, MIGRATION_019_SHA256, 'committed 019 matches the certified hash');
+  const db = new PGlite(); const sql = asSql(db);
+  await applyThrough018(sql);
+  const db019 = { query: async (t: string, p?: unknown[]) => ({ rows: (await db.query(t, p ?? [])).rows as Record<string, unknown>[] }), exec: async (t: string) => { await db.exec(t); } };
+  assert.equal((await verify019(db019)).absent, true);
+  const rehearsal = await run019(db019, 'rehearse');
+  assert.equal(rehearsal.after.complete, true); assert.equal(rehearsal.committed, false);
+  assert.equal((await verify019(db019)).absent, true, 'rehearsal leaves no change');
+  const applied = await run019(db019, 'apply');
+  assert.equal(applied.committed, true); assert.equal((await verify019(db019)).complete, true);
+  const again = await run019(db019, 'apply');
+  assert.equal(again.before.complete, true); assert.equal(again.after.complete, true, 'idempotent');
+  const script = readFileSync('scripts/claim-v2-019-apply.ts', 'utf8');
+  assert.match(script, /SET LOCAL lock_timeout = '3s'/); assert.match(script, /--confirm=APPLY-019-/);
+  await db.close();
+});

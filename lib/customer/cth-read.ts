@@ -18,9 +18,11 @@ SELECT c.id::text AS id,
        l.source_system
   FROM contractors c
   JOIN licenses l ON l.contractor_id = c.id AND l.source_system = 'fl_dbpr'
+                  AND NULLIF(TRIM(l.external_key), '') IS NOT NULL
  WHERE c.id = $1::uuid
  ORDER BY CASE WHEN l.status_normalized = 'active' THEN 0 ELSE 1 END,
-          l.last_seen_at DESC NULLS LAST
+          l.last_seen_at DESC NULLS LAST,
+          l.external_key ASC -- ATH-CLAIM-V2-001R4: deterministic tiebreak, identical to Contractor loadEligibleClaimProfile
  LIMIT 1
 `;
 

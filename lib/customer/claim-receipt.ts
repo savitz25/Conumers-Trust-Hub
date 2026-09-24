@@ -35,7 +35,11 @@ function receiptSignature(secret: string, body: string): string {
   return hmacSha256(secret, `${RECEIPT_DOMAIN}:${body}`);
 }
 
+/** ATH-CLAIM-V2-001R4: no receipt is signed or verified with an absent/short secret. */
+const MIN_RECEIPT_SECRET_LENGTH = 32;
+
 export function encodeClaimReceipt(receipt: ClaimReceipt, secret: string): string {
+  if (!secret || secret.length < MIN_RECEIPT_SECRET_LENGTH) throw new Error('receipt_secret_misconfigured');
   const body = receiptBody(receipt);
   return `${body}.${receiptSignature(secret, body)}`;
 }
@@ -52,6 +56,7 @@ export function receiptMatchesConfirmation(receipt: ClaimReceipt | null, submitt
 
 export function decodeClaimReceipt(raw: string | undefined | null, secret: string): ClaimReceipt | null {
   if (!raw || raw.length > 4096) return null;
+  if (!secret || secret.length < MIN_RECEIPT_SECRET_LENGTH) return null;
   const dot = raw.lastIndexOf('.');
   if (dot <= 0 || dot === raw.length - 1) return null; // no separator (e.g. a legacy unsigned candidate) never verifies
   const body = raw.slice(0, dot);

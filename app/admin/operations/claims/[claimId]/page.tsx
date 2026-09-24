@@ -47,20 +47,25 @@ export default async function Page({
           Claim status: {String(c.status)} · Policy: {q.policy.result} · Case:{" "}
           {q.workflowState} · Source: {q.acquisitionSource}
         </p>
-        {q.isOpen ? (
+        {!timing ? (
+          <p role="status" className="mt-2 rounded-lg border border-amber-600 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Claim V2 schema (migration 019) is not applied yet. Decisions and revocation still work; the review timer,
+            review target and source attribution are unavailable until it is applied. No claim data was changed.
+          </p>
+        ) : q.isOpen ? (
           <p className={`mt-2 inline-block rounded-full border px-3 py-1 text-sm font-semibold ${timing.sla.state === "OVER_TARGET" ? "border-amber-600 bg-amber-50 text-amber-800" : "border-border"}`}>
             {REVIEW_SLA_LABEL[timing.sla.state]} · {Math.round(timing.sla.businessHoursOpen)} business hours open
           </p>
         ) : null}
       </header>
-      <ReviewTimer
+      {timing ? <ReviewTimer
         claimId={id}
         openSession={timing.openSession}
         humanReviewActiveSeconds={timing.humanReviewActiveSeconds}
         evidenceReady={timing.evidenceReadyAtFirstReview}
         firstReview={!timing.reviewStartedAt}
         canWrite={canWrite && q.isOpen}
-      />
+      /> : null}
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Exact specialist identity">
           <Fact label="Hub / class" value={`${q.hub} / ${q.profileClass}`} />
@@ -108,14 +113,14 @@ export default async function Page({
             }
           />
         </Panel>
-        <Panel title="Review timing (capacity instrumentation)">
+        {timing ? <Panel title="Review timing (capacity instrumentation)">
           <Fact label="Submitted" value={new Date(timing.submittedAt).toISOString()} />
           <Fact label="Review started" value={timing.reviewStartedAt ? new Date(timing.reviewStartedAt).toISOString() : "Not started"} />
           <Fact label="Decided" value={timing.reviewDecidedAt ? new Date(timing.reviewDecidedAt).toISOString() : "No final decision"} />
           <Fact label="Evidence ready at first review" value={timing.evidenceReadyAtFirstReview === null ? "Not recorded" : timing.evidenceReadyAtFirstReview ? "Yes" : "No"} />
           <Fact label="Human review time" value={`${Math.round((timing.humanReviewActiveSeconds / 60) * 10) / 10} min across ${timing.sessions.length} session(s)`} />
           <Fact label="Elapsed (wall clock, not labor)" value={`${Math.round(q.ageHours)} h`} />
-        </Panel>
+        </Panel> : null}
         <Panel title="Authority constraints">
           <Fact
             label="Active management grant"

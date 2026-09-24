@@ -48,13 +48,20 @@ It was fail-safe on first approval (under-disclosure) but not on revocation (a r
 | Timing | fired inside the DB transaction (pre-COMMIT) | deferred until after COMMIT (`withAskTx` → `withDeferredPublicReadInvalidation`); a rolled-back write invalidates nothing |
 | Shared data cache (Neon guard) | `unstable_cache` list, 6h, `'max'` | list + **per-ID state** entries, tagged, expired with `{ expire: 0 }`; 3600s backstop only if an invalidation is lost |
 | In-process memo | existence 6h, per-ID payload 6h incl. negatives | existence 30s (single-flight), positive payload 30s, **negatives never stored per ID** |
+| Write scope | every write flushed everything | **change-kinded**: `granted`/`revoked` patch the writer's existence set incrementally (add/remove one ID) and expire the shared list; `content` (profile save/reconfirm, reply publish/withdraw) expires only that profile's state entry — existence is never flushed by content writes |
 | Ask edge | `s-maxage=21600, swr=86400` | `s-maxage=60, stale-while-revalidate=60` |
 | Ask outage | profile route 404 **edge-cached 6h**; replies 404 cached | 503 `no-store` on all three routes (fail closed, never cached) |
-| Contractor fetch | `revalidate: 21600` | `revalidate: 60` (`ASK_PUBLIC_REVALIDATE_S`; still a cache, per ATH-NEON-001) |
+| Contractor fetch | `revalidate: 21600`, untagged | `revalidate: 60` (`ASK_PUBLIC_REVALIDATE_S`; still a cache, per ATH-NEON-001) + per-profile tag `ask-public-state:<id>` (precisely purgeable by a future trusted path; no public purge route exists by design) |
 
 No client-controlled invalidation: nothing under `app/` imports the invalidator (asserted by test). Unknown-ID
-Neon protection is unchanged in kind and improved in memory: 1,000 random UUIDs → ≤1 shared list load per
-cold instance, 0 payload loads, 0 per-ID memory entries (test R4-7).
+Neon protection is unchanged in kind and improved in memory: **5,000** random UUIDs across two instances →
+≤1 shared list load per cold instance, 0 payload loads, 0 per-ID memory entries (test R4-7 / acceptance H).
+Negative answers: never cached per ID; the in-process existence set is at most 30 s old and is patched
+immediately on the writer; a negative can never be re-cached from a stale list (single-flight generation guard +
+post-COMMIT invalidation). Bounded fallback: if an invalidation is lost, the shared list self-heals within
+3600 s — kept at 3600 s rather than 60 s deliberately, because a 60 s shared revalidation would issue a Neon
+list query every minute per region under crawler traffic (compute-hours pressure; see the Ask Neon quota
+incident).
 
 ### Measured visibility window (normal owner save → public)
 
@@ -105,7 +112,21 @@ byte-identical → re-apply → exactly one one-open-session index → second V2
 No runtime path applies migrations in Production (the only runtime caller is a fixture route that runs only on
 an empty schema behind a fixture-environment assertion). Applying 019 is a manual Founder step.
 
-**MIGRATION_019 = READY_FOR_FOUNDER_APPLY.**
+### Narrow Production apply path (C-B2 #6)
+
+Do not use the broad `applyCustomerMigrations` replay for Production. Use `scripts/claim-v2-019-apply.ts`
+(single file, one transaction, `SET LOCAL lock_timeout='3s'` + `statement_timeout='60s'`, file hash pinned to
+`a82b9e5b…`, schema verified before COMMIT):
+
+1. `ATH_019_TARGET_URL=… node --experimental-strip-types scripts/claim-v2-019-apply.ts verify` → expect exit 3 (absent).
+2. `… rehearse` → applies, verifies, **ROLLBACK** (no change; proves locks are obtainable within 3 s).
+3. `… apply --confirm=APPLY-019-a82b9e5b58fd` → applies, verifies, COMMIT.
+4. `… verify` → exit 0 (`intentColumns 4, claimColumns 7, reviewSessions, oneOpenIndex, checks 5, rlsForced`).
+
+Exercised on the isolated PG 16.15 (verify absent → rehearse leaves absent → apply refused without confirm →
+apply commits → verify complete → re-apply idempotent) and in the permanent suite (R4 Section 6, PGlite).
+
+**MIGRATION_019 = READY_FOR_FOUNDER_APPLY. MIGRATION_019_APPLY_PATH = READY.**
 
 ## 4. Contractor abuse gate
 
@@ -150,11 +171,17 @@ Route `GET /api/cron/claim-review-reminders` — **still dormant** (no `vercel.j
 | needs_info | Open pause → never `OVER_TARGET` → never reminded |
 | PII | Email: hub, status, admin link. No names, emails, evidence, notes |
 | Storm | ≤ 20 claims per run × staff list; daily idempotency caps repeats |
+| internal_test | **Excluded** (R4) — synthetic QA claims never page staff |
+| Cap fairness | **Fixed** (R4): already-reminded-today claims are dropped *before* the per-run cap |
 | No destination | Returns before any write when the staff list is empty |
 | Pre-019 | `assertClaimV2Schema` throws → 500, no writes |
 
-Known, non-blocking limitation: the 20-claim cap is applied before already-reminded claims are filtered, so
-with more than 20 over-target claims the 21st+ are not reminded that day. Irrelevant at canary scale.
+Target semantics (code and docs agree): **time-to-decision** — from submission to the final staff decision
+(approve/reject), excluding every needs_info pause while the claimant is responsible. First staff action is
+recorded separately (`review_started_at`, evidence-ready flag) but is not the target.
+
+Activation rule: keep UNSCHEDULED until the two historical open Contractor claims are dispositioned
+(FOUNDER_ACTION_REQUIRED).
 
 Founder note: when scheduled, the first run **will email staff** (only) about the two historical submitted
 Contractor claims (they are past the target) and write a notification + audit row referencing them. It does
@@ -182,14 +209,23 @@ decision is a staff action with rationale and audit.
 Read-only. R4 code touches no claim row and adds no automatic mail. The only path that could email about them
 is the dormant reminder cron (staff-only), which stays unscheduled.
 
-## 9. Contractor IPv6 rate-key fix (C-B2 finding)
+## 9. Contractor IPv6 rate limiting (C-B2 P1-2)
 
-`MemoryRateLimitStore` parsed `ip-profile:<ip>:<uuid>` at the FIRST colon, so every IPv6 client sharing a first
-hextet (e.g. all `2600:*`) shared one 64-slot profile map; the 65th distinct address got a 429 for up to 24 h —
-a real risk for a mobile (IPv6) canary owner. Fixed by splitting at the LAST colon (profile UUIDs never contain
-one). Test: 200 distinct `2600:1f18:*` clients on one profile each get their own counter; one client's own bound
-still applies; 20,000-request churn test still passes. Normalisation policy unchanged: full address per bucket
-(no /64 aggregation in this ticket).
+Bug: `MemoryRateLimitStore` parsed `ip-profile:<ip>:<uuid>` at the FIRST colon, so every IPv6 client sharing a
+first hextet shared one 64-slot profile map (65th client → 429 for up to 24 h).
+
+Fix: a **structured key API** — `hit({ kind: 'agg'|'hourly'|'profile', bucket, profileId? })`; the route never
+builds or parses a string. Legacy string keys still parse, now from the fixed UUID suffix (regex anchored on the
+UUID), rejecting anything else. **Normalisation policy** (`abuseBucket`): IPv4 = full address; IPv4-mapped IPv6 =
+its IPv4; other IPv6 = the **/64** prefix, because a subscriber/device is normally delegated a whole /64 (RFC 6177;
+per-device /64 on mobile) and rotating inside it is free — per-address buckets were bypassable. Trade-off (same
+as IPv4 NAT): unrelated users behind one shared /64 share a bucket.
+
+Tests: IPv4; `::1`; full vs compressed forms of one address → same bucket; mapped IPv4; embedded-IPv4 tail;
+5 addresses in one /64 exhaust one bound together, a 6th address in that /64 → 429, a neighbouring /64 → allowed;
+spoofed rotating `x-forwarded-for` with a stable `x-vercel-forwarded-for` stays one bucket; 65+ distinct profile
+ids fail closed without resetting the aggregate; 20,000 adversarial requests rotating addresses and profiles
+inside one /64 → ≤ 5 mints; existing 20,000-request churn test still passes. **IPV6_RATE_LIMIT = PASS.**
 
 ## 10. Synthetic paired E2E (local, isolated) — 2026-09-24
 
@@ -227,3 +263,20 @@ measurement (not a product defect; the swap scripts are in the server HTML) and 
 outside V2: the Contractor "Print" toolbar button extends to 352 px at 320 px (clipped, no page scroll); (c)
 pre-existing, outside V2: after a revocation `/claim/status/<id>` still reads "You can manage this profile"
 because revocation does not change `claim.status`.
+
+
+## 11. C-B2 audit punch list — disposition (folded into R4)
+
+| # | Finding | Disposition | Evidence |
+| --- | --- | --- | --- |
+| P1-1 | Cache chain can hide first publication / delay revocation for hours | **Fixed** (§2): writer-registered, post-COMMIT, `{expire:0}`, change-kinded incremental existence, no per-ID negatives, 60 s edge + 60 s Contractor window, tagged Contractor fetch, 503 no-store outages | `ath-claim-v2-001r4.test.ts` R4 1–8 + wiring; E2E §10 (publish 40 s, withdraw ~35 s) |
+| P1-2 | IPv6 rate key | **Fixed** (§9): structured keys + /64 policy | Contractor `test_ath_claim_v2_001.tsx` R4 IPV6_* |
+| P2-3 | DB rate-limit before HMAC | **Fixed**: `receiveHandoff`/`confirmClaimIntent` now size-check → secret check → HMAC/expiry → then schema/durable rate accounting | R4 #3: 1,000 forged/malformed tokens → 0 rate rows, 0 intents; legit 30/15 min bound still enforced |
+| P2-4 | Empty/short secret verifies | **Fixed**: handoff verify throws `misconfigured` (<32 chars) → user sees "temporarily unavailable"; receipt encode throws / decode returns null | R4 #4 |
+| P2-5 | Ask client IP trusts client XFF | **Fixed**: `lib/customer/client-ip.ts` (trusted `x-vercel-forwarded-for`; malformed → `unknown`; on Vercel no XFF fallback; bounded + IPv4/IPv6-validated) used by customer and admin contexts | R4 #5 |
+| P2-6 | Broad migration replay for Production | **Fixed** (§3): `scripts/claim-v2-019-apply.ts` verify/rehearse/apply | R4 Section 6 + isolated PG run |
+| P2-7 | Admin queue breaks pre-019 | **Fixed**: `claimV2SchemaReady()` probe; queue selects typed literals instead of V2 columns; timer/SLA hidden with a staff banner; decisions and revocation still work (V2 timing/pause writes skipped) | R4 #7 (pre-019 needs_info decision succeeds) |
+| P2-8 | Unstable multi-license order | **Fixed**: final `external_key ASC` on both sides; Ask also excludes blank keys like Contractor (a blank key can never match a signed credential, so eligibility is unchanged in effect) | R4 #8 + Contractor server.ts |
+| P3-9 | Reminders | internal_test excluded; cap fairness fixed; target = time-to-decision documented; stays unscheduled until the historical claims are dispositioned | R4 #9, existing reminder test |
+| P3-10 | manual_outreach attribution | **Implemented**: `/api/internal/handoff/mint` (operator secret or staff session only) accepts `acquisitionSource: manual_outreach \| internal_test`, signed into the token; never from a claimant's browser. Note: the token is still 15 min, so use it in an assisted live session; for the canary the runbook keeps the organic profile CTA | R4 #8/#10 static + mint route |
+| P3-11 | Intent lifetime tied to 15-min token | **Fixed**: explicit Continue creates an intent valid 60 min from Continue (`CLAIM_INTENT_CONTINUATION_SECONDS`); intent cookie matches; handoff token stays 15 min and single-use | R4 #11 (Continue at minute 14, submit at minute 40 OK; expires after 60 min) |

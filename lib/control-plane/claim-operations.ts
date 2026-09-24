@@ -81,13 +81,21 @@ export class ClaimOperationsService {
     CASE c.status WHEN 'needs_info' THEN 'WAITING_FOR_CLAIMANT' WHEN 'approved' THEN 'RESOLVED_APPROVED' WHEN 'rejected' THEN 'RESOLVED_REJECTED' WHEN 'withdrawn' THEN 'RESOLVED_WITHDRAWN' WHEN 'superseded' THEN 'CLOSED' ELSE 'READY_FOR_REVIEW' END,c.id,c.created_at,c.created_at+interval '72 hours',ARRAY['CLAIM_DOMAIN_SYNC']
     FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id ON CONFLICT(target_type,target_ref) DO NOTHING`);
   }
+  /** ATH-CLAIM-V2-001R4 — false when code is deployed before migration 019; staff surfaces then run in legacy mode. */
+  async schemaReady(): Promise<boolean> {
+    return customerPlatformForSql(this.sql).claimV2SchemaReady();
+  }
   async list(filter: ClaimQueueFilter = "all"): Promise<ClaimQueueRow[]> {
     await this.requireRead();
     await this.ensureCases();
+    // R4: never reference a V2 column before it exists — a failed SELECT would abort the whole admin transaction.
+    const v2Columns = (await this.schemaReady())
+      ? "c.acquisition_source,c.review_started_at::text,c.review_decided_at::text,c.human_review_active_seconds,c.evidence_ready_at_first_review,c.needs_info_entered_at::text,c.needs_info_paused_business_hours"
+      : "'unknown'::text acquisition_source,NULL::text review_started_at,NULL::text review_decided_at,0 human_review_active_seconds,NULL::boolean evidence_ready_at_first_review,NULL::text needs_info_entered_at,0 needs_info_paused_business_hours";
     const rows = (
       await this.sql.query<
         Record<string, unknown>
-      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,c.created_at::text submitted_at,c.acquisition_source,c.review_started_at::text,c.review_decided_at::text,c.human_review_active_seconds,c.evidence_ready_at_first_review,c.needs_info_entered_at::text,c.needs_info_paused_business_hours,p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key identifier,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
+      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,c.created_at::text submitted_at,${v2Columns},p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key identifier,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
     EXISTS(SELECT 1 FROM ath_management_grants g WHERE g.hub_profile_id=c.hub_profile_id AND g.status='active') existing_grant,(SELECT count(*)::int FROM ath_claims x WHERE x.hub_profile_id=c.hub_profile_id AND x.id<>c.id AND x.status IN('submitted','needs_info','in_review')) competing_claims
     FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id JOIN ath_ops_cases oc ON oc.target_ref=c.id LEFT JOIN ath_admin_staff s ON s.staff_id=oc.assigned_staff_id ORDER BY CASE WHEN c.status IN('submitted','needs_info','in_review') THEN 0 ELSE 1 END,c.created_at ASC LIMIT 250`)
     ).rows;
@@ -126,8 +134,10 @@ export class ClaimOperationsService {
     await this.security.recordClaimOperation(this.token, { eventType: "CLAIM_REVIEW_SESSION_STOPPED", targetRef: claimId, reason: "REVIEW_TIMER", result: "SUCCEEDED", after: { closed: result.closed, humanReviewActiveSeconds: result.humanReviewActiveSeconds } }, this.ctx);
     return result;
   }
+  /** R4: null before migration 019 (the page shows the timer as unavailable instead of failing). */
   async timing(claimId: string) {
     await this.requireRead();
+    if (!(await this.schemaReady())) return null;
     return customerPlatformForSql(this.sql).reviewTiming(this.token, claimId);
   }
   private row(r: Record<string, unknown>): ClaimQueueRow {

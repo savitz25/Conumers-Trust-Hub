@@ -132,11 +132,25 @@ export function createPublicContractorReadLayer(deps: {
     };
   }
 
-  function invalidate(contractorId?: string) {
-    generation += 1;
-    existence = null;
-    if (contractorId) payloads.delete(contractorId);
-    else payloads.clear();
+  /**
+   * R4: incremental. `granted`/`revoked` patch this instance's existence set for the one profile (no global
+   * flush); `content` only drops that profile's payload. No `change` = full local reset (tests/tools).
+   */
+  function invalidate(contractorId?: string, change?: 'granted' | 'revoked' | 'content') {
+    if (!contractorId || !change) {
+      generation += 1;
+      existence = null;
+      if (contractorId) payloads.delete(contractorId);
+      else payloads.clear();
+      return;
+    }
+    payloads.delete(contractorId);
+    if (change === 'content') return;
+    generation += 1; // an in-flight refresh started before this change must not overwrite the patched set
+    if (existence) {
+      if (change === 'granted') existence.ids.add(contractorId);
+      else existence.ids.delete(contractorId);
+    }
   }
 
   function stats() {

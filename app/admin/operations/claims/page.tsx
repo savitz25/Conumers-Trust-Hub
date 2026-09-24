@@ -36,8 +36,10 @@ export default async function Page({
   try {
     data = await withAdminSecurity(async (s, t, c, sql) => {
       const staff = await s.require(t, "ADMIN_VIEW");
-      const rows = await new ClaimOperationsService(sql, s, t, c).list(filter);
-      return { staff, rows };
+      const service = new ClaimOperationsService(sql, s, t, c);
+      const schemaReady = await service.schemaReady();
+      const rows = await service.list(filter);
+      return { staff, rows, schemaReady };
     });
   } catch {
     redirect("/admin/login");
@@ -55,6 +57,12 @@ export default async function Page({
           Exact-profile authority review. Claims never change Layer A evidence,
           ranking, or publication.
         </p>
+        {!data.schemaReady ? (
+          <p role="status" className="mt-3 rounded-lg border border-amber-600 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Claim V2 schema (migration 019) is not applied yet. The queue and decisions work in legacy mode; source,
+            review timer and review-target columns are unavailable until it is applied.
+          </p>
+        ) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-3" aria-label="Open claim summary">
           <div className={`rounded-xl border p-4 ${data.rows.filter((r) => r.isOpen).length ? "border-indigo" : "border-border"}`}>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Open claims</p>

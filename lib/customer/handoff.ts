@@ -17,7 +17,13 @@ export type HandoffVerifyFailure =
   | 'unsupported_hub'
   | 'unsupported_state'
   | 'unsupported_source'
-  | 'reused_nonce';
+  | 'reused_nonce'
+  | 'misconfigured';
+
+/** ATH-CLAIM-V2-001R4: verification fails closed on the same minimum as minting. */
+export const MIN_HANDOFF_SECRET_LENGTH = 32;
+/** Bounded before any parsing/HMAC work; real v2 tokens are well under 2 KB. */
+export const MAX_HANDOFF_TOKEN_LENGTH = 4096;
 
 export class HandoffError extends Error {
   readonly code: HandoffVerifyFailure;
@@ -120,6 +126,8 @@ export function parseAndAuthenticateHandoff(
   token: string,
   now: Date = new Date()
 ): HandoffPayload {
+  if (!secret || secret.length < MIN_HANDOFF_SECRET_LENGTH) throw new HandoffError('misconfigured');
+  if (typeof token !== 'string' || token.length === 0 || token.length > MAX_HANDOFF_TOKEN_LENGTH) throw new HandoffError('malformed');
   const parts = token.split('.');
   if (parts.length !== 2 || !parts[0] || !parts[1]) {
     throw new HandoffError('malformed');
