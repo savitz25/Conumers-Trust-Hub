@@ -21,12 +21,14 @@ import {
 } from "@/components/my-trusthub/my-shell";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
+import { IsolatedSaved } from '@/components/my-trusthub/isolated-saved';
 
 export default async function SavedPage({
   searchParams,
 }: {
   searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string }>;
 }) {
+  if (process.env.VERCEL_ENV === 'preview' && process.env.MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED === 'true') return <IsolatedSaved />;
   const { adapter, user } = await requireWorkspace();
   const [query, saved, projects, notes, sessions] = await Promise.all([
     searchParams,

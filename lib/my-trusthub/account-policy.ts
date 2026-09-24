@@ -11,10 +11,40 @@ export function accessMode(env: AccountEnv): 'internal' | 'invitation' | 'public
   if (!mode) return 'internal'; // No implicit public activation from the legacy canary toggle.
   return mode === 'internal' || mode === 'invitation' || mode === 'public' ? mode : 'closed';
 }
+/**
+ * Password sign-in for an already-approved isolated preview or local dev pair.
+ * Production and an unset VERCEL_ENV ignore the flag. It does not open signup,
+ * email delivery, or the My TrustHub workspace master gate.
+ */
+export function previewAccountAccess(env: AccountEnv): boolean {
+  if (env.VERCEL_ENV !== 'preview' && env.VERCEL_ENV !== 'development') return false;
+  if (!enabled(env.MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS)) return false;
+  return accountRuntime(env) !== null;
+}
+
+export function accountSignInEnabled(env: AccountEnv): boolean {
+  return enabled(env.MY_TRUSTHUB_ENABLED) || previewAccountAccess(env);
+}
+
+/** Login can use preview account access. Every other account form still requires the master gate. */
+export function accountFormAvailable(operation: 'signup' | 'login' | 'link' | 'recovery' | 'password', env: AccountEnv): boolean {
+  if (!accountRuntime(env)) return false;
+  if (isolatedSaveAccount(env) && operation !== 'login') return false;
+  if (operation === 'login') return accountSignInEnabled(env);
+  return enabled(env.MY_TRUSTHUB_ENABLED);
+}
+/** The isolated V2-3 packet admits existing password users only. In particular,
+ * the workspace master flag must not activate Auth-provider email operations. */
+export function isolatedSaveAccount(env: AccountEnv): boolean {
+  return env.VERCEL_ENV === 'preview' && env.MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED === 'true';
+}
+
 export function admitted(user: AccountUser | null, env: AccountEnv): boolean {
-  if (!enabled(env.MY_TRUSTHUB_ENABLED) || !user?.email_confirmed_at) return false;
+  if (!accountSignInEnabled(env) || !user?.email_confirmed_at) return false;
   const mode = accessMode(env);
-  if (mode === 'public') return true;
+  // Preview account access never widens to every confirmed user. Public admission
+  // still requires the master gate.
+  if (mode === 'public') return enabled(env.MY_TRUSTHUB_ENABLED);
   if (mode === 'closed') return false;
   const prefix = mode === 'internal' ? 'MY_TRUSTHUB_CANARY' : 'MY_TRUSTHUB_INVITED';
   const eligible = list(env[`${prefix}_USER_IDS`]).includes(user.id.toLowerCase()) ||
@@ -66,7 +96,7 @@ export function safeReturn(value: unknown): string {
     const u = new URL(decoded, PARENT_ORIGIN);
     if (u.origin !== PARENT_ORIGIN) return '/my';
     const path = u.pathname;
-    if (['/my', '/my/saved', '/my/projects', '/my/you'].includes(path)) return path;
+    if (['/my', '/my/saved', '/my/projects', '/my/you', '/my/profile-save'].includes(path)) return path;
     if (/^\/my\/(projects|sessions)\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(path)) return path;
   } catch { /* malformed input is not a destination */ }
   return '/my';

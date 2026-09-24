@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { accountRuntime, accessMode, admitted, enabled, safeReturn } from '@/lib/my-trusthub/account-policy';
+import { accountFormAvailable, accessMode, admitted, enabled, safeReturn, isolatedSaveAccount } from '@/lib/my-trusthub/account-policy';
 import type { AccountOperation } from '@/lib/my-trusthub/account-service';
 import { createMyTrustHubSupabaseClient } from '@/lib/supabase/server';
 import { signOutAccountAction } from '@/app/my/account-actions';
@@ -8,12 +8,12 @@ import { AccountForm } from './account-form';
 export type AccountQuery = Record<string, string | string[] | undefined>;
 export async function AccountEntry({ operation, query }: { operation: AccountOperation; query: AccountQuery }) {
   const next = safeReturn(query.next);
-  const runtime = accountRuntime(process.env);
-  const available = enabled(process.env.MY_TRUSTHUB_ENABLED) && Boolean(runtime);
+  const available = accountFormAvailable(operation, process.env);
   const client = available ? await createMyTrustHubSupabaseClient() : null;
   const user = client ? (await client.auth.getUser()).data.user : null;
   const allowed = admitted(user, process.env);
   const mode = accessMode(process.env);
+  const saveOnly = isolatedSaveAccount(process.env);
   const titles: Record<AccountOperation, string> = { signup: 'Create your My TrustHub account', login: 'Sign in to My TrustHub', link: 'Sign in with an email link', recovery: 'Recover your account', password: 'Set your password' };
   const href = (path: string) => `${path}?next=${encodeURIComponent(next)}`;
   return <main className="myth-auth-page"><section className="myth-auth-card" aria-labelledby="account-title">
@@ -32,10 +32,10 @@ export async function AccountEntry({ operation, query }: { operation: AccountOpe
       <AccountForm operation={operation} next={next} expectedUserId={operation === 'password' ? user?.id : undefined} siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} />
     </>}
     <nav aria-label="Account options" className="myth-account-options">
-      <Link href={href('/my/create-account')}>Create account</Link>
+      {!saveOnly ? <Link href={href('/my/create-account')}>Create account</Link> : null}
       <Link href={href('/my/sign-in')}>Already have an account? Sign in</Link>
-      <Link href={href('/my/email-link')}>Email me a sign-in link instead</Link>
-      <Link href={href('/my/recover')}>Forgot your password?</Link>
+      {!saveOnly ? <Link href={href('/my/email-link')}>Email me a sign-in link instead</Link> : null}
+      {!saveOnly ? <Link href={href('/my/recover')}>Forgot your password?</Link> : null}
     </nav>
     <p>Your consumer workspace is separate from business access. Saves and Projects never start a Watch.</p>
     <Link href="/">Continue researching on Ask Trust Hub</Link>

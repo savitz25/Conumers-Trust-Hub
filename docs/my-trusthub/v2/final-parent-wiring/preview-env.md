@@ -1,0 +1,71 @@
+# Exact isolated preview environment packet — NOT APPLIED
+
+Scope changes to the reviewed Ask V2-3 preview branch only. No Production or all-preview default edits. Verify the alias points to the reviewed Ask commit before JQA. Do not use a rotating immutable deployment URL as the account origin.
+
+```dotenv
+NEXT_PUBLIC_SITE_URL=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
+NEXT_PUBLIC_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app
+MY_TRUSTHUB_TEST_ORIGIN=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
+NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL=https://xkkiicsassizmakcvxml.supabase.co
+MY_TRUSTHUB_TEST_SUPABASE_URL=https://xkkiicsassizmakcvxml.supabase.co
+MY_TRUSTHUB_NONPRODUCTION_APPROVED=true
+MY_TRUSTHUB_ENABLED=true
+MY_TRUSTHUB_SAVED_ENABLED=true
+MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED=true
+MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED=true
+MY_TRUSTHUB_V23_ISOLATED_PROJECT=xkkiicsassizmakcvxml
+MY_TRUSTHUB_V23_PARENT_ORIGIN=https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app
+MY_TRUSTHUB_V23_MOVE_ORIGIN=https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app
+MY_TRUSTHUB_V23_SESSION_AFFINITY=dedicated
+MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE=SUPAVISOR_SESSION
+MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST=<exact-reviewed-session-pooler-hostname>
+MY_TRUSTHUB_ACCESS_MODE=invitation
+MY_TRUSTHUB_SIGNUP_ENABLED=false
+MY_TRUSTHUB_EMAIL_ENABLED=false
+MY_TRUSTHUB_WATCH_ENABLED=false
+MY_TRUSTHUB_ALERTS_ENABLED=false
+MY_TRUSTHUB_SOURCE_MONITORING_ENABLED=false
+MY_TRUSTHUB_PROJECTS_ENABLED=false
+MY_TRUSTHUB_SESSIONS_ENABLED=false
+MY_TRUSTHUB_EXPORT_ENABLED=false
+MY_TRUSTHUB_DELETE_ENABLED=false
+MY_TRUSTHUB_AUTH_SECURITY_READY=false
+```
+
+`NEXT_PUBLIC_MOVE_ORIGIN` and `MY_TRUSTHUB_V23_MOVE_ORIGIN` in this list name the reviewed current-main Move preview alias. This document change does not modify Vercel, does not supply signing-key or database values, and does not activate runtime. Reciprocal signing names remain `MY_TRUSTHUB_V23_ASK_KEY_ID`, `MY_TRUSTHUB_V23_ASK_SIGNING_PRIVATE_KEY_PEM`, `MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM`, `MY_TRUSTHUB_V23_MOVE_KEY_ID`, `MY_TRUSTHUB_V23_MOVE_SIGNING_PRIVATE_KEY_PEM`, `MY_TRUSTHUB_V23_MOVE_VERIFY_PUBLIC_KEY_PEM`, and `MTH_MOVE_PARENT_SAVE_PARENT_PROTECTION_BYPASS`. Isolated Move source approval names are `MTH_V23_MOVE_ISOLATED_SOURCE` and `MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`. No values are recorded here. The hosted deployment-pin SQL still names the previous Move alias until a separate authorization.
+
+`VERCEL_ENV` must be Vercel's actual `preview`; do not override it. The only invited IDs must be the existing isolated QA A/B UUIDs, loaded locally into server-only `MY_TRUSTHUB_INVITED_USER_IDS` through the approved credential/config channel. Clear `MY_TRUSTHUB_INVITED_EMAILS`: email matching must not broaden admission. No user IDs, emails or passwords are included here. The secure file is never changed or copied. Existing optional Projects may be listed and assigned during consent; this packet does not open the Projects creation workspace.
+
+Keep the existing isolated `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY` and approved `NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY`. Verify the latter works at the stable Ask alias. Missing CAPTCHA still blocks password login; do not bypass or change Supabase CAPTCHA settings to produce a test PASS. Do not set an anon public field to service_role or a secret API key. No SMTP, email provider secret, signup or Auth user creation is authorized.
+
+`MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE` is exactly `DIRECT` or `SUPAVISOR_SESSION`. Direct uses `db.xkkiicsassizmakcvxml.supabase.co:5432`, database `postgres`, and login `myth_v23_parent_preview`, but that branch host is IPv6-only and is not currently deployable from Vercel. Session mode is eligible only after its hosted parity probe passes. It requires port `5432`, the separately pinned Supavisor hostname, database `postgres`, and URL user `myth_v23_parent_preview.xkkiicsassizmakcvxml`. Port `6543`, transaction mode, arbitrary pooler hosts, production refs, URL parameters and fallback are rejected. `MY_TRUSTHUB_V23_DATABASE_CA_PEM` retains certificate and hostname verification. The application pool maximum is two, below the login limit of six.
+
+The role creation SQL starts with `PASSWORD NULL`, so it is not usable until an authorized operator provisions its password through a local secure channel such as interactive `psql \password`. Do not put password/URL/private key/bypass values into SQL, CLI output, screenshots, Git, Slack, GitHub or reports. [Builder 3 handoff](BUILDER-3-HANDOFF.md) gives all key IDs and secret variable names.
+
+Activation is strictly ordered, after separate founder authorization. Every failed or missing gate stops activation; partial success is **BLOCKED**, never READY.
+
+1. Independently pin project `xkkiicsassizmakcvxml` and its actual TLS database host outside SQL.
+2. Verify clean preconditions: reviewed P11/P12/P13/V2-3 certified objects, exactly two Ask/Move registry rows, no prior preview login/reader/wrappers/tables or preview-only grants, and the approved isolated operator. The guards at the start of `ports-forward.sql` enforce the catalog portion; a GUC does not authenticate the host.
+3. Apply `ports-forward.sql`. It retains the original registry arrays and a private, non-secret ACL/role baseline before changing preview grants.
+4. Create `myth_v23_parent_preview` with `runtime-role-forward.sql`.
+   Before Phase 5, complete the separately authorized isolated [pg_net absence gate](platform-public-review.md): read-only preflight, disable without CASCADE, and exact postcheck. PUBLIC ACL revocation is superseded.
+5. Securely provision its password locally; keep all password/connection material server-only and out of SQL/output/reports.
+6. Freshly reverify the exact Move identity is PUBLISHABLE within two minutes of binding apply.
+7. Apply `move-binding-forward.sql`. Retain its returned `binding_id`, `network_entity_id`, and `provenance_ref` in the approved operator record.
+8. Set `v23.binding_id`, `v23.network_entity_id`, and `v23.binding_provenance_ref` from that exact forward result, then run fail-closed `assertions.sql` with stop-on-error. Require `V23_PARENT_PACKET_ASSERTIONS_PASS`; inspect nothing into a PASS manually.
+9. Run the separately authorized hosted V2-3 matrix. Preserve its exact evidence and cleanup boundaries.
+10. Only after all prior gates pass, configure branch-scoped preview secrets/env and deploy the reviewed previews. No Production/all-preview defaults.
+11. Complete Builder 3 final composition and verify both reviewed SHAs at the exact stable aliases.
+12. Run the full Journey QA from the beginning, including real A/B login, consent, Save, receipt, isolation and zero Watch.
+
+Never merge #185/#157 or promote production under this packet. Local test success does not certify hosted privileges or the browser journey.
+
+Runtime returns unavailable if the exact config, login flags/memberships, raw-table denial, private-port readiness marker, isolated Auth service, source assertion/publication or approved binding cannot be verified. It has no SQLite, memory, legacy Auth or admin credential fallback.
+
+Operational cleanup, after separate authorization, may use the existing nonlogin `myth_v23_cleanup` role to delete a bounded batch of expired `v23_private.preview_transport_records` older than one hour. Do not remove P12 Saved/Project rows or durable receipts. No job, cron, configuration or hosted cleanup was installed here.
+
+Full closeout is separately steward-authorized. Independently pin the isolated host, quiesce writers, and drain runtime connections. Use one operator session: `teardown-preconditions.sql` -> temporarily grant the operator SET authority for `myth_identity_governor` -> `move-binding-teardown.sql` -> immediately revoke that temporary authority -> `teardown.sql` -> `teardown-assertions.sql`. Before and after lifecycle work only the known Supabase bookkeeping row may remain: member `postgres`, grantor `supabase_admin`, ADMIN true, INHERIT false, SET false. Local PostgreSQL may have zero rows. Any other membership or capability fails. The isolated pg_net-absent state remains absent throughout closeout.
+
+The first script privately captures original permissions/origins, exact identity, and row-count/SHA-256 fingerprints of research and receipt tables in session-local tables. The binding script closes the existing accepted lifetime with `valid_to` and marks the same entity `retired`. It does not delete, supersede into a successor, redirect, or merge anything. The parent teardown removes only preview ports/roles/tables/grants and restores original origin arrays. The final script requires exact baseline equality and the authorized historical lifecycle before emitting `V23_PARENT_PACKET_TEARDOWN_ASSERTIONS_PASS`.
+
+Keep all writers quiescent until verification completes. The independently authorized operator must already have the owner/lock privileges needed for SHARE locks on redirects and protected research; SELECT-only access is insufficient. Missing privileges stop this packet, without any new grants. Baseline locks end with their transaction; concurrent edits cause the final comparison to fail. Do not recapture baselines after a failure or delete research to make assertions pass. A lost operator session loses its temporary preservation proof: stop for steward review. Reopening a retired lifetime requires a separate reviewed operation with fresh collision/lifecycle checks; there is no automatic undo/merge fallback.

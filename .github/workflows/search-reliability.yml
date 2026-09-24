@@ -16,6 +16,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run check:move-origin
       - run: npm run check:ath-search-p0-001
       - run: npm run check:th-search-r1-008
       - run: npm run typecheck
