@@ -1,0 +1,3092 @@
+{
+  "schemaVersion": "accepted-extract-baseline-v1",
+  "parserVersion": "ath-accepted-extract-parser-v1",
+  "generatedAt": "2026-09-25T15:15:50.988Z",
+  "generatedFrom": "bundled",
+  "entries": [
+    {
+      "hub": "contractor",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/contractor-trust-hub/main/data/home/contractor-network-metrics-v1.json",
+        "schemaVersion": "contractor-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "b719b0821bf92dc6d2cb57ce6cfc97045efa34de1fe8164ddae3717d9eb23b41",
+        "sourceFingerprint": "22c4ccf3f53d78c37ad6f19f9303af2676c69bf1fe8c45d9fad3f06c6b3502cb",
+        "contractRevision": "ATH-METRICS-R2-02",
+        "metricCount": 95,
+        "metrics": [
+          {
+            "key": "ca_acquired_cslb_license_master_rows_truncated",
+            "grain": "acquired_partial_license_master_row",
+            "unit": "count",
+            "value": 75572
+          },
+          {
+            "key": "evidence_CO_business_credentials_EC_active_exact",
+            "grain": "business_credential",
+            "unit": "count",
+            "value": 4789
+          },
+          {
+            "key": "evidence_CO_business_credentials_PC_active_exact",
+            "grain": "business_credential",
+            "unit": "count",
+            "value": 3147
+          },
+          {
+            "key": "evidence_CO_business_credentials_combined_active_exact_if_shown_value",
+            "grain": "business_credential",
+            "unit": "count",
+            "value": 7936
+          },
+          {
+            "key": "evidence_CO_discipline_contractor_relevant_rows",
+            "grain": "disciplinary_observation",
+            "unit": "count",
+            "value": 5990
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_JP_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 2911
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_JW_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 12549
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_ME_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 7441
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_MP_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 4954
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_RP_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 546
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_RW_active_exact",
+            "grain": "person_credential",
+            "unit": "count",
+            "value": 2031
+          },
+          {
+            "key": "evidence_IL_business_licenses_active_business_y_rows",
+            "grain": "business_credential_source_row",
+            "unit": "count",
+            "value": 4891
+          },
+          {
+            "key": "evidence_IL_discipline_flag_distinct_license_ids",
+            "grain": "credential_id_with_evidence",
+            "unit": "count",
+            "value": 836
+          },
+          {
+            "key": "evidence_IL_discipline_flag_rows",
+            "grain": "disciplinary_observation",
+            "unit": "count",
+            "value": 1393
+          },
+          {
+            "key": "evidence_IL_qualifying_parties_active_distinct_license_ids",
+            "grain": "person_credential_id",
+            "unit": "count",
+            "value": 12042
+          },
+          {
+            "key": "evidence_IL_roofing_distinct_license_ids",
+            "grain": "business_or_person_credential_id",
+            "unit": "count",
+            "value": 33290
+          },
+          {
+            "key": "evidence_IL_roofing_source_rows",
+            "grain": "roofing_source_row",
+            "unit": "count",
+            "value": 33891
+          },
+          {
+            "key": "evidence_NY_debarment_registry_field_has_been_debarred_yes",
+            "grain": "historical_debarment_period",
+            "unit": "count",
+            "value": 36
+          },
+          {
+            "key": "evidence_austin_page",
+            "grain": "published city intelligence route",
+            "unit": "count",
+            "value": 1
+          },
+          {
+            "key": "evidence_austin_permits",
+            "grain": "one row = one issued permit (permit_number unique in source metadata)",
+            "unit": "count",
+            "value": 2373854
+          },
+          {
+            "key": "evidence_az_addresses",
+            "grain": "business address on ROC license row",
+            "unit": "count",
+            "value": 58122
+          },
+          {
+            "key": "evidence_az_current",
+            "grain": "ROC current-posting license row",
+            "unit": "count",
+            "value": 57886
+          },
+          {
+            "key": "evidence_az_discipline",
+            "grain": "ROC disciplinary action row",
+            "unit": "count",
+            "value": 459
+          },
+          {
+            "key": "evidence_az_qualifiers",
+            "grain": "name string on the license row; QP Exempt is a source-native sentinel, not a person identity",
+            "unit": "count",
+            "value": 56281
+          },
+          {
+            "key": "evidence_ca_city_pages",
+            "grain": "published_city_local_intelligence_page",
+            "unit": "count",
+            "value": 2
+          },
+          {
+            "key": "evidence_ca_license_master",
+            "grain": "acquired partial License Master row",
+            "unit": "count",
+            "value": 75572
+          },
+          {
+            "key": "evidence_county_pages",
+            "grain": "published_county_intelligence_page",
+            "unit": "count",
+            "value": 8
+          },
+          {
+            "key": "evidence_fl_dbpr_discipline",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 6457
+          },
+          {
+            "key": "evidence_fl_dbpr_unlicensed",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 11691
+          },
+          {
+            "key": "evidence_fl_dfs_stop_work",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 48254
+          },
+          {
+            "key": "evidence_fl_recovery_fund",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 1679
+          },
+          {
+            "key": "evidence_graph_contacts",
+            "grain": "public_contact_observation",
+            "unit": "count",
+            "value": 16009
+          },
+          {
+            "key": "evidence_il_roofing_active_business",
+            "grain": "distinct IDFPR licensed roofing contractor license_number (ACTIVE, business=Y)",
+            "unit": "count",
+            "value": 4675
+          },
+          {
+            "key": "evidence_indexed_permits",
+            "grain": "permit_source_record",
+            "unit": "count",
+            "value": 139586
+          },
+          {
+            "key": "evidence_la_cofo",
+            "grain": "certificate of occupancy",
+            "unit": "count",
+            "value": 132426
+          },
+          {
+            "key": "evidence_la_current_permits",
+            "grain": "issued building permit",
+            "unit": "count",
+            "value": 409619
+          },
+          {
+            "key": "evidence_live_credentials",
+            "grain": "license_credential_record",
+            "unit": "count",
+            "value": 662331
+          },
+          {
+            "key": "evidence_new_york_city_acris_legals_parsed_rows",
+            "grain": "legal_row",
+            "unit": "count",
+            "value": 829724
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_distinct_bbls",
+            "grain": "bbl",
+            "unit": "count",
+            "value": 258026
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_documents_with_bbl",
+            "grain": "document_id",
+            "unit": "count",
+            "value": 577863
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_documents_with_gt1_bbl",
+            "grain": "document_id",
+            "unit": "count",
+            "value": 41578
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_display_group_counts_deed",
+            "grain": "deed_type_observation",
+            "unit": "count",
+            "value": 139675
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_display_group_counts_mortgage",
+            "grain": "mortgage_type_observation",
+            "unit": "count",
+            "value": 90438
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_distinct_document_ids",
+            "grain": "document_id",
+            "unit": "count",
+            "value": 580444
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_parsed_rows",
+            "grain": "document_observation",
+            "unit": "count",
+            "value": 581566
+          },
+          {
+            "key": "evidence_new_york_city_charges_parsed_rows",
+            "grain": "charge_observation",
+            "unit": "count",
+            "value": 558
+          },
+          {
+            "key": "evidence_new_york_city_complaints_parsed_rows",
+            "grain": "complaint_observation",
+            "unit": "count",
+            "value": 3341
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_bbls",
+            "grain": "bbl",
+            "unit": "count",
+            "value": 64375
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_bins",
+            "grain": "bin",
+            "unit": "count",
+            "value": 70797
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_job_filing_numbers",
+            "grain": "job_filing_id",
+            "unit": "count",
+            "value": 219791
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_permit_ids",
+            "grain": "dobnow_permit_id",
+            "unit": "count",
+            "value": 228515
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_parsed_rows",
+            "grain": "permit_observation",
+            "unit": "count",
+            "value": 337613
+          },
+          {
+            "key": "evidence_new_york_city_dob_legacy_distinct_job_ids",
+            "grain": "bis_job_id",
+            "unit": "count",
+            "value": 8196
+          },
+          {
+            "key": "evidence_new_york_city_dob_legacy_distinct_permit_ids",
+            "grain": "bis_permit_id",
+            "unit": "count",
+            "value": 18858
+          },
+          {
+            "key": "evidence_new_york_city_dob_pluto_matched_rows",
+            "grain": "matched_bbl",
+            "unit": "count",
+            "value": 66525
+          },
+          {
+            "key": "evidence_new_york_city_dob_pluto_universe_rows",
+            "grain": "tax_lot",
+            "unit": "count",
+            "value": 858284
+          },
+          {
+            "key": "evidence_new_york_city_inspections_parsed_rows",
+            "grain": "inspection_observation",
+            "unit": "count",
+            "value": 102
+          },
+          {
+            "key": "evidence_new_york_city_licenses_distinct_business_unique_ids",
+            "grain": "dcwp_buid",
+            "unit": "count",
+            "value": 18684
+          },
+          {
+            "key": "evidence_new_york_city_licenses_distinct_license_ids",
+            "grain": "license_id",
+            "unit": "count",
+            "value": 18931
+          },
+          {
+            "key": "evidence_new_york_city_wall_of_shame_name_count",
+            "grain": "published_name",
+            "unit": "count",
+            "value": 19
+          },
+          {
+            "key": "evidence_nj_construction",
+            "grain": "permit-issued or certificate-issued source record",
+            "unit": "count",
+            "value": 2678341
+          },
+          {
+            "key": "evidence_nj_public_works_regulatory",
+            "grain": "family-separated public-works regulatory source row",
+            "unit": "count",
+            "value": 1898
+          },
+          {
+            "key": "evidence_ny_pw_registry",
+            "grain": "NYSDOL public-work contractor registry certificate",
+            "unit": "count",
+            "value": 14665
+          },
+          {
+            "key": "evidence_nyc_dcwp_hic_active",
+            "grain": "source-native Active NYC DCWP Home Improvement Contractor license number",
+            "unit": "count",
+            "value": 13385
+          },
+          {
+            "key": "evidence_nyc_local_page",
+            "grain": "published_city_local_intelligence_page",
+            "unit": "count",
+            "value": 1
+          },
+          {
+            "key": "evidence_regulatory_actions",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 75664
+          },
+          {
+            "key": "evidence_research_graph_licenses",
+            "grain": "research_graph_license_record",
+            "unit": "count",
+            "value": 1284124
+          },
+          {
+            "key": "evidence_sf_permits",
+            "grain": "permit at an address",
+            "unit": "count",
+            "value": 1294909
+          },
+          {
+            "key": "evidence_state_pages",
+            "grain": "published state intelligence route",
+            "unit": "count",
+            "value": 10
+          },
+          {
+            "key": "evidence_tx_business_credentials",
+            "grain": "specialty business credential",
+            "unit": "count",
+            "value": 38915
+          },
+          {
+            "key": "evidence_tx_vendors",
+            "grain": "construction-related procurement vendor row",
+            "unit": "count",
+            "value": 3337
+          },
+          {
+            "key": "evidence_va_class_abc",
+            "grain": "DPOR contractor-business license number",
+            "unit": "count",
+            "value": 53840
+          },
+          {
+            "key": "evidence_va_revocations",
+            "grain": "revocation-release observation with exact license number",
+            "unit": "count",
+            "value": 120
+          },
+          {
+            "key": "evidence_wa_bond_identities",
+            "grain": "distinct ContractorLicenseNumber with bond evidence",
+            "unit": "count",
+            "value": 82635
+          },
+          {
+            "key": "evidence_wa_bond_rows",
+            "grain": "one row = one bond filing associated with a ContractorLicenseNumber",
+            "unit": "count",
+            "value": 176920
+          },
+          {
+            "key": "evidence_wa_both_identities",
+            "grain": "distinct ContractorLicenseNumber in both filing files",
+            "unit": "count",
+            "value": 70622
+          },
+          {
+            "key": "evidence_wa_insurance_identities",
+            "grain": "distinct ContractorLicenseNumber with insurance evidence",
+            "unit": "count",
+            "value": 70953
+          },
+          {
+            "key": "evidence_wa_insurance_rows",
+            "grain": "one row = one liability-insurance filing associated with a ContractorLicenseNumber",
+            "unit": "count",
+            "value": 77005
+          },
+          {
+            "key": "evidence_wa_phones",
+            "grain": "source-published business phone field",
+            "unit": "count",
+            "value": 160819
+          },
+          {
+            "key": "evidence_wa_principals",
+            "grain": "principal relationship row",
+            "unit": "count",
+            "value": 250349
+          },
+          {
+            "key": "evidence_wa_public_works",
+            "grain": "public-works project-detail row",
+            "unit": "count",
+            "value": 347082
+          },
+          {
+            "key": "evidence_wa_registrations",
+            "grain": "one row = one ContractorLicenseNumber",
+            "unit": "count",
+            "value": 160923
+          },
+          {
+            "key": "indexed_permit_source_records",
+            "grain": "permit_source_record",
+            "unit": "count",
+            "value": 139586
+          },
+          {
+            "key": "live_active_current_credential_records",
+            "grain": "license_credential_record_active_current",
+            "unit": "count",
+            "value": 507933
+          },
+          {
+            "key": "live_credential_records",
+            "grain": "license_credential_record",
+            "unit": "count",
+            "value": 662331
+          },
+          {
+            "key": "live_researched_states",
+            "grain": "live_researched_state",
+            "unit": "count",
+            "value": 11
+          },
+          {
+            "key": "nj_construction_source_records",
+            "grain": "municipal_permit_or_certificate_source_record",
+            "unit": "count",
+            "value": 2678341
+          },
+          {
+            "key": "nj_current_municipalities",
+            "grain": "current_municipality",
+            "unit": "count",
+            "value": 564
+          },
+          {
+            "key": "public_contact_observations",
+            "grain": "public_contact_observation",
+            "unit": "count",
+            "value": 16009
+          },
+          {
+            "key": "published_ca_city_local_intelligence_pages",
+            "grain": "published_city_local_intelligence_page",
+            "unit": "count",
+            "value": 2
+          },
+          {
+            "key": "published_county_intelligence_pages",
+            "grain": "published_county_intelligence_page",
+            "unit": "count",
+            "value": 8
+          },
+          {
+            "key": "published_nyc_local_intelligence_pages",
+            "grain": "published_city_local_intelligence_page",
+            "unit": "count",
+            "value": 1
+          },
+          {
+            "key": "regulatory_discipline_action_rows",
+            "grain": "discipline_action_row",
+            "unit": "count",
+            "value": 75664
+          },
+          {
+            "key": "research_graph_contractor_identities",
+            "grain": "research_graph_contractor_identity",
+            "unit": "count",
+            "value": 1392730
+          },
+          {
+            "key": "research_graph_license_records",
+            "grain": "research_graph_license_record",
+            "unit": "count",
+            "value": 1284124
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-12T21:37:54.518Z",
+        "newestSourceAsOf": "2026-09-11",
+        "clockHash": "ee86debd9329c4cd74dc289e982fcc88c88afc6cf7887ab885c55532fe2d2ca2",
+        "clockLeafCount": 1044,
+        "metricSourceAsOf": [
+          {
+            "key": "ca_acquired_cslb_license_master_rows_truncated",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_CO_business_credentials_EC_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_business_credentials_PC_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_business_credentials_combined_active_exact_if_shown_value",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_discipline_contractor_relevant_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_JP_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_JW_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_ME_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_MP_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_RP_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_CO_individual_trades_prefixes_RW_active_exact",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_IL_business_licenses_active_business_y_rows",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_IL_discipline_flag_distinct_license_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_IL_discipline_flag_rows",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_IL_qualifying_parties_active_distinct_license_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_IL_roofing_distinct_license_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_IL_roofing_source_rows",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_NY_debarment_registry_field_has_been_debarred_yes",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_austin_page",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_austin_permits",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_az_addresses",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_az_current",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_az_discipline",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_az_qualifiers",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_ca_city_pages",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_ca_license_master",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_county_pages",
+            "sourceAsOf": "2026-08-13"
+          },
+          {
+            "key": "evidence_fl_dbpr_discipline",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_fl_dbpr_unlicensed",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_fl_dfs_stop_work",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_fl_recovery_fund",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_graph_contacts",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_il_roofing_active_business",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_indexed_permits",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_la_cofo",
+            "sourceAsOf": "weekly / 2026-08-31"
+          },
+          {
+            "key": "evidence_la_current_permits",
+            "sourceAsOf": "2026-08-31"
+          },
+          {
+            "key": "evidence_live_credentials",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_new_york_city_acris_legals_parsed_rows",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_distinct_bbls",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_documents_with_bbl",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_new_york_city_acris_linking_documents_with_gt1_bbl",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_display_group_counts_deed",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_display_group_counts_mortgage",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_distinct_document_ids",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_new_york_city_acris_master_parsed_rows",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_new_york_city_charges_parsed_rows",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_new_york_city_complaints_parsed_rows",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_bbls",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_bins",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_job_filing_numbers",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_distinct_permit_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_dob_now_parsed_rows",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_legacy_distinct_job_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_legacy_distinct_permit_ids",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_new_york_city_dob_pluto_matched_rows",
+            "sourceAsOf": "2026-08-24"
+          },
+          {
+            "key": "evidence_new_york_city_dob_pluto_universe_rows",
+            "sourceAsOf": "2026-08-24"
+          },
+          {
+            "key": "evidence_new_york_city_inspections_parsed_rows",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_new_york_city_licenses_distinct_business_unique_ids",
+            "sourceAsOf": "2026-08-20"
+          },
+          {
+            "key": "evidence_new_york_city_licenses_distinct_license_ids",
+            "sourceAsOf": "2026-08-20"
+          },
+          {
+            "key": "evidence_new_york_city_wall_of_shame_name_count",
+            "sourceAsOf": "2026-09-01"
+          },
+          {
+            "key": "evidence_nj_construction",
+            "sourceAsOf": "2026-08-07"
+          },
+          {
+            "key": "evidence_nj_public_works_regulatory",
+            "sourceAsOf": "2026-08-13"
+          },
+          {
+            "key": "evidence_ny_pw_registry",
+            "sourceAsOf": "2026-09-11"
+          },
+          {
+            "key": "evidence_nyc_dcwp_hic_active",
+            "sourceAsOf": "2026-08-20"
+          },
+          {
+            "key": "evidence_nyc_local_page",
+            "sourceAsOf": "2026-08-20"
+          },
+          {
+            "key": "evidence_regulatory_actions",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_research_graph_licenses",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_sf_permits",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "evidence_state_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "evidence_tx_business_credentials",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "evidence_tx_vendors",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "evidence_va_class_abc",
+            "sourceAsOf": "2026-09-08"
+          },
+          {
+            "key": "evidence_va_revocations",
+            "sourceAsOf": "2026-08-25"
+          },
+          {
+            "key": "evidence_wa_bond_identities",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_bond_rows",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_both_identities",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_insurance_identities",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_insurance_rows",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_phones",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_principals",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_public_works",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "evidence_wa_registrations",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "indexed_permit_source_records",
+            "sourceAsOf": null
+          },
+          {
+            "key": "live_active_current_credential_records",
+            "sourceAsOf": null
+          },
+          {
+            "key": "live_credential_records",
+            "sourceAsOf": null
+          },
+          {
+            "key": "live_researched_states",
+            "sourceAsOf": null
+          },
+          {
+            "key": "nj_construction_source_records",
+            "sourceAsOf": "2026-08-07"
+          },
+          {
+            "key": "nj_current_municipalities",
+            "sourceAsOf": "2026-08-13"
+          },
+          {
+            "key": "public_contact_observations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "published_ca_city_local_intelligence_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "published_county_intelligence_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "published_nyc_local_intelligence_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "regulatory_discipline_action_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "research_graph_contractor_identities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "research_graph_license_records",
+            "sourceAsOf": null
+          }
+        ]
+      }
+    },
+    {
+      "hub": "insurance",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/Insurance-trust-hub/main/data/home/insurance-network-metrics-v1.json",
+        "schemaVersion": "insurance-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "e75bd960dee3d80b4d869ef78249befeccbc9cd1708eb4f3c0cb9552d9466c4b",
+        "sourceFingerprint": "f479e78d730ec190a9011169cb0ec024d99e895b1b82951845919c4dc878bf21",
+        "contractRevision": "ATH-METRICS-R2-04",
+        "metricCount": 76,
+        "metrics": [
+          {
+            "key": "appointing_carrier_entities",
+            "grain": "appointing_carrier_entity",
+            "unit": "count",
+            "value": 13547
+          },
+          {
+            "key": "appointments",
+            "grain": "agency_appointment",
+            "unit": "count",
+            "value": 622019
+          },
+          {
+            "key": "ca_admitted_insurer_universe",
+            "grain": "admitted_legal_insurer_row",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "cms_marketplace_evidence_observations",
+            "grain": "cms_marketplace_observation",
+            "unit": "count",
+            "value": 1300108
+          },
+          {
+            "key": "co_agency_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "co_authorized_companies",
+            "grain": "authorized_company_row",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "co_authorized_insurers_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "co_complaints_standard_ratio_index_company_line_rows",
+            "grain": "complaint_company_line_observation",
+            "unit": "count",
+            "value": 415
+          },
+          {
+            "key": "co_complaints_standard_ratio_index_distinct_naic",
+            "grain": "source_identifier",
+            "unit": "count",
+            "value": 292
+          },
+          {
+            "key": "co_naic_crosswalk_complaint_standard_2025_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 291
+          },
+          {
+            "key": "co_naic_crosswalk_statistical_report_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 1834
+          },
+          {
+            "key": "co_naic_crosswalk_surplus_lines_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 223
+          },
+          {
+            "key": "co_producer_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "co_statistical_report_naic_directory_rows",
+            "grain": "statistical_report_directory_row",
+            "unit": "count",
+            "value": 1839
+          },
+          {
+            "key": "co_surplus_lines_eligible_identities",
+            "grain": "surplus_lines_eligibility_identity",
+            "unit": "count",
+            "value": 259
+          },
+          {
+            "key": "co_title_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "combined_insurance_companies",
+            "grain": "combined_incompatible_grains",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "consumer_complaint_observations",
+            "grain": "consumer_complaint_observation",
+            "unit": "count",
+            "value": 305156
+          },
+          {
+            "key": "credential_observations",
+            "grain": "license_credential_row",
+            "unit": "count",
+            "value": 1531158
+          },
+          {
+            "key": "florida_agencies_with_fl_credential",
+            "grain": "florida_credentialed_agency",
+            "unit": "count",
+            "value": 56939
+          },
+          {
+            "key": "florida_agency_appointed_by",
+            "grain": "agency_appointment",
+            "unit": "count",
+            "value": 2680
+          },
+          {
+            "key": "florida_financial_examinations",
+            "grain": "financial_examination_listing",
+            "unit": "count",
+            "value": 1060
+          },
+          {
+            "key": "il_agency_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "il_authorized_companies",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "il_complaints_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "il_directors_order_observations",
+            "grain": "directors_order_observation",
+            "unit": "count",
+            "value": 2896
+          },
+          {
+            "key": "il_directors_orders_distinct_ids",
+            "grain": "source_identifier",
+            "unit": "count",
+            "value": 2896
+          },
+          {
+            "key": "il_directors_orders_with_both_names",
+            "grain": "directors_order_observation",
+            "unit": "count",
+            "value": 210
+          },
+          {
+            "key": "il_directors_orders_with_company_name",
+            "grain": "directors_order_observation",
+            "unit": "count",
+            "value": 782
+          },
+          {
+            "key": "il_directors_orders_with_person_name",
+            "grain": "directors_order_observation",
+            "unit": "count",
+            "value": 2321
+          },
+          {
+            "key": "il_market_conduct_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "il_producer_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "insurance_agencies",
+            "grain": "canonical_agency_entity",
+            "unit": "count",
+            "value": 82071
+          },
+          {
+            "key": "insurance_producer_records",
+            "grain": "canonical_person_entity",
+            "unit": "count",
+            "value": 1029860
+          },
+          {
+            "key": "licensed_insurance_companies",
+            "grain": "canonical_legal_insurer_entity",
+            "unit": "count",
+            "value": 6185
+          },
+          {
+            "key": "market_conduct_examinations",
+            "grain": "market_conduct_examination_listing",
+            "unit": "count",
+            "value": 1007
+          },
+          {
+            "key": "nfip_registry_listings",
+            "grain": "nfip_registry_listing",
+            "unit": "count",
+            "value": 1474
+          },
+          {
+            "key": "nj_admitted_legal_insurers",
+            "grain": "admitted_legal_insurer_row",
+            "unit": "count",
+            "value": 1370
+          },
+          {
+            "key": "nj_surplus_lines_eligible_companies",
+            "grain": "surplus_lines_observation",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_agency_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_auto_complaints_observation_rows",
+            "grain": "auto_market_report_observation",
+            "unit": "count",
+            "value": 128
+          },
+          {
+            "key": "ny_company_directory_distinct_group_numbers",
+            "grain": "source_identifier",
+            "unit": "count",
+            "value": 300
+          },
+          {
+            "key": "ny_company_directory_ny_domicile_rows",
+            "grain": "state_evidence_observation",
+            "unit": "count",
+            "value": 210
+          },
+          {
+            "key": "ny_company_directory_org_type_distribution_AH",
+            "grain": "state_evidence_observation",
+            "unit": "count",
+            "value": 26
+          },
+          {
+            "key": "ny_current_authorization_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_dfs_company_directory_rows",
+            "grain": "ny_dfs_company_directory_row",
+            "unit": "count",
+            "value": 1054
+          },
+          {
+            "key": "ny_enforcement_actions_observation_rows",
+            "grain": "regulatory_evidence_row",
+            "unit": "count",
+            "value": 147
+          },
+          {
+            "key": "ny_market_conduct_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_naic_crosswalk_auto_complaints_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 127
+          },
+          {
+            "key": "ny_naic_crosswalk_company_directory_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 1051
+          },
+          {
+            "key": "ny_producer_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "public_directory_listings",
+            "grain": "public_directory_listing",
+            "unit": "count",
+            "value": 170499
+          },
+          {
+            "key": "public_legal_insurer_wave1_profiles",
+            "grain": "public_legal_insurer_profile",
+            "unit": "count",
+            "value": 26
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "grain": "published_state_intelligence_page",
+            "unit": "count",
+            "value": 9
+          },
+          {
+            "key": "rate_filing_observations",
+            "grain": "rate_filing_observation",
+            "unit": "count",
+            "value": 18001
+          },
+          {
+            "key": "tdi_complaint_index_rows",
+            "grain": "complaint_index_row",
+            "unit": "count",
+            "value": 5966
+          },
+          {
+            "key": "texas_authorized_companies",
+            "grain": "authorized_company_row",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "texas_surplus_lines_observations",
+            "grain": "surplus_lines_observation",
+            "unit": "count",
+            "value": 18816
+          },
+          {
+            "key": "texas_tdi_agency_license_rows",
+            "grain": "tdi_agency_license_row",
+            "unit": "count",
+            "value": 56625
+          },
+          {
+            "key": "texas_title_appointment_rows",
+            "grain": "title_appointment_row",
+            "unit": "count",
+            "value": 23115
+          },
+          {
+            "key": "va_agency_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_complaints_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_current_company_verification_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_financial_exams_listing_rows",
+            "grain": "financial_examination_listing",
+            "unit": "count",
+            "value": 85
+          },
+          {
+            "key": "va_market_conduct_observation_rows",
+            "grain": "market_conduct_examination_listing",
+            "unit": "count",
+            "value": 117
+          },
+          {
+            "key": "va_naic_crosswalk_financial_exams_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 59
+          },
+          {
+            "key": "va_naic_crosswalk_market_conduct_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 100
+          },
+          {
+            "key": "va_naic_crosswalk_regulatory_actions_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 86
+          },
+          {
+            "key": "va_naic_crosswalk_statistical_report_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "grain": "exact_naic_identity_match",
+            "unit": "count",
+            "value": 1541
+          },
+          {
+            "key": "va_producer_roster_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_regulatory_actions_distinct_cases",
+            "grain": "source_identifier",
+            "unit": "count",
+            "value": 79
+          },
+          {
+            "key": "va_regulatory_actions_observation_rows",
+            "grain": "regulatory_evidence_row",
+            "unit": "count",
+            "value": 124
+          },
+          {
+            "key": "va_statistical_report_naic_directory_rows",
+            "grain": "statistical_report_directory_row",
+            "unit": "count",
+            "value": 1546
+          },
+          {
+            "key": "va_surplus_lines_count",
+            "grain": "unknown_state_universe",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "wa_authorized_companies",
+            "grain": "authorized_company_row",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "wa_oic_regulated_entities_annual_report",
+            "grain": "annual_report_entity_aggregate",
+            "unit": "count",
+            "value": 2924
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-13T15:57:42.473Z",
+        "newestSourceAsOf": "2026-08-21",
+        "clockHash": "022c60c5af451cf4c5b631265359d0b5195a836c298cad14e484ab462d220a9f",
+        "clockLeafCount": 750,
+        "metricSourceAsOf": [
+          {
+            "key": "appointing_carrier_entities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "appointments",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "ca_admitted_insurer_universe",
+            "sourceAsOf": null
+          },
+          {
+            "key": "cms_marketplace_evidence_observations",
+            "sourceAsOf": "2026-08-21"
+          },
+          {
+            "key": "co_agency_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_authorized_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_authorized_insurers_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_complaints_standard_ratio_index_company_line_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_complaints_standard_ratio_index_distinct_naic",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_naic_crosswalk_complaint_standard_2025_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_naic_crosswalk_statistical_report_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_naic_crosswalk_surplus_lines_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_producer_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_statistical_report_naic_directory_rows",
+            "sourceAsOf": "2025-12-31"
+          },
+          {
+            "key": "co_surplus_lines_eligible_identities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_title_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "combined_insurance_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "consumer_complaint_observations",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "credential_observations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_agencies_with_fl_credential",
+            "sourceAsOf": "2026-08-28"
+          },
+          {
+            "key": "florida_agency_appointed_by",
+            "sourceAsOf": "2026-08-28"
+          },
+          {
+            "key": "florida_financial_examinations",
+            "sourceAsOf": "2026-08-28"
+          },
+          {
+            "key": "il_agency_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_authorized_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_complaints_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_directors_order_observations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_directors_orders_distinct_ids",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_directors_orders_with_both_names",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_directors_orders_with_company_name",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_directors_orders_with_person_name",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_market_conduct_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_producer_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "insurance_agencies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "insurance_producer_records",
+            "sourceAsOf": null
+          },
+          {
+            "key": "licensed_insurance_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "market_conduct_examinations",
+            "sourceAsOf": "2026-08-28"
+          },
+          {
+            "key": "nfip_registry_listings",
+            "sourceAsOf": "2026-08-28"
+          },
+          {
+            "key": "nj_admitted_legal_insurers",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "nj_surplus_lines_eligible_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_agency_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_auto_complaints_observation_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_company_directory_distinct_group_numbers",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_company_directory_ny_domicile_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_company_directory_org_type_distribution_AH",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_current_authorization_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_dfs_company_directory_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_enforcement_actions_observation_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_market_conduct_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_naic_crosswalk_auto_complaints_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_naic_crosswalk_company_directory_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_producer_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "public_directory_listings",
+            "sourceAsOf": null
+          },
+          {
+            "key": "public_legal_insurer_wave1_profiles",
+            "sourceAsOf": "2026-08-29"
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "rate_filing_observations",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "tdi_complaint_index_rows",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "texas_authorized_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "texas_surplus_lines_observations",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "texas_tdi_agency_license_rows",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "texas_title_appointment_rows",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "va_agency_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_complaints_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_current_company_verification_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_financial_exams_listing_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_market_conduct_observation_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_naic_crosswalk_financial_exams_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_naic_crosswalk_market_conduct_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_naic_crosswalk_regulatory_actions_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_naic_crosswalk_statistical_report_EXACT_EXISTING_LEGAL_INSURER_MATCHES",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_producer_roster_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_regulatory_actions_distinct_cases",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_regulatory_actions_observation_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_statistical_report_naic_directory_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_surplus_lines_count",
+            "sourceAsOf": null
+          },
+          {
+            "key": "wa_authorized_companies",
+            "sourceAsOf": null
+          },
+          {
+            "key": "wa_oic_regulated_entities_annual_report",
+            "sourceAsOf": "2026-09-04"
+          }
+        ]
+      }
+    },
+    {
+      "hub": "investor",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/investor-trust-hub/main/data/home/investor-network-metrics-v1.json",
+        "schemaVersion": "investor-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "5f075385d37e88011adf1752b09eb791d5de401fe62a0b09d3a4eb7904aff704",
+        "sourceFingerprint": "e68140f4bd33cb115e0950accc2b229e975c55039f89894ca57d4b2636bf9f5d",
+        "contractRevision": "ATH-METRICS-R2-04",
+        "metricCount": 20,
+        "metrics": [
+          {
+            "key": "az_state_ria_roster",
+            "grain": "az_state_ria_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ca_state_ria_roster",
+            "grain": "ca_state_ria_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "co_state_ria_roster",
+            "grain": "co_state_ria_roster",
+            "unit": "count",
+            "value": 740
+          },
+          {
+            "key": "disclosure_events",
+            "grain": "disclosure_event",
+            "unit": "count",
+            "value": 0
+          },
+          {
+            "key": "era_records",
+            "grain": "era_firm_fact",
+            "unit": "count",
+            "value": 6604
+          },
+          {
+            "key": "form_adv_attribute_observations",
+            "grain": "form_adv_attribute_observation",
+            "unit": "count",
+            "value": 5149596
+          },
+          {
+            "key": "form_adv_filings",
+            "grain": "form_adv_filing",
+            "unit": "count",
+            "value": 635269
+          },
+          {
+            "key": "form_adv_item11_yes_indicators",
+            "grain": "form_adv_item11_yes_indicator",
+            "unit": "count",
+            "value": 956
+          },
+          {
+            "key": "il_state_ria_roster",
+            "grain": "il_state_ria_roster",
+            "unit": "count",
+            "value": 855
+          },
+          {
+            "key": "indexable_firm_profiles",
+            "grain": "indexable_firm_profile",
+            "unit": "count",
+            "value": 1000
+          },
+          {
+            "key": "investment_advisory_firms",
+            "grain": "sec_iard_roster_firm",
+            "unit": "count",
+            "value": 23622
+          },
+          {
+            "key": "nj_state_ria_roster",
+            "grain": "nj_state_ria_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_state_ria_roster",
+            "grain": "ny_state_ria_roster",
+            "unit": "count",
+            "value": 1297
+          },
+          {
+            "key": "ownership_control_observations",
+            "grain": "ownership_control_observation",
+            "unit": "count",
+            "value": 158560
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "grain": "published_state_intelligence_page",
+            "unit": "count",
+            "value": 9
+          },
+          {
+            "key": "ria_raum_observations",
+            "grain": "raum_observation",
+            "unit": "count",
+            "value": 17018
+          },
+          {
+            "key": "ria_records",
+            "grain": "ria_firm_fact",
+            "unit": "count",
+            "value": 17018
+          },
+          {
+            "key": "tx_state_ria_roster",
+            "grain": "tx_state_ria_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_state_ria_roster",
+            "grain": "va_state_ria_roster",
+            "unit": "count",
+            "value": 697
+          },
+          {
+            "key": "wa_state_ria_roster",
+            "grain": "wa_state_ria_roster",
+            "unit": "count",
+            "value": null
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-13T15:54:56.879Z",
+        "newestSourceAsOf": "2026-08-27",
+        "clockHash": "440d265f05a10836e0dee7a551186647cbf814711595fd87b1ef3820aa7eb0fc",
+        "clockLeafCount": 534,
+        "metricSourceAsOf": [
+          {
+            "key": "az_state_ria_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_state_ria_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_state_ria_roster",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "disclosure_events",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "era_records",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "form_adv_attribute_observations",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "form_adv_filings",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "form_adv_item11_yes_indicators",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "il_state_ria_roster",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "indexable_firm_profiles",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "investment_advisory_firms",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "nj_state_ria_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_state_ria_roster",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "ownership_control_observations",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ria_raum_observations",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "ria_records",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "tx_state_ria_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_state_ria_roster",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "wa_state_ria_roster",
+            "sourceAsOf": null
+          }
+        ]
+      }
+    },
+    {
+      "hub": "lender",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/Lender-Trust-Hub/main/data/home/lender-network-metrics-v1.json",
+        "schemaVersion": "lender-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "87ce46de0cf7ede7fd42269628090831f4fd70db3f43e3574ba81b9844ae30d1",
+        "sourceFingerprint": "0d6dc909edfec5882b9324b85dd8453ea3d30f9d653c4612cabc91f012a00f05",
+        "contractRevision": "ATH-METRICS-R2-03",
+        "metricCount": 32,
+        "metrics": [
+          {
+            "key": "az_cfpb_mortgage_complaints",
+            "grain": "az_cfpb_mortgage_complaint_row",
+            "unit": "count",
+            "value": 10365
+          },
+          {
+            "key": "az_difi_live_roster",
+            "grain": "az_difi_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "branch_entities",
+            "grain": "branch_entity",
+            "unit": "count",
+            "value": 6682
+          },
+          {
+            "key": "ca_calhfa_directory_rows",
+            "grain": "ca_calhfa_directory_row",
+            "unit": "count",
+            "value": 1414
+          },
+          {
+            "key": "ca_crmla_live_roster",
+            "grain": "ca_crmla_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "cfpb_mortgage_complaint_observations",
+            "grain": "cfpb_mortgage_complaint_observation",
+            "unit": "count",
+            "value": 458146
+          },
+          {
+            "key": "co_cfpb_mortgage_complaints",
+            "grain": "co_cfpb_mortgage_complaint_row",
+            "unit": "count",
+            "value": 8627
+          },
+          {
+            "key": "co_dre_mlo_rows",
+            "grain": "co_dre_mlo_person_row",
+            "unit": "count",
+            "value": 21865
+          },
+          {
+            "key": "co_mortgage_company_live_roster",
+            "grain": "co_mortgage_company_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "federal_enforcement_events",
+            "grain": "federal_enforcement_event",
+            "unit": "count",
+            "value": 17655
+          },
+          {
+            "key": "florida_confirmed_nmls_identities",
+            "grain": "florida_confirmed_nmls",
+            "unit": "count",
+            "value": 6265
+          },
+          {
+            "key": "florida_ofr_approved_company_credentials",
+            "grain": "florida_ofr_approved_credential",
+            "unit": "count",
+            "value": 6392
+          },
+          {
+            "key": "hmda_2025_county_applications",
+            "grain": "hmda_2025_county_observation",
+            "unit": "count",
+            "value": 11529787
+          },
+          {
+            "key": "hmda_2025_county_originations",
+            "grain": "hmda_2025_county_observation",
+            "unit": "count",
+            "value": 6793253
+          },
+          {
+            "key": "il_live_licensed_company_universe",
+            "grain": "il_mortgage_company_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "lenders_lending_institutions",
+            "grain": "canonical_institution_entity",
+            "unit": "count",
+            "value": 14623
+          },
+          {
+            "key": "nj_dobi_unique_orders",
+            "grain": "nj_dobi_unique_order",
+            "unit": "count",
+            "value": 453
+          },
+          {
+            "key": "nj_rmla_license_roster",
+            "grain": "nj_rmla_license_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "nmls_institution_identifiers",
+            "grain": "nmls_institution_identifier",
+            "unit": "count",
+            "value": 6641
+          },
+          {
+            "key": "ny_dfs_2024_licensed_mortgage_bankers",
+            "grain": "ny_dfs_2024_mortgage_banker_aggregate",
+            "unit": "count",
+            "value": 151
+          },
+          {
+            "key": "ny_live_licensed_company_universe",
+            "grain": "ny_mortgage_company_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "person_mlo_entities",
+            "grain": "person_mlo_entity",
+            "unit": "count",
+            "value": 136763
+          },
+          {
+            "key": "person_public_candidate",
+            "grain": "person_public_candidate_entity",
+            "unit": "count",
+            "value": 0
+          },
+          {
+            "key": "public_national_render_profiles",
+            "grain": "national_render_profile",
+            "unit": "count",
+            "value": 181
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "grain": "published_state_intelligence_page",
+            "unit": "count",
+            "value": 10
+          },
+          {
+            "key": "tx_sml_live_roster",
+            "grain": "tx_sml_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "tx_sml_orders",
+            "grain": "tx_sml_order",
+            "unit": "count",
+            "value": 3981
+          },
+          {
+            "key": "va_cfpb_mortgage_complaints",
+            "grain": "va_cfpb_mortgage_complaint_row",
+            "unit": "count",
+            "value": 14563
+          },
+          {
+            "key": "va_mortgage_company_live_roster",
+            "grain": "va_mortgage_company_live_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_scc_dated_company_rows",
+            "grain": "va_scc_dated_company_row",
+            "unit": "count",
+            "value": 1257
+          },
+          {
+            "key": "wa_dfi_enforcement_rows",
+            "grain": "wa_dfi_enforcement_row",
+            "unit": "count",
+            "value": 777
+          },
+          {
+            "key": "wa_dfi_live_roster",
+            "grain": "wa_dfi_live_roster",
+            "unit": "count",
+            "value": null
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-12T22:48:10.535Z",
+        "newestSourceAsOf": "2026-09-09",
+        "clockHash": "152261f22e777f2c1b82e042cf9e2ac908b2f2701fc7f02e4ee6d005f58f4e14",
+        "clockLeafCount": 442,
+        "metricSourceAsOf": [
+          {
+            "key": "az_cfpb_mortgage_complaints",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "az_difi_live_roster",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "branch_entities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_calhfa_directory_rows",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "ca_crmla_live_roster",
+            "sourceAsOf": "2026-09-03"
+          },
+          {
+            "key": "cfpb_mortgage_complaint_observations",
+            "sourceAsOf": "2026-08-26"
+          },
+          {
+            "key": "co_cfpb_mortgage_complaints",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_dre_mlo_rows",
+            "sourceAsOf": "2026-09-09"
+          },
+          {
+            "key": "co_mortgage_company_live_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_enforcement_events",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_confirmed_nmls_identities",
+            "sourceAsOf": "2026-08-30"
+          },
+          {
+            "key": "florida_ofr_approved_company_credentials",
+            "sourceAsOf": "2026-08-30"
+          },
+          {
+            "key": "hmda_2025_county_applications",
+            "sourceAsOf": "2025"
+          },
+          {
+            "key": "hmda_2025_county_originations",
+            "sourceAsOf": "2025"
+          },
+          {
+            "key": "il_live_licensed_company_universe",
+            "sourceAsOf": null
+          },
+          {
+            "key": "lenders_lending_institutions",
+            "sourceAsOf": null
+          },
+          {
+            "key": "nj_dobi_unique_orders",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "nj_rmla_license_roster",
+            "sourceAsOf": "2026-09-02"
+          },
+          {
+            "key": "nmls_institution_identifiers",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_dfs_2024_licensed_mortgage_bankers",
+            "sourceAsOf": "2024-12-31"
+          },
+          {
+            "key": "ny_live_licensed_company_universe",
+            "sourceAsOf": null
+          },
+          {
+            "key": "person_mlo_entities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "person_public_candidate",
+            "sourceAsOf": null
+          },
+          {
+            "key": "public_national_render_profiles",
+            "sourceAsOf": "2026-08-27"
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "sourceAsOf": "2026-09-09"
+          },
+          {
+            "key": "tx_sml_live_roster",
+            "sourceAsOf": "2025-10-16"
+          },
+          {
+            "key": "tx_sml_orders",
+            "sourceAsOf": "2025-10-16"
+          },
+          {
+            "key": "va_cfpb_mortgage_complaints",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_mortgage_company_live_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_scc_dated_company_rows",
+            "sourceAsOf": "2025-12-31"
+          },
+          {
+            "key": "wa_dfi_enforcement_rows",
+            "sourceAsOf": "2026-09-04"
+          },
+          {
+            "key": "wa_dfi_live_roster",
+            "sourceAsOf": "2026-09-04"
+          }
+        ]
+      }
+    },
+    {
+      "hub": "move",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/Move-trust-Hub/main/data/home/move-network-metrics-v1.json",
+        "schemaVersion": "move-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "3ddb5ae33027dff7608fb21c99942a4e341313a88ad55620fd34193550630be6",
+        "sourceFingerprint": "c219dd772556d4097cd90d2762f979b3d40d5c0c7c84643557aa9657547e100c",
+        "contractRevision": "ATH-METRICS-R2-02",
+        "metricCount": 40,
+        "metrics": [
+          {
+            "key": "ca_bhgs_19237_citation_rows",
+            "grain": "bhgs_bpc_19237_citation_row",
+            "unit": "count",
+            "value": 132
+          },
+          {
+            "key": "ca_bhgs_19237_exact_cal_t_rows",
+            "grain": "bhgs_bpc_19237_exact_cal_t_row",
+            "unit": "count",
+            "value": 12
+          },
+          {
+            "key": "ca_bhgs_19237_unlicensed_rows",
+            "grain": "bhgs_bpc_19237_unlicensed_row",
+            "unit": "count",
+            "value": 120
+          },
+          {
+            "key": "ca_cal_t_household_mover_universe",
+            "grain": "ca_cal_t_household_mover_permit",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ca_hq_publishable_profiles",
+            "grain": "ca_hq_publishable_profile",
+            "unit": "count",
+            "value": 403
+          },
+          {
+            "key": "co_puc_active_household_goods_permit_listings",
+            "grain": "co_puc_hhg_active_permit_listing",
+            "unit": "count",
+            "value": 203
+          },
+          {
+            "key": "co_puc_revoked_household_goods_permit_listings",
+            "grain": "co_puc_hhg_revoked_status_observation",
+            "unit": "count",
+            "value": 207
+          },
+          {
+            "key": "co_puc_suspended_household_goods_permit_listings",
+            "grain": "co_puc_hhg_suspended_status_observation",
+            "unit": "count",
+            "value": 5
+          },
+          {
+            "key": "federal_directory_authority_active",
+            "grain": "directory_profile_authority_active",
+            "unit": "count",
+            "value": 4715
+          },
+          {
+            "key": "federal_directory_authority_not_current",
+            "grain": "directory_profile_authority_not_current",
+            "unit": "count",
+            "value": 13
+          },
+          {
+            "key": "federal_directory_authority_unknown",
+            "grain": "directory_profile_authority_unknown",
+            "unit": "count",
+            "value": 294
+          },
+          {
+            "key": "federal_directory_broker_profiles",
+            "grain": "directory_profile_broker",
+            "unit": "count",
+            "value": 278
+          },
+          {
+            "key": "federal_directory_carrier_broker_profiles",
+            "grain": "directory_profile_carrier_broker",
+            "unit": "count",
+            "value": 94
+          },
+          {
+            "key": "federal_directory_carrier_profiles",
+            "grain": "directory_profile_carrier",
+            "unit": "count",
+            "value": 4227
+          },
+          {
+            "key": "federal_directory_unknown_role_profiles",
+            "grain": "directory_profile_unknown_role",
+            "unit": "count",
+            "value": 423
+          },
+          {
+            "key": "federal_indexable_directory_profiles",
+            "grain": "indexable_directory_profile",
+            "unit": "count",
+            "value": 4905
+          },
+          {
+            "key": "federal_mc_identities_in_directory",
+            "grain": "directory_profile_with_mc_number",
+            "unit": "count",
+            "value": 4383
+          },
+          {
+            "key": "federal_publishable_directory_profiles",
+            "grain": "directory_profile",
+            "unit": "count",
+            "value": 5022
+          },
+          {
+            "key": "florida_fdacs_im_active_registrations",
+            "grain": "fdacs_intrastate_mover_registration_active",
+            "unit": "count",
+            "value": 1099
+          },
+          {
+            "key": "florida_fdacs_im_registrations",
+            "grain": "fdacs_intrastate_mover_registration",
+            "unit": "count",
+            "value": 1314
+          },
+          {
+            "key": "florida_fdacs_mb_active_registrations",
+            "grain": "fdacs_moving_broker_registration_active",
+            "unit": "count",
+            "value": 26
+          },
+          {
+            "key": "florida_fdacs_verified_identity_links",
+            "grain": "fdacs_im_verified_link",
+            "unit": "count",
+            "value": 941
+          },
+          {
+            "key": "florida_hq_publishable_profiles",
+            "grain": "florida_hq_publishable_profile",
+            "unit": "count",
+            "value": 483
+          },
+          {
+            "key": "florida_public_contact_observations",
+            "grain": "public_contact_observation",
+            "unit": "count",
+            "value": 3875
+          },
+          {
+            "key": "il_current_hhg_roster",
+            "grain": "il_hhg_authority_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "nj_hq_publishable_profiles",
+            "grain": "nj_hq_publishable_profile",
+            "unit": "count",
+            "value": 269
+          },
+          {
+            "key": "nj_operation_safe_move_novs_acquired",
+            "grain": "nj_operation_safe_move_nov",
+            "unit": "count",
+            "value": 34
+          },
+          {
+            "key": "nj_pmw_authority_roster",
+            "grain": "nj_pmw_authority_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_bulletin_case_numbers",
+            "grain": "application_case_number",
+            "unit": "count",
+            "value": 103
+          },
+          {
+            "key": "ny_bulletin_issues",
+            "grain": "bulletin_issue",
+            "unit": "count",
+            "value": 36
+          },
+          {
+            "key": "ny_current_hhg_roster",
+            "grain": "ny_hhg_authority_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "ny_dot_2026_hhg_bulletin_observations",
+            "grain": "ny_dot_weekly_bulletin_hhg_application_observation",
+            "unit": "count",
+            "value": 108
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "grain": "published_state_intelligence_page",
+            "unit": "count",
+            "value": 9
+          },
+          {
+            "key": "tx_txdmv_household_goods_mover_universe",
+            "grain": "txdmv_household_goods_certificate_roster",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "va_dmv_household_goods_carrier_listings",
+            "grain": "va_dmv_hhg_certificate_listing",
+            "unit": "count",
+            "value": 192
+          },
+          {
+            "key": "va_dmv_property_carrier_listings",
+            "grain": "va_dmv_property_carrier_permit_listing",
+            "unit": "count",
+            "value": 4916
+          },
+          {
+            "key": "va_hhg_authority_identities",
+            "grain": "va_hhg_authority_id",
+            "unit": "count",
+            "value": 192
+          },
+          {
+            "key": "va_property_authority_identities",
+            "grain": "va_property_authority_id",
+            "unit": "count",
+            "value": 4914
+          },
+          {
+            "key": "wa_utc_active_household_goods_directory_results",
+            "grain": "utc_active_household_goods_directory_result",
+            "unit": "count",
+            "value": 284
+          },
+          {
+            "key": "wa_utc_household_goods_bulk_roster",
+            "grain": "utc_household_goods_bulk_roster",
+            "unit": "count",
+            "value": null
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-12T21:36:55.191Z",
+        "newestSourceAsOf": "2026-09-09",
+        "clockHash": "d07a9617a1ced00e92cddd797eb067c37860eae113a4a38e303a33e6a3bc3f4a",
+        "clockLeafCount": 347,
+        "metricSourceAsOf": [
+          {
+            "key": "ca_bhgs_19237_citation_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_bhgs_19237_exact_cal_t_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_bhgs_19237_unlicensed_rows",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_cal_t_household_mover_universe",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ca_hq_publishable_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "co_puc_active_household_goods_permit_listings",
+            "sourceAsOf": "2025-06-27"
+          },
+          {
+            "key": "co_puc_revoked_household_goods_permit_listings",
+            "sourceAsOf": "2025-06-27"
+          },
+          {
+            "key": "co_puc_suspended_household_goods_permit_listings",
+            "sourceAsOf": "2025-06-27"
+          },
+          {
+            "key": "federal_directory_authority_active",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_authority_not_current",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_authority_unknown",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_broker_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_carrier_broker_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_carrier_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_directory_unknown_role_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_indexable_directory_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_mc_identities_in_directory",
+            "sourceAsOf": null
+          },
+          {
+            "key": "federal_publishable_directory_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_fdacs_im_active_registrations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_fdacs_im_registrations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_fdacs_mb_active_registrations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_fdacs_verified_identity_links",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_hq_publishable_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "florida_public_contact_observations",
+            "sourceAsOf": null
+          },
+          {
+            "key": "il_current_hhg_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "nj_hq_publishable_profiles",
+            "sourceAsOf": null
+          },
+          {
+            "key": "nj_operation_safe_move_novs_acquired",
+            "sourceAsOf": null
+          },
+          {
+            "key": "nj_pmw_authority_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_bulletin_case_numbers",
+            "sourceAsOf": "2026-09-09"
+          },
+          {
+            "key": "ny_bulletin_issues",
+            "sourceAsOf": "2026-09-09"
+          },
+          {
+            "key": "ny_current_hhg_roster",
+            "sourceAsOf": null
+          },
+          {
+            "key": "ny_dot_2026_hhg_bulletin_observations",
+            "sourceAsOf": "2026-09-09"
+          },
+          {
+            "key": "published_state_intelligence_pages",
+            "sourceAsOf": null
+          },
+          {
+            "key": "tx_txdmv_household_goods_mover_universe",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_dmv_household_goods_carrier_listings",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_dmv_property_carrier_listings",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_hhg_authority_identities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "va_property_authority_identities",
+            "sourceAsOf": null
+          },
+          {
+            "key": "wa_utc_active_household_goods_directory_results",
+            "sourceAsOf": null
+          },
+          {
+            "key": "wa_utc_household_goods_bulk_roster",
+            "sourceAsOf": null
+          }
+        ]
+      }
+    },
+    {
+      "hub": "senior",
+      "acceptance": {
+        "state": "ACCEPTED",
+        "acceptedFrom": "bundled",
+        "acceptedAt": "2026-09-25T15:15:50.988Z",
+        "note": null
+      },
+      "identity": {
+        "publicationUrl": "https://raw.githubusercontent.com/savitz25/care-trust-hub/main/apps/web/src/data/senior-network-metrics-v1.json",
+        "schemaVersion": "senior-network-metrics-v1"
+      },
+      "content": {
+        "contentHash": "513d623b579375f14d24adec9b9a6f46da092ee93b3acac05b9b072ea7a7a324",
+        "sourceFingerprint": "fa3c792ace29445aad6d2cc66ee16bcd2cf25da31af2355c9a80d5408cc3ca5c",
+        "contractRevision": "ATH-METRICS-R2-03",
+        "metricCount": 28,
+        "metrics": [
+          {
+            "key": "canonical_organizations",
+            "grain": "organization",
+            "unit": "count",
+            "value": 205082
+          },
+          {
+            "key": "chow_events",
+            "grain": "chow_event",
+            "unit": "count",
+            "value": 5227
+          },
+          {
+            "key": "civil_monetary_penalties",
+            "grain": "civil_monetary_penalty",
+            "unit": "count",
+            "value": 13254
+          },
+          {
+            "key": "combined_cms_senior_providers",
+            "grain": "combined_provider_classes",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "combined_indexed_evidence_records",
+            "grain": "combined_incompatible_evidence_grains",
+            "unit": "count",
+            "value": null
+          },
+          {
+            "key": "current_home_health_agencies",
+            "grain": "current_directory_provider",
+            "unit": "count",
+            "value": 12460
+          },
+          {
+            "key": "current_hospice_providers",
+            "grain": "current_directory_provider",
+            "unit": "count",
+            "value": 6669
+          },
+          {
+            "key": "current_nursing_homes",
+            "grain": "current_directory_provider",
+            "unit": "count",
+            "value": 14690
+          },
+          {
+            "key": "enforcement_records",
+            "grain": "enforcement_record",
+            "unit": "count",
+            "value": 15694
+          },
+          {
+            "key": "enforcement_records_all_ingested_releases",
+            "grain": "enforcement_record",
+            "unit": "count",
+            "value": 31860
+          },
+          {
+            "key": "fire_citations",
+            "grain": "fire_citation",
+            "unit": "count",
+            "value": 200327
+          },
+          {
+            "key": "health_deficiencies",
+            "grain": "health_deficiency",
+            "unit": "count",
+            "value": 419479
+          },
+          {
+            "key": "health_deficiencies_all_ingested_releases",
+            "grain": "health_deficiency",
+            "unit": "count",
+            "value": 837823
+          },
+          {
+            "key": "hh_hhcahps_observations",
+            "grain": "quality_observation",
+            "unit": "count",
+            "value": 74760
+          },
+          {
+            "key": "hh_quality_observations",
+            "grain": "quality_observation",
+            "unit": "count",
+            "value": 199360
+          },
+          {
+            "key": "hospice_cahps_observations",
+            "grain": "quality_observation",
+            "unit": "count",
+            "value": 140049
+          },
+          {
+            "key": "hospice_evidence_only",
+            "grain": "evidence_only_identity",
+            "unit": "count",
+            "value": 242
+          },
+          {
+            "key": "hospice_quality_observations",
+            "grain": "quality_observation",
+            "unit": "count",
+            "value": 453492
+          },
+          {
+            "key": "hospice_typed_identities",
+            "grain": "known_ccn_identity",
+            "unit": "count",
+            "value": 6911
+          },
+          {
+            "key": "inspection_events",
+            "grain": "inspection_event",
+            "unit": "count",
+            "value": 149978
+          },
+          {
+            "key": "inspection_events_all_ingested_releases",
+            "grain": "inspection_event",
+            "unit": "count",
+            "value": 299683
+          },
+          {
+            "key": "known_nursing_home_ccns",
+            "grain": "known_ccn_identity",
+            "unit": "count",
+            "value": 14696
+          },
+          {
+            "key": "mds_observations",
+            "grain": "mds_observation",
+            "unit": "count",
+            "value": 1248650
+          },
+          {
+            "key": "nursing_homes_absent_from_current_directory",
+            "grain": "directory_exclusion",
+            "unit": "count",
+            "value": 6
+          },
+          {
+            "key": "ownership_graph_edges",
+            "grain": "ownership_edge",
+            "unit": "count",
+            "value": 1421277
+          },
+          {
+            "key": "payment_denials",
+            "grain": "payment_denial",
+            "unit": "count",
+            "value": 2440
+          },
+          {
+            "key": "pbj_quarter_summaries",
+            "grain": "pbj_quarter_summary",
+            "unit": "count",
+            "value": 14487
+          },
+          {
+            "key": "pbj_staffing_days_current_release",
+            "grain": "pbj_staffing_day",
+            "unit": "count",
+            "value": 1303830
+          }
+        ]
+      },
+      "clocks": {
+        "generatedAt": "2026-09-12T23:07:39.449Z",
+        "newestSourceAsOf": null,
+        "clockHash": "bbf48ae2baebe70ee17fde33996a6466007e1f39e830aa193962ad79f6223b7b",
+        "clockLeafCount": 774,
+        "metricSourceAsOf": [
+          {
+            "key": "canonical_organizations",
+            "sourceAsOf": "2026-08-17"
+          },
+          {
+            "key": "chow_events",
+            "sourceAsOf": "2026-08-24"
+          },
+          {
+            "key": "civil_monetary_penalties",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "combined_cms_senior_providers",
+            "sourceAsOf": null
+          },
+          {
+            "key": "combined_indexed_evidence_records",
+            "sourceAsOf": null
+          },
+          {
+            "key": "current_home_health_agencies",
+            "sourceAsOf": "2026-05-27"
+          },
+          {
+            "key": "current_hospice_providers",
+            "sourceAsOf": "2026-08-19"
+          },
+          {
+            "key": "current_nursing_homes",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "enforcement_records",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "enforcement_records_all_ingested_releases",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "fire_citations",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "health_deficiencies",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "health_deficiencies_all_ingested_releases",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "hh_hhcahps_observations",
+            "sourceAsOf": "2026-06-10"
+          },
+          {
+            "key": "hh_quality_observations",
+            "sourceAsOf": "2026-05-27"
+          },
+          {
+            "key": "hospice_cahps_observations",
+            "sourceAsOf": "2026-08-07"
+          },
+          {
+            "key": "hospice_evidence_only",
+            "sourceAsOf": "2026-08-19"
+          },
+          {
+            "key": "hospice_quality_observations",
+            "sourceAsOf": "2026-08-07"
+          },
+          {
+            "key": "hospice_typed_identities",
+            "sourceAsOf": "2026-08-19"
+          },
+          {
+            "key": "inspection_events",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "inspection_events_all_ingested_releases",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "known_nursing_home_ccns",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "mds_observations",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "nursing_homes_absent_from_current_directory",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "ownership_graph_edges",
+            "sourceAsOf": "2026-08-17"
+          },
+          {
+            "key": "payment_denials",
+            "sourceAsOf": "2026-08-01"
+          },
+          {
+            "key": "pbj_quarter_summaries",
+            "sourceAsOf": "2026-07-29"
+          },
+          {
+            "key": "pbj_staffing_days_current_release",
+            "sourceAsOf": "2026-07-29"
+          }
+        ]
+      }
+    }
+  ]
+}

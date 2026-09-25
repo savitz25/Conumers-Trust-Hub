@@ -34,3 +34,11 @@ jobs:
       # reviewed PR. See scripts/refresh-specialist-fallbacks.mjs.
       - name: Report bundled fallback drift (informational, does not fail)
         run: npm run metrics:check-fallback-drift
+      # ENB-001 -- visibility only, never fails the job and never writes. Compares
+      # the live specialist publications against the persisted accepted-extract
+      # baseline (data/network-metrics/accepted-extract-baseline-v1.json) so a
+      # human can tell "endpoint alive" from "accepted extract actually changed"
+      # and clock-only rebuilds from content drift. A replacement baseline is
+      # branch/PR material: see docs/metrics/ENB-001-ACCEPTED-EXTRACT-BASELINE.md.
+      - name: Report accepted-extract baseline status (informational, does not fail)
+        run: npm run metrics:check-accepted-baseline
