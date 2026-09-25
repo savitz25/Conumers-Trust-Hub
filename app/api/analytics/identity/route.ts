@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { isOpaqueTrustHubId } from '@/lib/analytics/privacy';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 import { isMyTrustHubFeatureEnabled } from '@/lib/my-trusthub/feature-flags';
@@ -17,13 +18,17 @@ export async function GET() {
     }
     const token = await readSessionToken();
     if (token) {
-      const customer = await withPlatform((p) => p.sessionUser(token)).catch(() => null);
+      const customer = await withPlatform((p) => p.sessionUser(token)).catch((error: unknown) => {
+        if (isDbUnavailableError(error)) throw error;
+        return null;
+      });
       if (customer?.id && isOpaqueTrustHubId(customer.id)) {
         return NextResponse.json({ distinctId: customer.id });
       }
     }
     return NextResponse.json({ distinctId: null });
-  } catch {
+  } catch (e) {
+    if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     return NextResponse.json({ distinctId: null });
   }
 }

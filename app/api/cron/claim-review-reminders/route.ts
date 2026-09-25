@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { authorized, safeHeaders } from "@/lib/my-trusthub/p13-runtime";
 import { withPlatform } from "@/lib/customer/server";
 
@@ -22,7 +23,8 @@ export async function GET(request: Request) {
   try {
     const result = await withPlatform((p) => p.reviewQueueReminders({ dryRun, limit: 20 }));
     return NextResponse.json({ ok: true, dryRun, ...result }, { headers: safeHeaders });
-  } catch {
+  } catch (e) {
+    if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     return NextResponse.json({ ok: false }, { status: 500, headers: safeHeaders });
   }
 }

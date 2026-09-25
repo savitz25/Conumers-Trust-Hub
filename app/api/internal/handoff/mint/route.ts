@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { timingSafeEqualText } from '@/lib/customer/crypto';
 import { mintHandoffToken } from '@/lib/customer/handoff';
 import { cthReadDirectory } from '@/lib/customer/cth-read';
@@ -22,9 +23,9 @@ function operatorAuthorized(header: string | null): boolean {
 
 export async function POST(request: Request) {
   const staffSession = await readSessionToken();
-  const staff = staffSession
-    ? await withPlatform((p) => p.sessionUser(staffSession))
-    : null;
+  let staff: Awaited<ReturnType<typeof withPlatform<Awaited<ReturnType<import('@/lib/customer/store').CustomerPlatform['sessionUser']>>>>> | null = null;
+  try { staff = staffSession ? await withPlatform((p) => p.sessionUser(staffSession)) : null; }
+  catch (e) { if (isDbUnavailableError(e)) return serviceUnavailableResponse(); throw e; }
   const opOk = operatorAuthorized(request.headers.get('authorization'));
   if (!opOk && !staff?.isStaff) {
     return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 });

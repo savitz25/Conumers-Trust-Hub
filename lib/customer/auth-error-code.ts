@@ -9,7 +9,7 @@
 import { CUSTOMER_CLAIM_ERROR_CODES, type CustomerClaimErrorCode } from './claim-recovery.ts';
 
 /** Sign-in link states that can reach the claim page from /api/customer/auth/verify. */
-export const CLAIM_SIGN_IN_ERROR_CODES = ['expired_link', 'consumed_link', 'rate_limited', 'auth_failed'] as const;
+export const CLAIM_SIGN_IN_ERROR_CODES = ['expired_link', 'consumed_link', 'rate_limited', 'auth_failed', 'service_unavailable'] as const;
 export type ClaimSignInErrorCode = (typeof CLAIM_SIGN_IN_ERROR_CODES)[number];
 export type ClaimAuthErrorCode = CustomerClaimErrorCode | ClaimSignInErrorCode;
 
@@ -25,6 +25,8 @@ const HANDOFF_ERROR_MAP: Record<string, CustomerClaimErrorCode> = {
   schema_not_ready: 'SPECIALIST_VALIDATION_UNAVAILABLE',
   // ATH-CLAIM-V2-001R4: an absent/short ATH_HANDOFF_SECRET is a server fault, never the user's link.
   misconfigured: 'SPECIALIST_VALIDATION_UNAVAILABLE',
+  // ATH-SENTRY-P2: the Ask database itself is unavailable (provider outage). Bounded recovery state, never the raw driver text.
+  db_unavailable: 'SPECIALIST_VALIDATION_UNAVAILABLE',
 };
 
 const isKnown = (value: unknown): value is ClaimAuthErrorCode => typeof value === 'string' && (CLAIM_AUTH_ERROR_CODES as readonly string[]).includes(value);
@@ -53,6 +55,7 @@ export const CLAIM_SIGN_IN_ERROR_COPY: Record<ClaimSignInErrorCode, string> = {
   consumed_link: 'This sign-in link was already used. Request a new link to continue.',
   rate_limited: 'Too many sign-in attempts. Please wait a few minutes, then request a new link.',
   auth_failed: 'We could not complete sign-in. Request a new link to continue.',
+  service_unavailable: 'Sign-in is temporarily unavailable. Please try again in a few minutes.',
 };
 
 export function claimSignInErrorMessage(code: ClaimAuthErrorCode | null): string | null {

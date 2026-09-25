@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError, ClaimError } from "@/lib/customer/store";
 import {
   currentContext,
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
       }),
     );
     return NextResponse.json({ ok: true });
-  } catch (e) {
+  } catch (e) {if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     if (e instanceof AuthError)
       return NextResponse.json(
         { ok: false, error: e.code },

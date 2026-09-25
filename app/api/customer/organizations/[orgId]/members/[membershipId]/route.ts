@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError } from '@/lib/customer/store';
 import { OrganizationError } from '@/lib/customer/organization';
 import { currentContext,readSessionToken,withPlatform } from '@/lib/customer/server';
@@ -11,5 +12,5 @@ export async function POST(request:Request,{params}:{params:Promise<{orgId:strin
       ?await withPlatform(p=>p.changeOrganizationMemberRole({sessionToken:token||'',orgId,membershipId,role:body.role,ctx}))
       :await withPlatform(p=>p.removeOrganizationMember({sessionToken:token||'',orgId,membershipId,ctx}));
     return NextResponse.json(result,{headers:{'Cache-Control':'no-store'}});
-  }catch(error){if(error instanceof AuthError)return NextResponse.json({error:error.code},{status:401});if(error instanceof OrganizationError)return NextResponse.json({error:error.code},{status:error.code==='forbidden'?403:error.code==='not_found'?404:error.code==='last_owner'?409:400});return NextResponse.json({error:'unavailable'},{status:500});}
+  }catch(error){if (isDbUnavailableError(error)) return serviceUnavailableResponse();if(error instanceof AuthError)return NextResponse.json({error:error.code},{status:401});if(error instanceof OrganizationError)return NextResponse.json({error:error.code},{status:error.code==='forbidden'?403:error.code==='not_found'?404:error.code==='last_owner'?409:400});return NextResponse.json({error:'unavailable'},{status:500});}
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 import { currentContext, readSessionToken, withPlatform } from '@/lib/customer/server';
 
@@ -20,7 +21,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pro
       sessionToken, nativeProfileId: profileId, version, ctx,
     }));
     return NextResponse.json(result, { headers: { 'Cache-Control': 'no-store' } });
-  } catch (error) {
+  } catch (error) {if (isDbUnavailableError(error)) return serviceUnavailableResponse();
     if (error instanceof ManagementError) {
       const status = error.code === 'stale_version' ? 409 : error.code === 'not_found' ? 404 : 403;
       return NextResponse.json({ error: error.code }, { status });

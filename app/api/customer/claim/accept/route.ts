@@ -5,6 +5,7 @@ import { clearIntentCookie, currentContext, readClaimReceipt, readIntentId, setC
 import { peekHandoffIdentity } from '@/lib/customer/handoff';
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { randomToken } from '@/lib/customer/crypto';
 
 export const runtime = 'nodejs';
@@ -49,6 +50,7 @@ export async function GET(request: Request) {
     await setClaimReceiptCookie({ token, receiptId, source: received.acquisitionSource, receivedAt: Date.now() });
     return NextResponse.redirect(new URL('/claim/continue', url.origin), { headers: NO_STORE });
   } catch (e) {
+    if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     const internalCode =
       e instanceof HandoffError || e instanceof ClaimError
         ? e.code

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 
 export const dynamic='force-dynamic';
@@ -9,5 +10,5 @@ export async function POST(request:Request){
   if(!origin||origin!==new URL(request.url).origin)return NextResponse.json({error:'forbidden'},{status:403});
   const token=await readSessionToken();
   if(!token)return NextResponse.json({error:'staff_authorization_required'},{status:403});
-  try{return NextResponse.json(await withPlatform(p=>p.sendLifecycleQa(token)))}catch{return NextResponse.json({error:'qa_not_available'},{status:403})}
+  try{return NextResponse.json(await withPlatform(p=>p.sendLifecycleQa(token)))}catch(e){if(isDbUnavailableError(e))return serviceUnavailableResponse();return NextResponse.json({error:'qa_not_available'},{status:403})}
 }
