@@ -2,7 +2,7 @@ import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
-import { classifyTnHub, tnBareLicenseAmbiguous, tnLabeledIdentifier } from './tn-network.ts';
+import { classifyTnHub, tnBareLicenseAmbiguous, tnExactCredentialRoute, tnLabeledIdentifier } from './tn-network.ts';
 import { stripTrustQualifierWrapper, type UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 
@@ -98,8 +98,10 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
   if (isInvestorAdviserSeekingQuery(query)) explicit.push('investor');
   // ATH-TN-001: Tennessee-only credential words (HIC, LLE, LLP, ACLF, RHA, notice filing) are
   // classified only when the parsed geography is already Tennessee; other states are unchanged.
-  if (parsed.geography?.stateCode === 'TN' && !tnLabeledIdentifier(query) && !tnBareLicenseAmbiguous(query)) {
-    const tnHub = classifyTnHub(query);
+  if (parsed.geography?.stateCode === 'TN' && !tnBareLicenseAmbiguous(query)) {
+    // An exact Tennessee credential (contractor license, HFC class license, SEC file) names its hub;
+    // any other labeled identifier keeps the shared identifier parser's hub.
+    const tnHub = tnExactCredentialRoute(query)?.hubId ?? (tnLabeledIdentifier(query) ? undefined : classifyTnHub(query));
     if (tnHub && !explicit.includes(tnHub)) explicit.push(tnHub);
   }
   if(parsed.intent==='place'&&explicit.length)return dedupe(explicit);

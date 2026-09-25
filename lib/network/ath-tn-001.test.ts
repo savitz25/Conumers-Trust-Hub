@@ -233,6 +233,9 @@ test('Tennessee routing covers all six hubs with Tennessee caveats', () => {
   assert.equal(planAskResearch('HIC Nashville').primaryHub, 'contractor');
   assert.equal(planAskResearch('Nashville investor').primaryHub, 'investor');
   assert.equal(planAskResearch('Tennessee senior').primaryHub, 'senior');
+  assert.equal(planAskResearch('Tennessee ACLF license 115').primaryHub, 'senior');
+  assert.equal(planAskResearch('Tennessee contractor license 1742').primaryHub, 'contractor');
+  assert.equal(planAskResearch('SEC 801-12345 Tennessee').primaryHub, 'investor');
   const best = buildNetworkAskPlan('best nursing home Tennessee');
   assert.equal(best.hubs[0]?.hubId, 'senior');
   assert.match(best.hubs[0]?.reason ?? '', /does not select a winner/);
