@@ -4,6 +4,7 @@ import verificationJson from '../../data/network/georgia-verification.json' with
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const GA_NETWORK_CONTRACT = 'ath-ga-network-release-v1' as const;
 
@@ -273,7 +274,7 @@ export type GaRoute = {
 };
 
 function earlierStateNamed(query: string): boolean {
-  return /\b(ohio|north carolina|pennsylvania|new york|illinois|oregon|virginia|colorado|california|texas|florida|washington|arizona|new jersey|tennessee)\b/i.test(
+  return /\b(ohio|north carolina|pennsylvania|new york|illinois|oregon|virginia|colorado|california|texas|florida|washington|arizona|new jersey|tennessee|nevada)\b/i.test(
     query,
   );
 }
@@ -295,8 +296,9 @@ export function classifyGaHub(query: string): SpecialistHubId | undefined {
 
 export function routeGaAsk(query: string): GaRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (earlierStateNamed(query) && !/\bgeorgia\b/i.test(query)) return undefined;
-  if (earlierStateNamed(query) && query.search(/\bgeorgia\b/i) > query.search(/\b(ohio|north carolina|pennsylvania|tennessee)\b/i)) {
+  if (earlierStateNamed(query) && query.search(/\bgeorgia\b/i) > query.search(/\b(ohio|north carolina|pennsylvania|tennessee|nevada)\b/i)) {
     return undefined;
   }
   if (labeledIdentifier(query)) return undefined;

@@ -3,6 +3,7 @@ import {careTask,careLocation,planCareResearch,type CareSetting} from './care-ta
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { classifyTnHub, queryLooksLikeTennessee, tnBareLicenseAmbiguous, tnExactCredentialRoute, tnLabeledIdentifier } from './tn-network.ts';
+import { classifyNvHub, nvBareLicenseAmbiguous, nvExactCredentialRoute, nvIdentifierRoute, nvLabeledIdentifier, queryLooksLikeNevada } from './nv-network.ts';
 import { stripTrustQualifierWrapper, type UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 
@@ -103,6 +104,24 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
     // any other labeled identifier keeps the shared identifier parser's hub.
     const tnHub = tnExactCredentialRoute(query)?.hubId ?? (tnLabeledIdentifier(query) ? undefined : classifyTnHub(query));
     if (tnHub && !explicit.includes(tnHub)) explicit.push(tnHub);
+  }
+  // ATH-NV-001: Nevada-only credential words (RFG, HIC = Home for Individual Residential Care, HCQC, CPCN,
+  // MLO, notice filing) are classified only when Nevada itself is the named state; others are unchanged.
+  if (parsed.geography?.stateCode === 'NV' && queryLooksLikeNevada(query) && !nvBareLicenseAmbiguous(query)) {
+    const nvHub = nvExactCredentialRoute(query)?.hubId ?? (nvLabeledIdentifier(query) ? undefined : classifyNvHub(query));
+    if (nvHub) {
+      const at = explicit.indexOf(nvHub);
+      if (at >= 0) explicit.splice(at, 1);
+      explicit.unshift(nvHub);
+      // Nevada HIC is senior care, not a home improvement contractor.
+      if (nvHub === 'senior' && /\bhic\b/i.test(query)) {
+        const c = explicit.indexOf('contractor');
+        if (c >= 0) explicit.splice(c, 1);
+      }
+    }
+  } else if (parsed.geography?.stateCode !== 'NV') {
+    const nvId = nvIdentifierRoute(query, queryLooksLikeTennessee(query));
+    if (nvId && !explicit.includes(nvId.hubId)) explicit.unshift(nvId.hubId);
   }
   if(parsed.intent==='place'&&explicit.length)return dedupe(explicit);
   return dedupe([...hubs,...explicit]);

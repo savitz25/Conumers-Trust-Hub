@@ -4,6 +4,7 @@ import verificationJson from '../../data/network/massachusetts-verification.json
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS } from './registry.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const MA_NETWORK_CONTRACT = 'ath-ma-network-release-v1' as const;
 
@@ -228,7 +229,7 @@ export function queryLooksLikeMassachusetts(query: string): boolean {
   if (
     /\bboston\b/i.test(query) &&
     /\b(mover|moving|contractor|mortgage|lender|insurance|nursing|hospice|assisted|senior|advis|securit|broker|debar)\b/i.test(query) &&
-    !/\b(ohio|georgia|illinois|missouri|oregon|virginia|colorado|florida|texas|california|washington|arizona|pennsylvania|new york|north carolina|new jersey|tennessee)\b/i.test(query)
+    !/\b(ohio|georgia|illinois|missouri|oregon|virginia|colorado|florida|texas|california|washington|arizona|pennsylvania|new york|north carolina|new jersey|tennessee|nevada)\b/i.test(query)
   ) {
     return true;
   }
@@ -283,7 +284,7 @@ export type MaRoute = {
 };
 
 function earlierStateNamed(query: string): boolean {
-  return /\b(ohio|georgia|north carolina|pennsylvania|new york|illinois|oregon|virginia|colorado|california|texas|florida|washington|arizona|new jersey|tennessee)\b/i.test(
+  return /\b(ohio|georgia|north carolina|pennsylvania|new york|illinois|oregon|virginia|colorado|california|texas|florida|washington|arizona|new jersey|tennessee|nevada)\b/i.test(
     query,
   );
 }
@@ -309,10 +310,11 @@ export function classifyMaHub(query: string): SpecialistHubId | undefined {
 
 export function routeMaAsk(query: string): MaRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (/\bmedicare\s+advantage\b/i.test(query) && !/\bmassachusetts\b/i.test(query)) return undefined;
   if (/\bma-pd\b/i.test(query) && !/\bmassachusetts\b/i.test(query)) return undefined;
   if (earlierStateNamed(query) && !/\bmassachusetts\b/i.test(query)) return undefined;
-  if (earlierStateNamed(query) && query.search(/\bmassachusetts\b/i) > query.search(/\b(ohio|georgia|north carolina|pennsylvania|tennessee)\b/i)) {
+  if (earlierStateNamed(query) && query.search(/\bmassachusetts\b/i) > query.search(/\b(ohio|georgia|north carolina|pennsylvania|tennessee|nevada)\b/i)) {
     return undefined;
   }
   if (labeledIdentifier(query)) return undefined;

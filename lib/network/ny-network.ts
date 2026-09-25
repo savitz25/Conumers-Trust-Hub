@@ -5,6 +5,7 @@ import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const NY_NETWORK_CONTRACT = 'ath-ny-network-release-v1' as const;
 
@@ -433,6 +434,7 @@ export function classifyNyHub(query: string): SpecialistHubId | undefined {
 
 export function routeNyAsk(query: string): NyRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (newYorkLifeOnly(query)) return undefined;
   const requested = requestedLegalJurisdiction(query);
   if (requested?.ambiguous) return undefined;

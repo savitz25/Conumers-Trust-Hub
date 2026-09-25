@@ -2,6 +2,7 @@ import manifestJson from '../../data/network/washington-publication-manifest.jso
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const WA_NETWORK_CONTRACT = 'ath-wa-network-release-v1' as const;
 
@@ -145,6 +146,7 @@ export function classifyWaHub(query: string): SpecialistHubId | undefined {
 
 export function routeWaAsk(query: string): WaRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (earlierStateNamed(query, /\bcalifornia\b|\bcalif\b/i)) return undefined;
   if (earlierStateNamed(query, /\btexas\b|\btexan\b/i)) return undefined;
   if (earlierStateNamed(query, /\bnew\s+jersey\b/i)) return undefined;
