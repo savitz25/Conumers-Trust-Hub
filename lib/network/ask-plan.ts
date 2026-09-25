@@ -75,6 +75,7 @@ import { ohCaveatForHub, ohSpecialistUrl, routeOhAsk } from './oh-network.ts';
 import { gaCaveatForHub, gaSpecialistUrl, routeGaAsk } from './ga-network.ts';
 import { maCaveatForHub, maSpecialistUrl, routeMaAsk } from './ma-network.ts';
 import {
+  queryLooksLikeTennessee,
   routeTnAsk,
   TN_SEMANTIC_GUARDRAILS,
   tnBareLicenseAmbiguous,
@@ -1403,7 +1404,9 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     }
   }
 
-  if (parsed.geography?.stateCode === 'TN') {
+  // A full state name outranks a bare code in the shared geography fallback ("movers CA and
+  // Tennessee" parses as TN); Tennessee only annotates when Tennessee itself was named first.
+  if (parsed.geography?.stateCode === 'TN' && queryLooksLikeTennessee(parsed.query)) {
     const specificDestination = (dest?: string) =>
       Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
     const annotateTn = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
