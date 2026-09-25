@@ -323,6 +323,17 @@ test('state disambiguation: the first named state wins and other states keep the
   assert.equal(queryLooksLikeTennessee('contractor Franklin'), false);
   assert.equal(queryLooksLikeTennessee('contractor Franklin Tennessee'), true);
   assert.equal(tennesseeNamedFirst('movers Ohio and Tennessee'), false);
+  // Vercel review on #210: a state named only by its code before Tennessee still wins.
+  assert.equal(tennesseeNamedFirst('movers CA and Tennessee'), false);
+  assert.equal(tennesseeNamedFirst('contractor FL and TN'), false);
+  assert.equal(tennesseeNamedFirst('movers TN and CA'), true);
+  assert.equal(tennesseeNamedFirst('Medicare Advantage MA plans Tennessee'), true);
+  assert.equal(routeTnAsk('movers CA and Tennessee'), undefined);
+  assert.equal(queryLooksLikeTennessee('movers CA and Tennessee'), false);
+  // The shared geography fallback may still read the full state name; the Tennessee caveat must not apply.
+  const caFirst = buildNetworkAskPlan('movers CA and Tennessee');
+  assert.doesNotMatch(caFirst.hubs[0]?.reason ?? '', /Intrastate Authority/);
+  assert.doesNotMatch(caFirst.hubs[0]?.destination ?? '', /movetrusthub\.com\/tennessee$/);
   assert.equal(routeTnAsk('movers Ohio and Tennessee'), undefined);
   assert.equal(routeOhAsk('investment adviser Tennessee and Ohio'), undefined);
   assert.equal(routeGaAsk('contractor Tennessee and Georgia'), undefined);

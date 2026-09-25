@@ -248,16 +248,26 @@ export function firstOtherStateIndex(query: string): number {
   return first;
 }
 
-function otherStateCodeNamed(query: string): boolean {
-  return (query.match(/\b[A-Z]{2}\b/g) ?? []).some((token) => OTHER_STATE_CODES.includes(token) && !AMBIGUOUS_CODES.has(token));
+/** Index of the first other-state two-letter code; ambiguous codes (MA, OR, IN, ...) are ignored, as in the city fallback. */
+function firstOtherStateCodeIndex(query: string): number {
+  const re = /\b[A-Z]{2}\b/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(query)) !== null) {
+    if (OTHER_STATE_CODES.includes(match[0]) && !AMBIGUOUS_CODES.has(match[0])) return match.index;
+  }
+  return -1;
 }
 
-/** Tennessee (or TN) is named, and no other state is named before it. */
+function otherStateCodeNamed(query: string): boolean {
+  return firstOtherStateCodeIndex(query) >= 0;
+}
+
+/** Tennessee (or TN) is named, and no other state, by full name or two-letter code, is named before it. */
 export function tennesseeNamedFirst(query: string): boolean {
   const tn = tnTokenIndex(query);
   if (tn < 0) return false;
-  const other = firstOtherStateIndex(query);
-  return other < 0 || tn < other;
+  const others = [firstOtherStateIndex(query), firstOtherStateCodeIndex(query)].filter((at) => at >= 0);
+  return others.length === 0 || tn < Math.min(...others);
 }
 
 export function detectTnCity(query: string): string | undefined {
