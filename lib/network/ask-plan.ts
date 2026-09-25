@@ -74,6 +74,16 @@ import { ncCaveatForHub, ncSpecialistUrl, routeNcAsk } from './nc-network.ts';
 import { ohCaveatForHub, ohSpecialistUrl, routeOhAsk } from './oh-network.ts';
 import { gaCaveatForHub, gaSpecialistUrl, routeGaAsk } from './ga-network.ts';
 import { maCaveatForHub, maSpecialistUrl, routeMaAsk } from './ma-network.ts';
+import {
+  routeTnAsk,
+  TN_SEMANTIC_GUARDRAILS,
+  tnBareLicenseAmbiguous,
+  tnGatewayOnlyQuery,
+  tnCaveatForHub,
+  tnExactCredentialRoute,
+  tnLabeledIdentifier,
+  tnSpecialistUrl,
+} from './tn-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -206,6 +216,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'PA') return '/pennsylvania';
   if (parsed.geography?.stateCode === 'NC') return '/north-carolina';
   if (parsed.geography?.stateCode === 'MA') return '/massachusetts';
+  if (parsed.geography?.stateCode === 'TN') return '/tennessee';
   return undefined;
 }
 
@@ -1389,6 +1400,96 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0] && !/\b(usdot|dot|mc|nmls|naic|npn|ccn|crd|sec(?:\s+number|\s+file)?|hic|csl)\b/i.test(parsed.query)) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateMa(h, maCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'TN') {
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateTn = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : tnSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? tnSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    const exact = tnExactCredentialRoute(parsed.query);
+    const tnRoute = routeTnAsk(parsed.query);
+    const gatewayOnly = tnGatewayOnlyQuery(parsed.query);
+    if (tnBareLicenseAmbiguous(parsed.query)) {
+      // ATH-TN-001: a bare Tennessee license number is never guessed across hubs.
+      const clarification = TN_SEMANTIC_GUARDRAILS.bare_license_ambiguous;
+      const primary = hubs[0]?.hubId ?? parsed.suggestedHubs[0] ?? 'contractor';
+      hubs = [
+        {
+          hubId: primary,
+          name: NETWORK_PUBLIC_NAMES[primary],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          failKind: 'hard',
+          destination: undefined,
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          preview: { headline: clarification, grain: 'fail_closed', limitation: clarification },
+        },
+      ];
+    } else if (gatewayOnly) {
+      // ATH-TN-001: no specialist is claimed; the Tennessee gateway (placeLensHref) owns the answer.
+      hubs = [];
+    } else if (exact) {
+      const rest = hubs.filter((h) => h.hubId !== exact.hubId);
+      hubs = [
+        {
+          hubId: exact.hubId,
+          name: NETWORK_PUBLIC_NAMES[exact.hubId],
+          capabilityStatus: 'handoff',
+          destination: exact.destination,
+          reason: exact.caveat,
+          whatItCanAnswer: `Exact Tennessee credential lookup on ${NETWORK_PUBLIC_NAMES[exact.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          compareHref: tnSpecialistUrl(exact.hubId),
+        },
+        ...rest,
+      ];
+    } else if (tnRoute) {
+      const ranking = /does not select a winner/.test(tnRoute.caveat);
+      const already = hubs.some((h) => h.hubId === tnRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: tnRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[tnRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: tnRoute.destination,
+            reason: tnRoute.caveat,
+            whatItCanAnswer: `Tennessee research on ${NETWORK_PUBLIC_NAMES[tnRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          },
+          ...hubs,
+        ];
+      } else if (ranking) {
+        hubs = hubs.map((h) =>
+          h.hubId === tnRoute.hubId
+            ? {
+                ...h,
+                capabilityStatus: 'handoff' as const,
+                destination: tnRoute.destination,
+                reason: `${h.reason} ${tnRoute.caveat}`,
+                compareHref: tnRoute.destination,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === tnRoute.hubId), ...hubs.filter((h) => h.hubId !== tnRoute.hubId)];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === tnRoute.hubId ? annotateTn(h, tnRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === tnRoute.hubId), ...hubs.filter((h) => h.hubId !== tnRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0] && !tnLabeledIdentifier(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateTn(h, tnCaveatForHub(primary)) : h));
     }
   }
 

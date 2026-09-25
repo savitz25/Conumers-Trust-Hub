@@ -252,11 +252,11 @@ test('claim eligibility surfaces are unchanged', () => {
 });
 
 test('state page count increments exactly once and places/concierge stay gated', () => {
-  assert.equal(ASK_NETWORK_STATES.length, 16);
+  assert.equal(ASK_NETWORK_STATES.length, 17);
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'VA').length, 1);
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee'],
   );
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/virginia'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/virginia/richmond'), false);

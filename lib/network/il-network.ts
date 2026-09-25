@@ -3,6 +3,7 @@ import manifestJson from '../../data/network/illinois-publication-manifest.json'
 import verificationJson from '../../data/network/illinois-verification.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const IL_NETWORK_CONTRACT = 'ath-il-network-release-v1' as const;
 
@@ -343,6 +344,7 @@ export function classifyIlHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeIlAsk(query: string): IlRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (earlierStateNamed(query, /\bnew york\b/i) && !/\bregistered in illinois\b/i.test(query)) return undefined;
   if (earlierStateNamed(query, /\bcolorado\b/i)) return undefined;
   if (earlierStateNamed(query, /\bvirginia\b/i)) return undefined;

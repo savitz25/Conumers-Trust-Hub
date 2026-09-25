@@ -3,6 +3,7 @@ import manifestJson from '../../data/network/pennsylvania-publication-manifest.j
 import verificationJson from '../../data/network/pennsylvania-verification.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const PA_NETWORK_CONTRACT = 'ath-pa-network-release-v1' as const;
 
@@ -360,6 +361,7 @@ export function classifyPaHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routePaAsk(query: string): PaRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (earlierStateNamed(query, /\bnew york\b/i)) return undefined;
   if (earlierStateNamed(query, /\billinois\b/i)) return undefined;
   if (earlierStateNamed(query, /\bcolorado\b/i)) return undefined;

@@ -1,6 +1,7 @@
 import manifestJson from '../../data/network/virginia-publication-manifest.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const VA_NETWORK_CONTRACT = 'ath-va-network-release-v1' as const;
 export const VA_PUBLICATION_FINGERPRINT =
@@ -159,6 +160,7 @@ export function classifyVaHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeVaAsk(query: string): VaRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (earlierStateNamed(query, /\bwest\s+virginia\b/i)) return undefined;
   if (earlierStateNamed(query, /\bcalifornia\b|\bcalif\b/i)) return undefined;
   if (earlierStateNamed(query, /\btexas\b|\btexan\b/i)) return undefined;

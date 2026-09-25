@@ -3,6 +3,7 @@ import manifestJson from '../../data/network/north-carolina-publication-manifest
 import verificationJson from '../../data/network/north-carolina-verification.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const NC_NETWORK_CONTRACT = 'ath-nc-network-release-v1' as const;
 
@@ -367,6 +368,7 @@ export function classifyNcHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeNcAsk(query: string): NcRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (earlierStateNamed(query, /\bpennsylvania\b/i)) return undefined;
   if (earlierStateNamed(query, /\bnew york\b/i)) return undefined;
   if (earlierStateNamed(query, /\billinois\b/i)) return undefined;
