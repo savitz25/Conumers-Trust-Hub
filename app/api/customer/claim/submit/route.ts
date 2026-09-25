@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError, ClaimError } from '@/lib/customer/store';
 import { currentContext, readIntentId, readSessionToken, withPlatform } from '@/lib/customer/server';
 import type { RelationshipType } from '@/lib/customer/types';
@@ -34,11 +35,12 @@ export async function POST(request: Request) {
       })
     );
     const attribution=(await cookies()).get('ath_campaign_attribution')?.value;
+    // The claim transaction has already committed. Attribution stays best-effort so a later outage cannot turn a stored claim into a retryable 503.
     if(attribution)try{await withAskTx(async sql=>{const attributed=await attributeClaim(sql,result.claimId,attribution);
       // ATH-CLAIM-V2-001: a campaign-attributed claim is deterministically email_campaign in the V2 source column too.
       if(attributed)await sql.query(`UPDATE ath_claims SET acquisition_source='email_campaign' WHERE id=$1 AND acquisition_source IN ('unknown','organic')`,[result.claimId]);});}catch(error){customerLog('claim_attribution_failed',{errorClass:error instanceof Error?error.name:'unknown'},'error')}
     return NextResponse.json({ ok: true, ...result });
-  } catch (e) {
+  } catch (e) {if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     if (e instanceof AuthError) {
       return NextResponse.json({ ok: false, error: e.code }, { status: e.code === 'missing_session' ? 401 : 400 });
     }

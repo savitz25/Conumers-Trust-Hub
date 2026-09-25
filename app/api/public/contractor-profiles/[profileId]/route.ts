@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { publicReadHeaders, readPublicContractorState } from '@/lib/customer/public-read-server';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ profileId: string }> }) {
@@ -10,7 +11,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pro
       return NextResponse.json({ error: 'not_found' }, { status: 404, headers });
     }
     return NextResponse.json(result.state.profile, { headers });
-  } catch {
+  } catch (error) {
+    if (isDbUnavailableError(error)) return serviceUnavailableResponse();
     return NextResponse.json(
       { error: 'unavailable' },
       { status: 503, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } },

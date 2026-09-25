@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError } from '@/lib/customer/store';
 import { currentContext, withPlatform } from '@/lib/customer/server';
 
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
       })
     );
     return NextResponse.json({ ok: true, sent: result.sent, preview: result.preview });
-  } catch (e) {
+  } catch (e) {if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     if (e instanceof AuthError) {
       const status = e.code === 'rate_limited' ? 429 : 400;
       return NextResponse.json({ ok: false, error: e.code }, { status });

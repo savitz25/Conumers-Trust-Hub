@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { classifyDbError, isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { Pool } from 'pg';
 import { applyCustomerMigrations, enableAppRole, askDatabaseUrl } from '@/lib/customer/db';
 import { assertR2FixtureEnvironment, cleanupR2Fixture, createR2Fixture, R2_FIXTURE, verifyR2Fixture } from '@/lib/customer/browser-fixture';
@@ -50,8 +51,9 @@ export async function POST(request:Request){
       return NextResponse.json({ok:true,fixture:await fixtureTransaction(verifyR2Fixture)},{headers});
     }
     return NextResponse.json({ok:false,error:'fixture_action_invalid'},{status:400,headers});
-  }catch(error){
-    const message=error instanceof Error?error.message:'fixture_failed';
+  }catch(error){if (isDbUnavailableError(error) || classifyDbError(error).unavailable) return serviceUnavailableResponse();
+    const driverCode=typeof error==='object'&&error&&'code' in error&&typeof (error as {code?:unknown}).code==='string'?(error as {code:string}).code:'';
+    const message=/^[0-9A-Z]{5}$/.test(driverCode)?'fixture_failed':error instanceof Error?error.message:'fixture_failed';
     const status=/refused|not_enabled|confirmation/.test(message)?404:500;
     return NextResponse.json({ok:false,error:message},{status,headers});
   }

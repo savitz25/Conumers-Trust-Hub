@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { withPlatform } from '@/lib/customer/server';
 import { fetchContractorMonitoringEvents } from '@/lib/customer/monitoring-feed';
 import {randomUUID} from 'node:crypto';
@@ -9,17 +10,30 @@ export const dynamic='force-dynamic';
 export async function GET(request:Request){
   const cronSecret=process.env.CRON_SECRET||'';
   if(cronSecret.length<16||request.headers.get('authorization')!==`Bearer ${cronSecret}`) return new Response('Unauthorized',{status:401});
-  const cursor=await withPlatform(async(_p,sql)=>{
-    const row=await sql.query<{last_sequence:string}>(`SELECT last_sequence::text FROM ath_monitoring_sync_cursors WHERE source_key='contractor_fl_dbpr'`);
-    return Number(row.rows[0]?.last_sequence||0);
-  });
+  let cursor: number;
+  try {
+    cursor=await withPlatform(async(_p,sql)=>{
+      const row=await sql.query<{last_sequence:string}>(`SELECT last_sequence::text FROM ath_monitoring_sync_cursors WHERE source_key='contractor_fl_dbpr'`);
+      return Number(row.rows[0]?.last_sequence||0);
+    });
+  } catch (error) {
+    if (isDbUnavailableError(error)) return serviceUnavailableResponse();
+    throw error;
+  }
   const checkedAt=new Date().toISOString();
   let events;
-  try{events=await fetchContractorMonitoringEvents(cursor,100)}catch(error){
-    await withPlatform(async(_p,sql)=>{await seedCapabilityRegistry(sql);await recordHealthObservation(sql,{schema_version:'capability_health.v1',observation_id:randomUUID(),capability_key:'ASK_CONTRACTOR_MONITORING',hub:'ask',status:error instanceof Error&&error.message==='monitoring_feed_contract'?'DEGRADED':'DEGRADED',reason_code:error instanceof Error&&error.message==='monitoring_feed_contract'?'FEED_CONTRACT_MISMATCH':'POLL_FAILURE',checked_at:checkedAt,last_failure_at:checkedAt,evidence_ref:'contractor_signed_feed',observed_by:'regulatory-monitoring-cron'});await upsertIncident(sql,'ASK_CONTRACTOR_MONITORING',error instanceof Error&&error.message==='monitoring_feed_contract'?'SCHEMA_DRIFT':'MONITORING_HEALTH',error instanceof Error&&error.message==='monitoring_feed_contract'?'FEED_CONTRACT_MISMATCH':'POLL_FAILURE',checkedAt)});
+  try{events=await fetchContractorMonitoringEvents(cursor,100)}catch(error){if (isDbUnavailableError(error)) return serviceUnavailableResponse();
+    try {
+      await withPlatform(async(_p,sql)=>{await seedCapabilityRegistry(sql);await recordHealthObservation(sql,{schema_version:'capability_health.v1',observation_id:randomUUID(),capability_key:'ASK_CONTRACTOR_MONITORING',hub:'ask',status:error instanceof Error&&error.message==='monitoring_feed_contract'?'DEGRADED':'DEGRADED',reason_code:error instanceof Error&&error.message==='monitoring_feed_contract'?'FEED_CONTRACT_MISMATCH':'POLL_FAILURE',checked_at:checkedAt,last_failure_at:checkedAt,evidence_ref:'contractor_signed_feed',observed_by:'regulatory-monitoring-cron'});await upsertIncident(sql,'ASK_CONTRACTOR_MONITORING',error instanceof Error&&error.message==='monitoring_feed_contract'?'SCHEMA_DRIFT':'MONITORING_HEALTH',error instanceof Error&&error.message==='monitoring_feed_contract'?'FEED_CONTRACT_MISMATCH':'POLL_FAILURE',checkedAt)});
+    } catch (writeError) {
+      if (isDbUnavailableError(writeError)) return serviceUnavailableResponse();
+      throw writeError;
+    }
     return NextResponse.json({ok:false,code:'monitoring_health_degraded'},{status:502,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
   }
-  const result=await withPlatform(async(p,sql)=>{
+  let result;
+  try {
+    result=await withPlatform(async(p,sql)=>{
     const ingested=await p.ingestMonitoringEvents(events);
     const last=events.reduce((n,e)=>Math.max(n,Number(e.sequence_id)||0),cursor);
     if(last>cursor) await sql.query(`INSERT INTO ath_monitoring_sync_cursors(source_key,last_sequence) VALUES('contractor_fl_dbpr',$1) ON CONFLICT(source_key) DO UPDATE SET last_sequence=GREATEST(ath_monitoring_sync_cursors.last_sequence,EXCLUDED.last_sequence),updated_at=now()`,[last]);
@@ -28,7 +42,11 @@ export async function GET(request:Request){
     await recordHealthObservation(sql,{schema_version:'capability_health.v1',observation_id:randomUUID(),capability_key:'ASK_CONTRACTOR_MONITORING',hub:'ask',status:'CURRENT',reason_code:events.length?'POLL_SUCCEEDED_EVENTS':'POLL_SUCCEEDED_NO_CHANGE',checked_at:checkedAt,last_success_at:checkedAt,retrieved_at:checkedAt,records_observed:events.length,contract_version:'1',evidence_ref:`cursor:${last}`,observed_by:'regulatory-monitoring-cron'});
     await sql.query(`UPDATE ath_data_incidents SET status='RESOLVED',resolved_at=now(),resolution_reason='SYSTEM_HEALTH_RECOVERED',updated_at=now() WHERE capability_key='ASK_CONTRACTOR_MONITORING' AND status IN('OPEN','ACKNOWLEDGED')`);
     return {...ingested,...deliveries,lastSequence:last,health:'CURRENT',emptyPoll:events.length===0};
-  });
+    });
+  } catch (error) {
+    if (isDbUnavailableError(error)) return serviceUnavailableResponse();
+    throw error;
+  }
   return NextResponse.json({ok:true,...result},{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
 }
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { BusinessProfileValidationError } from '@/lib/customer/business-profile';
 import { AuthError, ManagementError } from '@/lib/customer/store';
 import { currentContext, readSessionToken, withPlatform } from '@/lib/customer/server';
@@ -18,7 +19,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ prof
       sessionToken, nativeProfileId: profileId, body, ctx,
     }));
     return NextResponse.json(result, { headers: { 'Cache-Control': 'no-store' } });
-  } catch (error) {
+  } catch (error) {if (isDbUnavailableError(error)) return serviceUnavailableResponse();
     if (error instanceof BusinessProfileValidationError) {
       return NextResponse.json({ error: 'validation_failed', issues: error.issues }, { status: 400 });
     }

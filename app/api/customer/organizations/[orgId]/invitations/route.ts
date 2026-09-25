@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError } from '@/lib/customer/store';
 import { OrganizationError } from '@/lib/customer/organization';
 import { currentContext,readSessionToken,withPlatform } from '@/lib/customer/server';
@@ -6,7 +7,7 @@ import { currentContext,readSessionToken,withPlatform } from '@/lib/customer/ser
 export async function POST(request:Request,{params}:{params:Promise<{orgId:string}>}) {
   const token=await readSessionToken(),{orgId}=await params,body=await request.json().catch(()=>null),ctx=await currentContext();
   try { return NextResponse.json(await withPlatform(p=>p.createOrganizationInvitation({sessionToken:token||'',orgId,body,ctx})),{status:201,headers:{'Cache-Control':'no-store'}}); }
-  catch(error){return organizationResponse(error);}
+  catch(error){if (isDbUnavailableError(error)) return serviceUnavailableResponse();return organizationResponse(error);}
 }
 
 function organizationResponse(error:unknown){

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { withAdminSecurity } from "@/lib/control-plane/server";
 import { ClaimOperationsService } from "@/lib/control-plane/claim-operations";
 export const runtime = "nodejs";
@@ -19,8 +20,9 @@ export async function POST(
       return { ...(await service.startReview(claimId, { evidenceReady: typeof body.evidenceReady === "boolean" ? body.evidenceReady : null })) };
     });
     return NextResponse.json({ ok: true, ...result }, { headers: { "Cache-Control": "no-store" } });
-  } catch (error) {
-    const code = error instanceof Error ? error.message : "unavailable";
+  } catch (error) {if (isDbUnavailableError(error)) return serviceUnavailableResponse();
+    const driverCode = typeof error === "object" && error && "code" in error && typeof (error as { code?: unknown }).code === "string" ? (error as { code: string }).code : "";
+    const code = /^[0-9A-Z]{5}$/.test(driverCode) || !(error instanceof Error) ? "unavailable" : error.message;
     return NextResponse.json(
       { ok: false, error: code },
       { status: /UNAUTHENTICATED/.test(code) ? 401 : /FORBIDDEN|not_staff/.test(code) ? 403 : 409 },

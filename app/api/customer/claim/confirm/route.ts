@@ -4,6 +4,7 @@ import { ClaimError } from '@/lib/customer/store';
 import { clearClaimReceiptCookie, currentContext, readClaimReceipt, readIntentId, setIntentCookie, withPlatform } from '@/lib/customer/server';
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { checkSameOrigin } from '@/lib/customer/request-origin';
 import { receiptMatchesConfirmation } from '@/lib/customer/claim-receipt';
 
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
     await clearClaimReceiptCookie();
     return NextResponse.redirect(new URL(`/claim/continue?confirmed=${confirmed.created ? '1' : '0'}`, url.origin), { status: 303, headers: NO_STORE });
   } catch (e) {
+    if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     const internalCode = e instanceof HandoffError || e instanceof ClaimError ? e.code : 'unavailable';
     const code = claimAcceptErrorCode(internalCode);
     customerLog('claim_continue_failed', { code, internalCode: String(internalCode).slice(0, 40) }, 'warn');

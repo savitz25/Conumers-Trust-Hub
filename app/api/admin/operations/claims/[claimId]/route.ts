@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { withAdminSecurity } from "@/lib/control-plane/server";
 import { ClaimOperationsService } from "@/lib/control-plane/claim-operations";
 import type {
@@ -35,8 +36,9 @@ export async function POST(
       }),
     );
     return NextResponse.json(result);
-  } catch (error) {
-    const code = error instanceof Error ? error.message : "unavailable";
+  } catch (error) {if (isDbUnavailableError(error)) return serviceUnavailableResponse();
+    const driverCode = typeof error === "object" && error && "code" in error && typeof (error as { code?: unknown }).code === "string" ? (error as { code: string }).code : "";
+    const code = /^[0-9A-Z]{5}$/.test(driverCode) || !(error instanceof Error) ? "unavailable" : error.message;
     return NextResponse.json(
       { ok: false, error: code },
       {

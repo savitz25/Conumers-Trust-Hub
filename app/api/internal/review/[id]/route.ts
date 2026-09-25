@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDbUnavailableError, serviceUnavailableResponse } from '@/lib/customer/db-unavailable';
 import { AuthError, ClaimError } from '@/lib/customer/store';
 import { currentContext, readSessionToken, withPlatform } from '@/lib/customer/server';
 import type { AuthorityEvidenceCode, ClaimDecisionCategory } from '@/lib/customer/claim-governance';
@@ -34,7 +35,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       })
     );
     return NextResponse.json({ ok: true, ...result });
-  } catch (e) {
+  } catch (e) {if (isDbUnavailableError(e)) return serviceUnavailableResponse();
     if (e instanceof AuthError) {
       return NextResponse.json({ ok: false, error: e.code }, { status: e.code === 'not_staff' ? 403 : 401 });
     }
