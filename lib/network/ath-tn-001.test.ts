@@ -383,7 +383,18 @@ test('closeout stays awaiting Production until the certificate is recorded', () 
     assert.equal(closeout.ask_production.http_status, 200);
     assert.equal(closeout.ask_production.sso, false);
     assert.equal(closeout.ask_production.canonical, 'https://www.asktrusthub.com/tennessee');
+    assert.equal(closeout.ask_production.robots, 'index, follow');
     assert.equal(release.ask_production.deployed_sha, closeout.ask_production.merge_sha);
+    // ATH-TN-001P: Production certified at the ATH-TN-001R merge SHA (gateway #209, routing #210).
+    assert.equal(closeout.ask_production.merge_sha, '33bf20498a90445558ac847f2c206fcab3d3f17a');
+    assert.equal(closeout.ask_production.deployment_id, 6666921175);
+    assert.equal(closeout.ask_production.gateway_pr, 209);
+    assert.equal(closeout.ask_production.routing_pr, 210);
+    assert.equal(closeout.ask_production.sitemap_occurrences, 1);
+    assert.equal(closeout.ask_production.rating_schema, false);
+    assert.deepEqual(closeout.ask_production.mixed_case_308, ['/Tennessee', '/TENNESSEE']);
+    assert.equal(closeout.ask_production.identifier_matrix, '10/10');
+    assert.equal(closeout.network_release_gate.passed, true);
   } else {
     assert.equal(closeout.status, 'AWAITING_PRODUCTION_CERTIFICATE');
     assert.equal(closeout.ask_production, null);

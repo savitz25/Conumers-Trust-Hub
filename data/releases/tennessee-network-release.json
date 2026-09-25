@@ -23,7 +23,7 @@
   },
   "ask_graph_writes": 0,
   "ask_claim_eligibility_broadened": false,
-  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
   "release_gate_passed": true,
   "ask_fingerprint": "dfe8e4cdb77f0a9cfb0cd86fa312dcc20b5648b38d00d359fe8aef75775b5f50",
   "specialists": {
@@ -76,5 +76,40 @@
       "production_serving_sha": "506ba754a21105c309c87757b8f57fdb41e39b34"
     }
   },
-  "ask_production": null
+  "ask_production": {
+    "verified_at": "2026-09-25T17:58:28Z",
+    "merge_sha": "33bf20498a90445558ac847f2c206fcab3d3f17a",
+    "gateway_pr": 209,
+    "routing_pr": 210,
+    "pr": 210,
+    "deployment_id": 6666921175,
+    "environment": "Production",
+    "deployed_sha": "33bf20498a90445558ac847f2c206fcab3d3f17a",
+    "unique_deployment_url": "https://conumers-trust-9rgyv9e9d-savitz25-s-projects.vercel.app",
+    "live_route": "https://www.asktrusthub.com/tennessee",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/tennessee",
+    "robots": "index, follow",
+    "sso": false,
+    "mixed_case_308": [
+      "/Tennessee",
+      "/TENNESSEE"
+    ],
+    "city_route_404": [
+      "/tennessee/nashville",
+      "/tennessee/memphis"
+    ],
+    "sitemap_occurrences": 1,
+    "rating_schema": false,
+    "axe_widths_clean": [
+      1440,
+      390,
+      320
+    ],
+    "routing_matrix": "46/47",
+    "identifier_matrix": "10/10",
+    "prior_states_200": "15/16",
+    "prior_states_note": "/florida answers 308 to /places/florida (200) by design; the other 15 prior state pages answer 200 directly.",
+    "routing_matrix_method": "POST /api/guided-research with the labeled category interpretation (interpretAs=category), the same action the /ask page exposes; the first paint for proper-noun-shaped queries is the network name search by design (TH-SEARCH-R1-019A)."
+  }
 }
