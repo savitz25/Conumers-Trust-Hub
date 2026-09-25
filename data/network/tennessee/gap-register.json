@@ -1,0 +1,26 @@
+{
+  "state": "TN",
+  "local_phase": {
+    "status": "NOT_STARTED",
+    "note": "No Ask city or county Tennessee intelligence routes."
+  },
+  "cross_hub_record_total": {
+    "status": "REJECTED",
+    "value": null
+  },
+  "local_work_needed_now": "NO",
+  "remaining_gaps": [
+    "Move: Intrastate Authority roster NOT_ACQUIRED (no public roster or search). Tariff index NOT_ACQUIRED. Complaint outcomes REQUEST_ONLY. No exact USDOT/MC joins.",
+    "Lender: bulk license, MLO and branch rosters NOT_ACQUIRED. TDFI enforcement 2024-2026 UNKNOWN. Complaints REQUEST_ONLY. 0 exact NMLS attachments.",
+    "Contractor: Home Improvement, LLE and LLP rosters NOT_ACQUIRED. Discipline before 2024 deferred. Complaint records NOT_ACQUIRED. Qualifying-agent person identity not published.",
+    "Insurance: agency and producer bulk NOT_ACQUIRED. Company complaint data NOT_ACQUIRED. Placeholder-NAIC reinsurer identity UNKNOWN.",
+    "Senior: Home Health/Hospice license numbers UNKNOWN (lists date from 2024). Adult Care Home roster NOT_ACQUIRED. Complaints REQUEST_ONLY. Exact HFC-to-CMS join UNKNOWN.",
+    "Investor: IAR population NOT_ACQUIRED. State broker-dealer and agent bulk NOT_ACQUIRED. Order identifiers before 2024 and 11 scanned 2024-2026 orders not read. Unique matters UNKNOWN."
+  ],
+  "observations_not_blockers": [
+    "Lender GitHub Deployments feed stopped at 945be89 (2026-09-02); Production proof uses the Vercel commit status for 54b11a9 and the page fingerprint marker.",
+    "Contractor Production runs later main b2d6e84; Tennessee files are byte-identical to certified d36047b.",
+    "Move keeps pre-existing /moving-to/tennessee/[slug] marketing pages; Ask must link only the statewide /tennessee intelligence page.",
+    "Lender page title repeats the brand ('| LenderTrustHub | Lender Trust Hub'); cosmetic."
+  ]
+}

@@ -1,6 +1,7 @@
 import manifestJson from '../../data/network/texas-publication-manifest.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const TX_NETWORK_CONTRACT = 'ath-tx-network-release-v1' as const;
 
@@ -138,6 +139,7 @@ export function classifyTxHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeTxAsk(query: string): TxRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (californiaNamedBeforeTexas(query)) return undefined;
   if (!queryLooksLikeTexas(query)) return undefined;
   const hubId = classifyTxHub(query);

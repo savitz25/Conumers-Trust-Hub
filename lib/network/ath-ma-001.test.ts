@@ -40,8 +40,8 @@ test('Massachusetts manifest rejects a cross-hub total and keeps six hubs', () =
   assert.equal(MA_PUBLICATION_MANIFEST.ask_production, null);
   assert.equal(existsSync('app/massachusetts/boston'), false);
   assert.equal(existsSync('app/boston'), false);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'massachusetts');
-  assert.equal(ASK_NETWORK_STATES.length, 16);
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'tennessee');
+  assert.equal(ASK_NETWORK_STATES.length, 17);
 });
 
 test('Massachusetts page has no ranking schema and is cataloged once', () => {
@@ -53,7 +53,7 @@ test('Massachusetts page has no ranking schema and is cataloged once', () => {
   assert.match(sitemap, /askStateSitemapEntries/);
   const paths = askStateSitemapEntries().map((entry) => entry.path);
   assert.equal(paths.filter((path) => path === '/massachusetts').length, 1);
-  assert.match(askStateExplorerEyebrow(), /Sixteen-state network explorer/);
+  assert.match(askStateExplorerEyebrow(), /Seventeen-state network explorer/);
 });
 
 test('Massachusetts routing preserves grains and does not intercept identifiers', () => {
@@ -121,7 +121,7 @@ test('Massachusetts routing preserves grains and does not intercept identifiers'
 test('existing state routes stay registered ahead of Massachusetts', () => {
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee'],
   );
 });
 

@@ -1,0 +1,78 @@
+{
+  "ticket": "ATH-TN-001",
+  "state": "TN",
+  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "note": "Tennessee Ask publication contract is ready. The Production certificate is recorded only after Production runs the merge SHA and live /tennessee checks pass. The publication semantic fingerprint stays on the publication manifest.",
+  "contract": "ath-tn-network-release-v1",
+  "network_contract": "ath-tn-network-release-v1",
+  "ask_path": "/tennessee",
+  "ask_route": "/tennessee",
+  "ask_canonical": "https://www.asktrusthub.com/tennessee",
+  "scope": "STATE_LEVEL_ONLY",
+  "local_work_needed_now": "NO",
+  "local_work_decision": "NO",
+  "cross_hub_record_total": null,
+  "cross_hub_record_total_status": "REJECTED",
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false,
+  "publication_manifest_fingerprint": "dfe8e4cdb77f0a9cfb0cd86fa312dcc20b5648b38d00d359fe8aef75775b5f50",
+  "publication_manifest_fingerprint_method": "tnPublicationSemanticFingerprint() in lib/network/tn-network.ts (Ask canonical implementation). Controls release.",
+  "packet_preview_fingerprint": "deb688cb743c10ec66832aa7a01399aeec51630350b5b5dea1e3a14384bf7e04",
+  "packet_preview_fingerprint_note": "Python preview hash from ~/ath-tn-001-packet (codepoint key order). Informational only; does not control release.",
+  "specialists": {
+    "move": {
+      "certified_release_sha": "b72c3c0aabf0813358a8f622be68f4b2fe4302a4",
+      "snapshot_version": "move-tn-state-intel-v1",
+      "fingerprint": "aa892cceecbc7ad96f9e9df43f9f941e5e9df24f6622ff23bc1fb66751d63b69",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/tennessee",
+      "production_serving_sha": "b72c3c0aabf0813358a8f622be68f4b2fe4302a4"
+    },
+    "lender": {
+      "certified_release_sha": "54b11a9c12bf03042f1bb3ff1af60a0005d6d04a",
+      "snapshot_version": "lender-tn-state-intel-v1",
+      "fingerprint": "cb713c0a555163348f74e4679e66182cd55739b079178a469dd5d39e9ce1d66a",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/tennessee",
+      "production_serving_sha": "54b11a9c12bf03042f1bb3ff1af60a0005d6d04a"
+    },
+    "contractor": {
+      "certified_release_sha": "d36047b72a69374514ee32b9aededc36c4318944",
+      "snapshot_version": "contractor-tn-state-intel-v1",
+      "fingerprint": "f9ff8de0df88d4f59ae19efea15aae25cac4ca42a02c4f9439f7d50959a0e680",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/tennessee",
+      "production_serving_sha": "b2d6e847cafc47348ccb7a31f71ae0a72fc7ea61"
+    },
+    "insurance": {
+      "certified_release_sha": "a52b69d53e408d18f3ef5d64f38d40e57f8e1c41",
+      "snapshot_version": "insurance-tn-state-intel-v1",
+      "fingerprint": "bb82b021809e2deaf5355dd8d30e5d751483f51cb708a9c77bf79fad8eed1bf8",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/tennessee",
+      "production_serving_sha": "a52b69d53e408d18f3ef5d64f38d40e57f8e1c41"
+    },
+    "senior": {
+      "certified_release_sha": "e5ba724a9209422e15c80c4d112afba1cd57b1f8",
+      "snapshot_version": "senior-tn-state-intel-v1",
+      "fingerprint": "f95d81b37f042879e0259bf8d833e0e89122e8a44e55030aa281ca044b047ea9",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/tennessee",
+      "production_serving_sha": "e5ba724a9209422e15c80c4d112afba1cd57b1f8"
+    },
+    "investor": {
+      "certified_release_sha": "506ba754a21105c309c87757b8f57fdb41e39b34",
+      "snapshot_version": "investor-tn-state-intel-v1",
+      "fingerprint": "a2332c25eb07803d5e126c0a1935c3e8e0d9268d2fd9f3790e90fce65545f54e",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/tennessee",
+      "production_serving_sha": "506ba754a21105c309c87757b8f57fdb41e39b34"
+    }
+  },
+  "ask_production": null,
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-25T15:36:36.514Z"
+  }
+}

@@ -46,6 +46,7 @@ import { detectNcCity, queryLooksLikeNorthCarolina } from './nc-network.ts';
 import { detectOhCity, queryLooksLikeOhio } from './oh-network.ts';
 import { detectGaCity, queryLooksLikeGeorgia } from './ga-network.ts';
 import { detectMaCity, queryLooksLikeMassachusetts } from './ma-network.ts';
+import { detectTnCity, queryLooksLikeTennessee } from './tn-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -98,6 +99,19 @@ const BROWARD = /\bbroward\b/i;
 const PALM = /\bpalm\s*beach\b/i;
 
 function geography(q: string): ParsedGeography | undefined {
+  // ATH-TN-001: Tennessee named before any other state (or a Tennessee city with a TrustHub vertical
+  // and no other state) is Tennessee. Another state named first keeps its own routing below.
+  if (queryLooksLikeTennessee(q)) {
+    const tnCity = detectTnCity(q);
+    return {
+      stateCode: 'TN',
+      stateName: 'Tennessee',
+      city: tnCity,
+      meaning: tnCity
+        ? `${tnCity}, Tennessee. Tennessee research is statewide. ${tnCity} is not a separate regulatory system and has no Ask city route.`
+        : 'Tennessee. State licensing is not physical location. Tennessee city and county Ask pages are not published.',
+    };
+  }
   const broward = BROWARD.test(q);
   const palm = PALM.test(q);
   // TH-DISCOVERY-003: was a hardcoded 3-city allowlist (Tampa/Miami/Boca Raton) tested with

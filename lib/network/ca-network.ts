@@ -1,6 +1,7 @@
 import manifestJson from '../../data/network/california-publication-manifest.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
 
 export const CA_NETWORK_CONTRACT = 'ath-ca-network-v1' as const;
 
@@ -127,6 +128,7 @@ export function classifyCaHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeCaAsk(query: string): CaRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
   if (!queryLooksLikeCalifornia(query)) return undefined;
   const hubId = classifyCaHub(query);
   if (!hubId) return undefined;
