@@ -7,11 +7,15 @@ schema `net`, its HTTP functions, queue and response table are all absent.
 Production does not inherit this branch-specific policy.
 
 No hosted change was made by this packet. Bot Team must independently pin
-`xkkiicsassizmakcvxml`, run [pg-net-preflight.sql](pg-net-preflight.sql) read
-only, stop on any dependency or queued request, and obtain separate authorization
-before [pg-net-disable.sql](pg-net-disable.sql). The disable uses `DROP EXTENSION
-pg_net` followed by `DROP SCHEMA net`, both without CASCADE. The postcondition is
-machine checked by [pg-net-postcheck.sql](pg-net-postcheck.sql) and Phase 5
+`xkkiicsassizmakcvxml`. If `pg_net` is installed, run
+[pg-net-preflight.sql](pg-net-preflight.sql) read only, stop on any dependency or
+queued request, and obtain separate authorization before
+[pg-net-disable.sql](pg-net-disable.sql). The disable uses `DROP EXTENSION
+pg_net` followed by `DROP SCHEMA net`, both without CASCADE. If the extension,
+schema `net`, HTTP routines, and queue/response relations are already absent,
+run [pg-net-already-absent.sql](pg-net-already-absent.sql) instead of installing
+`pg_net`. That marker is not a disable event. Either path then requires
+[pg-net-postcheck.sql](pg-net-postcheck.sql) and Phase 5
 [assertions.sql](assertions.sql).
 
 Disabling pg_net discards its transient response history and cannot preserve an

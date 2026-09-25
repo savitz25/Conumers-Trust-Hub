@@ -122,6 +122,8 @@ async function expectBlock(db, sql, pattern) {
 export async function assertPgNetDependencyPredicate() {
   const preflight = readSql('pg-net-preflight.sql');
   const disable = readSql('pg-net-disable.sql');
+  const alreadyAbsent = readSql('pg-net-already-absent.sql');
+  const postcheck = readSql('pg-net-postcheck.sql');
   const preflightClosure = closureSlice(preflight);
   const disableClosure = closureSlice(disable);
   assert.equal(preflightClosure, disableClosure);
@@ -130,6 +132,11 @@ export async function assertPgNetDependencyPredicate() {
   assert.equal(preflight.includes("prokind in ('f','p')"), false);
   assert.equal(disable.includes("prokind in ('f','p')"), false);
   assert.deepEqual(dependencyPredicates(preflight), dependencyPredicates(disable));
+  assert.deepEqual(dependencyPredicates(alreadyAbsent), dependencyPredicates(preflight));
+  assert.doesNotMatch(alreadyAbsent, /select\s+'V23_PG_NET_DISABLE_PASS'/i);
+  assert.doesNotMatch(alreadyAbsent, /select\s+'V23_PG_NET_PREFLIGHT_PASS'/i);
+  assert.doesNotMatch(alreadyAbsent, /drop\s+(extension|schema)/i);
+  assert.doesNotMatch(alreadyAbsent, /create\s+extension/i);
   assert.equal(dependencyPredicates(preflight).length, 3);
   assert.match(preflightClosure, /deptype in \('i','a','x','P','S'\)/);
   assert.match(preflightClosure, /while expand_at<=c_n/);
@@ -367,8 +374,58 @@ export async function assertPgNetDependencyPredicate() {
     assert.ok(clean.some((result) => result.rows?.some((row) => row.result === 'V23_PG_NET_PREFLIGHT_PASS')));
     assert.equal((await db.query("select count(*)::int n from pg_extension where extname='pg_net'")).rows[0].n, 1);
     console.log('PASS closure restored and extension still present');
+    await expectBlock(db, alreadyAbsent, /Already-absent path refuses installed pg_net/);
+    console.log('PASS installed baseline rejected by already-absent');
   } finally {
     await db.close();
+  }
+
+  const absent = new PGlite();
+  try {
+    await absent.exec("select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false)");
+    await expectBlock(absent, alreadyAbsent, /attestation required/);
+    await absent.exec("select set_config('v23.approved_project','xkkiicsassizmakcvxml',false)");
+    const absentPass = await absent.exec(alreadyAbsent);
+    assert.ok(absentPass.some((result) => result.rows?.some((row) => row.result === 'V23_PG_NET_ALREADY_ABSENT_PASS')));
+    assert.equal(JSON.stringify(absentPass).includes('V23_PG_NET_DISABLE_PASS'), false);
+    const absentPost = await absent.exec(postcheck);
+    assert.ok(absentPost.some((result) => result.rows?.some((row) => row.result === 'V23_PG_NET_ABSENT_PASS')));
+    console.log('PASS fully absent baseline');
+
+    await absent.exec('create schema net');
+    await expectBlock(absent, alreadyAbsent, /schema net remains/);
+    await absent.exec('create function net.http_get(url text, headers jsonb, params jsonb, timeout integer) returns bigint language sql as $$ select 1 $$');
+    await expectBlock(absent, alreadyAbsent, /pg_net HTTP routine or relation remains/);
+    await absent.exec('drop function net.http_get(text,jsonb,jsonb,integer)');
+    await absent.exec('create table net.http_request_queue(id int)');
+    await expectBlock(absent, alreadyAbsent, /pg_net HTTP routine or relation remains/);
+    await absent.exec('drop table net.http_request_queue');
+    await absent.exec('create table net.user_owned(id int)');
+    await expectBlock(absent, alreadyAbsent, /Object remains in schema net/);
+    await absent.exec('drop schema net cascade');
+    console.log('PASS leftover schema, routine, relation, and user object fail closed');
+
+    await absent.exec(`create function public.plpgsql_mentions_net() returns void language plpgsql as $fn$
+      begin raise notice 'net.http_get'; end $fn$`);
+    await expectBlock(absent, alreadyAbsent, /Application-owned function depends on pg_net/);
+    await absent.exec('drop function public.plpgsql_mentions_net()');
+    const extensionWithoutQueue = extensionSql.replace(
+      /create unlogged table net\.http_request_queue\([\s\S]*?\);\n/,
+      '',
+    );
+    assert.notEqual(extensionWithoutQueue, extensionSql);
+    await installExtension(absent, extensionWithoutQueue);
+    await expectBlock(absent, preflight, /queue\/response relations missing/);
+    await expectBlock(absent, alreadyAbsent, /Already-absent path refuses installed pg_net/);
+    await absent.exec('drop extension pg_net');
+    console.log('PASS extension present with missing queue fails both paths');
+    await installExtension(absent, extensionSql);
+    await absent.exec('create table public.app_user(method net.http_method)');
+    await expectBlock(absent, alreadyAbsent, /Already-absent path refuses installed pg_net|Application-owned function depends on pg_net|External catalog dependency/);
+    await expectBlock(absent, preflight, /External catalog dependency would make DROP EXTENSION unsafe/);
+    console.log('PASS installed external dependency fails closed');
+  } finally {
+    await absent.close();
   }
 }
 
