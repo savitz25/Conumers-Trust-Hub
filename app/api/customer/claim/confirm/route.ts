@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { HandoffError } from '@/lib/customer/handoff';
 import { ClaimError } from '@/lib/customer/store';
-import { clearClaimReceiptCookie, currentContext, readClaimReceipt, setIntentCookie, withPlatform } from '@/lib/customer/server';
+import { clearClaimReceiptCookie, currentContext, readClaimReceipt, readIntentId, setIntentCookie, withPlatform } from '@/lib/customer/server';
 import { customerLog } from '@/lib/customer/log';
 import { claimAcceptErrorCode } from '@/lib/customer/auth-error-code';
 import { checkSameOrigin } from '@/lib/customer/request-origin';
@@ -38,7 +38,8 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL('/claim/continue', url.origin), { status: 303, headers: NO_STORE });
   }
   try {
-    const confirmed = await withPlatform((p) => p.confirmClaimIntent({ token: receipt.token, receiptId: receipt.receiptId, acquisitionSource: receipt.source, ctx }));
+    const existingIntentId = (await readIntentId()) || null;
+    const confirmed = await withPlatform((p) => p.confirmClaimIntent({ token: receipt.token, receiptId: receipt.receiptId, acquisitionSource: receipt.source, existingIntentId, ctx }));
     await setIntentCookie(confirmed.intentId);
     await clearClaimReceiptCookie();
     return NextResponse.redirect(new URL(`/claim/continue?confirmed=${confirmed.created ? '1' : '0'}`, url.origin), { status: 303, headers: NO_STORE });

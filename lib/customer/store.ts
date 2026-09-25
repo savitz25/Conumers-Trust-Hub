@@ -11,6 +11,7 @@ import {
 } from './copy.ts';
 import { isFreeEmail } from './free-email.ts';
 import { safeInternalNextPath } from './safe-next-path.ts';
+import { CLAIM_START_DURABLE_POLICY, type ClaimStartPreflightDecision } from './claim-start-preflight.ts';
 import { HandoffError, parseAndAuthenticateHandoff } from './handoff.ts';
 import { customerLog } from './log.ts';
 import { askFromEmail, type Mailer } from './mail.ts';
@@ -77,6 +78,12 @@ export class AuthError extends Error {
 
 /** ATH-CLAIM-V2-001R4 — bounded lifetime of a durable intent after explicit Continue (see confirmClaimIntent). */
 export const CLAIM_INTENT_CONTINUATION_SECONDS = 60 * 60;
+
+/** ATH-CLAIM-V2-FLNJ-001 — which specialist sources have a monitoring feed. Contractor: Florida DBPR only. */
+export function monitoringSourceSupported(hubId: string, nativeSourceSystem: string | null | undefined): boolean {
+  if (hubId !== 'contractor') return true;
+  return nativeSourceSystem === 'fl_dbpr';
+}
 
 export class ClaimError extends Error {
   readonly code: string;
@@ -170,6 +177,44 @@ export class CustomerPlatform {
 
   private opaqueRateKey(rawKey: string): string {
     return hmacSha256(this.deps.handoffSecret, `ATH_RATE_KEY_V1:${rawKey}`);
+  }
+
+  /**
+   * ATH-CLAIM-V2-FLNJ-001R1 — durable, cross-isolate claim-start admission. Runs inside the request transaction.
+   * `pg_advisory_xact_lock` on the client-bucket digest serializes every concurrent decision for that client until
+   * COMMIT, so a burst across isolates cannot exceed the limits (each later transaction counts only after the
+   * earlier one committed). Writes nothing but `ath_rate_events` rows keyed by opaque digests: no IP, no bucket,
+   * no intent, no claim, no grant. A replayed request id inside the replay window is refused.
+   */
+  async claimStartPreflight(input: { bucketDigest: string; profileId: string; requestId: string }): Promise<ClaimStartPreflightDecision> {
+    const now = this.now();
+    await this.deps.sql.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`ath_claim_start:${input.bucketDigest}`]);
+    const since = (windowMs: number) => new Date(now.getTime() - windowMs).toISOString();
+    const count = async (bucket: string, rateKey: string, windowMs: number) =>
+      Number((await one<{ n: string }>(this.deps.sql, `SELECT count(*)::text AS n FROM ath_rate_events WHERE bucket=$1 AND rate_key=$2 AND created_at >= $3`, [bucket, rateKey, since(windowMs)]))?.n || 0);
+    const insert = (bucket: string, rateKey: string) => this.deps.sql.query(`INSERT INTO ath_rate_events (bucket, rate_key, created_at) VALUES ($1, $2, $3)`, [bucket, rateKey, now.toISOString()]);
+    const ridKey = this.opaqueRateKey(`claim_start_rid:${input.requestId}`);
+    if ((await count('claim_start_rid', ridKey, CLAIM_START_DURABLE_POLICY.replayWindowMs)) > 0) {
+      return { allowed: false, reason: 'replay', retryAfterSeconds: CLAIM_START_DURABLE_POLICY.retryAfterSeconds };
+    }
+    await insert('claim_start_rid', ridKey);
+    const aggKey = this.opaqueRateKey(`claim_start:${input.bucketDigest}`);
+    const profileKey = this.opaqueRateKey(`claim_start_profile:${input.bucketDigest}:${input.profileId.toLowerCase()}`);
+    const policy = CLAIM_START_DURABLE_POLICY;
+    const [agg, profile, hourly] = await Promise.all([
+      count('claim_start_bucket', aggKey, policy.perBucket.windowMs),
+      count('claim_start_profile', profileKey, policy.perBucketProfile.windowMs),
+      count('claim_start_hourly', aggKey, policy.perBucketHourly.windowMs),
+    ]);
+    const limited = agg >= policy.perBucket.max ? 'per_bucket' : profile >= policy.perBucketProfile.max ? 'per_bucket_profile' : hourly >= policy.perBucketHourly.max ? 'per_bucket_hourly' : null;
+    if (limited) {
+      customerLog('rate_limited', { bucket: `claim_start_${limited}`, result: 'blocked' }, 'warn');
+      return { allowed: false, reason: limited, retryAfterSeconds: policy.retryAfterSeconds };
+    }
+    await insert('claim_start_bucket', aggKey);
+    await insert('claim_start_profile', profileKey);
+    await insert('claim_start_hourly', aggKey);
+    return { allowed: true, reason: 'ok' };
   }
 
   async audit(input: {
@@ -455,6 +500,8 @@ export class CustomerPlatform {
     token: string;
     receiptId: string;
     acquisitionSource?: ClaimAcquisitionSourceV2 | string;
+    /** ATH-CLAIM-V2-FLNJ-001R1: the intent id this browser already holds (httpOnly cookie), if any. */
+    existingIntentId?: string | null;
     ctx?: RequestContext;
   }): Promise<{ intentId: string; payload: HandoffPayload; displayName: string; profileHref: string; created: boolean }> {
     if (typeof input.receiptId !== 'string' || input.receiptId.length < 16) throw new ClaimError('missing_receipt');
@@ -475,6 +522,10 @@ export class CustomerPlatform {
       }
     }
     const receiptHash = hashToken(input.receiptId);
+    // ATH-CLAIM-V2-FLNJ-001R1 (double-intent P1): serialize every Continue for this browser receipt inside the
+    // transaction. Concurrent or repeated Continues — including ones carrying a FRESH token because the specialist
+    // minted twice for one click — resolve to the intent the browser already holds for this exact profile.
+    await this.deps.sql.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`claim_continue:${receiptHash}`]);
     const sameReceiptIntent = async () => one<{ id: string; consumed: boolean; receipt_hash: string | null }>(
       this.deps.sql,
       `SELECT id, (consumed_at IS NOT NULL) AS consumed, receipt_hash FROM ath_claim_intents WHERE nonce = $1`,
@@ -494,6 +545,22 @@ export class CustomerPlatform {
       }
       customerLog('claim_continue_rejected', { code: 'reused_nonce' }, 'warn');
       throw new HandoffError('reused_nonce');
+    }
+    const heldIntentId = typeof input.existingIntentId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.existingIntentId) ? input.existingIntentId : null;
+    const held = await one<{ id: string }>(
+      this.deps.sql,
+      `SELECT id FROM ath_claim_intents
+        WHERE intent_origin = 'explicit_continue' AND consumed_at IS NULL AND expires_at > $1::timestamptz
+          AND payload->>'hub_id' = $2 AND lower(payload->>'native_profile_id') = lower($3)
+          AND (receipt_hash = $4 OR id = $5::uuid)
+        ORDER BY created_at DESC LIMIT 1`,
+      [this.now().toISOString(), payload.hub_id, payload.native_profile_id, receiptHash, heldIntentId]
+    );
+    if (held) {
+      // Same browser, same exact profile, one logical Continue: reuse. The new token's nonce is never recorded,
+      // so nothing about handoff expiry or replay protection changes.
+      customerLog('claim_continue_idempotent', { hub: payload.hub_id, via: 'held_intent' });
+      return { intentId: held.id, created: false, ...identity };
     }
     const source = claimAcquisitionSourceV2(input.acquisitionSource);
     const inserted = await one<{ id: string }>(
@@ -1677,6 +1744,8 @@ export class CustomerPlatform {
   async saveMonitoring(input:{sessionToken:string;nativeProfileId:string;body:unknown;ctx?:RequestContext}) {
     const access=await this.requireProfileAccess(input.sessionToken,input.nativeProfileId,true);
     if(customerHub(access.hub_id)?.monitoring!=='SUPPORTED') throw new MonitoringError('forbidden');
+    // ATH-CLAIM-V2-FLNJ-001: the Contractor feed is Florida DBPR only; NJ DCA profiles cannot enable it (fail closed).
+    if(!monitoringSourceSupported(access.hub_id,access.native_source_system)) throw new MonitoringError('forbidden');
     const data=validateMonitoringSettings(input.body),now=this.now().toISOString();
     const existing=await one<{id:string;enabled:boolean;version:number;baseline_at:string|null}>(this.deps.sql,
       `SELECT id,enabled,version,baseline_at::text FROM ath_monitoring_subscriptions
@@ -1811,7 +1880,7 @@ export class CustomerPlatform {
          FROM ath_organization_invitations WHERE org_id=$1 AND status='PENDING' ORDER BY created_at DESC`,[orgId]);
     const profiles=await this.deps.sql.query<Record<string,unknown>>(
         `SELECT g.id grant_id,g.status grant_status,g.granted_at::text,p.hub_id,p.native_profile_id::text,p.native_slug,
-                p.native_credential_key,p.display_name_snapshot,s.enabled monitoring_enabled
+                p.native_credential_key,p.display_name_snapshot,p.native_source_system,s.enabled monitoring_enabled
          FROM ath_management_grants g JOIN ath_hub_profiles p ON p.id=g.hub_profile_id
          LEFT JOIN ath_monitoring_subscriptions s ON s.org_id=g.org_id AND s.hub_profile_id=g.hub_profile_id
          WHERE g.org_id=$1 AND g.status='active' ORDER BY p.hub_id,p.display_name_snapshot,p.native_profile_id`,[orgId]);
@@ -2013,7 +2082,7 @@ export class CustomerPlatform {
     if (!user) throw new AuthError('missing_session');
     const profiles = await this.deps.sql.query<Record<string, unknown>>(
       `SELECT g.id AS grant_id,g.status AS grant_status,o.id AS org_id,o.display_name AS organization_name,
-              p.hub_id,p.native_profile_id::text,p.native_credential_key,p.display_name_snapshot,p.canonical_url,p.entity_class,
+              p.hub_id,p.native_profile_id::text,p.native_credential_key,p.display_name_snapshot,p.canonical_url,p.entity_class,p.native_source_system,
               m.role,COALESCE(s.enabled,false) AS monitoring_enabled,
               (SELECT count(*)::int FROM ath_business_profile_fields f WHERE f.org_id=o.id AND f.hub_profile_id=p.id AND btrim(f.value_text)<>'') AS business_field_count,
               (SELECT count(DISTINCT i.category)::int FROM ath_business_profile_items i WHERE i.org_id=o.id AND i.hub_profile_id=p.id) AS business_item_category_count,

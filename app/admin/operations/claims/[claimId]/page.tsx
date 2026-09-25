@@ -66,6 +66,14 @@ export default async function Page({
         firstReview={!timing.reviewStartedAt}
         canWrite={canWrite && q.isOpen}
       /> : null}
+      {String(c.native_source_system) === "nj_dca" ? (
+        <p role="note" className="rounded-lg border border-indigo bg-indigo/5 px-4 py-3 text-sm">
+          <strong>New Jersey credential — MANUAL AUTHORITY REVIEW.</strong> Source <code>nj_dca</code> · credential{" "}
+          <code>{String(c.native_credential_key)}</code>. No automated NJ identity signal exists: verify authority
+          independently (NJ business entity officer/authorized person, DCA registrant match, callback on a
+          pre-existing public number) before any grant. Company-domain email alone is insufficient.
+        </p>
+      ) : null}
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Exact specialist identity">
           <Fact label="Hub / class" value={`${q.hub} / ${q.profileClass}`} />

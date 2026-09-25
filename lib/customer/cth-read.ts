@@ -3,10 +3,18 @@ import { Pool } from 'pg';
 import { assertReadOnlyCthSql } from './layer-a';
 import type { CthDirectory } from './adapter';
 import type { CthProfileRecord } from './types';
+import { selectCthCredential, type CthCredentialRow } from './cth-credential-select';
 import { customerLog } from './log';
 
 let pool: Pool | null = null;
 
+/**
+ * ATH-CLAIM-V2-FLNJ-001: returns every claimable-source credential row for the profile (FL fl_dbpr, NJ nj_dca) in
+ * the same order Contractor's loadEligibleClaimProfile uses. The caller picks the credential the signed handoff
+ * names (exact source + key) so Ask re-reads and verifies the specialist's own row; without a hint the FL-first
+ * deterministic selection applies. Research-only sources (nj_sos, nj_enforcement, permits, out-of-state
+ * credentials) never qualify.
+ */
 const PROFILE_SQL = `
 SELECT c.id::text AS id,
        c.slug,
@@ -17,13 +25,14 @@ SELECT c.id::text AS id,
        l.external_key,
        l.source_system
   FROM contractors c
-  JOIN licenses l ON l.contractor_id = c.id AND l.source_system = 'fl_dbpr'
+  JOIN licenses l ON l.contractor_id = c.id AND l.source_system IN ('fl_dbpr', 'nj_dca')
                   AND NULLIF(TRIM(l.external_key), '') IS NOT NULL
  WHERE c.id = $1::uuid
- ORDER BY CASE WHEN l.status_normalized = 'active' THEN 0 ELSE 1 END,
+ ORDER BY CASE WHEN l.source_system = 'fl_dbpr' THEN 0 ELSE 1 END,
+          CASE WHEN l.status_normalized = 'active' THEN 0 ELSE 1 END,
           l.last_seen_at DESC NULLS LAST,
-          l.external_key ASC -- ATH-CLAIM-V2-001R4: deterministic tiebreak, identical to Contractor loadEligibleClaimProfile
- LIMIT 1
+          l.external_key ASC
+ LIMIT 50
 `;
 
 function getPool(): Pool {
@@ -45,22 +54,11 @@ function getPool(): Pool {
 }
 
 export const cthReadDirectory: CthDirectory = {
-  async getById(id: string): Promise<CthProfileRecord | null> {
+  async getById(id: string, credential?: { sourceSystem: string; externalKey: string }): Promise<CthProfileRecord | null> {
     assertReadOnlyCthSql(PROFILE_SQL);
     try {
       const res = await getPool().query(PROFILE_SQL, [id]);
-      const row = res.rows[0] as
-        | {
-            id: string;
-            slug: string;
-            display_name: string;
-            is_thin_profile: boolean;
-            home_state: string | null;
-            license_state: string | null;
-            external_key: string;
-            source_system: string;
-          }
-        | undefined;
+      const row = selectCthCredential(res.rows as CthCredentialRow[], credential);
       if (!row) return null;
       return {
         id: row.id,

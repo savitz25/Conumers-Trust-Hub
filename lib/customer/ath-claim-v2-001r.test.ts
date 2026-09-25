@@ -82,14 +82,28 @@ test('readiness: Contractor R8 is IMPLEMENTED (pending a real owner canary), nev
 });
 
 test('schema guard is wired into every V2 write path and the queue snapshot', () => {
-  const store = readFileSync('lib/customer/store.ts', 'utf8');
-  for (const fn of ['async confirmClaimIntent(', 'async intentPreview(', 'async startReviewSession(', 'async stopReviewSession(', 'async reviewTiming(', 'async reviewQueueReminders(', 'private async stampReviewTiming(', 'async launchOpsSnapshot(']) {
-    const at = store.indexOf(fn);
+  // Line endings are normalized so a CRLF checkout inspects the same text as an LF one.
+  const store = readFileSync('lib/customer/store.ts', 'utf8').replace(/\r\n/g, '\n');
+  // A class-level method declaration of CustomerPlatform (two-space indent). The segment under test runs from the
+  // named method's declaration to the next such declaration, i.e. the whole method body and nothing else.
+  const methodStart = /^  (?:private |protected |public )?(?:static )?(?:async )?[A-Za-z_$][\w$]*\s*(?:<[^>\n]*>)?\([^\n]*$/gm;
+  const methodSegment = (fn: string): string => {
+    const at = store.indexOf(`  ${fn}`);
     assert.ok(at > 0, fn);
-    const body = store.slice(at, at + 900);
+    assert.equal(store.indexOf(`  ${fn}`, at + 1), -1, `${fn} declared once`);
+    methodStart.lastIndex = at + fn.length;
+    const next = methodStart.exec(store);
+    return store.slice(at, next ? next.index : store.length);
+  };
+  for (const fn of ['async confirmClaimIntent(', 'async intentPreview(', 'async startReviewSession(', 'async stopReviewSession(', 'async reviewTiming(', 'async reviewQueueReminders(', 'private async stampReviewTiming(', 'async launchOpsSnapshot(']) {
+    const body = methodSegment(fn);
+    assert.ok(body.length > fn.length + 20 && body.length < 20_000, `${fn} segment is a single bounded method (${body.length} chars)`);
     // R4 (#7): stampReviewTiming guards with the non-throwing probe so a pre-019 staff decision degrades to legacy
     // mode instead of failing; every other V2 path still fails closed.
     const guard = fn === 'private async stampReviewTiming(' ? /claimV2SchemaReady\(\)/ : /assertClaimV2Schema\(\)/;
     assert.match(body, guard, `${fn} guards on migration 019`);
+    // The guard must run before the method touches any V2 table.
+    const firstWrite = body.search(/\b(?:INSERT INTO|UPDATE|DELETE FROM|SELECT)\b/);
+    if (firstWrite !== -1) assert.ok(body.search(guard) < firstWrite, `${fn} guards before its first SQL`);
   }
 });

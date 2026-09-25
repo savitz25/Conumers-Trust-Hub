@@ -4,6 +4,7 @@ import {
   HOME_STATE_FL,
   HUB_CONTRACTOR,
   SOURCE_FL_DBPR,
+  contractorCredentialPairAllowed,
   type CustomerHubId,
   type HandoffPayload,
 } from './types.ts';
@@ -54,10 +55,10 @@ function isCompleteV2(payload: HandoffPayload): boolean {
     ? { namespace: 'credential', entityClass: 'contractor' }
     : null;
   if (!capability) return true;
+  // ATH-CLAIM-V2-FLNJ-001: FL (fl_dbpr) unchanged; NJ accepted only as (nj_dca, NJ). Any other pair is malformed.
   return payload.identifier_namespace === capability.namespace
     && payload.entity_class === capability.entityClass
-    && payload.source_system === SOURCE_FL_DBPR
-    && payload.home_state === HOME_STATE_FL
+    && contractorCredentialPairAllowed(payload.source_system, payload.home_state)
     && typeof payload.canonical_profile_url === 'string'
     && payload.canonical_profile_url.length > 0
     && typeof payload.display_name === 'string'
@@ -146,6 +147,17 @@ export function parseAndAuthenticateHandoff(
   if (payload.v === 1 && payload.source_system !== SOURCE_FL_DBPR) throw new HandoffError('unsupported_source');
   if (payload.v === 2 && !isCompleteV2(payload)) throw new HandoffError('malformed');
   return payload;
+}
+
+/**
+ * ATH-CLAIM-V2-FLNJ-001R1 (double-intent P1) — identity peek WITHOUT authentication. Only ever applied to a token
+ * that came out of an HMAC-signed receipt cookie, and only to compare hub/profile ids; never to grant anything.
+ */
+export function peekHandoffIdentity(token: string): { hub_id: string; native_profile_id: string } | null {
+  if (typeof token !== 'string' || token.length === 0 || token.length > MAX_HANDOFF_TOKEN_LENGTH) return null;
+  const payload = decodePayload(token.split('.')[0] ?? '');
+  if (!payload || typeof payload.hub_id !== 'string' || typeof payload.native_profile_id !== 'string') return null;
+  return { hub_id: payload.hub_id, native_profile_id: payload.native_profile_id.toLowerCase() };
 }
 
 export function mutateHandoffToken(
