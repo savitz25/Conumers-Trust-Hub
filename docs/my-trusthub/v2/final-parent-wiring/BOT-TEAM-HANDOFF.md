@@ -5,17 +5,29 @@ print environment variables or connection strings.
 
 1. Independently pin preview branch `xkkiicsassizmakcvxml`, database `postgres`,
    and reject parent ref `qvvxvbcdmbjzrgvwjatw` outside SQL.
-2. In one read-only inspector session set only
+2. The pg_net portion of Gate 1 is exactly one of these paths. No other
+   marker combination is valid. Production does not inherit this rule.
+
+   Path A, installed. In one read-only inspector session set only
    `v23.approved_project=xkkiicsassizmakcvxml`; run `pg-net-preflight.sql` with
    `ON_ERROR_STOP=1`. Require `V23_PG_NET_PREFLIGHT_PASS`. Stop for any trigger,
    webhook, cron, application function, dependency, pending queue, missing object,
-   or unexpected branch identity.
-3. After separate hosted authorization, set
+   or unexpected branch identity. After separate hosted authorization, set
    `v23.pg_net_disable_authorized=true` in the same independently pinned operator
    session and run `pg-net-disable.sql`. It uses no CASCADE. Require
    `V23_PG_NET_DISABLE_PASS`, then run `pg-net-postcheck.sql` and require
    `V23_PG_NET_ABSENT_PASS`.
-4. Phase 5 uses two separate authenticated contexts. Markers 1–3 below are
+
+   Path B, already absent. Do not install pg_net in order to remove it. In one
+   read-only inspector session set only `v23.approved_project=xkkiicsassizmakcvxml`
+   and run `pg-net-already-absent.sql` with `ON_ERROR_STOP=1`. Require
+   `V23_PG_NET_ALREADY_ABSENT_PASS`. Then run `pg-net-postcheck.sql` and require
+   `V23_PG_NET_ABSENT_PASS`. Do not record `V23_PG_NET_DISABLE_PASS` or
+   `V23_PG_NET_PREFLIGHT_PASS` for this path. Stop if the extension is present,
+   schema `net` exists, an HTTP routine or queue/response relation remains, a
+   trigger, webhook, cron job, or application function still depends on pg_net,
+   or the project attestation is wrong.
+3. After the chosen pg_net path, Phase 5 uses two separate authenticated contexts. Markers 1–3 below are
    already earned on the hosted preview and must not be rerun. Markers 4 and 5
    are both required before Gate 1 is complete. The operator must not
    `SET ROLE myth_v23_authorizer` and must not receive runtime-role privileges.
@@ -34,9 +46,17 @@ print environment variables or connection strings.
    the same retained Phase 4 outputs. Run `platform-runtime-probes.sql` with
    `ON_ERROR_STOP=1`. Require `V23_PLATFORM_RUNTIME_PROBES_PASS`.
 
-   Gate 1 requires all five markers: `V23_PG_NET_PREFLIGHT_PASS`,
-   `V23_PG_NET_DISABLE_PASS`, `V23_PG_NET_ABSENT_PASS`,
-   `V23_PARENT_PACKET_ASSERTIONS_PASS`, and
+   Gate 1 pg_net is satisfied by exactly one of:
+
+   A) `V23_PG_NET_PREFLIGHT_PASS` + `V23_PG_NET_DISABLE_PASS` +
+   `V23_PG_NET_ABSENT_PASS`
+
+   or
+
+   B) `V23_PG_NET_ALREADY_ABSENT_PASS` + `V23_PG_NET_ABSENT_PASS`
+
+   Gate 1 is complete only when that combination is joined by
+   `V23_PARENT_PACKET_ASSERTIONS_PASS` and
    `V23_PLATFORM_RUNTIME_PROBES_PASS`.
 
 Phase 4 authority accounting is exact. Supabase's durable bookkeeping row is

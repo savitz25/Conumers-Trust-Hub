@@ -1,5 +1,18 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Gate 1 already-absent path
+
+`pg-net-preflight.sql` remains the strict installed-path check. It rejects a
+preview where `pg_net` is already absent. That absence is a valid isolated
+preview postcondition, so it is certified separately by the read-only
+`pg-net-already-absent.sql` marker `V23_PG_NET_ALREADY_ABSENT_PASS`, followed
+by `pg-net-postcheck.sql` (`V23_PG_NET_ABSENT_PASS`). This path does not install
+`pg_net` and does not emit `V23_PG_NET_DISABLE_PASS`.
+
+Gate 1 pg_net is exactly one of: preflight + disable + absent, or
+already-absent + absent. Mixed leftovers fail closed. This is not a production
+policy.
+
 ## Gate 1B 42809 hotfix — second pass (2026-09-23)
 
 Hosted Gate 1B stopped at `pg-net-preflight.sql` with SQLSTATE 42809
