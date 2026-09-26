@@ -25,6 +25,7 @@ import {
   stateCodeNamedBeforeNevada,
 } from './nv-network.ts';
 import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
+import { decideNameCandidateSearch } from './name-candidates/decision.ts';
 import { askStateExplorerEyebrow, askStateFooterLinks, askStateSitemapEntries, listGatedAskStates } from './published-ask-states.ts';
 import { normalizedPublishedStatePath } from './published-state-path.ts';
 
@@ -293,6 +294,39 @@ test('publication fingerprint uses the Ask canonical implementation and is recor
   assert.match(closeout.publication_manifest_fingerprint_method, /nvPublicationSemanticFingerprint\(\)/);
   assert.equal(closeout.status, 'AWAITING_PRODUCTION_CERTIFICATE');
   assert.equal(closeout.ask_production, null);
+});
+
+test('ATH-NV-001R: routed identifiers never fall into the name-candidate search', () => {
+  // The five live release-contract queries, plus the same formats with Nevada, a city or another state.
+  const release: Array<[string, string]> = [
+    ['CPCN 3251.3', 'move'], ['116-AGC-41', 'senior'], ['116-AGC-41 Las Vegas', 'senior'], ['SEC 801-12345', 'investor'], ['SEC 801-12345 Las Vegas', 'investor'],
+  ];
+  const variants: Array<[string, string]> = [
+    ['CPCN 3251.3 Nevada', 'move'], ['CPCN 3251.3 Las Vegas', 'move'], ['CPCN 3251.3 Texas', 'move'], ['CPCN No. 3251', 'move'],
+    ['116-AGC-41 Nevada', 'senior'], ['2345-SNF-12', 'senior'], ['12-HHA-7 Reno', 'senior'],
+    ['SEC file 801-12345', 'investor'], ['SEC 801-12345 Nevada', 'investor'], ['SEC 801-12345 Tennessee', 'investor'],
+  ];
+  for (const [q, hub] of [...release, ...variants]) {
+    for (const interpretAs of [null, 'category'] as const) {
+      const d = decideNameCandidateSearch(q, { interpretAs });
+      assert.equal(d.operation, 'NOT_NAME_SEARCH', `${q} (${interpretAs ?? 'plain'})`);
+      assert.equal(d.operation === 'NOT_NAME_SEARCH' && d.reason, 'IDENTIFIER_PATH_PROTECTED', q);
+    }
+    assert.equal(planAskResearch(q).primaryHub, hub, q);
+  }
+  // Shared-registry identifiers keep the same protection.
+  for (const q of ['NMLS 3029', 'USDOT 1234567', 'MC 123456', 'NAIC 19232', 'NPN 17405963', 'CCN 295102', 'CRD 108137']) {
+    const d = decideNameCandidateSearch(q);
+    assert.equal(d.operation === 'NOT_NAME_SEARCH' && d.reason, 'IDENTIFIER_PATH_PROTECTED', q);
+  }
+  // Unlabeled numbers are not identifiers: they keep their own fail-closed handling.
+  assert.equal(decideNameCandidateSearch('1234567').operation === 'NOT_NAME_SEARCH' && (decideNameCandidateSearch('1234567') as { reason: string }).reason, 'BARE_DIGITS_ARE_IDENTIFIER_INPUT');
+  assert.equal((decideNameCandidateSearch('license 115 Nevada') as { reason: string }).reason, 'EVIDENCE_REQUEST_KEEPS_EXISTING_PATH');
+  assert.equal(plan('license 115 Nevada').hubs[0].mode, 'fail_closed');
+  // Names that merely contain a label word are still name searches.
+  for (const q of ['Allied', 'Allied Van Lines', 'CPCN Logistics LLC', 'SEC Financial Group', 'AGC Holdings', 'Las Vegas Moving Company', 'Reno Roofing LLC']) {
+    assert.equal(decideNameCandidateSearch(q).operation, 'NAME_CANDIDATES', q);
+  }
 });
 
 test('prior states are not stolen by Nevada', () => {
