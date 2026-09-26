@@ -13,6 +13,7 @@
  */
 import { planAskResearch, type AskResearchPlan } from '../research-planner.ts';
 import { validateAskQuestion } from '../ask-request.ts';
+import { nvIdentifierFormat } from '../nv-network.ts';
 import { isSpecialistHubId, type SpecialistHubId } from '../registry.ts';
 import { NAME_MAX_LENGTH, NAME_MIN_LENGTH, type NameHubScope } from './contract.ts';
 
@@ -61,6 +62,16 @@ const ORG_FORM = /\b(?:center|centre|facility|company|agency|associates|partners
 /** Planner protections that a clearly organization-shaped NAME may still be searched under (candidates first; the protected path remains the fallback). */
 const NAME_OVERRIDABLE_CODES = new Set(['MULTIPLE_SPECIALIST_HUBS', 'CARE_TASK', 'IDENTITY_CONTRADICTS_GEOGRAPHY']);
 const PLACE_LENS = /^(?:what does trusthub know about|show (?:the )?place lens(?: for)?)\b/i;
+
+/**
+ * ATH-NV-001R: a labeled identifier Ask already routes is never an unscoped name search -- the shared
+ * registry (plan.identifier), the label list above, and the state-module formats outside the registry
+ * (NTA CPCN, Nevada HCQC credential, SEC file number). Bare digits and "license 115" are not labeled
+ * and keep their own handling below.
+ */
+function recognizedIdentifierRequest(original: string, plan: AskResearchPlan): boolean {
+  return Boolean(plan.identifier) || IDENTIFIER_LABEL.test(original) || nvIdentifierFormat(original);
+}
 
 /**
  * Industry/category vocabulary. A token listed here is NOT distinctive on its own -- but it is
@@ -150,7 +161,7 @@ function decideName(
   const plan = options.plan ?? planAskResearch(original);
 
   if (PLACE_LENS.test(original)) return not('PLACE_LENS');
-  if (plan.identifier || IDENTIFIER_LABEL.test(original)) return not('IDENTIFIER_PATH_PROTECTED');
+  if (recognizedIdentifierRequest(original, plan)) return not('IDENTIFIER_PATH_PROTECTED');
   if (/^[\d\s#-]+$/.test(original)) return not('BARE_DIGITS_ARE_IDENTIFIER_INPUT');
   if (LEADING_IDENTIFIER_LABEL.test(original)) return not('MALFORMED_IDENTIFIER_ATTEMPT_PROTECTED');
   // A phrase that is unmistakably an ORGANIZATION NAME (name-shaped, carries an organization-form word

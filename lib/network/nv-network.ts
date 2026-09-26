@@ -270,10 +270,18 @@ const HCQC_CREDENTIAL_RE = /\b(\d{2,6}-(?:SNF|SFD|AGC|HIC|ADC|HHA|HBR|HSB|HPC|HF
 const SEC_FILE_RE = /\bsec\b(?:\s+(?:file|number))?(?:\s+(?:no\.?|#))?\s*(\d{3}-\d{3,6})\b/i;
 const LICENSE_NUMBER_RE = /\b(?:licen[cs]e|credential)\s*(?:number|no\.?|#)?\s*#?\s*[A-Z]?\d{2,}/i;
 
+/**
+ * Exact identifier formats the shared registry (identifiers.ts) does not carry: an NTA CPCN, an HCQC
+ * credential such as 116-AGC-41, and an SEC file number. Each is an identifier, never a business name.
+ */
+export function nvIdentifierFormat(query: string): boolean {
+  return CPCN_RE.test(query) || HCQC_CREDENTIAL_RE.test(query) || SEC_FILE_RE.test(query);
+}
+
 /** Exact labeled identifiers stay in identifier mode ahead of any Nevada vertical routing. */
 export function nvLabeledIdentifier(query: string): boolean {
   if (/\b(usdot|dot|mc|nmls|naic|npn|ccn|crd|iard|sec(?:\s+number|\s+file)?)\b[\s#:.-]*\d/i.test(query)) return true;
-  if (CPCN_RE.test(query) || HCQC_CREDENTIAL_RE.test(query) || SEC_FILE_RE.test(query)) return true;
+  if (nvIdentifierFormat(query)) return true;
   return LICENSE_NUMBER_RE.test(query);
 }
 
