@@ -1,0 +1,252 @@
+{
+  "verified_at": "2026-09-25T20:43:07.981Z",
+  "release_gate_passed": true,
+  "required_hubs": [
+    "move",
+    "lender",
+    "contractor",
+    "insurance",
+    "senior",
+    "investor"
+  ],
+  "missing": [],
+  "pending_certificates": [],
+  "blocker": null,
+  "fingerprint_method": "Accepted specialist snapshot artifact at certified repository SHA. Not recomputed from public HTML.",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "url": "https://www.movetrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.movetrusthub.com/nevada",
+      "final_url": "https://www.movetrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.movetrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada Moving &amp; Household Goods Intelligence",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "move-nv-state-intel-v1",
+      "fingerprint": "4a8af0569b5d5d023dbdcd7b37ac30842158282d11e45fd7ffbfd8cfa43d4f80",
+      "certified_release_sha": "d0dddb4e93ec1e5557e0fa006ae020cc2407b2e8",
+      "production_serving_sha": "d0dddb4e93ec1e5557e0fa006ae020cc2407b2e8",
+      "serving_proof": "GitHub Production deployment 6667128434 SHA equals the certified merge SHA and is the latest Production deployment.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    },
+    {
+      "hub_id": "lender",
+      "url": "https://www.lendertrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.lendertrusthub.com/nevada",
+      "final_url": "https://www.lendertrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.lendertrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada Mortgage Licensing &amp; Lending Intelligence",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "lender-nv-state-intel-v1",
+      "fingerprint": "a38a2aa9b3929f04c4cbea42a435866e6f1f31e41dc570e0b7ec1a7145ac6400",
+      "certified_release_sha": "a8dafcda82b5e2c561aa38ffd5fad60f097c226d",
+      "production_serving_sha": "a8dafcda82b5e2c561aa38ffd5fad60f097c226d",
+      "serving_proof": "GitHub deployment 6668864799 (environment 'Production – lender-trust-hub') is a8dafcd. The Nevada data release is c6970df (#57); #58 (a8dafcd) changes only two lines of the Nevada component for keyboard focus and leaves the snapshot and fingerprint unchanged.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    },
+    {
+      "hub_id": "contractor",
+      "url": "https://www.contractortrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.contractortrusthub.com/nevada",
+      "final_url": "https://www.contractortrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.contractortrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada contractor licensing",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "contractor-nv-state-intel-v1",
+      "fingerprint": "a0fd24f0af96fda1408c53af35675961dc7beb529b1e90336162e12a433ccbaa",
+      "certified_release_sha": "c6835be2c61b98fdaf5959d507a22a78f56ab615",
+      "production_serving_sha": "c6835be2c61b98fdaf5959d507a22a78f56ab615",
+      "serving_proof": "GitHub Production deployment 6666815483 SHA equals the certified merge SHA and is the latest Production deployment.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    },
+    {
+      "hub_id": "insurance",
+      "url": "https://www.insurancetrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.insurancetrusthub.com/nevada",
+      "final_url": "https://www.insurancetrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.insurancetrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada insurance regulatory research",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "insurance-nv-state-intel-v1",
+      "fingerprint": "633d2f8bbcde1f817532ccf3c02e9ba0deda879ed4ebac79046736acbcf19c55",
+      "certified_release_sha": "9bd835860b68507546deb0392bd5d261e327eaeb",
+      "production_serving_sha": "9bd835860b68507546deb0392bd5d261e327eaeb",
+      "serving_proof": "GitHub Production deployment 6667227150 SHA equals the certified merge SHA and is the latest Production deployment.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    },
+    {
+      "hub_id": "senior",
+      "url": "https://www.seniortrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.seniortrusthub.com/nevada",
+      "final_url": "https://www.seniortrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.seniortrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada Senior Care Research",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "senior-nv-state-intel-v1",
+      "fingerprint": "43e036b7d3db32c9c76393a79b51163f5d8de5014d90899213639715dd49b640",
+      "certified_release_sha": "234c6b09a019da362b1c383418d13e3715a5fbca",
+      "production_serving_sha": "234c6b09a019da362b1c383418d13e3715a5fbca",
+      "serving_proof": "GitHub Production deployment 6668830016 SHA equals the certified merge SHA and is the latest Production deployment.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    },
+    {
+      "hub_id": "investor",
+      "url": "https://www.investortrusthub.com/nevada",
+      "verified_at": "2026-09-25T20:43:07.981Z",
+      "http_status": 200,
+      "expected_url": "https://www.investortrusthub.com/nevada",
+      "final_url": "https://www.investortrusthub.com/nevada",
+      "ok": true,
+      "canonical": "https://www.investortrusthub.com/nevada",
+      "robots": "index, follow",
+      "x_robots_tag": null,
+      "headline": "Nevada Investment Adviser &amp; Securities Intelligence",
+      "intended_intelligence_page": true,
+      "headline_ok": true,
+      "not_noindex": true,
+      "selfCanonical": true,
+      "sso": false,
+      "mixed_case_redirects": {
+        "/Nevada": [
+          308,
+          "/nevada"
+        ],
+        "/NEVADA": [
+          308,
+          "/nevada"
+        ]
+      },
+      "city_route_status": {
+        "/nevada/las-vegas": 404
+      },
+      "sitemap_occurrences": 1,
+      "rating_schema": false,
+      "snapshot_version": "investor-nv-state-intel-v1",
+      "fingerprint": "951496e8f1ef02f7b2777455e965b0768c0a89c610dbe8d2a3b4ed192661f6f6",
+      "certified_release_sha": "68fa8d10ccc2fe71e61ca078ef26d79a0ea44b15",
+      "production_serving_sha": "68fa8d10ccc2fe71e61ca078ef26d79a0ea44b15",
+      "serving_proof": "GitHub Production deployment 6668334156 SHA equals the certified merge SHA and is the latest Production deployment.",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED"
+    }
+  ]
+}

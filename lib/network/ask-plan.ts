@@ -85,6 +85,18 @@ import {
   tnLabeledIdentifier,
   tnSpecialistUrl,
 } from './tn-network.ts';
+import {
+  NV_SEMANTIC_GUARDRAILS,
+  nvBareLicenseAmbiguous,
+  nvCaveatForHub,
+  nvExactCredentialRoute,
+  nvGatewayOnlyQuery,
+  nvIdentifierRoute,
+  nvLabeledIdentifier,
+  nvSpecialistUrl,
+  queryLooksLikeNevada,
+  routeNvAsk,
+} from './nv-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -218,6 +230,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'NC') return '/north-carolina';
   if (parsed.geography?.stateCode === 'MA') return '/massachusetts';
   if (parsed.geography?.stateCode === 'TN') return '/tennessee';
+  if (parsed.geography?.stateCode === 'NV') return '/nevada';
   return undefined;
 }
 
@@ -1493,6 +1506,114 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
     } else if (parsed.suggestedHubs[0] && !tnLabeledIdentifier(parsed.query)) {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateTn(h, tnCaveatForHub(primary)) : h));
+    }
+  }
+
+  // ATH-NV-001: Nevada annotates only when Nevada itself was named first (or a Nevada city with a
+  // vertical and no other state); exact identifiers outrank Nevada vertical routing.
+  const nvContext = parsed.geography?.stateCode === 'NV' && queryLooksLikeNevada(parsed.query);
+  if (nvContext) {
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateNv = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : nvSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? nvSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    const exact = nvExactCredentialRoute(parsed.query);
+    const nvRoute = routeNvAsk(parsed.query);
+    const gatewayOnly = nvGatewayOnlyQuery(parsed.query);
+    if (exact) {
+      const rest = hubs.filter((h) => h.hubId !== exact.hubId);
+      hubs = [
+        {
+          hubId: exact.hubId,
+          name: NETWORK_PUBLIC_NAMES[exact.hubId],
+          capabilityStatus: 'handoff',
+          destination: exact.destination,
+          reason: exact.caveat,
+          whatItCanAnswer: `Exact Nevada credential lookup on ${NETWORK_PUBLIC_NAMES[exact.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          compareHref: nvSpecialistUrl(exact.hubId),
+        },
+        ...rest,
+      ];
+    } else if (nvBareLicenseAmbiguous(parsed.query)) {
+      // ATH-NV-001: a bare Nevada license number is never guessed across hubs.
+      const clarification = NV_SEMANTIC_GUARDRAILS.bare_license_ambiguous;
+      const primary = hubs[0]?.hubId ?? parsed.suggestedHubs[0] ?? 'contractor';
+      hubs = [
+        {
+          hubId: primary,
+          name: NETWORK_PUBLIC_NAMES[primary],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          failKind: 'hard',
+          destination: undefined,
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          preview: { headline: clarification, grain: 'fail_closed', limitation: clarification },
+        },
+      ];
+    } else if (gatewayOnly) {
+      // ATH-NV-001: no specialist is claimed; the Nevada gateway (placeLensHref) owns the answer.
+      hubs = [];
+    } else if (nvRoute) {
+      const ranking = /does not select a winner/.test(nvRoute.caveat);
+      const already = hubs.some((h) => h.hubId === nvRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: nvRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[nvRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: nvRoute.destination,
+            reason: nvRoute.caveat,
+            whatItCanAnswer: `Nevada research on ${NETWORK_PUBLIC_NAMES[nvRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          },
+          ...hubs.filter((h) => h.hubId !== nvRoute.hubId),
+        ];
+      } else if (ranking) {
+        hubs = hubs.map((h) =>
+          h.hubId === nvRoute.hubId
+            ? { ...h, capabilityStatus: 'handoff' as const, destination: nvRoute.destination, reason: `${h.reason} ${nvRoute.caveat}`, compareHref: nvRoute.destination }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === nvRoute.hubId), ...hubs.filter((h) => h.hubId !== nvRoute.hubId)];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === nvRoute.hubId ? annotateNv(h, nvRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === nvRoute.hubId), ...hubs.filter((h) => h.hubId !== nvRoute.hubId)];
+      }
+      // A single-vertical Nevada question claims one specialist, not the shared place fan-out.
+      if (!/\b(and|or|compare|versus|vs\.?)\b/i.test(parsed.query)) hubs = hubs.filter((h) => h.hubId === nvRoute.hubId);
+    } else if (parsed.suggestedHubs[0] && !nvLabeledIdentifier(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateNv(h, nvCaveatForHub(primary)) : h));
+    }
+  } else {
+    // ATH-NV-001: Nevada-only identifier formats (NTA CPCN, HCQC credential, SEC file number) name their
+    // hub even without Nevada context; shared-parser identifier families keep their own routing.
+    const identifierRoute = parsed.intent === 'identifier' && !parsed.identifier?.ambiguous ? undefined : nvIdentifierRoute(parsed.query, queryLooksLikeTennessee(parsed.query));
+    if (identifierRoute) {
+      hubs = [
+        {
+          hubId: identifierRoute.hubId,
+          name: NETWORK_PUBLIC_NAMES[identifierRoute.hubId],
+          capabilityStatus: 'handoff',
+          destination: identifierRoute.destination,
+          reason: identifierRoute.caveat,
+          whatItCanAnswer: `Exact identifier lookup on ${NETWORK_PUBLIC_NAMES[identifierRoute.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Identifier routing — not geography.',
+          compareHref: nvSpecialistUrl(identifierRoute.hubId),
+        },
+        ...hubs.filter((h) => h.hubId !== identifierRoute.hubId),
+      ];
     }
   }
 

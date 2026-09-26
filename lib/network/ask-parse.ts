@@ -47,6 +47,7 @@ import { detectOhCity, queryLooksLikeOhio } from './oh-network.ts';
 import { detectGaCity, queryLooksLikeGeorgia } from './ga-network.ts';
 import { detectMaCity, queryLooksLikeMassachusetts } from './ma-network.ts';
 import { detectTnCity, queryLooksLikeTennessee } from './tn-network.ts';
+import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -99,6 +100,31 @@ const BROWARD = /\bbroward\b/i;
 const PALM = /\bpalm\s*beach\b/i;
 
 function geography(q: string): ParsedGeography | undefined {
+  // ATH-NV-001: Nevada named before any other state (or a Nevada city with a TrustHub vertical and no
+  // other state) is Nevada. A state code named before Nevada ("movers CA and Nevada") keeps that state,
+  // because the shared fallback below would otherwise read the later full name first.
+  if (queryLooksLikeNevada(q)) {
+    const nvCity = detectNvCity(q);
+    return {
+      stateCode: 'NV',
+      stateName: 'Nevada',
+      city: nvCity,
+      meaning: nvCity
+        ? `${nvCity}, Nevada. Nevada research is statewide. ${nvCity} is not a separate regulatory system and has no Ask city route.`
+        : 'Nevada. State licensing is not physical location. Nevada city and county Ask pages are not published.',
+    };
+  }
+  const codeBeforeNevada = stateCodeNamedBeforeNevada(q);
+  if (codeBeforeNevada) {
+    const j = US_JURISDICTIONS.find((row) => row.code === codeBeforeNevada);
+    if (j) {
+      return {
+        stateCode: j.code,
+        stateName: j.name,
+        meaning: `${j.name}. Named before Nevada; geography meaning stays source-specific to the specialist.`,
+      };
+    }
+  }
   // ATH-TN-001: Tennessee named before any other state (or a Tennessee city with a TrustHub vertical
   // and no other state) is Tennessee. Another state named first keeps its own routing below.
   if (queryLooksLikeTennessee(q)) {

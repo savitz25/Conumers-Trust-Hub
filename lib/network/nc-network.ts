@@ -4,6 +4,7 @@ import verificationJson from '../../data/network/north-carolina-verification.jso
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const NC_NETWORK_CONTRACT = 'ath-nc-network-release-v1' as const;
 
@@ -369,6 +370,7 @@ export function classifyNcHub(query: string): SpecialistHubId | undefined {
 
 export function routeNcAsk(query: string): NcRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (earlierStateNamed(query, /\bpennsylvania\b/i)) return undefined;
   if (earlierStateNamed(query, /\bnew york\b/i)) return undefined;
   if (earlierStateNamed(query, /\billinois\b/i)) return undefined;

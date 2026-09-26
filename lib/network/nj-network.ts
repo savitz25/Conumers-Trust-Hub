@@ -3,6 +3,7 @@ import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, SPECIALIST_HUB_IDS } from './registry.ts';
 import { detectNjPilotCountySlug, njCountySpecialistUrl } from './nj-counties.ts';
 import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const NJ_NETWORK_CONTRACT = 'ath-nj-network-v1' as const;
 
@@ -72,7 +73,7 @@ export function queryLooksLikeNewJersey(query: string): boolean {
   if (!county) return false;
   const strong =
     /\b(bergen|hudson|middlesex|monmouth|camden|morris|somerset|union)\s+county\b/i.test(query);
-  const otherState = /\b(florida|texas|new york|california|pennsylvania|massachusetts|tennessee)\b/i.test(query);
+  const otherState = /\b(florida|texas|new york|california|pennsylvania|massachusetts|tennessee|nevada)\b/i.test(query);
   return strong && !otherState;
 }
 
@@ -141,6 +142,7 @@ export function classifyNjHub(query: string): SpecialistHubId | undefined {
 
 export function routeNjAsk(query: string): NjRoute | undefined {
   if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (!queryLooksLikeNewJersey(query)) return undefined;
   const hubId = classifyNjHub(query);
   if (!hubId) return undefined;
