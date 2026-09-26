@@ -23,7 +23,7 @@
   },
   "ask_graph_writes": 0,
   "ask_claim_eligibility_broadened": false,
-  "status": "AWAITING_PRODUCTION_CERTIFICATE",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
   "release_gate_passed": true,
   "ask_fingerprint": "f4b89ff2b7ad0c98af8132541d6ce4a2513753aa821a523eeab526afa681d672",
   "specialists": {
@@ -77,5 +77,78 @@
       "production_serving_sha": "68fa8d10ccc2fe71e61ca078ef26d79a0ea44b15"
     }
   },
-  "ask_production": null
+  "ask_production": {
+    "verified_at": "2026-09-26T15:05:05Z",
+    "ask_start_sha": "264305b66996611f3d2c11a35e32af8a94dbf4e6",
+    "gateway_pr": 212,
+    "gateway_head_sha": "820a7617bc1b92c5e29368cba8f401d460a0943d",
+    "gateway_merge_sha": "09ea8036135295661d501f316b1fba7e40f8dfbb",
+    "gateway_deployment_id": 6679965431,
+    "routing_pr": 213,
+    "routing_head_sha": "bac6fa37166b00ea13e9db460297011c846b720f",
+    "routing_merge_sha": "04392ddd185a81bb37d46103cabe0aae85c27d8a",
+    "pr": 213,
+    "merge_sha": "04392ddd185a81bb37d46103cabe0aae85c27d8a",
+    "deployment_id": 6680402271,
+    "environment": "Production",
+    "deployed_sha": "04392ddd185a81bb37d46103cabe0aae85c27d8a",
+    "unique_deployment_url": "https://conumers-trust-bm39pua94-savitz25-s-projects.vercel.app",
+    "live_route": "https://www.asktrusthub.com/nevada",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/nevada",
+    "robots": "index, follow",
+    "sso": false,
+    "mixed_case_308": [
+      "/Nevada",
+      "/NEVADA"
+    ],
+    "city_route_404": [
+      "/nevada/las-vegas",
+      "/nevada/reno",
+      "/nevada/henderson",
+      "/nevada/clark-county"
+    ],
+    "sitemap_occurrences": 1,
+    "rating_schema": false,
+    "six_canonical_specialist_links": true,
+    "legacy_routes_linked": false,
+    "axe_widths_clean": [
+      1440,
+      390,
+      320
+    ],
+    "page_qa": "66/66",
+    "ask_fingerprint": "f4b89ff2b7ad0c98af8132541d6ce4a2513753aa821a523eeab526afa681d672",
+    "ask_fingerprint_method": "nvPublicationSemanticFingerprint() at 04392ddd. It hashes the publication manifest; ATH-NV-001R changed routing code only, so the value is unchanged.",
+    "routing_matrix": "56/57",
+    "routing_matrix_note": "The one miss is \"Nevada CPCN application\" (HTTP 400 execution_not_authorized), classified PRE_EXISTING / NON_BLOCKING_FOR_NV.",
+    "identifier_matrix": "51/51",
+    "identifier_matrix_before_routing_fix": "46/51",
+    "identifier_queries_fixed": [
+      "CPCN 3251.3",
+      "116-AGC-41",
+      "116-AGC-41 Las Vegas",
+      "SEC 801-12345",
+      "SEC 801-12345 Las Vegas"
+    ],
+    "ask_page_identifier_check": "55/55",
+    "state_collision_matrix": "25/25",
+    "city_matrix": "15/15",
+    "ambiguous_license_matrix": "9/9",
+    "prior_state_routing_matrix": "23/23",
+    "human_review_queries": 17,
+    "prior_states_200": "16/17",
+    "prior_states_note": "/florida answers 308 to /places/florida (200) by design; the other 16 prior state pages answer 200 directly.",
+    "matrix_source": "Independent NV-CLOSEOUT matrix of 197 queries (180 automated, 17 human-reviewed) covering routing, state collisions, cities, identifiers, ambiguous licenses and prior states. The 165-query packet named in the audit ticket was not present on the verifying machine.",
+    "routing_matrix_method": "POST /api/guided-research with the labeled category interpretation (interpretAs=category), compared with planAskResearch at the merged tree; identifier queries were also loaded on the plain /ask page, where none may render the name-candidate search.",
+    "pre_existing_issues": [
+      {
+        "query": "Nevada CPCN application",
+        "result": "HTTP 400 execution_not_authorized from /api/guided-research",
+        "classification": "PRE_EXISTING / NON_BLOCKING_FOR_NV",
+        "evidence": "\"Tennessee mover application\" and \"Massachusetts mover application\" return the same 400 on Production. The guided orchestrator is not changed by #212 or #213."
+      }
+    ],
+    "local_work": "NO"
+  }
 }

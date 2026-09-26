@@ -292,8 +292,61 @@ test('publication fingerprint uses the Ask canonical implementation and is recor
   assert.equal(closeout.publication_manifest_fingerprint, NV_PUBLICATION_FINGERPRINT);
   assert.equal(release.ask_fingerprint, NV_PUBLICATION_FINGERPRINT);
   assert.match(closeout.publication_manifest_fingerprint_method, /nvPublicationSemanticFingerprint\(\)/);
-  assert.equal(closeout.status, 'AWAITING_PRODUCTION_CERTIFICATE');
-  assert.equal(closeout.ask_production, null);
+  // The certificate lives only in the closeout and release records; the manifest never carries it.
+  assert.equal(M.status, 'ASK_PUBLICATION_CONTRACT');
+  assert.equal(M.ask_production, null);
+  if (closeout.status === 'CLOSED_PRODUCTION_VERIFIED') {
+    // ATH-NV-001P: Production certified at the ATH-NV-001R merge SHA (gateway #212, routing #213).
+    const P = closeout.ask_production;
+    assert.equal(release.status, 'CLOSED_PRODUCTION_VERIFIED');
+    assert.deepEqual(release.ask_production, P);
+    assert.equal(NV_PUBLICATION_FINGERPRINT, 'f4b89ff2b7ad0c98af8132541d6ce4a2513753aa821a523eeab526afa681d672');
+    assert.equal(P.ask_fingerprint, NV_PUBLICATION_FINGERPRINT);
+    assert.equal(P.ask_start_sha, '264305b66996611f3d2c11a35e32af8a94dbf4e6');
+    assert.equal(P.gateway_pr, 212);
+    assert.equal(P.gateway_head_sha, '820a7617bc1b92c5e29368cba8f401d460a0943d');
+    assert.equal(P.gateway_merge_sha, '09ea8036135295661d501f316b1fba7e40f8dfbb');
+    assert.equal(P.routing_pr, 213);
+    assert.equal(P.routing_head_sha, 'bac6fa37166b00ea13e9db460297011c846b720f');
+    assert.equal(P.routing_merge_sha, '04392ddd185a81bb37d46103cabe0aae85c27d8a');
+    assert.equal(P.merge_sha, P.routing_merge_sha);
+    assert.equal(P.deployed_sha, P.merge_sha);
+    assert.equal(P.deployment_id, 6680402271);
+    assert.equal(P.environment, 'Production');
+    assert.equal(P.http_status, 200);
+    assert.equal(P.canonical, 'https://www.asktrusthub.com/nevada');
+    assert.equal(P.robots, 'index, follow');
+    assert.equal(P.sso, false);
+    assert.deepEqual(P.mixed_case_308, ['/Nevada', '/NEVADA']);
+    assert.ok(P.city_route_404.includes('/nevada/las-vegas') && P.city_route_404.includes('/nevada/reno'));
+    assert.equal(P.sitemap_occurrences, 1);
+    assert.equal(P.rating_schema, false);
+    assert.equal(P.legacy_routes_linked, false);
+    assert.deepEqual(P.axe_widths_clean, [1440, 390, 320]);
+    assert.equal(P.identifier_matrix, '51/51');
+    assert.equal(P.state_collision_matrix, '25/25');
+    assert.equal(P.city_matrix, '15/15');
+    assert.equal(P.ambiguous_license_matrix, '9/9');
+    assert.equal(P.prior_state_routing_matrix, '23/23');
+    assert.deepEqual(P.identifier_queries_fixed, ['CPCN 3251.3', '116-AGC-41', '116-AGC-41 Las Vegas', 'SEC 801-12345', 'SEC 801-12345 Las Vegas']);
+    assert.equal(P.pre_existing_issues.length, 1);
+    assert.equal(P.pre_existing_issues[0].classification, 'PRE_EXISTING / NON_BLOCKING_FOR_NV');
+    assert.equal(P.local_work, 'NO');
+    assert.equal(closeout.local_work_decision, 'NO');
+    assert.equal(closeout.network_release_gate.passed, true);
+    // Specialist evidence is frozen: the certificate records the same six releases the manifest pins.
+    for (const hub of M.hubs) {
+      for (const doc of [closeout, release]) {
+        const s = doc.specialists[hub.hub_id];
+        assert.equal(s.certified_release_sha, hub.certified_release_sha, hub.hub_id);
+        assert.equal(s.fingerprint, hub.fingerprint, hub.hub_id);
+        assert.equal(s.specialist_status, 'CLOSED_PRODUCTION_VERIFIED', hub.hub_id);
+      }
+    }
+  } else {
+    assert.equal(closeout.status, 'AWAITING_PRODUCTION_CERTIFICATE');
+    assert.equal(closeout.ask_production, null);
+  }
 });
 
 test('ATH-NV-001R: routed identifiers never fall into the name-candidate search', () => {
