@@ -1,0 +1,1309 @@
+{
+  "routing": [
+    {
+      "query": "mover Minnesota",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "movers Minnesota",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "household goods mover Minnesota",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "Minnesota mover permit",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "Minnesota household goods permit",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "intrastate mover Minnesota",
+      "expected_hub": "move",
+      "note": ""
+    },
+    {
+      "query": "moving company Minneapolis",
+      "expected_hub": "move",
+      "note": "city = geography only"
+    },
+    {
+      "query": "mortgage lender Minnesota",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "MLO Minnesota",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "mortgage loan originator Minnesota",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "mortgage servicer Minnesota",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "Minnesota HMDA",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "mortgage broker Minnesota",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "mortgage lender Minneapolis",
+      "expected_hub": "lender",
+      "note": ""
+    },
+    {
+      "query": "contractor Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "residential building contractor Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "remodeler Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "roofer Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "electrical contractor Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "plumbing contractor Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "Minnesota DLI credential",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "contractor license Minnesota",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "general contractor St Paul",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "Minnesota contractor enforcement",
+      "expected_hub": "contractor",
+      "note": ""
+    },
+    {
+      "query": "insurer Minnesota",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "insurance company Minnesota",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "insurance agent Minnesota",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "insurance agency Minnesota",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "Minnesota insurance complaints",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "insurance agent Duluth",
+      "expected_hub": "insurance",
+      "note": ""
+    },
+    {
+      "query": "nursing home Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "nursing homes Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "assisted living Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "dementia care Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "memory care Minnesota",
+      "expected_hub": "senior",
+      "note": "answer from MDH dementia-care license only"
+    },
+    {
+      "query": "boarding care Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "home care Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "home health Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "hospice Minnesota",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "assisted living Minneapolis",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "assisted living St Paul",
+      "expected_hub": "senior",
+      "note": ""
+    },
+    {
+      "query": "nursing home Minneapolis",
+      "expected_hub": "senior",
+      "note": "PRE_EXISTING_SHARED_SEARCH_GAP on Senior; Ask must route to Senior /minnesota or fail closed, never another state"
+    },
+    {
+      "query": "investment adviser Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "RIA Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "ERA Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "exempt reporting adviser Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "notice filing Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "broker dealer Minnesota",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "financial advisor Minneapolis",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "Minnesota securities enforcement",
+      "expected_hub": "investor",
+      "note": ""
+    },
+    {
+      "query": "Minnesota",
+      "expected_hub": "gateway",
+      "note": "state gateway only"
+    },
+    {
+      "query": "Minnesota consumer research",
+      "expected_hub": "gateway",
+      "note": ""
+    },
+    {
+      "query": "best contractor Minnesota",
+      "expected_hub": "refuse_ranking",
+      "note": ""
+    },
+    {
+      "query": "top rated nursing home Minnesota",
+      "expected_hub": "refuse_ranking",
+      "note": ""
+    },
+    {
+      "query": "safest assisted living Minnesota",
+      "expected_hub": "refuse_ranking",
+      "note": ""
+    },
+    {
+      "query": "#1 mover Minnesota",
+      "expected_hub": "refuse_ranking",
+      "note": ""
+    },
+    {
+      "query": "how many providers in Minnesota",
+      "expected_hub": "reject_cross_hub_total",
+      "note": ""
+    },
+    {
+      "query": "total licensed businesses Minnesota",
+      "expected_hub": "reject_cross_hub_total",
+      "note": ""
+    },
+    {
+      "query": "280,548 Minnesota contractors",
+      "expected_hub": "reject_false_headline",
+      "note": ""
+    },
+    {
+      "query": "all Minnesota senior facilities",
+      "expected_hub": "reject_cross_hub_total",
+      "note": ""
+    },
+    {
+      "query": "Minnesota mortgage servicer",
+      "expected_hub": "lender"
+    },
+    {
+      "query": "Minnesota HMDA activity",
+      "expected_hub": "lender"
+    },
+    {
+      "query": "Minnesota residential remodeler",
+      "expected_hub": "contractor"
+    },
+    {
+      "query": "Minnesota home health",
+      "expected_hub": "senior"
+    },
+    {
+      "query": "Minnesota hospice",
+      "expected_hub": "senior"
+    },
+    {
+      "query": "Minnesota ERA",
+      "expected_hub": "investor"
+    },
+    {
+      "query": "Minnesota notice filing",
+      "expected_hub": "investor"
+    }
+  ],
+  "identifiers": [
+    {
+      "query": "MnDOT 123456",
+      "expected_hub": "move",
+      "identifier_family": "mn_mndot_carrier_number",
+      "note": "MnDOT # is verification only; no roster held"
+    },
+    {
+      "query": "Minnesota mover permit 123456",
+      "expected_hub": "move",
+      "identifier_family": "mn_mndot_carrier_number",
+      "note": ""
+    },
+    {
+      "query": "USDOT 1234567 Minnesota",
+      "expected_hub": "move",
+      "identifier_family": "usdot",
+      "note": "USDOT outranks Minnesota routing; USDOT is not a MN permit"
+    },
+    {
+      "query": "MC 123456 Minnesota",
+      "expected_hub": "move",
+      "identifier_family": "mc",
+      "note": ""
+    },
+    {
+      "query": "NMLS 12345 Minnesota",
+      "expected_hub": "lender",
+      "identifier_family": "nmls",
+      "note": ""
+    },
+    {
+      "query": "BC123456 Minnesota",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": ""
+    },
+    {
+      "query": "Minnesota DLI BC123456",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": ""
+    },
+    {
+      "query": "RR123456 Minnesota",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "MN Residential Roofer; must not route to Florida"
+    },
+    {
+      "query": "QB123456 Minnesota",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "person-grain credential: exact-number lookup only, no name"
+    },
+    {
+      "query": "NAIC 12345 Minnesota",
+      "expected_hub": "insurance",
+      "identifier_family": "naic_company_code",
+      "note": ""
+    },
+    {
+      "query": "NPN 1234567 Minnesota",
+      "expected_hub": "insurance",
+      "identifier_family": "npn",
+      "note": ""
+    },
+    {
+      "query": "CCN 245012 Minnesota",
+      "expected_hub": "senior",
+      "identifier_family": "cms_ccn",
+      "note": ""
+    },
+    {
+      "query": "HFID 00002",
+      "expected_hub": "senior",
+      "identifier_family": "mn_mdh_hfid",
+      "note": ""
+    },
+    {
+      "query": "MDH license 424820",
+      "expected_hub": "senior",
+      "identifier_family": "mn_mdh_license",
+      "note": ""
+    },
+    {
+      "query": "CRD 105958 Minnesota",
+      "expected_hub": "investor",
+      "identifier_family": "crd",
+      "note": ""
+    },
+    {
+      "query": "SEC 801-12345 Minnesota",
+      "expected_hub": "investor",
+      "identifier_family": "sec_file_number",
+      "note": ""
+    },
+    {
+      "query": "123456 Minnesota",
+      "expected_hub": "fail_closed",
+      "identifier_family": null,
+      "note": "bare number: never guessed"
+    },
+    {
+      "query": "license 424820",
+      "expected_hub": "fail_closed",
+      "identifier_family": null,
+      "note": "bare labelled number without state/class is ambiguous (MDH vs DLI vs others)"
+    },
+    {
+      "query": "license 123456 Minnesota",
+      "expected_hub": "fail_closed",
+      "identifier_family": null,
+      "note": "ambiguous across MDH and DLI; ask for prefix or class"
+    }
+  ],
+  "ambiguous_license": [
+    {
+      "query": "license 424820 Minnesota",
+      "expected": "fail_closed_or_disambiguate",
+      "why": "MDH licenses are six digits; DLI credentials need a two-character prefix; the number alone does not name a hub"
+    },
+    {
+      "query": "123456",
+      "expected": "fail_closed",
+      "why": "bare digits"
+    },
+    {
+      "query": "HIC 12345 Minnesota",
+      "expected": "fail_closed_or_contractor_guidance",
+      "why": "HIC is a Nevada Senior class and a PA contractor label; not a Minnesota credential"
+    },
+    {
+      "query": "RC123456",
+      "expected": "unchanged_current_behavior",
+      "why": "no state named; must not become Minnesota"
+    },
+    {
+      "query": "BC123456",
+      "expected": "unchanged_current_behavior",
+      "why": "no state named; Minnesota DLI routing requires Minnesota or DLI context"
+    },
+    {
+      "query": "2229",
+      "expected": "fail_closed",
+      "why": "No unlabeled number promotion to NMLS or other exact identifier"
+    },
+    {
+      "query": "2229 Minnesota",
+      "expected": "fail_closed",
+      "why": "No unlabeled number promotion to NMLS or other exact identifier"
+    },
+    {
+      "query": "license 2229 Minnesota",
+      "expected": "fail_closed",
+      "why": "No unlabeled number promotion to NMLS or other exact identifier"
+    }
+  ],
+  "state_collisions": [
+    {
+      "query": "Rochester NY contractor",
+      "expected_state": "NY",
+      "rule": "explicit other state wins; bare Rochester is ambiguous"
+    },
+    {
+      "query": "contractor Rochester",
+      "expected_state": null,
+      "rule": "bare Rochester is not Minnesota"
+    },
+    {
+      "query": "Rochester Minnesota contractor",
+      "expected_state": "MN",
+      "rule": "Minnesota named"
+    },
+    {
+      "query": "Rochester MN nursing home",
+      "expected_state": "MN"
+    },
+    {
+      "query": "St Paul Virginia contractor",
+      "expected_state": "VA",
+      "rule": "St. Paul, VA exists; explicit state wins"
+    },
+    {
+      "query": "Saint Paul contractor",
+      "expected_state": "MN",
+      "rule": "St. Paul / Saint Paul without another state (confirm current precedent)"
+    },
+    {
+      "query": "Duluth GA assisted living",
+      "expected_state": "GA"
+    },
+    {
+      "query": "Duluth assisted living",
+      "expected_state": "MN"
+    },
+    {
+      "query": "Bloomington IN contractor",
+      "expected_state": "IN"
+    },
+    {
+      "query": "Bloomington IL insurance agent",
+      "expected_state": "IL"
+    },
+    {
+      "query": "Bloomington contractor",
+      "expected_state": null,
+      "rule": "bare Bloomington is ambiguous (IN, IL, MN)"
+    },
+    {
+      "query": "Minneapolis contractor",
+      "expected_state": "MN"
+    },
+    {
+      "query": "Minnesota contractor Tennessee",
+      "expected_state": "MN",
+      "rule": "state named first wins (Nevada precedent: 'Nevada named first')"
+    },
+    {
+      "query": "Tennessee mover Minnesota",
+      "expected_state": "TN",
+      "rule": "state named first wins"
+    },
+    {
+      "query": "MN mover",
+      "expected_state": "MN"
+    },
+    {
+      "query": "Nevada mover Minnesota",
+      "expected_state": "NV",
+      "rule": "earlier state classifiers keep their state when named first"
+    }
+  ],
+  "florida_prefix_regression": [
+    {
+      "query": "CBC015082",
+      "expected": "florida_state_contractor_license (unchanged)"
+    },
+    {
+      "query": "verify contractor license CBC015082",
+      "expected": "florida_state_contractor_license (unchanged)"
+    },
+    {
+      "query": "CGC1523456",
+      "expected": "florida (unchanged)"
+    },
+    {
+      "query": "CCC1327213",
+      "expected": "florida (unchanged)"
+    },
+    {
+      "query": "RR123456 Minnesota",
+      "expected": "mn_dli_credential (Residential Roofer)"
+    },
+    {
+      "query": "RR123456",
+      "expected": "unchanged current behavior; not Minnesota without Minnesota/DLI context"
+    },
+    {
+      "query": "RC29027885 Florida",
+      "expected": "florida registered roofing (unchanged)"
+    },
+    {
+      "query": "RC123456 Minnesota",
+      "expected": "fail_closed: RC is not a printed Minnesota DLI prefix"
+    },
+    {
+      "query": "RF123456 Minnesota",
+      "expected": "fail_closed: RF is not a printed Minnesota DLI prefix"
+    },
+    {
+      "query": "BC123456 Minnesota",
+      "expected": "mn_dli_credential (Residential Building Contractor)"
+    },
+    {
+      "query": "CR123456 Minnesota",
+      "expected": "mn_dli_credential (Residential Remodeler); must not match Florida CRC"
+    },
+    {
+      "query": "CRC123456",
+      "expected": "florida certified residential contractor (unchanged)"
+    }
+  ],
+  "legacy_routes": {
+    "observed_at": "2026-09-26",
+    "rule": "Ask links only to each specialist's canonical /minnesota; never to legacy, local, county or city routes.",
+    "hubs": {
+      "move": {
+        "canonical": "/minnesota (200, self-canonical, index)",
+        "legacy": [
+          "/moving-to/minnesota (200)",
+          "/moving-to/minnesota/{city}-mn x10 (duluth, eagan, eden-prairie, edina, maple-grove, plymouth, rochester, stillwater, wayzata, woodbury)",
+          "/resources/routes/minnesota-to-{state} x7",
+          "/hubs/minnesota (308)",
+          "/hubs/browse/minnesota (308)"
+        ]
+      },
+      "lender": {
+        "canonical": "/minnesota (200 observed 2026-09-26; PR #59 merged; not closed)",
+        "legacy": [
+          "/local-lenders/minnesota",
+          "/local-lenders/minnesota/hennepin",
+          "/local-lenders/minnesota/ramsey"
+        ]
+      },
+      "contractor": {
+        "canonical": "/minnesota (200, self-canonical, index)",
+        "legacy": []
+      },
+      "insurance": {
+        "canonical": "/minnesota (200, self-canonical, index; CLOSED)",
+        "legacy": [
+          "/hubs/minnesota (200)",
+          "/hubs/browse/minnesota (200)",
+          "/hubs/minnesota/minneapolis (in sitemap; city route)"
+        ]
+      },
+      "senior": {
+        "canonical": "/minnesota (200, self-canonical, index)",
+        "legacy": []
+      },
+      "investor": {
+        "canonical": "/minnesota (404 until closeout)",
+        "legacy": []
+      },
+      "ask": {
+        "canonical": "/minnesota (404; not published)",
+        "legacy": [
+          "/moving-to/minnesota (308)"
+        ]
+      }
+    }
+  },
+  "source_clocks": {
+    "policy": "Never create one Minnesota-wide as-of date.",
+    "move": {
+      "retrieved": "2026-09-26T13:40:00Z (MnDOT pages + 2025 Minnesota Statutes)",
+      "permit_roster_as_of": null,
+      "federal_overlay_observed": "2026-09-26T13:20:00Z"
+    },
+    "contractor": {
+      "retrieved": "2026-09-26T14:11:34Z (DLI nightly export)",
+      "dli_as_of": null,
+      "export_member_datetime": "2026-09-26T04:32:00",
+      "enforcement_actions": "2024-01-05 .. 2026-08-31"
+    },
+    "senior": {
+      "retrieved": "2026-09-26T14:14:50Z (MDH daily directory)",
+      "annual_directory_as_of": "2026-03-13",
+      "findings_retrieved": "2026-09-26T14:20:33Z",
+      "cms": "per-class CMS clocks, separate"
+    },
+    "lender": "PENDING_SPECIALIST_CLOSEOUT",
+    "insurance": {
+      "retrieved": "2026-09-26T12:00:00Z (Minnesota Commerce pages)",
+      "source_as_of": null,
+      "enforcement_window": "2022 through current 2026 (CARDS)"
+    },
+    "investor": "PENDING_SPECIALIST_CLOSEOUT"
+  },
+  "privacy": {
+    "contractor_pre_existing_concern": {
+      "classification": "PRE_EXISTING_PRIVACY_DATA_MODEL_CONCERN",
+      "detail": "Production publishes each DLI person credential (218,686 at the 2026-08-14 load) as a contractor profile, with phone and street address in raw_payload. MN-CON-001 did not change this.",
+      "ask_rule": "Ask Minnesota must not link to, promote, or broaden individual DLI profiles; person credentials resolve only by exact number on Contractor /minnesota. ASK_GRAPH_WRITES = 0; claim eligibility unchanged.",
+      "owner": "network QA / Contractor data owner (flag only; not fixed in preflight)"
+    }
+  },
+  "harness": {
+    "suites": [
+      "routing_matrix",
+      "state_collision_matrix",
+      "identifier_matrix",
+      "ambiguous_license_matrix",
+      "florida_prefix_regression",
+      "legacy_route_audit",
+      "source_clock_audit",
+      "cross_hub_total_audit",
+      "graph_write_audit",
+      "ranking_safety_audit",
+      "prior_state_regression (17 probed queries: ATH-NV-001R identifier fixes, Nevada/Tennessee hub tests, Florida CBC)"
+    ],
+    "runner": "scripts/audit-minnesota-preflight.mjs (records Ask main behavior as a baseline; asserts only the preflight contract)"
+  },
+  "baseline_findings_on_ask_main": {
+    "ask_main": "04392ddd185a81bb37d46103cabe0aae85c27d8a",
+    "routing_hub_agreement": "41/50 specialist-routed queries already reach the expected hub",
+    "must_fix_in_final_implementation": [
+      "Rochester resolves to NY even when Minnesota is named ('Rochester Minnesota contractor', 'Rochester MN nursing home' -> NY): Minnesota named must win; bare Rochester stays ambiguous.",
+      "No Minnesota gateway: 'Minnesota', 'how many providers in Minnesota', 'total licensed businesses Minnesota' fall to CLARIFY; final implementation routes to /minnesota and rejects cross-hub totals explicitly.",
+      "Ranking queries ('best contractor Minnesota', 'top rated nursing home Minnesota', 'safest assisted living Minnesota', '#1 mover Minnesota') reach COHORT browse; final implementation must refuse ranking for Minnesota as Nevada does.",
+      "'280,548 Minnesota contractors' reaches contractor COHORT; must be answered with the business-class grain, never the credential total.",
+      "Minnesota-only identifiers are unrecognized: MnDOT #, DLI prefix credentials (BC/CR/RR/QB...), HFID, MDH license; SEC file number with Minnesota falls to CLARIFY.",
+      "Vertical terms without a hub today: household goods permit, MLO, DLI credential, dementia care, boarding care, home care, notice filing, broker dealer, securities enforcement."
+    ],
+    "pre_existing_outside_minnesota": [
+      "'Bloomington IN contractor' resolves to IL (Indiana city collision) - record for network QA; not a Minnesota blocker."
+    ],
+    "keep_unchanged": [
+      "Labeled USDOT/MC/NMLS/NAIC/NPN/CCN/CRD route correctly today",
+      "Florida CBC/CGC/CCC identifier routing",
+      "'Tennessee mover Minnesota' -> TN and 'Nevada mover Minnesota' -> NV (state named first)",
+      "'St Paul Virginia' -> VA"
+    ],
+    "r1_reevaluation": {
+      "ask_main": "b34b2b4a81cf42ddfc890f37c02c703285d47a22",
+      "previous_ask_main": "04392ddd185a81bb37d46103cabe0aae85c27d8a",
+      "planner_code_diff": "none (#214 touched data/network/nevada, data/releases and lib/network/ath-nv-001.test.ts only)",
+      "baseline_diffs": 0,
+      "hub_agreement": "41/50 (unchanged)",
+      "prior_state_regression": "17/17 incl. all five ATH-NV-001R identifier fixes",
+      "required_fixes_still_open": [
+        "Minnesota gateway",
+        "ranking refusals",
+        "cross-hub total refusal",
+        "280,548 false-headline refusal",
+        "household goods permit",
+        "MLO",
+        "DLI credential",
+        "dementia care",
+        "boarding care",
+        "home care",
+        "notice filing",
+        "broker dealer",
+        "securities enforcement",
+        "Rochester MN -> MN",
+        "MnDOT # / DLI prefix / HFID / MDH license identifiers",
+        "SEC 801-12345 Minnesota executes (currently investor + CLARIFY)"
+      ],
+      "pre_existing_network_geo_bug": {
+        "query": "Bloomington IN contractor",
+        "observed": "IL",
+        "classification": "PRE_EXISTING_NETWORK_GEO_BUG",
+        "minnesota_blocker": false
+      }
+    }
+  },
+  "refresh": "ATH-MN-PREFLIGHT-R1",
+  "prior_state_regression": [
+    {
+      "query": "CPCN 3251.3",
+      "expected_hub": "move",
+      "source": "ATH-NV-001R fixed"
+    },
+    {
+      "query": "116-AGC-41",
+      "expected_hub": "senior",
+      "source": "ATH-NV-001R fixed"
+    },
+    {
+      "query": "116-AGC-41 Las Vegas",
+      "expected_hub": "senior",
+      "source": "ATH-NV-001R fixed"
+    },
+    {
+      "query": "SEC 801-12345",
+      "expected_hub": "investor",
+      "source": "ATH-NV-001R fixed"
+    },
+    {
+      "query": "SEC 801-12345 Las Vegas",
+      "expected_hub": "investor",
+      "source": "ATH-NV-001R fixed"
+    },
+    {
+      "query": "SEC 801-12345 Nevada",
+      "expected_hub": "investor",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "SEC 801-12345 Tennessee",
+      "expected_hub": "investor",
+      "source": "ath-tn-001.test"
+    },
+    {
+      "query": "CPCN 3251.3 Tennessee",
+      "expected_hub": "move",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "Nevada contractor license 0095506",
+      "expected_hub": "contractor",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "notice filing Nevada",
+      "expected_hub": "investor",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "RFG Nevada",
+      "expected_hub": "senior",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "HIC Nevada",
+      "expected_hub": "senior",
+      "source": "ath-nv-001.test"
+    },
+    {
+      "query": "USDOT 125563 Tennessee",
+      "expected_hub": "move",
+      "source": "ath-tn-001.test"
+    },
+    {
+      "query": "NMLS 2767 Tennessee",
+      "expected_hub": "lender",
+      "source": "ath-tn-001.test"
+    },
+    {
+      "query": "NAIC 16862 Tennessee",
+      "expected_hub": "insurance",
+      "source": "ath-tn-001.test"
+    },
+    {
+      "query": "CRD 250 Tennessee",
+      "expected_hub": "investor",
+      "source": "ath-tn-001.test"
+    },
+    {
+      "query": "CBC1234567",
+      "expected_hub": "contractor",
+      "source": "Florida CBC"
+    }
+  ],
+  "identifier_priority": [
+    {
+      "query": "MnDOT 123456 Minneapolis",
+      "expected_hub": "move",
+      "identifier_family": "mn_mndot_carrier_number",
+      "note": "MnDOT # is verification only; no roster held",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "Minnesota mover permit 123456 Minneapolis",
+      "expected_hub": "move",
+      "identifier_family": "mn_mndot_carrier_number",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "USDOT 1234567 Minnesota Minneapolis",
+      "expected_hub": "move",
+      "identifier_family": "usdot",
+      "note": "USDOT outranks Minnesota routing; USDOT is not a MN permit",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "MC 123456 Minnesota Minneapolis",
+      "expected_hub": "move",
+      "identifier_family": "mc",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "NMLS 12345 Minnesota Minneapolis",
+      "expected_hub": "lender",
+      "identifier_family": "nmls",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "BC123456 Minnesota Minneapolis",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "Minnesota DLI BC123456 Minneapolis",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "RR123456 Minnesota Minneapolis",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "MN Residential Roofer; must not route to Florida",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "QB123456 Minnesota Minneapolis",
+      "expected_hub": "contractor",
+      "identifier_family": "mn_dli_credential",
+      "note": "person-grain credential: exact-number lookup only, no name",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "NAIC 12345 Minnesota Minneapolis",
+      "expected_hub": "insurance",
+      "identifier_family": "naic_company_code",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "NPN 1234567 Minnesota Minneapolis",
+      "expected_hub": "insurance",
+      "identifier_family": "npn",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "CCN 245012 Minnesota Minneapolis",
+      "expected_hub": "senior",
+      "identifier_family": "cms_ccn",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "HFID 00002 Minneapolis",
+      "expected_hub": "senior",
+      "identifier_family": "mn_mdh_hfid",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "MDH license 424820 Minneapolis",
+      "expected_hub": "senior",
+      "identifier_family": "mn_mdh_license",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "CRD 105958 Minnesota Minneapolis",
+      "expected_hub": "investor",
+      "identifier_family": "crd",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    },
+    {
+      "query": "SEC 801-12345 Minnesota Minneapolis",
+      "expected_hub": "investor",
+      "identifier_family": "sec_file_number",
+      "note": "",
+      "expected_priority": "identifier_before_generic_geography_or_name"
+    }
+  ],
+  "ranking_refusal": [
+    {
+      "query": "best mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "best lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "best contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "best insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "best assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "best investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "safest investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "recommended investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "top-rated investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "#1 investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "Trust Score investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "paid ranking investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking mover Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking lender Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking contractor Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking insurance agency Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking assisted living Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    },
+    {
+      "query": "sponsored ranking investment adviser Minnesota",
+      "expected": "explicit_ranking_refusal",
+      "provider_winner": false,
+      "rating_schema": false
+    }
+  ],
+  "release_requirements": {
+    "canonical_specialist_destinations": 6,
+    "route": "/minnesota",
+    "mixed_case_status": 308,
+    "city_route_status": 404,
+    "sitemap_occurrences": 1,
+    "canonical": "self",
+    "robots": "index, follow",
+    "rating_schema": false,
+    "trust_score": false,
+    "no_seventh_dataset": true,
+    "no_combined_total": true,
+    "source_clocks": "six independent",
+    "graph_writes": 0,
+    "claim_eligibility_broadened": false,
+    "local_phase": "NO"
+  },
+  "allowed_preexisting": [
+    {
+      "query": "nursing home Minneapolis",
+      "condition": "shared CMS resolver may remain fail-closed only if not worsened"
+    },
+    {
+      "query": "Bloomington IN contractor",
+      "condition": "may retain baseline geography issue if unchanged; document"
+    }
+  ],
+  "required_validation": [
+    "Minnesota routing",
+    "identifier matrix and priority",
+    "state collisions",
+    "ambiguous licenses",
+    "ranking refusals",
+    "Florida identifiers",
+    "legacy routes",
+    "source clocks",
+    "cross-hub totals",
+    "graph writes",
+    "Nevada regression",
+    "Tennessee regression",
+    "Massachusetts regression",
+    "Georgia regression",
+    "complete Ask tests",
+    "typecheck",
+    "lint",
+    "production build (local only)",
+    "preview QA"
+  ]
+}

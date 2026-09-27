@@ -9,6 +9,7 @@ import { buildSeniorClassPreviewResult, executeGuidedSpecialist, isGuidedExecuti
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
+import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/mn-network.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -271,6 +272,15 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     else if (input.action.type==='RESET') session=createGuidedSession(session.originalQuestion)!;
   }
   let result:GuidedExecutionResult|undefined;
+  const mnPlan = planAskResearch(session.originalQuestion);
+  if (mnPlan.reasonCodes.includes('MINNESOTA_RESEARCH_ROUTING') || mnPlan.reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL') || mnIdentifier(session.originalQuestion)) {
+    const refusal = mnRefusal(session.originalQuestion);
+    const hub = mnPlan.primaryHub;
+    const message = refusal ?? (hub ? mnCaveat(hub) : 'Choose a Minnesota specialist on the state gateway.');
+    session = touch({...session, researchPlan:mnPlan, phase:refusal?'CLARIFY':'DEEP_LINK', availableChoices:[], availableRefinements:[], nextActions:[], nextAction:message});
+    if (hub) result = {specialist:hub, executionOccurred:false, resultState:refusal?'INVALID_QUERY':'UNSUPPORTED_CAPABILITY', consumerHeading:refusal?'Clarify this research request':'Continue at the Minnesota specialist', consumerMessage:message, interpretation:mnPlan.identifier?[{label:mnPlan.identifier.type,value:mnPlan.identifier.value}]:[], rows:[], total:0, refinements:[], provenance:{contract:'ath-mn-network-release-v1'}, limitations:['Ask is a gateway. No specialist records were retrieved or copied.'], destinations:refusal?[]:[{type:'STATE_RESEARCH',href:mnSpecialistUrl(hub),label:'Open Minnesota research'}], latencyMs:0, firstUsefulResult:true, nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;
   if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {

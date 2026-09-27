@@ -1,0 +1,64 @@
+{
+  "ticket": "ATH-MN-001",
+  "contract": "ath-mn-network-release-v1",
+  "status": "INDEPENDENT_REVIEW_PENDING",
+  "base_sha": "b34b2b4a81cf42ddfc890f37c02c703285d47a22",
+  "semantic_fingerprint": "4baa31da936a1270d9606ce8647c88180aa0c5cecfa4f701f85e7b21829eee58",
+  "manifest": "data/network/minnesota-publication-manifest.json",
+  "certificates": "data/network/minnesota/certified-specialists.json",
+  "matrix": "data/network/minnesota/audit-matrices.json",
+  "matrix_cases": 203,
+  "release_gate": {
+    "passed": true,
+    "blocker": null,
+    "certification_basis": "Six independent specialist certificates; A-B1 Lender PASS"
+  },
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "These different source grains cannot be summed."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  },
+  "specialists": [
+    {
+      "hub": "move",
+      "sha": "6c03a2d34bb7532b97914d3318974f6b3733baf4",
+      "fingerprint": "fbd810749239faa78696c44b882c7aa0b18411bccae556115b65890a605521ab"
+    },
+    {
+      "hub": "lender",
+      "sha": "d4cc8bcb5bae8fbf9b698165e908e58d05339fe4",
+      "fingerprint": "e1c89c65a4d4b87497ef267f122dc7d53be9583e5e51e78a77f5f4847a6872c8"
+    },
+    {
+      "hub": "contractor",
+      "sha": "f2e56d552ea5176ba7ec8a4906a1760a76b46bfa",
+      "fingerprint": "7f9ba09a491f185178a511ede5c08311ec767362459ecce8aa8c2f044fa1105f"
+    },
+    {
+      "hub": "insurance",
+      "sha": "c150a4c4e89a0932af9fc5d41461d78a50496c78",
+      "fingerprint": "6ecbdbb8406a95152e1503977a57f1e87b6f9060c1b5a739a8d791e51a2911e2"
+    },
+    {
+      "hub": "senior",
+      "sha": "97663823fb289ed1daaedd7e2cbff62d8345e1cb",
+      "fingerprint": "b453a290198d834945104aa81f2942bd1fb3bc0fda33fff8cb51fb4d18e9e223"
+    },
+    {
+      "hub": "investor",
+      "sha": "693eb80e0083f4cf3ad20069d20f0ccca1435ae2",
+      "fingerprint": "5e60cddd13ec5a9c2efc786f722ff8df4e5aa0bae5f83cf1adedf6f22f2ed3c3"
+    }
+  ],
+  "known_limitations": [
+    "Bloomington IN geography remains unchanged baseline debt.",
+    "Senior nursing home Minneapolis remains a canonical state handoff; Ask does not resolve CMS providers.",
+    "Individual DLI credentials are not promoted as business-company profiles."
+  ],
+  "ask_production": null
+}
