@@ -130,7 +130,7 @@ export async function assertionFailureCases(db) {
     ['wrong staging origins', "update ops.consumer_hub_registry set staging_origins=array['https://wrong.invalid'] where hub_key='move'", /Exact Ask\/Move staging origins/],
     ['missing registry row', "delete from ops.consumer_hub_registry where hub_key='ask'", /Exact Ask\/Move staging origins/],
   ];
-  const ports = ['preview_ports_ready()','preview_confirmation(text,text,jsonb)','preview_session_bind(uuid,uuid,bigint,bytea)','preview_session_live(uuid,uuid)',
+  const ports = ['preview_ports_ready()','preview_session_authority_ready()','preview_confirmation(text,text,jsonb)','preview_session_bind(uuid,uuid,bigint,bytea)','preview_session_live(uuid,uuid)',
     'preview_move_binding()','preview_projects(uuid,uuid)','preview_saved(uuid,uuid)','preview_issue_context(jsonb,uuid,uuid)'];
   for (const port of ports) cases.push(['missing ' + port, `alter function v23_private.${port} rename to hidden_packet_port`, /Required private port missing/]);
   for (const [label, mutation, expected] of cases) {
@@ -197,8 +197,8 @@ async function phase5ContextCases(db) {
   console.log('PASS wrong-principal runtime probe negatives');
   const runtimeNegatives = [
     ['runtime cannot SET authorizer', 'revoke myth_v23_authorizer from myth_v23_parent_preview', /permission denied to set role "myth_v23_authorizer"/],
-    ['runtime cannot SET executor', 'revoke myth_v23_executor from myth_v23_parent_preview', /permission denied to set role "myth_v23_executor"/],
-    ['runtime can SET cleanup', 'grant myth_v23_cleanup to myth_v23_parent_preview with admin false, inherit false, set true', /Unrelated SET ROLE accepted/],
+    ['runtime cannot SET executor', 'revoke myth_v23_executor from myth_v23_parent_preview', /Required private ports are not ready as authorizer/],
+    ['runtime can SET cleanup', 'grant myth_v23_cleanup to myth_v23_parent_preview with admin false, inherit false, set true', /Required private ports are not ready as authorizer/],
     ['wrong resolver ID', "create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select gen_random_uuid(),gen_random_uuid(),'accepted'::text$$", /Private resolver disagrees/],
     ['wrong resolver entity', `create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select '${pin.binding_id}'::uuid,gen_random_uuid(),'accepted'::text$$`, /Private resolver disagrees/],
     ['resolver status not accepted', `create or replace function v23_private.preview_move_binding() returns table(id uuid,network_entity_id uuid,binding_status text) language sql as $$select '${pin.binding_id}'::uuid,'${pin.entity_id}'::uuid,'review_required'::text$$`, /Private resolver disagrees/],

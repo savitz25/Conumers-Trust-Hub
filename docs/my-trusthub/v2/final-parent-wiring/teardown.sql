@@ -36,6 +36,7 @@ set local role myth_v23_foundation;
 drop function v23_private.preview_projects(uuid,uuid);
 drop function v23_private.preview_saved(uuid,uuid);
 drop function v23_private.preview_issue_context(jsonb,uuid,uuid);
+drop function v23_private.preview_session_authority_ready();
 drop function v23_private.preview_session_live(uuid,uuid);
 drop function v23_private.preview_session_bind(uuid,uuid,bigint,bytea);
 drop function v23_private.preview_session_install_mac(bytea);

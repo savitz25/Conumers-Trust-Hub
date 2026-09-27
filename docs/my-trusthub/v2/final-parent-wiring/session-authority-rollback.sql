@@ -15,6 +15,8 @@ end $$;
 
 grant create on schema v23_private to myth_v23_foundation;
 grant myth_v23_foundation to current_user with admin false, inherit false, set true granted by current_user;
+set local role myth_v23_foundation;
+drop function if exists v23_private.preview_session_authority_ready();
 drop function if exists v23_private.preview_session_bind(uuid,uuid,bigint,bytea);
 drop function if exists v23_private.preview_session_install_mac(bytea);
 drop function if exists v23_private.preview_session_mac_matches(text,bytea,bytea);
@@ -31,22 +33,30 @@ begin
 end $$;
 revoke all on function v23_private.preview_session_live(uuid,uuid) from public,anon,authenticated;
 grant execute on function v23_private.preview_session_live(uuid,uuid) to myth_v23_authorizer,myth_v23_executor;
-alter function v23_private.preview_session_live(uuid,uuid) owner to myth_v23_foundation;
+reset role;
 revoke create on schema v23_private from myth_v23_foundation;
 revoke myth_v23_foundation from current_user granted by current_user;
+create or replace function v23_private.preview_ports_ready() returns boolean
+language sql stable security invoker set search_path=pg_catalog as $$
+ select current_user='myth_v23_authorizer'
+ and not exists(select 1 from unnest(array[
+  'v23_private.preview_confirmation(text,text,jsonb)',
+  'v23_private.preview_session_live(uuid,uuid)',
+  'v23_private.preview_move_binding()',
+  'v23_private.preview_projects(uuid,uuid)',
+  'v23_private.preview_saved(uuid,uuid)',
+  'v23_private.preview_issue_context(jsonb,uuid,uuid)']) f
+  where to_regprocedure(f) is null or not has_function_privilege(current_user,f,'EXECUTE'))
+ and (select count(*)=5 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+  where n.nspname||'.'||c.relname in ('v23_private.preview_transport_records','v23_private.browser_confirmations',
+  'v23_private.transaction_authority','ops.v23_profile_runtime_records','ops.v23_profile_runtime_quota')
+  and c.relrowsecurity and c.relforcerowsecurity)
+ and not exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+  where n.nspname='auth' and c.relname in ('users','sessions') and has_table_privilege(current_user,c.oid,'SELECT'));
+$$;
+revoke all on function v23_private.preview_ports_ready() from public,anon,authenticated;
+grant execute on function v23_private.preview_ports_ready() to myth_v23_authorizer;
 commit;
 
--- The function above is already committed. This second transaction only attempts
--- the managed-schema grant. If it fails, the function restore remains and the
--- branch is back in the known failing state. Do not use supabase_admin to force it.
-begin;
-do $$ begin
-  execute 'grant select(id,user_id,not_after) on auth.sessions to myth_v23_foundation';
-  if not exists (select 1 from pg_policy where polname='preview_exact_live_session') then
-    execute $pol$create policy preview_exact_live_session on auth.sessions for select to myth_v23_foundation
-      using (id::text=current_setting('v23.session_id',true) and user_id::text=current_setting('v23.session_subject',true))$pol$;
-  end if;
-exception when insufficient_privilege then
-  raise exception 'preview_session_live now reads auth.sessions, but SELECT could not be granted. This is the known failing state; do not use supabase_admin to force it.';
-end $$;
-commit;
+
+-- Intentionally no managed Auth grants/policies: restored predicate remains HOLD.

@@ -1,5 +1,66 @@
 # V2-3-FINAL-PARENT-WIRING-SQL-CLOSEOUT
 
+## Session SQL upgrade / rollback / readiness repair (2026-09-27)
+
+Parent: `2f0c3a07a4e531a9d41ad30082a00ba1524ccfed`. SQL packet and local QA only.
+Application session authority, getUser/getClaims, admission, HMAC derivation,
+Ed25519 assertions, browser/P13 binding and the 120-second TTL are unchanged.
+
+All active and rollback definitions preserve `preview_session_live(subject uuid,
+session uuid)`. The new predicate uses positional arguments internally. The
+forward transaction replaces both the session predicate and readiness. Owner
+operations explicitly SET the nonlogin foundation role, then remove only the
+operator's temporary self-granted membership. A non-superuser, NOINHERIT,
+CREATEROLE/BYPASSRLS schema-owner fixture exercises the actual repair and rollback.
+It has no managed Auth grants and uses no supabase_admin role.
+
+Clean-install and forward SQL contain byte-identical shared readiness definitions;
+the QA test rejects drift. Readiness checks both session tables, RLS/FORCE RLS,
+foundation ownership, table/column ACLs, session function owners/security modes
+and exact runtime EXECUTE privileges. The private boolean helper checks exactly
+one true singleton MAC row with a 32-byte key; it never returns that key. It also
+preserves the prior ports/forced-RLS checks and checks the runtime role posture
+and isolated deployment pin. Assertions independently inspect the same session
+invariants without granting the inspector runtime membership. Missing objects
+or permission errors produce FALSE, not an observational success.
+
+A clean schema is intentionally not ready before MAC installation. After the
+runtime-role packet, the guarded `session-authority-forward.sql` transaction can
+install the existing PEM digest and verify the session objects atomically. Supply
+`v23.install_session_mac` through a parameterized non-echoing trusted runner with
+SQL/parameter logging disabled; do not use an interactive SELECT that prints its
+value. Hash the exact existing UTF-8 PEM bytes, preserving existing newlines and
+adding none. No secret is committed, logged, or included in this report.
+
+Rollback restores the old compatible predicate and the exact old readiness
+function in one transaction, drops all new session tables/helpers, and restores
+membership state. It deliberately restores the prior HOLD state and does not
+attempt Auth grants, Auth policies, or a supabase_admin workaround.
+
+Local results (disposable PostgreSQL 17.5/PGlite; no hosted certification):
+
+- Before patch: exact old input names reproduce SQLSTATE 42P13.
+- After patch: OLD -> FORWARD -> ROLLBACK -> FORWARD passes; forward reapply passes.
+- Complete valid state is ready; 70 controlled missing-object, row, key-length,
+  singleton, RLS, FORCE-RLS, owner, ACL, security-mode and role-posture defects
+  each return FALSE, with a restored TRUE positive control after every case.
+- Wrong install material and wrong approval project refuse atomically, preserving
+  valid state and operator memberships. Rollback leaves only the old session
+  function, no new tables/helpers, and no foundation Auth SELECT grant.
+- `npm run check:my-trusthub-v2-3`: PASS (41 tests).
+- `npm run check:my-trusthub-v2-3-runtime`: PASS (17 tests plus local Move harness).
+- `npm run check:my-trusthub-v2-3r`: PASS (7 browser contract tests).
+- `npm run check:my-trusthub-v2-3f`: PASS (3 static tests plus local PostgreSQL integration).
+- `npm run check:my-trusthub-v2-3-final-parent`: PASS (dependency checks, 25 focused
+  tests including session authority/final wiring, existing packet integration,
+  43 assertion negatives, teardown preservation, and the new upgrade/readiness test).
+- `npm run typecheck`: PASS.
+
+No hosted database, Auth, Vercel configuration, Turnstile, users, passwords,
+flags, or production were changed. No manual deployment. PR #185 remains for
+independent re-review; this report is not authorization to apply SQL or resume users.
+
+
 ## Gate 1B 42809 hotfix — second pass (2026-09-23)
 
 Hosted Gate 1B stopped at `pg-net-preflight.sql` with SQLSTATE 42809

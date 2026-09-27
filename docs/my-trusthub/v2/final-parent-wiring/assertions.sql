@@ -97,7 +97,7 @@ begin
    raise exception 'Isolated V2-3 requires pg_net and schema net absent'; end if;
  foreach f in array array[
    'v23_private.preview_ports_ready()','v23_private.preview_confirmation(text,text,jsonb)',
-   'v23_private.preview_session_bind(uuid,uuid,bigint,bytea)','v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',
+   'v23_private.preview_session_authority_ready()','v23_private.preview_session_bind(uuid,uuid,bigint,bytea)','v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',
    'v23_private.preview_projects(uuid,uuid)','v23_private.preview_saved(uuid,uuid)',
    'v23_private.preview_issue_context(jsonb,uuid,uuid)','v23_private.authority()',
    'v23_private.save_profile(uuid)','v23_private.add_project(uuid,uuid)','v23_private.consume_context(jsonb)'] loop
@@ -152,6 +152,51 @@ begin
    raise exception 'Forward identity must not participate in a merge/redirect'; end if;
  if exists(select 1 from information_schema.tables where table_schema in ('consumer','ops','network','v23_private')
    and table_name ~* '(watch|alert)') then raise exception 'Unexpected Watch/Alert relations'; end if;
+end $$;
+-- Inspector copy of shared session readiness invariants (no secret output).
+do $$
+declare rel oid; fn oid; spec record; foundation oid := to_regrole('myth_v23_foundation');
+  allowed oid[]; complete boolean;
+begin
+  if foundation is null or not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+    where n.nspname in ('extensions','public') and p.proname='hmac' and p.proargtypes='17 17 25'::oidvector) then raise exception 'Session authority security/installation is incomplete'; end if;
+  foreach rel in array array[to_regclass('v23_private.preview_session_mac'),
+    to_regclass('v23_private.preview_session_attestations')] loop
+    if rel is null or not exists(select 1 from pg_class where oid=rel and relkind='r'
+      and relowner=foundation and relrowsecurity and relforcerowsecurity) then raise exception 'Session authority security/installation is incomplete'; end if;
+    if exists(select 1 from pg_class c, lateral aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a
+      where c.oid=rel and a.grantee<>foundation and not exists
+        (select 1 from pg_roles where oid=a.grantee and (rolsuper or rolbypassrls)))
+      or exists(select 1 from pg_attribute c, lateral aclexplode(c.attacl) a
+        where c.attrelid=rel and a.grantee<>foundation and not exists
+          (select 1 from pg_roles where oid=a.grantee and (rolsuper or rolbypassrls)))
+      or exists(select 1 from pg_roles r where r.rolname in
+        ('anon','authenticated','myth_v23_parent_preview','myth_v23_authorizer','myth_v23_executor')
+        and (has_table_privilege(r.oid,rel,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+          or has_any_column_privilege(r.oid,rel,'SELECT,INSERT,UPDATE,REFERENCES'))) then raise exception 'Session authority security/installation is incomplete'; end if;
+  end loop;
+  for spec in select * from (values
+    ('v23_private.preview_session_mac_matches(text,bytea,bytea)',false,array[]::text[]),
+    ('v23_private.preview_session_install_mac(bytea)',true,array[]::text[]),
+    ('v23_private.preview_session_bind(uuid,uuid,bigint,bytea)',true,array['myth_v23_authorizer']),
+    ('v23_private.preview_session_live(uuid,uuid)',true,array['myth_v23_authorizer','myth_v23_executor']),
+    ('v23_private.preview_session_authority_ready()',true,array['myth_v23_authorizer'])
+  ) specs(signature,definer,callers) loop
+    fn := to_regprocedure(spec.signature);
+    if fn is null or not exists(select 1 from pg_proc where oid=fn and proowner=foundation
+      and prosecdef=spec.definer) then raise exception 'Session authority security/installation is incomplete'; end if;
+    allowed := array[foundation] || array(select to_regrole(x)::oid from unnest(spec.callers) x);
+    if exists(select 1 from pg_proc p, lateral aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
+      where p.oid=fn and (not a.grantee=any(allowed) or (a.grantee<>foundation and a.is_grantable)))
+      or exists(select 1 from unnest(spec.callers) r where not has_function_privilege(r,fn,'EXECUTE'))
+      or exists(select 1 from pg_roles r where r.rolname in ('anon','authenticated','myth_v23_parent_preview',
+        'myth_v23_authorizer','myth_v23_executor') and not r.rolname=any(spec.callers)
+        and has_function_privilege(r.oid,fn,'EXECUTE')) then raise exception 'Session authority security/installation is incomplete'; end if;
+  end loop;
+  -- Dynamic only after catalog checks: missing tables must return FALSE, not throw.
+  execute 'select count(*)=1 and coalesce(bool_and(singleton and octet_length(key)=32),false)
+    from v23_private.preview_session_mac' into complete;
+  if not coalesce(complete,false) then raise exception 'Session authority security/installation is incomplete'; end if;
 end $$;
 -- V23_PARENT_PACKET_ASSERTIONS_PASS certifies this inspector/catalog packet only.
 -- It does not certify runtime SET ROLE behavior. That proof is a fresh
