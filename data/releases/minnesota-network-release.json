@@ -7,7 +7,7 @@
   "manifest": "data/network/minnesota-publication-manifest.json",
   "certificates": "data/network/minnesota/certified-specialists.json",
   "matrix": "data/network/minnesota/audit-matrices.json",
-  "matrix_cases": 203,
+  "matrix_cases": 215,
   "release_gate": {
     "passed": true,
     "blocker": null,
@@ -60,5 +60,7 @@
     "Senior nursing home Minneapolis remains a canonical state handoff; Ask does not resolve CMS providers.",
     "Individual DLI credentials are not promoted as business-company profiles."
   ],
-  "ask_production": null
+  "ask_production": null,
+  "repair_ticket": "ATH-MN-001R",
+  "repair_scope": "Minnesota ambiguity refusal requires Minnesota context; generic network identity-needed behavior preserved."
 }

@@ -1,0 +1,28 @@
+{
+  "base": "b34b2b4a81cf42ddfc890f37c02c703285d47a22",
+  "command": "node --experimental-strip-types --test lib/network/*.test.ts lib/network/name-candidates/*.test.ts lib/guided-research/*.test.ts",
+  "candidate": {
+    "tests": 1081,
+    "pass": 1070,
+    "fail": 11
+  },
+  "base_results": {
+    "tests": 860,
+    "pass": 849,
+    "fail": 11
+  },
+  "candidate_only_failures": [],
+  "identical_failure_messages": {
+    "lib\\guided-research\\th-discovery-001-corpus.test.ts:199:1": " [ERR_ASSERTION]: a genuine local-directory search must either succeed or honestly report a backend failure, never a fabricated result (got UNSUPPORTED_CAPABILITY)",
+    "lib\\guided-research\\th-discovery-002-corpus.test.ts:124:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'UNSUPPORTED_CAPABILITY'\n  - 'SUPPORTED_RESULTS'\n  ",
+    "lib\\guided-research\\th-discovery-002-corpus.test.ts:134:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'UNSUPPORTED_CAPABILITY'\n  - 'SUPPORTED_RESULTS'\n  ",
+    "lib\\guided-research\\th-discovery-002-corpus.test.ts:148:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'SUPPORTED_RESULTS'\n  - 'UNSUPPORTED_CAPABILITY'\n  ",
+    "lib\\guided-research\\th-discovery-002-corpus.test.ts:165:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'SUPPORTED_RESULTS'\n  - 'PUBLICATION_RESTRICTED'\n  ",
+    "lib\\guided-research\\th-discovery-002b-corpus.test.ts:36:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'UNSUPPORTED_CAPABILITY'\n  - 'SUPPORTED_RESULTS'\n  ",
+    "lib\\guided-research\\th-discovery-002b-corpus.test.ts:47:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'UNSUPPORTED_CAPABILITY'\n  - 'SUPPORTED_RESULTS'\n  ",
+    "lib\\guided-research\\th-discovery-002b-corpus.test.ts:60:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + 'UNSUPPORTED_CAPABILITY'\n  - 'SUPPORTED_RESULTS'\n  ",
+    "lib\\network\\ath-search-hotfix-001.test.ts:117:1": " [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + '13d732611c16eb244167e10fa28af4541101901c79e907e8a151199a56679d97'\n  - 'c0a898c5be52197362c6118e9833e1c04c8bd81838ba4e45c2f5a5315353a02f'\n  ",
+    "lib\\network\\prompt-1.test.ts:53:1": " [ERR_ASSERTION]: The expression evaluated to a falsy value:\n  \n    assert.ok(!live.includes('nmls'))\n  ",
+    "lib\\network\\th-search-network-cert.test.ts:36:1": " [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n    [\n      'q',\n  +   'class',\n  +   'state'\n    ]\n  "
+  }
+}

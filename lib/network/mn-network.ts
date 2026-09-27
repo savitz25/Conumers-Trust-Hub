@@ -84,8 +84,8 @@ export function mnAmbiguousNumber(q: string): boolean {
 }
 export function mnRefusal(q: string): string | undefined {
   if (mnRankingAsked(q)) return MN_RANKING_REFUSAL;
-  if (mnAmbiguousNumber(q)) return 'A bare number or unqualified license is ambiguous. Supply the identifier family (for example NMLS 2229); Ask will not search the number as a company name.';
   if (!queryLooksLikeMinnesota(q)) return undefined;
+  if (mnAmbiguousNumber(q)) return 'A bare number or unqualified license is ambiguous. Supply the identifier family (for example NMLS 2229); Ask will not search the number as a company name.';
   if (/\b(?:HIC\s*\d+|(?:RC|RF)\d{6})\b/i.test(q)) return 'That prefix is not a recognized Minnesota credential. Specify the regulator and printed credential; Ask will not guess or search it as a business name.';
   if (/280,?548/.test(q)) return '280,548 mixes DLI credential classes and is not a count of contractor companies. The safe lens is 10,923 Residential Building Contractor credentials with status Issued; individual credentials are not business profiles.';
   if (/how many providers|total licensed businesses|all minnesota senior facilities|combined.*total/i.test(q)) return 'CROSS_HUB_RECORD_TOTAL is REJECTED; value is null. Different source grains and Senior care classes cannot be summed.';

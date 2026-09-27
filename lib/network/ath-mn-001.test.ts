@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import matrix from '../../data/network/minnesota/audit-matrices.json' with { type:'json' };
 import baseline from '../../data/network/minnesota/baseline.json' with { type:'json' };
 import { planAskResearch } from './research-planner.ts';
+import { buildAskResearchRoute } from './ask-research-route.ts';
 import { buildNetworkAskPlan } from './ask-plan.ts';
 import { decideNameCandidateSearch } from './name-candidates/decision.ts';
 import { MN_PUBLICATION_MANIFEST as M, MN_PUBLICATION_FINGERPRINT, MN_HUBS, mnReleaseGatePassed, mnPublicationSemanticFingerprint, mnRefusal, mnSpecialistUrl } from './mn-network.ts';
@@ -91,4 +92,24 @@ test('MN independent clocks, canonical links, no graph writes or combined popula
   assert.equal((ui.match(/<a href=\{hub.canonical_state_url\}/g)||[]).length,1,'one link per hub, no duplicate routing list');
   assert.equal(normalizedPublishedStatePath('/MINNESOTA'),'/minnesota');assert.equal(normalizedPublishedStatePath('/Minnesota'),'/minnesota');
   assert.equal(askStateSitemapEntries().filter(s=>s.path === '/minnesota').length,1);
+});
+
+for (const row of matrix.refusal_scope_regression) test(`MN refusal scope / ${row.query}`, () => {
+  if (row.minnesota) {
+    assert.match(mnRefusal(row.query) ?? '', /A bare number or unqualified license is ambiguous/);
+    assert.equal(planAskResearch(row.query).executionAllowed, false);
+    assert.equal(decideNameCandidateSearch(row.query).operation, 'NOT_NAME_SEARCH');
+  } else {
+    assert.equal(mnRefusal(row.query), undefined);
+    assert.doesNotMatch(planAskResearch(row.query).clarificationReason ?? '', /Supply the identifier family/);
+  }
+});
+test('MN leaves generic 2229 on the original network identity-needed route', () => {
+  const route = buildAskResearchRoute('2229');
+  assert.equal(route.intentLabel, 'One organization \u2014 identity needed');
+  assert.equal(route.status, 'I need one detail before I search.');
+  assert.equal(route.canExecute, false);
+  assert.equal(route.plan.primaryHub, undefined);
+  assert.equal(route.plan.normalizedGeography, undefined);
+  assert.doesNotMatch(route.explanation, /NMLS 2229|Supply the identifier family/);
 });

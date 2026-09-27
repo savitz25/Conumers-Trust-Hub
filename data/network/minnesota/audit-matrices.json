@@ -1305,5 +1305,55 @@
     "lint",
     "production build (local only)",
     "preview QA"
+  ],
+  "refusal_scope_regression": [
+    {
+      "query": "2229",
+      "minnesota": false
+    },
+    {
+      "query": "license 2229",
+      "minnesota": false
+    },
+    {
+      "query": "credential 2229",
+      "minnesota": false
+    },
+    {
+      "query": "2229 Tennessee",
+      "minnesota": false
+    },
+    {
+      "query": "license 2229 Tennessee",
+      "minnesota": false
+    },
+    {
+      "query": "credential 2229 Tennessee",
+      "minnesota": false
+    },
+    {
+      "query": "2229 Florida",
+      "minnesota": false
+    },
+    {
+      "query": "license 2229 Florida",
+      "minnesota": false
+    },
+    {
+      "query": "credential 2229 Florida",
+      "minnesota": false
+    },
+    {
+      "query": "2229 Minnesota",
+      "minnesota": true
+    },
+    {
+      "query": "license 2229 Minnesota",
+      "minnesota": true
+    },
+    {
+      "query": "credential 2229 Minnesota",
+      "minnesota": true
+    }
   ]
 }
