@@ -7,6 +7,7 @@ import { SourceChannel } from './source-channel.ts';
 import { ISOLATED_PROJECT, PARENT_LOGIN, isolatedConfig, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
+import { sessionMac } from './session-authority.ts';
 import { hash } from './runtime.ts';
 import type { TransactionPool } from './postgres-backend.ts';
 
@@ -69,7 +70,10 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
     const runtime = new PreviewAssembly(env, scoped, source, moveKey, async request => {
       const { createMyTrustHubSupabaseClient } = await import('../../supabase/server');
       const client = await createMyTrustHubSupabaseClient(true);
-      return client ? verifiedParent(request, env, client.auth, (sub, sid) => store.live(sub, sid)) : null;
+      return client ? verifiedParent(request, env, client.auth, {
+        bind: (sub, sid, exp) => store.bind(sub, sid, exp, sessionMac(key.pem, sub, sid, exp)),
+        live: (sub, sid) => store.live(sub, sid),
+      }) : null;
     });
     // Missing binding or unwired/non-publishable source is unavailable everywhere.
     await runtime.binding(); await source.publication(randomRef());

@@ -97,7 +97,7 @@ begin
    raise exception 'Isolated V2-3 requires pg_net and schema net absent'; end if;
  foreach f in array array[
    'v23_private.preview_ports_ready()','v23_private.preview_confirmation(text,text,jsonb)',
-   'v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',
+   'v23_private.preview_session_bind(uuid,uuid,bigint,bytea)','v23_private.preview_session_live(uuid,uuid)','v23_private.preview_move_binding()',
    'v23_private.preview_projects(uuid,uuid)','v23_private.preview_saved(uuid,uuid)',
    'v23_private.preview_issue_context(jsonb,uuid,uuid)','v23_private.authority()',
    'v23_private.save_profile(uuid)','v23_private.add_project(uuid,uuid)','v23_private.consume_context(jsonb)'] loop

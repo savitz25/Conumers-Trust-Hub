@@ -40,6 +40,10 @@ export class PreviewStore {
   async claim(key: string, expiresAt: number): Promise<boolean> {
     return await this.record('nonce:' + key, async current => current ? { result: false } : { value: { used: true }, expiresAt, result: true }) as boolean;
   }
+  async bind(subject: string, session: string, expiresUnix: number, mac: Uint8Array): Promise<boolean> {
+    return this.authorized(async db => (await db.query<{ bound: boolean }>(
+      'select v23_private.preview_session_bind($1,$2,$3,$4) as bound', [subject, session, expiresUnix, mac])).rows[0]?.bound === true);
+  }
   async live(subject: string, session: string): Promise<boolean> {
     return this.authorized(async db => (await db.query<{ live: boolean }>('select v23_private.preview_session_live($1,$2) as live', [subject, session])).rows[0]?.live === true);
   }

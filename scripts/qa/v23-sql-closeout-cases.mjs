@@ -130,7 +130,7 @@ export async function assertionFailureCases(db) {
     ['wrong staging origins', "update ops.consumer_hub_registry set staging_origins=array['https://wrong.invalid'] where hub_key='move'", /Exact Ask\/Move staging origins/],
     ['missing registry row', "delete from ops.consumer_hub_registry where hub_key='ask'", /Exact Ask\/Move staging origins/],
   ];
-  const ports = ['preview_ports_ready()','preview_confirmation(text,text,jsonb)','preview_session_live(uuid,uuid)',
+  const ports = ['preview_ports_ready()','preview_confirmation(text,text,jsonb)','preview_session_bind(uuid,uuid,bigint,bytea)','preview_session_live(uuid,uuid)',
     'preview_move_binding()','preview_projects(uuid,uuid)','preview_saved(uuid,uuid)','preview_issue_context(jsonb,uuid,uuid)'];
   for (const port of ports) cases.push(['missing ' + port, `alter function v23_private.${port} rename to hidden_packet_port`, /Required private port missing/]);
   for (const [label, mutation, expected] of cases) {

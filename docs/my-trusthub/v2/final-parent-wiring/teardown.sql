@@ -37,10 +37,13 @@ drop function v23_private.preview_projects(uuid,uuid);
 drop function v23_private.preview_saved(uuid,uuid);
 drop function v23_private.preview_issue_context(jsonb,uuid,uuid);
 drop function v23_private.preview_session_live(uuid,uuid);
+drop function v23_private.preview_session_bind(uuid,uuid,bigint,bytea);
+drop function v23_private.preview_session_install_mac(bytea);
+drop function v23_private.preview_session_mac_matches(text,bytea,bytea);
+drop table v23_private.preview_session_attestations;
+drop table v23_private.preview_session_mac;
 reset role;
 revoke myth_v23_browser_store,myth_v23_preview_reader,myth_v23_foundation from current_user granted by current_user;
-drop policy preview_exact_live_session on auth.sessions;
-revoke select(id,user_id,not_after) on auth.sessions from myth_v23_foundation;
 revoke execute on function consumer.list_cross_hub_project_summaries(integer),consumer.list_saved_entities(),
  ops.create_browser_handoff_intent(text,text,text,text,text,text,text,text,text),ops.create_consumer_auth_handoff(text,uuid,text,text,text,uuid,text) from myth_v23_foundation;
 drop policy preview_exact_move_binding on network.network_entity_bindings;

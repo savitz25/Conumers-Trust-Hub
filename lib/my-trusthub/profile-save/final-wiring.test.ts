@@ -70,12 +70,28 @@ test('F03 verified parent requires server Auth, matching verified claims, admitt
   const user = { id: A, email_confirmed_at: '2026-09-01', email: 'fixture@example.invalid' };
   const claims = { sub: A, session_id: sid, exp: Date.now() / 1000 + 60, iss: `https://${ISOLATED_PROJECT}.supabase.co/auth/v1` };
   const auth = (patch = {}) => ({ getUser: async () => ({ data: { user }, error: null }), getClaims: async () => ({ data: { claims: { ...claims, ...patch } }, error: null }) });
-  const req = new Request(ASK_PREVIEW + '/my/profile-save');
-  assert.equal((await verifiedParent(req, fixtureEnv, auth(), async (s, id) => s === A && id === sid))?.subject, A);
-  for (const patch of [{ sub: B }, { iss: 'https://example.invalid/auth/v1' }, { session_id: 'browser-uuid' }, { exp: 1 }]) assert.equal(await verifiedParent(req, fixtureEnv, auth(patch), async () => true), null);
-  assert.equal(await verifiedParent(req, fixtureEnv, auth(), async () => false), null);
-  assert.equal(await verifiedParent(new Request(MOVE_PREVIEW + API_PATH), fixtureEnv, auth(), async () => true), null);
-  assert.equal(await verifiedParent(req, fixtureEnv, { ...auth(), getUser: async () => ({ data: { user: null }, error: Error('revoked') }) }, async () => true), null);
+  const req = new Request(ASK_PREVIEW + '/my/profile-save', { method: 'POST', body: JSON.stringify({ subject: B, session: 'browser-posted' }) });
+  const authority = (live: (s: string, id: string) => boolean) => {
+    const bound: string[] = [];
+    return { bound, port: { bind: async (s: string, id: string) => { bound.push(s + ':' + id); return true; }, live: async (s: string, id: string) => live(s, id) } };
+  };
+  const ok = authority((s, id) => s === A && id === sid);
+  assert.equal((await verifiedParent(req, fixtureEnv, auth(), ok.port))?.subject, A);
+  assert.deepEqual(ok.bound, [A + ':' + sid]);
+  for (const patch of [{ sub: B }, { iss: 'https://example.invalid/auth/v1' }, { session_id: 'browser-uuid' }, { exp: 1 }, { session_id: undefined }]) {
+    const attempt = authority(() => true);
+    assert.equal(await verifiedParent(req, fixtureEnv, auth(patch), attempt.port), null);
+    assert.deepEqual(attempt.bound, []);
+  }
+  const dead = authority(() => false);
+  assert.equal(await verifiedParent(req, fixtureEnv, auth(), dead.port), null);
+  assert.equal(await verifiedParent(new Request(MOVE_PREVIEW + API_PATH), fixtureEnv, auth(), authority(() => true).port), null);
+  const revoked = authority(() => true);
+  assert.equal(await verifiedParent(req, fixtureEnv, { ...auth(), getUser: async () => ({ data: { user: null }, error: Error('revoked') }) }, revoked.port), null);
+  assert.deepEqual(revoked.bound, []);
+  const claimsDown = authority(() => true);
+  assert.equal(await verifiedParent(req, fixtureEnv, { ...auth(), getClaims: async () => ({ data: null, error: Error('claims') }) }, claimsDown.port), null);
+  assert.deepEqual(claimsDown.bound, []);
 });
 
 test('F04 source callback pins network target and rejects stale/unpublished/mismatched source data', async () => {
