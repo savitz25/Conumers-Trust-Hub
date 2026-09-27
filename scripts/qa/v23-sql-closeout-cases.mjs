@@ -127,6 +127,7 @@ export async function assertionFailureCases(db) {
     ['public private wrapper', 'grant execute on function v23_private.preview_confirmation(text,text,jsonb) to public', /Public private-preview wrapper execution/],
     ['authenticated private wrapper', 'grant execute on function v23_private.preview_saved(uuid,uuid) to authenticated', /Public private-preview wrapper execution/],
     ['wrong pin', "update v23_private.preview_deployment_pin set ask_origin='https://wrong.invalid'", /Exact deployment pin/],
+    ['public-only HMAC dependency', 'alter function extensions.hmac(bytea,bytea,text) set schema public', /Session authority security\/installation is incomplete/],
     ['wrong staging origins', "update ops.consumer_hub_registry set staging_origins=array['https://wrong.invalid'] where hub_key='move'", /Exact Ask\/Move staging origins/],
     ['missing registry row', "delete from ops.consumer_hub_registry where hub_key='ask'", /Exact Ask\/Move staging origins/],
   ];

@@ -1,4 +1,8 @@
--- FORWARD REPAIR ONLY. Do not apply from an agent session.
+-- FORWARD REPAIR ONLY. Production prohibited.
+-- Do not apply through a stateless Query API or unsafe agent execution.
+-- An explicitly authorized operator may apply using ONE persistent PostgreSQL session.
+-- Approval setting, hidden MAC parameter and this SQL must remain in that same session.
+-- Secret logging and echo must be disabled; SQL authorization gates still apply.
 -- Target: isolated Ask project xkkiicsassizmakcvxml.
 -- Not applicable to production qvvxvbcdmbjzrgvwjatw.
 -- Replaces preview_session_live so myth_v23_foundation no longer reads auth.sessions.
@@ -64,20 +68,16 @@ end $$;
 revoke all on v23_private.preview_session_attestations from public,anon,authenticated;
 
 do $hmac$
-declare sig text;
 begin
-  sig := coalesce(
-    to_regprocedure('extensions.hmac(bytea,bytea,text)')::text,
-    to_regprocedure('public.hmac(bytea,bytea,text)')::text);
-  if sig is null then
-    raise exception 'pgcrypto hmac(bytea,bytea,text) is required for session attestation';
+  if to_regprocedure('extensions.hmac(bytea,bytea,text)') is null then
+    raise exception 'Required session dependency extensions.hmac(bytea,bytea,text) is missing';
   end if;
   execute 'drop function if exists v23_private.preview_session_mac_matches(text,bytea,bytea)';
-  execute format($fn$
+  execute $fn$
     create function v23_private.preview_session_mac_matches(message text, secret bytea, mac bytea) returns boolean
     language sql immutable set search_path=pg_catalog as
-    $body$ select %s(convert_to(message, 'UTF8'), secret, 'sha256') = mac $body$
-  $fn$, split_part(sig, '(', 1));
+    $body$ select extensions.hmac(convert_to(message, 'UTF8'), secret, 'sha256'::text) = mac $body$
+  $fn$;
 end $hmac$;
 revoke all on function v23_private.preview_session_mac_matches(text,bytea,bytea) from public,anon,authenticated;
 
@@ -151,8 +151,7 @@ language plpgsql security definer set search_path=pg_catalog,v23_private set row
 declare rel oid; fn oid; spec record; foundation oid := to_regrole('myth_v23_foundation');
   allowed oid[]; complete boolean;
 begin
-  if foundation is null or not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-    where n.nspname in ('extensions','public') and p.proname='hmac' and p.proargtypes='17 17 25'::oidvector) then return false; end if;
+  if foundation is null or to_regprocedure('extensions.hmac(bytea,bytea,text)') is null then return false; end if;
   foreach rel in array array[to_regclass('v23_private.preview_session_mac'),
     to_regclass('v23_private.preview_session_attestations')] loop
     if rel is null or not exists(select 1 from pg_class where oid=rel and relkind='r'

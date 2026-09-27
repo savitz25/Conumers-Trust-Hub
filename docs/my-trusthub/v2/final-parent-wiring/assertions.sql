@@ -159,7 +159,7 @@ declare rel oid; fn oid; spec record; foundation oid := to_regrole('myth_v23_fou
   allowed oid[]; complete boolean;
 begin
   if foundation is null or not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-    where n.nspname in ('extensions','public') and p.proname='hmac' and p.proargtypes='17 17 25'::oidvector) then raise exception 'Session authority security/installation is incomplete'; end if;
+    where n.nspname='extensions' and p.proname='hmac' and p.proargtypes='17 17 25'::oidvector) then raise exception 'Session authority security/installation is incomplete'; end if;
   foreach rel in array array[to_regclass('v23_private.preview_session_mac'),
     to_regclass('v23_private.preview_session_attestations')] loop
     if rel is null or not exists(select 1 from pg_class where oid=rel and relkind='r'

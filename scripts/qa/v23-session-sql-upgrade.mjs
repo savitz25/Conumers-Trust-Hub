@@ -43,6 +43,13 @@ try {
     await db.exec(readFileSync('supabase/migrations/'+name,'utf8'));
   }
   await db.exec("set v23.approved_project='xkkiicsassizmakcvxml'");
+  // Hosted visibility: regprocedure display is not a schema-qualified SQL dependency.
+  await db.exec('set search_path=extensions,public');
+  assert.equal((await db.query("select to_regprocedure('extensions.hmac(bytea,bytea,text)')::text sig")).rows[0].sig,'hmac(bytea,bytea,text)');
+  await assert.rejects(db.exec(`create function public.old_hmac_visibility(message text,secret bytea,mac bytea)
+    returns boolean language sql set search_path=pg_catalog as
+    $$select hmac(convert_to(message,'UTF8'),secret,'sha256')=mac$$`), e=>e.code==='42883');
+  console.log('PASS hosted-like OLD bare hmac construction fails 42883 with extensions visible');
   await db.exec(sql('ports-forward.sql'));
   await db.exec(sql('runtime-role-forward.sql'));
   assert.equal(await ready(),false,'clean install cannot be ready before key installation');
@@ -77,6 +84,7 @@ try {
   console.log('PASS before-patch 42P13 reproduction against exact OLD installed names');
   await db.exec('set session authorization local_packet_operator');
 
+  await db.exec('set search_path=extensions,public');
   await install();
   await db.exec(sql('session-authority-forward.sql'));
   assert.equal(await ready(),true);
@@ -89,8 +97,21 @@ try {
   assert.equal((await db.query('select v23_private.preview_session_live($1,$2) live',[subject,session])).rows[0].live,true);
   await db.exec('reset role');
   console.log('PASS OLD -> FORWARD; new attestation predicate active; complete readiness TRUE');
+  for (const path of ['extensions,public','pg_catalog,public']) {
+    await db.exec('set session authorization local_packet_operator; set search_path='+path);
+    await install(); await db.exec(sql('session-authority-forward.sql'));
+    assert.equal(await ready(),true);
+    await db.exec('set session authorization local_test_root; set role myth_v23_authorizer');
+    await db.query('select v23_private.preview_session_bind($1,$2,$3,$4)',[subject,session,expiry,sessionMac(pem,subject,session,expiry)]);
+    assert.equal((await db.query('select v23_private.preview_session_live($1,$2) live',[subject,session])).rows[0].live,true);
+    await db.exec('reset role');
+  }
+  console.log('PASS repaired forward and actual MAC binding with extensions visible and absent from caller search_path');
+
 
   const cases = [
+    ['missing exact HMAC dependency', 'alter function extensions.hmac(bytea,bytea,text) rename to hidden_hmac'],
+    ['only public HMAC dependency', `alter function extensions.hmac(bytea,bytea,text) set schema public`],
     ['missing MAC table', 'drop table v23_private.preview_session_mac'],
     ['missing attestation table', 'drop table v23_private.preview_session_attestations'],
     ['missing MAC row','delete from v23_private.preview_session_mac'],
@@ -133,6 +154,16 @@ try {
     assert.equal(await ready(),true,`${label}: restored positive control`);
   }
   console.log(`PASS ${negatives} readiness negative cases, each with restored positive control`);
+  // Public-only dependency cannot satisfy the forward installation guard either.
+  await db.exec('alter function extensions.hmac(bytea,bytea,text) set schema public');
+  await db.exec('set session authorization local_packet_operator');
+  await install();
+  await assert.rejects(db.exec(sql('session-authority-forward.sql')),/Required session dependency extensions.hmac/);
+  await db.exec('rollback; set session authorization local_test_root');
+  assert.equal(await ready(),false);
+  await db.exec('alter function public.hmac(bytea,bytea,text) set schema extensions');
+  assert.equal(await ready(),true);
+  console.log('PASS public-only HMAC: readiness FALSE and forward dependency guard refuses atomically');
   await db.exec('set session authorization local_packet_operator');
   await db.exec(sql('session-authority-rollback.sql'));
   assert.equal((await db.query("select pg_get_functiondef('v23_private.preview_session_live(uuid,uuid)'::regprocedure) body")).rows[0].body.includes('auth.sessions'),true);
