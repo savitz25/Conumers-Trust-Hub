@@ -1,4 +1,5 @@
 import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksLikeMinnesota, classifyMnHub } from './mn-network.ts';
+import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksLikeMichigan, classifyMiHub } from './mi-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
@@ -313,6 +314,27 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const miId = miIdentifier(originalQuestion);
+  const mi = queryLooksLikeMichigan(originalQuestion);
+  const miBlocked = miRefusal(originalQuestion);
+  const miHub = miId?.hub ?? (mi ? classifyMiHub(originalQuestion) : undefined);
+  const miNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  if (miId || miBlocked || (mi && !miNamed && (miHub || /^(Michigan|MI)( consumer research)?$/i.test(originalQuestion)))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: miAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : miRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : miId ? 'IDENTIFIER_LOOKUP' : miHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: miHub, candidateHubs: miHub ? [miHub] : [],
+      identifier: miId ? {type:miId.type,value:miId.value,raw:miId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: miBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !miBlocked && Boolean(miHub), executionMode: miBlocked || !miHub ? 'CLARIFY' : miId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: miBlocked ?? (!miHub ? 'Open /michigan for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [miId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MICHIGAN_RESEARCH_ROUTING', ...(miBlocked ? ['MICHIGAN_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: miId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   const mnId = mnIdentifier(originalQuestion);
   const mn = queryLooksLikeMinnesota(originalQuestion);
   const refusal = mnRefusal(originalQuestion);
@@ -438,5 +460,6 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'GEOGRAPHY_SCOPE_UNRESOLVED', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
     'IDENTITY_EVIDENCE_FAILED_VALIDATION', 'MULTIPLE_SPECIALIST_HUBS',
     'UNSUPPORTED_SECURITIES_ADVICE', 'MINNESOTA_SAFETY_REFUSAL',
+    'MICHIGAN_SAFETY_REFUSAL',
   ].includes(code));
 }

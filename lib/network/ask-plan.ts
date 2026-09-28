@@ -1,4 +1,5 @@
 import { mnIdentifier, mnRefusal, mnCaveat, classifyMnHub, queryLooksLikeMinnesota, mnSpecialistUrl } from './mn-network.ts';
+import { miIdentifier, miRefusal, miCaveat, classifyMiHub, queryLooksLikeMichigan, miSpecialistUrl } from './mi-network.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
@@ -233,6 +234,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'TN') return '/tennessee';
   if (parsed.geography?.stateCode === 'NV') return '/nevada';
   if (parsed.geography?.stateCode === 'MN') return '/minnesota';
+  if (parsed.geography?.stateCode === 'MI') return '/michigan';
   return undefined;
 }
 
@@ -1633,6 +1635,22 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:mnId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     } else hubs = [];
     if (mnRefused) parsed.interpretationLines.push({label:'Research boundary',value:mnRefused});
+  }
+
+  // Michigan remains a six-hub source gateway. Exact IDs hand off to the specialist's
+  // canonical state page; no specialist rows or graph entities are copied into Ask.
+  const miId = miIdentifier(parsed.query);
+  const miRefused = miRefusal(parsed.query);
+  if (miId || miRefused || queryLooksLikeMichigan(parsed.query)) {
+    const hub = miId?.hub ?? classifyMiHub(parsed.query);
+    if (hub) {
+      const reason = miRefused ?? `${miId ? `Exact ${miId.type} ${miId.value}. ` : ''}${miCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:miRefused?'unsupported':'handoff',
+        ...(miRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:miRefused?undefined:miSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:miId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (miRefused) parsed.interpretationLines.push({label:'Research boundary',value:miRefused});
   }
 
   const requested = requestedLegalJurisdiction(parsed.query);
