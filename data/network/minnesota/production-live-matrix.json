@@ -1,0 +1,1924 @@
+{
+  "verified_at": "2026-09-28T02:22:19.377Z",
+  "sha": "e1fa026e1e9e672da088f2bffe2f6f0f08b5b448",
+  "fingerprint": "4baa31da936a1270d9606ce8647c88180aa0c5cecfa4f701f85e7b21829eee58",
+  "groups": {
+    "ranking": {
+      "total": 102,
+      "pass": 102
+    },
+    "routing": {
+      "total": 6,
+      "pass": 6
+    },
+    "identifiers": {
+      "total": 12,
+      "pass": 12
+    },
+    "geography": {
+      "total": 8,
+      "pass": 8
+    },
+    "prior_states": {
+      "total": 8,
+      "pass": 8
+    },
+    "numeric": {
+      "total": 5,
+      "pass": 5
+    }
+  },
+  "results": [
+    {
+      "group": "ranking",
+      "query": "best Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "best Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "best Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "best Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "best Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "best Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "safest Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommended Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "recommend Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top rated Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "top-rated Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest rated Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "highest-rated Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "#1 Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "number one Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trustworthy Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "most trusted Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "Trust Score Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "AggregateRating Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "ratingValue Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "paid ranking Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "lender",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "insurance",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "contractor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "move",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "senior",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "ranking",
+      "query": "sponsored ranking Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "RECOMMENDATION_REQUEST",
+        "hub": "investor",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota insurance agency",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "insurance",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota lender",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "lender",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota mover",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota assisted living",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "senior",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "routing",
+      "query": "Minnesota investment adviser",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "investor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "NMLS 2229 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "lender",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "nmls",
+          "value": "2229",
+          "raw": "NMLS 2229"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "USDOT 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "usdot",
+          "value": "12345",
+          "raw": "USDOT 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "MC 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "mc",
+          "value": "12345",
+          "raw": "MC 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "MnDOT 1234",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "mn_mndot_carrier_number",
+          "value": "1234",
+          "raw": "MnDOT 1234"
+        }
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "NPN 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "insurance",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "npn",
+          "value": "12345",
+          "raw": "NPN 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "NAIC 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "insurance",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "naic_company_code",
+          "value": "12345",
+          "raw": "NAIC 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "DLI BC123456 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "mn_dli_credential",
+          "value": "BC123456",
+          "raw": "BC123456"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "HFID 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "senior",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "mn_mdh_hfid",
+          "value": "12345",
+          "raw": "HFID 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "CRD 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "investor",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "crd",
+          "value": "12345",
+          "raw": "CRD 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "SEC 801-12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "investor",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "sec_file_number",
+          "value": "801-12345",
+          "raw": "SEC 801-12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "MDH license 12345 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "senior",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "mn_mdh_license",
+          "value": "12345",
+          "raw": "MDH license 12345"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "identifiers",
+      "query": "CCN 245001 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "senior",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "cms_ccn",
+          "value": "245001",
+          "raw": "CCN 245001"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Minneapolis contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Rochester MN nursing home",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "senior",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Rochester New York contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "NY"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Rochester Minnesota contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Saint Paul lender",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "lender",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "St Paul mover",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Duluth contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "geography",
+      "query": "Bloomington IN contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "IL"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "Tennessee contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "TN"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "Nevada contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "NV"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "Georgia contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "GA"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "Massachusetts contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "MA"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "Ohio contractor",
+      "http": 200,
+      "plan": {
+        "intent": "COHORT_BROWSE",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "COHORT",
+        "state": "OH"
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "NMLS 2229",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "lender",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "nmls",
+          "value": "2229",
+          "raw": "NMLS 2229"
+        }
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "USDOT 12345",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "move",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "usdot",
+          "value": "12345",
+          "raw": "USDOT 12345"
+        }
+      },
+      "pass": true
+    },
+    {
+      "group": "prior_states",
+      "query": "CGC1234567 Florida",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "contractor",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "state_contractor_license",
+          "value": "CGC1234567",
+          "raw": "CGC1234567"
+        },
+        "state": "FL"
+      },
+      "pass": true
+    },
+    {
+      "group": "numeric",
+      "query": "2229 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+        "executionAllowed": false,
+        "mode": "CLARIFY",
+        "state": "MN"
+      },
+      "pass": true
+    },
+    {
+      "group": "numeric",
+      "query": "license 2229",
+      "http": 422,
+      "result": "generic identity-needed; no Minnesota guidance",
+      "pass": true
+    },
+    {
+      "group": "numeric",
+      "query": "credential 2229",
+      "http": 422,
+      "result": "generic identity-needed; no Minnesota guidance",
+      "pass": true
+    },
+    {
+      "group": "numeric",
+      "query": "2229",
+      "http": 422,
+      "result": "generic identity-needed; no Minnesota guidance",
+      "pass": true
+    },
+    {
+      "group": "numeric",
+      "query": "NMLS 2229 Minnesota",
+      "http": 200,
+      "plan": {
+        "intent": "IDENTIFIER_LOOKUP",
+        "hub": "lender",
+        "executionAllowed": true,
+        "mode": "IDENTIFIER",
+        "identifier": {
+          "type": "nmls",
+          "value": "2229",
+          "raw": "NMLS 2229"
+        },
+        "state": "MN"
+      },
+      "pass": true
+    }
+  ]
+}
