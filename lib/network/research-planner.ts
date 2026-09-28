@@ -1,3 +1,4 @@
+import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksLikeMinnesota, classifyMnHub } from './mn-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
@@ -312,6 +313,27 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const mnId = mnIdentifier(originalQuestion);
+  const mn = queryLooksLikeMinnesota(originalQuestion);
+  const refusal = mnRefusal(originalQuestion);
+  const mnHub = mnId?.hub ?? (mn ? classifyMnHub(originalQuestion) : undefined);
+  const named = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  if (mnId || refusal || (mn && !named && (mnHub || /^(Minnesota|MN)( consumer research)?$/i.test(originalQuestion)))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: mnAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : mnRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : mnId ? 'IDENTIFIER_LOOKUP' : mnHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: mnHub, candidateHubs: mnHub ? [mnHub] : [],
+      identifier: mnId ? {type:mnId.type,value:mnId.value,raw:mnId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: refusal ? ['sourceOrScope'] : [],
+      executionAllowed: !refusal && Boolean(mnHub), executionMode: refusal || !mnHub ? 'CLARIFY' : mnId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: refusal ?? (!mnHub ? 'Open /minnesota for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [mnId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MINNESOTA_RESEARCH_ROUTING', ...(refusal ? ['MINNESOTA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: mnId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   if (isUnsupportedSecuritiesAdviceQuery(originalQuestion)) {
     return {
       version: 'ask-research-plan-v1',
@@ -415,6 +437,6 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'HOW_TO_LANGUAGE', 'EXPLAINER_LANGUAGE', 'SPECIFIC_REFERENCE_WITHOUT_IDENTITY',
     'GEOGRAPHY_SCOPE_UNRESOLVED', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
     'IDENTITY_EVIDENCE_FAILED_VALIDATION', 'MULTIPLE_SPECIALIST_HUBS',
-    'UNSUPPORTED_SECURITIES_ADVICE',
+    'UNSUPPORTED_SECURITIES_ADVICE', 'MINNESOTA_SAFETY_REFUSAL',
   ].includes(code));
 }

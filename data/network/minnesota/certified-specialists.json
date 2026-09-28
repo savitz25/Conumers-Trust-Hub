@@ -1,0 +1,45 @@
+{
+  "move": {
+    "sha": "6c03a2d34bb7532b97914d3318974f6b3733baf4",
+    "fingerprint": "fbd810749239faa78696c44b882c7aa0b18411bccae556115b65890a605521ab",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS"
+  },
+  "lender": {
+    "sha": "d4cc8bcb5bae8fbf9b698165e908e58d05339fe4",
+    "fingerprint": "e1c89c65a4d4b87497ef267f122dc7d53be9583e5e51e78a77f5f4847a6872c8",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS",
+    "production_deployment": "dpl_BaRjKL4FmsLkfiRX9e7K3w9CmYAQ"
+  },
+  "contractor": {
+    "sha": "f2e56d552ea5176ba7ec8a4906a1760a76b46bfa",
+    "fingerprint": "7f9ba09a491f185178a511ede5c08311ec767362459ecce8aa8c2f044fa1105f",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS"
+  },
+  "insurance": {
+    "sha": "c150a4c4e89a0932af9fc5d41461d78a50496c78",
+    "fingerprint": "6ecbdbb8406a95152e1503977a57f1e87b6f9060c1b5a739a8d791e51a2911e2",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS"
+  },
+  "senior": {
+    "sha": "97663823fb289ed1daaedd7e2cbff62d8345e1cb",
+    "fingerprint": "b453a290198d834945104aa81f2942bd1fb3bc0fda33fff8cb51fb4d18e9e223",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS"
+  },
+  "investor": {
+    "sha": "693eb80e0083f4cf3ad20069d20f0ccca1435ae2",
+    "fingerprint": "5e60cddd13ec5a9c2efc786f722ff8df4e5aa0bae5f83cf1adedf6f22f2ed3c3",
+    "status": "CLOSED_PRODUCTION_VERIFIED",
+    "canonical_path": "/minnesota",
+    "independent_certification": "PASS"
+  }
+}

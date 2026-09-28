@@ -1,3 +1,4 @@
+import { mnIdentifier, mnRefusal, mnCaveat, classifyMnHub, queryLooksLikeMinnesota, mnSpecialistUrl } from './mn-network.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
@@ -231,6 +232,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'MA') return '/massachusetts';
   if (parsed.geography?.stateCode === 'TN') return '/tennessee';
   if (parsed.geography?.stateCode === 'NV') return '/nevada';
+  if (parsed.geography?.stateCode === 'MN') return '/minnesota';
   return undefined;
 }
 
@@ -1615,6 +1617,22 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         ...hubs.filter((h) => h.hubId !== identifierRoute.hubId),
       ];
     }
+  }
+
+  // Minnesota is a source gateway. Exact credential handoffs never promote individual rows
+  // into company headlines, and refusals cannot execute a provider search.
+  const mnId = mnIdentifier(parsed.query);
+  const mnRefused = mnRefusal(parsed.query);
+  if (mnId || mnRefused || queryLooksLikeMinnesota(parsed.query)) {
+    const hub = mnId?.hub ?? classifyMnHub(parsed.query);
+    if (hub) {
+      const reason = mnRefused ?? `${mnId ? `Exact ${mnId.type} ${mnId.value}. ` : ''}${mnCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:mnRefused?'unsupported':'handoff',
+        ...(mnRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:mnRefused?undefined:mnSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:mnId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (mnRefused) parsed.interpretationLines.push({label:'Research boundary',value:mnRefused});
   }
 
   const requested = requestedLegalJurisdiction(parsed.query);
