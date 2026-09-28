@@ -8,6 +8,7 @@ import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { PreviewAssembly } from '../../lib/my-trusthub/profile-save/preview-assembly.ts';
 import { PreviewStore, PreviewConfirmationStore, randomRef } from '../../lib/my-trusthub/profile-save/preview-store.ts';
 import { SourceChannel, TEST_PROFILE, TEST_SLUG } from '../../lib/my-trusthub/profile-save/source-channel.ts';
+import { verifiedParent } from '../../lib/my-trusthub/profile-save/verified-parent.ts';
 import { handleProfileConfirmation } from '../../lib/my-trusthub/profile-save/browser.ts';
 import { handleProfileSave } from '../../lib/my-trusthub/profile-save/http.ts';
 import { ASSERTION_HEADER, signAssertion, verifyAssertion } from '../../lib/my-trusthub/profile-save/service-assertion.ts';
@@ -91,6 +92,15 @@ try {
   });
   let parent = null;
   const runtime = new PreviewAssembly(fixtureEnv, pool, source, move.publicKey, async () => parent);
+  const refreshedParent=await verifiedParent(new Request(ASK_PREVIEW+'/my/profile-save'),fixtureEnv,{
+    getUser:async()=>({data:{user:{id:A,email_confirmed_at:'2026-09-01'}},error:null}),
+    getClaims:async()=>({data:{claims:{sub:A,session_id:sidA,exp:Math.floor(Date.now()/1000)+3600,iss:'https://xkkiicsassizmakcvxml.supabase.co/auth/v1'}},error:null}),
+  },{bind:(sub,sid,expiry)=>store.bind(sub,sid,expiry,sessionMac(signing.privateKey.pem,sub,sid,expiry)),live:(sub,sid)=>store.live(sub,sid)});
+  assert.equal(refreshedParent?.subject,A);
+  assert.equal(await store.live(A,sidA),true);
+  assert.deepEqual((await store.authorized(d=>d.query('select * from v23_private.preview_projects($1,$2)',[A,sidA]))).rows,[]);
+  assert.deepEqual(await runtime.projects(refreshedParent),[]);
+  console.log('PASS live attestation + zero active Projects: SQL and assembly both return []');
   const projectA = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', projectB = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
   await db.query("insert into consumer.consumer_projects(id,user_id,creation_key,name,life_event_type) values($1,$2,gen_random_uuid(),'A private Project','moving'),($3,$4,gen_random_uuid(),'B private Project','moving')", [projectA,A,projectB,B]);
   const projectsA = await runtime.projects({subject:A,session:sidA,label:'Fixture A'});

@@ -1,42 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {mkdtempSync} from 'node:fs';
-import {join} from 'node:path';
-import {tmpdir} from 'node:os';
-import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type BrowserParent,type Confirmation} from './browser.ts';
-import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
-import {SqliteHarnessBackend} from '../../../scripts/qa/v23-sqlite-backend.ts';
-import {TRANSFER_VERSION,profileKey,type GuestStageInput,type GuestStageRef} from '../contracts/v2-3-profile-transfer.ts';
+import {handleProfileConfirmation,PROFILE_CONFIRM_PATH} from './browser.ts';
+import {fixture} from './browser.fixture.ts';
 import {safeReturn} from '../account-policy.ts';
 import {retentionBatch,quotaRetentionBatch} from './retention.ts';
-async function fixture(){
-  let now=1000,parent:BrowserParent|null=null;
-  const origin='http://127.0.0.1:4520',sourceOrigin='http://127.0.0.1:4521';
-  const registry={environment:'isolated' as const,isolatedBackendVerified:true,origins:{move:sourceOrigin,insurance:'http://127.0.0.1:4522',lender:'http://127.0.0.1:4523',contractor:'http://127.0.0.1:4524',senior:'http://127.0.0.1:4525',investor:'http://127.0.0.1:4529'}};
-  const identity={hub:'move' as const,nativeId:'fixture-mover',profileClass:'mover'};
-  const manifest:GuestStageInput={version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:'fixture-mover',profile:identity}};
-  const backend=new SqliteHarnessBackend(join(mkdtempSync(join(tmpdir(),'b4-browser-')),'qa.sqlite'));
-  backend.profiles.set(profileKey(identity),{...identity,published:true,supportedClass:true,binding:{id:'fixture-binding',networkEntityId:'fixture-entity',status:'accepted'}});
-  let caller:VerifiedCaller={hub:'move',browserBinding:'b'.repeat(43),environment:'isolated',scopes:['transfer:stage','saved:write','receipt:verify']};
-  const runtime=new ParentProfileSaveRuntime({enabled:true,backend,registry,now:()=>now,authenticate:async()=>caller});
-  const stage=await runtime.execute('prepareGuestProfileTransfer',manifest) as GuestStageRef;
-  const continuation=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:stage.transferRef,manifestDigest:stage.manifestDigest}) as {continuationRef:string};
-  // Source snapshot is obtained by a separate mocked authenticated service, NOT
-  // by reading the parent's SQLite tables. Concrete service credentials NOT RUN.
-  const records=new Map<string,Confirmation>();let acks=0;
-  const b:BrowserBindings={origin,registry,now:()=>now,source:async()=>({...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)}),
-    parent:async()=>parent,projects:async()=>[{ref:'p'.repeat(43),label:'Test Project'}],
-    store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null,async()=>{})},
-    runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
-    acknowledge:async()=>{acks++;}};
-  const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
-  const arrival=await handleProfileConfirmation(post(new URLSearchParams({continuationRef:continuation.continuationRef}).toString(),'',sourceOrigin),b);
-  assert.equal(arrival.status,303);const cookie=arrival.headers.get('set-cookie')!.split(';')[0];
-  const get=()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie}}),b);
-  const confirm=async(project='')=>{const page=await (await get()).text();const csrf=/name="csrf" value="([^"]+)"/.exec(page)?.[1];return handleProfileConfirmation(post(new URLSearchParams({csrf:csrf??'',confirm:'yes',project}).toString(),cookie),b);};
-  return {b,backend,get,confirm,post,cookie,records,origin,get acks(){return acks;},
-    login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
-}
+import {ASK_PREVIEW,MOVE_PREVIEW} from './isolated-config.ts';
 test('B01 concrete target: sign-in continuation -> explicit confirmation -> real runtime receipt -> bounded return',async()=>{
   const f=await fixture();try{
     assert.match(await(await f.get()).text(),/Sign in to continue/);assert.equal(f.backend.count('saves'),0);
@@ -89,3 +57,39 @@ test('B06 checkpoint gap resumes existing exact P13 context without replay',asyn
     assert.equal(c.accountContextRef,original);assert.equal(f.backend.count('saves'),1);
   }finally{f.close();}
 });
+
+const previewFixture=()=>fixture({origin:ASK_PREVIEW,sourceOrigin:MOVE_PREVIEW,zeroProjects:true,nativeId:'usdot-1002530'});
+test('B07 exact browser form with zero Projects saves without Project and checkpoints context',async()=>{
+ const f=await previewFixture();try{
+  f.login();const page=await f.get();assert.equal(page.status,200);
+  assert.equal(page.headers.get('referrer-policy'),'same-origin');
+  const html=await page.text(),csrf=/name="csrf" value="([^"]+)"/.exec(html)![1];
+  assert.equal(csrf.length,43);assert.match(html,/<option value="">No Project<\/option>/);
+  assert.deepEqual(await f.b.projects([...f.records.values()][0].parent!),[]);
+  const response=await handleProfileConfirmation(f.post(new URLSearchParams({csrf,confirm:'yes',project:''}).toString(),f.cookie),f.b);
+  assert.equal(response.status,200);assert.match(await response.text(),/Saved to My TrustHub/);
+  assert.ok(f.checkpoints.some(c=>!!c.contextCandidateRef&&c.projectRef===undefined));
+  assert.equal(f.backend.count('saves'),1);assert.equal(f.backend.count('memberships'),0);
+ }finally{f.close();}
+});
+for(const invalid of ['missing-confirm','wrong-csrf','wrong-origin','null-origin','duplicate-csrf','duplicate-confirm','duplicate-project','unknown-key','unknown-project','account-switch','expired']){
+ test(`B08 final form denies ${invalid} before context checkpoint`,async()=>{
+  const f=await previewFixture();try{
+   f.login();const html=await(await f.get()).text(),csrf=/name="csrf" value="([^"]+)"/.exec(html)![1];
+   const fields=new URLSearchParams({csrf,confirm:'yes',project:''});let origin=ASK_PREVIEW;
+   if(invalid==='missing-confirm')fields.delete('confirm');
+   if(invalid==='wrong-csrf')fields.set('csrf','x'.repeat(43));
+   if(invalid==='wrong-origin')origin=MOVE_PREVIEW;
+   if(invalid==='null-origin')origin='null';
+   if(invalid.startsWith('duplicate-')){const k=invalid.slice(10);fields.append(k,fields.get(k)!);}
+   if(invalid==='unknown-key')fields.set('subject','untrusted');
+   if(invalid==='unknown-project')fields.set('project','p'.repeat(43));
+   if(invalid==='account-switch')f.login('consumer-b','session-b');
+   if(invalid==='expired')f.expire();
+   const response=await handleProfileConfirmation(f.post(fields.toString(),f.cookie,origin),f.b);
+   assert.equal(response.status,invalid==='account-switch'?409:invalid==='expired'?410:503);
+   assert.ok(!f.checkpoints.some(c=>c.contextCandidateRef));
+   assert.equal(f.backend.count('saves'),0);
+  }finally{f.close();}
+ });
+}

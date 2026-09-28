@@ -35,7 +35,9 @@ export interface BrowserBindings {
   confirmed?(confirmation:Confirmation,parent:BrowserParent):Promise<void>;
   now():number;
 }
-function html(body:string,status=200){return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Keep profiles in My TrustHub</title><style>body{font:1rem system-ui;margin:1rem;overflow-wrap:anywhere}main{max-width:42rem;margin:auto}button,select{font:inherit;padding:.7rem;max-width:100%}label{display:block;margin:1rem 0}:focus-visible{outline:3px solid #165cba}</style><main>${body}</main></html>`,{status,headers:{...PRIVATE_HEADERS,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});}
+// Native form navigations under no-referrer send Origin:null. Preserve the exact
+// same-origin POST check while still suppressing referrers to other origins.
+function html(body:string,status=200){return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Keep profiles in My TrustHub</title><style>body{font:1rem system-ui;margin:1rem;overflow-wrap:anywhere}main{max-width:42rem;margin:auto}button,select{font:inherit;padding:.7rem;max-width:100%}label{display:block;margin:1rem 0}:focus-visible{outline:3px solid #165cba}</style><main>${body}</main></html>`,{status,headers:{...PRIVATE_HEADERS,'Referrer-Policy':'same-origin','Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});}
 const unavailable=()=>html('<h1>Save is unavailable</h1><p>Your device copy is unchanged. Return to the profile and try again.</p>',503);
 const same=(a:BrowserParent|null,b:BrowserParent)=>a?.subject===b.subject&&a.session===b.session;
 async function form(request:Request){
