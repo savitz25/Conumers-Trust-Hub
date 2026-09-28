@@ -1,5 +1,6 @@
 import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksLikeMinnesota, classifyMnHub } from './mn-network.ts';
 import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksLikeMichigan, classifyMiHub } from './mi-network.ts';
+import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
@@ -321,6 +322,28 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const ctId = ctIdentifier(originalQuestion);
+  const ct = queryLooksLikeConnecticut(originalQuestion);
+  const ctBlocked = ctRefusal(originalQuestion);
+  const ctHub = ctId?.hub ?? (ct ? classifyCtHub(originalQuestion) : undefined);
+  const ctNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const ctSeparateTask = Boolean(ctId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!ctSeparateTask && (ctId || ctBlocked || (ct && !ctNamed && (ctHub || /^(Connecticut|CT)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: ctAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : ctRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : ctId ? 'IDENTIFIER_LOOKUP' : ctHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: ctHub, candidateHubs: ctHub ? [ctHub] : [],
+      identifier: ctId ? {type:ctId.type,value:ctId.value,raw:ctId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: ctBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !ctBlocked && Boolean(ctHub), executionMode: ctBlocked || !ctHub ? 'CLARIFY' : ctId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: ctBlocked ?? (!ctHub ? 'Open /connecticut for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [ctId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'CONNECTICUT_RESEARCH_ROUTING', ...(ctBlocked ? ['CONNECTICUT_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: ctId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   const miId = miIdentifier(originalQuestion);
   const mi = queryLooksLikeMichigan(originalQuestion);
   const miBlocked = miRefusal(originalQuestion);
@@ -469,5 +492,6 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'IDENTITY_EVIDENCE_FAILED_VALIDATION', 'MULTIPLE_SPECIALIST_HUBS',
     'UNSUPPORTED_SECURITIES_ADVICE', 'MINNESOTA_SAFETY_REFUSAL',
     'MICHIGAN_SAFETY_REFUSAL',
+    'CONNECTICUT_SAFETY_REFUSAL',
   ].includes(code));
 }

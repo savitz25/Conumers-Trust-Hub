@@ -49,6 +49,7 @@ import { detectMaCity, queryLooksLikeMassachusetts } from './ma-network.ts';
 import { detectTnCity, queryLooksLikeTennessee } from './tn-network.ts';
 import { mnGeography, mnIdentifier, mnSpecialistUrl } from './mn-network.ts';
 import { miGeography, miIdentifier, miSpecialistUrl } from './mi-network.ts';
+import { ctGeography, ctIdentifier, ctSpecialistUrl } from './ct-network.ts';
 import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
@@ -106,6 +107,8 @@ function geography(q: string): ParsedGeography | undefined {
   if (mnGeo) return mnGeo;
   const miGeo = miGeography(q);
   if (miGeo) return miGeo;
+  const ctGeo = ctGeography(q);
+  if (ctGeo) return ctGeo;
   if (/\b(rochester|bloomington)\b/i.test(q) && !US_JURISDICTIONS.some(j => new RegExp(`\\b${j.name}\\b`, 'i').test(q) || new RegExp(`\\b${j.code}\\b`).test(q))) return { meaning: 'Ambiguous city; specify its state.' };
   // ATH-NV-001: Nevada named before any other state (or a Nevada city with a TrustHub vertical and no
   // other state) is Nevada. A state code named before Nevada ("movers CA and Nevada") keeps that state,
@@ -727,8 +730,9 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const geo = geography(query);
   const mnId = mnIdentifier(query);
   const miId = miIdentifier(query);
-  const scopedId = mnId ?? miId;
-  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : undefined;
+  const ctId = ctIdentifier(query);
+  const scopedId = mnId ?? miId ?? ctId;
+  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : undefined;
   const id = scopedId ? { family: { id: scopedId.type, hubId: scopedId.hub, label: scopedId.type, examples: [scopedId.raw], pattern: /./, live: false, destinationHint: specialistUrl!, note: 'Exact source identifier; specialist verification, not a business name.' }, raw: scopedId.raw, ambiguous: false, note: 'Exact source identifier.' } : matchIdentifier(query);
 
   const nameCheck =
