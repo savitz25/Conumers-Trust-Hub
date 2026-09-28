@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-CT-001",
+  "contract": "ath-ct-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "582880d8635fe087023bbc3f6368b9e584de4875",
+  "manifest": "data/network/connecticut-publication-manifest.json",
+  "semantic_fingerprint": "628ff3c870fbac2e5c2435546267fb1845be46b1feddad79d153c1b041a5a1e2",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

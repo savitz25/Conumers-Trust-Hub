@@ -1,0 +1,62 @@
+{
+  "contract": "ath-ct-network-release-v1",
+  "ticket": "ATH-CT-001",
+  "state_code": "CT",
+  "state_name": "Connecticut",
+  "ask_canonical": "https://www.asktrusthub.com/connecticut",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "38112e200ebcd5df3044593c81fb826e6af5c7e0", "canonical_state_url": "https://www.movetrusthub.com/connecticut",
+      "capability_summary": "117 CTDOT 2026 household-goods roster rows / 115 distinct HG certificates",
+      "grain": "CTDOT source rows, not unique mover companies. The roster prints no USDOT or MC identifiers; RCHG eLicense verification is separate. State authority is not federal authority.",
+      "source_clocks": { "workbook_last_modified_http": "2026-05-20T13:50:36Z", "workbook_publication_date_printed": null, "roster_retrieved_at": "2026-09-28T17:53:58Z" },
+      "gaps": [{ "capability": "exact USDOT/MC bridges from CTDOT roster", "state": "NOT_ACQUIRED" }, { "capability": "provider-level CTDOT enforcement corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "7e25742f75b3b4c1cf79ae554a28cee1aa54447b", "canonical_state_url": "https://www.contractortrusthub.com/connecticut",
+      "capability_summary": "23,684 ACTIVE Connecticut Home Improvement Contractor credential rows",
+      "grain": "HIC credential rows, not unique contractor businesses. New Home Construction Contractor ACTIVE 2,964 and Home Improvement Salesperson ACTIVE 3,395 are separate classes; skilled-trade classes are separate. Administrative-decision index: 107 relevant rows, not unique violations.",
+      "source_clocks": { "credentials_rows_updated_at": "2026-09-28T10:18:37Z", "decisions_rows_updated_at": "2026-09-28T11:49:21Z", "snapshot_retrieved_at": "2026-09-28T18:22:46.804Z", "decision_window": "2022-01-01 through 2026-09-28" },
+      "gaps": [{ "capability": "deduplicated statewide contractor-business census", "state": "UNSUPPORTED" }, { "capability": "provider-level guaranty payout corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "7f0fade2ad9bf5e9089f7d1e9974802648852639", "canonical_state_url": "https://www.lendertrusthub.com/connecticut",
+      "capability_summary": "448 Connecticut mortgage-lender company license rows",
+      "grain": "DOB lender company-license rows, not branch rows, brokers, servicers, or unique lender businesses. Separate classes: lender branches 1,119; broker companies 290; correspondent-lender companies 22; servicer companies 75. HMDA 2025 Connecticut-property activity is separate: 123,096 applications, 74,032 originations, 21,096 denials, 607 LEIs.",
+      "source_clocks": { "dob_license_sheets_as_of": "2026-09-02", "dob_sheets_retrieved_at": "2026-09-28T18:47:28Z", "hmda_vintage": "2025" },
+      "gaps": [{ "capability": "combined license plus HMDA lender total", "state": "UNSUPPORTED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "5b7ffabdf7327a1223650690fe43afbc1a0c3148", "canonical_state_url": "https://www.insurancetrusthub.com/connecticut",
+      "capability_summary": "1,773 CID company-type rows as of 2026-06-30",
+      "grain": "Dated company-list rows, not a deduplicated statewide insurer count. 1,633 rows print NAIC and 1,611 distinct NAIC codes. Market-conduct index 184 entries in 2022–2026 and separate financial-exam list 54 rows.",
+      "source_clocks": { "company_list_as_of": "2026-06-30", "company_list_retrieved_at": "2026-09-28T18:56:10Z", "market_conduct_retrieved_at": "2026-09-28T18:56:10Z", "market_conduct_window": "2022-01-01 through 2026-09-28" },
+      "gaps": [{ "capability": "deduplicated insurer population", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "48f4e18bb7f03cb4c00aae9f4de42c2875553759", "canonical_state_url": "https://www.seniortrusthub.com/connecticut",
+      "capability_summary": "189 Connecticut DPH active-status CCNH license rows",
+      "grain": "One Chronic & Convalescent Nursing Home license class, not all Connecticut senior facilities. Separate rows: Residential Care Facility 96, Assisted Living Service Agency 126, Home Health Care 86, Homemaker–Home Health Aide 1, Hospice 2. State license is not CMS certification.",
+      "source_clocks": { "credentials_last_modified_http": "2026-09-28T10:18:31Z", "credentials_retrieved_at": "2026-09-28T19:35:17Z", "orders_index_retrieved_at": "2026-09-28T19:30:33Z", "orders_window": "2023–2024 indexed documents" },
+      "gaps": [{ "capability": "exact state-license to CMS CCN bridges", "state": "NOT_ACQUIRED" }, { "capability": "statewide inspection report index", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "3eede73a6067ca404350acd9f5f8a3b324f978b3", "canonical_state_url": "https://www.investortrusthub.com/connecticut",
+      "capability_summary": "398 Connecticut state IA firm CRDs with IAPD status APPROVED",
+      "grain": "IAPD APPROVED state IA lens, not a combined adviser population. Separate DOB list lenses: state IA 442 CRD rows (all statuses), federal notice 2,709, ERA 236; separate IAPD lenses: notice FILED 2,745, ERA ACTIVE 255, Connecticut principal office 591. Securities-order index: 138 links, not unique findings.",
+      "source_clocks": { "dob_state_ia_list_source_updated": "2025-10-22", "dob_lists_retrieved_at": "2026-09-28T19:30:38Z", "iapd_feed_as_of": "2026-09-17", "iapd_accepted_retrieved_at": "2026-09-17T15:15:00Z", "orders_retrieved_at": "2026-09-28T19:31:31Z" },
+      "gaps": [{ "capability": "combined adviser total across DOB and IAPD lenses", "state": "UNSUPPORTED" }]
+    }
+  ]
+}
