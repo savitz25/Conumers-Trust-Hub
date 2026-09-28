@@ -1,0 +1,172 @@
+{
+  "ticket": "ATH-MN-001P",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
+  "verified_at": "2026-09-28T02:26:13.933482+00:00",
+  "implementation_pr": 215,
+  "reviewed_head": "dcad3e6619e152ed4679021accf1ae42e16f407d",
+  "merge_sha": "e1fa026e1e9e672da088f2bffe2f6f0f08b5b448",
+  "merged_at": "2026-09-28T02:19:41Z",
+  "ask_main_at_verification": "e1fa026e1e9e672da088f2bffe2f6f0f08b5b448",
+  "reviewed_tree_equals_merge_tree": true,
+  "deployment_id": "dpl_72J4VpcSRCBxo3vmS8PsWoTjrqen",
+  "deployment_url": "https://conumers-trust-igges48dy-savitz25-s-projects.vercel.app",
+  "production_url": "https://www.asktrusthub.com/minnesota",
+  "production_sha": "e1fa026e1e9e672da088f2bffe2f6f0f08b5b448",
+  "deployment_method": "Git-triggered Production; www.asktrusthub.com alias resolved to this deployment",
+  "semantic_fingerprint": "4baa31da936a1270d9606ce8647c88180aa0c5cecfa4f701f85e7b21829eee58",
+  "fingerprint_method": "mnPublicationSemanticFingerprint() on the merged tree; unchanged publication manifest",
+  "page_qa": {
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/minnesota",
+    "robots": "index, follow",
+    "platform_noindex": false,
+    "sso": false,
+    "links": [
+      "https://www.movetrusthub.com/minnesota",
+      "https://www.lendertrusthub.com/minnesota",
+      "https://www.contractortrusthub.com/minnesota",
+      "https://www.insurancetrusthub.com/minnesota",
+      "https://www.seniortrusthub.com/minnesota",
+      "https://www.investortrusthub.com/minnesota"
+    ],
+    "grain_checks": 6,
+    "schema_clean": true,
+    "trust_score": false,
+    "paths": {
+      "/Minnesota": {
+        "status": 308,
+        "location": "/minnesota"
+      },
+      "/MINNESOTA": {
+        "status": 308,
+        "location": "/minnesota"
+      },
+      "/minnesota/minneapolis": {
+        "status": 404,
+        "location": null
+      }
+    },
+    "sitemap_occurrences": 1,
+    "prior_pages": {
+      "nevada": 200,
+      "tennessee": 200,
+      "massachusetts": 200,
+      "georgia": 200,
+      "ohio": 200
+    }
+  },
+  "accessibility": {
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "axe_tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21aa"
+    ],
+    "violations": 0,
+    "horizontal_overflow": false,
+    "browser_page_errors": 0,
+    "specialist_link_height_px": 44,
+    "specialist_links_keyboard_focusable": true
+  },
+  "live_matrix": {
+    "ranking": {
+      "total": 102,
+      "pass": 102
+    },
+    "routing": {
+      "total": 6,
+      "pass": 6
+    },
+    "identifiers": {
+      "total": 12,
+      "pass": 12
+    },
+    "geography": {
+      "total": 8,
+      "pass": 8
+    },
+    "prior_states": {
+      "total": 8,
+      "pass": 8
+    },
+    "numeric": {
+      "total": 5,
+      "pass": 5
+    }
+  },
+  "live_matrix_total": 141,
+  "live_matrix_pass": 141,
+  "matrix_method": "Unauthenticated Production POST /api/guided-research START with interpretAs=category, matched against planAskResearch at merged SHA; generic numbers additionally checked through public /ask HTML. Ranking must refuse, disable execution, return no rows or destinations.",
+  "local_review_evidence": {
+    "minnesota_matrix": "361/361",
+    "minnesota_suite": "367/367",
+    "full_chain": "886/886",
+    "broad_candidate": "1216/1227",
+    "broad_pinned_base": "849/860",
+    "identical_failure_names_and_messages": 11,
+    "candidate_only_failures": 0,
+    "prior_states": [
+      "Nevada",
+      "Tennessee",
+      "Massachusetts",
+      "Georgia",
+      "Ohio",
+      "North Carolina",
+      "Oregon",
+      "Pennsylvania"
+    ]
+  },
+  "specialists": [
+    {
+      "hub": "move",
+      "sha": "6c03a2d34bb7532b97914d3318974f6b3733baf4",
+      "fingerprint": "fbd810749239faa78696c44b882c7aa0b18411bccae556115b65890a605521ab"
+    },
+    {
+      "hub": "lender",
+      "sha": "d4cc8bcb5bae8fbf9b698165e908e58d05339fe4",
+      "fingerprint": "e1c89c65a4d4b87497ef267f122dc7d53be9583e5e51e78a77f5f4847a6872c8"
+    },
+    {
+      "hub": "contractor",
+      "sha": "f2e56d552ea5176ba7ec8a4906a1760a76b46bfa",
+      "fingerprint": "7f9ba09a491f185178a511ede5c08311ec767362459ecce8aa8c2f044fa1105f"
+    },
+    {
+      "hub": "insurance",
+      "sha": "c150a4c4e89a0932af9fc5d41461d78a50496c78",
+      "fingerprint": "6ecbdbb8406a95152e1503977a57f1e87b6f9060c1b5a739a8d791e51a2911e2"
+    },
+    {
+      "hub": "senior",
+      "sha": "97663823fb289ed1daaedd7e2cbff62d8345e1cb",
+      "fingerprint": "b453a290198d834945104aa81f2942bd1fb3bc0fda33fff8cb51fb4d18e9e223"
+    },
+    {
+      "hub": "investor",
+      "sha": "693eb80e0083f4cf3ad20069d20f0ccca1435ae2",
+      "fingerprint": "5e60cddd13ec5a9c2efc786f722ff8df4e5aa0bae5f83cf1adedf6f22f2ed3c3"
+    }
+  ],
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "These different source grains cannot be summed."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  },
+  "bounded_exceptions": [
+    "Bloomington IN geography remains unchanged baseline debt.",
+    "Senior nursing home Minneapolis remains a canonical state handoff; Ask does not resolve CMS providers.",
+    "Individual DLI credentials are not promoted as business-company profiles.",
+    "Broad sweep has 11 independently reproduced baseline failures: eight live Insurance assertions and three historical static assertions. Initial transient Investor timeouts cleared on targeted and full reruns."
+  ],
+  "production_probe_note": "Early requests during the build saw the previous release. All certified probes ran after READY and alias assignment."
+}
