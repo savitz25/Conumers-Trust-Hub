@@ -69,8 +69,15 @@ const RECOMMENDATION = /\b(?:best|safest|most\s+trustworthy|legitimate|recommend
 const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|contractor|roofer|roof\s+guy|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency|nursing\s+home|assisted\s+living(?:\s+facility)?|hospice|senior\s+home|senior\s+facility)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b|\b(?:hire|research|check)\b[^?.!]{0,80}\b(?:them|him|her)\b/i;
 
 function dedupe<T>(values: T[]): T[] { return [...new Set(values)]; }
+const EXPLICIT_SECOND_TASK = /\b(?:and also|and then|plus|as well as)\s+(?:find|research|look\s+up|verify|compare|browse)\b/i;
 
 function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): SpecialistHubId[] {
+  // A labeled identifier names its specialist even when an unrelated category word follows.
+  // Retain the existing multi-hub choice only when the consumer explicitly asks for a second
+  // task; a lone trailing word ("USDOT 1234567 contractor") is not such a request.
+  if (parsed.identifier && !parsed.identifier.ambiguous && !EXPLICIT_SECOND_TASK.test(query)) {
+    return [parsed.identifier.family.hubId];
+  }
   if(/\bMedicare\s+insurance\b/i.test(query))return ['insurance'];
   const care=careTask(query);
   if(care?.kind==='move_context')return ['move'];
@@ -319,7 +326,8 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
   const miBlocked = miRefusal(originalQuestion);
   const miHub = miId?.hub ?? (mi ? classifyMiHub(originalQuestion) : undefined);
   const miNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
-  if (miId || miBlocked || (mi && !miNamed && (miHub || /^(Michigan|MI)( consumer research)?$/i.test(originalQuestion)))) {
+  const miSeparateTask = Boolean(miId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!miSeparateTask && (miId || miBlocked || (mi && !miNamed && (miHub || /^(Michigan|MI)( consumer research)?$/i.test(originalQuestion))))) {
     const geo = parseNetworkAsk(originalQuestion).geography;
     return {
       version: 'ask-research-plan-v1', originalQuestion,

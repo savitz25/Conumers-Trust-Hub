@@ -23,9 +23,8 @@ import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
 export type LabeledIdentifierMatch = { type: string; value: string };
 // TH-ARCH-P0-001: maps research-planner.ts's lowercase identifier family ids (from
 // identifiers.ts's IDENTIFIER_FAMILIES) to the uppercase display codes this session layer has
-// always exposed on GuidedResearchSession.identifier. Scoped to the financial families the
-// investor/insurance/lender fast paths below actually consult.
-const FINANCIAL_IDENTIFIER_LABELS = { crd: 'CRD', npn: 'NPN', naic_company_code: 'NAIC', nmls: 'NMLS', lei: 'LEI' } as const;
+// always exposed on GuidedResearchSession.identifier.
+const GUIDED_IDENTIFIER_LABELS = { usdot: 'USDOT', mc: 'MC', cms_ccn: 'CCN', crd: 'CRD', npn: 'NPN', naic_company_code: 'NAIC', nmls: 'NMLS', lei: 'LEI', sec_file_number: 'SEC' } as const;
 export function parseLabeledIdentifier(text: string, digitLabels: readonly string[], options: { anchored?: boolean; leiSupported?: boolean } = {}): LabeledIdentifierMatch | null {
   const { anchored = false, leiSupported = false } = options;
   const start = anchored ? '^' : '\\b';
@@ -184,11 +183,9 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   // TH-ARCH-P0-001: consume the canonical planner's identifier extraction (ask-parse.ts's
   // matchIdentifier, now filler-word-hardened -- see IDENTIFIER_FILLER_SOURCE) instead of
   // independently re-parsing the raw query with a second implementation. Scoped to the same
-  // financial identifier families the prior duplicate parser covered (CRD/NPN/NAIC/NMLS/LEI);
-  // USDOT/MC/CCN/state-license identifiers are handled by the generic hub-resolution path below,
-  // which already reads parsed.identifier directly.
-  if (plan.identifier && plan.identifier.type in FINANCIAL_IDENTIFIER_LABELS) {
-    session.identifier = { type: FINANCIAL_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof FINANCIAL_IDENTIFIER_LABELS], value: plan.identifier.value };
+  // labeled identifier families, before any generic hub keyword paths below.
+  if (plan.identifier && plan.identifier.type in GUIDED_IDENTIFIER_LABELS) {
+    session.identifier = { type: GUIDED_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof GUIDED_IDENTIFIER_LABELS], value: plan.identifier.value };
   }
 
   // TH-DISCOVERY-002: a live-rate-shopping request ("lowest mortgage rates today") has no entity
@@ -236,8 +233,24 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     };
   }
 
-  const investorIntent=/\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
-  if(investorIntent){
+  // The planner's labeled identifier is authoritative. A stray category word elsewhere in
+  // the question must not let one of the keyword fast paths below change its hub; doing so
+  // produces a session the execution authorization guard correctly rejects.
+  if (session.identifier && plan.primaryHub === 'move' && ['USDOT', 'MC'].includes(session.identifier.type)) {
+    return {...session, hub:'move', moveMode:'identifier', entityClass:'identifier', identityName:undefined,
+      geography:undefined, phase:'EXECUTE', missingFields:[], availableChoices:[], nextAction:'execute'};
+  }
+  if (session.identifier?.type === 'CCN' && plan.primaryHub === 'senior') {
+    return {...session, hub:'senior', identityName:undefined, geography:undefined,
+      phase:'EXECUTE', missingFields:[], availableChoices:[], nextAction:'execute'};
+  }
+  if (session.identifier?.type === 'SEC' && plan.primaryHub === 'investor') {
+    return {...session, hub:'investor', phase:'CLARIFY', missingFields:[], availableChoices:[],
+      nextAction:'A labeled SEC file number belongs to InvestorTrustHub, but this Guided Research contract only executes exact CRD lookups. Continue at InvestorTrustHub Michigan to verify the SEC file number; Ask will not treat it as a CRD.'};
+  }
+
+  const investorIntent=(plan.primaryHub === 'investor' && Boolean(session.identifier)) || /\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
+  if(investorIntent && (!session.identifier || plan.primaryHub === 'investor')){
     session.hub='investor';session.geography=financialGeography;
     if(/^i\s+need\s+an?\s+investment\s+advis(?:er|or)\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['investorResearchMode'],availableChoices:INVESTOR_CHOICES,nextAction:'What would you like to research?'};
     session.investorResearchMode=session.identifier?'identifier':/\bnamed\s+(.+)$/i.test(q)?'identity_name':'firm_cohort';
@@ -259,7 +272,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   // precedent already in lenderIntent below; bounded to a short list of major P&C/health carriers
   // used only for hub routing, not a new dataset.
   const insuranceIntent=/\b(?:insurance|insurers?|\bNPN\b|\bNAIC\b|State\s+Farm|Allstate|GEICO|Progressive|Nationwide|Farmers|USAA|Liberty\s+Mutual|Travelers)\b/i.test(q);
-  if(insuranceIntent){
+  if(insuranceIntent && (!session.identifier || plan.primaryHub === 'insurance')){
     session.hub='insurance';session.geography=financialGeography;
     if(/^i\s+need\s+help\s+with\s+insurance\s*[?.!]*$/i.test(q)||/\binsurance\s+provider\b/i.test(q)||/insurance\s+complaints\s+against\s+a\s+company/i.test(q)||/insurance\s+professional\s+near\s+me/i.test(q))return {...session,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:INSURANCE_CHOICES,nextAction:'What kind of insurance entity do you want to research?'};
     // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: a specific, defensible insurance entity name found
@@ -327,7 +340,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   }
 
   const lenderIntent=/\b(?:mortgage|lenders?|\bNMLS\b|\bLEI\b|HMDA|FHA|VA|USDA|originations?|applications?|denials?|Rocket\s+Mortgage|Newrez)\b/i.test(q);
-  if(lenderIntent){
+  if(lenderIntent && (!session.identifier || plan.primaryHub === 'lender')){
     session.hub='lender';session.geography=financialGeography;
     if(/^i\s+need\s+a\s+mortgage\s+lender\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What would you like to research?'};
     const genericStateLenders=/^lenders?\s+in\s+(?:Texas|TX)\s*[?.!]*$/i.test(q);
@@ -353,7 +366,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     session.entityClass=session.lenderResearchMode==='unsupported_person_branch'?'mlo_or_branch':'hmda_reporting_institution';
     return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
   }
-  if (/\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
+  if ((!session.identifier || plan.primaryHub === 'contractor') && /\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
     const geography=geographyFromParsed(parsed);
     return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
   }
@@ -370,7 +383,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   const hub = plan.primaryHub ?? parsedHub ?? (njTrade?'contractor':undefined);
   if (!hub) return null;
   session.hub = hub;
-  session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
+  session.identifier ??= parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
   // TH-SEARCH-R1-016: prefer research-planner's entity-name extraction (recognizes a
   // company name embedded alongside route/journey language, e.g. "Can JK Moving handle
   // my move from Virginia to Florida?") over the legacy whole-question fallback below,
