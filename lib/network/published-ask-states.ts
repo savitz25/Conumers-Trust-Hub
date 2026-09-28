@@ -23,6 +23,7 @@ import { gaReleaseGatePassed } from './ga-network.ts';
 import { maReleaseGatePassed } from './ma-network.ts';
 import { tnReleaseGatePassed } from './tn-network.ts';
 import { mnReleaseGatePassed } from './mn-network.ts';
+import { miReleaseGatePassed } from './mi-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 
 export type AskPublishedState = {
@@ -52,6 +53,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'TN', slug: 'tennessee', name: 'Tennessee', gate: tnReleaseGatePassed },
   { code: 'NV', slug: 'nevada', name: 'Nevada', gate: nvReleaseGatePassed },
   { code: 'MN', slug: 'minnesota', name: 'Minnesota', gate: mnReleaseGatePassed },
+  { code: 'MI', slug: 'michigan', name: 'Michigan', gate: miReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

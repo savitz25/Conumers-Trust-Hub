@@ -350,10 +350,10 @@ test('state disambiguation: the first named state wins and other states keep the
 test('Tennessee is cataloged once, gated, and appended after Massachusetts', () => {
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan'],
   );
-  assert.equal(ASK_NETWORK_STATES.length, 19);
-  assert.match(askStateExplorerEyebrow(), /Nineteen-state network explorer/);
+  assert.equal(ASK_NETWORK_STATES.length, 20);
+  assert.match(askStateExplorerEyebrow(), /Twenty-state network explorer/);
   assert.equal(askStateSitemapEntries().filter((entry) => entry.path === '/tennessee').length, 1);
   assert.equal(askStateFooterLinks().filter((link) => link.href === '/tennessee').length, 1);
   assert.equal(M.ask_canonical, 'https://www.asktrusthub.com/tennessee');

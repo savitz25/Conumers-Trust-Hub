@@ -1,0 +1,62 @@
+{
+  "contract": "ath-mi-network-release-v1",
+  "ticket": "ATH-MI-001",
+  "state_code": "MI",
+  "state_name": "Michigan",
+  "ask_canonical": "https://www.asktrusthub.com/michigan",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "01699b6ddf32ef8f97576c87e11ee6ddee2b749b", "canonical_state_url": "https://www.movetrusthub.com/michigan",
+      "capability_summary": "199 active Michigan CVED household-goods authority rows",
+      "grain": "State household-goods authority rows, not a combined state/federal mover total. 188 print USDOT; 99 print MC. Michigan authority, USDOT and MC remain distinct.",
+      "source_clocks": { "cved_retrieved_at": "2026-09-28T13:27:16.497Z", "cved_source_as_of": null },
+      "gaps": [{ "capability": "combined Michigan + federal mover total", "state": "UNSUPPORTED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "fc82e00919c77f5568c20a8a8666412e5b9f5a99", "canonical_state_url": "https://www.lendertrusthub.com/michigan",
+      "capability_summary": "381,619 Michigan-property HMDA applications in 2025",
+      "grain": "HMDA activity, not lender count: 228,503 originations, 69,927 denials, 857 LEIs and 83 counties. DIFS broker/lender/servicer verification is separate; enforcement is a document-reviewed sample, not a census.",
+      "source_clocks": { "hmda_year": "2025", "snapshot_retrieved_at": "2026-09-28T15:27:56Z", "difs_annual_report_as_of": "2025-12-31", "enforcement_window": "2022-01-01 through 2026-09-28" },
+      "gaps": [{ "capability": "statewide DIFS license roster", "state": "NOT_ACQUIRED" }, { "capability": "complete enforcement census", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "5193b127771101ebb0127ef9d40640b0a1298f84", "canonical_state_url": "https://www.contractortrusthub.com/michigan",
+      "capability_summary": "192 Michigan BCC Residential Builder disciplinary-report rows, FY22–FY26 YTD",
+      "grain": "Report rows, not 192 unique contractors or a generic Michigan contractor count. Residential and skilled-trade credentials remain distinct.",
+      "source_clocks": { "reports_retrieved_at": "2026-09-28T13:28:16Z", "report_window": "FY22–FY26 YTD", "fy26_orders_served_through": "2026-02-28" },
+      "gaps": [{ "capability": "statewide contractor license rosters", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "57ee1c6456001e81cca92aeb1875dd9e629b051f", "canonical_state_url": "https://www.insurancetrusthub.com/michigan",
+      "capability_summary": "321 Michigan DIFS insurance-labeled Final Decision index entries, 2022–2026",
+      "grain": "Index/document rows, not unique insurers, companies or adjudicated violations. 293 print exact Michigan System ID; 41 separate company-examination rows. DIFS insurer/agency/producer/appointment verification is separate.",
+      "source_clocks": { "decisions_retrieved_at": "2026-09-28T15:28:45Z", "examinations_retrieved_at": "2026-09-28T15:28:45Z", "decision_window": "2022–2026" },
+      "gaps": [{ "capability": "statewide combined insurance census", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "23bfe3c35f2dfeccf5d86fd499d30068875b9c1f", "canonical_state_url": "https://www.seniortrusthub.com/michigan",
+      "capability_summary": "426 active Michigan nursing-home license rows",
+      "grain": "One LARA nursing-home class, not a senior-facility total. AFC/HFA classes remain separate: AF 424, AS 2,471, AM 425, AL 558, AG 4, AI 2, AH 351 and XH exempt 234; hospice agency 191, hospice residence 15, licensed HFA 350, exempt HFA 237. Disciplinary list: 88 rows.",
+      "source_clocks": { "afc_file_last_modified_at": "2026-09-26T02:38:45Z", "afc_and_health_exports_retrieved_at": "2026-09-28T16:00:15Z", "discipline_page_last_updated": "2026-03-18", "discipline_retrieved_at": "2026-09-28T15:58:00Z" },
+      "gaps": [{ "capability": "state Home Health Agency export", "state": "NOT_ACQUIRED" }, { "capability": "statewide inspection outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "42bfb2a0a8119b3055b50b96afc6614627734470", "canonical_state_url": "https://www.investortrusthub.com/michigan",
+      "capability_summary": "574 Michigan state investment-adviser firms with IAPD status APPROVED",
+      "grain": "State IA status, not a combined adviser total. TERMREQUEST 9, ERA 75, federal notice FILED 2,453, principal office 332; state IA ∩ notice 5, principal office ∩ notice 303. Separate MUSA-tagged order-document lens: 107.",
+      "source_clocks": { "iapd_feed_as_of": "2026-09-17", "iapd_retrieved_at": "2026-09-17T15:15:00Z", "orders_retrieved_at": "2026-09-28T16:00:19Z" },
+      "gaps": [{ "capability": "combined investment-adviser total", "state": "UNSUPPORTED" }]
+    }
+  ]
+}
