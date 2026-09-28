@@ -7,7 +7,7 @@ import { planAskResearch } from './research-planner.ts';
 import { buildAskResearchRoute } from './ask-research-route.ts';
 import { buildNetworkAskPlan } from './ask-plan.ts';
 import { decideNameCandidateSearch } from './name-candidates/decision.ts';
-import { MN_PUBLICATION_MANIFEST as M, MN_PUBLICATION_FINGERPRINT, MN_HUBS, mnReleaseGatePassed, mnPublicationSemanticFingerprint, mnRefusal, mnSpecialistUrl } from './mn-network.ts';
+import { MN_RANKING_REFUSAL, MN_PUBLICATION_MANIFEST as M, MN_PUBLICATION_FINGERPRINT, MN_HUBS, mnReleaseGatePassed, mnPublicationSemanticFingerprint, mnRefusal, mnSpecialistUrl } from './mn-network.ts';
 import { normalizedPublishedStatePath } from './published-state-path.ts';
 import { askStateSitemapEntries } from './published-ask-states.ts';
 import { orchestrateGuidedResearch } from '../guided-research/orchestrator.ts';
@@ -113,3 +113,51 @@ test('MN leaves generic 2229 on the original network identity-needed route', () 
   assert.equal(route.plan.normalizedGeography, undefined);
   assert.doesNotMatch(route.explanation, /NMLS 2229|Supply the identifier family/);
 });
+
+// ATH-MN-001R2: exercise the full planner/route, not only the keyword predicate.
+const rankingVocabulary = ['best', 'safest', 'recommended', 'recommend', 'top rated', 'top-rated',
+  'highest rated', 'highest-rated', '#1', 'number one', 'most trustworthy', 'most trusted',
+  'Trust Score', 'AggregateRating', 'ratingValue', 'paid ranking', 'sponsored ranking'];
+const rankingProviders = ['contractor', 'mortgage lender', 'insurance agency', 'mover', 'assisted living', 'investment adviser'];
+for (const term of rankingVocabulary) for (const [index, provider] of rankingProviders.entries()) {
+  const query = `${index % 2 ? term.toUpperCase() : term} Minnesota ${provider}`;
+  test(`MN ranking execution / ${query}`, () => {
+    assert.equal(mnRefusal(query), MN_RANKING_REFUSAL);
+    const plan = planAskResearch(query), route = buildAskResearchRoute(query);
+    assert.equal(plan.intent, 'RECOMMENDATION_REQUEST');
+    assert.equal(plan.executionMode, 'CLARIFY');
+    assert.equal(plan.executionAllowed, false);
+    assert.equal(plan.clarificationReason, MN_RANKING_REFUSAL);
+    assert.equal(route.canExecute, false);
+    assert.doesNotMatch(route.status, /research can begin/i);
+    assert.equal(decideNameCandidateSearch(query).operation, 'NOT_NAME_SEARCH');
+    assert.ok(buildNetworkAskPlan(query).hubs.every(h => h.capabilityStatus !== 'execute' && !h.options?.length));
+  });
+}
+for (const query of ['recommended Minnesota nursing home', 'most trusted Minnesota lender',
+  'paid ranking Minnesota contractors', 'sponsored ranking Minnesota lenders']) {
+  test(`MN ranking execution exact reported wording / ${query}`, () => {
+    assert.equal(mnRefusal(query), MN_RANKING_REFUSAL);
+    const route = buildAskResearchRoute(query);
+    assert.equal(route.plan.intent, 'RECOMMENDATION_REQUEST');
+    assert.equal(route.plan.executionAllowed, false);
+    assert.equal(route.canExecute, false);
+    assert.equal(decideNameCandidateSearch(query).operation, 'NOT_NAME_SEARCH');
+  });
+}
+for (const provider of rankingProviders) test(`MN ordinary research remains available / ${provider}`, () => {
+  const query = `Minnesota ${provider}`, route = buildAskResearchRoute(query);
+  assert.equal(mnRefusal(query), undefined);
+  assert.equal(route.plan.intent, 'COHORT_BROWSE');
+  assert.equal(route.plan.executionAllowed, true);
+  // Existing care-scope routing keeps assisted living non-executable independently of ranking.
+  assert.equal(route.canExecute, provider !== 'assisted living');
+  assert.ok(!route.plan.reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL'));
+});
+for (const term of rankingVocabulary) for (const state of ['', 'Tennessee ']) {
+  const query = `${term} ${state}contractor`;
+  test(`MN ranking cannot intercept outside Minnesota / ${query}`, () => {
+    assert.equal(mnRefusal(query), undefined);
+    assert.ok(!planAskResearch(query).reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL'));
+  });
+}

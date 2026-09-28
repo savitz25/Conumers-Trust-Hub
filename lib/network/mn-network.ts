@@ -77,7 +77,7 @@ export function mnIdentifier(q: string): MnIdentifier | undefined {
   return undefined;
 }
 export const MN_RANKING_REFUSAL = 'Ask does not rank, recommend, or select a provider winner. Best, safest, top-rated, #1, Trust Score, paid ranking and sponsored ranking are not established. Research source evidence instead.';
-export function mnRankingAsked(q: string): boolean { return queryLooksLikeMinnesota(q) && /(?:\b(best|safest|recommended|top[- ]rated|trust score|paid ranking|sponsored ranking)\b|#1\b)/i.test(q); }
+export function mnRankingAsked(q: string): boolean { return queryLooksLikeMinnesota(q) && /(?:\b(best|safest|recommend(?:ed)?|(?:top|highest)[-\s]+rated|number\s+one|most\s+(?:trustworthy|trusted)|trust\s+score|AggregateRating|ratingValue|(?:paid|sponsored)\s+ranking)\b|#1\b)/i.test(q); }
 export function mnAmbiguousNumber(q: string): boolean {
   if (mnIdentifier(q)) return false;
   return /^\d+(?:\s+(?:Minnesota|MN))?$/i.test(q.trim()) || /^(?:license|credential)\s*#?\s*\d+(?:\s+(?:Minnesota|MN))?$/i.test(q.trim());
