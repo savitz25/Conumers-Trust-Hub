@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-WI-001",
+  "contract": "ath-wi-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "aeefc984543974ac2bbcb3497910939146cd0759",
+  "manifest": "data/network/wisconsin-publication-manifest.json",
+  "semantic_fingerprint": "b7efd58b7f2d2ec62271dd349cc29b3205fe7c8e9d2ab6bfbeaeab997a9b3ec3",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

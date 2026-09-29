@@ -2,6 +2,7 @@ import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksL
 import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksLikeMichigan, classifyMiHub } from './mi-network.ts';
 import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
 import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksLikeMaryland, classifyMdHub } from './md-network.ts';
+import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
@@ -323,6 +324,28 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const wiId = wiIdentifier(originalQuestion);
+  const wi = queryLooksLikeWisconsin(originalQuestion);
+  const wiBlocked = wiRefusal(originalQuestion);
+  const wiHub = wiId?.hub ?? (wi ? classifyWiHub(originalQuestion) : undefined);
+  const wiNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const wiSeparateTask = Boolean(wiId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!wiSeparateTask && (wiId || wiBlocked || (wi && !wiNamed && (wiHub || /^(Wisconsin|WI)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: wiAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : wiRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : wiId ? 'IDENTIFIER_LOOKUP' : wiHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: wiHub, candidateHubs: wiHub ? [wiHub] : [],
+      identifier: wiId ? {type:wiId.type,value:wiId.value,raw:wiId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: wiBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !wiBlocked && Boolean(wiHub), executionMode: wiBlocked || !wiHub ? 'CLARIFY' : wiId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: wiBlocked ?? (!wiHub ? 'Open /wisconsin for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [wiId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'WISCONSIN_RESEARCH_ROUTING', ...(wiBlocked ? ['WISCONSIN_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: wiId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   const mdId = mdIdentifier(originalQuestion);
   const md = queryLooksLikeMaryland(originalQuestion);
   const mdBlocked = mdRefusal(originalQuestion);

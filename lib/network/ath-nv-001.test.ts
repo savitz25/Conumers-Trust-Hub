@@ -274,7 +274,7 @@ test('catalog, sitemap, footer, explorer and evidence inventory include Nevada e
   assert.equal(gated.filter((s) => s.slug === 'nevada').length, 1);
   assert.equal(askStateSitemapEntries().filter((e) => e.path === '/nevada').length, 1);
   assert.equal(askStateFooterLinks().filter((l) => l.href === '/nevada').length, 1);
-    assert.match(askStateExplorerEyebrow(), /^22-state network explorer$/);
+    assert.match(askStateExplorerEyebrow(), /^23-state network explorer$/);
   assert.ok(ASK_NETWORK_STATES.some((s: { slug?: string; href?: string; code?: string }) => s.slug === 'nevada' || s.href === '/nevada' || s.code === 'NV'));
 });
 
