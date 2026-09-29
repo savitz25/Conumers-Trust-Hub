@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-IN-001",
+  "contract": "ath-in-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "3616a4a055fd7166596e4feb07012f5e8db45e58",
+  "manifest": "data/network/indiana-publication-manifest.json",
+  "semantic_fingerprint": "f4f7903087482efcd7af944c9680851c33f6c5d7d51495e6c42b79c3205c645e",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}
