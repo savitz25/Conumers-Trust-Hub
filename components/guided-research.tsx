@@ -55,7 +55,7 @@ export function GuidedResearch({query,initialSession,initialResult=null,routeDes
     setSession(initialSession);setResult(initialResult);setError('');setResumeRecovery(false);setBusy(initialSession.phase==='EXECUTE');
     let restored:GuidedResearchSession|null=null;
     try{const raw=sessionStorage.getItem(storageKey(query));if(raw){const parsed=JSON.parse(raw) as GuidedResearchSession;if(parsed.version===GUIDED_SESSION_VERSION&&parsed.originalQuestion===query)restored=parsed;}}catch{}
-    if(restored)void send({type:'RESUME'},restored);else if(initialSession.phase==='EXECUTE'||(initialSession.researchPlan.reasonCodes.includes('CARE_TASK')&&initialSession.researchPlan.careSetting&&!initialSession.missingFields.length))void send({type:'EXECUTE'},initialSession);
+    if(restored)void send({type:'RESUME'},restored);else if(initialSession.phase==='EXECUTE'||initialSession.hub==='investor'&&initialSession.identifier?.type==='SEC'||(initialSession.researchPlan.reasonCodes.includes('CARE_TASK')&&initialSession.researchPlan.careSetting&&!initialSession.missingFields.length))void send({type:'EXECUTE'},initialSession);
     const requests=requestRef.current;return ()=>{requests.revision++;requests.controller?.abort();};
   // session is intentionally excluded: this initializes once per URL query.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,7 +74,7 @@ export function GuidedResearch({query,initialSession,initialResult=null,routeDes
       {currentResearch||session?.geography?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?<> · <span data-ph-mask>{session.geography.value}</span></>:null}</p>:null}
       {session?.executionScope.requestedGeography?<div className="mt-4 rounded-xl border p-3 text-sm" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.ink}}>
         <p><span className="font-semibold" style={{color:ASK_BRAND.navy}}>You asked:</span> <span data-ph-mask>{session.executionScope.requestedGeography.display}</span></p>
-        {session.executionScope.executionGeography?<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>{session.lastExecution?'Research executed:':'Selected research scope:'}</span> <span data-ph-mask>{session.executionScope.executionGeography.display}</span></p>:<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Available research:</span> This local scope has not been executed.</p>}
+        {session.executionScope.executionGeography?<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>{session.lastExecution?'Research executed:':'Selected research scope:'}</span> <span data-ph-mask>{session.executionScope.executionGeography.display}</span></p>:<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Available research:</span> {session.hub==='senior'&&session.entityClass==='assisted_living'&&session.researchPlan.requestedGeography?.stateCode==='MD'?'Maryland statewide Assisted Living Program evidence is available at SeniorTrustHub.':'This local scope has not been executed.'}</p>}
         {session.executionScope.disclosure?<p className="mt-1" data-ph-mask>{session.executionScope.disclosure}</p>:null}
       </div>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Route confirmed — researching {specialistName} public records…</p>:null}

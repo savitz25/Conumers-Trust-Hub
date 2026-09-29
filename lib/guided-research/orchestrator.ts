@@ -10,6 +10,8 @@ import { planRequiresImmediateClarification } from '../network/research-planner.
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
 import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/mn-network.ts';
+import { mdSpecialistUrl } from '../network/md-network.ts';
+import { investorSecHandoff } from './state-handoff.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -272,6 +274,16 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     else if (input.action.type==='RESET') session=createGuidedSession(session.originalQuestion)!;
   }
   let result:GuidedExecutionResult|undefined;
+  if (session.hub === 'investor' && session.identifier?.type === 'SEC') {
+    const secFileNumber = session.identifier.value;
+    const handoff = investorSecHandoff(session.researchPlan.requestedGeography?.stateCode);
+    const message = `A labeled SEC file number belongs to InvestorTrustHub. Continue at ${handoff.label} to verify it; Ask will not treat it as a CRD.`;
+    session = touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result = {specialist:'investor',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:'Verify the SEC file number',consumerMessage:message,
+      interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
+      limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
   const mnPlan = planAskResearch(session.originalQuestion);
   if (mnPlan.reasonCodes.includes('MINNESOTA_RESEARCH_ROUTING') || mnPlan.reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL') || mnIdentifier(session.originalQuestion)) {
     const refusal = mnRefusal(session.originalQuestion);
@@ -280,6 +292,16 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     session = touch({...session, researchPlan:mnPlan, phase:refusal?'CLARIFY':'DEEP_LINK', availableChoices:[], availableRefinements:[], nextActions:[], nextAction:message});
     if (hub) result = {specialist:hub, executionOccurred:false, resultState:refusal?'INVALID_QUERY':'UNSUPPORTED_CAPABILITY', consumerHeading:refusal?'Clarify this research request':'Continue at the Minnesota specialist', consumerMessage:message, interpretation:mnPlan.identifier?[{label:mnPlan.identifier.type,value:mnPlan.identifier.value}]:[], rows:[], total:0, refinements:[], provenance:{contract:'ath-mn-network-release-v1'}, limitations:['Ask is a gateway. No specialist records were retrieved or copied.'], destinations:refusal?[]:[{type:'STATE_RESEARCH',href:mnSpecialistUrl(hub),label:'Open Minnesota research'}], latencyMs:0, firstUsefulResult:true, nextActions:[]};
     return {session,result,diagnostics:{requestId,hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  if (session.hub === 'senior' && session.entityClass === 'assisted_living' && session.researchPlan.requestedGeography?.stateCode === 'MD') {
+    const href = mdSpecialistUrl('senior');
+    const message = 'Maryland has statewide Assisted Living Program evidence at SeniorTrustHub. Continue there to research that licensed class. Ask has not retrieved a provider cohort or made a city-level claim.';
+    session = touch({...session, phase:'DEEP_LINK', missingFields:[], availableChoices:[], nextAction:message});
+    result = {specialist:'senior', executionOccurred:false, resultState:'UNSUPPORTED_CAPABILITY', consumerHeading:'Maryland assisted living research', consumerMessage:message,
+      interpretation:[{label:'Requested class',value:'Assisted Living Programs'},{label:'Research geography',value:'Maryland statewide'}], rows:[],total:0,refinements:[],
+      provenance:{contract:'ath-md-network-release-v1'},limitations:['Ask is a gateway; no provider records were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href,label:'Open Maryland assisted living research'}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'senior',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;
