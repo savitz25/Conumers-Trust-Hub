@@ -23,6 +23,15 @@ type ProjectList = { items: Project[] };
 const equal = (a: BrowserParent | null, b: BrowserParent) => a?.subject === b.subject && a.session === b.session;
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
 const exact = (x: Record<string, unknown>, keys: string[]) => Object.keys(x).sort().join() === keys.sort().join();
+type ExchangeStage = 'authorize' | 'bind_transport_key' | 'lock_transport' | 'read_transport' | 'issue_context' | 'write_transport';
+const diagnosticCode = (error: unknown): string => {
+  if (error instanceof RuntimeError) return error.code;
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const code = (error as { code: unknown }).code;
+    if (typeof code === 'string' && /^[A-Za-z0-9_]{1,32}$/.test(code)) return code;
+  }
+  return 'unknown';
+};
 
 /** Production assembly. Dependencies are verified infrastructure ports, never
  * a request-supplied subject or fallback persistence implementation. */
@@ -56,24 +65,35 @@ export class PreviewAssembly {
     }) as Project[];
   }
   private async exchange(ref: string, a: RuntimeAuthorization): Promise<P13Proof | null> {
-    const p = a.caller.parent;
-    if (!p || a.caller.exchange !== ref || a.caller.confirmedAccountContextRef !== ref || !a.caller.selectionConfirmed) return null;
-    return this.store.authorized(async db => {
-      const key = hash('exchange:' + ref);
-      await db.query("select set_config('v23.transport_key',$1,true)", [key]);
-      await db.query('select pg_advisory_xact_lock(hashtextextended($1,0))', ['v23-preview:' + key]);
-      const prior = (await db.query<{ payload: Exchange }>('select payload from v23_private.preview_transport_records where key_hash=$1', [key])).rows[0]?.payload;
-      if (prior) {
-        if (prior.parent.subject !== p.subject || prior.parent.session !== p.sessionBinding || prior.expiresAt <= Date.now()) throw new RuntimeError('expired');
-        return prior.proof;
-      }
-      const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: ASK_PREVIEW, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-      const issued = await db.query<{ issued: boolean }>('select v23_private.preview_issue_context($1,$2,$3) as issued', [JSON.stringify(proof), p.subject, p.sessionBinding]);
-      if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
-      const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
-      await db.query('insert into v23_private.preview_transport_records(key_hash,payload,expires_at) values($1,$2,to_timestamp($3/1000.0))', [key, JSON.stringify(value), value.expiresAt]);
-      return proof;
-    });
+    let stage: ExchangeStage = 'authorize';
+    try {
+      const p = a.caller.parent;
+      if (!p || a.caller.exchange !== ref || a.caller.confirmedAccountContextRef !== ref || !a.caller.selectionConfirmed) return null;
+      return await this.store.authorized(async db => {
+        stage = 'bind_transport_key';
+        const key = hash('exchange:' + ref);
+        await db.query("select set_config('v23.transport_key',$1,true)", [key]);
+        stage = 'lock_transport';
+        await db.query('select pg_advisory_xact_lock(hashtextextended($1,0))', ['v23-preview:' + key]);
+        stage = 'read_transport';
+        const prior = (await db.query<{ payload: Exchange }>('select payload from v23_private.preview_transport_records where key_hash=$1', [key])).rows[0]?.payload;
+        if (prior) {
+          if (prior.parent.subject !== p.subject || prior.parent.session !== p.sessionBinding || prior.expiresAt <= Date.now()) throw new RuntimeError('expired');
+          return prior.proof;
+        }
+        stage = 'issue_context';
+        const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: ASK_PREVIEW, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
+        const issued = await db.query<{ issued: boolean }>('select v23_private.preview_issue_context($1,$2,$3) as issued', [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
+        stage = 'write_transport';
+        const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
+        await db.query('insert into v23_private.preview_transport_records(key_hash,payload,expires_at) values($1,$2,to_timestamp($3/1000.0))', [key, JSON.stringify(value), value.expiresAt]);
+        return proof;
+      });
+    } catch (error) {
+      console.warn(JSON.stringify({ event: 'my_trusthub_v23_exchange_failure', stage, code: diagnosticCode(error) }));
+      throw error;
+    }
   }
   private ports(verify: AuthorizedPostgresPorts['verify'], browser: string): AuthorizedPostgresPorts {
     return { pool: this.pool, verify,

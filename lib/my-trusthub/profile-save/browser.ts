@@ -10,6 +10,14 @@ export const PROFILE_CONFIRM_PATH = '/my/profile-save';
 const COOKIE = 'mth_parent_profile_confirmation';
 const opaque = () => randomBytes(32).toString('base64url');
 const valid = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9_-]{43}$/.test(v);
+function diagnosticCode(error:unknown){
+  if(error instanceof RuntimeError)return error.code;
+  if(typeof error==='object'&&error!==null&&'code'in error){
+    const code=(error as {code:unknown}).code;
+    if(typeof code==='string'&&/^[A-Za-z0-9_]{1,32}$/.test(code))return code;
+  }
+  return 'unknown';
+}
 const escape = (v: string) => v.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export type BrowserParent = {subject:string;session:string;label:string};
 export type SourceSnapshot = {continuationRef:string;transferRef:string;manifest:GuestStageInput;
@@ -97,8 +105,14 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         if(!c.accountContextRef){
           if(await runtime.resumeConfirmedContext(c.contextCandidateRef))c.accountContextRef=c.contextCandidateRef;
           else{
-            const result=await runtime.execute('consumeProfileSaveContinuation',{continuationRef:c.source.continuationRef,
-              issuer:c.source.manifest.sourceHub,audience:'ask',browserProof:c.source.browserProof}) as {accountContextRef:string};
+            let result:{accountContextRef:string};
+            try{
+              result=await runtime.execute('consumeProfileSaveContinuation',{continuationRef:c.source.continuationRef,
+                issuer:c.source.manifest.sourceHub,audience:'ask',browserProof:c.source.browserProof}) as {accountContextRef:string};
+            }catch(error){
+              console.warn(JSON.stringify({event:'my_trusthub_v23_confirmation_failure',stage:'consume_continuation',code:diagnosticCode(error)}));
+              throw error;
+            }
             c.accountContextRef=result.accountContextRef;
           }
           await checkpoint();
