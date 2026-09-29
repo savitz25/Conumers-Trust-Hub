@@ -55,7 +55,7 @@ export function GuidedResearch({query,initialSession,initialResult=null,routeDes
     setSession(initialSession);setResult(initialResult);setError('');setResumeRecovery(false);setBusy(initialSession.phase==='EXECUTE');
     let restored:GuidedResearchSession|null=null;
     try{const raw=sessionStorage.getItem(storageKey(query));if(raw){const parsed=JSON.parse(raw) as GuidedResearchSession;if(parsed.version===GUIDED_SESSION_VERSION&&parsed.originalQuestion===query)restored=parsed;}}catch{}
-    if(restored)void send({type:'RESUME'},restored);else if(initialSession.phase==='EXECUTE'||(initialSession.researchPlan.reasonCodes.includes('CARE_TASK')&&initialSession.researchPlan.careSetting&&!initialSession.missingFields.length))void send({type:'EXECUTE'},initialSession);
+    if(restored)void send({type:'RESUME'},restored);else if(initialSession.phase==='EXECUTE'||initialSession.hub==='investor'&&initialSession.identifier?.type==='SEC'||(initialSession.researchPlan.reasonCodes.includes('CARE_TASK')&&initialSession.researchPlan.careSetting&&!initialSession.missingFields.length))void send({type:'EXECUTE'},initialSession);
     const requests=requestRef.current;return ()=>{requests.revision++;requests.controller?.abort();};
   // session is intentionally excluded: this initializes once per URL query.
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -248,7 +248,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   const secFile = q.match(/\bSEC\s+(?:file\s+(?:number\s+)?)?(\d{3}-\d{3,})\b/i)?.[1];
   if (plan.primaryHub === 'investor' && (session.identifier?.type === 'SEC' || secFile)) {
     const handoff = investorSecHandoff(plan.requestedGeography?.stateCode);
-    return {...session, hub:'investor', identifier:{type:'SEC',value:session.identifier?.value ?? secFile!}, phase:'EXECUTE', missingFields:[], availableChoices:[],
+    return {...session, hub:'investor', identifier:{type:'SEC',value:session.identifier?.value ?? secFile!}, phase:'CLARIFY', missingFields:[], availableChoices:[],
       nextAction:`A labeled SEC file number belongs to InvestorTrustHub, but this Guided Research contract only executes exact CRD lookups. Continue at ${handoff.label} to verify the SEC file number: ${handoff.href}. Ask will not treat it as a CRD.`};
   }
 

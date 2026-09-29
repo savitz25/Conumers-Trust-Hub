@@ -21,7 +21,7 @@ test('SEC file handoff uses explicit state and preserves Investor grain', async 
   assert.equal(unscoped.result?.destinations[0]?.href,'https://www.investortrusthub.com/ask');
   assert.doesNotMatch(unscoped.session.nextAction ?? '',/Michigan|Maryland/);
   const initial=createGuidedSession('SEC 801-12345 Maryland')!;
-  assert.equal(initial.phase,'EXECUTE');
+  assert.equal(initial.phase,'CLARIFY');
   const live=await orchestrateGuidedResearch({session:initial,action:{type:'EXECUTE'}});
   assert.equal(live.result?.destinations[0]?.href,'https://www.investortrusthub.com/maryland');
 });
