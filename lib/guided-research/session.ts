@@ -9,6 +9,7 @@ import { NETWORK_PUBLIC_NAMES } from '../network/registry.ts';
 import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
 import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
 import { investorSecHandoff } from './state-handoff.ts';
+import { wiSeniorStateResearch } from '../network/wi-network.ts';
 
 /**
  * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
@@ -495,6 +496,9 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  const wiSenior=wiSeniorStateResearch(session.researchPlan);
+  if(wiSenior)return {...session,hub:'senior',entityClass:wiSenior.classId,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub Wisconsin. Continue at ${wiSenior.href}; Ask has not executed a provider cohort.`};
   if(session.hub==='senior'&&session.entityClass==='assisted_living'&&session.researchPlan.requestedGeography?.stateCode==='MD')return session;
   if(session.researchPlan.reasonCodes.includes('CARE_TASK'))return session;
   // TH-ARCH-P0-001: the multi-hub guard above already produced its own CLARIFY (with a hub-choice
