@@ -13,6 +13,7 @@ import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/m
 import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -284,6 +285,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const indiana=inResearchHandoff(session.researchPlan);
+  if(indiana&&session.hub===indiana.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${inCaveat(indiana.hub,session.originalQuestion)} ${city?`${city} is context only; no city provider search or city page was executed. `:''}Continue at ${indiana.label} Indiana. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:indiana.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Indiana ${indiana.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Indiana statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-in-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:indiana.href,label:`Open ${indiana.label} Indiana`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:indiana.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const wiSenior=wiSeniorStateResearch(session.researchPlan);
   if(session.hub==='senior'&&wiSenior){

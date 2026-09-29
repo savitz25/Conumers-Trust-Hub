@@ -3,6 +3,7 @@ import { miIdentifier, miRefusal, miCaveat, classifyMiHub, queryLooksLikeMichiga
 import { ctIdentifier, ctRefusal, ctCaveat, classifyCtHub, queryLooksLikeConnecticut, ctSpecialistUrl } from './ct-network.ts';
 import { mdIdentifier, mdRefusal, mdCaveat, classifyMdHub, queryLooksLikeMaryland, mdSpecialistUrl } from './md-network.ts';
 import { wiIdentifier, wiRefusal, wiCaveat, classifyWiHub, queryLooksLikeWisconsin, wiSpecialistUrl } from './wi-network.ts';
+import { inIdentifier, inRefusal, inCaveat, classifyInHub, queryLooksLikeIndiana, inSpecialistUrl } from './in-network.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
@@ -241,6 +242,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'CT') return '/connecticut';
   if (parsed.geography?.stateCode === 'MD') return '/maryland';
   if (parsed.geography?.stateCode === 'WI') return '/wisconsin';
+  if (parsed.geography?.stateCode === 'IN') return '/indiana';
   return undefined;
 }
 
@@ -1702,6 +1704,21 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:wiId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     } else hubs = [];
     if (wiRefused) parsed.interpretationLines.push({label:'Research boundary',value:wiRefused});
+  }
+
+  // Indiana is a six-hub gateway; specialist rows and current authority remain with their owners.
+  const inId=inIdentifier(parsed.query);
+  const inRefused=inRefusal(parsed.query);
+  if(inId||inRefused||queryLooksLikeIndiana(parsed.query)){
+    const hub=inId?.hub??classifyInHub(parsed.query);
+    if(hub){
+      const reason=inRefused??`${inId?`Exact ${inId.type} ${inId.value}. `:''}${inCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:inRefused?'unsupported':'handoff',
+        ...(inRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:inRefused?undefined:inSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:inId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(inRefused)parsed.interpretationLines.push({label:'Research boundary',value:inRefused});
   }
 
   const requested = requestedLegalJurisdiction(parsed.query);
