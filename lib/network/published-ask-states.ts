@@ -25,6 +25,7 @@ import { tnReleaseGatePassed } from './tn-network.ts';
 import { mnReleaseGatePassed } from './mn-network.ts';
 import { miReleaseGatePassed } from './mi-network.ts';
 import { ctReleaseGatePassed } from './ct-network.ts';
+import { mdReleaseGatePassed } from './md-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 
 export type AskPublishedState = {
@@ -56,6 +57,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'MN', slug: 'minnesota', name: 'Minnesota', gate: mnReleaseGatePassed },
   { code: 'MI', slug: 'michigan', name: 'Michigan', gate: miReleaseGatePassed },
   { code: 'CT', slug: 'connecticut', name: 'Connecticut', gate: ctReleaseGatePassed },
+  { code: 'MD', slug: 'maryland', name: 'Maryland', gate: mdReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

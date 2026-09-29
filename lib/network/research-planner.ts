@@ -1,6 +1,7 @@
 import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksLikeMinnesota, classifyMnHub } from './mn-network.ts';
 import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksLikeMichigan, classifyMiHub } from './mi-network.ts';
 import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
+import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksLikeMaryland, classifyMdHub } from './md-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
@@ -322,6 +323,28 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const mdId = mdIdentifier(originalQuestion);
+  const md = queryLooksLikeMaryland(originalQuestion);
+  const mdBlocked = mdRefusal(originalQuestion);
+  const mdHub = mdId?.hub ?? (md ? classifyMdHub(originalQuestion) : undefined);
+  const mdNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const mdSeparateTask = Boolean(mdId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!mdSeparateTask && (mdId || mdBlocked || (md && !mdNamed && (mdHub || /^(Maryland|MD)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: mdAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : mdRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : mdId ? 'IDENTIFIER_LOOKUP' : mdHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: mdHub, candidateHubs: mdHub ? [mdHub] : [],
+      identifier: mdId ? {type:mdId.type,value:mdId.value,raw:mdId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: mdBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !mdBlocked && Boolean(mdHub), executionMode: mdBlocked || !mdHub ? 'CLARIFY' : mdId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: mdBlocked ?? (!mdHub ? 'Open /maryland for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [mdId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MARYLAND_RESEARCH_ROUTING', ...(mdBlocked ? ['MARYLAND_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: mdId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   const ctId = ctIdentifier(originalQuestion);
   const ct = queryLooksLikeConnecticut(originalQuestion);
   const ctBlocked = ctRefusal(originalQuestion);

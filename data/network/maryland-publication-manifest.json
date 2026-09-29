@@ -1,0 +1,57 @@
+{
+  "contract": "ath-md-network-release-v1",
+  "ticket": "ATH-MD-001",
+  "state_code": "MD",
+  "state_name": "Maryland",
+  "ask_canonical": "https://www.asktrusthub.com/maryland",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "13a4b8e69ae93dcfa4e518ee8c0d11ee2ebd4886", "canonical_state_url": "https://www.movetrusthub.com/maryland",
+      "capability_summary": "Maryland Labor household-goods registration verification",
+      "grain": "Official active-registrant query, not a statewide roster or mover count. Maryland registration, USDOT and MC are separate; complaint intake is known and enforcement capability is partial.",
+      "source_clocks": { "registration_query_footer": "2025-12-01", "registration_page_retrieved_at": "2026-09-29", "enforcement_window": "2025–2026" },
+      "gaps": [{ "capability": "statewide registration roster/count", "state": "NOT_ACQUIRED" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }, { "capability": "provider-level enforcement rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "3f8d0e21119edbc1f9e1dd727e7dcd1e672d9979", "canonical_state_url": "https://www.contractortrusthub.com/maryland",
+      "capability_summary": "631 MHIC disciplinary/action table rows, FY2022–FY2025",
+      "grain": "Action-table rows, not unique contractors or license revocations. Separate Guaranty Fund lens: 540 rows with $6,194,364.67 in printed proposed/final award amounts, not confirmed payouts. Active MHIC verification is separate.",
+      "source_clocks": { "action_fiscal_years": "FY2022–FY2025", "actions_retrieved_at": "2026-09-29T12:54:08Z", "active_license_query_as_of": null },
+      "gaps": [{ "capability": "statewide MHIC roster/count", "state": "NOT_ACQUIRED" }, { "capability": "FY2026 action page", "state": "NOT_ACQUIRED" }, { "capability": "exact adverse attachments (identifiers not printed)", "state": "0" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "98e6ef9cb900f816a71e519f3bd9c7dee436dd81", "canonical_state_url": "https://www.lendertrusthub.com/maryland",
+      "capability_summary": "225,524 Maryland-property HMDA applications in 2025",
+      "grain": "HMDA activity, not a license census: 125,573 originations, 41,888 denials, 708 LEIs and 24 counties/county-equivalents. NMLS verification is separate. Eight selected OFR mortgage-relevant actions are not an enforcement census.",
+      "source_clocks": { "hmda_vintage": "2025", "ofr_resources_retrieved_at": "2026-09-29", "enforcement_index_window": "2022–2025", "snapshot_generated_at": "2026-09-29T13:27:12Z" },
+      "gaps": [{ "capability": "statewide OFR roster", "state": "NOT_ACQUIRED" }, { "capability": "license-class counts", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "ff48c58ea04466d660019ff88c978a7e249619c5", "canonical_state_url": "https://www.insurancetrusthub.com/maryland",
+      "capability_summary": "1,295 MIA company-search rows",
+      "grain": "Company-search rows, not a deduplicated insurer census: 1,285 print NAIC and 1,278 distinct NAIC codes. Other Licensed Entity has 114 separate rows. The bounded order/exam index has 703 rows, not a complete adverse-event census; producer-enforcement summary has 105 separate rows.",
+      "source_clocks": { "company_search_update": "weekly; exact update instant not displayed", "company_search_retrieved_at": "2026-09-29T13:19:31Z", "order_exam_index_retrieved_at": "2026-09-29T13:23:25Z", "order_dates": "per indexed document" },
+      "gaps": [{ "capability": "agency and individual-producer statewide rosters", "state": "NOT_ACQUIRED" }, { "capability": "complete order census", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "31985f3aa213228f28486f852ca979fe7c1e2815", "canonical_state_url": "https://www.seniortrusthub.com/maryland",
+      "capability_summary": "1,673 Maryland Assisted Living Program directory rows",
+      "grain": "One OHCQ directory class, not a senior-facility total. Separate rows: Long Term Care Facilities 221, Home Health Agencies 53, Hospices 28 and Adult Medical Day Care Centers 128. State licenses are distinct from CMS certifications.",
+      "source_clocks": { "assisted_living_sheet_as_of": "2026-09-03", "long_term_care_home_health_hospice_sheets_as_of": "2026-09-01", "adult_medical_day_sheet_as_of": "2026-09-03", "workbooks_retrieved_at": "2026-09-29T14:02:23Z" },
+      "gaps": [{ "capability": "exact CMS bridges (CCNs not printed)", "state": "0" }, { "capability": "clean statewide inspection index", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "1d5554a5c775ff29ae73317475689b0e002889d2", "canonical_state_url": "https://www.investortrusthub.com/maryland",
+      "capability_summary": "142 Maryland securities administrative-action index rows, 2022–2026",
+      "grain": "Action-index rows, not unique cases or final findings. A separate national SEC/IARD lens has 263 Maryland principal-office firms; office location does not establish Maryland registration. Exact adverse CRD/SEC attachments: 0.",
+      "source_clocks": { "principal_office_roster_source_as_of": "2026-08-27", "principal_office_roster_retrieved_at": "2026-08-28", "action_index_retrieved_at": "2026-09-29T14:04:09Z", "action_list_dates": "2022–2026, per index row" },
+      "gaps": [{ "capability": "Maryland state IA / federal notice / ERA counts", "state": "NOT_ACQUIRED" }, { "capability": "Maryland-only BD/agent/IAR bulk rosters", "state": "NOT_ACQUIRED" }, { "capability": "provider exam and complaint outcomes", "state": "NOT_ACQUIRED" }]
+    }
+  ]
+}
