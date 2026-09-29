@@ -8,6 +8,7 @@ import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_
 import { NETWORK_PUBLIC_NAMES } from '../network/registry.ts';
 import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
 import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
+import { investorSecHandoff } from './state-handoff.ts';
 
 /**
  * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
@@ -244,9 +245,11 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     return {...session, hub:'senior', identityName:undefined, geography:undefined,
       phase:'EXECUTE', missingFields:[], availableChoices:[], nextAction:'execute'};
   }
-  if (session.identifier?.type === 'SEC' && plan.primaryHub === 'investor') {
-    return {...session, hub:'investor', phase:'CLARIFY', missingFields:[], availableChoices:[],
-      nextAction:'A labeled SEC file number belongs to InvestorTrustHub, but this Guided Research contract only executes exact CRD lookups. Continue at InvestorTrustHub Michigan to verify the SEC file number; Ask will not treat it as a CRD.'};
+  const secFile = q.match(/\bSEC\s+(?:file\s+(?:number\s+)?)?(\d{3}-\d{3,})\b/i)?.[1];
+  if (plan.primaryHub === 'investor' && (session.identifier?.type === 'SEC' || secFile)) {
+    const handoff = investorSecHandoff(plan.requestedGeography?.stateCode);
+    return {...session, hub:'investor', identifier:{type:'SEC',value:session.identifier?.value ?? secFile!}, phase:'EXECUTE', missingFields:[], availableChoices:[],
+      nextAction:`A labeled SEC file number belongs to InvestorTrustHub, but this Guided Research contract only executes exact CRD lookups. Continue at ${handoff.label} to verify the SEC file number: ${handoff.href}. Ask will not treat it as a CRD.`};
   }
 
   const investorIntent=(plan.primaryHub === 'investor' && Boolean(session.identifier)) || /\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
@@ -399,6 +402,10 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     // capability that does not exist. Route those two classes to an honest terminal CLARIFY
     // instead (mirrors Section H / senior-ask.ts's seniorFailClosedReason).
     if (parsed.seniorProviderClass === 'memory_care' || parsed.seniorProviderClass === 'assisted_living') {
+      if (parsed.seniorProviderClass === 'assisted_living' && plan.requestedGeography?.stateCode === 'MD') {
+        return {...session, entityClass:'assisted_living', phase:'EXECUTE', missingFields:[], availableChoices:[],
+          nextAction:'Maryland assisted living is supported by the statewide SeniorTrustHub Maryland evidence. Continue there to research licensed Assisted Living Programs; no city-level provider search is implied.'};
+      }
       const label = SENIOR_PROVIDER_CLASS_LABEL[parsed.seniorProviderClass];
       return {
         ...session,
@@ -488,6 +495,7 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  if(session.hub==='senior'&&session.entityClass==='assisted_living'&&session.researchPlan.requestedGeography?.stateCode==='MD')return session;
   if(session.researchPlan.reasonCodes.includes('CARE_TASK'))return session;
   // TH-ARCH-P0-001: the multi-hub guard above already produced its own CLARIFY (with a hub-choice
   // menu and an explanatory message) for a query the planner recognized as spanning multiple
