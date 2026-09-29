@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import manifest from '../../data/network/wisconsin-publication-manifest.json' with { type: 'json' };
 import { CANONICAL_ORIGINS, type SpecialistHubId } from './registry.ts';
 import { US_JURISDICTIONS } from './us-jurisdictions.ts';
+import type { AskResearchPlan } from './research-planner.ts';
 
 export const WI_PUBLICATION_MANIFEST = manifest;
 export const WI_NETWORK_CONTRACT = 'ath-wi-network-release-v1';
@@ -15,6 +16,22 @@ const FROZEN_SHAS: Record<SpecialistHubId, string> = {
   investor: '90e4edcd63bede842493c5e95a241af87b10c544',
 };
 export function wiSpecialistUrl(hub: SpecialistHubId): string { return `${CANONICAL_ORIGINS[hub]}/wisconsin`; }
+export type WiSeniorStateClass = 'adult_family_home'|'cbrf'|'rcac'|'nursing_home'|'hospice'|'home_health'|'ccn';
+export function wiSeniorStateResearch(plan: AskResearchPlan): {classId: WiSeniorStateClass; label: string; href: string} | undefined {
+  if (plan.primaryHub !== 'senior' || plan.requestedGeography?.stateCode !== 'WI' || !plan.executionAllowed) return undefined;
+  const q = plan.originalQuestion;
+  const classes: Array<[WiSeniorStateClass, string, RegExp]> = [
+    ['adult_family_home', 'Adult Family Home', /\badult family homes?\b/i],
+    ['cbrf', 'Community-Based Residential Facility', /\b(?:CBRF|community[- ]based residential facilit(?:y|ies))\b/i],
+    ['rcac', 'Residential Care Apartment Complex', /\b(?:RCAC|residential care apartment complex(?:es)?)\b/i],
+    ['nursing_home', 'Nursing Home', /\bnursing homes?\b/i],
+    ['hospice', 'Hospice', /\bhospice\b/i],
+    ['home_health', 'Home Health Agency', /\bhome health\b/i],
+  ];
+  if (plan.identifier?.type === 'cms_ccn') return {classId:'ccn',label:'CCN verification',href:wiSpecialistUrl('senior')};
+  const found = classes.find(([, , pattern]) => pattern.test(q));
+  return found ? {classId:found[0], label:found[1], href:wiSpecialistUrl('senior')} : undefined;
+}
 export function wiReleaseGatePassed(value = manifest): boolean {
   return value.contract === WI_NETWORK_CONTRACT && value.release_gate.passed && value.scope === 'STATE_LEVEL_ONLY' &&
     !value.hardcoded_city_routes && !value.hardcoded_county_routes && value.hubs.length === 6 &&

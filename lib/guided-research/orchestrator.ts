@@ -12,6 +12,7 @@ import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
 import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/mn-network.ts';
 import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
+import { wiSeniorStateResearch } from '../network/wi-network.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -283,6 +284,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const wiSenior=wiSeniorStateResearch(session.researchPlan);
+  if(session.hub==='senior'&&wiSenior){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub Wisconsin. ${city?`${city} is context only; no city provider search or city page was executed. `:''}Continue at the Wisconsin research page. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:'senior',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Wisconsin ${wiSenior.label} research`,consumerMessage:message,
+      interpretation:[{label:'Requested class',value:wiSenior.label},{label:'Research geography',value:'Wisconsin statewide'},...(session.identifier?.type==='CCN'?[{label:'CCN',value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-wi-network-release-v1'},
+      limitations:['Ask is a state research gateway; no provider records were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:wiSenior.href,label:'Open SeniorTrustHub Wisconsin'}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'senior',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const mnPlan = planAskResearch(session.originalQuestion);
   if (mnPlan.reasonCodes.includes('MINNESOTA_RESEARCH_ROUTING') || mnPlan.reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL') || mnIdentifier(session.originalQuestion)) {
