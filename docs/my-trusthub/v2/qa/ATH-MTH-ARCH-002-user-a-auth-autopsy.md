@@ -4,6 +4,8 @@ Status: read-only diagnosis. No repair. Audited 2026-09-30.
 
 ATH-MTH-ARCH-002R status: `HOLD`. The fresh human password grant proves the operational root cause. The supported Admin password update was not performed. The sections at the end of this file supersede the Phase A grant conclusion and the Phase A repair line.
 
+ATH-MTH-ARCH-002R2 status: `RESET_COMPLETE_HUMAN_LOGIN_PENDING`. A temporary isolated admin credential was available. `auth.admin.updateUserById` changed only the USER_A password, and the canonical handoff was atomically rewritten. That section supersedes the 002R statement that the Admin update was not performed. No human login has been performed.
+
 Governing decision, unchanged:
 
 ONE IDENTITY. SPECIALIST TOOLS. PARENT SAVED/PROJECTS. SAVE ≠ WATCH.
@@ -346,3 +348,40 @@ A later read-only check on `xkkiicsassizmakcvxml` still shows the same USER_A id
 | `HUMAN_LOGIN_READY` | no |
 
 The supported human Chrome login waits until an isolated service-role credential can perform `updateUserById` and the canonical handoff is rotated with it. This ticket does not certify a login.
+
+## Supported password reset
+
+ATH-MTH-ARCH-002R2. A temporary secret key named `mth_v2_3_user_a_reset_temp` was present at `~/.trusthub-secrets/xkkiics_admin_secret.txt` for project `xkkiicsassizmakcvxml`. It was loaded into process memory for this repair. It was not copied into Git, this receipt, Slack, or another file.
+
+Admin preflight used `auth.admin.listUsers` and `auth.admin.getUserById` against `https://xkkiicsassizmakcvxml.supabase.co` only. The client disabled session persistence, token refresh, and session detection in the URL. The read matched the existing USER_A: confirmed, not banned, not deleted, and email provider. The project still had two users.
+
+`auth.admin.updateUserById` was then called with the password attribute only. The call returned no error.
+
+A second admin read showed the same USER_A identity: same user, same email identity, confirmed, not banned, not deleted, and email provider. `updated_at` changed. User B was unchanged: confirmed, not banned, and not deleted.
+
+The canonical handoff `~/.trusthub-secrets/mth_user_a_credential.txt` was written to a temporary file, privately validated, and atomically replaced at 2026-09-30T19:13:05Z. The temporary handoff file and the replace backup were removed. The replacement has exactly the email and password fields, no BOM, no wrapping quotes, no edge whitespace, and no embedded newline in the password.
+
+No SQL was used. `auth.users` and `encrypted_password` were not written directly. `crypt()` and `gen_salt()` were not used. USER_A was not recreated. Email, confirmation, and metadata were not intentionally changed. User B was not changed. Production projects were not contacted. Vercel was not changed. Code, schema, RLS, CAPTCHA, signup, and email settings were not changed. P13 was not executed. No password grant and no browser login were performed.
+
+The temporary admin key remains in its private local file. It was not used again after this repair and was not revoked in this ticket.
+
+| Check | Result |
+| --- | --- |
+| Admin preflight | pass |
+| Target project | `xkkiicsassizmakcvxml` |
+| Repair API | `auth.admin.updateUserById` |
+| Admin reset | pass |
+| Direct SQL password mutation | no |
+| USER_A identity | preserved |
+| USER_A confirmed | yes |
+| USER_A banned or deleted | no |
+| User B | unchanged |
+| Canonical handoff | atomic rewrite pass |
+| Temporary admin key exposed | no |
+| Production mutation | none |
+| Code mutation | none |
+| P13 | not executed |
+| Human password login | not performed |
+| `HUMAN_LOGIN_READY` | yes |
+
+`HUMAN_LOGIN_READY` means the founder can attempt the human Chrome login on the stable Ask preview after G-B2 reviews this repair. It does not mean that login has succeeded.
