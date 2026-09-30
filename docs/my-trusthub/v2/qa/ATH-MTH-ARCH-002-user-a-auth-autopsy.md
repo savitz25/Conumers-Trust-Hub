@@ -1,10 +1,14 @@
 # ATH-MTH-ARCH-002 — Isolated User A auth autopsy
 
-Status: read-only diagnosis. No repair. Audited 2026-09-30.
+Status: `ATH-MTH-ARCH-002 AUTH BLOCKER CLOSED`. Closeout 2026-09-30.
 
-ATH-MTH-ARCH-002R status: `HOLD`. The fresh human password grant proves the operational root cause. The supported Admin password update was not performed. The sections at the end of this file supersede the Phase A grant conclusion and the Phase A repair line.
+USER_A auth: `PASS`. Human login: `PASS`. P13: `NOT EXECUTED`. Profile-save, the parent receipt, and `/my/saved` were not tested.
 
-ATH-MTH-ARCH-002R2 status: `RESET_COMPLETE_HUMAN_LOGIN_PENDING`. A temporary isolated admin credential was available. `auth.admin.updateUserById` changed only the USER_A password, and the canonical handoff was atomically rewritten. That section supersedes the 002R statement that the Admin update was not performed. No human login has been performed.
+The sections below keep the read-only autopsy, the pre-repair grant failure, and the supported password repair. The final closeout is the current ticket result.
+
+ATH-MTH-ARCH-002R status at that time: `HOLD`. The fresh human password grant proved the operational root cause. The supported Admin password update had not been performed. Those sections supersede the Phase A grant conclusion.
+
+ATH-MTH-ARCH-002R2 status at that time: `RESET_COMPLETE_HUMAN_LOGIN_PENDING`. A temporary isolated admin credential was available. `auth.admin.updateUserById` changed only the USER_A password, and the canonical handoff was atomically rewritten. That section supersedes the 002R statement that the Admin update was not performed. The founder login and the temporary-key cleanup are recorded in the final closeout.
 
 Governing decision, unchanged:
 
@@ -363,7 +367,7 @@ The canonical handoff `~/.trusthub-secrets/mth_user_a_credential.txt` was writte
 
 No SQL was used. `auth.users` and `encrypted_password` were not written directly. `crypt()` and `gen_salt()` were not used. USER_A was not recreated. Email, confirmation, and metadata were not intentionally changed. User B was not changed. Production projects were not contacted. Vercel was not changed. Code, schema, RLS, CAPTCHA, signup, and email settings were not changed. P13 was not executed. No password grant and no browser login were performed.
 
-The temporary admin key remains in its private local file. It was not used again after this repair and was not revoked in this ticket.
+At the close of 002R2, the temporary admin key was still in its private local file. It was not used again after the repair. Revocation is recorded in the final closeout.
 
 | Check | Result |
 | --- | --- |
@@ -384,4 +388,93 @@ The temporary admin key remains in its private local file. It was not used again
 | Human password login | not performed |
 | `HUMAN_LOGIN_READY` | yes |
 
-`HUMAN_LOGIN_READY` means the founder can attempt the human Chrome login on the stable Ask preview after G-B2 reviews this repair. It does not mean that login has succeeded.
+`HUMAN_LOGIN_READY` at the close of 002R2 meant the founder could attempt the human Chrome login on the stable Ask preview. The result of that later attempt is recorded in the final closeout.
+
+## Final auth closeout
+
+ATH-MTH-ARCH-002C. Documentation only. This closeout does not change Auth, preview configuration, schema, or runtime code.
+
+### Pre-repair failure
+
+A human Chrome login on the reviewed Ask preview, before the password repair, used the canonical handoff. Cloudflare Turnstile completed. P13 was not reached.
+
+| Field | Value |
+| --- | --- |
+| Ask time | 2026-09-30T18:02:57Z |
+| Deployment | `dpl_3g13PFDAbKEN8tRoUDY4wb4eUifj` |
+| Branch | `mth-v2-3-parent-runtime` |
+| SHA | `b885a651d1b229f8c6acbc5888733af08f4a5e5d` |
+| Ask event | `my_trusthub_account` |
+| Operation | `login` |
+| Ask outcome | `provider_failure` |
+| Supabase project | `xkkiicsassizmakcvxml` |
+| Auth time | 2026-09-30T18:02:58Z |
+| Request | `POST /token` |
+| Grant | `grant_type=password` |
+| HTTP | 400 |
+| `error_code` | `invalid_credentials` |
+| Turnstile | human success |
+| P13 | not reached |
+
+### Supported repair
+
+Temporary isolated admin access was created only for `xkkiicsassizmakcvxml`, under the key name `mth_v2_3_user_a_reset_temp`.
+
+The supported operation was `auth.admin.updateUserById`, a password-only update for the existing USER_A. No SQL was used. `auth.users` was not updated directly. USER_A was not recreated. The USER_A identity was preserved. User B was unchanged. The canonical USER_A handoff was atomically rewritten at 2026-09-30T19:13:05Z.
+
+### Post-repair human login pass
+
+The founder completed a human Chrome login on the same reviewed Ask preview at approximately 2026-09-30T20:00:56Z.
+
+| Field | Value |
+| --- | --- |
+| Deployment | `dpl_3g13PFDAbKEN8tRoUDY4wb4eUifj` |
+| Branch | `mth-v2-3-parent-runtime` |
+| SHA | `b885a651d1b229f8c6acbc5888733af08f4a5e5d` |
+| Ask event | `my_trusthub_account` |
+| Operation | `login` |
+| Ask outcome | `request_accepted` |
+| Continuation | `auth_continuation_completed` |
+| Method | `password` |
+| Continuation outcome | `authenticated` |
+| Supabase project | `xkkiicsassizmakcvxml` |
+| Request | `POST /token` |
+| Grant | `grant_type=password` |
+| HTTP | 200 |
+| Browser landing | `/my?auth=complete` |
+| Classification | `USER_A_AUTH_PASS` |
+
+USER_A successfully authenticated. This proves USER_A auth. It does not prove P13, profile-save continuation, a parent receipt, a `/my/saved` row, or a Move to Ask journey.
+
+### Temporary admin access closed
+
+Chief of Staff cleanup on `xkkiicsassizmakcvxml` closed the temporary admin access. Status: `TEMP_ADMIN_ACCESS_CLOSED`.
+
+| Check | Result |
+| --- | --- |
+| Temporary key `mth_v2_3_user_a_reset_temp` | found, then revoked and deleted |
+| Windows local admin-key file | deleted |
+| Office copy | deleted |
+| Canonical USER_A handoff | preserved |
+| USER_A during cleanup | not mutated |
+| User B during cleanup | not mutated |
+| Other Auth or config mutation | none |
+| Production mutation | none |
+| P13 | not executed |
+
+The local admin-key path used for the repair is no longer present. The canonical handoff file remains the file written at 2026-09-30T19:13:05Z.
+
+### Final ticket status
+
+`ATH-MTH-ARCH-002 AUTH BLOCKER CLOSED`.
+
+| Item | Result |
+| --- | --- |
+| USER_A auth | `PASS` |
+| Human login | `PASS` |
+| P13 | `NOT EXECUTED` |
+| Profile-save | `NOT TESTED` |
+| Parent receipt | `NOT TESTED` |
+| `/my/saved` | `NOT TESTED` |
+
+Next work is ATH-MTH-ARCH-003, the contract freeze, and then ATH-MTH-ARCH-004, the first Move to Ask receipt proof. This closeout does not start that work. PR #185 and Move PR #169 were not changed. PR #226 stays open, draft, and unmerged.
