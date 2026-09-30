@@ -4,6 +4,8 @@ Status: documentation only. Audited 2026-09-30 from repository `origin/main`, th
 
 This file is the canonical location for the map. Current Ask `main` has no `docs/my-trusthub/v2/` tree. The flat `docs/my-trusthub-*.md` files are Phase 2 cutover records. `docs/control-plane/` is the research and claim inventory, not the consumer identity map. This path is the V2 architecture series this ticket starts.
 
+ATH-MTH-ARCH-001R1 corrects six certification points on this same document: the login gate versus the profile-save gate, the isolated profile-save flags and QA relation evidence, the User A evidence boundary, production magic-link sign-in versus the preview password form, the business database selector name `ASK_DATABASE_URL`, and the `qvvxvb` region cell. The accepted production project matrix is unchanged.
+
 Governing decision, founder-adopted, not reopened here:
 
 ONE IDENTITY. SPECIALIST TOOLS. PARENT SAVED/PROJECTS. SAVE ≠ WATCH.
@@ -18,7 +20,7 @@ Seven names that must not be swapped:
 
 | Layer | Project ref | What it is |
 | --- | --- | --- |
-| Legacy production consumer identity | `arepfylnilkjmyduhwbz` | Live Move browser and service Supabase project. Historical shared Gen1 IdP. Not Insurance. Not Lender. Not Ask. |
+| Legacy production consumer identity | `arepfylnilkjmyduhwbz` | Live Move browser and service Supabase project. A shared Move / Insurance / Lender IdP is historical design intent. Current live browser Auth on this ref is Move. |
 | New Ask production identity | `qvvxvbcdmbjzrgvwjatw` | Intended permanent My TrustHub consumer authority. Production source admits only this host. The production env value is encrypted and was not read. |
 | Isolated Ask QA | `xkkiicsassizmakcvxml` | Ask preview branch `mth-v2-3-parent-runtime` only. QA. Never a production IdP. |
 | Specialist preview isolation | `zvoijbohtyuhqfuvteoy` | Move preview branch `mth-v2-3-move-current-main` browser project. Not Ask. Not User A. |
@@ -28,7 +30,11 @@ Seven names that must not be swapped:
 
 The live network is already split. A Move session does not create an Ask session. An Insurance session is not a Move session. Lender's handoff health check succeeds on `hidcrbexurginnuqgipx`, which is a different project from Move. Insurance's live host is `gojyhmbojbwbpiamoktq`, and its handoff consume function is missing. Move's handoff table probe fails on `arepfylnilkjmyduhwbz`.
 
-Ask production code at `057ac969f7e016b742fd3d42789e65b488e2c938` will build a My TrustHub client only when `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` is exactly `https://qvvxvbcdmbjzrgvwjatw.supabase.co`. The V2 branch replaces that pin with a pair check: production must be that host plus `https://www.asktrusthub.com`; preview must be a matched non-production origin and a backend that is not `qvvxvb`. The reviewed preview pair is `xkkiicsassizmakcvxml` on the Ask preview alias, with Move isolated at `zvoijbohtyuhqfuvteoy`.
+Ask production code at `057ac969f7e016b742fd3d42789e65b488e2c938` will build a My TrustHub client only when `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` is exactly `https://qvvxvbcdmbjzrgvwjatw.supabase.co`. Production `/my/sign-in` on that SHA is the magic-link canary. The button text is "Email me a sign-in link".
+
+The unmerged V2 branch has two gates. `accountRuntime` is the login admission rule. Off production it admits the origin and backend supplied by `MY_TRUSTHUB_TEST_ORIGIN` and `MY_TRUSTHUB_TEST_SUPABASE_URL` when the non-production checks pass. It rejects the `qvvxvb` backend off production, and it rejects Ask production hostnames. It does not hardcode `xkkiicsassizmakcvxml`. `isolatedConfig` is the stricter profile-save gate. It returns null unless the admitted pair is exactly the Ask preview alias plus `xkkiicsassizmakcvxml`, with signup, email, Watch, alerts, and source monitoring equal to the string `false`. Login does not require `isolatedConfig`. A preview password login can therefore be admitted against a backend that later fails the profile-save pin.
+
+The reviewed branch environment at `b885a651` is currently configured for that `xkkiics` pair. That configuration is not the `accountRuntime` rule. Move preview isolation on the paired branch is `zvoijbohtyuhqfuvteoy`.
 
 User A belongs only to the Ask isolated project and the Ask preview deployment in section 13. This ticket does not log in, reset that user, or run P13.
 
@@ -36,8 +42,8 @@ User A belongs only to the Ask isolated project and the Ask preview deployment i
 
 | Ref | Name in source or dashboard docs | Region evidence | Live role verified this audit | Status | Fate |
 | --- | --- | --- | --- | --- | --- |
-| `qvvxvbcdmbjzrgvwjatw` | `Conumers-Trust-Hub` in older control-plane docs | `us-east-1` in those docs; V2 preview pooler host `aws-0-us-east-1.pooler.supabase.com` is set on the Ask preview branch | Production source allowlist. Preview V2 code treats it as `PARENT_BACKEND` and refuses it off production. Plaintext production env not read. | CANONICAL intended | KEEP. Permanent My TrustHub consumer Auth owner. |
-| `xkkiicsassizmakcvxml` | Isolated V2 parent | Preview env `MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST=aws-0-us-east-1.pooler.supabase.com` | Plain `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` and `MY_TRUSTHUB_TEST_SUPABASE_URL` on Ask preview branch only. `MY_TRUSTHUB_V23_ISOLATED_PROJECT` equals this ref. | QA_ONLY | KEEP as QA. Never production identity authority. |
+| `qvvxvbcdmbjzrgvwjatw` | `Conumers-Trust-Hub` in older control-plane docs | UNKNOWN | Production source allowlist. Preview V2 code treats it as `PARENT_BACKEND` and refuses it off production. Plaintext production env not read. | CANONICAL intended | KEEP. Permanent My TrustHub consumer Auth owner. |
+| `xkkiicsassizmakcvxml` | Isolated V2 parent | QA pooler host `aws-0-us-east-1.pooler.supabase.com` from `MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST` on the Ask preview branch. That host is evidence for this QA project only. | Reviewed branch environment: plain `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` and `MY_TRUSTHUB_TEST_SUPABASE_URL` equal this project, and `MY_TRUSTHUB_V23_ISOLATED_PROJECT` equals this ref. `accountRuntime` does not hardcode the ref. `isolatedConfig` does, for profile-save. | QA_ONLY | KEEP as QA. Never production identity authority. |
 | `arepfylnilkjmyduhwbz` | Move-Trust-Hub | `us-west-2` in older docs | Live Move production health: `projectRef` and `supabaseHost` are this ref. Move `main` canonical constant. | LEGACY consumer IdP; CANONICAL Move data plane | BRIDGE, then retire as consumer IdP. Move evidence data stays specialist-owned. |
 | `zvoijbohtyuhqfuvteoy` | Reviewed Move V2 preview branch | Not read from a database connection this audit | Plain `NEXT_PUBLIC_SUPABASE_URL` on Move preview branch `mth-v2-3-move-current-main`. Build guard admits only this exact URL outside production, and only with the isolation flag. | PREVIEW_ISOLATED | KEEP for isolated Move QA. Not a consumer IdP. |
 | `gojyhmbojbwbpiamoktq` | Not named in the old shared-IdP note | Not verified | Live Insurance `/api/auth/network-handoff/health` host, and the host in the `/my-insurance` JavaScript bundle. | CANONICAL for current Insurance browser and service client | MIGRATE consumer Auth to Ask. KEEP the specialist database. |
@@ -47,7 +53,7 @@ User A belongs only to the Ask isolated project and the Ask preview deployment i
 | `uvqkyupfnpswdozmuzih` | Legacy free Move project | Not applicable | Forbidden by Move `canonical-project.ts`. Live Move health reports `isForbidden: false` and the canonical ref. | RETIRED as a browser target | RETIRE. Do not point any hub at it. |
 | `tzzcogaricohtezsugjr` | Named only inside the unmerged Move local SQL harness forbidden list | Not applicable | No live deployment mapped. | UNKNOWN live role | INVESTIGATE only if a later ticket finds it in an env URL. Do not use it. |
 
-Ask also has Vercel variables `neon_tech_database` and `CTH_READ_DATABASE_URL`. Current `docs/control-plane/` says Neon is the Ask customer and research data plane and that `qvvxvb` was not that database. Those URLs were not read. Neon is not consumer Auth.
+Ask business and claim data are selected in `lib/customer/database-selection.ts` on `057ac969`. The ordinary selector is `neon_tech_database`, then `ASK_DATABASE_URL`. A preview fixture URL is selected only when that file's fixture flags are set. Values were not read. Current `docs/control-plane/` says the Neon customer database is not `qvvxvbcdmbjzrgvwjatw`. `qvvxvb` is the consumer Auth project. It is not the business or claim database. `CTH_READ_DATABASE_URL` is a separate research read URL and was not read.
 
 ## 3. Domain, environment, and repository matrix
 
@@ -61,11 +67,13 @@ Team slug `savitz25-s-projects`. Production deployment SHAs below match GitHub P
 | Move | PREVIEW | V2 branch alias only | same | same | `mth-v2-3-move-current-main` | `73bc86e503a57fc52d420a1c339c7fd8b912e2af` | `https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app` equals deployment `dpl_6uXvZfQDzAydDUasWTgkWU2C76n4` (`move-trust-l09zneao4`). |
 | Insurance | PRODUCTION | `https://www.insurancetrusthub.com` (also apex) | `savitz25/Insurance-trust-hub` | `insurance-trust-hub` `prj_ARBlfWYNhpJWBtaPO4vUJlraa5BK` | `main` | `33c176213aeb02651c91c48fdd82215bf3e57e14` | Deployment `dpl_5TPvNwiXLM22BnBrBWUSwqMgf9W6`. |
 | Lender | PRODUCTION | `https://www.lendertrusthub.com` (also apex) | `savitz25/Lender-Trust-Hub` | `lender-trust-hub` `prj_Il28Mv0ebRiIrumFO7iBX6JrSbdD` | `main` | `38b91f316d6902543035ff152f6a172e61254c0f` | Deployment `dpl_CZ3jnmTRCoZHRV5z5u3VCTxTMTca`. |
-| Lender extra | PRODUCTION | No custom domain. `lender-trust-hub-ask-search-009.vercel.app` | same repo | `lender-trust-hub-ask-search-009` `prj_FjFslauzgDtdqZay7AvzhaZirhSx` | `main` | GitHub recorded the same SHA `38b91f31` as a second Production deployment. Vercel production deployment id `dpl_9QqyWrBXsD2UkP28DxK4B6nSwiod`. | None on the canonical domain. Zero env vars. |
+| Lender extra | PRODUCTION | No custom domain. `lender-trust-hub-ask-search-009.vercel.app`. Purpose UNKNOWN. | same repo | `lender-trust-hub-ask-search-009` `prj_FjFslauzgDtdqZay7AvzhaZirhSx` | `main` | GitHub recorded the same SHA `38b91f31` as a second Production deployment. Vercel production deployment id `dpl_9QqyWrBXsD2UkP28DxK4B6nSwiod`. | None on the canonical domain. Zero env vars. Purpose UNKNOWN. |
 | Contractor | PRODUCTION | `https://www.contractortrusthub.com` (also apex) | `savitz25/contractor-trust-hub` | `contractor-trust-hub` `prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq` | `main` | `8575bc3fd10fb3751bf7cd2952410458e8db3b2c` | Deployment `dpl_5mX3Lb4xXbux4uEUNWnXwyyrssou`. |
 | Senior | PRODUCTION | `https://seniortrusthub.com` and `https://www.seniortrusthub.com` | `savitz25/care-trust-hub` | `care-trust-hub` `prj_k9GyyXn28JZkyYKqLhBJ4rUQcpUb` | `main` | `9b35178e40b054783ba4b655fc7fb03d3286239e` | Deployment `dpl_6fq94ApweNRawg937SSZGrR1Gpuz`. App root is `apps/web`. |
 | Investor | PRODUCTION | `https://www.investortrusthub.com` (also apex) | `savitz25/investor-trust-hub` | `investor-trust-hub-web` `prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8` | `main` | `9a6681377e442151e969e1ea8422ac5f7c6e2a5d` | Deployment `dpl_Gr39SLWWByLN7mUHd54ZYzaHanh3`. App root is `apps/web`. |
 | Move stale | none | No production URL | `savitz25/Move-trust-Hub` was not linked | `move-trust-hub-mdc-prod-003` `prj_NPTwOcY4BFHmuinaSZpKwiaLZszm` | none | none | No deployment, no env, no git link. |
+
+Ask production `/my/sign-in` at SHA `057ac969` is the magic-link canary ("Email me a sign-in link"). The V2 password form at `/my/sign-in` exists on unmerged preview SHA `b885a651`. `www.asktrusthub.com` does not serve that password form.
 
 Other preview deployments exist for ordinary pull requests. They were not inventoried one by one. Only the V2 branch aliases above were checked against the branch tips.
 
@@ -76,7 +84,7 @@ Development is not a separate deployed identity surface. Vercel development targ
 | Surface | Consumer Auth ref | Public browser ref | Service-side ref | How verified |
 | --- | --- | --- | --- | --- |
 | Ask production `/my` | Code admits only `qvvxvbcdmbjzrgvwjatw`. Env value encrypted. | Same client. Server-only module, so the host is not in the sign-in HTML. | `SUPABASE_SERVICE_ROLE_KEY` is set for development, preview, and production. Target host not read. Separate `MY_TRUSTHUB_P13_DATABASE_URL`, `P15`, `P17`, `P19_EXPORT`, `P19_DELETE` exist on production and were not read. | Source `lib/my-trusthub/runtime-config.ts` on `057ac969`. Env names and scopes from Vercel. |
-| Ask V2 preview | `xkkiicsassizmakcvxml` | Same, branch-scoped public URL | `MY_TRUSTHUB_V23_PARENT_DATABASE_URL` set sensitive on that branch. Host not read. Pooler host plain: `aws-0-us-east-1.pooler.supabase.com`. Mode `SUPAVISOR_SESSION`. | Plain env values on `mth-v2-3-parent-runtime`. |
+| Ask V2 preview | Reviewed branch environment is `xkkiicsassizmakcvxml`. Login admission is `accountRuntime`, which accepts the configured test pair and does not hardcode this ref. Profile-save admission is `isolatedConfig`, which requires this ref. | The public URL on the reviewed branch is this same project. A different test pair that passes `accountRuntime` would point the browser at that other project. | `MY_TRUSTHUB_V23_PARENT_DATABASE_URL` set sensitive on that branch. Host not read. QA pooler host plain: `aws-0-us-east-1.pooler.supabase.com`. Mode `SUPAVISOR_SESSION`. That pooler is QA evidence, not a `qvvxvb` region. | Plain env values on `mth-v2-3-parent-runtime`. |
 | Move production | `arepfylnilkjmyduhwbz` | Same | Health reports admin configured on that same `projectRef`. | `GET /api/health/local-movers` and `GET /api/auth/network-handoff/health` on 2026-09-30. |
 | Move V2 preview | Not the consumer IdP. Browser project `zvoijbohtyuhqfuvteoy` | Same branch URL | `MTH_MOVE_PARENT_SAVE_DATABASE_URL` sensitive on that branch. Host not read. `SUPABASE_SERVICE_ROLE_KEY` remains on the shared production+preview+development variable. V2 source refuses a service-role client while isolated browser auth is admitted. | Plain branch URL. Source `lib/supabase/canonical-project.ts` and `scripts/supabase-project-guard.ts` at `73bc86e5`. |
 | Insurance production | `gojyhmbojbwbpiamoktq` | Same. `getSupabaseUrl()` prefers `NEXT_PUBLIC_SUPABASE_URL`. | Service role validates against the host that function returns. A separate `SUPABASE_URL` exists and is unused while the public URL is set. Its host was not compared. | Live health plus page bundle. |
@@ -108,10 +116,10 @@ Production site URL verified plain: `https://www.asktrusthub.com`.
 | `MY_TRUSTHUB_P13_DATABASE_URL`, `P15`, `P17`, `P19_EXPORT`, `P19_DELETE`, `MY_TRUSTHUB_DATABASE_CA` | production, sensitive or encrypted | Phase pipeline database URLs | UNKNOWN. Must not be the QA project during a production launch, and must not be used as the isolated proof target | Pipeline writes to the wrong generation | Names present. Values not read. |
 | `MY_TRUSTHUB_P13_CONTRACTOR_SECRET` | production, sensitive | Shared secret for the Contractor issue route | Ask production verifier | Forged specialist save handoff | Present. Value withheld. |
 | `ATH_HANDOFF_SECRET` | production and, separately, preview | Business claim handoff | Claim verifier, not consumer session | Claim token accepted as a consumer session | Present. Value withheld. |
-| `neon_tech_database`, `CTH_READ_DATABASE_URL`, `ATH_PREVIEW_DB_*` | production and/or preview, sensitive | Research or preview Postgres | Not consumer Auth | Research DSN used as the identity database | Present. Values withheld. |
+| `neon_tech_database`, `ASK_DATABASE_URL`, `CTH_READ_DATABASE_URL`, `ATH_PREVIEW_DB_*` | `neon_tech_database` is present for production and preview, sensitive. `ASK_DATABASE_URL` is the source fallback in `lib/customer/database-selection.ts`. Its Vercel presence was not recorded in the earlier inventory. Values unread. | Business, claim, or research Postgres. Not My TrustHub consumer Auth. | Neon customer data, or `ASK_DATABASE_URL` when Neon is unset. Not `qvvxvb`. | A business DSN used as the consumer identity database, or `qvvxvb` used as the claim database | Selector names verified in source. Values withheld. |
 | `ASK_AUTH_FROM_EMAIL` | production + preview, sensitive | Mail from-address | Ask domain | Auth mail from the wrong brand | Present. Value withheld. |
 
-Ask preview branch `mth-v2-3-parent-runtime` overrides, all target `preview` and that git branch:
+Ask preview branch `mth-v2-3-parent-runtime` overrides, all target `preview` and that git branch. These rows are the reviewed branch environment. They are not a hardcode inside `accountRuntime`. `isolatedConfig` is the function that requires the `xkkiics` pair for profile-save.
 
 | Variable | Recorded value | Risk if this leaks onto production |
 | --- | --- | --- |
@@ -213,8 +221,8 @@ No consumer Auth URL variable was identified. `CARE_DATABASE_URL` is the server 
 
 | Surface | Consumer identity owner today | Workspace owner today | Current Auth UX | Target Auth UX under AD-0 | Status | Fate |
 | --- | --- | --- | --- | --- | --- | --- |
-| Ask production `/my` | Intended `qvvxvb`. Binding plaintext UNVERIFIED. | Ask Saved and Projects, flag-gated | Ask `/my/sign-in`. Page is live and says My TrustHub. | Ask | CANONICAL intended | KEEP |
-| Ask V2 preview | `xkkiics` | Ask preview Saved, flag-gated. Watch and alerts forced false. | Ask preview `/my/sign-in` | Ask, QA only | QA_ONLY | KEEP for proof. Never promote the project. |
+| Ask production `/my` | Intended `qvvxvb`. Binding plaintext UNVERIFIED. | Ask Saved and Projects, flag-gated | Magic-link canary at `/my/sign-in`. The control is "Email me a sign-in link". This is not the V2 password form. | Ask | CANONICAL intended | KEEP |
+| Ask V2 preview | Reviewed branch environment `xkkiics`. `accountRuntime` does not hardcode that ref. | Ask preview Saved when the reviewed flags are on. `isolatedConfig` requires signup, email, Watch, alerts, and source monitoring to be the string `false`. | V2 password form at preview `/my/sign-in` on `b885a651`. Login uses `accountRuntime`. Profile-save uses `isolatedConfig`. | Ask, QA only | QA_ONLY | KEEP for proof. Never promote the project. |
 | Move production My Move | `arepfyl` | My Move cloud plus device shortlist | Move `/my-move` and `/auth/*` | Ask | LEGACY | BRIDGE, then retire the consumer IdP UX |
 | Move V2 preview | `zvoijboht` for that browser only | Device shortlist plus isolated parent-save runtime | Isolated preview callbacks. Network handoff refused while isolation is admitted, per V2 source. | Ask parent. Move remains the tool. | PREVIEW_ISOLATED | KEEP until certification. Not an IdP. |
 | Insurance My Insurance | `gojyhmbo` | My Insurance local and cloud | Insurance `/my-insurance` and `/auth/*`, with source still able to send OAuth through Move | Ask | LEGACY, already a separate project | MIGRATE consumer Auth. KEEP evidence. |
@@ -233,7 +241,7 @@ Routes below exist on the production SHA unless marked V2-only. V2-only routes a
 | Path | Role |
 | --- | --- |
 | `/my`, `/my/saved`, `/my/projects`, `/my/projects/[projectId]`, `/my/watches`, `/my/alerts`, `/my/alerts/[alertId]`, `/my/you`, `/my/sessions/[sessionId]` | Consumer workspace. Feature-gated. |
-| `/my/sign-in` | Consumer sign-in. Live HTTP 200. |
+| `/my/sign-in` | Magic-link canary on `057ac969`. The live control is "Email me a sign-in link". This is not the V2 password form. Live HTTP 200. |
 | `/auth/callback` | Supabase return for the My TrustHub client. |
 | `/my/handoff/prepare`, `/start`, `/arrive`, `/finish` | Cross-hub handoff routes in the Ask app. |
 | `/api/my-trusthub/handoff/issue` | Server handoff issue. |
@@ -243,17 +251,19 @@ Routes below exist on the production SHA unless marked V2-only. V2-only routes a
 | `lib/supabase/server.ts`, `lib/supabase/middleware.ts` | My TrustHub server client. Null unless the `qvvxvb` host pin matches. |
 | `lib/my-trusthub/runtime-config.ts`, `feature-flags.ts` | Host pin and `true`-only flags. |
 
-Ask `main` does not contain `/my/profile-save`, `/my/create-account`, `/my/reset-password`, or `lib/my-trusthub/account-policy.ts`.
+Ask `main` does not contain `/my/profile-save`, `/my/create-account`, `/my/reset-password`, `lib/my-trusthub/account-policy.ts`, or the V2 password sign-in form.
 
 ### Ask V2 branch only
 
 | Path | Role |
 | --- | --- |
-| `/my/sign-in`, `/my/create-account`, `/my/email-link`, `/my/recover`, `/my/reset-password` | Account forms. Isolated mode admits login only. |
-| `/my/profile-save`, `/my/profile-save/current-grant` | Parent confirmation and current-grant. |
-| `/api/my-trusthub/profile-save`, `/api/my-trusthub/profile-save/current-grant` | Parent runtime. |
-| `lib/my-trusthub/account-policy.ts` | Production pair versus preview pair. |
-| `lib/my-trusthub/account-service.ts` | Account operations behind that policy. |
+| `/my/sign-in` | V2 password form on `b885a651` only. `AccountEntry` operation `login`. Login calls `accountRuntime`. It does not require `isolatedConfig`. |
+| `/my/create-account`, `/my/email-link`, `/my/recover`, `/my/reset-password` | Other account forms on this branch. When `isolatedSaveAccount` is true (`VERCEL_ENV=preview` and `MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED` exactly `true`), those operations are refused and login remains the admitted account operation. `isolatedSaveAccount` is not `isolatedConfig`. |
+| `/my/profile-save`, `/my/profile-save/current-grant` | Parent confirmation and current-grant. These routes use `isolatedConfig`. |
+| `/api/my-trusthub/profile-save`, `/api/my-trusthub/profile-save/current-grant` | Parent runtime. Profile-save deployment returns null unless `isolatedConfig` admits the environment. |
+| `lib/my-trusthub/account-policy.ts` | `accountRuntime` admits the test pair off production. It does not hardcode `xkkiics`. |
+| `lib/my-trusthub/account-service.ts` | Password login and the other account operations behind `accountRuntime`. |
+| `lib/my-trusthub/profile-save/isolated-config.ts` | `isolatedConfig`. Stricter profile-save pin to the Ask preview alias plus `xkkiics`, with the disabled flags below. |
 | `lib/my-trusthub/profile-save/*` | Continuation, receipt, isolated adapters. Not deployed to production. |
 
 ### Move production
@@ -296,11 +306,11 @@ No consumer auth tree. Claim routes: `apps/web/src/app/api/claim/handoff/[slug]/
 
 ## 8. Session and cookie map
 
-Supabase SSR clients in Ask, Move, Insurance, and Lender do not set a parent `Domain`. The library cookie name is `sb-<project-ref>-auth-token`, with chunked `.0`, `.1` names. Move's `hasSupabaseAuthCookies` looks for that prefix. Anonymous loads of the production pages did not set those cookies, so the live `Set-Cookie` attributes were not observed. The code path passes the library options through and never sets a shared parent domain.
+Supabase SSR clients in Ask, Move, Insurance, and Lender do not set a parent `Domain`. The library cookie name is `sb-<project-ref>-auth-token`, with chunked `.0`, `.1` names. Move's `hasSupabaseAuthCookies` looks for that prefix. Anonymous loads of the production pages did not set those cookies, so the live `Set-Cookie` attributes were not observed. The `Domain` attribute on a real consumer session cookie remains unmeasured. The code path passes the library options through and does not set a shared parent domain.
 
 | Cookie or session | Set by | Project that issues it | Domain scope | Logout |
 | --- | --- | --- | --- | --- |
-| `sb-<ref>-auth-token` | Ask `/my` when the client is non-null | `qvvxvb` if the production pin matches; `xkkiics` on the V2 preview | Host-only on the Ask host. Not sent to Move, Insurance, or Lender. | Ask `signOut` clears this host. It does not clear specialist cookies. |
+| `sb-<ref>-auth-token` | Ask `/my` when the client is non-null | Production pin expects `qvvxvb`. The reviewed V2 preview environment is configured for `xkkiics`. The cookie project is whichever backend `accountRuntime` admitted. Login does not require the `isolatedConfig` pin. | Code does not set a parent `Domain`. Live `Domain` was not measured. The cookie is not sent to Move, Insurance, or Lender by any parent-domain setting in this code. | Ask `signOut` clears this host. It does not clear specialist cookies. |
 | `sb-arepfylnilkjmyduhwbz-auth-token` | `www.movetrusthub.com` | `arepfyl` | Host-only | `signOut({ scope: 'global' })` revokes refresh tokens in `arepfyl` only. |
 | `sb-gojyhmbojbwbpiamoktq-auth-token` | `www.insurancetrusthub.com` | `gojyhmbo` | Host-only | Not the Move session. A Move global sign-out does not revoke it. |
 | `sb-hidcrbexurginnuqgipx-auth-token` | `www.lendertrusthub.com` | `hidcrbex` | Host-only | Same split. Lender health says this project's handoff RPC works. It cannot redeem an `arepfyl` code. |
@@ -342,7 +352,7 @@ Older Ask and specialist docs describe one project, `arepfylnilkjmyduhwbz`, for 
 
 ## 10. V2 pathways
 
-Ask owns identity, admission, the Saved index, Projects, receipts, the Watch registry, and export or delete. Those tables exist in Ask migrations as `consumer.consumer_profiles`, `consumer.consumer_saved_entities`, `consumer.consumer_projects`, `consumer.consumer_watches`, `consumer.consumer_alerts`, and the `ops.consumer_*handoff*` tables. Whether those migrations are applied to `qvvxvb` was not re-queried. Older cutover docs said they were not yet applied. That application state is UNKNOWN on 2026-09-30.
+Ask owns identity, admission, the Saved index, Projects, receipts, the Watch registry, and export or delete. Ask migration files define `consumer.consumer_profiles`, `consumer.consumer_saved_entities`, `consumer.consumer_projects`, `consumer.consumer_watches`, `consumer.consumer_alerts`, and the `ops.consumer_*handoff*` tables. Migration files are not database presence. G-B2's read-only inspection of the isolated QA database `xkkiicsassizmakcvxml` did not find relation names matching watch, alert, export, receipt, or delete. This correction pass did not re-query that database. Ask repository migrations may define those concepts elsewhere. Whether those migrations are applied on `qvvxvbcdmbjzrgvwjatw` remains UNKNOWN. Older cutover docs said they were not yet applied. That application state was not independently proven on 2026-09-30.
 
 Specialists own evidence, entity identity, guest and device state, and the private tool runtime. Move's device shortlist, Insurance's `ith:*` keys, and Lender's `lth:*` keys stay on the device. They are not Ask rows.
 
@@ -359,15 +369,55 @@ Conceptual reference fields: `hub`, `object_class`, `schema_version`, `opaque_ob
 
 The specialist private object must not be keyed by a Generation 1 consumer UUID or by Ask `auth.users.id`. Lender's current device key `lth:my-lending:v1:user:{userId}` is Gen1 behavior. It is not the V2 key. Continue, when it is built, uses a short-TTL single-use capability. The current-grant route on the unmerged Ask branch is the parent side of that future capability. This ticket does not change it.
 
-Save does not create Watch. On the Ask preview branch, Saved and specialist handoff are `true`, and Watch, alerts, and source monitoring are `false`. The isolated config returns null if those three are not the string `false`.
+Save does not create Watch.
 
-Parent profile-save on the unmerged branch is enabled only when `VERCEL_ENV` is not production, the preview pair matches `xkkiics` and the Ask preview alias, the Move origin matches the Move preview alias, and the invitation and flag gates in `isolated-config.ts` pass. Production deployment of Ask `main` does not contain this runtime.
+### Login gate and profile-save gate
+
+`accountRuntime` in `lib/my-trusthub/account-policy.ts` on `b885a651` is the login and account-form admission rule.
+
+On `VERCEL_ENV=production` it admits only `https://www.asktrusthub.com` paired with `https://qvvxvbcdmbjzrgvwjatw.supabase.co`. That function is not what production `057ac969` runs. Production still uses the older host pin, and its `/my/sign-in` page is the magic-link canary.
+
+On every other `VERCEL_ENV`, `accountRuntime` admits the origin and backend supplied by `MY_TRUSTHUB_TEST_ORIGIN` and `MY_TRUSTHUB_TEST_SUPABASE_URL` when all of these hold:
+
+- `MY_TRUSTHUB_NONPRODUCTION_APPROVED` is the string `true`
+- `NEXT_PUBLIC_SITE_URL` and the test origin are the same origin
+- `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` and the test backend are the same origin
+- the backend is not `https://qvvxvbcdmbjzrgvwjatw.supabase.co`
+- the origin hostname is not `asktrusthub.com` or `consumerstrusthub.com`, including a subdomain of either
+
+`accountRuntime` contains no literal `xkkiicsassizmakcvxml`. Preview password login reaches this gate through `accountFormAvailable` and `account-service.ts` `signInWithPassword`. It does not call `isolatedConfig`.
+
+`isolatedConfig` in `lib/my-trusthub/profile-save/isolated-config.ts` is the stricter profile-save gate. It returns null unless `accountRuntime` has already admitted a pair and that pair is exactly:
+
+- origin `https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app`
+- backend `https://xkkiicsassizmakcvxml.supabase.co`
+
+It also returns null unless `VERCEL_ENV` is `preview`, profile-save, the master flag, Saved, and specialist handoff are `true`, access mode is `invitation`, session affinity is `dedicated`, the Move origin and `MY_TRUSTHUB_V23_ISOLATED_PROJECT` match the reviewed pair, invited emails are empty, and exactly two distinct invited user ids are present.
+
+The same function requires these variables to be the string `false`:
+
+- `MY_TRUSTHUB_SIGNUP_ENABLED`
+- `MY_TRUSTHUB_EMAIL_ENABLED`
+- `MY_TRUSTHUB_WATCH_ENABLED`
+- `MY_TRUSTHUB_ALERTS_ENABLED`
+- `MY_TRUSTHUB_SOURCE_MONITORING_ENABLED`
+
+Login does not require `isolatedConfig`. A preview password login can be admitted against a backend that later fails this profile-save pin.
+
+`isolatedSaveAccount` is a third, narrower switch. It is true only when `VERCEL_ENV` is `preview` and `MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED` is exactly `true`. While it is true, signup, email-link, recovery, and password-change forms are refused, and login can still proceed through `accountRuntime`. It does not pin `xkkiics`.
+
+### Code admission versus reviewed branch environment
+
+The reviewed branch `mth-v2-3-parent-runtime` at `b885a651` is currently configured so the test pair is the Ask preview alias plus `xkkiicsassizmakcvxml`. On that environment Saved and specialist handoff are `true`, and signup, email, Watch, alerts, and source monitoring are `false`. That is branch configuration. It is not a hardcode inside `accountRuntime`. `isolatedConfig` is the function that hardcodes the QA project for profile-save.
+
+Production deployment of Ask `main` does not contain either gate.
 
 ## 11. Business `/manage` separation
 
-Consumer Auth is `/my` on the Ask consumer project. Business claim is a different surface:
+Consumer Auth is the `/my` route family on the Ask consumer project. Business claim is a different route family and a different database selector:
 
-- Ask routes under `/manage`, including organization, invitation accept, and notifications.
+- Ask routes under `/manage`, including organization, invitation accept, and notifications. These are not `/my` consumer Auth routes.
+- Business database selector `lib/customer/database-selection.ts`: `neon_tech_database`, otherwise `ASK_DATABASE_URL`. Values unread. This selector does not choose `qvvxvbcdmbjzrgvwjatw`.
 - `ATH_HANDOFF_SECRET` on Ask, Move, Insurance, Lender, Contractor, Senior, and Investor.
 - Specialist claim routes, including Senior and Investor `api/claim/handoff`, Contractor `ManageProfileCta`, and `ATH_CLAIM_*` canary variables.
 - Claim canary branches (`ath-cust-net-001a-move`, `001b-lender`, `002a-senior`, `002b-investor`, `002c-insurance`, `ath-cust-003`) carry their own claim variables and are not the V2 consumer preview.
@@ -379,11 +429,13 @@ No Supabase project ref was verified as a business-only Auth tenant. Do not put 
 | Source | Expected target | Possible wrong target | Protection present | Gap |
 | --- | --- | --- | --- | --- |
 | Ask production `getMyTrustHubSupabaseUrl` on `057ac969` | `qvvxvbcdmbjzrgvwjatw` | `arepfyl`, `xkkiics`, `gojyhmbo`, `hidcrbex` | Function returns null unless the host is exactly `qvvxvbcdmbjzrgvwjatw.supabase.co` | The production env value is encrypted and was not read. A mismatch fail-closes. It does not silently follow another project. A runtime probe that prints only the host is still undone. |
-| Ask V2 `accountRuntime` on preview | `xkkiics` plus the Ask preview alias | `qvvxvb` | Preview returns null when the backend is `PARENT_BACKEND` or the test URL does not match | Protection is on the unmerged branch only. Production `main` does not contain this pair check. |
-| Ask V2 `accountRuntime` on production | `qvvxvb` plus `https://www.asktrusthub.com` | `xkkiics` | Production returns null for any other pair | That code is not what production runs today. Production is protected by the older host pin instead. The branch env that holds `xkkiics` is `preview` plus git branch, not production. |
+| Ask V2 `accountRuntime` off production. Code admission rule for login. | The pair in `MY_TRUSTHUB_TEST_ORIGIN` and `MY_TRUSTHUB_TEST_SUPABASE_URL` | Any other Supabase project written into both the public URL and the test URL. That includes a specialist project, `zvoijbohtyuhqfuvteoy`, or a QA project other than `xkkiics`. `qvvxvb` is also a wrong target, and this function rejects it off production. | Non-production approval must be the string `true`. The backend must not be `PARENT_BACKEND`. The origin hostname must not be `asktrusthub.com` or `consumerstrusthub.com`. The public URL and the test URL must be the same pair. | This gate does not hardcode `xkkiics`. Login does not call `isolatedConfig`. A preview password login can be admitted against a backend that later fails the profile-save pin. The protection exists on the unmerged branch only. |
+| Ask V2 `isolatedConfig`. Code admission rule for profile-save. | Exactly the Ask preview alias plus `https://xkkiicsassizmakcvxml.supabase.co`, with signup, email, Watch, alerts, and source monitoring equal to the string `false`, plus the invitation conditions in `isolated-config.ts` | A backend that `accountRuntime` would accept and that is not `xkkiics` | Returns null unless the runtime pair, origins, isolated-project variable, invitation list, and the five `false` flags all match | Profile-save uses this gate. Login does not. The reviewed branch environment currently supplies the pinned pair. A different preview environment can pass login and fail here. |
+| Reviewed branch environment `mth-v2-3-parent-runtime` at `b885a651` | Current env is the Ask `3127df` alias and `xkkiics` | Reading that env as proof that `accountRuntime` only allows `xkkiics` | The env values show the current configuration. The two functions above are the admission rules. | Configuration of one branch is not the login hardcode. |
+| Ask V2 `accountRuntime` when `VERCEL_ENV` is production | `qvvxvb` plus `https://www.asktrusthub.com` | `xkkiics` or any other backend | Production returns null for any other pair | That code is not what production runs today. Production is protected by the older host pin, and production `/my/sign-in` is the magic-link canary. The branch env that currently holds `xkkiics` is `preview` plus git branch. |
 | Move production browser | `arepfyl` | `zvoijboht`, `qvvxvb`, `uvqkyup` | Live health is `arepfyl`. Production build guard admits only `arepfyl`. `uvqkyup` is forbidden. | The shared `NEXT_PUBLIC_SUPABASE_URL` is also attached to preview and development. Non-V2 previews were not probed and might be that production URL. |
 | Move V2 preview browser | `zvoijboht` | `arepfyl`, Ask `xkkiics`, Ask `qvvxvb` | Branch URL is exactly `zvoijboht`. Guard admits that URL only with `NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED=1` and an anon JWT for that ref. Production `VERCEL_ENV` cannot take that path. | Anon JWT claims were not re-decoded. Service-role refusal depends on the unmerged source. Do not merge it from this ticket. |
-| Ask preview calling Move | Move preview alias and `zvoijboht` as the specialist | Move production `arepfyl`, or using the Move preview as the Ask user store | `isolated-config.ts` pins both origins and refuses production `VERCEL_ENV` | Two preview aliases are easy to transpose. They are different projects. User A is not a `zvoijboht` user. |
+| Ask profile-save `isolatedConfig` calling Move | Move preview alias and `zvoijboht` as the specialist | Move production `arepfyl`, or using the Move preview as the Ask user store | `isolated-config.ts` pins both origins and refuses production `VERCEL_ENV` | This row is the profile-save gate. It is not the login gate. Two preview aliases are easy to transpose. They are different projects. User A is recorded on `xkkiics`, not on `zvoijboht`. |
 | Insurance sign-in redirect | `gojyhmbo` callback on `www.insurancetrusthub.com` | Move `arepfyl` via `www.movetrusthub.com/auth/callback` | `AUTH_OAUTH_DIRECT=1` would keep the redirect on Insurance | That variable is unset. Source default is the Move bridge. Docs still say the project must equal Move. |
 | Lender sign-in redirect | `hidcrbex` callback on `www.lendertrusthub.com` | Move `arepfyl` via the same bridge default | Same `AUTH_OAUTH_DIRECT` switch | Unset. `lib/my-lending/auth-constants.ts` hard-defaults the bridge. |
 | Builder following `docs/NETWORK-AUTH.md` or Lender `docs/LEND-NAT-002B` | Current live hosts | `arepfyl` for Insurance and Lender | None in those docs | The docs contradict the live health hosts. |
@@ -393,24 +445,27 @@ No Supabase project ref was verified as a business-only Auth tenant. Do not put 
 
 ## 13. Current User A test boundary
 
-This boundary is recorded. It was not re-tested. No password was used. No user was reset. No login probe was sent.
+This boundary records where a later test may run. This architecture audit did not log in, did not reset the user, and did not send a credentialed probe.
 
 | Fact | Boundary |
 | --- | --- |
-| Isolated project | `xkkiicsassizmakcvxml` |
-| User A | Exists, confirmed, not banned, not deleted |
-| Password identity | Exists |
-| Human Turnstile | Passes |
-| Password grant | Currently returns `invalid_credentials` |
+| Isolated project | User A exists in `xkkiicsassizmakcvxml` |
+| Account state | Confirmed. Not banned. Not deleted. |
+| Identity | Email/password identity exists |
+| Target branch | `mth-v2-3-parent-runtime` |
+| Target SHA | `b885a651d1b229f8c6acbc5888733af08f4a5e5d` |
+| Target stable alias | `https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app` |
 | P13 | Has not executed |
 
-The deployment that may participate in a later test:
+The deployment that may participate in a later test is that preview:
 
-- Ask Vercel preview `mth-v2-3-parent-runtime`
-- SHA `b885a651d1b229f8c6acbc5888733af08f4a5e5d`
 - Deployment `dpl_3g13PFDAbKEN8tRoUDY4wb4eUifj`
-- Alias `https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app`
-- Env pair `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` = `https://xkkiicsassizmakcvxml.supabase.co`
+- Reviewed branch environment `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` = `https://xkkiicsassizmakcvxml.supabase.co`
+- Login on that deployment uses `accountRuntime`. Profile-save, if reached, also has to pass `isolatedConfig`.
+
+Reported symptom from prior hosted testing: `invalid_credentials`.
+
+This architecture audit did not reproduce the password grant. This architecture audit did not observe a completed Turnstile. No root cause is established here. This document does not claim a CAPTCHA result, a password or hash proof, or a reproduced grant.
 
 Do not use these for that test:
 
@@ -419,7 +474,7 @@ Do not use these for that test:
 - Move preview `zvoijbohtyuhqfuvteoy` and alias `move-trust-hub-git-mth-v2-3-move-cur-0a05f1`
 - Insurance `gojyhmbojbwbpiamoktq` or Lender `hidcrbexurginnuqgipx`
 
-Move preview is the specialist on the other side of a later parent-save proof. It is not where User A's password lives.
+Move preview is the specialist on the other side of a later parent-save proof. User A is recorded on `xkkiics`, not on the Move preview.
 
 ## 14. Target-state identity diagram
 
@@ -461,6 +516,8 @@ AD-0 TARGET
    ATH_HANDOFF_SECRET and Ask /manage are not /my.
 ```
 
+The QA box is the reviewed profile-save project. `accountRuntime` does not hardcode that ref. The reviewed branch environment currently points the test pair at it.
+
 Gen1 Move, Insurance, and Lender sign-in boxes stay up until a later migration ticket. They are not deleted by this map.
 
 ## 15. Migration and fate
@@ -486,7 +543,8 @@ Gen1 Move, Insurance, and Lender sign-in boxes stay up until a later migration t
 | Investor `ghjhcx` | Source-declared evidence project. Env unread. | KEEP evidence. INVESTIGATE the unread URL before relying on the ref. |
 | Contractor database ref | Historical QA note only | INVESTIGATE |
 | Senior `CARE_DATABASE_URL` | Set, unread | INVESTIGATE the ref. KEEP as evidence. |
-| Ask Neon and `CTH_READ_DATABASE_URL` | Research data plane, per control-plane docs | KEEP out of consumer Auth |
+| Ask `neon_tech_database`, then `ASK_DATABASE_URL` | Business and claim selector in `lib/customer/database-selection.ts`. Values unread. Not `qvvxvb`. | KEEP out of consumer Auth |
+| `CTH_READ_DATABASE_URL` | Research read URL. Value unread. | KEEP out of consumer Auth |
 | Ask `NEXT_PUBLIC_SUPABASE_URL` | Set on all environments, no `main` TypeScript reader found | INVESTIGATE, then remove or bind deliberately |
 | Extra phase database URLs on Ask production | `P13`, `P15`, `P17`, `P19` | INVESTIGATE hosts before any apply |
 | Lender `TARGET_DATABASE_URL` | Production, unread | INVESTIGATE |
@@ -500,7 +558,8 @@ Gen1 Move, Insurance, and Lender sign-in boxes stay up until a later migration t
 - Plaintext of production `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` on Ask. Source will accept only `qvvxvb`. The ciphertext was not decrypted.
 - Whether Ask production feature flags are `true` or not. They exist and are encrypted. The code treats anything other than `true` as off.
 - Whether `consumer.*` migrations are applied on `qvvxvb`. Not queried.
-- Hosts inside `MY_TRUSTHUB_P13_DATABASE_URL`, `P15`, `P17`, `P19_*`, `MY_TRUSTHUB_DATABASE_CA`, `neon_tech_database`, and `CTH_READ_DATABASE_URL`.
+- Hosts inside `MY_TRUSTHUB_P13_DATABASE_URL`, `P15`, `P17`, `P19_*`, `MY_TRUSTHUB_DATABASE_CA`, `neon_tech_database`, `ASK_DATABASE_URL`, and `CTH_READ_DATABASE_URL`. The business selector names `neon_tech_database` and `ASK_DATABASE_URL`. Neither value was read. Neither is evidence that `qvvxvb` is the claim database.
+- Region of `qvvxvbcdmbjzrgvwjatw`. UNKNOWN. The QA pooler host `aws-0-us-east-1.pooler.supabase.com` belongs to `xkkiics` and is not region evidence for `qvvxvb`.
 - Ask `NEXT_PUBLIC_SUPABASE_URL` target and why it has no reader on `main`.
 - Insurance `SUPABASE_URL` host, which is unused while the public URL is set.
 - Lender `TARGET_DATABASE_URL` host.
@@ -515,7 +574,7 @@ Gen1 Move, Insurance, and Lender sign-in boxes stay up until a later migration t
 - `move-trust-hub-mdc-prod-003` purpose.
 - `tzzcogaricohtezsugjr` beyond the forbidden list in the unmerged Move harness.
 - Claim user store behind `/manage`.
-- User A password-grant failure. Recorded, not reproduced.
+- User A password grant. Prior hosted testing reported `invalid_credentials`. This architecture audit did not reproduce the grant, did not observe a completed Turnstile, and establishes no root cause.
 - Whether the two invited preview ids satisfy the V2 two-UUID gate. The value was withheld and not parsed.
 
 ## 17. Hard invariants
