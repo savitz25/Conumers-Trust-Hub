@@ -2,6 +2,8 @@
 
 Status: read-only diagnosis. No repair. Audited 2026-09-30.
 
+ATH-MTH-ARCH-002R status: `HOLD`. The fresh human password grant proves the operational root cause. The supported Admin password update was not performed. The sections at the end of this file supersede the Phase A grant conclusion and the Phase A repair line.
+
 Governing decision, unchanged:
 
 ONE IDENTITY. SPECIALIST TOOLS. PARENT SAVED/PROJECTS. SAVE ≠ WATCH.
@@ -280,3 +282,67 @@ B1 was not performed. B2 was not performed. No user was recreated. CAPTCHA, sign
 | `HUMAN_LOGIN_READY` | no |
 
 The next human Chrome login, if the founder chooses to make one, belongs on the stable alias above. This autopsy does not certify that login.
+
+## Fresh human reproduction
+
+A human Chrome login on the stable Ask preview used the canonical handoff. Cloudflare Turnstile completed in that browser. P13 was not reached.
+
+| Field | Value |
+| --- | --- |
+| Ask Vercel time | 2026-09-30T18:02:57Z |
+| Deployment | `dpl_3g13PFDAbKEN8tRoUDY4wb4eUifj` |
+| Branch | `mth-v2-3-parent-runtime` |
+| SHA | `b885a651d1b229f8c6acbc5888733af08f4a5e5d` |
+| Event | `my_trusthub_account` |
+| Operation | `login` |
+| Outcome | `provider_failure` |
+| Supabase project | `xkkiicsassizmakcvxml` |
+| Auth time | 2026-09-30T18:02:58Z |
+| Request | `POST /token` |
+| Grant | `grant_type=password` |
+| HTTP | 400 |
+| `error_code` | `invalid_credentials` |
+| Turnstile | human success |
+| P13 | not reached |
+
+This is a fresh supported GoTrue password-grant rejection on the reviewed deployment. The app outcome is `provider_failure`. The failure is before P13. It is not an `admission_blocked` result, and it is not an `isolatedConfig` or profile-save failure. Login does not call `isolatedConfig`.
+
+The Phase A statement that rejection of the current password by a password grant was unproven is superseded. The supported password grant is authoritative. A local bcrypt comparison of the canonical handoff against the stored credential does not establish that GoTrue will accept that password.
+
+Operational root cause: the current USER_A password credential is not accepted by Supabase Auth. The historical writer remains unknown. This record does not assign that rejection to a SQL mutation, an Admin reset, a credential migration, hash semantics, or another writer.
+
+## Authorized repair
+
+`HOLD`. Repair method: `NONE`.
+
+The authorized action was `supabase.auth.admin.updateUserById` on the existing USER_A in `xkkiicsassizmakcvxml`, changing only the password. That call was not made.
+
+No service-role credential for `xkkiicsassizmakcvxml` was available:
+
+- The local files for this project contain the session database URL and the canonical handoff. They do not contain a service-role key.
+- The database login is not a superuser. Vault secret names are empty. `auth.instances` has no rows. The JWT secret setting is unset. Those facts were not used to mint a key or to write a password.
+- The Vercel variable named `SUPABASE_SERVICE_ROLE_KEY` is a JWT for `qvvxvbcdmbjzrgvwjatw` with role `anon`. It was classified and not sent.
+- No Supabase management access token was present.
+- One local admin-shaped secret was presented only to `https://xkkiicsassizmakcvxml.supabase.co` and was rejected with HTTP 401. It was not used for an update, and it was not sent to any other project.
+
+`auth.users` was not updated. `encrypted_password` was not written. SQL, `crypt()`, and `gen_salt()` were not used. USER_A was not recreated. Email, confirmation, and metadata were not changed. User B was not changed. The canonical handoff was not rewritten. It remains the file written at 2026-09-29T21:52:01.988Z.
+
+A later read-only check on `xkkiicsassizmakcvxml` still shows the same USER_A identity:
+
+| Check | Result |
+| --- | --- |
+| USER_A row | one case-exact email match |
+| Confirmed | yes |
+| Banned | no |
+| Deleted | no |
+| Provider | email |
+| `updated_at` | `2026-09-29T22:18:46.764Z`, unchanged |
+| User B | one other user; confirmed; not banned; not deleted; zero sessions |
+| Handoff rewritten | no |
+| Production mutation | none |
+| Code mutation | none |
+| P13 | not executed |
+| Automated password login | not performed |
+| `HUMAN_LOGIN_READY` | no |
+
+The supported human Chrome login waits until an isolated service-role credential can perform `updateUserById` and the canonical handoff is rotated with it. This ticket does not certify a login.
