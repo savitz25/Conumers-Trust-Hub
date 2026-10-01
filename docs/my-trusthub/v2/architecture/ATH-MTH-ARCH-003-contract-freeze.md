@@ -2,6 +2,8 @@
 
 Status: documentation only. This file is the normative contract for every remaining My TrustHub V2 builder ticket, including ATH-MTH-ARCH-004 and later six-hub rollout work.
 
+ATH-MTH-ARCH-003R1 corrects the hosted confirmation-label description and the pre-ARCH-004 delta register after the independent hold. The sections that already passed review are unchanged in substance.
+
 This path is the architecture series opened by [ATH-MTH-ARCH-001](ATH-MTH-ARCH-001-identity-environment-map.md). No separate index lists these documents. This ticket adds only this file.
 
 Governing decision, founder-adopted, not reopened here:
@@ -60,7 +62,15 @@ On merged P11, `consumer.require_user()` returns `auth.uid()` and raises `insuff
 
 PR #185 `VerifiedCaller.parent.subject` is supplied by the auth adapter. The profile-save comment forbids constructing that caller from JSON, headers, or URL claims. `ParentProfileSavePort` and the transfer port comments say no operation accepts a consumer UUID or email. Move `profile-save-adapter.ts` derives the parent through the verified channel.
 
-The confirmation page in `lib/my-trusthub/profile-save/browser.ts` renders each selected `profile.hub` and `profile.nativeId`. That native id is the specialist public identity. Preview assembly sets the account `label` to an empty string, so the confirmation heading does not render an email from that assembly path.
+The specialist browser handoff and the hosted Ask confirmation page are different surfaces.
+
+The handoff form posts only the opaque `continuationRef`. That payload MUST NOT carry the Ask consumer UUID or the consumer email.
+
+After that continuation reaches Ask, the hosted confirmation path resolves the parent with `verifiedParent` in `lib/my-trusthub/profile-save/verified-parent.ts`. `verifiedParent` sets `label` from the admitted account: `u.email`, or the fallback text `Your My TrustHub account` when that email is absent. `lib/my-trusthub/profile-save/browser.ts` prints that label on `/my/profile-save` as `Destination:` before Confirm Save. The page MAY therefore show the authenticated account email. Ask reads that email from the admitted session. The specialist handoff does not carry it.
+
+`preview-assembly.ts` stores a separate internal exchange whose `label` is an empty string. That empty string is not the hosted confirmation label.
+
+The same confirmation page also renders each selected `profile.hub` and `profile.nativeId`. That native id is the specialist public identity.
 
 ### FUTURE MIGRATION
 
@@ -299,7 +309,7 @@ Account Save success MUST produce a parent receipt. The server-side receipt MUST
 - the completion result
 - the schema or source revision where the transfer has one
 
-The browser-visible reference MUST NOT expose the consumer UUID, the consumer email, a raw continuation secret, or a service credential. A public specialist identity MAY appear on the signed-in confirmation page.
+The browser-visible receipt reference MUST NOT expose the consumer UUID, the consumer email, a raw continuation secret, or a service credential. A public specialist identity MAY appear on the signed-in confirmation page. The `Destination:` label in section 1 comes from the admitted session and may be the account email. That label is separate from the receipt reference.
 
 ### CURRENT IMPLEMENTATION
 
@@ -311,13 +321,9 @@ The confirmation success page does not print `receiptRef`. It links to `/my/save
 
 P13 tables are a different object: `ops.consumer_browser_handoff_intents`, `ops.consumer_auth_handoffs`, `ops.consumer_context_handoffs`, and `ops.consumer_handoff_events`. They store SHA-256 hashes. Their comments say raw codes, JWTs, refresh tokens, and canonical ids do not enter browser URLs.
 
-The v23 migration header says it is unapplied to hosted environments. A prior QA inspection reported `v23_private` present on `xkkiicsassizmakcvxml`. This ticket did not re-query.
+The v23 migration file header still says the migration is unapplied to hosted environments. G-B2 independently confirmed, by a read-only inspection of `xkkiicsassizmakcvxml`, that `ops.v23_profile_runtime_records` is present. The observed columns include `kind`, `key_hash`, `payload`, `created_at`, `hub`, `browser_hash`, and `owner_id`. `kind` allows `stage`, `continuation`, `grant`, and `receipt`. Those fields are structurally compatible with the reviewed runtime. Private row contents are not recorded here. This correction did not re-query the database.
 
 Cleanup in that migration deletes receipt rows older than 30 days and other runtime rows older than one hour, measured from `created_at`. `RECEIPT_RETENTION_MS` in the runtime is the same 30 days. Retention is not the handoff TTL.
-
-### UNKNOWN
-
-Whether `ops.v23_profile_runtime_records` exists on `xkkiicsassizmakcvxml` now is not re-proven. ARCH-004 cannot record a parent receipt from a table that is absent. That live check belongs to the entry gate in section 19.
 
 ## 10. Specialist to Ask handoff
 
@@ -538,7 +544,7 @@ ARCH-004 MUST NOT start until every line below is true. This ticket does not exe
 - Public signup is off. Email is off. Watch is off. Alerts are off. Source monitoring is off.
 - User A and User B are the invited pair. No additional public account is created for the proof.
 - Production is not mutated. `qvvxvbcdmbjzrgvwjatw`, `arepfylnilkjmyduhwbz`, and the other production specialist projects stay untouched.
-- The Move preview runtime can resolve the certified public profile, or the publication gap in section 22 has been closed by a later ticket. Until that resolution returns `SAVE_SUPPORTED`, the journey stops at device Save.
+- The Move certified-publication gate in section 22 is satisfied for the reviewed mover, or a later ticket has deliberately prepared that relation and its `PUBLISHABLE` row. Until then ARCH-004 stays blocked. Live Move preview satisfaction of that gate remains UNKNOWN.
 
 Expected journey, not executed here:
 
@@ -558,7 +564,7 @@ PASS requires evidence for every item below. A missing item is a fail or a recor
 | Check | Required evidence |
 | --- | --- |
 | Move profile loaded | The certified slug renders on the reviewed Move preview. |
-| Save mover usable | The Save mover control can be operated. No keyboard trap was found in `components/save-my-move/save-mover-button.tsx` at `73bc86e`. This ticket did not press Tab in a browser. ARCH-004 MUST observe the control. There is no deferred workaround to cite, because the reviewed component does not document one. |
+| Save mover usable | The Save mover control can be operated on the hosted profile. Keyboard behavior and `DeferredSaveMyMove` are NEEDS_TEST_ONLY observations for that proof. This contract does not certify a workaround for either. |
 | Device Save | Local shortlist gains the slug. UI may say saved on this device. |
 | Handoff starts | Keep this in My TrustHub posts the continuation and leaves the Move origin for `/my/profile-save`. |
 | Ask session | The admitted preview session is accepted. A missing session shows "Sign in to continue" and MUST NOT commit. |
@@ -572,7 +578,7 @@ PASS requires evidence for every item below. A missing item is a fail or a recor
 | Idempotency | A repeated Save of the same entity does not add a second `consumer_saved_entities` row. |
 | Production | No production project, header, or Auth setting changes. |
 
-If the publication row is absent, prepare returns `local_only` and the receipt checks cannot pass. That outcome is a failed proof, not a waiver.
+If `readCertified` does not receive one matching `PUBLISHABLE` row from `mth_profile_transfer.certified_publication`, `prepare` returns `local_only` with `IDENTITY_REVIEW_REQUIRED` before `prepareGuestProfileTransfer`. The parent Save and P13 commit path do not start, and the receipt checks cannot pass. That outcome is a failed proof, not a waiver. Whether the live Move preview already satisfies this row remains UNKNOWN. `public.companies.publication_state` is a different object.
 
 ## 21. Production header cutover
 
@@ -600,10 +606,14 @@ Gaps are classified only. Nothing in this list is fixed here.
 | --- | --- | --- |
 | Public profile journey code exists on the two reviewed heads: Move prepares and verifies; Ask confirms and commits; local copy is kept; Save does not call `start_watch`. | READY | ARCH-004 can aim at this path. It does not require a new product design. |
 | P12 dedup `(auth.uid(), canonical network entity)` plus unique `(user_id, network_entity_id)`. | READY | Repeated public-entity Save updates one row. |
-| Save mover keyboard behavior. | NEEDS_TEST_ONLY | No trap is declared in the reviewed button. The proof still has to operate it. |
+| USER_A auth on the reviewed Ask preview. | READY | ARCH-002. Auth PASS is separate from the receipt proof. |
+| `ops.v23_profile_runtime_records` on `xkkiicsassizmakcvxml`. | READY | G-B2 read-only confirmation: the relation is present and the columns and `kind` values are compatible with the reviewed runtime. Row contents were not copied. |
+| Accepted Ask QA binding for the reviewed mover. | READY | G-B2 confirmed `PRESENT_AND_ACCEPTED`. It resolves to one active accepted canonical network entity. No consumer identity is recorded here. |
+| Save ≠ Watch architecture. | READY | `consumer.save_entity` does not insert `consumer.consumer_watches`. |
+| Save mover keyboard behavior. | NEEDS_TEST_ONLY | The hosted proof still has to operate the control. No workaround is certified. |
+| `DeferredSaveMyMove` on a company profile. | NEEDS_TEST_ONLY | On routes other than `/my-move` and `/portal`, the reviewed component waits for interaction, or a long idle, before it mounts `SaveMyMoveProvider`. The independent review did not require a code change before ARCH-004. No workaround is certified. |
 | Ask and Move deployment ids for the exact SHAs. | NEEDS_TEST_ONLY | Ask login deployment `dpl_3g13PFDAbKEN8tRoUDY4wb4eUifj` was not re-listed. The Move deployment id is unrecorded. Record both before the proof. No code change is implied by the missing id. |
-| Live presence of `ops.v23_profile_runtime_records` and an accepted Move binding on `xkkiicsassizmakcvxml`. | NEEDS_TEST_ONLY | The migration header says the v23 file is unapplied. A prior QA read saw `v23_private`. This ticket did not query. If either object is missing, the class becomes NEEDS_CODE_BEFORE_ARCH-004. |
-| `mth_profile_transfer.certified_publication` is queried by Move `hosted-runtime.ts` and is absent from reviewed SQL. The module comment says the contract is design-only and the module does not create the object. `resolveExactPublished` returns null without one `PUBLISHABLE` row for `usdot-1002530` / `hindman-isaacs-moving-storage-inc` / `mover`. Prepare then returns `local_only`. | NEEDS_CODE_BEFORE_ARCH-004 | The success bar cannot pass on a test alone. A later ticket has to add the reviewed relation and the one row, or an equivalent resolver that already exists in a reviewed head. This ticket does not add it. |
+| `mth_profile_transfer.certified_publication`. | NEEDS_CODE_BEFORE_ARCH-004 | REVIEWED CODE/SQL GAP = CONFIRMED. LIVE MOVE PREVIEW SATISFACTION = UNKNOWN. Move PR #169 head `73bc86e503a57fc52d420a1c339c7fd8b912e2af` reads this relation from `lib/my-trusthub/hosted-runtime.ts` before parent preparation proceeds. `supabase/migrations/20260921154559_move_v23_source_stage.sql` creates `stages`, `quota`, and `assertion_nonces`. It does not create `mth_profile_transfer.certified_publication`. `public.companies.publication_state` is a different object and is not what `resolveExactPublished` reads. `hosted-runtime.test.ts` mocks the query and is not hosted schema evidence. A missing or nonmatching row makes `readCertified` return null, `prepare` return `local_only` with `IDENTITY_REVIEW_REQUIRED`, and that return happens before `prepareGuestProfileTransfer`, so the parent Save and P13 commit path do not start. One matching `PUBLISHABLE` record for native id `usdot-1002530`, slug `hindman-isaacs-moving-storage-inc`, and class `mover` is sufficient for this publication gate when reader permissions and the other dependencies are valid. This contract does not say the live preview row is absent. Until that live state is proven, or a later ticket deliberately prepares the relation and row, ARCH-004 remains blocked. This ticket does not create the relation or insert the row. |
 | Several handoff windows coexist: P13 maximum 120 seconds, P13 issue and exchange matcher 90 seconds, preview exchange 85 seconds, current-grant challenge 90 seconds, stage and grant 600 seconds. | POST-ARCH-004_HARDENING | The proof can finish inside the shortest live window. Do not treat these as one TTL, and do not change them in the receipt ticket unless a failure proves the windows disagree. |
 | v23 `authority()` admits only `move`, `insurance`, and `lender`. | POST-ARCH-004_HARDENING | It does not block the first Move proof. Contractor, Senior, and Investor need a reviewed admission change before their own receipt proofs. |
 | Private tool pointer (`opaque_object_id` and the other addendum fields as stored columns) and private Continue rehydration. | PRE-MASS-MIGRATION_REQUIRED | Required before inventories, baskets, or scenarios move. Not required for the first public profile receipt. |
@@ -614,6 +624,31 @@ Gaps are classified only. Nothing in this list is fixed here.
 | Production magic-link `/my/sign-in` versus the preview password form. | PRE-PRODUCTION_REQUIRED | ARCH-001. Header and auth UX cutover stay locked. |
 | Email-only identity merge. | READY as a prohibition | `ops.consumer_identity_links` forbids it. Do not build a merge. |
 
+### Pre-ARCH-004 state after 003R1
+
+READY:
+
+- USER_A auth
+- Ask QA `ops.v23_profile_runtime_records`
+- the accepted Move canonical binding
+- the parent Saved and idempotency foundation
+- the Save ≠ Watch architecture
+
+NEEDS TEST:
+
+- the exact Ask and Move deployment pins at execution time
+- hosted Save control behavior, including keyboard use and `DeferredSaveMyMove`
+
+CONFIRMED BLOCKER BEFORE ARCH-004:
+
+`mth_profile_transfer.certified_publication` on the Move side. The reviewed mover must resolve as `PUBLISHABLE` through that relation before the first parent receipt proof can pass.
+
+LIVE MOVE PREVIEW PUBLICATION STATE: UNKNOWN.
+
+ARCH-004 immediate readiness: NO.
+
 ## 23. Prohibitions observed by this ticket
 
 This ticket did not run P13, did not perform a profile Save, did not log in, did not reset users, did not recreate an admin key, and did not modify Supabase, Vercel, production, product code, SQL, RLS, or headers. It did not migrate Generation 1 users, did not start six-hub rollout, and did not start ARCH-004. PR #185 and Move PR #169 were read and were not changed.
+
+ATH-MTH-ARCH-003R1 is the same kind of correction. It does not create `mth_profile_transfer.certified_publication`, does not insert a `PUBLISHABLE` row, does not modify PR #185 or Move PR #169, does not query or write a preview or production database, and does not start ARCH-004.
