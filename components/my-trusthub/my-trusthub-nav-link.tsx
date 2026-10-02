@@ -78,20 +78,21 @@ export function MyTrustHubNavLink({
     );
   }
 
-  // The reference shell is tight between 1024 and 1400px: keep the icon-only
-  // control there and show the label once the nav has room.
+  // The reference shell caps at 1200px and shows all nine nav links from
+  // 1280px, which leaves ~130px beside Concierge and Switch Hub. Keep the
+  // label, but compact the control there so the primary nav never overlaps.
   return (
     <Link
       href={href}
       prefetch={false}
       onClick={onNavigate}
-      className={cn('th-btn-secondary !px-3 min-[1400px]:!px-[14px]', className)}
+      className={cn('th-btn-secondary min-[1280px]:!gap-1.5 min-[1280px]:!px-2.5 min-[1280px]:!text-[13px]', className)}
       title={title}
       aria-label="My TrustHub"
       data-mth-entry={signedIn ? 'workspace' : 'sign-in'}
     >
-      <ShieldCheck className="h-4 w-4 text-[var(--th-accent)]" aria-hidden />
-      <span className="hidden min-[1400px]:inline">My TrustHub</span>
+      <ShieldCheck className="h-4 w-4 shrink-0 text-[var(--th-accent)]" aria-hidden />
+      <span>My TrustHub</span>
     </Link>
   );
 }
