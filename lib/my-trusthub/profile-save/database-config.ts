@@ -5,7 +5,10 @@ export type DatabaseConnectionConfig = {
   mode: DatabaseConnectionMode; host: string; port: 5432; database: 'postgres';
   user: string; password: string; ca: string;
 };
-export const RUNTIME_POOL_MAX = 2;
+/** Confirmation holds one advisory-lock connection for the request. The runtime
+ * transaction holds a second. Its closing parent re-check binds on a third.
+ * Two slots time out that bind and Confirm Save returns 503. */
+export const RUNTIME_POOL_MAX = 3;
 
 /** Strict preview-only database endpoint contract. Transaction-mode poolers
  * (port 6543), arbitrary pooler hosts, query parameters and production refs

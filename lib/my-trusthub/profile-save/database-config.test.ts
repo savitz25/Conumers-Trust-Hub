@@ -8,7 +8,7 @@ test('direct and exact Supavisor session configurations are accepted',()=>{
   assert.equal(databaseConnectionConfig({...base,MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE:'DIRECT',MY_TRUSTHUB_V23_PARENT_DATABASE_URL:`postgres://${PARENT_LOGIN}:secret@db.${ISOLATED_PROJECT}.supabase.co:5432/postgres`})?.mode,'DIRECT');
   const host='aws-0-us-east-1.pooler.supabase.com';
   assert.equal(databaseConnectionConfig({...base,MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE:'SUPAVISOR_SESSION',MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST:host,MY_TRUSTHUB_V23_PARENT_DATABASE_URL:`postgres://${PARENT_LOGIN}.${ISOLATED_PROJECT}:secret@${host}:5432/postgres`})?.mode,'SUPAVISOR_SESSION');
-  assert.equal(RUNTIME_POOL_MAX,2);
+  assert.equal(RUNTIME_POOL_MAX,3);
 });
 test('transaction pooler, wrong identity, host, project and implicit mode fail closed',()=>{
   const host='aws-0-us-east-1.pooler.supabase.com';
