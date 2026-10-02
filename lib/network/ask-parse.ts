@@ -1,6 +1,11 @@
 import { IDENTIFIER_FAMILIES, collidingBareDigitsNote, IDENTIFIER_FILLER_SOURCE, type IdentifierFamily } from './identifiers.ts';
 import type { SpecialistHubId } from './registry.ts';
-import { detectSeniorProviderClass, isSeniorClassQuery, type SeniorProviderClass } from './senior-ask.ts';
+import {
+  detectSeniorProviderClass,
+  isSeniorClassQuery,
+  SENIOR_PROVIDER_CLASS_LABEL,
+  type SeniorProviderClass,
+} from './senior-ask.ts';
 import { detectInvestorFirmType, isInvestorClassQuery, type InvestorFirmType } from './investor-ask.ts';
 import {
   detectInsuranceEntityClass,
@@ -39,6 +44,16 @@ import { detectOrCity, queryLooksLikeOregon } from './or-network.ts';
 import { detectPaCity, queryLooksLikePennsylvania } from './pa-network.ts';
 import { detectNcCity, queryLooksLikeNorthCarolina } from './nc-network.ts';
 import { detectOhCity, queryLooksLikeOhio } from './oh-network.ts';
+import { detectGaCity, queryLooksLikeGeorgia } from './ga-network.ts';
+import { detectMaCity, queryLooksLikeMassachusetts } from './ma-network.ts';
+import { detectTnCity, queryLooksLikeTennessee } from './tn-network.ts';
+import { mnGeography, mnIdentifier, mnSpecialistUrl } from './mn-network.ts';
+import { miGeography, miIdentifier, miSpecialistUrl } from './mi-network.ts';
+import { ctGeography, ctIdentifier, ctSpecialistUrl } from './ct-network.ts';
+import { mdGeography, mdIdentifier, mdSpecialistUrl } from './md-network.ts';
+import { wiGeography, wiIdentifier, wiSpecialistUrl } from './wi-network.ts';
+import { inGeography, inIdentifier, inSpecialistUrl } from './in-network.ts';
+import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
 import { detectFloridaCity } from './florida-municipality-crosswalk.ts';
 
 export type NetworkAskIntent =
@@ -91,6 +106,57 @@ const BROWARD = /\bbroward\b/i;
 const PALM = /\bpalm\s*beach\b/i;
 
 function geography(q: string): ParsedGeography | undefined {
+  const mnGeo = mnGeography(q);
+  if (mnGeo) return mnGeo;
+  const miGeo = miGeography(q);
+  if (miGeo) return miGeo;
+  const ctGeo = ctGeography(q);
+  if (ctGeo) return ctGeo;
+  const mdGeo = mdGeography(q);
+  if (mdGeo) return mdGeo;
+  const wiGeo = wiGeography(q);
+  if (wiGeo) return wiGeo;
+  const inGeo = inGeography(q);
+  if (inGeo) return inGeo;
+  if (/\b(rochester|bloomington)\b/i.test(q) && !US_JURISDICTIONS.some(j => new RegExp(`\\b${j.name}\\b`, 'i').test(q) || new RegExp(`\\b${j.code}\\b`).test(q))) return { meaning: 'Ambiguous city; specify its state.' };
+  // ATH-NV-001: Nevada named before any other state (or a Nevada city with a TrustHub vertical and no
+  // other state) is Nevada. A state code named before Nevada ("movers CA and Nevada") keeps that state,
+  // because the shared fallback below would otherwise read the later full name first.
+  if (queryLooksLikeNevada(q)) {
+    const nvCity = detectNvCity(q);
+    return {
+      stateCode: 'NV',
+      stateName: 'Nevada',
+      city: nvCity,
+      meaning: nvCity
+        ? `${nvCity}, Nevada. Nevada research is statewide. ${nvCity} is not a separate regulatory system and has no Ask city route.`
+        : 'Nevada. State licensing is not physical location. Nevada city and county Ask pages are not published.',
+    };
+  }
+  const codeBeforeNevada = stateCodeNamedBeforeNevada(q);
+  if (codeBeforeNevada) {
+    const j = US_JURISDICTIONS.find((row) => row.code === codeBeforeNevada);
+    if (j) {
+      return {
+        stateCode: j.code,
+        stateName: j.name,
+        meaning: `${j.name}. Named before Nevada; geography meaning stays source-specific to the specialist.`,
+      };
+    }
+  }
+  // ATH-TN-001: Tennessee named before any other state (or a Tennessee city with a TrustHub vertical
+  // and no other state) is Tennessee. Another state named first keeps its own routing below.
+  if (queryLooksLikeTennessee(q)) {
+    const tnCity = detectTnCity(q);
+    return {
+      stateCode: 'TN',
+      stateName: 'Tennessee',
+      city: tnCity,
+      meaning: tnCity
+        ? `${tnCity}, Tennessee. Tennessee research is statewide. ${tnCity} is not a separate regulatory system and has no Ask city route.`
+        : 'Tennessee. State licensing is not physical location. Tennessee city and county Ask pages are not published.',
+    };
+  }
   const broward = BROWARD.test(q);
   const palm = PALM.test(q);
   // TH-DISCOVERY-003: was a hardcoded 3-city allowlist (Tampa/Miami/Boca Raton) tested with
@@ -119,11 +185,14 @@ function geography(q: string): ParsedGeography | undefined {
   const coNamedEarly = queryLooksLikeColorado(q);
   const vaNamedEarly = queryLooksLikeVirginia(q);
   const nyNamedEarly = queryLooksLikeNewYork(q);
-  const ilNamedEarly = queryLooksLikeIllinois(q);
+  const ilNamedEarly =
+    queryLooksLikeIllinois(q) && !(/\bmassachusetts\b/i.test(q) && !/\billinois\b/i.test(q));
   const orNamedEarly = queryLooksLikeOregon(q);
   const paNamedEarly = queryLooksLikePennsylvania(q);
   const ncNamedEarly = queryLooksLikeNorthCarolina(q);
   const ohNamedEarly = queryLooksLikeOhio(q);
+  const gaNamedEarly = queryLooksLikeGeorgia(q) && !ohNamedEarly;
+  const maNamedEarly = queryLooksLikeMassachusetts(q) && !ohNamedEarly && !gaNamedEarly;
   const requestedJurisdiction = requestedLegalJurisdiction(q);
   const nyInvolved = nyNamedEarly || Boolean(requestedJurisdiction?.codes.includes('NY'));
   const vaMortgageProduct = /\bva mortgage\b/i.test(q);
@@ -306,13 +375,23 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
   if (florida) {
+    // POST-R1-ASK-INTENT-001 Problem E: flCity already carries an authoritative
+    // county (florida-municipality-crosswalk.ts, sourced from the FL Dept of
+    // State city/county list) for every crosswalk city, not just Broward/Palm
+    // Beach -- e.g. Miami -> Miami-Dade, Tampa -> Hillsborough, Orlando -> Orange.
+    // This branch previously dropped that county entirely and returned city-only,
+    // losing the county grain the ticket asks for ("Miami -> Miami-Dade County FL").
+    const county = flCity?.county;
     return {
       stateCode: 'FL',
       stateName: 'Florida',
+      countyName: county ? `${county} County` : undefined,
       city,
-      meaning: city
-        ? `${city}, Florida. Recorded/address geography is not service territory.`
-        : 'Florida. State licensing is not physical location; principal office is not client geography.',
+      meaning: county
+        ? `${city}, ${county} County, Florida. Recorded/address geography is not service territory.`
+        : city
+          ? `${city}, Florida. Recorded/address geography is not service territory.`
+          : 'Florida. State licensing is not physical location; principal office is not client geography.',
     };
   }
 
@@ -485,6 +564,30 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (gaNamedEarly) {
+    const gaCity = detectGaCity(q);
+    return {
+      stateCode: 'GA',
+      stateName: 'Georgia',
+      city: gaCity,
+      meaning: gaCity
+        ? `${gaCity}, Georgia. Georgia research is statewide. Atlanta is not a separate regulatory system and has no Ask city route.`
+        : 'Georgia. State licensing is not physical location. Georgia city and county Ask pages are not published.',
+    };
+  }
+
+  if (maNamedEarly) {
+    const maCity = detectMaCity(q);
+    return {
+      stateCode: 'MA',
+      stateName: 'Massachusetts',
+      city: maCity,
+      meaning: maCity
+        ? `${maCity}, Massachusetts. Massachusetts research is statewide. Boston is not a separate regulatory system and has no Ask city route.`
+        : 'Massachusetts. State licensing is not physical location. Massachusetts city and county Ask pages are not published.',
+    };
+  }
+
   const byName = [...US_JURISDICTIONS].sort((a, b) => b.name.length - a.name.length).find((j) => {
     if (j.code === 'WA' && /\bwashington\s*,?\s*d\.?c\.?\b|\bwashington\s+dc\b/i.test(q)) return false;
     if (j.code === 'NY' && !queryLooksLikeNewYork(q)) return false;
@@ -584,6 +687,24 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
       return { family, raw: `MC ${digits}`, ambiguous: false, note: family.note };
     }
   }
+  // POST-R1-ASK-INTENT-001 Problem B: "verify contractor license CBC015082" carries
+  // the license code inside a full sentence, not as the whole query -- the FL
+  // CBC/CGC/CCC pattern below only ever matched when the code WAS the entire
+  // trimmed query. Extract it in-sentence, mirroring the NMLS/LEI/CCN/CRD/NPN/NAIC
+  // in-sentence matches above, so an embedded identifier takes precedence over
+  // fuzzy name/vocabulary interpretation per the ticket's explicit requirement.
+  const contractorLicenseInSentence = trimmed.match(/\b(cbc|cgc|ccc)\s*[-#]?\s*(\d{5,8})\b/i);
+  if (contractorLicenseInSentence) {
+    const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'state_contractor_license');
+    if (family) {
+      return {
+        family,
+        raw: `${contractorLicenseInSentence[1].toUpperCase()}${contractorLicenseInSentence[2]}`,
+        ambiguous: false,
+        note: family.note,
+      };
+    }
+  }
   const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
@@ -616,7 +737,15 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
 export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const query = raw.trim();
   const geo = geography(query);
-  const id = matchIdentifier(query);
+  const mnId = mnIdentifier(query);
+  const miId = miIdentifier(query);
+  const ctId = ctIdentifier(query);
+  const mdId = mdIdentifier(query);
+  const wiId = wiIdentifier(query);
+  const inId = inIdentifier(query);
+  const scopedId = mnId ?? miId ?? ctId ?? mdId ?? wiId ?? inId;
+  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : mdId ? mdSpecialistUrl(mdId.hub) : wiId ? wiSpecialistUrl(wiId.hub) : inId ? inSpecialistUrl(inId.hub) : undefined;
+  const id = scopedId ? { family: { id: scopedId.type, hubId: scopedId.hub, label: scopedId.type, examples: [scopedId.raw], pattern: /./, live: false, destinationHint: specialistUrl!, note: 'Exact source identifier; specialist verification, not a business name.' }, raw: scopedId.raw, ambiguous: false, note: 'Exact source identifier.' } : matchIdentifier(query);
 
   const nameCheck =
     /across (the )?trusthub|check (a |this )?name|name check|appears in more than one/i.test(query) ||
@@ -629,8 +758,12 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const comparePlaces = /compare .*(broward|palm beach)|broward.*palm beach|palm beach.*broward/i.test(query);
   const placeQ = /what (do you|does trusthub) know about|research in broward|about broward|about palm beach|about florida|about new jersey|research in new jersey|research new jersey/i.test(query);
   const contractor = /contractor|roof(ing|er)|hvac|plumb|electrical|general contractor|builder|remodeler|dbpr|cilb/i.test(query);
-  const lender = isLenderClassQuery(query) || /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate/i.test(query);
-  const mover = isMoveClassQuery(query);
+  const lender =
+    isLenderClassQuery(query) ||
+    /lender|mortgage|hmda|fha|\bva\b|home loan|nmls|loan officer|down[- ]payment|njhmfa|\bdpa\b|denial rate|\bhelocs?\b|home equity line/i.test(
+      query,
+    );
+  const mover = isMoveClassQuery(query) || /\bdpu\s+certificate\b/i.test(query);
   const moveResearchCategory = isAutoTransportQuery(query) ? 'auto_transport' as const : undefined;
   const insurance =
     isInsuranceClassQuery(query) ||
@@ -686,7 +819,7 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     intent = 'entity';
     hubs.push('senior');
     topic = seniorProviderClass
-      ? `${seniorProviderClass === 'nursing_home' ? 'Nursing Home' : seniorProviderClass === 'home_health' ? 'Home Health' : 'Hospice'} research`
+      ? `${SENIOR_PROVIDER_CLASS_LABEL[seniorProviderClass]} research`
       : 'Senior-care research';
   } else if (contractor) {
     intent = 'entity';
@@ -741,7 +874,17 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   } else if (geo) {
     intent = 'place';
     hubs.push('contractor', 'lender', 'insurance', 'move');
-    topic = geo.countyName ? `${geo.countyName} research` : 'Florida research';
+    // POST-R1-ASK-INTENT-001: this was hardcoded to "Florida research" for
+    // every non-county geography, mislabeling every other state (Texas,
+    // Ohio, ...) -- almost certainly a leftover from when this branch only
+    // ever saw Florida queries. Use the actual detected state/city.
+    topic = geo.countyName
+      ? `${geo.countyName} research`
+      : geo.city
+        ? `${geo.city} research`
+        : geo.stateName
+          ? `${geo.stateName} research`
+          : 'Location research';
   }
 
   const queryClassification = classifyUniversalQuery({
@@ -812,14 +955,19 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     } else if (/\bdomicile\b/i.test(geoMeaning) && geo?.stateName) {
       interpretationLines.push({ label: 'regulatory domicile', value: geo.stateName });
     } else if (geo?.countyName) {
-      interpretationLines.push({ label: 'Geography (not service territory)', value: `${geo.countyName}, Florida` });
+      // POST-R1-ASK-INTENT-001: same hardcoded ", Florida" bug as the global
+      // Location line below -- fixed the same way (use the detected state).
+      interpretationLines.push({
+        label: 'Geography (not service territory)',
+        value: geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName,
+      });
     } else if (geo?.stateName) {
       interpretationLines.push({ label: 'Geography', value: geo.stateName });
     }
   } else if (lenderOnly && intent !== 'identifier') {
     interpretationLines.push({
       label: 'Geography (HMDA property, not HQ)',
-      value: geo?.countyName ? `${geo.countyName}, Florida` : geo?.stateName ?? 'See specialist result',
+      value: geo?.countyName ? (geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName) : geo?.stateName ?? 'See specialist result',
     });
     interpretationLines.push({
       label: 'Does not mean',
@@ -829,20 +977,23 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
     if (/rate|denominator/i.test(geoMeaning)) {
       interpretationLines.push({ label: 'Limitation', value: geoMeaning });
     }
-  } else if (geo?.countyName) interpretationLines.push({ label: 'Location', value: `${geo.countyName}, Florida` });
-  else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });
+  } else if (geo?.countyName) {
+    // POST-R1-ASK-INTENT-001: this appended ", Florida" unconditionally,
+    // mislabeling every non-Florida county (e.g. NJ counties elsewhere in
+    // this same file support Monmouth/Middlesex/Somerset/Union). Use the
+    // geography's own detected state.
+    interpretationLines.push({
+      label: 'Location',
+      value: geo.stateName ? `${geo.countyName}, ${geo.stateName}` : geo.countyName,
+    });
+  } else if (geo?.stateName) interpretationLines.push({ label: 'Location', value: geo.stateName });
   if (trade) interpretationLines.push({ label: 'Trade', value: trade });
   if (credentialStatus) interpretationLines.push({ label: 'Credential status', value: credentialStatus });
   if (id && !id.ambiguous) interpretationLines.push({ label: 'Identifier', value: `${id.family.label}: ${id.raw}` });
   if (seniorProviderClass) {
     interpretationLines.push({
       label: 'Provider class',
-      value:
-        seniorProviderClass === 'nursing_home'
-          ? 'Nursing Home'
-          : seniorProviderClass === 'home_health'
-            ? 'Home Health'
-            : 'Hospice',
+      value: SENIOR_PROVIDER_CLASS_LABEL[seniorProviderClass],
     });
   }
   if (hubs[0] === 'investor' && hubs.length === 1) {

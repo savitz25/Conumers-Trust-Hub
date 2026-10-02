@@ -237,6 +237,30 @@ export class ProductionMyTrustHubAdapter {
     return rows<SavedEntityRow>(await this.rpc("list_saved_entities"));
   }
 
+  /**
+   * Unsave: soft-removes one Saved entity the signed-in user owns through the
+   * P12 `remove_saved_entity` RPC. The expected row version is read first under
+   * the owner-only RLS select policy so a concurrent change fails closed.
+   */
+  async removeSavedEntity(savedEntityId: string, expectedVersion?: number): Promise<number> {
+    let version = expectedVersion;
+    if (version === undefined) {
+      const current = await this.client
+        .schema("consumer")
+        .from("consumer_saved_entities")
+        .select("id,row_version,removed_at")
+        .eq("id", savedEntityId);
+      if (current.error) fail(current.error);
+      const row = one<{ row_version: number | string; removed_at: string | null }>(current.data);
+      if (!row || row.removed_at) throw new Error("My TrustHub Saved entity was not found");
+      version = Number(row.row_version);
+    }
+    return Number(await this.rpc("remove_saved_entity", {
+      p_saved_entity_id: savedEntityId,
+      p_expected_row_version: version,
+    }));
+  }
+
   async saveEntity(bindingId: string): Promise<string> {
     const result = one<{ saved_entity_id: string }>(
       await this.rpc("save_entity", {

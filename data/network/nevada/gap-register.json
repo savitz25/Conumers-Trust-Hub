@@ -1,0 +1,27 @@
+{
+  "state": "NV",
+  "local_phase": {
+    "status": "NOT_STARTED",
+    "note": "No Ask city or county Nevada intelligence routes."
+  },
+  "cross_hub_record_total": {
+    "status": "REJECTED",
+    "value": null
+  },
+  "local_work_needed_now": "NO",
+  "remaining_gaps": [
+    "Move: NTA pages print no as-of date. Tariff effective dates NOT_ACQUIRED. Complaint outcomes not published. No exact USDOT/MC joins (0/0).",
+    "Lender: company, MLO, branch and escrow bulk rosters NOT_ACQUIRED. MLD order documents read 2019-2026 only. Provider-level complaints NOT_ACQUIRED. HMDA is loan activity, not licensees.",
+    "Contractor: active directory only; expired, suspended and revoked licenses NOT_ACQUIRED. Qualified-individual bulk NOT_ACQUIRED. Discipline penalty detail NOT_ACQUIRED. Unlicensed-contractor enforcement NOT_ACQUIRED.",
+    "Insurance: company, agency and producer bulk NOT_ACQUIRED. NDOI census figures are dated October 2024. Enforcement archive before the current listing NOT_ACQUIRED. Complaint data 2015-2021 NOT_ACQUIRED.",
+    "Senior: active licenses only; closed and revoked licenses NOT_ACQUIRED. Inspection findings text NOT_ACQUIRED. Complaint records REQUEST_ONLY. 6 of 66 CMS nursing homes not linked by exact CCN (unlinked is not no overlap).",
+    "Investor: Securities Division enforcement actions NOT_ACQUIRED (bot defense); no substitute regulator. IAR and broker-dealer agent populations NOT_ACQUIRED."
+  ],
+  "observations_not_blockers": [
+    "Lender's plain 'Production' GitHub environment stopped at 945be89 (2026-09-02); the current Production deployment for a8dafcd is recorded under 'Production – lender-trust-hub'.",
+    "Move keeps pre-existing /moving-to/nevada marketing pages; Ask links only the statewide /nevada intelligence page.",
+    "Insurance keeps legacy /hubs/nevada, /hubs/nevada/las-vegas and /hubs/browse/nevada directory pages (live, indexable); Ask never links or cites them.",
+    "Lender keeps /local-lenders/nevada, /local-lenders/nv/clark and /fdic-insured-banks/nevada; Ask never links them.",
+    "Investor /nevada prints the disclaimer text 'No AggregateRating'; it is not rating markup."
+  ]
+}

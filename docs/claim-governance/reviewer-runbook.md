@@ -10,4 +10,4 @@
 8. Reject neutrally when authority cannot be established or the relationship is ineligible. Do not allege fraud without an established incident process.
 9. Treat an unresolved competing claim or active grant as blocking. Direct legitimate additional staff toward organization invitations.
 
-Internal target: first action within 48 business hours for invited Contractor claims. Waiting on claimant pauses that target.
+Internal target: first action within 2 business days (Mon–Fri; holidays not modeled) for invited Contractor claims. Waiting on claimant (`needs_info`) pauses that target; it resumes, never restarts, once a reviewer re-engages.

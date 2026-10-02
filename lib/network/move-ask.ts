@@ -1,3 +1,5 @@
+import { moveOrigin, PRODUCTION_MOVE_ORIGIN } from './move-origin.ts';
+
 /**
  * Parent adapter for MoveTrustHub production Ask (move-ask-v1).
  * Ask constructs the specialist URL / may read the public JSON contract.
@@ -5,13 +7,13 @@
  */
 
 export const MOVE_ASK_CONTRACT = 'move-ask-v1' as const;
-export const MOVE_ASK_ROUTE = 'https://www.movetrusthub.com/ask';
-export const MOVE_ASK_API = 'https://www.movetrusthub.com/api/ask';
+export const MOVE_ASK_ROUTE = `${PRODUCTION_MOVE_ORIGIN}/ask`;
+export const MOVE_ASK_API = `${PRODUCTION_MOVE_ORIGIN}/api/ask`;
 
 export type MoveRegulatoryRole = 'carrier' | 'broker' | 'carrier_broker';
 export type MoveResearchCategory = 'auto_transport';
 
-export const MOVE_COMPANY_RESEARCH_ROUTE = 'https://www.movetrusthub.com/companies?services=Auto+Transport';
+export const MOVE_COMPANY_RESEARCH_ROUTE = `${PRODUCTION_MOVE_ORIGIN}/companies?services=Auto+Transport`;
 
 export type MoveAskMode =
   | 'entity'
@@ -78,7 +80,7 @@ export type MoveAskPayload = {
 export function moveAskUrl(query: string): string {
   const params = new URLSearchParams();
   params.set('q', query);
-  return `${MOVE_ASK_ROUTE}?${params.toString()}`;
+  return `${moveOrigin()}/ask?${params.toString()}`;
 }
 
 export function moveAskApiUrl(query: string): string {

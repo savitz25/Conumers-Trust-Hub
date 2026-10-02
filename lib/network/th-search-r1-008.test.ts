@@ -99,8 +99,15 @@ test('R1-008 original class clarification completes inline source-backed results
  assert.equal(calls.length,4);assert.equal(selected.result?.specialist,'senior');assert.equal(selected.result?.total,7);assert.equal(selected.result.rows.length,1);assert.equal(selected.result.rows[0].recordedLocation,'Austin, TX');assert.match(selected.result.rows[0].whyShown,/Austin, TX/);assert.equal(selected.result.resultState,'SUPPORTED_RESULTS');assert.equal(selected.diagnostics.specialistCalls,1);
  assert(selected.result.rows[0].facts.some(f=>f.label==='Source as of'&&f.value==='2026-08-01'));
 }));
-for(const [q,cls,city] of [['nursing homes in Austin Texas','nursing_home','Austin'],['home health agencies in Houston Texas','home_health','Houston'],['hospice in Madison Wisconsin','hospice','Madison']])test(`R1-008 explicit class ${cls} executes directly`,async()=>withSeniorFixture(async calls=>{
+for(const [q,cls,city] of [['nursing homes in Austin Texas','nursing_home','Austin'],['home health agencies in Houston Texas','home_health','Houston']])test(`R1-008 explicit class ${cls} executes directly`,async()=>withSeniorFixture(async calls=>{
  const result=await orchestrateGuidedResearch({action:{type:'START',question:q}});assert.equal(calls.length,1);assert.equal(calls[0].body.providerClass,cls);assert.equal(result.result?.resultState,'SUPPORTED_RESULTS');assert.match(result.result.rows[0].recordedLocation!,new RegExp(city));
+}));
+test('Wisconsin statewide hospice request hands off without executing the older national class path',async()=>withSeniorFixture(async calls=>{
+ const q='hospice in Madison Wisconsin';
+ assert.equal(buildAskResearchRoute(q).plan.primaryHub,'senior');
+ assert.equal(buildAskResearchRoute(q).canExecute,false);
+ await orchestrateGuidedResearch({action:{type:'START',question:q}});
+ assert.equal(calls.length,0);
 }));
 test('R1-008 city-only choice completes only after state selection',async()=>withSeniorFixture(async calls=>{
  const first=await orchestrateGuidedResearch({action:{type:'START',question:'home health agencies in Houston'}});assert.equal(calls.length,0);

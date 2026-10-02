@@ -94,7 +94,10 @@ export function buildMyTrustHubHome(input: { profiles: MyTrustHubRawProfile[]; c
   const cards: ProfileHomeCard[] = input.profiles.map((row) => {
     const profileId = text(row.native_profile_id), orgId = text(row.org_id), displayName = text(row.display_name_snapshot) || 'Business profile';
     const hubId = row.hub_id, hubName = ownerHubName(hubId), completeness = businessInformationCompleteness(row);
-    const monitoringStatus: MonitoringStatus = CUSTOMER_HUB_REGISTRY[hubId].monitoring === 'UNAVAILABLE' ? 'UNAVAILABLE' : row.monitoring_enabled ? 'ON' : 'OFF';
+    // ATH-CLAIM-V2-FLNJ-001: Contractor monitoring is Florida DBPR-sourced. Other credential sources (NJ DCA) have
+    // no monitoring feed yet, so the card says UNAVAILABLE instead of implying FL regulatory monitoring.
+    const sourceUnsupported = hubId === 'contractor' && Boolean(text(row.native_source_system)) && text(row.native_source_system) !== 'fl_dbpr';
+    const monitoringStatus: MonitoringStatus = CUSTOMER_HUB_REGISTRY[hubId].monitoring === 'UNAVAILABLE' || sourceUnsupported ? 'UNAVAILABLE' : row.monitoring_enabled ? 'ON' : 'OFF';
     const confirmed = text(row.last_confirmed_at);
     const freshness = confirmed ? businessFreshness(confirmed, now) : null;
     const add = (type: AttentionType, priority: AttentionPriority, label: string, reason: string, href: string) => attention.push({ id: `${profileId}:${type}`, type, priority, label, reason, context: `${displayName} · ${hubName}`, href });

@@ -13,6 +13,7 @@
  */
 import { planAskResearch, type AskResearchPlan } from '../research-planner.ts';
 import { validateAskQuestion } from '../ask-request.ts';
+import { nvIdentifierFormat } from '../nv-network.ts';
 import { isSpecialistHubId, type SpecialistHubId } from '../registry.ts';
 import { NAME_MAX_LENGTH, NAME_MIN_LENGTH, type NameHubScope } from './contract.ts';
 
@@ -43,12 +44,12 @@ const not = (reason: string): NameCandidateDecision => ({ operation: 'NOT_NAME_S
 
 /** Planner outcomes that are protected and must never be reinterpreted as a name. */
 const PROTECTED_REASON_CODES = new Set([
-  'EXACT_IDENTIFIER_RECOGNIZED', 'HOW_TO_LANGUAGE', 'EXPLAINER_LANGUAGE', 'STATUS_MEANING_QUESTION',
+  'MINNESOTA_RESEARCH_ROUTING', 'MINNESOTA_SAFETY_REFUSAL', 'MICHIGAN_RESEARCH_ROUTING', 'MICHIGAN_SAFETY_REFUSAL', 'CONNECTICUT_RESEARCH_ROUTING', 'CONNECTICUT_SAFETY_REFUSAL', 'MARYLAND_RESEARCH_ROUTING', 'MARYLAND_SAFETY_REFUSAL', 'WISCONSIN_RESEARCH_ROUTING', 'WISCONSIN_SAFETY_REFUSAL', 'INDIANA_RESEARCH_ROUTING', 'INDIANA_SAFETY_REFUSAL', 'EXACT_IDENTIFIER_RECOGNIZED', 'HOW_TO_LANGUAGE', 'EXPLAINER_LANGUAGE', 'STATUS_MEANING_QUESTION',
   'COMPARISON_LANGUAGE', 'MULTIPLE_SPECIALIST_HUBS', 'SPECIFIC_REFERENCE_WITHOUT_IDENTITY',
   'UNSUPPORTED_SECURITIES_ADVICE', 'CARE_TASK', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
 ]);
 
-const IDENTIFIER_LABEL = /\b(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)\b\s*#?\s*[A-Z0-9-]*\d/i;
+const IDENTIFIER_LABEL = /\b(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN|DPU(?:\s+certificate)?)\b\s*#?\s*[A-Z0-9-]*\d/i;
 /** A phrase LED by an identifier-family label ("NAIC ABCD") is a malformed identifier attempt, not a name -- mirrors the planner's own protection. */
 const LEADING_IDENTIFIER_LABEL = /^(?:NAIC|CBC|CGC|CCC|CRD|NPN|NMLS|LEI|USDOT|DOT|MC|CCN)\b/i;
 const SENTENCE_START = /^(?:show|find|list|which|what|who|whom|whose|where|when|why|how|is|are|was|were|does|do|did|can|could|should|would|will|i|i'm|im|we|my|need|looking|search|get|give|tell|help|compare|verify|check|research|look|please|any|are\s+there)\b/i;
@@ -61,6 +62,16 @@ const ORG_FORM = /\b(?:center|centre|facility|company|agency|associates|partners
 /** Planner protections that a clearly organization-shaped NAME may still be searched under (candidates first; the protected path remains the fallback). */
 const NAME_OVERRIDABLE_CODES = new Set(['MULTIPLE_SPECIALIST_HUBS', 'CARE_TASK', 'IDENTITY_CONTRADICTS_GEOGRAPHY']);
 const PLACE_LENS = /^(?:what does trusthub know about|show (?:the )?place lens(?: for)?)\b/i;
+
+/**
+ * ATH-NV-001R: a labeled identifier Ask already routes is never an unscoped name search -- the shared
+ * registry (plan.identifier), the label list above, and the state-module formats outside the registry
+ * (NTA CPCN, Nevada HCQC credential, SEC file number). Bare digits and "license 115" are not labeled
+ * and keep their own handling below.
+ */
+function recognizedIdentifierRequest(original: string, plan: AskResearchPlan): boolean {
+  return Boolean(plan.identifier) || IDENTIFIER_LABEL.test(original) || nvIdentifierFormat(original);
+}
 
 /**
  * Industry/category vocabulary. A token listed here is NOT distinctive on its own -- but it is
@@ -150,7 +161,7 @@ function decideName(
   const plan = options.plan ?? planAskResearch(original);
 
   if (PLACE_LENS.test(original)) return not('PLACE_LENS');
-  if (plan.identifier || IDENTIFIER_LABEL.test(original)) return not('IDENTIFIER_PATH_PROTECTED');
+  if (recognizedIdentifierRequest(original, plan)) return not('IDENTIFIER_PATH_PROTECTED');
   if (/^[\d\s#-]+$/.test(original)) return not('BARE_DIGITS_ARE_IDENTIFIER_INPUT');
   if (LEADING_IDENTIFIER_LABEL.test(original)) return not('MALFORMED_IDENTIFIER_ATTEMPT_PROTECTED');
   // A phrase that is unmistakably an ORGANIZATION NAME (name-shaped, carries an organization-form word

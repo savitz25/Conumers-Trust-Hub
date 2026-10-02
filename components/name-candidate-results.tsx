@@ -21,11 +21,15 @@ import {
  *   the hub's fresh state is shown: coverage never keeps claiming success.
  * - A candidate is a relevant public record -- never presented as a confirmed identity.
  */
+// TH-SEARCH-R1-019D Astra review 1: the released Lender operation's entityType is not a verified
+// subtype (e.g. "Nonbank mortgage company"); the lead badge never asserts more than the operation's
+// own institution-only grain. The real value is unaffected on the candidate object itself.
+const LENDER_CANDIDATE_SUBTYPE = 'Lending institution record';
 function CandidateCard({ candidate }: { candidate: NameCandidate }) {
   const suggestion = candidate.matchMethod === 'SIMILAR_SPELLING';
   return (
     <li className="min-w-0 rounded-2xl border bg-white p-4 sm:p-5" style={{ borderColor: ASK_BRAND.border }} data-testid="name-candidate-card" data-hub={candidate.hub} data-stable-key={candidate.stableKey}>
-      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: ASK_BRAND.indigo }}>{NETWORK_PUBLIC_NAMES[candidate.hub]}{candidate.entityType ? ` · ${candidate.entityType}` : ''}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: ASK_BRAND.indigo }}>{NETWORK_PUBLIC_NAMES[candidate.hub]}{candidate.hub === 'lender' ? ` · ${LENDER_CANDIDATE_SUBTYPE}` : candidate.entityType ? ` · ${candidate.entityType}` : ''}</p>
       <h4 className="mt-1 break-words text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>{candidate.displayName}</h4>
       <p className="mt-2 text-sm" style={{ color: ASK_BRAND.ink }}>
         <span className="inline-block rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: suggestion ? '#FEF3C7' : ASK_BRAND.periwinkle, color: ASK_BRAND.navy }}>{MATCH_METHOD_LABEL[candidate.matchMethod]}</span>
@@ -118,6 +122,7 @@ export function NameCandidateResults({ query, initial, alternate = null }: { que
             {group.emptyPageNote ? <p className="mt-3 rounded-xl border p-3 text-sm" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.ink }} data-testid={`empty-page-note-${group.hub}`}>{group.emptyPageNote}</p> : null}
             {group.cards.length ? <ul className="mt-3 grid gap-4 md:grid-cols-2">{group.cards.map((candidate) => <CandidateCard key={candidate.stableKey} candidate={candidate} />)}</ul> : null}
             {group.returned ? <p className="mt-3 text-sm" style={{ color: ASK_BRAND.ink }} role="status">{moreLine(group, hub)}</p> : null}
+            {group.infoNote ? <p className="mt-2 rounded-xl border p-3 text-sm" role="status" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.ink }} data-testid={`hub-info-note-${group.hub}`}>{group.infoNote}</p> : null}
             {group.statusNote ? <p className="mt-2 text-sm" role="alert" style={{ color: '#B91C1C' }} data-testid={`hub-status-note-${group.hub}`}>{group.statusNote}{group.returned ? ' The records above were returned earlier and are unchanged.' : ''}</p> : null}
             <div className="mt-2 flex flex-wrap items-center gap-3">
               {group.canReveal || group.canFetchMore ? <button type="button" onClick={() => viewMore(hub)} disabled={loadingHub === group.hub} data-testid={`view-more-${group.hub}`} className="inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-semibold disabled:opacity-60" style={{ borderColor: ASK_BRAND.indigo, color: ASK_BRAND.indigo }}>{loadingHub === group.hub ? 'Loading…' : group.statusNote && !group.emptyPageNote ? `Try ${group.title} again` : group.returned ? `View more from ${group.title}` : `Check more of ${group.title}`}</button> : null}

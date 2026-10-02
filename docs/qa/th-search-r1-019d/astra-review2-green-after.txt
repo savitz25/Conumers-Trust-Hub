@@ -1,0 +1,11 @@
+✔ key-family matrix. every discovered eligible namespace family is admitted; excluded projections and malformed keys are dropped, never accepted as any lender: string (33.6311ms)
+✔ live reproduction: First State Bank -- three fdic-cert public profiles and two hmda-lei research rows all survive together (1.4153ms)
+✔ live reproduction: Select Portfolio Servicing -- retains its gleif-lei source key, LEI identifier, matched name and profile action (0.4119ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 572.855

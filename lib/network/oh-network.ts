@@ -3,6 +3,8 @@ import manifestJson from '../../data/network/ohio-publication-manifest.json' wit
 import verificationJson from '../../data/network/ohio-verification.json' with { type: 'json' };
 import type { SpecialistHubId } from './registry.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES } from './registry.ts';
+import { tennesseeNamedFirst } from './tn-network.ts';
+import { nevadaNamedFirst } from './nv-network.ts';
 
 export const OH_NETWORK_CONTRACT = 'ath-oh-network-release-v1' as const;
 
@@ -359,6 +361,8 @@ export function classifyOhHub(query: string): SpecialistHubId | undefined {
 }
 
 export function routeOhAsk(query: string): OhRoute | undefined {
+  if (tennesseeNamedFirst(query)) return undefined; // ATH-TN-001: Tennessee named first wins
+  if (nevadaNamedFirst(query)) return undefined; // ATH-NV-001: Nevada named first wins
   if (earlierStateNamed(query, /\bnorth carolina\b/i)) return undefined;
   if (earlierStateNamed(query, /\bpennsylvania\b/i)) return undefined;
   if (earlierStateNamed(query, /\bnew york\b/i)) return undefined;

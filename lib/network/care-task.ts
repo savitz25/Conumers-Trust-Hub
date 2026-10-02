@@ -1,6 +1,6 @@
 import {US_JURISDICTIONS} from './us-jurisdictions.ts';
 import type {AskResearchPlan,AskRequestedGeography} from './research-planner.ts';
-import {resolveFloridaMunicipality} from './florida-municipality-crosswalk.ts';
+import {resolveFloridaMunicipality, resolveFlCountyDisplayName} from './florida-municipality-crosswalk.ts';
 
 export type CareSetting='nursing_home'|'home_health'|'hospice'|'assisted_living'|'memory_care'|'independent_living';
 export function careTask(question:string):{kind:'care'|'move_context'|'care_and_move';setting?:CareSetting}|null {
@@ -22,7 +22,15 @@ const esc=(s:string)=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 export function careLocation(question:string):AskRequestedGeography|undefined {
  const raw=question.match(/\b(?:in|near|around|within)\s+(.+?)(?=\s+(?:then|with|that|which|rated|having|for)\b|[?!;]|$)/i)?.[1]?.trim().replace(/[, .]+$/,'');
  if(!raw)return undefined;
- if(/^(?:broward|palm\s+beach)\s+county$/i.test(raw))return {raw,display:`${raw}, Florida`,kind:'county',resolution:'RESOLVED',stateCode:'FL',stateName:'Florida',county:raw.replace(/\s+county$/i,'')};
+ // POST-R1-ASK-INTENT-001R: this only ever recognized Broward/Palm Beach County by name --
+ // "miami dade county" (one of the ticket's own 13 reproduction queries, care-task.ts route)
+ // fell straight through to the generic jurisdiction search below, which has no FL-county
+ // vocabulary at all, and dead-ended asking the consumer to name a state despite "county"
+ // being explicit in the question. Generalized to all 67 FL counties via the same
+ // authoritative FL_COUNTY_FIPS list ask-parse.ts's generic Florida branch already uses.
+ const explicitFlCountyMatch=raw.match(/^([a-z][a-z .'-]*?)\s+county$/i);
+ const explicitFlCountyName=explicitFlCountyMatch?resolveFlCountyDisplayName(explicitFlCountyMatch[1]):undefined;
+ if(explicitFlCountyName)return {raw,display:`${explicitFlCountyName} County, Florida`,kind:'county',resolution:'RESOLVED',stateCode:'FL',stateName:'Florida',county:explicitFlCountyName};
  const ambiguous=/\b(?:near me|miles?|radius|and|or)\b/i.test(raw)||/\b(?:near me|within\s+\d+)\b/i.test(question);
  const jurisdictions=US_JURISDICTIONS.filter(j=>new RegExp(`(?:^|[ ,])(?:${esc(j.name)}|${j.code})(?=$|[ ,])`,'i').test(raw));
  const unique=[...new Map(jurisdictions.map(j=>[j.code,j])).values()];

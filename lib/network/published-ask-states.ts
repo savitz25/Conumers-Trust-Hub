@@ -19,6 +19,16 @@ import { orReleaseGatePassed } from './or-network.ts';
 import { paReleaseGatePassed } from './pa-network.ts';
 import { ncReleaseGatePassed } from './nc-network.ts';
 import { ohReleaseGatePassed } from './oh-network.ts';
+import { gaReleaseGatePassed } from './ga-network.ts';
+import { maReleaseGatePassed } from './ma-network.ts';
+import { tnReleaseGatePassed } from './tn-network.ts';
+import { mnReleaseGatePassed } from './mn-network.ts';
+import { miReleaseGatePassed } from './mi-network.ts';
+import { ctReleaseGatePassed } from './ct-network.ts';
+import { mdReleaseGatePassed } from './md-network.ts';
+import { wiReleaseGatePassed } from './wi-network.ts';
+import { inReleaseGatePassed } from './in-network.ts';
+import { nvReleaseGatePassed } from './nv-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -42,6 +52,16 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'PA', slug: 'pennsylvania', name: 'Pennsylvania', gate: paReleaseGatePassed },
   { code: 'NC', slug: 'north-carolina', name: 'North Carolina', gate: ncReleaseGatePassed },
   { code: 'OH', slug: 'ohio', name: 'Ohio', gate: ohReleaseGatePassed },
+  { code: 'GA', slug: 'georgia', name: 'Georgia', gate: gaReleaseGatePassed },
+  { code: 'MA', slug: 'massachusetts', name: 'Massachusetts', gate: maReleaseGatePassed },
+  { code: 'TN', slug: 'tennessee', name: 'Tennessee', gate: tnReleaseGatePassed },
+  { code: 'NV', slug: 'nevada', name: 'Nevada', gate: nvReleaseGatePassed },
+  { code: 'MN', slug: 'minnesota', name: 'Minnesota', gate: mnReleaseGatePassed },
+  { code: 'MI', slug: 'michigan', name: 'Michigan', gate: miReleaseGatePassed },
+  { code: 'CT', slug: 'connecticut', name: 'Connecticut', gate: ctReleaseGatePassed },
+  { code: 'MD', slug: 'maryland', name: 'Maryland', gate: mdReleaseGatePassed },
+  { code: 'WI', slug: 'wisconsin', name: 'Wisconsin', gate: wiReleaseGatePassed },
+  { code: 'IN', slug: 'indiana', name: 'Indiana', gate: inReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

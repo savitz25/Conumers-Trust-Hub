@@ -14,6 +14,10 @@ export const ANALYTICS_EVENTS = {
   MANAGE_CONSOLE_VIEW: 'manage_console_view',
   BUSINESS_PROFILE_VIEWED: 'business_profile_viewed',
   CLAIM_CTA_CLICKED: 'claim_cta_clicked',
+  // ATH-CLAIM-V2-001 frozen funnel (behavioral subset). Authoritative events live in the customer DB/audit.
+  CLAIM_CTA_VIEWED: 'claim_cta_viewed',
+  CLAIM_CTA_ACTIVATED: 'claim_cta_activated',
+  CLAIM_CONTINUE_CONFIRMED: 'claim_continue_confirmed',
   CLAIM_HANDOFF_RECEIVED: 'claim_handoff_received',
   CLAIM_AUTH_REQUIRED: 'claim_auth_required',
   CLAIM_AUTH_RETURNED: 'claim_auth_returned',

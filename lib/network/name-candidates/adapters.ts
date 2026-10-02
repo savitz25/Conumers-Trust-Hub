@@ -14,7 +14,6 @@ import { CANONICAL_ORIGINS, type SpecialistHubId } from '../registry.ts';
 import {
   MOVE_NETWORK_CONTRACT_FINGERPRINT, MOVE_NETWORK_RESOLVER_URL, MOVE_NETWORK_RESOLVER_VERSION, MOVE_NETWORK_SCHEMA_FINGERPRINT,
 } from '../move-network-resolver.ts';
-import { SENIOR_ASK_API, SENIOR_ASK_CONTRACT } from '../senior-ask.ts';
 import {
   HUB_PAGE_SIZE, type CandidateAction, type HubNameSearchOutcome, type MatchMethod, type NameCandidate,
 } from './contract.ts';
@@ -43,7 +42,9 @@ export type HubNameAdapter = {
 
 const OFFICIAL_ORIGINS: Partial<Record<SpecialistHubId, string[]>> = {
   investor: ['https://adviserinfo.sec.gov'],
-  lender: ['https://www.consumerfinance.gov'],
+  // TH-SEARCH-R1-019D: search.gleif.org is the official LEI registry the released Lender
+  // name-candidates operation cites for a research row that has no LenderTrustHub profile.
+  lender: ['https://www.consumerfinance.gov', 'https://search.gleif.org'],
 };
 
 /** Query params that select WHICH record a hub link opens. */
@@ -52,7 +53,33 @@ const RECORD_IDENTITY_PARAMS = new Set(['selected', 'id', 'slug', 'crd', 'ccn', 
 function text(value: unknown): string | null { return typeof value === 'string' && value.trim() ? value.trim() : null; }
 function record(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function records(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((row) => row && typeof row === 'object' && !Array.isArray(row)) as Record<string, unknown>[] : []; }
-const fold = (value: string) => nameTokens(value).join(' ');
+/**
+ * Collapse a run of consecutive single-LETTER tokens into one initialism token: "v","i","p" -> "vip".
+ * A generic, symmetric name-form equivalence (not hub-specific): "V.I.P." and "VIP" are the same
+ * word once punctuation is stripped by nameTokens, whichever side of a comparison carries the dots.
+ * Digits are never folded into a run: a numeric-leading token ("1st", "3") keeps its own shape --
+ * this is an initialism rule, not a general token-merge.
+ */
+function collapseInitialisms(tokens: string[]): string[] {
+  const out: string[] = []; let run = '';
+  for (const token of tokens) {
+    if (token.length === 1 && /^[a-z]$/.test(token)) { run += token; continue; }
+    if (run) { out.push(run); run = ''; }
+    out.push(token);
+  }
+  if (run) out.push(run);
+  return out;
+}
+/**
+ * TH-SEARCH-R1-019D Astra review 1 (R1): the SAME canonical initialism-collapsed token form must be
+ * used everywhere two names are compared for relevance -- not only inside fold()'s whole-string
+ * containment shortcut. Before this fix, rowRelatesToName recomputed raw (uncollapsed) nameTokens()
+ * for its token-sharing fallback, so a row whose containment check failed for an UNRELATED reason
+ * (e.g. a differing legal suffix: "VIP Mortgage LLC" vs "V.I.P. MORTGAGE, INC.") fell through to a
+ * fallback that could never match "vip" against the still-separate "v","i","p" tokens.
+ */
+function normalizedTokens(value: string): string[] { return collapseInitialisms(nameTokens(value)); }
+const fold = (value: string) => normalizedTokens(value).join(' ');
 /** Separator-insensitive form for ECHO comparison only: hubs differ on whether "Al's" folds to "als" or "al s". */
 const squash = (value: string) => nameTokens(value).join('');
 /** True when the hub's echo of the searched name is the name we sent. */
@@ -95,8 +122,8 @@ export function rowRelatesToName(suppliedName: string, matchedName: string | nul
   // source-established (and the response-level echo proved the filter ran); the CURRENT display name
   // having different words is not grounds to discard it. Only this explicit method is exempt.
   if (matchedName === null) return method === 'DOCUMENTED_ALIAS';
-  const all = nameTokens(suppliedName);
-  const matched = nameTokens(matchedName);
+  const all = normalizedTokens(suppliedName);
+  const matched = normalizedTokens(matchedName);
   if (!all.length || !matched.length) return false;
   // Whole-name containment must fall on WORD boundaries. A hub "contains" match that lands mid-word
   // ("alpha asset management" inside "CLEVERALPHA ASSET MANAGEMENT") is not a name candidate.
@@ -277,120 +304,922 @@ export const investorNameAdapter: HubNameAdapter = {
   },
 };
 
-const INSURANCE_METHOD: Record<string, MatchMethod> = { exact_name: 'EXACT_SOURCE_NAME', exact: 'EXACT_SOURCE_NAME', normalized_exact: 'NORMALIZED_NAME', normalized_name: 'NORMALIZED_NAME', alias: 'DOCUMENTED_ALIAS', distinctive_token_candidate: 'PREFIX_OR_TOKEN', token_candidate: 'PREFIX_OR_TOKEN', prefix: 'PREFIX_OR_TOKEN', fuzzy: 'SIMILAR_SPELLING' };
-const insuranceBase: Base = { hub: 'insurance', searchedScope: 'Public-safe insurance agencies and published legal insurers (individual producers are not searched)', matchBreadth: 'Organization names containing every distinctive word entered; capped at 10 per request' };
+// ---------------------------------------------------------------- Insurance (insurance-name-candidates-v1, TH-SEARCH-R1-019I)
+// R1-019F released a dedicated candidate operation for Insurance, SEPARATE from and alongside the
+// untouched v2 identity contract above (NAME_SPECIALIST_LOCKS.insurance / v2Identity -- still used
+// elsewhere in Ask for Insurance identifiers, cohorts, evidence and other specialist execution, and
+// left completely untouched here). This is the only place that dispatches Insurance NAME_CANDIDATES;
+// it never falls back to v2 on a miss, restriction, partial-refine or failure.
+export const INSURANCE_NAME_CANDIDATES_CONTRACT = 'insurance-name-candidates-v1';
+export const INSURANCE_NAME_CANDIDATES_LOCK = {
+  url: process.env.INSURANCE_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.insurancetrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: 'c272675bdde4adab8d6672be7fb3143319ada5ec5e61dcf72dc7cda295b0d62f',
+} as const;
+
+/**
+ * The released operation's own method vocabulary (confirmed live 2026-09-20 against allied/beacon/
+ * summit/V FINANCIAL LLC/CITIZENS PROP INS CORP/ocean harbor): exactly these two methods are ever
+ * emitted. No permissive HUB_NAME_MATCH fallback -- an unrecognized method fails row-structural
+ * validation below (and therefore the whole response), never a silent guess.
+ */
+const INSURANCE_METHOD_V1: Record<string, MatchMethod> = {
+  normalized_exact_name: 'NORMALIZED_NAME',
+  distinctive_token_candidate: 'PREFIX_OR_TOKEN',
+};
+const INSURANCE_ELIGIBLE_ENTITY_CLASSES = new Set(['agency', 'legal_insurer']);
+const INSURANCE_PUBLICATION_STATES = new Set(['PUBLIC_PROFILE', 'RESEARCH_ROW_ONLY']);
+const INSURANCE_RESULT_STATES = new Set([
+  'CANDIDATES', 'NO_MATCH', 'PARTIAL_REFINE_REQUIRED', 'INVALID_REQUEST',
+  'UNSUPPORTED_OPERATION', 'RESTRICTED_SCOPE', 'SOURCE_UNAVAILABLE', 'TIMEOUT',
+]);
+/** The released contract's own published HTTP/state pairing (ticket Section 4) -- a contradiction is always TECHNICAL_FAILURE. */
+function insuranceExpectedStatus(state: string): number {
+  if (state === 'CANDIDATES' || state === 'NO_MATCH' || state === 'PARTIAL_REFINE_REQUIRED') return 200;
+  if (state === 'INVALID_REQUEST') return 400;
+  if (state === 'UNSUPPORTED_OPERATION' || state === 'RESTRICTED_SCOPE') return 422;
+  if (state === 'SOURCE_UNAVAILABLE') return 503;
+  return 504; // TIMEOUT
+}
+
+/**
+ * Strict pagination validation for the released operation's own {page, limit, returned, hasMore,
+ * nextPage, outOfRange, matchedCount, matchedCountIsExact, completeness, suppressedByPublicationPolicy}
+ * shape (confirmed live). Never infers final-page state from returned < limit -- publication
+ * suppression can make a page short while hasMore is still true (ticket Section 13).
+ */
+function validInsurancePagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const {
+    page, limit, returned, hasMore, nextPage, outOfRange, matchedCount, matchedCountIsExact, completeness, suppressedByPublicationPolicy,
+  } = pag;
+  if (!int(page) || !int(limit) || !int(returned)) return false;
+  if (typeof hasMore !== 'boolean' || typeof outOfRange !== 'boolean' || typeof matchedCountIsExact !== 'boolean') return false;
+  if (!int(suppressedByPublicationPolicy) || suppressedByPublicationPolicy < 0) return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (returned > limit || returned < 0) return false;
+  if (hasMore) { if (nextPage !== page + 1) return false; } else if (nextPage !== null) return false;
+  if (outOfRange && returned !== 0) return false;
+  if (completeness === 'COMPLETE') {
+    if (!int(matchedCount) || matchedCount < 0 || matchedCountIsExact !== true) return false;
+  } else if (completeness === 'SCAN_BOUND_REACHED') {
+    if (matchedCount !== null || matchedCountIsExact !== false) return false;
+  } else {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Strict per-row structural validation, mirroring Senior's model (TH-SEARCH-R1-019G): ANY array
+ * element failing this fails the WHOLE response as TECHNICAL_FAILURE -- never silently dropped
+ * alongside otherwise-valid rows (ticket Section 9). This is also where the entity-class allowlist
+ * (agency/legal_insurer only -- never person/producer) and the strict match-method vocabulary
+ * (ticket Section 10) are enforced. Action/profileUrl/selectionUrl are only shape-checked here;
+ * their deeper cross-validation (origin, name-scoping, URL correspondence) happens in the action
+ * builders below and degrades that one row's action to null on failure, never the row's identity.
+ */
+function isStructurallyValidInsuranceRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const entityClass = text(row.entityClass);
+  if (!entityClass || !INSURANCE_ELIGIBLE_ENTITY_CLASSES.has(entityClass)) return false;
+  const stableKey = text(row.stableKey);
+  const prefix = `insurance:${entityClass}:`;
+  if (!stableKey || !stableKey.startsWith(prefix) || stableKey.length <= prefix.length) return false;
+  if (!text(row.displayName)) return false;
+  if (row.npn !== null && !/^\d+$/.test(text(row.npn) ?? '')) return false;
+  if (row.naicCode !== null && !/^\d+$/.test(text(row.naicCode) ?? '')) return false;
+  const match = record(row.match);
+  const method = text(match.method);
+  if (!text(match.field) || !text(match.value) || !method || !Object.hasOwn(INSURANCE_METHOD_V1, method)) return false;
+  const publicationState = text(row.publicationState);
+  if (!publicationState || !INSURANCE_PUBLICATION_STATES.has(publicationState)) return false;
+  const act = record(row.action);
+  const actType = text(act.type);
+  if (!actType || (actType !== 'PROFILE' && actType !== 'RESEARCH') || !text(act.url)) return false;
+  if (row.profileUrl !== null && !text(row.profileUrl)) return false;
+  if (!text(row.selectionUrl)) return false;
+  if (!text(row.whyMatched)) return false;
+  return true;
+}
+
+/** The candidate's own stable identity suffix (after "insurance:<class>:"), used to revalidate a RESEARCH action's `selected` param. */
+function insuranceStableSuffix(stableKey: string): string { return stableKey.split(':').slice(2).join(':'); }
+
+/** PROFILE action requires publicationState === PUBLIC_PROFILE, InsuranceTrustHub's canonical origin, and profileUrl (when supplied) to resolve to the same URL as the action. */
+function insuranceProfileAction(row: Record<string, unknown>): CandidateAction | null {
+  const act = record(row.action);
+  if (text(act.type) !== 'PROFILE') return null;
+  const safe = safeHubUrl('insurance', act.url);
+  if (!safe || safe.official) return null;
+  const profileUrlRaw = text(row.profileUrl);
+  if (profileUrlRaw !== null) {
+    const safeProfile = safeHubUrl('insurance', profileUrlRaw);
+    if (!safeProfile || safeProfile.href !== safe.href) return null;
+  }
+  return { type: 'PROFILE', href: safe.href, label: 'Open InsuranceTrustHub profile' };
+}
+
+/**
+ * RESEARCH action requires publicationState === RESEARCH_ROW_ONLY, InsuranceTrustHub's canonical
+ * origin, a name-scoped `q`, the candidate's own stable identity where the URL exposes `selected`,
+ * and selectionUrl (when supplied) to resolve to the same URL as the action.
+ */
+function insuranceResearchAction(name: string, row: Record<string, unknown>, stableKey: string): CandidateAction | null {
+  const act = record(row.action);
+  if (text(act.type) !== 'RESEARCH') return null;
+  const safe = safeHubUrl('insurance', act.url);
+  if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  // The released operation's own research URL echoes the search as "Find <name>" (confirmed live:
+  // "/ask?q=Find+allied&selected=..."), not the bare name -- strip that fixed prefix before the
+  // generic echo-equivalence check, the same way the shared continuation link is built below.
+  const q = url.searchParams.get('q');
+  if (!echoesName(q?.replace(/^find\s+/i, '') ?? null, name)) return null;
+  const selected = url.searchParams.get('selected');
+  if (selected !== null && selected !== insuranceStableSuffix(stableKey)) return null;
+  const selectionUrlRaw = text(row.selectionUrl);
+  if (selectionUrlRaw !== null) {
+    const safeSel = safeHubUrl('insurance', selectionUrlRaw);
+    if (!safeSel || safeSel.href !== safe.href) return null;
+  }
+  return { type: 'RESEARCH', href: safe.href, label: 'Continue research on InsuranceTrustHub' };
+}
+
+const insuranceBase: Base = {
+  hub: 'insurance',
+  searchedScope: 'Agency identities in the accepted national source graph (research rows) and legal insurers in the published Wave-1 cohort (public profiles); individual producers are not searched',
+  matchBreadth: 'Organization names containing every distinctive word entered, matched before any page window is cut',
+};
 export const insuranceNameAdapter: HubNameAdapter = {
   ...insuranceBase, enabled: true, sourceGrain: 'NIPR/NAIC-sourced insurance organization',
   async search(name, page, ctx) {
     const started = Date.now();
-    const r = await v2Identity('insurance', insuranceBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
-    if ('fail' in r) return r.fail!;
-    const p = r.payload;
-    const echoed = records(record(p.queryInterpretation).interpretation).find((row) => text(row.label) === 'Requested name');
-    if (!echoesName(text(echoed?.value ?? null), name)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
-    const rows = records(p.rows);
-    const mapped = rows.flatMap((row): NameCandidate[] => {
-      const entityClass = text(row.entityClass);
-      // Private-person restriction: only organization grains are ever admitted for name discovery.
-      if (entityClass !== 'agency' && entityClass !== 'legal_insurer') return [];
-      const display = text(row.name); const evidence = record(row.matchEvidence);
-      const npn = text(row.npn); const naic = text(row.naicCode); const key = naic ? `naic:${naic}` : npn ? `npn:${npn}` : text(evidence.entityId) ? `entity:${text(evidence.entityId)}` : null;
-      const matchedName = text(evidence.value); const field = text(evidence.field);
-      if (!display || !key || !matchedName || !field) return [];
-      const isProfile = text(row.publicationState) === 'PUBLIC_PROFILE';
-      return [{
-        hub: 'insurance', sourceGrain: 'NIPR/NAIC-sourced insurance organization', stableKey: `insurance:${key}`, displayName: display,
-        entityType: entityClass === 'legal_insurer' ? 'Legal insurer' : 'Insurance agency', matchedName, matchedField: field.replaceAll('_', ' '),
-        matchMethod: INSURANCE_METHOD[text(evidence.method) ?? ''] ?? 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
-        identifiers: [naic ? { label: 'NAIC Company Code', value: naic } : null, npn ? { label: 'NPN', value: npn } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: text(row.credentialJurisdiction), locationMeaning: text(row.credentialJurisdiction) ? 'Credential jurisdiction -- not office or service area' : null,
-        sourceAsOf: text(row.sourceObservedAt), sourceDateLabel: 'Observed in source on', publicationState: text(row.publicationState),
-        action: isProfile ? action('insurance', row.destination, 'PROFILE', 'InsuranceTrustHub') : action('insurance', row.selectionUrl, 'RESEARCH', 'InsuranceTrustHub'),
-      }];
+    const res = await call(ctx, INSURANCE_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ contract: INSURANCE_NAME_CANDIDATES_CONTRACT, operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
     });
-    // The hub caps identity candidates at 10 with no cursor and asserts no exact total.
-    const capped = rows.length >= HUB_PAGE_SIZE;
-    return finish(insuranceBase, name, mapped, rows.length, { truncatedWithoutCursor: capped, continuation: capped ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub') : null }, started, page, { state: r.state, hubName: 'InsuranceTrustHub', continuation: r.continuation });
+    if ('failure' in res) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== INSURANCE_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== INSURANCE_NAME_CANDIDATES_LOCK.version
+      || text(p.schemaFingerprint) !== INSURANCE_NAME_CANDIDATES_LOCK.schemaFingerprint || text(p.hub) !== 'insurance' || text(p.operation) !== 'name_candidates') {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (!INSURANCE_RESULT_STATES.has(state)) return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    if (res.status !== insuranceExpectedStatus(state)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_OPERATION') {
+      return outcome(insuranceBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) ?? 'InsuranceTrustHub could not search this input as an organization name.' }, started, page);
+    }
+    if (state === 'RESTRICTED_SCOPE') {
+      return outcome(insuranceBase, { state: 'POLICY_RESTRICTED', message: text(p.message) ?? 'Matching records are not published for name discovery.' }, started, page);
+    }
+    if (state === 'SOURCE_UNAVAILABLE' || state === 'TIMEOUT') {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: state === 'TIMEOUT' ? 'timeout' : 'unavailable', message: text(p.message) }, started, page);
+    }
+    if (state === 'INVALID_REQUEST') {
+      // Ask's own properly-formed request was rejected: an adapter/contract disagreement, never a user no-match.
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported Ask’s own request as invalid.' }, started, page);
+    }
+    // Remaining: CANDIDATES, NO_MATCH, PARTIAL_REFINE_REQUIRED -- all require name-filter proof.
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    if (state === 'NO_MATCH' && rawCandidates.length > 0) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);
+    }
+    const pagination = record(p.pagination);
+    if (!validInsurancePagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidInsuranceRow)) {
+      return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    if (state === 'NO_MATCH') {
+      // Only a completed miss when the operation PROVES it: a completed, exact-zero, no-more-pages scan.
+      const completedMiss = pagination.completeness === 'COMPLETE' && pagination.matchedCount === 0
+        && pagination.matchedCountIsExact === true && rawCandidates.length === 0 && pagination.hasMore === false;
+      if (!completedMiss) {
+        return outcome(insuranceBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match under conditions that do not prove a completed search.' }, started, page);
+      }
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const stableKey = text(row.stableKey)!;
+      const entityClass = text(row.entityClass)!;
+      const displayName = text(row.displayName)!;
+      const npn = row.npn === null ? null : text(row.npn);
+      const naicCode = row.naicCode === null ? null : text(row.naicCode);
+      const match = record(row.match);
+      const matchedName = text(match.value)!;
+      const matchedField = text(match.field)!.replaceAll('_', ' ');
+      const matchMethod = INSURANCE_METHOD_V1[text(match.method)!];
+      const publicationState = text(row.publicationState)!;
+      const act = publicationState === 'PUBLIC_PROFILE' ? insuranceProfileAction(row)
+        : publicationState === 'RESEARCH_ROW_ONLY' ? insuranceResearchAction(name, row, stableKey) : null;
+      return {
+        hub: 'insurance', sourceGrain: 'NIPR/NAIC-sourced insurance organization', stableKey, displayName,
+        entityType: entityClass === 'legal_insurer' ? 'Legal insurer' : 'Insurance agency',
+        matchedName, matchedField, matchMethod, hubMatchExplanation: text(row.whyMatched),
+        identifiers: [naicCode ? { label: 'NAIC Company Code', value: naicCode } : null, npn ? { label: 'NPN', value: npn } : null].filter(Boolean) as NameCandidate['identifiers'],
+        // The released candidate contract does not publish credential-jurisdiction/source-clock fields
+        // (ticket Section 12) -- Ask never carries these over from the old v2 shape or invents a date.
+        recordedLocation: null, locationMeaning: null,
+        sourceAsOf: null, sourceDateLabel: 'Source clock not published by this candidate operation',
+        publicationState, action: act,
+      };
+    });
+    const hasMore = pagination.hasMore === true;
+    const outOfRange = pagination.outOfRange === true;
+    const suppressedCount = typeof pagination.suppressedByPublicationPolicy === 'number' ? pagination.suppressedByPublicationPolicy : 0;
+    // R3 (TH-SEARCH-R1-019I-R3): the released operation determines resultState BEFORE its own
+    // network publication suppression is applied, so an all-suppressed final page arrives as an
+    // otherwise-ordinary CANDIDATES response with an empty visible page (rawCandidates.length === 0)
+    // and hasMore === false. That is NOT a completed miss -- matching source identities exist, they
+    // are just withheld from this network view by publication policy -- so it must not silently
+    // fall through to COMPLETED_NO_CANDIDATES. It is only ever "final page" (not "more pages exist"):
+    // when hasMore is true the existing hasMore-driven truncation already prevents a completed miss,
+    // and forcing this here would incorrectly override real next-page continuation with the source-
+    // capped research one (ticket's "HASMORE CASE").
+    const allSuppressedFinalPage = suppressedCount > 0 && rawCandidates.length === 0 && !hasMore;
+    // PARTIAL_REFINE_REQUIRED: the source scan itself was not exhaustive -- always disclose as
+    // partial coverage, even on a page whose own hasMore is false, because the scanned stream ending
+    // is not the same as every possible matching identity being found (ticket Section 7). An
+    // out-of-range page similarly proves matching identities exist beyond the reachable window --
+    // never a completed miss (ticket Section 8). Neither ever silently substitutes page 1.
+    const truncatedWithoutCursor = state === 'PARTIAL_REFINE_REQUIRED' || outOfRange || allSuppressedFinalPage;
+    const refineExhausted = state === 'PARTIAL_REFINE_REQUIRED' && !hasMore;
+    const continuation = outOfRange || refineExhausted || allSuppressedFinalPage
+      ? action('insurance', `/ask?q=${encodeURIComponent(`Find ${name}`)}`, 'RESEARCH', 'InsuranceTrustHub')
+      : null;
+    // Ask may need to disclose more than one truthful fact about the SAME page at once (e.g. a
+    // publication-policy suppression alongside a refine-exhausted or out-of-range notice) -- these
+    // are composed, never allowed to overwrite one another (ticket's "suppression notice + refine
+    // notice must preserve both facts" requirement).
+    const notices: string[] = [];
+    if (outOfRange) {
+      notices.push('The requested Insurance candidate page is past the available candidate window. Matching identities exist; this is not a no-match.');
+    } else if (refineExhausted) {
+      notices.push('InsuranceTrustHub reached its source scan bound for this name before finding every possible match. Refine the organization name for a complete result.');
+    }
+    if (suppressedCount > 0) {
+      // Truthful disclosure only: never "violation"/"bad actor"/"deleted"/"missing data", never a
+      // claim that the withheld identities were added to `candidates`, and matchedCount is untouched.
+      notices.push(`InsuranceTrustHub matched ${suppressedCount} additional source ${suppressedCount === 1 ? 'identity' : 'identities'} on this page that ${suppressedCount === 1 ? 'is' : 'are'} withheld from this network view by its publication policy.`);
+    }
+    const message = notices.length ? notices.join(' ') : null;
+    return finish(insuranceBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: pagination.matchedCountIsExact === true && typeof pagination.matchedCount === 'number' ? pagination.matchedCount : null,
+      hasMore, truncatedWithoutCursor, continuation, message,
+    }, started, page);
   },
 };
 
-const lenderBase: Base = { hub: 'lender', searchedScope: 'Accepted public lender institutions', matchBreadth: 'EXACT public or historical institution name only -- partial names are not matched by this source' };
+// ---------------------------------------------------------------- Lender (lender-name-candidates-v1, TH-SEARCH-R1-019D)
+// R1-019C released a candidate operation, SEPARATE from and alongside the untouched v2 identity/evidence
+// contract above (still used elsewhere in Ask -- e.g. guided-research -- for exact NMLS/LEI, complaints
+// and HMDA cohorts). This is the only place that dispatches Lender NAME_CANDIDATES; it never falls back
+// to v2 on a miss, restriction or failure.
+export const LENDER_NAME_CANDIDATES_CONTRACT = 'lender-name-candidates-v1';
+export const LENDER_NAME_CANDIDATES_LOCK = {
+  url: process.env.LENDER_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.lendertrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: '09e9764c94ec410bfb6426c890ab85c527004af61bbd958d27767842f3489a4b',
+} as const;
+
+/** The hub's own method vocabulary, mapped honestly -- a search-form rule is never relabeled a documented alias. */
+const LENDER_METHOD: Record<string, MatchMethod> = {
+  EXACT_NORMALIZED_NAME: 'NORMALIZED_NAME',
+  DOCUMENTED_HISTORICAL_NAME: 'DOCUMENTED_ALIAS',
+  LEGAL_SUFFIX_NORMALIZED: 'NORMALIZED_NAME',
+  ABBREVIATION_NORMALIZED: 'NORMALIZED_NAME',
+  DERIVED_SLUG_FORM: 'HUB_NAME_MATCH',
+  WORD_PREFIX: 'PREFIX_OR_TOKEN',
+  DISTINCTIVE_TOKENS: 'PREFIX_OR_TOKEN',
+};
+/** Own-property lookup only (TH-SEARCH-R1-019D Astra review 1, R3-D): a method key must never resolve through the prototype chain. */
+function lenderMethod(key: string): MatchMethod | null { return Object.hasOwn(LENDER_METHOD, key) ? LENDER_METHOD[key] : null; }
+/**
+ * The field a method claims to have matched on, validated against the released engine's OWN
+ * method<->field pairing (lib/name-candidates/engine.ts matchOneName, read-only). DERIVED_SLUG_FORM and
+ * DOCUMENTED_HISTORICAL_NAME are exclusive to their one source field there; every other method may land
+ * on any ordinary catalog name field. A pairing the engine could never produce is a contract defect.
+ */
+const LENDER_ORDINARY_FIELDS = new Set(['canonical_name', 'presentation_name', 'historical_name', 'hmda_reporter_name']);
+const LENDER_METHOD_FIELDS: Record<string, ReadonlySet<string>> = {
+  EXACT_NORMALIZED_NAME: new Set(['canonical_name', 'presentation_name', 'hmda_reporter_name']),
+  DOCUMENTED_HISTORICAL_NAME: new Set(['historical_name']),
+  LEGAL_SUFFIX_NORMALIZED: LENDER_ORDINARY_FIELDS,
+  ABBREVIATION_NORMALIZED: LENDER_ORDINARY_FIELDS,
+  DERIVED_SLUG_FORM: new Set(['derived_slug_form']),
+  WORD_PREFIX: LENDER_ORDINARY_FIELDS,
+  DISTINCTIVE_TOKENS: LENDER_ORDINARY_FIELDS,
+};
+/** Identifier syntax mirroring the released contract's own record checks (lib/ask-lender/identity-lookup.ts) -- never a guessed shape. */
+const LENDER_IDENTIFIER_SYNTAX: Record<string, RegExp> = { NMLS: /^\d{2,12}$/, LEI: /^[A-Z0-9]{20}$/ };
+/**
+ * TH-SEARCH-R1-019D Astra review 2: the complete eligible stable-key family, derived read-only from
+ * the released catalog's OWN upstream stable-key definitions -- not the two examples the review cited.
+ * An eligible PUBLIC PROFILE copies `record.stable_key` verbatim into `institutionKey`
+ * (lib/name-candidates/catalog.ts); across that source's real production data (see
+ * lib/national-profile/cohort.ts's ten-row QA sample, which intentionally spans every eligible shape:
+ * NMLS-keyed banks/credit unions, LEI-keyed nonbank servicers, and an FDIC-cert-keyed small bank with
+ * no NMLS/LEI coverage) that key takes exactly three forms:
+ *   nmls-inst:<NMLS institution id>  -- digits, per lib/ask-lender/identity-lookup.ts's own
+ *                                        record.nmls contract check (2-12 digits).
+ *   gleif-lei:<LEI>                  -- 20-char ISO 17442 LEI, per identity-lookup.ts's record.lei
+ *                                        contract check and lib/identity/namespaces.ts normalizeLeiValue.
+ *   fdic-cert:<FDIC certificate id>  -- digits (confirmed live: "First State Bank" fdic-cert:15663/
+ *                                        12836/22971; cohort.ts fdic-cert:16243).
+ * A standalone HMDA research row (no profile) is synthesized directly in catalog.ts, never copied from
+ * a profile record:
+ *   hmda-lei:<LEI>                   -- 20-char LEI, same syntax as gleif-lei.
+ * Person/branch/MLO stable keys (nmls-branch:, nmls-person:) are excluded upstream by the catalog's own
+ * institution-only publication gate (lib/national-profile/disc-tests.ts asserts neither ever appears in
+ * the discovery feed) and are never a supported namespace here. No other lib/identity/namespaces.ts
+ * IdentifierType (NCUA_CHARTER, RSSD, FHA_ID, HUD_ID, SBA_ID, STATE_LICENSE, OTHER_AUTHORITATIVE) is
+ * ever used as a stable-key prefix anywhere in the released source -- those exist only in a SEPARATE
+ * internal identity-graph representation this operation never exposes.
+ */
+const LENDER_KEY_FAMILY_SYNTAX: Readonly<Record<string, RegExp>> = {
+  'nmls-inst': /^\d{2,12}$/,
+  'gleif-lei': /^[A-Z0-9]{20}$/,
+  'fdic-cert': /^\d{1,10}$/,
+  'hmda-lei': /^[A-Z0-9]{20}$/,
+};
+/** The supplied key is validated, never rewritten: a bank's own fdic-cert/nmls-inst/gleif-lei key is preserved exactly, never merged or re-keyed onto a coincidentally-matching LEI. */
+function validLenderStableKey(stableKey: string): boolean {
+  const m = /^lender:([a-z]+(?:-[a-z]+)?):(.+)$/.exec(stableKey);
+  if (!m) return false;
+  const [, family, suffix] = m;
+  return Object.hasOwn(LENDER_KEY_FAMILY_SYNTAX, family) && (LENDER_KEY_FAMILY_SYNTAX[family]?.test(suffix) ?? false);
+}
+/** The only publication states the released catalog emits (lib/name-candidates/engine.ts PublicationState). */
+const LENDER_PUBLICATION_STATES = new Set(['public_profile', 'unpublished_research_identity', 'identity_hold']);
+
+/**
+ * Structural pagination validation derived from the released engine's own formulas
+ * (lib/name-candidates/engine.ts searchNameCandidates; lib/name-candidates/operation.ts pageCount).
+ * Validates the RELATIONSHIPS the engine guarantees between these fields -- never a specific name's
+ * data counts, and never rejects a genuinely valid, empty out-of-range page solely for being empty.
+ */
+function validLenderPagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const { page, limit, returned, total, reachable, hasMore, truncated, outOfRange, pageCount, window } = pag;
+  if (!int(page) || !int(limit) || !int(returned) || !int(total) || !int(reachable) || !int(pageCount) || !int(window)) return false;
+  if (typeof hasMore !== 'boolean' || typeof truncated !== 'boolean' || typeof outOfRange !== 'boolean') return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (total < 0 || reachable < 0 || reachable > total || window <= 0 || reachable > window || pageCount < 1) return false;
+  if (truncated !== (total > reachable)) return false;
+  if (pageCount !== Math.max(1, Math.ceil(reachable / limit))) return false;
+  const start = (page - 1) * limit;
+  if (outOfRange !== (reachable > 0 && start >= reachable)) return false;
+  if (outOfRange && returned !== 0) return false;
+  if (hasMore !== (!outOfRange && start + limit < reachable)) return false;
+  return true;
+}
+
+/** An https URL's origin, resolved against Lender's own canonical origin -- never constructed, only read. */
+function originOf(raw: unknown): string | null {
+  const value = text(raw); if (!value) return null;
+  try { return new URL(value, CANONICAL_ORIGINS.lender).origin; } catch { return null; }
+}
+
+/**
+ * The one action Ask cannot get from safeHubUrl's generic origin check alone: an
+ * OFFICIAL_IDENTIFIER_VERIFICATION link must land on GLEIF's real record for the returned LEI, not
+ * merely on the GLEIF origin. A link that fails this is dropped -- never rewritten to a generic page.
+ */
+function lenderOfficialAction(raw: unknown, lei: string | null): CandidateAction | null {
+  if (!lei) return null;
+  const safe = safeHubUrl('lender', raw);
+  if (!safe || !safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  if (url.origin !== 'https://search.gleif.org' || url.hash !== `#/record/${lei}`) return null;
+  return { type: 'OFFICIAL_SOURCE', href: safe.href, label: 'Verify with the official source' };
+}
+
+/** TH-SEARCH-R1-019D Astra review 1 (R3-E): the RESEARCH continuation must stay scoped to the name that was actually searched, not merely land on Lender's origin. */
+function lenderResearchAction(name: string, raw: unknown): CandidateAction | null {
+  const safe = safeHubUrl('lender', raw); if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  if (!echoesName(url.searchParams.get('q'), name)) return null;
+  return { type: 'RESEARCH', href: safe.href, label: 'Continue research on LenderTrustHub' };
+}
+
+const lenderBase: Base = {
+  hub: 'lender', searchedScope: 'Published LenderTrustHub institution profiles and public HMDA reporting institutions',
+  matchBreadth: 'Normalized, historical and search-form name matches, then word-prefix and distinctive-word candidates',
+};
 export const lenderNameAdapter: HubNameAdapter = {
-  ...lenderBase, enabled: true, sourceGrain: 'NMLS/LEI lender institution',
+  ...lenderBase, enabled: true, sourceGrain: 'Lender institution name candidate',
   async search(name, page, ctx) {
     const started = Date.now();
-    const r = await v2Identity('lender', lenderBase, { identityName: name, limit: HUB_PAGE_SIZE }, ctx, started, page);
-    if ('fail' in r) return r.fail!;
-    const p = r.payload; const qi = record(p.queryInterpretation);
-    if (!echoesName(text(qi.identityName), name)) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
-    const identity = record(p.identity);
-    const rows = records(p.rows).length ? records(p.rows) : Object.keys(identity).length ? [identity] : [];
+    const res = await call(ctx, LENDER_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
+    });
+    if ('failure' in res) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== LENDER_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== LENDER_NAME_CANDIDATES_LOCK.version || text(p.schemaFingerprint) !== LENDER_NAME_CANDIDATES_LOCK.schemaFingerprint) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (state === 'RESTRICTED_SCOPE') {
+      // The upstream operation itself declined this input (identifier/person/branch-shaped). Not
+      // evidence a hidden matching institution exists, and never a completed miss.
+      return outcome(lenderBase, { state: 'UNSUPPORTED_OPERATION', message: 'LenderTrustHub could not search this input as an institution name.' }, started, page);
+    }
+    if (state === 'SOURCE_UNAVAILABLE') return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
+    if (!['CANDIDATES', 'AMBIGUOUS_EXACT_NAME', 'NO_MATCH'].includes(state)) {
+      // Includes INVALID_REQUEST: Ask's own request was malformed. An adapter/contract defect, never a miss.
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    }
+    // TH-SEARCH-R1-019D Astra review 1 (R3-A): a success-shaped body is only trustworthy behind the
+    // status the released contract actually returns it with (200 for every state handled above).
+    if (res.status !== 200) return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    // TH-SEARCH-R1-019D Astra review 1 (R3-B): validate the array BEFORE records() can silently drop a
+    // missing/null/string/object payload (or an array of primitives) into an empty, falsely-completed miss.
+    if (!Array.isArray(p.candidates)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    // A contradictory payload -- claims no match yet supplies records -- is a contract failure, never silently admitted.
+    if (state === 'NO_MATCH' && rawCandidates.length > 0) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported no match but returned candidate records.' }, started, page);
+    }
+    const rows = records(rawCandidates);
     const mapped = rows.flatMap((row): NameCandidate[] => {
-      const display = text(row.displayName) ?? text(row.institutionName); const nmls = text(row.nmls); const lei = text(row.lei);
-      const key = nmls ? `nmls:${nmls}` : lei ? `lei:${lei}` : null;
-      if (!display || !key) return [];
+      const displayName = text(row.displayName);
+      const stableKey = text(row.stableKey);
+      const matchRow = record(row.match);
+      const lenderMethodKey = text(matchRow.method) ?? '';
+      const method = lenderMethod(lenderMethodKey);
+      const rawField = text(matchRow.field);
+      const matchedValue = text(matchRow.value);
+      const matchedField = text(matchRow.sourceLabel);
+      const publicationState = text(row.publicationState);
+      // A row missing any of these, claiming an unrecognized method/namespace/projection, or pairing a
+      // method with a field the released engine could never produce for it, is dropped -- never invented.
+      if (!displayName || !stableKey || !validLenderStableKey(stableKey) || !method || !rawField
+        || !LENDER_METHOD_FIELDS[lenderMethodKey]?.has(rawField) || !matchedValue || !matchedField
+        || !publicationState || !LENDER_PUBLICATION_STATES.has(publicationState)) return [];
+      const seenLabels = new Set<string>();
+      const identifiers = records(row.identifiers).flatMap((id) => {
+        const label = text(id.label); const value = text(id.value);
+        if (!label || !value || (label !== 'NMLS' && label !== 'LEI') || seenLabels.has(label)) return [];
+        if (!LENDER_IDENTIFIER_SYNTAX[label].test(value)) return [];
+        seenLabels.add(label);
+        return [{ label, value }];
+      });
+      const rowAction = record(row.action);
+      const actionType = text(rowAction.type);
+      const lei = identifiers.find((id) => id.label === 'LEI')?.value ?? null;
+      // TH-SEARCH-R1-019D Astra review 1 (R3-E): a URL that resolves to the GLEIF origin ALWAYS takes the
+      // strict LEI-bound path, whatever action type the row declared -- a PROFILE-typed action secretly
+      // pointed at gleif.org must not borrow the generic (weaker) PROFILE check to bypass the LEI binding.
+      const act = originOf(rowAction.url) === 'https://search.gleif.org' ? lenderOfficialAction(rowAction.url, lei)
+        : actionType === 'PROFILE' ? action('lender', rowAction.url, 'PROFILE', 'LenderTrustHub')
+          : actionType === 'OFFICIAL_IDENTIFIER_VERIFICATION' ? lenderOfficialAction(rowAction.url, lei)
+            : null;
+      const clock = record(record(row.source).clock);
       return [{
-        hub: 'lender', sourceGrain: 'NMLS/LEI lender institution', stableKey: `lender:${key}`, displayName: display, entityType: 'Lender institution',
-        // The hub matches EXACT public or historical names. When the returned display name is not what was
-        // entered, the match was on a historical/alternate name the endpoint does not return.
-        matchedName: fold(display) === fold(name) ? display : null,
-        matchedField: fold(display) === fold(name) ? 'accepted public institution name' : 'a historical or alternate institution name (the source does not return that text)',
-        matchMethod: fold(display) === fold(name) ? 'EXACT_SOURCE_NAME' : 'DOCUMENTED_ALIAS', hubMatchExplanation: text(qi.matchMethod)?.replaceAll('_', ' ') ?? null,
-        identifiers: [nmls ? { label: 'NMLS', value: nmls } : null, lei ? { label: 'LEI', value: lei } : null].filter(Boolean) as NameCandidate['identifiers'],
-        recordedLocation: null, locationMeaning: null, sourceAsOf: text(row.sourceFetchedAt), sourceDateLabel: 'Fetched from source on', publicationState: text(row.publicationState),
-        action: action('lender', record(row.destination).url, 'PROFILE', 'LenderTrustHub'),
+        hub: 'lender', sourceGrain: 'Lender institution name candidate', stableKey, displayName,
+        entityType: text(row.entityType),
+        matchedName: matchedValue, matchedField, matchMethod: method, hubMatchExplanation: text(matchRow.explanation),
+        identifiers, recordedLocation: null, locationMeaning: null,
+        sourceAsOf: text(clock.value), sourceDateLabel: text(clock.label) ?? 'Source as-of date',
+        publicationState, action: act,
       }];
     });
-    // Ambiguity continuation: the payload's own hub destination, else the hub's existing public lender directory.
-    return finish(lenderBase, name, mapped, rows.length, {}, started, page, { state: r.state, hubName: 'LenderTrustHub', continuation: r.continuation ?? action('lender', '/lender', 'RESEARCH', 'LenderTrustHub') });
+    const pagination = record(p.pagination);
+    if (!validLenderPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(lenderBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    const continuationRaw = record(p.continuation);
+    // TH-SEARCH-R1-019D Astra review 1 (R2): the hub-supplied, name-scoped native-search continuation
+    // is preserved on EVERY successful page (Lender always returns one -- see operation.ts), independent
+    // of upstream hasMore. Ask's own MAX_CARDS_PER_HUB cap can be reached well before Lender's window is
+    // exhausted; without this, Ask holds no way forward even though the source has more records. It opens
+    // the supported native search on this name, never a claim of resuming exactly where Ask left off.
+    const continuation = lenderResearchAction(name, continuationRaw.url);
+    // TH-SEARCH-R1-019D Astra review 1 (R3-A): CANDIDATES/AMBIGUOUS_EXACT_NAME always carry >=1 record
+    // in the released engine; zero real rows under either state is a contradictory payload, never a miss.
+    const upstream: Upstream | undefined = state === 'AMBIGUOUS_EXACT_NAME' ? { state: 'AMBIGUOUS_IDENTITIES', hubName: 'LenderTrustHub', continuation }
+      : state === 'CANDIDATES' ? { state: 'SUPPORTED_RESULTS', hubName: 'LenderTrustHub', continuation }
+        : undefined;
+    return finish(lenderBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: typeof pagination.total === 'number' ? pagination.total : null,
+      hasMore,
+      // Lender's own 200-candidate window is exhausted, not a hub-side page cursor -- the same
+      // "capped without a usable cursor" shape Insurance already reports.
+      truncatedWithoutCursor: pagination.truncated === true && !hasMore,
+      continuation,
+    }, started, page, upstream);
   },
 };
 
-// ---------------------------------------------------------------- Senior (senior-ask-v1 JSON contract; the same engine as the native site)
+// ---------------------------------------------------------------- Senior (senior-name-candidates-v1, TH-SEARCH-R1-019G)
+// R1-019E released a dedicated candidate operation, SEPARATE from and alongside the untouched
+// senior-ask-v1 free-text engine (senior-ask.ts's SENIOR_ASK_API/SENIOR_ASK_CONTRACT, still used
+// elsewhere in Ask -- ask-plan.ts, federated-ask.ts -- for other Senior surfaces this ticket does not
+// touch, and left untouched here). This
+// is the only place that dispatches Senior NAME_CANDIDATES; it never falls back to the free-text
+// engine on a miss, unsupported result or failure. detectClass()/UNSUPPORTED_SENIOR_CLASSES-style
+// category words (nursing, SNF, hospice, home health, care facility) are the SPECIALIST's classifier
+// vocabulary, not Ask's -- a provider class here comes ONLY from the specialist's own row, never
+// inferred from the supplied name's words.
+export const SENIOR_NAME_CANDIDATES_CONTRACT = 'senior-name-candidates-v1';
+export const SENIOR_NAME_CANDIDATES_LOCK = {
+  url: process.env.SENIOR_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.seniortrusthub.com/api/specialist-execution/name-candidates/v1',
+} as const;
+
+/**
+ * The released operation exposes no contractVersion/schemaFingerprint field (unlike Lender/v2), so a
+ * malformed or drifted payload is caught by strict STRUCTURAL validation instead: an allowlisted
+ * resultState, an HTTP status that matches the exact pairing the route itself implements
+ * (route.ts: TECHNICAL_FAILURE->503, UNSUPPORTED_OPERATION->422, every other state->200 -- confirmed
+ * live 2026-09-20), and per-row/per-pagination shape checks below. Anything outside this is rejected
+ * as TECHNICAL_FAILURE, never silently coerced into a miss.
+ */
+const SENIOR_PROVIDER_CLASSES = new Set(['nursing_home', 'home_health', 'hospice']);
+const SENIOR_RESULT_STATES = new Set(['COMPLETED_WITH_CANDIDATES', 'COMPLETED_NO_CANDIDATES', 'PARTIAL_TRUNCATED', 'UNSUPPORTED_OPERATION', 'TECHNICAL_FAILURE']);
+function seniorExpectedStatus(state: string): number { return state === 'TECHNICAL_FAILURE' ? 503 : state === 'UNSUPPORTED_OPERATION' ? 422 : 200; }
+
+/**
+ * A Senior profile action must resolve on SeniorTrustHub's canonical origin AND, where the URL's own
+ * structure exposes a CMS CCN path segment, that segment must equal the row's own CCN -- a URL
+ * exposing a DIFFERENT CCN than the record it is attached to is dropped, never rewritten.
+ */
+function seniorProfileAction(ccn: string, raw: unknown): CandidateAction | null {
+  const safe = safeHubUrl('senior', raw); if (!safe || safe.official) return null;
+  let url: URL; try { url = new URL(safe.href); } catch { return null; }
+  const m = /\/cms\/(\d{6})(?:\/|$)/.exec(url.pathname);
+  if (m && m[1] !== ccn) return null;
+  return { type: 'PROFILE', href: safe.href, label: 'Open SeniorTrustHub profile' };
+}
+
+/** Structural pagination validation for the released operation's own (much smaller) {page, hasMore} shape -- never a specific name's counts. */
+function validSeniorPagination(pag: Record<string, unknown>, requestedPage: number): boolean {
+  return typeof pag.page === 'number' && Number.isInteger(pag.page) && pag.page === requestedPage && typeof pag.hasMore === 'boolean';
+}
+
+/**
+ * TH-SEARCH-R1-019G-R1: with no contractVersion/schemaFingerprint to lean on, Ask must also verify
+ * the released operation's OWN internal state<->count<->hasMore relationships (confirmed against
+ * Senior main) instead of letting a contradictory payload get silently REPAIRED into a different
+ * state further down (finish() re-derives COMPLETED_WITH_CANDIDATES/COMPLETED_NO_CANDIDATES/
+ * PARTIAL_TRUNCATED from the mapped candidates + hasMore on its own, which is exactly the mechanism
+ * that would quietly reinterpret an upstream contradiction as a normal outcome). A mismatch here is
+ * always TECHNICAL_FAILURE -- Ask never guesses which side (state vs. count vs. hasMore) was right.
+ */
+function seniorStateConsistent(state: string, candidateCount: number, hasMore: boolean): boolean {
+  if (state === 'COMPLETED_WITH_CANDIDATES') return candidateCount > 0 && !hasMore;
+  if (state === 'COMPLETED_NO_CANDIDATES') return candidateCount === 0 && !hasMore;
+  // PARTIAL_TRUNCATED's own candidate count may be zero or greater per Senior's published contract --
+  // never a stricter rule invented here.
+  return hasMore === true;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Strict per-row structural validation. ANY array element failing this fails the WHOLE response as
+ * TECHNICAL_FAILURE -- never silently dropped alongside valid rows the way records()'s generic
+ * plain-object filter would. Action fields are deliberately EXCLUDED from this check (see
+ * seniorProfileAction): a missing/malformed/off-origin/wrong-CCN action degrades that one row's
+ * action to null, by prior explicit design, and must never fail the row's identity.
+ */
+function isStructurallyValidSeniorRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const cls = text(row.providerClass);
+  if (!cls || !SENIOR_PROVIDER_CLASSES.has(cls)) return false;
+  if (!text(row.displayName)) return false;
+  const ccn = text(row.ccn);
+  if (!ccn || !/^\d{6}$/.test(ccn)) return false;
+  if (!text(row.locationMeaning)) return false;
+  if (text(row.publicationState) !== 'public_profile') return false;
+  // recordedLocation may be absent; if present, it must be an object -- never manufactured fields.
+  if (row.recordedLocation !== undefined && !isPlainObject(row.recordedLocation)) return false;
+  return true;
+}
+
 const seniorBase: Base = { hub: 'senior', searchedScope: 'Current CMS nursing home, home health and hospice directories', matchBreadth: 'Bounded provider-name matches in the CMS directories' };
 export const seniorNameAdapter: HubNameAdapter = {
   ...seniorBase, enabled: true, sourceGrain: 'CMS certified provider (CCN)',
   async search(name, page, ctx) {
     const started = Date.now();
-    const url = new URL(SENIOR_ASK_API); url.searchParams.set('q', name); if (page > 1) url.searchParams.set('page', String(page));
-    const res = await call(ctx, url, { method: 'GET' });
+    const res = await call(ctx, SENIOR_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ operation: 'provider_name_candidates', name, page }),
+    });
     if ('failure' in res) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
     const p = res.body;
-    if (text(p.contract) !== SENIOR_ASK_CONTRACT) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
-    if (res.status !== 200) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable' }, started, page);
-    const query = record(p.query);
-    // This endpoint interprets free text. Unless it PROVES it ran a provider-name search on exactly
-    // our name, its answer is about some other question -- never a name miss.
-    if (text(query.mode) !== 'entity' || !echoesName(text(query.identityQuery), name)) {
-      return outcome(seniorBase, { state: 'UNSUPPORTED_OPERATION', message: 'SeniorTrustHub interpreted this text as a care-category question instead of a provider name, so a name search could not be confirmed.' }, started, page);
+    if (text(p.contract) !== SENIOR_NAME_CANDIDATES_CONTRACT || text(p.hub) !== 'senior') {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
     }
-    const rows = records(p.results);
-    const mapped = rows.flatMap((row): NameCandidate[] => {
-      const display = text(row.providerName); const ccn = text(row.ccn); const cls = text(row.providerClass);
-      const act = action('senior', row.href, 'PROFILE', 'SeniorTrustHub');
-      if (!display || !ccn || !/^\d{6}$/.test(ccn) || !cls || !act) return [];
-      return [{
-        hub: 'senior', sourceGrain: 'CMS certified provider (CCN)', stableKey: `senior:${cls}:${ccn}`, displayName: display,
-        entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()), matchedName: display, matchedField: 'CMS provider name',
-        matchMethod: fold(display) === fold(name) ? 'NORMALIZED_NAME' : 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
-        identifiers: [{ label: 'CMS CCN', value: ccn }], recordedLocation: text(row.location), locationMeaning: 'Recorded CMS location -- not service availability',
-        sourceAsOf: text(row.sourceAsOf), sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
-      }];
-    });
+    const state = text(p.resultState) ?? '';
+    // Catches BOTH an unrecognized resultState AND the route's own request-validation/execution-error
+    // shapes ({status:"invalid_request"|"execution_unavailable"}), which carry no resultState at all.
+    if (!SENIOR_RESULT_STATES.has(state)) return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    if (res.status !== seniorExpectedStatus(state)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_OPERATION') {
+      // The specialist itself declined this input (a care-category/quality-intent phrase, not a
+      // structured provider name). Not evidence a matching provider does not exist, never a miss.
+      return outcome(seniorBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) }, started, page);
+    }
+    if (state === 'TECHNICAL_FAILURE') return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'unavailable', message: text(p.message) }, started, page);
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
     const pagination = record(p.pagination);
-    return finish(seniorBase, name, mapped, rows.length, { hasMore: pagination.hasMore === true || (typeof pagination.totalPages === 'number' && pagination.totalPages > page) }, started, page);
+    if (!validSeniorPagination(pagination, page)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    // The released operation's own state<->count<->hasMore relationships must hold BEFORE any mapping
+    // happens -- a contradiction here is never repaired into a different (but plausible-looking)
+    // success/miss state further down.
+    if (!seniorStateConsistent(state, rawCandidates.length, hasMore)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a result state inconsistent with its own candidate count and pagination.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidSeniorRow)) {
+      return outcome(seniorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const cls = text(row.providerClass)!;
+      const displayName = text(row.displayName)!;
+      const ccn = text(row.ccn)!;
+      const locationMeaning = text(row.locationMeaning)!;
+      const loc = record(row.recordedLocation);
+      const recordedLocation = [text(loc.city), text(loc.state), text(loc.county)].filter(Boolean).join(', ') || null;
+      const rowAction = record(row.action);
+      // Action validation stays intentionally tolerant: a missing/malformed/off-origin/wrong-CCN
+      // action degrades to null on this one row -- it never invalidates the row's own identity.
+      const act = text(rowAction.type) === 'PROFILE' ? seniorProfileAction(ccn, rowAction.href) : null;
+      return {
+        hub: 'senior', sourceGrain: 'CMS certified provider (CCN)', stableKey: `senior:${cls}:${ccn}`, displayName,
+        entityType: cls.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+        matchedName: displayName, matchedField: 'CMS provider name',
+        matchMethod: fold(displayName) === fold(name) ? 'NORMALIZED_NAME' : 'HUB_NAME_MATCH', hubMatchExplanation: text(row.whyMatched),
+        identifiers: [{ label: 'CMS CCN', value: ccn }],
+        // The specialist's OWN wording is preserved verbatim -- never Ask's own paraphrase of what
+        // "recorded location" means, since that meaning can differ by hub and by row.
+        recordedLocation, locationMeaning,
+        sourceAsOf: null, sourceDateLabel: 'CMS source as-of date', publicationState: 'PUBLIC_PROFILE', action: act,
+      };
+    });
+    return finish(seniorBase, name, mapped, rawCandidates.length, { hasMore }, started, page);
   },
 };
 
-// ---------------------------------------------------------------- Contractor (blocked: no structured name operation)
-const contractorBase: Base = { hub: 'contractor', searchedScope: 'Not searched by name', matchBreadth: 'No structured name operation is available' };
-export const CONTRACTOR_NAME_DEPENDENCY = 'ContractorTrustHub /api/specialist-execution/v2 declares queryType "identity" but rejects any name field (unsupported_field). Its existing searchContractors() engine (behind /verify) already performs name search; a thin v2 wrapper exposing identityName over that engine is required. Owner: ContractorTrustHub.';
+// ---------------------------------------------------------------- Contractor (contractor-name-candidates-v1, TH-SEARCH-R1-019B / TH-SEARCH-R1-019A-FINAL)
+// TH-SEARCH-R1-019B released a dedicated candidate operation, separate from the untouched v2
+// identity contract (which still rejects every name field). This is the only place that dispatches
+// Contractor NAME_CANDIDATES. Confirmed live against Production (2026-09-21, merged main
+// 330dc2ab4bd2db2ec49878633ea6b66c2253dded): this contract NEVER asserts an exact total --
+// pagination.total is always null; hasMore is proven by a one-row probe beyond the page, not a
+// count -- so hubReportedTotal stays null for Contractor by contract design, unlike hubs that assert
+// an exact total when exact.
+export const CONTRACTOR_NAME_CANDIDATES_CONTRACT = 'contractor-name-candidates-v1';
+export const CONTRACTOR_NAME_CANDIDATES_LOCK = {
+  url: process.env.CONTRACTOR_NAME_CANDIDATES_EXECUTION_URL ?? 'https://www.contractortrusthub.com/api/specialist-execution/name-candidates/v1',
+  version: '1.0.0',
+  schemaFingerprint: 'ac344bfdda58296b163f8ea6737a36b1e44c1af99b3e252e39cae4d08b822fc3',
+} as const;
+
+/**
+ * The released operation's own match-method vocabulary is a literal subset of Ask's shared
+ * MatchMethod enum, so this is an identity map kept explicit (not a fallback) so an unrecognized
+ * method fails row-structural validation below, never a silent HUB_NAME_MATCH guess.
+ */
+const CONTRACTOR_METHOD: Record<string, MatchMethod> = {
+  EXACT_SOURCE_NAME: 'EXACT_SOURCE_NAME', NORMALIZED_NAME: 'NORMALIZED_NAME',
+  DOCUMENTED_ALIAS: 'DOCUMENTED_ALIAS', PREFIX_OR_TOKEN: 'PREFIX_OR_TOKEN',
+};
+/** The released engine's own source name fields (lib/contractors/name-search-core.ts NAME_MATCH_FIELDS), read-only reference. */
+const CONTRACTOR_MATCH_FIELDS = new Set(['display_name', 'legal_name', 'dba_name', 'licensee_name_raw', 'dba_name_raw']);
+const CONTRACTOR_FIELD_LABEL: Record<string, string> = {
+  display_name: 'public display name',
+  legal_name: 'recorded legal/licensee name (in some sources this is the qualifying individual, not the business)',
+  dba_name: 'documented DBA name',
+  licensee_name_raw: 'source licensee name on the credential row',
+  dba_name_raw: 'source DBA name on the credential row',
+};
+/** The only publication state the released operation ever emits (only existing, non-thin public profiles are returned). */
+const CONTRACTOR_PUBLICATION_STATES = new Set(['PUBLIC_PROFILE']);
+const CONTRACTOR_RESULT_STATES = new Set([
+  'COMPLETED_WITH_CANDIDATES', 'COMPLETED_NO_CANDIDATES', 'PARTIAL_TRUNCATED', 'UNSUPPORTED_SCOPE', 'INVALID_QUERY', 'SOURCE_FAILURE',
+]);
+/** The released route's own resultState<->HTTP-status pairing (app/api/specialist-execution/name-candidates/v1/route.ts httpStatus, read-only reference). */
+function contractorExpectedStatus(state: string, failureKind: string | null): number {
+  if (state === 'INVALID_QUERY') return 400;
+  if (state === 'UNSUPPORTED_SCOPE') return 422;
+  if (state === 'SOURCE_FAILURE') return failureKind === 'timeout' ? 504 : 503;
+  return 200;
+}
+
+/**
+ * Strict pagination validation for the released operation's own {page, limit, returned, hasMore,
+ * nextPage, sourceCap, truncated, total, totalMeaning} shape. total is always null by contract
+ * design (see above) -- never a hub-asserted exact count for Contractor.
+ */
+function validContractorPagination(pag: Record<string, unknown>, requestedPage: number, requestedLimit: number, rawRowCount: number): boolean {
+  const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
+  const { page, limit, returned, hasMore, nextPage, sourceCap, truncated, total, totalMeaning } = pag;
+  if (!int(page) || !int(limit) || !int(returned) || !int(sourceCap)) return false;
+  if (typeof hasMore !== 'boolean' || typeof truncated !== 'boolean') return false;
+  if (page !== requestedPage || limit !== requestedLimit || returned !== rawRowCount) return false;
+  if (returned > limit || returned < 0) return false;
+  if (hasMore) { if (nextPage !== page + 1) return false; } else if (nextPage !== null) return false;
+  if (total !== null) return false;
+  if (typeof totalMeaning !== 'string' || !totalMeaning) return false;
+  return true;
+}
+
+/**
+ * The released engine's own resultState<->candidateCount<->truncated/hasMore relationships
+ * (lib/specialist-execution/contractor-name-candidates.ts executeContractorNameCandidates, read-only
+ * reference): resultState is `truncated || tokenTierIncomplete ? PARTIAL_TRUNCATED : candidates.length
+ * > 0 ? COMPLETED_WITH_CANDIDATES : COMPLETED_NO_CANDIDATES`. A contradiction here is always
+ * TECHNICAL_FAILURE -- never silently repaired into a different, plausible-looking outcome.
+ */
+function contractorStateConsistent(state: string, candidateCount: number, hasMore: boolean, truncated: boolean): boolean {
+  if (state === 'COMPLETED_WITH_CANDIDATES') return candidateCount > 0 && !truncated;
+  if (state === 'COMPLETED_NO_CANDIDATES') return candidateCount === 0 && !truncated && !hasMore;
+  // PARTIAL_TRUNCATED's own candidate count may be zero or more, and hasMore may be true (the token
+  // tier did not finish in time, but full pages remain) or false (the source cap was reached).
+  return state === 'PARTIAL_TRUNCATED' && truncated;
+}
+
+/**
+ * Strict per-row structural validation, mirroring Insurance/Lender/Senior's model: ANY array element
+ * failing this fails the WHOLE response as TECHNICAL_FAILURE -- never silently dropped alongside
+ * otherwise-valid rows. Action is only shape-checked here (deeper URL/origin validation happens in
+ * the mapper below and degrades that one row's action to null on failure, never the row's identity).
+ */
+function isStructurallyValidContractorRow(row: unknown): row is Record<string, unknown> {
+  if (!isPlainObject(row)) return false;
+  const stableKey = text(row.stableKey);
+  if (!stableKey || !/^contractor:profile:.+$/.test(stableKey)) return false;
+  if (!text(row.displayName)) return false;
+  // Entity type is not source-backed at this grain per the released contract -- never a non-null
+  // value of any type Ask did not expect (string or null only).
+  if (row.entityType !== null && typeof row.entityType !== 'string') return false;
+  const match = record(row.match);
+  const field = text(match.field);
+  const method = text(match.method);
+  if (!field || !CONTRACTOR_MATCH_FIELDS.has(field) || !text(match.value) || !method || !Object.hasOwn(CONTRACTOR_METHOD, method)) return false;
+  if (!text(match.explanation)) return false;
+  if (!Array.isArray(row.identifiers) || !row.identifiers.every((id) => isPlainObject(id) && text(id.label) && text(id.value))) return false;
+  const credential = record(row.credential);
+  if (!text(credential.class) || !text(credential.status)) return false;
+  const credJur = record(row.credentialJurisdiction);
+  if (!text(credJur.code) || !text(credJur.label)) return false;
+  const loc = record(row.recordedLocation);
+  if (!text(loc.meaning)) return false;
+  const clock = record(record(row.source).clock);
+  if (!text(clock.label)) return false;
+  if (clock.value !== null && typeof clock.value !== 'string') return false;
+  const publicationState = text(row.publicationState);
+  if (!publicationState || !CONTRACTOR_PUBLICATION_STATES.has(publicationState)) return false;
+  const act = record(row.action);
+  if (text(act.type) !== 'PROFILE' || !text(act.href)) return false;
+  return true;
+}
+
+function contractorRecordedLocation(row: Record<string, unknown>): string | null {
+  const loc = record(row.recordedLocation);
+  return [text(loc.city), text(loc.state), text(loc.county)].filter(Boolean).join(', ') || null;
+}
+
+const contractorBase: Base = {
+  hub: 'contractor',
+  searchedScope: 'Every jurisdiction ContractorTrustHub name search covers (state licensing-board credential sources) -- not nationwide coverage',
+  matchBreadth: 'Exact, normalized, documented-DBA-alias and prefix/contains-token contractor-name matches, applied before any page limit',
+};
 export const contractorNameAdapter: HubNameAdapter = {
-  ...contractorBase, enabled: false, sourceGrain: 'State contractor credential', dependency: CONTRACTOR_NAME_DEPENDENCY,
-  async search(_name, page) {
-    return { ...contractorBase, state: 'UNSUPPORTED_OPERATION', nameFilterApplied: false, candidates: [], returnedCount: 0, hubReportedTotal: null, page, hasMore: false, truncatedWithoutCursor: false,
-      continuation: { type: 'VERIFY', href: `${CANONICAL_ORIGINS.contractor}/verify?q=${encodeURIComponent(_name)}`, label: 'Search this name on ContractorTrustHub Verify' },
-      message: 'ContractorTrustHub cannot yet be searched by name from here. Its own Verify search can.', latencyMs: 0, calls: 0 };
+  ...contractorBase, enabled: true, sourceGrain: 'State contractor credential',
+  async search(name, page, ctx) {
+    const started = Date.now();
+    const res = await call(ctx, CONTRACTOR_NAME_CANDIDATES_LOCK.url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ contract: CONTRACTOR_NAME_CANDIDATES_CONTRACT, operation: 'name_candidates', name, page, limit: HUB_PAGE_SIZE }),
+    });
+    if ('failure' in res) return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: res.failure }, started, page);
+    const p = res.body;
+    if (text(p.contract) !== CONTRACTOR_NAME_CANDIDATES_CONTRACT || text(p.contractVersion) !== CONTRACTOR_NAME_CANDIDATES_LOCK.version
+      || text(p.schemaFingerprint) !== CONTRACTOR_NAME_CANDIDATES_LOCK.schemaFingerprint || text(p.hub) !== 'contractor' || text(p.operation) !== 'name_candidates') {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch' }, started, page);
+    }
+    const state = text(p.resultState) ?? '';
+    if (!CONTRACTOR_RESULT_STATES.has(state)) return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response' }, started, page);
+    const failureKindRaw = text(p.failureKind);
+    if (res.status !== contractorExpectedStatus(state, failureKindRaw)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported an HTTP status that does not match its own result state.' }, started, page);
+    }
+    if (state === 'INVALID_QUERY') {
+      // Ask's own properly-formed request was rejected: an adapter/contract disagreement, never a user no-match.
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported Ask’s own request as invalid.' }, started, page);
+    }
+    if (state === 'UNSUPPORTED_SCOPE') {
+      // Ask never supplies a jurisdiction, so this is not expected in practice; if it occurs, the
+      // input's scope genuinely was not supported -- not evidence a matching contractor does not exist.
+      return outcome(contractorBase, { state: 'UNSUPPORTED_OPERATION', message: text(p.message) ?? 'ContractorTrustHub could not search this input’s scope by name.' }, started, page);
+    }
+    if (state === 'SOURCE_FAILURE') {
+      // A timeout or unavailable dependency is never a miss (this repo's universal rule). This is the
+      // known Allied-scale wall-clock-variance risk already accepted by Contractor's own release
+      // ticket; a cold-cache timeout here is expected residual behavior, not a new defect.
+      const kind = failureKindRaw === 'timeout' || failureKindRaw === 'unavailable' || failureKindRaw === 'invalid_response' ? failureKindRaw : 'unavailable';
+      const errorCode = text(p.errorCode);
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: kind, message: errorCode ? `ContractorTrustHub source failure: ${errorCode}` : null }, started, page);
+    }
+    // Remaining: COMPLETED_WITH_CANDIDATES, COMPLETED_NO_CANDIDATES, PARTIAL_TRUNCATED -- all require name-filter proof.
+    const nameBlock = record(p.name);
+    if (nameBlock.predicateApplied !== true || !echoesName(text(nameBlock.supplied), name)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'name_filter_not_proven' }, started, page);
+    }
+    // Ask never supplies a jurisdiction; a response scoped to one anyway is a contract/request mismatch.
+    const scope = record(p.scope);
+    if (scope.requestedJurisdiction !== null) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'contract_mismatch', message: 'The specialist reported a jurisdiction-scoped response to an all-jurisdiction request.' }, started, page);
+    }
+    if (!Array.isArray(p.candidates)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist did not return a candidates array.' }, started, page);
+    }
+    const rawCandidates = p.candidates;
+    const pagination = record(p.pagination);
+    if (!validContractorPagination(pagination, page, HUB_PAGE_SIZE, rawCandidates.length)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported pagination that does not match what was requested or returned.' }, started, page);
+    }
+    const hasMore = pagination.hasMore === true;
+    const truncated = pagination.truncated === true;
+    if (!contractorStateConsistent(state, rawCandidates.length, hasMore, truncated)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist reported a result state inconsistent with its own candidate count and pagination.' }, started, page);
+    }
+    // Every element must be independently well-formed -- ONE malformed row invalidates the whole
+    // response rather than being silently dropped alongside otherwise-valid rows.
+    if (!rawCandidates.every(isStructurallyValidContractorRow)) {
+      return outcome(contractorBase, { state: 'TECHNICAL_FAILURE', failureKind: 'invalid_response', message: 'The specialist returned a candidate record in an unexpected shape.' }, started, page);
+    }
+    const mapped: NameCandidate[] = rawCandidates.map((row: Record<string, unknown>) => {
+      const stableKey = text(row.stableKey)!;
+      const displayName = text(row.displayName)!;
+      const entityType = typeof row.entityType === 'string' ? row.entityType : null;
+      const match = record(row.match);
+      const field = text(match.field)!;
+      const matchedValue = text(match.value)!;
+      const method = CONTRACTOR_METHOD[text(match.method)!];
+      const identifiers = records(row.identifiers).flatMap((id) => {
+        const label = text(id.label); const value = text(id.value);
+        return label && value ? [{ label, value }] : [];
+      });
+      const clock = record(record(row.source).clock);
+      const act = action('contractor', record(row.action).href, 'PROFILE', 'ContractorTrustHub');
+      const publicationState = text(row.publicationState)!;
+      return {
+        hub: 'contractor', sourceGrain: 'State contractor credential', stableKey, displayName, entityType,
+        matchedName: matchedValue, matchedField: CONTRACTOR_FIELD_LABEL[field] ?? field.replaceAll('_', ' '),
+        matchMethod: method, hubMatchExplanation: text(match.explanation),
+        identifiers, recordedLocation: contractorRecordedLocation(row), locationMeaning: text(record(row.recordedLocation).meaning),
+        sourceAsOf: text(clock.value), sourceDateLabel: text(clock.label) ?? 'ContractorTrustHub source clock',
+        publicationState, action: act,
+      };
+    });
+    // This contract never asserts an exact total (pagination.total is always null; hasMore is proven
+    // by a one-row probe beyond the page) -- hubReportedTotal stays null for Contractor by design.
+    const truncatedWithoutCursor = truncated && !hasMore;
+    const continuation = truncatedWithoutCursor
+      ? action('contractor', `/verify?q=${encodeURIComponent(name)}`, 'RESEARCH', 'ContractorTrustHub')
+      : null;
+    return finish(contractorBase, name, mapped, rawCandidates.length, {
+      hubReportedTotal: null, hasMore, truncatedWithoutCursor, continuation,
+    }, started, page);
   },
 };
 

@@ -12,6 +12,16 @@ export const INSURANCE_ASK_API = 'https://www.insurancetrusthub.com/api/ask';
 
 export type InsuranceEntityClass = 'person' | 'agency' | 'insurer';
 
+/**
+ * POST-R1-ASK-INTENT-001: "Medicare supplement" / "Medigap" are insurance
+ * products (regulated by state DOI producer licensing), not a Senior/CMS
+ * care-provider concept, even though they contain the word "Medicare".
+ * Without this anchor, "medicare supplement agent" matched neither the
+ * insur(ance|er) anchor nor SeniorTrustHub's own vocabulary, and fell
+ * through to the generic geography-only 4-hub fallback.
+ */
+const MEDICARE_SUPPLEMENT_RE = /\bmedicare\s+supplement\b|\bmedigap\b/i;
+
 export type InsuranceAskMode =
   | 'entity'
   | 'identifier'
@@ -98,7 +108,12 @@ export function detectInsuranceEntityClass(q: string): InsuranceEntityClass | un
   // enough to stand alone; the rest require an actual insurance/insurer anchor elsewhere in the
   // query. Found via TH-ARCH-P0-001's multi-hub guard surfacing a cross-vertical misclassification.
   if (/\bproducers?\b/i.test(q) && !/\bagenc/i.test(q)) return 'person';
-  if (/\b(?:individual|persons?|agents?)\b/i.test(q) && /\binsur(?:ance|er)\b/i.test(q) && !/\bagenc/i.test(q)) return 'person';
+  if (
+    /\b(?:individual|persons?|agents?)\b/i.test(q) &&
+    (/\binsur(?:ance|er)\b/i.test(q) || MEDICARE_SUPPLEMENT_RE.test(q)) &&
+    !/\bagenc/i.test(q)
+  )
+    return 'person';
   if (/\bagenc(y|ies)\b/i.test(q)) return 'agency';
   return undefined;
 }
@@ -108,6 +123,7 @@ export function isInsuranceClassQuery(q: string): boolean {
   return Boolean(
     detectInsuranceEntityClass(q) ||
       /\binsur(ance|er)|insurance (agenc(?:y|ies)|compan(?:y|ies)|brokers?)|homeowners insurance|agency license|\bnpn\b|\bnaic\b|line of authority|\bloa\b/i.test(q) ||
+      MEDICARE_SUPPLEMENT_RE.test(q) ||
       isInsuranceRankingQuery(q) ||
       isInsuranceAdviceQuery(q),
   );

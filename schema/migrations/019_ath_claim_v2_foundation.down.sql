@@ -1,0 +1,20 @@
+-- ATH-CLAIM-V2-001 reversal. Additive columns only; historical ath_claim_intents rows are never deleted.
+DROP TABLE IF EXISTS ath_claim_review_sessions;
+DROP INDEX IF EXISTS ath_claims_open_source_idx;
+ALTER TABLE ath_claims DROP CONSTRAINT IF EXISTS ath_claims_needs_info_paused_check;
+ALTER TABLE ath_claims DROP CONSTRAINT IF EXISTS ath_claims_human_review_seconds_check;
+ALTER TABLE ath_claims DROP CONSTRAINT IF EXISTS ath_claims_acquisition_source_check;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS needs_info_paused_business_hours;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS needs_info_entered_at;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS human_review_active_seconds;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS evidence_ready_at_first_review;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS review_decided_at;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS review_started_at;
+ALTER TABLE ath_claims DROP COLUMN IF EXISTS acquisition_source;
+DROP INDEX IF EXISTS ath_claim_intents_origin_created_idx;
+ALTER TABLE ath_claim_intents DROP CONSTRAINT IF EXISTS ath_claim_intents_source_check;
+ALTER TABLE ath_claim_intents DROP CONSTRAINT IF EXISTS ath_claim_intents_origin_check;
+ALTER TABLE ath_claim_intents DROP COLUMN IF EXISTS receipt_hash;
+ALTER TABLE ath_claim_intents DROP COLUMN IF EXISTS confirmed_at;
+ALTER TABLE ath_claim_intents DROP COLUMN IF EXISTS acquisition_source;
+ALTER TABLE ath_claim_intents DROP COLUMN IF EXISTS intent_origin;

@@ -33,7 +33,7 @@ function layer(publicIds: string[], profiles: Record<string, { profile: unknown 
   };
 }
 
-test('unknown UUID is a cached none state and does not load Neon payload', async () => {
+test('unknown UUID is answered from the existence set and does not load Neon payload', async () => {
   const unknown = randomUUID();
   const { api, counts } = layer([], {});
   const first = await api.read(unknown);
@@ -43,9 +43,12 @@ test('unknown UUID is a cached none state and does not load Neon payload', async
   assert.equal(counts().loadCalls, 0);
   assert.equal(counts().listCalls, 1);
   const second = await api.read(unknown);
-  assert.equal(second.source, 'payload_hit');
+  // R4: negatives are never stored per-ID; the warm existence set answers again with zero Neon work.
+  assert.equal(second.source, 'existence_miss');
+  assert.equal(second.neonQueries, 0);
   assert.equal(counts().listCalls, 1);
   assert.equal(counts().loadCalls, 0);
+  assert.equal(api.stats().cachedPayloads, 0);
 });
 
 test('1,000 distinct unknown contractor IDs do not become 1,000 Neon payload queries', async () => {
@@ -102,10 +105,12 @@ test('cache keys are contractor-scoped (no cross-profile bleed)', async () => {
   assert.equal(rb.state.hasPublicReply, true);
 });
 
-test('public cache control is multi-hour with SWR, not 60 seconds', () => {
-  assert.match(PUBLIC_CACHE_CONTROL, /s-maxage=21600/);
-  assert.match(PUBLIC_CACHE_CONTROL, /stale-while-revalidate=86400/);
-  assert.doesNotMatch(PUBLIC_CACHE_CONTROL, /s-maxage=60[^\d]/);
+test('public edge cache is a short bounded window; Neon protection lives in the data layer, not the CDN', () => {
+  // ATH-CLAIM-V2-001R4 replaced the 6h edge window: it made a first approval invisible for hours. The Neon guard
+  // is the existence set + shared data cache (see the 1,000-unknown-ID test), so a short edge TTL costs no Neon work.
+  assert.match(PUBLIC_CACHE_CONTROL, /s-maxage=60(,|$)/);
+  assert.match(PUBLIC_CACHE_CONTROL, /stale-while-revalidate=60(,|$)/);
+  assert.doesNotMatch(PUBLIC_CACHE_CONTROL, /s-maxage=21600/);
 });
 
 test('empty public state contains no private claim fields', () => {

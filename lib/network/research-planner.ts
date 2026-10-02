@@ -1,8 +1,16 @@
+import { mnAmbiguousNumber, mnIdentifier, mnRefusal, mnRankingAsked, queryLooksLikeMinnesota, classifyMnHub } from './mn-network.ts';
+import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksLikeMichigan, classifyMiHub } from './mi-network.ts';
+import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
+import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksLikeMaryland, classifyMdHub } from './md-network.ts';
+import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
+import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
-import type { UniversalQueryType } from './query-classification.ts';
+import { classifyTnHub, queryLooksLikeTennessee, tnBareLicenseAmbiguous, tnExactCredentialRoute, tnLabeledIdentifier } from './tn-network.ts';
+import { classifyNvHub, nvBareLicenseAmbiguous, nvExactCredentialRoute, nvIdentifierRoute, nvLabeledIdentifier, queryLooksLikeNevada } from './nv-network.ts';
+import { stripTrustQualifierWrapper, type UniversalQueryType } from './query-classification.ts';
 import { FLORIDA_MUNICIPALITY_CROSSWALK, resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 
 export const ASK_RESEARCH_INTENTS = [
@@ -65,8 +73,15 @@ const RECOMMENDATION = /\b(?:best|safest|most\s+trustworthy|legitimate|recommend
 const DEICTIC_ENTITY = /\b(?:this|that)\s+(?:company|firm|facility|place|agency|contractor|roofer|roof\s+guy|mover|moving\s+company|lender|advis(?:er|or)|financial\s+advis(?:er|or)|investment\s+advis(?:er|or)|agent|insurance\s+agent|guy|home\s+health\s+agency|nursing\s+home|assisted\s+living(?:\s+facility)?|hospice|senior\s+home|senior\s+facility)\b|\bmy\s+(?:company|contractor|mover|moving\s+company|lender|advis(?:er|or)|agent|agency)\b|\b(?:hire|research|check)\b[^?.!]{0,80}\b(?:them|him|her)\b/i;
 
 function dedupe<T>(values: T[]): T[] { return [...new Set(values)]; }
+const EXPLICIT_SECOND_TASK = /\b(?:and also|and then|plus|as well as)\s+(?:find|research|look\s+up|verify|compare|browse)\b/i;
 
 function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): SpecialistHubId[] {
+  // A labeled identifier names its specialist even when an unrelated category word follows.
+  // Retain the existing multi-hub choice only when the consumer explicitly asks for a second
+  // task; a lone trailing word ("USDOT 1234567 contractor") is not such a request.
+  if (parsed.identifier && !parsed.identifier.ambiguous && !EXPLICIT_SECOND_TASK.test(query)) {
+    return [parsed.identifier.family.hubId];
+  }
   if(/\bMedicare\s+insurance\b/i.test(query))return ['insurance'];
   const care=careTask(query);
   if(care?.kind==='move_context')return ['move'];
@@ -75,10 +90,17 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
   const hubs = [...parsed.suggestedHubs];
   const explicit: SpecialistHubId[] = [];
   const patterns: Array<[SpecialistHubId, RegExp]> = [
-    ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
+    ['move', /\b(?:move(?:r|rs)?|moving|moving\s+compan(?:y|ies)|relocat(?:e|ing|ion)|USDOT|\bMC\b|DPU\s+certificate|carrier|ship\s+(?:my|a)\s+(?:car|vehicle))\b/i],
     ['lender', /\b(?:lender|mortgage|refinance|refinancing|NMLS|LEI|HMDA|loan\s+estimate|loan\s+officer)\b/i],
     ['insurance', /\b(?:insurance|insurer|NPN|NAIC|producer)\b/i],
-    ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare|star\s+ratings?)\b/i],
+    // POST-R1-ASK-INTENT-001R: bare "Medicare" matched "medicare supplement agent in ohio",
+    // adding 'senior' alongside 'insurance' to candidateHubs and surfacing SeniorTrustHub as a
+    // multi-hub choice -- the exact "Do NOT route 'Medicare supplement agent' to SeniorTrustHub
+    // merely because it contains Medicare" case the original ticket named explicitly. "Medicare
+    // supplement"/"Medigap" are insurance products (mirrors insurance-ask.ts's own
+    // MEDICARE_SUPPLEMENT_RE guard); everything else containing "Medicare" (e.g. "Medicare
+    // certified") stays senior vocabulary.
+    ['senior', /\b(?:nursing\s+(?:home|facility|facilities)|home\s+health|senior\s+care|hospice|CMS|CCN|Medicare(?!\s+supplement)|star\s+ratings?)\b/i],
     // TH-ARCH-P0-001: plural forms ("locksmiths", "electricians") previously fell outside these
     // \b-bounded singular patterns, which starved the intent==='place'&&explicit.length narrowing
     // below of a match and let the generic multi-hub geography fallback leak in as a false
@@ -88,6 +110,32 @@ function inferHubs(query: string, parsed: ReturnType<typeof parseNetworkAsk>): S
   ];
   for (const [hub, pattern] of patterns) if (pattern.test(query)) explicit.push(hub);
   if (isInvestorAdviserSeekingQuery(query)) explicit.push('investor');
+  // ATH-TN-001: Tennessee-only credential words (HIC, LLE, LLP, ACLF, RHA, notice filing) are
+  // classified only when the parsed geography is already Tennessee; other states are unchanged.
+  if (parsed.geography?.stateCode === 'TN' && queryLooksLikeTennessee(query) && !tnBareLicenseAmbiguous(query)) {
+    // An exact Tennessee credential (contractor license, HFC class license, SEC file) names its hub;
+    // any other labeled identifier keeps the shared identifier parser's hub.
+    const tnHub = tnExactCredentialRoute(query)?.hubId ?? (tnLabeledIdentifier(query) ? undefined : classifyTnHub(query));
+    if (tnHub && !explicit.includes(tnHub)) explicit.push(tnHub);
+  }
+  // ATH-NV-001: Nevada-only credential words (RFG, HIC = Home for Individual Residential Care, HCQC, CPCN,
+  // MLO, notice filing) are classified only when Nevada itself is the named state; others are unchanged.
+  if (parsed.geography?.stateCode === 'NV' && queryLooksLikeNevada(query) && !nvBareLicenseAmbiguous(query)) {
+    const nvHub = nvExactCredentialRoute(query)?.hubId ?? (nvLabeledIdentifier(query) ? undefined : classifyNvHub(query));
+    if (nvHub) {
+      const at = explicit.indexOf(nvHub);
+      if (at >= 0) explicit.splice(at, 1);
+      explicit.unshift(nvHub);
+      // Nevada HIC is senior care, not a home improvement contractor.
+      if (nvHub === 'senior' && /\bhic\b/i.test(query)) {
+        const c = explicit.indexOf('contractor');
+        if (c >= 0) explicit.splice(c, 1);
+      }
+    }
+  } else if (parsed.geography?.stateCode !== 'NV') {
+    const nvId = nvIdentifierRoute(query, queryLooksLikeTennessee(query));
+    if (nvId && !explicit.includes(nvId.hubId)) explicit.unshift(nvId.hubId);
+  }
   if(parsed.intent==='place'&&explicit.length)return dedupe(explicit);
   return dedupe([...hubs,...explicit]);
 }
@@ -101,6 +149,7 @@ function entityClass(query: string, parsed: ReturnType<typeof parseNetworkAsk>):
   // leaving the category words un-stripped and falsely read as a literal company name.
   if (classified) return { id: classified.id, label: classified.label, matchedText: classified.matchedText };
   if (parsed.seniorProviderClass) return { id: parsed.seniorProviderClass, label: parsed.seniorProviderClass.replaceAll('_', ' ') };
+  if (/\bdpu\s+certificate\b/i.test(query)) return { id: 'mover', label: 'Moving company', matchedText: 'DPU certificate' };
   if (/\b(?:moving\s+compan(?:y|ies)|movers?)\b/i.test(query)) return { id: 'mover', label: 'Moving company' };
   // TH-DISCOVERY-003: "moving brokers in florida" fell through every branch here (matches neither
   // "moving compan(y|ies)" nor bare "movers?"), landing on ENTITY_LOOKUP_MISSING_IDENTITY -- a
@@ -208,6 +257,20 @@ function explicitEntityName(query: string, entity: AskResearchPlan['entityClass'
   if (introduced) return introduced;
   const evidenceSubject = query.match(/\b(?:complaints?\s+(?:about|against)|research|look\s+up|check)\s+([a-z0-9&.' -]+?)(?=[?.!,]|$)/i)?.[1]?.trim();
   if (evidenceSubject && !/^(?:a|an|the|this|that|my)\b/i.test(evidenceSubject)) return evidenceSubject;
+  // POST-R1-ASK-INTENT-001R (browser QA finding): "is rocket mortgage legit" and "is abbey
+  // delray south medicare certified" never reached any branch below -- lowercase, no quotes/
+  // LLC suffix/"named X" phrasing, and (for the first) no entity class matched at all -- so
+  // this returned undefined and the guided-research UI asked the consumer to re-type the name
+  // it had just been given ("NMLS number or lender name"), contradicting the ticket's explicit
+  // "Rocket Mortgage is extracted as the entity" requirement. Reuse the same trust-qualifier
+  // stripper ask-parse.ts's query-classification.ts already applies, and treat what's left as
+  // the entity name whenever stripping actually removed a wrapper (a narrow, specific trigger,
+  // not a general lowercase-name heuristic).
+  const trustStripped = stripTrustQualifierWrapper(query);
+  if (trustStripped !== query) {
+    const trimmedStripped = trustStripped.replace(/[?.!]+$/g, '').trim();
+    if (trimmedStripped && trimmedStripped.split(/\s+/).length <= 6) return trimmedStripped;
+  }
   if (/\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|LLP|L\.P\.)\b/i.test(query)) return query.replace(/[?.!]+$/g, '').trim();
   if (!entity && /^[A-Z][A-Z0-9&.-]{2,40}$/.test(query.trim())) return query.trim();
   if (entity && !geography && !/\b(?:in|near|nearby|around|within|how|which|what|is\s+this|is\s+my|show|find|need|serving|headquartered)\b/i.test(query)) {
@@ -262,6 +325,134 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const inId=inIdentifier(originalQuestion);
+  const indiana=queryLooksLikeIndiana(originalQuestion);
+  const inBlocked=inRefusal(originalQuestion);
+  const inHub=inId?.hub??(indiana?classifyInHub(originalQuestion):undefined);
+  const inNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const inSeparateTask=Boolean(inId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!inSeparateTask&&(inId||inBlocked||(indiana&&!inNamed&&(inHub||/^(Indiana|IN)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:inAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':inRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':inId?'IDENTIFIER_LOOKUP':inHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:inHub,candidateHubs:inHub?[inHub]:[],identifier:inId?{type:inId.type,value:inId.value,raw:inId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:inBlocked?['sourceOrScope']:[],executionAllowed:!inBlocked&&Boolean(inHub),
+      executionMode:inBlocked||!inHub?'CLARIFY':inId?'IDENTIFIER':'COHORT',
+      clarificationReason:inBlocked??(!inHub?'Open /indiana for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[inId?'EXACT_IDENTIFIER_RECOGNIZED':'INDIANA_RESEARCH_ROUTING',...(inBlocked?['INDIANA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:inId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const wiId = wiIdentifier(originalQuestion);
+  const wi = queryLooksLikeWisconsin(originalQuestion);
+  const wiBlocked = wiRefusal(originalQuestion);
+  const wiHub = wiId?.hub ?? (wi ? classifyWiHub(originalQuestion) : undefined);
+  const wiNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const wiSeparateTask = Boolean(wiId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!wiSeparateTask && (wiId || wiBlocked || (wi && !wiNamed && (wiHub || /^(Wisconsin|WI)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: wiAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : wiRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : wiId ? 'IDENTIFIER_LOOKUP' : wiHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: wiHub, candidateHubs: wiHub ? [wiHub] : [],
+      identifier: wiId ? {type:wiId.type,value:wiId.value,raw:wiId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: wiBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !wiBlocked && Boolean(wiHub), executionMode: wiBlocked || !wiHub ? 'CLARIFY' : wiId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: wiBlocked ?? (!wiHub ? 'Open /wisconsin for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [wiId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'WISCONSIN_RESEARCH_ROUTING', ...(wiBlocked ? ['WISCONSIN_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: wiId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
+  const mdId = mdIdentifier(originalQuestion);
+  const md = queryLooksLikeMaryland(originalQuestion);
+  const mdBlocked = mdRefusal(originalQuestion);
+  const mdHub = mdId?.hub ?? (md ? classifyMdHub(originalQuestion) : undefined);
+  const mdNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const mdSeparateTask = Boolean(mdId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!mdSeparateTask && (mdId || mdBlocked || (md && !mdNamed && (mdHub || /^(Maryland|MD)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: mdAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : mdRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : mdId ? 'IDENTIFIER_LOOKUP' : mdHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: mdHub, candidateHubs: mdHub ? [mdHub] : [],
+      identifier: mdId ? {type:mdId.type,value:mdId.value,raw:mdId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: mdBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !mdBlocked && Boolean(mdHub), executionMode: mdBlocked || !mdHub ? 'CLARIFY' : mdId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: mdBlocked ?? (!mdHub ? 'Open /maryland for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [mdId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MARYLAND_RESEARCH_ROUTING', ...(mdBlocked ? ['MARYLAND_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: mdId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
+  const ctId = ctIdentifier(originalQuestion);
+  const ct = queryLooksLikeConnecticut(originalQuestion);
+  const ctBlocked = ctRefusal(originalQuestion);
+  const ctHub = ctId?.hub ?? (ct ? classifyCtHub(originalQuestion) : undefined);
+  const ctNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const ctSeparateTask = Boolean(ctId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!ctSeparateTask && (ctId || ctBlocked || (ct && !ctNamed && (ctHub || /^(Connecticut|CT)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: ctAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : ctRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : ctId ? 'IDENTIFIER_LOOKUP' : ctHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: ctHub, candidateHubs: ctHub ? [ctHub] : [],
+      identifier: ctId ? {type:ctId.type,value:ctId.value,raw:ctId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: ctBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !ctBlocked && Boolean(ctHub), executionMode: ctBlocked || !ctHub ? 'CLARIFY' : ctId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: ctBlocked ?? (!ctHub ? 'Open /connecticut for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [ctId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'CONNECTICUT_RESEARCH_ROUTING', ...(ctBlocked ? ['CONNECTICUT_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: ctId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
+  const miId = miIdentifier(originalQuestion);
+  const mi = queryLooksLikeMichigan(originalQuestion);
+  const miBlocked = miRefusal(originalQuestion);
+  const miHub = miId?.hub ?? (mi ? classifyMiHub(originalQuestion) : undefined);
+  const miNamed = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const miSeparateTask = Boolean(miId && EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if (!miSeparateTask && (miId || miBlocked || (mi && !miNamed && (miHub || /^(Michigan|MI)( consumer research)?$/i.test(originalQuestion))))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: miAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : miRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : miId ? 'IDENTIFIER_LOOKUP' : miHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: miHub, candidateHubs: miHub ? [miHub] : [],
+      identifier: miId ? {type:miId.type,value:miId.value,raw:miId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: miBlocked ? ['sourceOrScope'] : [],
+      executionAllowed: !miBlocked && Boolean(miHub), executionMode: miBlocked || !miHub ? 'CLARIFY' : miId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: miBlocked ?? (!miHub ? 'Open /michigan for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [miId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MICHIGAN_RESEARCH_ROUTING', ...(miBlocked ? ['MICHIGAN_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: miId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
+  const mnId = mnIdentifier(originalQuestion);
+  const mn = queryLooksLikeMinnesota(originalQuestion);
+  const refusal = mnRefusal(originalQuestion);
+  const mnHub = mnId?.hub ?? (mn ? classifyMnHub(originalQuestion) : undefined);
+  const named = /\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  if (mnId || refusal || (mn && !named && (mnHub || /^(Minnesota|MN)( consumer research)?$/i.test(originalQuestion)))) {
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: mnAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : mnRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : mnId ? 'IDENTIFIER_LOOKUP' : mnHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub: mnHub, candidateHubs: mnHub ? [mnHub] : [],
+      identifier: mnId ? {type:mnId.type,value:mnId.value,raw:mnId.raw} : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? {raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city} : undefined,
+      requestedEvidence: [], missingSlots: refusal ? ['sourceOrScope'] : [],
+      executionAllowed: !refusal && Boolean(mnHub), executionMode: refusal || !mnHub ? 'CLARIFY' : mnId ? 'IDENTIFIER' : 'COHORT',
+      clarificationReason: refusal ?? (!mnHub ? 'Open /minnesota for six separate specialist research sources. No combined total.' : undefined),
+      reasonCodes: [mnId ? 'EXACT_IDENTIFIER_RECOGNIZED' : 'MINNESOTA_RESEARCH_ROUTING', ...(refusal ? ['MINNESOTA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'] : [])],
+      legacyQueryType: mnId ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   if (isUnsupportedSecuritiesAdviceQuery(originalQuestion)) {
     return {
       version: 'ask-research-plan-v1',
@@ -365,6 +556,8 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'HOW_TO_LANGUAGE', 'EXPLAINER_LANGUAGE', 'SPECIFIC_REFERENCE_WITHOUT_IDENTITY',
     'GEOGRAPHY_SCOPE_UNRESOLVED', 'IDENTITY_CONTRADICTS_GEOGRAPHY',
     'IDENTITY_EVIDENCE_FAILED_VALIDATION', 'MULTIPLE_SPECIALIST_HUBS',
-    'UNSUPPORTED_SECURITIES_ADVICE',
+    'UNSUPPORTED_SECURITIES_ADVICE', 'MINNESOTA_SAFETY_REFUSAL',
+    'MICHIGAN_SAFETY_REFUSAL',
+    'CONNECTICUT_SAFETY_REFUSAL',
   ].includes(code));
 }

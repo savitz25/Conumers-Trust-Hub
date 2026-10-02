@@ -1,0 +1,21 @@
+✔ R1-fix. VIP/V.I.P. survives a DIFFERING legal suffix, case, and combinations -- not just the identical-suffix case (28.7594ms)
+✔ R1-fix cross-hub regression: unrelated initialisms, mid-word overlap, separated initials and numeric-leading names are unaffected across hubs (1.7776ms)
+✔ R2-fix. the real adapter, mergeHubPage and buildNameResultsView chain to the Ask cap with a working native-search continuation (7.3532ms)
+✔ R2-fix negative: no continuation URL from the hub means no continuation is fabricated (0.7244ms)
+✔ R3-fix A. NO_MATCH with nonempty candidates, and CANDIDATES with zero rows, are contract failures -- never silently accepted (2.2737ms)
+✔ R3-fix A. a success-shaped body behind a non-200 status is never accepted (0.5504ms)
+✔ R3-fix B. a non-array or primitive-only candidates field is a contract failure, never a silently completed miss (0.9874ms)
+✔ R3-fix B. pagination inconsistent with the request or the actual row count is a contract failure (1.2952ms)
+✔ R3-fix C. unsupported key namespaces and unknown publication states are dropped, not admitted (2.4838ms)
+✔ R3-fix D. a method paired with a field the released engine could never produce is dropped, not merely the intact-vs-deleted-block case (1.8071ms)
+✔ R3-fix E. a GLEIF destination always takes the LEI-bound path, even when mislabeled PROFILE; a real PROFILE link is unaffected (1.3208ms)
+✔ R3-fix E. the RESEARCH continuation is dropped, not just left on the wrong origin, when its query does not match the searched name (0.3966ms)
+✔ R3-fix: identifier syntax and duplicates are enforced without inventing new identifier shapes (0.6733ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1083.1317

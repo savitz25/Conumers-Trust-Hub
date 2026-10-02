@@ -1,0 +1,413 @@
+{
+  "state_code": "NV",
+  "state_name": "Nevada",
+  "ask_path": "/nevada",
+  "ask_canonical": "https://www.asktrusthub.com/nevada",
+  "version": "ath-nv-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_city_routes": false,
+  "nevada_local_phase": "NO",
+  "nevada_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PUBLICATION_CONTRACT",
+  "ask_production": null,
+  "conceptual_statement": "Nevada research stays in six specialist products: the Nevada Transportation Authority household-goods CPCN roster for movers, the Division of Mortgage Lending framework with its enforcement index and HMDA activity, the State Contractors Board active license directory and discipline, the Division of Insurance framework and its own dated census, Health Care Quality and Compliance care classes beside CMS, and separate Nevada adviser registration lenses. Ask routes to those pages. It does not copy their records or add them into one Nevada total.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /nevada pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, and every hub must be CLOSED_PRODUCTION_VERIFIED at its certified SHA and fingerprint, before Ask /nevada is indexable. Any one specialist failure fails the gate.",
+    "verified_at": "2026-09-25T20:43:07.981Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "move",
+      "display": "46 Nevada household-goods CPCN identities",
+      "grain": "Distinct Nevada Transportation Authority household-goods CPCN numbers: 41 on the Active Mover list plus 5 proven by NTA-filed documents. Not USDOT or MC; exact USDOT/MC joins 0. The NTA prints no as-of date."
+    },
+    {
+      "hub_id": "lender",
+      "display": "119,768 Nevada HMDA applications in 2025",
+      "grain": "HMDA 2025 loan applications for Nevada properties: federal loan activity, not a lender, company or MLO count. 69,135 originations and 20,655 denials are separate measures. Lender licensing is verified on NMLS Consumer Access and the SRS search; no bulk roster."
+    },
+    {
+      "hub_id": "contractor",
+      "display": "19,213 active Nevada contractor license numbers",
+      "grain": "Active license numbers in the Nevada State Contractors Board directory (Board as-of 9/25/2026 10:32:43 AM). License numbers, not contractors; 21,937 classification links are a different grain."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "NDOI states 1,652 licensed insurers (as of October 2024)",
+      "grain": "The Division of Insurance's own figure from its 2025 Market Report, dated October 2024. Not a September 2026 identity count and not a company list InsuranceTrustHub holds. Company, agency and producer bulk lists were not acquired."
+    },
+    {
+      "hub_id": "senior",
+      "display": "438 Nevada Residential Facility for Groups licenses",
+      "grain": "Active HCQC RFG licenses (retrieved 2026-09-25). Only 74 hold the Assisted Living endorsement and 223 the Alzheimer's endorsement; an RFG is not assisted living by default. A state license is not CMS certification."
+    },
+    {
+      "hub_id": "investor",
+      "display": "271 APPROVED Nevada state IA firms",
+      "grain": "Firms with APPROVED Nevada state investment-adviser registration in IAPD (2026-09-17). 83 ERA (2026-09-17), 1,982 SEC notice filings (2026-09-18) and 99 principal-office firms (2026-08-27) are separate lenses with separate clocks."
+    }
+  ],
+  "what_makes_nevada_different": [
+    "Move: the Nevada Transportation Authority issues household-goods CPCNs and keeps tariffs on file; a CPCN is not a USDOT or MC number, a tariff is not a quote, and an application is not a certificate.",
+    "Lender: the Division of Mortgage Lending licenses companies, MLOs and escrow through NMLS and its own SRS search, publishes no bulk roster, and keeps an enforcement index back to 2012.",
+    "Contractor: the State Contractors Board licenses businesses with A, B, AB and C classifications and a Board-set monetary limit; the qualified individual is a person, not the license holder.",
+    "Insurance: the Division of Insurance publishes its own licensee census only in its Market Report, dated October 2024; no current company, agency or producer bulk list was available.",
+    "Senior: a Residential Facility for Groups is assisted living only with the state Assisted Living endorsement; Health Care Quality and Compliance also licenses SNFs, Homes for Individual Residential Care, Home Health and hospice, separately from CMS certification.",
+    "Investor: Nevada state IA registration, exempt reporting advisers, SEC notice filings and principal-office firms are separate lenses with separate dates; Securities Division actions were not acquired and no other regulator is substituted."
+  ],
+  "hub_expansion_ledgers": {
+    "move": {
+      "NV_NTA_HHG_DISTINCT_CPCN": 46,
+      "NV_NTA_ACTIVE_MOVER_CERTIFICATES": 41,
+      "NV_NTA_HHG_DOCUMENT_EVIDENCE_NOT_ON_ACTIVE_LIST": 5,
+      "EXACT_USDOT_JOINS": 0,
+      "EXACT_MC_JOINS": 0,
+      "TARIFF_IS_QUOTE": false,
+      "APPLICATION_IS_CERTIFICATE": false,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "lender": {
+      "NMLS_VERIFICATION": "KNOWN",
+      "SRS_VERIFICATION": "KNOWN",
+      "COMPANY_BULK": "NOT_ACQUIRED",
+      "MLO_BULK": "NOT_ACQUIRED",
+      "BRANCH_CENSUS": "NOT_ACQUIRED",
+      "ESCROW_ROSTERS": "NOT_ACQUIRED",
+      "HMDA_2025_APPLICATIONS": 119768,
+      "HMDA_2025_ORIGINATIONS": 69135,
+      "HMDA_2025_DENIALS": 20655,
+      "MLD_ENFORCEMENT_INDEX_ROWS": 189,
+      "MLD_ENFORCEMENT_DOCUMENTS": 188,
+      "MLD_ENFORCEMENT_INDEX_YEARS": "2012-2026",
+      "MLD_DOCUMENTS_READ_YEARS": "2019-2026",
+      "NAME_ONLY_ADVERSE_JOINS": 0,
+      "COMBINED_NEVADA_LENDER_TOTAL": "UNSUPPORTED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "contractor": {
+      "ACTIVE_LICENSE_NUMBERS": 19213,
+      "CLASSIFICATION_RELATIONSHIPS": 21937,
+      "DISCIPLINE_ROWS": 609,
+      "EXACT_ACTIVE_LICENSE_ATTACHMENTS": 287,
+      "QUALIFIER_BULK": "NOT_ACQUIRED",
+      "MONETARY_LIMIT_IS_REVENUE_OR_QUALITY": false,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "insurance": {
+      "COMPANY_BULK": "NOT_ACQUIRED",
+      "AGENCY_BULK": "NOT_ACQUIRED",
+      "PRODUCER_BULK": "NOT_ACQUIRED",
+      "NDOI_CENSUS_CLOCK": "2024-10",
+      "CURRENT_ENFORCEMENT_ORDERS_ACQUIRED": 1,
+      "COMPLAINT_AGGREGATES_ARE_COMPANY_RATES": false,
+      "NAME_ONLY_JOINS": 0,
+      "LEGACY_HUBS_NEVADA_USED": false,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "senior": {
+      "SNF": 58,
+      "SFD": 8,
+      "RFG": 438,
+      "RFG_ASSISTED_LIVING_ENDORSED": 74,
+      "RFG_ALZHEIMER_ENDORSED": 223,
+      "HIC": 145,
+      "ADULT_DAY": 27,
+      "HHA": 306,
+      "HHA_BRANCHES": 9,
+      "HOSPICE_PROGRAMS": 242,
+      "HOSPICE_FACILITIES": 4,
+      "EXACT_STATE_CMS_LINKS": 418,
+      "INSPECTION_INDEX_ROWS": 3942,
+      "STATE_SANCTIONS": 40,
+      "RFG_IS_ASSISTED_LIVING": false,
+      "STATE_LICENSE_IS_CMS_CERTIFICATION": false,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "investor": {
+      "STATE_IA_APPROVED": 271,
+      "ERA_ACTIVE": 83,
+      "NOTICE_FILINGS": 1982,
+      "PRINCIPAL_OFFICE_FIRMS": 99,
+      "STATE_IA_ERA_SOURCE_DATE": "2026-09-17",
+      "NOTICE_SOURCE_DATE": "2026-09-18",
+      "PRINCIPAL_OFFICE_CLOCK": "2026-08-27",
+      "SECURITIES_ENFORCEMENT_CAPABILITY": "KNOWN",
+      "SECURITIES_ENFORCEMENT_ACTIONS": "NOT_ACQUIRED",
+      "SUBSTITUTE_REGULATOR": false,
+      "NAME_ONLY_JOINS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Nevada evidence uses incompatible grains: household-goods CPCN identities, HMDA loan applications, mortgage enforcement index rows, contractor license numbers and classification links, discipline rows, a dated insurance-regulator census, care-class licenses and endorsements, inspection-index rows and sanctions, and adviser registrations, ERA and notice filings. They cannot be summed into a Nevada business, provider, professional or record total."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_WORK_NEEDED_NOW": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/nevada",
+      "snapshot_version": "move-nv-state-intel-v1",
+      "fingerprint": "4a8af0569b5d5d023dbdcd7b37ac30842158282d11e45fd7ffbfd8cfa43d4f80",
+      "certified_release_sha": "d0dddb4e93ec1e5557e0fa006ae020cc2407b2e8",
+      "source_clocks": {
+        "nta_active_certificates": null,
+        "nta_active_certificates_retrieved_at": "2026-09-25T15:05:00Z",
+        "nta_directory": null,
+        "tariff_effective_dates": "not acquired",
+        "generated_at": "2026-09-25T15:30:00Z"
+      },
+      "plain_question": "Who may move household goods within Nevada?",
+      "research_topics": [
+        "NTA household-goods CPCN",
+        "Active Mover certificates",
+        "Mover tariffs on file",
+        "CPCN applications"
+      ],
+      "coverage_summary": "Nevada Transportation Authority household-goods carriers: 46 distinct CPCN identities (41 on the Active Mover list, 5 proven by NTA-filed documents).",
+      "coverage_limitation": "NTA pages print no as-of date. CPCN is not USDOT or MC: exact USDOT joins 0, exact MC joins 0. A tariff is not a quote. An application is not a certificate. Complaint outcomes not published.",
+      "verified_facts": [
+        "46 distinct HHG CPCN identities",
+        "41 Active Mover certificates",
+        "5 HHG certificates proven by NTA documents",
+        "0 exact USDOT joins",
+        "0 exact MC joins"
+      ],
+      "routing_intents": [
+        "movers Nevada",
+        "intrastate mover Nevada",
+        "CPCN Nevada",
+        "Nevada moving tariff"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lending",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/nevada",
+      "snapshot_version": "lender-nv-state-intel-v1",
+      "fingerprint": "a38a2aa9b3929f04c4cbea42a435866e6f1f31e41dc570e0b7ec1a7145ac6400",
+      "certified_release_sha": "a8dafcda82b5e2c561aa38ffd5fad60f097c226d",
+      "data_release_sha": "c6970df5b7c442b89f4ae0f120e0c581114a477c",
+      "source_clocks": {
+        "licensing": "NMLS Consumer Access and Nevada SRS public search (live search; no bulk file)",
+        "enforcement_index_retrieved_at": "2026-09-25T18:46:10Z",
+        "enforcement_order_dates": "per index row, 2012-2026",
+        "hmda": "HMDA 2025",
+        "generated_at": "2026-09-25T18:50:00Z"
+      },
+      "plain_question": "How is mortgage lending licensed in Nevada?",
+      "research_topics": [
+        "Nevada Division of Mortgage Lending (MLD)",
+        "NMLS and SRS verification",
+        "MLD enforcement index",
+        "HMDA 2025 activity"
+      ],
+      "coverage_summary": "MLD regulation mapped; licenses verified on NMLS Consumer Access and the SRS search; 189 enforcement index rows (2012-2026), 188 linked documents; HMDA 2025 activity.",
+      "coverage_limitation": "No Nevada bulk company, MLO, branch or escrow roster (NOT_ACQUIRED). Order documents read 2019-2026 only. Provider-level complaints not acquired. HMDA is federal loan activity, not a lender count.",
+      "verified_facts": [
+        "189 MLD enforcement index rows",
+        "188 linked order documents",
+        "HMDA 2025: 119,768 applications",
+        "HMDA 2025: 69,135 originations",
+        "HMDA 2025: 20,655 denials"
+      ],
+      "routing_intents": [
+        "mortgage lender Nevada",
+        "mortgage broker Nevada",
+        "MLO Nevada",
+        "mortgage servicer Nevada",
+        "Nevada mortgage enforcement"
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/nevada",
+      "snapshot_version": "contractor-nv-state-intel-v1",
+      "fingerprint": "a0fd24f0af96fda1408c53af35675961dc7beb529b1e90336162e12a433ccbaa",
+      "certified_release_sha": "c6835be2c61b98fdaf5959d507a22a78f56ab615",
+      "source_clocks": {
+        "nscb_active_directory_as_of": "9/25/2026 10:32:43 AM (as printed by the Board)",
+        "nscb_directory_retrieved_at": "2026-09-25T17:32:48Z",
+        "nscb_discipline_retrieved_at": "2026-09-25T17:34:33Z",
+        "discipline_action_dates": "2023-01-03 to 2026-09-02",
+        "generated_at": "2026-09-25T18:30:00Z"
+      },
+      "plain_question": "How are Nevada contractors licensed?",
+      "research_topics": [
+        "NSCB business license",
+        "A / B / AB / C classifications",
+        "Monetary limit",
+        "NSCB disciplinary and Board actions"
+      ],
+      "coverage_summary": "Nevada State Contractors Board active directory: 19,213 active license numbers and 21,937 license-to-classification links; 609 disciplinary and Board action rows.",
+      "coverage_limitation": "Active licenses only. License numbers are not contractors. Qualified individuals not acquired in bulk. A monetary limit is not revenue or quality. Discipline attaches only by exact license number (287 rows).",
+      "verified_facts": [
+        "19,213 active license numbers",
+        "21,937 classification links",
+        "609 discipline rows",
+        "287 exact active-license attachments"
+      ],
+      "routing_intents": [
+        "contractor Nevada",
+        "Nevada contractor license",
+        "contractor monetary limit Nevada",
+        "contractor discipline Nevada"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/nevada",
+      "snapshot_version": "insurance-nv-state-intel-v1",
+      "fingerprint": "633d2f8bbcde1f817532ccf3c02e9ba0deda879ed4ebac79046736acbcf19c55",
+      "certified_release_sha": "9bd835860b68507546deb0392bd5d261e327eaeb",
+      "source_clocks": {
+        "ndoi_market_report_census": "2024-10",
+        "complaint_reason_rows": "2022-01-01 to 2024-12-31",
+        "enforcement_order_listed": "2026-06-26",
+        "retrieved_at": "2026-09-25T17:40:12Z",
+        "generated_at": "2026-09-25T17:43:26Z"
+      },
+      "plain_question": "How does Nevada regulate insurers, agencies and producers?",
+      "research_topics": [
+        "NDOI licensing framework",
+        "NDOI-stated census (Oct 2024)",
+        "NDOI enforcement orders",
+        "NDOI complaint data"
+      ],
+      "coverage_summary": "Nevada Division of Insurance framework; NDOI's 2025 Market Report states its own census as of October 2024; one current enforcement order listed; complaint-reason rows 2022-2024.",
+      "coverage_limitation": "Company, agency and producer bulk lists NOT_ACQUIRED. NDOI-stated figures keep their October 2024 clock and are not current identity counts. Complaint rows are reasons, not complaints or company rates.",
+      "verified_facts": [
+        "company bulk NOT_ACQUIRED",
+        "agency bulk NOT_ACQUIRED",
+        "producer bulk NOT_ACQUIRED",
+        "1 current enforcement order listed",
+        "NDOI census clock October 2024"
+      ],
+      "routing_intents": [
+        "insurance company Nevada",
+        "insurance agency Nevada",
+        "insurance agent Nevada",
+        "Nevada insurance enforcement"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior care",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/nevada",
+      "snapshot_version": "senior-nv-state-intel-v1",
+      "fingerprint": "43e036b7d3db32c9c76393a79b51163f5d8de5014d90899213639715dd49b640",
+      "certified_release_sha": "234c6b09a019da362b1c383418d13e3715a5fbca",
+      "source_clocks": {
+        "hcqc_facility_search_retrieved_at": "2026-09-25T18:56:48Z",
+        "hcqc_search_as_of": null,
+        "license_expiration_dates": "per license row",
+        "hcqc_inspection_dates": "2016-04-21 to 2026-09-22",
+        "cms_nursing_home_source": "2026-08-01",
+        "generated_at": "2026-09-25T21:00:00Z"
+      },
+      "plain_question": "Which Nevada care settings are licensed, and which are CMS-certified?",
+      "research_topics": [
+        "HCQC care classes",
+        "RFG Assisted Living and Alzheimer's endorsements",
+        "State inspections and sanctions",
+        "CMS beside the state license"
+      ],
+      "coverage_summary": "HCQC active licenses by class: 58 SNF, 8 SFD, 438 RFG (74 Assisted Living endorsed, 223 Alzheimer's endorsed), 145 HIC, 27 Adult Day, 306 HHA (+9 branches), 242 hospice programs, 4 hospice facilities.",
+      "coverage_limitation": "Active licenses only. An RFG is assisted living only with the endorsement. A state license is not CMS certification; 418 exact state-to-CMS links by printed CCN. Classes and beds are never added. Complaint records request-only.",
+      "verified_facts": [
+        "438 RFG licenses",
+        "74 Assisted Living endorsements",
+        "223 Alzheimer's endorsements",
+        "58 SNF + 8 SFD",
+        "418 exact state-to-CMS links",
+        "3,942 inspection-index rows",
+        "40 state sanctions"
+      ],
+      "routing_intents": [
+        "assisted living Nevada",
+        "Residential Facility for Groups Nevada",
+        "skilled nursing Nevada",
+        "home health Nevada",
+        "hospice Nevada"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment advisers",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/nevada",
+      "snapshot_version": "investor-nv-state-intel-v1",
+      "fingerprint": "951496e8f1ef02f7b2777455e965b0768c0a89c610dbe8d2a3b4ed192661f6f6",
+      "certified_release_sha": "68fa8d10ccc2fe71e61ca078ef26d79a0ea44b15",
+      "source_clocks": {
+        "iapd_state_ia_era": "2026-09-17",
+        "iapd_sec_notice_filing": "2026-09-18",
+        "principal_office_overlay": "2026-08-27",
+        "securities_division_enforcement": "not acquired",
+        "generated_at": "2026-09-25T19:01:50Z"
+      },
+      "plain_question": "How are investment advisers registered in Nevada?",
+      "research_topics": [
+        "Nevada state IA registration",
+        "Exempt reporting advisers",
+        "SEC notice filings",
+        "Securities Division enforcement"
+      ],
+      "coverage_summary": "271 APPROVED Nevada state IA firms and 83 ACTIVE ERA firms (IAPD 2026-09-17); 1,982 SEC notice filings (2026-09-18); 99 Nevada principal-office firms (2026-08-27).",
+      "coverage_limitation": "Separate registration lenses with separate clocks, never added. Securities Division enforcement capability is known but actions were not acquired; no other regulator is substituted. An ERA is not a Nevada-licensed IA.",
+      "verified_facts": [
+        "271 APPROVED state IA",
+        "83 ACTIVE ERA",
+        "1,982 notice filings",
+        "99 principal-office firms",
+        "enforcement actions NOT_ACQUIRED"
+      ],
+      "routing_intents": [
+        "investment adviser Nevada",
+        "RIA Nevada",
+        "ERA Nevada",
+        "notice filing Nevada",
+        "Nevada securities enforcement"
+      ]
+    }
+  ]
+}

@@ -8,6 +8,8 @@ import type {
 import type { RelationshipType } from "@/lib/customer/types";
 import { AdminSecurityService, type AdminRequestContext } from "./security";
 import { evaluateClaimPolicy, type PolicyEvaluation } from "./claim-policy";
+import { claimAcquisitionSourceV2, type ClaimAcquisitionSourceV2 } from "@/lib/customer/claim-v2-funnel";
+import { REVIEW_SLA_LABEL, openClaimPriority, reviewSlaState, type ReviewSlaState } from "@/lib/customer/review-sla";
 
 export type ClaimQueueFilter =
   | "all"
@@ -39,6 +41,16 @@ export type ClaimQueueRow = {
   competingClaims: number;
   assignedRole: string | null;
   nextAction: string;
+  // ATH-CLAIM-V2-001
+  acquisitionSource: ClaimAcquisitionSourceV2;
+  relationshipType: string;
+  slaState: ReviewSlaState;
+  slaLabel: string;
+  businessHoursOpen: number;
+  reviewStartedAt: string | null;
+  humanReviewMinutes: number;
+  evidenceReadyAtFirstReview: boolean | null;
+  isOpen: boolean;
 };
 const ageBand = (h: number) =>
   h < 24 ? "<24h" : h < 48 ? "24-48h" : h < 72 ? "48-72h" : ">72h";
@@ -69,18 +81,28 @@ export class ClaimOperationsService {
     CASE c.status WHEN 'needs_info' THEN 'WAITING_FOR_CLAIMANT' WHEN 'approved' THEN 'RESOLVED_APPROVED' WHEN 'rejected' THEN 'RESOLVED_REJECTED' WHEN 'withdrawn' THEN 'RESOLVED_WITHDRAWN' WHEN 'superseded' THEN 'CLOSED' ELSE 'READY_FOR_REVIEW' END,c.id,c.created_at,c.created_at+interval '72 hours',ARRAY['CLAIM_DOMAIN_SYNC']
     FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id ON CONFLICT(target_type,target_ref) DO NOTHING`);
   }
+  /** ATH-CLAIM-V2-001R4 — false when code is deployed before migration 019; staff surfaces then run in legacy mode. */
+  async schemaReady(): Promise<boolean> {
+    return customerPlatformForSql(this.sql).claimV2SchemaReady();
+  }
   async list(filter: ClaimQueueFilter = "all"): Promise<ClaimQueueRow[]> {
     await this.requireRead();
     await this.ensureCases();
+    // R4: never reference a V2 column before it exists — a failed SELECT would abort the whole admin transaction.
+    const v2Columns = (await this.schemaReady())
+      ? "c.acquisition_source,c.review_started_at::text,c.review_decided_at::text,c.human_review_active_seconds,c.evidence_ready_at_first_review,c.needs_info_entered_at::text,c.needs_info_paused_business_hours"
+      : "'unknown'::text acquisition_source,NULL::text review_started_at,NULL::text review_decided_at,0 human_review_active_seconds,NULL::boolean evidence_ready_at_first_review,NULL::text needs_info_entered_at,0 needs_info_paused_business_hours";
     const rows = (
       await this.sql.query<
         Record<string, unknown>
-      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
+      >(`SELECT c.id::text claim_id,oc.case_id::text,extract(epoch FROM(now()-c.created_at))/3600 age_hours,c.created_at::text submitted_at,${v2Columns},p.hub_id,COALESCE(p.entity_class,'unknown') profile_class,NULLIF(p.home_state,'NA') jurisdiction,COALESCE(p.display_name_snapshot,p.native_slug) display_name,COALESCE(p.identifier_namespace,'identifier') identifier_namespace,p.native_credential_key identifier,c.status claim_status,oc.status case_status,oc.workflow_state,s.role assigned_role,c.relationship_type,c.free_email,
     EXISTS(SELECT 1 FROM ath_management_grants g WHERE g.hub_profile_id=c.hub_profile_id AND g.status='active') existing_grant,(SELECT count(*)::int FROM ath_claims x WHERE x.hub_profile_id=c.hub_profile_id AND x.id<>c.id AND x.status IN('submitted','needs_info','in_review')) competing_claims
     FROM ath_claims c JOIN ath_hub_profiles p ON p.id=c.hub_profile_id JOIN ath_ops_cases oc ON oc.target_ref=c.id LEFT JOIN ath_admin_staff s ON s.staff_id=oc.assigned_staff_id ORDER BY CASE WHEN c.status IN('submitted','needs_info','in_review') THEN 0 ELSE 1 END,c.created_at ASC LIMIT 250`)
     ).rows;
     return rows
       .map((r) => this.row(r))
+      // Open work first: needs_info, then oldest submitted, then in_review. Approved history never buries open work.
+      .sort((a, b) => Number(b.isOpen) - Number(a.isOpen) || (a.isOpen ? openClaimPriority(a.claimStatus) - openClaimPriority(b.claimStatus) || b.ageHours - a.ageHours : 0))
       .filter(
         (r) =>
           filter === "all" ||
@@ -94,8 +116,29 @@ export class ClaimOperationsService {
           (filter === "existing_grant" && r.existingGrant) ||
           (filter === "waiting" &&
             r.workflowState === "WAITING_FOR_CLAIMANT") ||
-          (filter === "aged" && r.ageHours > 72),
+          (filter === "aged" && (r.ageHours > 72 || r.slaState === "OVER_TARGET")),
       );
+  }
+  /** ATH-CLAIM-V2-001 — explicit reviewer timer. */
+  async startReview(claimId: string, input: { evidenceReady?: boolean | null }) {
+    await this.security.require(this.token, "CLAIM_OPS");
+    await this.ensureCases();
+    const result = await customerPlatformForSql(this.sql).startReviewSession({ sessionToken: this.token, claimId, evidenceReady: input.evidenceReady ?? null, ctx: { ip: this.ctx.ip, userAgent: this.ctx.userAgent } });
+    await this.sql.query(`UPDATE ath_ops_cases SET status=CASE WHEN status='OPEN' THEN 'IN_PROGRESS' ELSE status END WHERE target_ref=$1`, [claimId]);
+    await this.security.recordClaimOperation(this.token, { eventType: "CLAIM_REVIEW_SESSION_STARTED", targetRef: claimId, reason: "REVIEW_TIMER", result: result.created ? "SUCCEEDED" : "IDEMPOTENT", after: { evidenceReady: input.evidenceReady ?? null } }, this.ctx);
+    return result;
+  }
+  async stopReview(claimId: string) {
+    await this.security.require(this.token, "CLAIM_OPS");
+    const result = await customerPlatformForSql(this.sql).stopReviewSession({ sessionToken: this.token, claimId, ctx: { ip: this.ctx.ip, userAgent: this.ctx.userAgent } });
+    await this.security.recordClaimOperation(this.token, { eventType: "CLAIM_REVIEW_SESSION_STOPPED", targetRef: claimId, reason: "REVIEW_TIMER", result: "SUCCEEDED", after: { closed: result.closed, humanReviewActiveSeconds: result.humanReviewActiveSeconds } }, this.ctx);
+    return result;
+  }
+  /** R4: null before migration 019 (the page shows the timer as unavailable instead of failing). */
+  async timing(claimId: string) {
+    await this.requireRead();
+    if (!(await this.schemaReady())) return null;
+    return customerPlatformForSql(this.sql).reviewTiming(this.token, claimId);
   }
   private row(r: Record<string, unknown>): ClaimQueueRow {
     const risk: string[] = [];
@@ -111,7 +154,25 @@ export class ClaimOperationsService {
       identityRevalidated: true,
     });
     const h = Number(r.age_hours);
+    const claimStatus = String(r.claim_status);
+    const isOpen = ["submitted", "needs_info", "in_review"].includes(claimStatus);
+    const sla = reviewSlaState({
+      submittedAt: new Date(String(r.submitted_at)),
+      decidedAt: r.review_decided_at ? new Date(String(r.review_decided_at)) : isOpen ? null : new Date(String(r.submitted_at)),
+      now: new Date(),
+      pausedBusinessHours: Number(r.needs_info_paused_business_hours ?? 0),
+      needsInfoEnteredAt: r.needs_info_entered_at ? new Date(String(r.needs_info_entered_at)) : null,
+    });
     return {
+      acquisitionSource: claimAcquisitionSourceV2(r.acquisition_source),
+      relationshipType: String(r.relationship_type ?? "unknown"),
+      slaState: sla.state,
+      slaLabel: REVIEW_SLA_LABEL[sla.state],
+      businessHoursOpen: sla.businessHoursOpen,
+      reviewStartedAt: r.review_started_at ? String(r.review_started_at) : null,
+      humanReviewMinutes: Math.round(Number(r.human_review_active_seconds ?? 0) / 6) / 10,
+      evidenceReadyAtFirstReview: typeof r.evidence_ready_at_first_review === "boolean" ? r.evidence_ready_at_first_review : null,
+      isOpen,
       claimId: String(r.claim_id),
       caseId: String(r.case_id),
       ageHours: h,

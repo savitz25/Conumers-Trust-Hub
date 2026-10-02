@@ -7,6 +7,10 @@ import { resolveResearchScope } from '../network/research-scope.ts';
 import { GUIDED_PHASES, GUIDED_PILOT_HUBS, GUIDED_RESULT_STATES, GUIDED_SESSION_TTL_MS, GUIDED_SESSION_VERSION, type GuidedChoice, type GuidedGeography, type GuidedResearchSession, type GuidedSessionSnapshot } from './contract.ts';
 import { NETWORK_PUBLIC_NAMES } from '../network/registry.ts';
 import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
+import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
+import { investorSecHandoff } from './state-handoff.ts';
+import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 
 /**
  * TH-SEARCH-R1-018 BLOCKER-IDENTIFIER-FILLER-WORD-01.
@@ -22,9 +26,8 @@ import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
 export type LabeledIdentifierMatch = { type: string; value: string };
 // TH-ARCH-P0-001: maps research-planner.ts's lowercase identifier family ids (from
 // identifiers.ts's IDENTIFIER_FAMILIES) to the uppercase display codes this session layer has
-// always exposed on GuidedResearchSession.identifier. Scoped to the financial families the
-// investor/insurance/lender fast paths below actually consult.
-const FINANCIAL_IDENTIFIER_LABELS = { crd: 'CRD', npn: 'NPN', naic_company_code: 'NAIC', nmls: 'NMLS', lei: 'LEI' } as const;
+// always exposed on GuidedResearchSession.identifier.
+const GUIDED_IDENTIFIER_LABELS = { usdot: 'USDOT', mc: 'MC', cms_ccn: 'CCN', crd: 'CRD', npn: 'NPN', naic_company_code: 'NAIC', nmls: 'NMLS', lei: 'LEI', sec_file_number: 'SEC' } as const;
 export function parseLabeledIdentifier(text: string, digitLabels: readonly string[], options: { anchored?: boolean; leiSupported?: boolean } = {}): LabeledIdentifierMatch | null {
   const { anchored = false, leiSupported = false } = options;
   const start = anchored ? '^' : '\\b';
@@ -119,15 +122,23 @@ export function parseGuidedGeography(raw: string): GuidedGeography | null {
   };
   if (/^\d{5}$/.test(value)) return { type: 'zip', value, meaning: 'Recorded ZIP in the specialist source; not service availability.' };
   const parsed = parseNetworkAsk(`providers in ${value}`);
+  // POST-R1-ASK-INTENT-001 Problem E: ask-parse.ts's generic Florida branch now surfaces the
+  // crosswalk county (countyName) for every known city, not just Broward/Palm Beach, so a bare
+  // "Boca Raton" now also carries a countyName. Checking countyName before city here would flip
+  // this to type:'county' for every FL crosswalk city, silently breaking every existing consumer
+  // gated on type==='city' (e.g. specialists.ts executeInsurance's local-directory handoff, which
+  // reads the resolved county off a still-city-typed geography, mirroring the pre-existing Summit/
+  // NJ city+county case above). Keep type:'city' whenever a specific city is known; still expose
+  // the resolved county via the `county` field rather than dropping it.
+  if (parsed.geography?.city) return { type: 'city', value: parsed.geography.city, city: parsed.geography.city, county: parsed.geography.countyName?.replace(/ County$/i, ''), stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded city/address geography; not service territory.' };
   if (parsed.geography?.countyName) return { type: 'county', value: parsed.geography.countyName.replace(/ County$/i, ''), county: parsed.geography.countyName.replace(/ County$/i, ''), stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded county geography; not service territory.' };
-  if (parsed.geography?.city) return { type: 'city', value: parsed.geography.city, city: parsed.geography.city, stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded city/address geography; not service territory.' };
   if (parsed.geography?.stateCode) return { type: 'state', value: parsed.geography.stateCode, stateCode: parsed.geography.stateCode, stateName: parsed.geography.stateName, meaning: 'Recorded state geography; not service territory.' };
   if (/broward/i.test(value)) return { type: 'county', value: 'Broward', county: 'Broward', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Broward County geography; not service territory.' };
   if (/palm\s*beach/i.test(value)) return { type: 'county', value: 'Palm Beach', county: 'Palm Beach', stateCode: 'FL', stateName: 'Florida', meaning: 'Recorded Palm Beach County geography; not service territory.' };
   return { type: 'city', value, city: value, meaning: 'Recorded city/address geography where supported; not service territory.' };
 }
 
-function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): GuidedGeography | undefined {
+export function geographyFromParsed(parsed: ReturnType<typeof parseNetworkAsk>): GuidedGeography | undefined {
   const geography = parsed.geography;
   if (!geography) return undefined;
   const stateSuffix = geography.stateName ? `, ${geography.stateName}` : '';
@@ -175,11 +186,9 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   // TH-ARCH-P0-001: consume the canonical planner's identifier extraction (ask-parse.ts's
   // matchIdentifier, now filler-word-hardened -- see IDENTIFIER_FILLER_SOURCE) instead of
   // independently re-parsing the raw query with a second implementation. Scoped to the same
-  // financial identifier families the prior duplicate parser covered (CRD/NPN/NAIC/NMLS/LEI);
-  // USDOT/MC/CCN/state-license identifiers are handled by the generic hub-resolution path below,
-  // which already reads parsed.identifier directly.
-  if (plan.identifier && plan.identifier.type in FINANCIAL_IDENTIFIER_LABELS) {
-    session.identifier = { type: FINANCIAL_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof FINANCIAL_IDENTIFIER_LABELS], value: plan.identifier.value };
+  // labeled identifier families, before any generic hub keyword paths below.
+  if (plan.identifier && plan.identifier.type in GUIDED_IDENTIFIER_LABELS) {
+    session.identifier = { type: GUIDED_IDENTIFIER_LABELS[plan.identifier.type as keyof typeof GUIDED_IDENTIFIER_LABELS], value: plan.identifier.value };
   }
 
   // TH-DISCOVERY-002: a live-rate-shopping request ("lowest mortgage rates today") has no entity
@@ -227,8 +236,26 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     };
   }
 
-  const investorIntent=/\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
-  if(investorIntent){
+  // The planner's labeled identifier is authoritative. A stray category word elsewhere in
+  // the question must not let one of the keyword fast paths below change its hub; doing so
+  // produces a session the execution authorization guard correctly rejects.
+  if (session.identifier && plan.primaryHub === 'move' && ['USDOT', 'MC'].includes(session.identifier.type)) {
+    return {...session, hub:'move', moveMode:'identifier', entityClass:'identifier', identityName:undefined,
+      geography:undefined, phase:'EXECUTE', missingFields:[], availableChoices:[], nextAction:'execute'};
+  }
+  if (session.identifier?.type === 'CCN' && plan.primaryHub === 'senior') {
+    return {...session, hub:'senior', identityName:undefined, geography:undefined,
+      phase:'EXECUTE', missingFields:[], availableChoices:[], nextAction:'execute'};
+  }
+  const secFile = q.match(/\bSEC\s+(?:file\s+(?:number\s+)?)?(\d{3}-\d{3,})\b/i)?.[1];
+  if (plan.primaryHub === 'investor' && (session.identifier?.type === 'SEC' || secFile)) {
+    const handoff = investorSecHandoff(plan.requestedGeography?.stateCode);
+    return {...session, hub:'investor', identifier:{type:'SEC',value:session.identifier?.value ?? secFile!}, phase:'CLARIFY', missingFields:[], availableChoices:[],
+      nextAction:`A labeled SEC file number belongs to InvestorTrustHub, but this Guided Research contract only executes exact CRD lookups. Continue at ${handoff.label} to verify the SEC file number: ${handoff.href}. Ask will not treat it as a CRD.`};
+  }
+
+  const investorIntent=(plan.primaryHub === 'investor' && Boolean(session.identifier)) || /\b(?:investment\s+advis(?:er|or)|advis(?:er|or)s?|advisory\s+firm|\bRIA\b|\bRIAs\b|\bERA\b|\bERAs\b|\bCRD\b|Form\s+ADV|IARD)\b/i.test(q);
+  if(investorIntent && (!session.identifier || plan.primaryHub === 'investor')){
     session.hub='investor';session.geography=financialGeography;
     if(/^i\s+need\s+an?\s+investment\s+advis(?:er|or)\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['investorResearchMode'],availableChoices:INVESTOR_CHOICES,nextAction:'What would you like to research?'};
     session.investorResearchMode=session.identifier?'identifier':/\bnamed\s+(.+)$/i.test(q)?'identity_name':'firm_cohort';
@@ -250,7 +277,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   // precedent already in lenderIntent below; bounded to a short list of major P&C/health carriers
   // used only for hub routing, not a new dataset.
   const insuranceIntent=/\b(?:insurance|insurers?|\bNPN\b|\bNAIC\b|State\s+Farm|Allstate|GEICO|Progressive|Nationwide|Farmers|USAA|Liberty\s+Mutual|Travelers)\b/i.test(q);
-  if(insuranceIntent){
+  if(insuranceIntent && (!session.identifier || plan.primaryHub === 'insurance')){
     session.hub='insurance';session.geography=financialGeography;
     if(/^i\s+need\s+help\s+with\s+insurance\s*[?.!]*$/i.test(q)||/\binsurance\s+provider\b/i.test(q)||/insurance\s+complaints\s+against\s+a\s+company/i.test(q)||/insurance\s+professional\s+near\s+me/i.test(q))return {...session,phase:'CLARIFY',missingFields:['insuranceEntityClass'],availableChoices:INSURANCE_CHOICES,nextAction:'What kind of insurance entity do you want to research?'};
     // TH-SEARCH-R1-018 BLOCKER-INSURANCE-01: a specific, defensible insurance entity name found
@@ -290,10 +317,27 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     // returns the entire ~82k-agency population). A ZIP or bare city request must never fall
     // through to that unscoped cohort; hand off to InsuranceTrustHub's own certified ZIP/local
     // directory /ask flow instead, which does support it.
+    // POST-R1-INS-LOCAL-001: this gate only ever recognized zip/city geography, so an explicit
+    // county phrasing ("insurance agent in broward county") never set local_directory_handoff at
+    // all -- it fell straight through to the generic cohort branch below and silently returned
+    // the full unscoped statewide population as if it were a real, successful result, with no
+    // disclosure that the requested county scope was never applied. specialists.ts's
+    // executeInsurance already reads a county off session.executionScope.normalizedRequestedGeography
+    // for exactly this case (it was only ever reachable via a bare-city request that then also
+    // carried a county, e.g. "insurance agent in miami"); this just lets an explicit county
+    // phrasing reach that same, already-existing code path instead of silently mislabeling
+    // CREDENTIAL_JURISDICTION geography as if it were a county-scoped directory result.
     if(!session.identityName&&!session.identifier){
       const zip=q.match(/\bzip\s*(?:code)?\s*#?\s*(\d{5})\b/i)?.[1];
       const zipGeography=zip?parseGuidedGeography(zip)??session.geography:session.geography;
-      if(zip||session.geography?.type==='zip'||session.geography?.type==='city'){
+      // POST-R1-INS-LOCAL-001: county is only routed into local_directory_handoff for the
+      // 'agency' entity class -- that is the only class the real local-directory fetch below
+      // (specialists.ts's executeInsurance) can ever attempt. Producer/legal_insurer + county
+      // must keep going through the normal cohort path so the existing automatic state-broadening
+      // (and the genuine, geography-independent producer mass-listing restriction it then hits)
+      // still runs -- routing them here too would divert them into a dead-end local-directory
+      // message for a fetch they were never going to attempt, silently skipping that broadening.
+      if(zip||session.geography?.type==='zip'||session.geography?.type==='city'||(session.geography?.type==='county'&&session.insuranceEntityClass==='agency')){
         return {...session,geography:zipGeography,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute',insuranceResearchMode:'local_directory_handoff'};
       }
     }
@@ -301,7 +345,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   }
 
   const lenderIntent=/\b(?:mortgage|lenders?|\bNMLS\b|\bLEI\b|HMDA|FHA|VA|USDA|originations?|applications?|denials?|Rocket\s+Mortgage|Newrez)\b/i.test(q);
-  if(lenderIntent){
+  if(lenderIntent && (!session.identifier || plan.primaryHub === 'lender')){
     session.hub='lender';session.geography=financialGeography;
     if(/^i\s+need\s+a\s+mortgage\s+lender\s*[?.!]*$/i.test(q))return {...session,phase:'CLARIFY',missingFields:['lenderResearchMode'],availableChoices:LENDER_CHOICES,nextAction:'What would you like to research?'};
     const genericStateLenders=/^lenders?\s+in\s+(?:Texas|TX)\s*[?.!]*$/i.test(q);
@@ -327,7 +371,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
     session.entityClass=session.lenderResearchMode==='unsupported_person_branch'?'mlo_or_branch':'hmda_reporting_institution';
     return {...session,phase:'EXECUTE',missingFields:[],availableChoices:[],nextAction:'execute'};
   }
-  if (/\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
+  if ((!session.identifier || plan.primaryHub === 'contractor') && /\b(?:electrician|electrical\s+contractor)\b/i.test(q)) {
     const geography=geographyFromParsed(parsed);
     return { ...session,hub:'contractor',identityName:undefined,trade:'electrical',entityClass:'credential_record',geography,phase:geography?'EXECUTE':'COLLECT',missingFields:geography?[]:['geography'],nextAction:geography?'execute':'Where is the property?' };
   }
@@ -344,7 +388,7 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   const hub = plan.primaryHub ?? parsedHub ?? (njTrade?'contractor':undefined);
   if (!hub) return null;
   session.hub = hub;
-  session.identifier = parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
+  session.identifier ??= parsed.identifier ? { type: parsed.identifier.family.id, value: parsed.identifier.raw.replace(/^.*?([A-Z0-9-]+)$/i, '$1') } : undefined;
   // TH-SEARCH-R1-016: prefer research-planner's entity-name extraction (recognizes a
   // company name embedded alongside route/journey language, e.g. "Can JK Moving handle
   // my move from Virginia to Florida?") over the legacy whole-question fallback below,
@@ -353,6 +397,27 @@ function createUnscopedGuidedSession(question: string): GuidedResearchSession | 
   if (parsed.geography) session.geography = parsedGeography;
 
   if (hub === 'senior') {
+    // POST-R1-ASK-INTENT-001: parsed.seniorProviderClass may now be memory_care/assisted_living
+    // (Problem C/F vocabulary), but GuidedResearchSession.providerClass stays contractually
+    // limited to the 3 classes SeniorTrustHub's specialist can actually execute (contract.ts) --
+    // assigning an unsourced class here would either fail TypeScript or silently claim a
+    // capability that does not exist. Route those two classes to an honest terminal CLARIFY
+    // instead (mirrors Section H / senior-ask.ts's seniorFailClosedReason).
+    if (parsed.seniorProviderClass === 'memory_care' || parsed.seniorProviderClass === 'assisted_living') {
+      if (parsed.seniorProviderClass === 'assisted_living' && plan.requestedGeography?.stateCode === 'MD') {
+        return {...session, entityClass:'assisted_living', phase:'EXECUTE', missingFields:[], availableChoices:[],
+          nextAction:'Maryland assisted living is supported by the statewide SeniorTrustHub Maryland evidence. Continue there to research licensed Assisted Living Programs; no city-level provider search is implied.'};
+      }
+      const label = SENIOR_PROVIDER_CLASS_LABEL[parsed.seniorProviderClass];
+      return {
+        ...session,
+        entityClass: parsed.seniorProviderClass,
+        phase: 'CLARIFY',
+        missingFields: ['providerClass'],
+        availableChoices: CARE_CHOICES.filter((c) => c.value !== 'assisted_living' && c.value !== 'memory_care'),
+        nextAction: `${label} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available. Choose a supported care setting, or search elsewhere for ${label.toLowerCase()}.`,
+      };
+    }
     session.providerClass = parsed.seniorProviderClass;
     session.entityClass = parsed.seniorProviderClass;
     if (session.identifier || session.providerClass && session.geography) return { ...session, phase: 'EXECUTE', nextAction: 'execute' };
@@ -432,6 +497,13 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  const indiana=inResearchHandoff(session.researchPlan);
+  if(indiana)return {...session,hub:indiana.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`${inCaveat(indiana.hub,question)} Continue at ${indiana.label} Indiana: ${indiana.href}. Ask has not executed a provider cohort.`};
+  const wiSenior=wiSeniorStateResearch(session.researchPlan);
+  if(wiSenior)return {...session,hub:'senior',entityClass:wiSenior.classId,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub Wisconsin. Continue at ${wiSenior.href}; Ask has not executed a provider cohort.`};
+  if(session.hub==='senior'&&session.entityClass==='assisted_living'&&session.researchPlan.requestedGeography?.stateCode==='MD')return session;
   if(session.researchPlan.reasonCodes.includes('CARE_TASK'))return session;
   // TH-ARCH-P0-001: the multi-hub guard above already produced its own CLARIFY (with a hub-choice
   // menu and an explanatory message) for a query the planner recognized as spanning multiple

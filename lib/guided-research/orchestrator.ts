@@ -1,5 +1,7 @@
-import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult } from './contract.ts';
-import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, parseGuidedGeography, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import type { GuidedAction, GuidedApiResponse, GuidedResearchSession, GuidedExecutionResult, GuidedPilotHub } from './contract.ts';
+import { GUIDED_PILOT_HUBS } from './contract.ts';
+import { createGuidedSession, parseLabeledIdentifier, refreshCareSession, CARE_CHOICES, INSURANCE_CHOICES, INVESTOR_CHOICES, LENDER_CHOICES, MOVE_CHOICES, parseGuidedGeography, geographyFromParsed, pushHistory, restorePrevious, TRADE_CHOICES, validateGuidedSession } from './session.ts';
+import { parseNetworkAsk } from '../network/ask-parse.ts';
 import {careLocation,initialCareRatingFilters,type CareSetting} from '../network/care-task.ts';
 import {planAskResearch} from '../network/research-planner.ts';
 import {validateAskQuestion} from '../network/ask-request.ts';
@@ -7,6 +9,12 @@ import { buildSeniorClassPreviewResult, executeGuidedSpecialist, isGuidedExecuti
 import { planRequiresImmediateClarification } from '../network/research-planner.ts';
 import { resolveResearchScope } from '../network/research-scope.ts';
 import { resolveGuidedNextActions } from '../network/guided-next-actions.ts';
+import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/mn-network.ts';
+import { mdSpecialistUrl } from '../network/md-network.ts';
+import { investorSecHandoff } from './state-handoff.ts';
+import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
+import { rewriteMoveSpecialistHref } from '../network/move-origin.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -42,6 +50,37 @@ function validateSelectedFilters(session: GuidedResearchSession): void {
   for (const [field, value] of Object.entries(session.selectedFilters)) validateFilter(session, field, value);
 }
 
+// POST-R1-ASK-MULTIHUB-001: continuation for a validated `hub:${hubId}` selection out of the
+// multi-hub CLARIFY state. Deliberately reuses each hub's own existing, already-shipped
+// "which research mode?" entry prompt (the exact choice constants and nextAction text
+// afterChoice's *_mode:explain branches already return) rather than re-deriving new routing --
+// the session then continues through those same, already-tested branches for every subsequent
+// click. Geography already resolved for the original question is carried over so a state/county
+// the user already typed is not asked for a second time; nothing about a specific entity/trade/
+// class is guessed, so an unexecutable request still correctly reaches the existing honest
+// unsupported/clarification state via the normal downstream path.
+function enterChosenHub(session: GuidedResearchSession, hubId: GuidedPilotHub): GuidedResearchSession {
+  const parsed = parseNetworkAsk(session.originalQuestion);
+  const geography = geographyFromParsed(parsed);
+  const base = { ...session, hub: hubId, geography: geography ?? session.geography, availableChoices: [] as GuidedResearchSession['availableChoices'] };
+  if (hubId === 'senior') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['providerClass'], availableChoices: CARE_CHOICES, nextAction: 'What kind of care are you looking for?' };
+  }
+  if (hubId === 'contractor') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['trade'], availableChoices: TRADE_CHOICES, nextAction: 'Tell us what kind of work you need.' };
+  }
+  if (hubId === 'move') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['moveMode'], availableChoices: MOVE_CHOICES, nextAction: 'What would you like to research?' };
+  }
+  if (hubId === 'investor') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['investorResearchMode'], availableChoices: INVESTOR_CHOICES, nextAction: 'Choose firm research, a CRD, or a specific firm name. Individual representatives are not published.' };
+  }
+  if (hubId === 'insurance') {
+    return { ...base, phase: 'CLARIFY', missingFields: ['insuranceEntityClass'], availableChoices: INSURANCE_CHOICES, nextAction: 'Choose agency, legal insurer, producer, or an exact identifier.' };
+  }
+  return { ...base, phase: 'CLARIFY', missingFields: ['lenderResearchMode'], availableChoices: LENDER_CHOICES, nextAction: 'Choose property-market activity, a lender name, an identifier, or complaint evidence.' };
+}
+
 function afterChoice(session: GuidedResearchSession, value: string): GuidedResearchSession {
   const next = pushHistory(session);
   if(value.startsWith('scope_state:')){
@@ -59,6 +98,26 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
     return touch({...next,executionScope,researchPlan:{...session.researchPlan,executionAllowed:true,executionMode:'COHORT',missingSlots:[],clarificationReason:undefined,reasonCodes:[...session.researchPlan.reasonCodes,'USER_SELECTED_REGION_COMPONENT']},geography:selected,availableChoices:[],missingFields:[],phase:'EXECUTE',nextAction:'execute'});
   }
   if(value==='scope_other')return touch({...next,availableChoices:[],missingFields:['geography'],phase:'COLLECT',nextAction:'Enter another city or county in the requested area.'});
+  // POST-R1-ASK-MULTIHUB-001: session.ts's candidateHubs.length>1 branch (base(), pre-existing
+  // since commit 0b0b767, unrelated to Post-R1 intent work) renders SELECT_CHOICE options shaped
+  // `hub:${hubId}` whenever a query touches more than one specialist area (e.g. "is state farm
+  // licensed in texas", "electrician mortgage lender New Jersey") -- but no branch here ever
+  // consumed that value format. Every hub-specific branch below requires session.hub to already
+  // be set, which is never true in this multi-hub CLARIFY state (session.hub stays undefined by
+  // design), so execution fell through to the catch-all `throw new Error('invalid_hub')` at the
+  // bottom of this function, surfaced to the user as "The Guided Research action or session was
+  // invalid." This is the fix: the chosen hub must be one this exact session actually offered
+  // (session.researchPlan.candidateHubs, not just "some known hub id" and not just "some string
+  // in availableChoices" -- both are checked) before the session is allowed to commit to it.
+  if (value.startsWith('hub:')) {
+    if (session.hub !== undefined) throw new Error('invalid_hub_selection');
+    const hubId = value.slice('hub:'.length);
+    const isKnownPilotHub = (GUIDED_PILOT_HUBS as readonly string[]).includes(hubId);
+    const wasOfferedThisSession = (session.researchPlan.candidateHubs as readonly string[]).includes(hubId);
+    const matchesAdvertisedChoice = session.availableChoices.some((c) => c.value === value);
+    if (!isKnownPilotHub || !wasOfferedThisSession || !matchesAdvertisedChoice) throw new Error('invalid_hub_selection');
+    return touch(enterChosenHub(next, hubId as GuidedPilotHub));
+  }
   if (session.hub === 'senior') {
     if(session.researchPlan.reasonCodes.includes('CARE_TASK')){
       if(!session.availableChoices.some(c=>c.value===value))throw new Error('stale_or_invalid_choice');
@@ -66,6 +125,24 @@ function afterChoice(session: GuidedResearchSession, value: string): GuidedResea
       return touch(refreshCareSession({...clearExecutionState(next),selectedFilters:initialCareRatingFilters(session.originalQuestion,value as CareSetting),identifier:undefined,identityName:undefined},value as CareSetting,session.geography));
     }
     if (value === 'explain_care') return touch({ ...next, phase: 'CLARIFY', missingFields: ['providerClass'], nextAction: 'Choose a care setting after reviewing the differences.' });
+    // POST-R1-ASK-INTENT-001 Section G: CARE_CHOICES (session.ts) has always rendered
+    // "Assisted living" and "Memory care" as clickable options here, but this non-CARE_TASK
+    // branch only ever accepted nursing_home/home_health/hospice -- clicking a choice the
+    // system itself just offered threw invalid_choice, which is exactly the "a valid
+    // generated action invalidates its own session" defect. SeniorTrustHub's CMS Care
+    // Compare source genuinely does not cover these two classes (same limitation already
+    // encoded in senior-ask.ts's SENIOR_UNSOURCED_PROVIDER_CLASSES/seniorFailClosedReason),
+    // so the fix is an honest terminal CLARIFY, not silently accepting an unexecutable class.
+    if (value === 'assisted_living' || value === 'memory_care') {
+      const label = value === 'assisted_living' ? 'Assisted Living' : 'Memory Care';
+      return touch({
+        ...next,
+        phase: 'CLARIFY',
+        missingFields: ['providerClass'],
+        availableChoices: next.availableChoices.filter((c) => c.value !== 'assisted_living' && c.value !== 'memory_care'),
+        nextAction: `${label} is licensed per-state and is not part of the CMS Care Compare data SeniorTrustHub currently sources (which covers Nursing Home, Home Health, and Hospice). A state-specific source would be required — this is not yet available. Choose a supported care setting, or search elsewhere for ${label.toLowerCase()}.`,
+      });
+    }
     if (!['nursing_home','home_health','hospice'].includes(value)) throw new Error('invalid_choice');
     return touch({ ...clearExecutionState(next), providerClass: value as GuidedResearchSession['providerClass'], entityClass: value, geography: undefined, identifier:undefined, identityName:undefined, availableChoices: [], missingFields: ['geography'], phase: 'COLLECT', nextAction: 'Where does she need care?' });
   }
@@ -200,6 +277,59 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
     else if (input.action.type==='RESET') session=createGuidedSession(session.originalQuestion)!;
   }
   let result:GuidedExecutionResult|undefined;
+  if (session.hub === 'investor' && session.identifier?.type === 'SEC') {
+    const secFileNumber = session.identifier.value;
+    const handoff = investorSecHandoff(session.researchPlan.requestedGeography?.stateCode);
+    const message = `A labeled SEC file number belongs to InvestorTrustHub. Continue at ${handoff.label} to verify it; Ask will not treat it as a CRD.`;
+    session = touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result = {specialist:'investor',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:'Verify the SEC file number',consumerMessage:message,
+      interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
+      limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const indiana=inResearchHandoff(session.researchPlan);
+  if(indiana&&session.hub===indiana.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${inCaveat(indiana.hub,session.originalQuestion)} ${city?`${city} is context only; no city provider search or city page was executed. `:''}Continue at ${indiana.label} Indiana. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:indiana.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Indiana ${indiana.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Indiana statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-in-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:indiana.href,label:`Open ${indiana.label} Indiana`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:indiana.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const wiSenior=wiSeniorStateResearch(session.researchPlan);
+  if(session.hub==='senior'&&wiSenior){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub Wisconsin. ${city?`${city} is context only; no city provider search or city page was executed. `:''}Continue at the Wisconsin research page. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:'senior',executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Wisconsin ${wiSenior.label} research`,consumerMessage:message,
+      interpretation:[{label:'Requested class',value:wiSenior.label},{label:'Research geography',value:'Wisconsin statewide'},...(session.identifier?.type==='CCN'?[{label:'CCN',value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-wi-network-release-v1'},
+      limitations:['Ask is a state research gateway; no provider records were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:wiSenior.href,label:'Open SeniorTrustHub Wisconsin'}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'senior',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const mnPlan = planAskResearch(session.originalQuestion);
+  if (mnPlan.reasonCodes.includes('MINNESOTA_RESEARCH_ROUTING') || mnPlan.reasonCodes.includes('MINNESOTA_SAFETY_REFUSAL') || mnIdentifier(session.originalQuestion)) {
+    const refusal = mnRefusal(session.originalQuestion);
+    const hub = mnPlan.primaryHub;
+    const message = refusal ?? (hub ? mnCaveat(hub) : 'Choose a Minnesota specialist on the state gateway.');
+    session = touch({...session, researchPlan:mnPlan, phase:refusal?'CLARIFY':'DEEP_LINK', availableChoices:[], availableRefinements:[], nextActions:[], nextAction:message});
+    if (hub) result = {specialist:hub, executionOccurred:false, resultState:refusal?'INVALID_QUERY':'UNSUPPORTED_CAPABILITY', consumerHeading:refusal?'Clarify this research request':'Continue at the Minnesota specialist', consumerMessage:message, interpretation:mnPlan.identifier?[{label:mnPlan.identifier.type,value:mnPlan.identifier.value}]:[], rows:[], total:0, refinements:[], provenance:{contract:'ath-mn-network-release-v1'}, limitations:['Ask is a gateway. No specialist records were retrieved or copied.'], destinations:refusal?[]:[{type:'STATE_RESEARCH',href:mnSpecialistUrl(hub),label:'Open Minnesota research'}], latencyMs:0, firstUsefulResult:true, nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub,phase:session.phase,resultState:result?.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  if (session.hub === 'senior' && session.entityClass === 'assisted_living' && session.researchPlan.requestedGeography?.stateCode === 'MD') {
+    const href = mdSpecialistUrl('senior');
+    const message = 'Maryland has statewide Assisted Living Program evidence at SeniorTrustHub. Continue there to research that licensed class. Ask has not retrieved a provider cohort or made a city-level claim.';
+    session = touch({...session, phase:'DEEP_LINK', missingFields:[], availableChoices:[], nextAction:message});
+    result = {specialist:'senior', executionOccurred:false, resultState:'UNSUPPORTED_CAPABILITY', consumerHeading:'Maryland assisted living research', consumerMessage:message,
+      interpretation:[{label:'Requested class',value:'Assisted Living Programs'},{label:'Research geography',value:'Maryland statewide'}], rows:[],total:0,refinements:[],
+      provenance:{contract:'ath-md-network-release-v1'},limitations:['Ask is a gateway; no provider records were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href,label:'Open Maryland assisted living research'}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:'senior',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;
   if (executionRequested && !session.researchPlan.executionAllowed && !planRequiresImmediateClarification(session.researchPlan)) {
@@ -208,7 +338,7 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
   const specialistCapabilityCheck=(session.hub==='contractor'&&session.executionScope.requestedGeographyMeaning==='SERVICE_TERRITORY')||(session.hub==='insurance'&&session.insuranceResearchMode==='local_directory_handoff');
   if (executionRequested && !session.executionScope.executionAllowed&&!specialistCapabilityCheck) {
     session=touch({...session,phase:'CLARIFY',nextAction:session.executionScope.disclosure??'The requested scope cannot be executed safely.'});
-    if(['move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(session.executionScope.requestedGeographyMeaning??''))result={specialist:session.hub!,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'Requested scope is not executable',consumerMessage:session.executionScope.disclosure??'The accepted source cannot establish service territory or route availability from recorded location.',interpretation:[{label:'Requested geography',value:session.executionScope.requestedGeography?.display??'Requested route'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['Service territory and route availability are not source-backed by recorded location or regulatory authority.'],destinations:session.hub==='move'?[{type:'VERIFY' as const,href:'https://www.movetrusthub.com/verify-dot',label:'Verify a USDOT or MC'},{type:'DIRECTORY' as const,href:'https://www.movetrusthub.com/companies',label:'Research recorded headquarters'}]:[],error:{code:'requested_scope_not_executable',retryable:false},latencyMs:0,firstUsefulResult:true};
+    if(['move','investor','insurance','lender'].includes(session.hub??'')&&['SERVICE_TERRITORY','ORIGIN_DESTINATION'].includes(session.executionScope.requestedGeographyMeaning??''))result={specialist:session.hub!,resultState:'UNSUPPORTED_CAPABILITY' as const,consumerHeading:'Requested scope is not executable',consumerMessage:session.executionScope.disclosure??'The accepted source cannot establish service territory or route availability from recorded location.',interpretation:[{label:'Requested geography',value:session.executionScope.requestedGeography?.display??'Requested route'}],rows:[],total:0,refinements:[],provenance:{contract:'ask-execution-scope-v1'},limitations:['Service territory and route availability are not source-backed by recorded location or regulatory authority.'],destinations:session.hub==='move'?[{type:'VERIFY' as const,href:rewriteMoveSpecialistHref('https://www.movetrusthub.com/verify-dot'),label:'Verify a USDOT or MC'},{type:'DIRECTORY' as const,href:rewriteMoveSpecialistHref('https://www.movetrusthub.com/companies'),label:'Research recorded headquarters'}]:[],error:{code:'requested_scope_not_executable',retryable:false},latencyMs:0,firstUsefulResult:true};
   } else if (executionRequested && !session.researchPlan.executionAllowed) {
     session=touch({...session,phase:'CLARIFY',nextAction:session.researchPlan.clarificationReason??'Clarify the research request before specialist execution.'});
   } else if (executionRequested) {

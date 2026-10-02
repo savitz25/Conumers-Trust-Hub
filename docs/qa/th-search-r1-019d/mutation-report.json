@@ -1,0 +1,101 @@
+{
+ "generatedAt": "2026-09-19T17:17:18.825Z",
+ "cleanBefore": {
+  "pass": 67,
+  "fail": 0,
+  "failing": []
+ },
+ "mutations": [
+  {
+   "id": "A_RESTORED_OLD_V2_DISPATCH",
+   "why": "Lender name search falls back to the old exact-only v2 identity operation instead of the released v1 candidate operation.",
+   "detected": true,
+   "failedTests": [
+    "01 name dispatch calls the released v1 endpoint, never trusthub-specialist-execution-v2"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "B_GLEIF_FRAGMENT_CHECK_LOST",
+   "why": "A GLEIF action is accepted without verifying its #/record/<LEI> fragment matches the record's own LEI.",
+   "detected": true,
+   "failedTests": [
+    "R3-fix E. a GLEIF destination always takes the LEI-bound path, even when mislabeled PROFILE; a real PROFILE link is unaffected",
+    "05 wrong echo/fingerprint, malformed rows and bad GLEIF identifiers are rejected -- never converted to misses"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "C_FAILURE_MISCLASSIFIED_AS_MISS",
+   "why": "A technical source failure (SOURCE_UNAVAILABLE) is reported as a completed miss instead of a failure.",
+   "detected": true,
+   "failedTests": [
+    "07 miss, restriction, source failure, partial/capped results and valid empty pages stay distinct; other hubs survive a Lender failure"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "D_R1_INITIALISM_FALLBACK_UNCOLLAPSED",
+   "why": "The token-sharing fallback in rowRelatesToName compares raw (uncollapsed) tokens again, so a differing legal suffix (VIP Mortgage LLC vs V.I.P. MORTGAGE, INC.) defeats initialism equivalence.",
+   "detected": true,
+   "failedTests": [
+    "R1-fix. VIP/V.I.P. survives a DIFFERING legal suffix, case, and combinations -- not just the identical-suffix case",
+    "R1-fix cross-hub regression: unrelated initialisms, mid-word overlap, separated initials and numeric-leading names are unaffected across hubs"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "E_R2_CONTINUATION_NULLED_ON_HASMORE",
+   "why": "The hub-supplied continuation is dropped whenever upstream hasMore is true, so Ask holds no way forward once its own cap is reached with more source records remaining.",
+   "detected": true,
+   "failedTests": [
+    "R2-fix. the real adapter, mergeHubPage and buildNameResultsView chain to the Ask cap with a working native-search continuation"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "F_R3_PAGINATION_VALIDATION_BYPASSED",
+   "why": "Malformed/inconsistent pagination (wrong page, row-count mismatch, impossible hasMore) is silently accepted instead of failing closed.",
+   "detected": true,
+   "failedTests": [
+    "R3-fix B. pagination inconsistent with the request or the actual row count is a contract failure"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "G_R3_GLEIF_BYPASS_VIA_PROFILE_TYPE",
+   "why": "A PROFILE-typed action secretly pointed at a GLEIF URL bypasses the strict LEI-fragment binding and is waved through as an official source.",
+   "detected": true,
+   "failedTests": [
+    "R3-fix E. a GLEIF destination always takes the LEI-bound path, even when mislabeled PROFILE; a real PROFILE link is unaffected"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "H_R3_NO_MATCH_CONTRADICTION_UNCHECKED",
+   "why": "A NO_MATCH result that also supplies candidate rows is silently admitted as real candidates instead of failing as a contradictory payload.",
+   "detected": true,
+   "failedTests": [
+    "R3-fix A. NO_MATCH with nonempty candidates, and CANDIDATES with zero rows, are contract failures -- never silently accepted"
+   ],
+   "restoredByteIdentical": true
+  },
+  {
+   "id": "I_R3_KEY_FAMILY_RESTRICTED_TO_THREE",
+   "why": "The stable-key family map is restored to the review 1 restrictive set (nmls-inst/lei/hmda-lei, no fdic-cert, no gleif-lei), so already-approved public-profile records (First State Bank's fdic-cert rows, Select Portfolio Servicing's gleif-lei row) are rejected again.",
+   "detected": true,
+   "failedTests": [
+    "key-family matrix. every discovered eligible namespace family is admitted; excluded projections and malformed keys are dropped, never accepted as any lender: string",
+    "live reproduction: First State Bank -- three fdic-cert public profiles and two hmda-lei research rows all survive together",
+    "live reproduction: Select Portfolio Servicing -- retains its gleif-lei source key, LEI identifier, matched name and profile action",
+    "02 BMO and Alliant candidate keys survive mapping; Randolph-Brooks FCU records stay separate, not merged"
+   ],
+   "restoredByteIdentical": true
+  }
+ ],
+ "cleanAfter": {
+  "pass": 67,
+  "fail": 0,
+  "failing": []
+ }
+}

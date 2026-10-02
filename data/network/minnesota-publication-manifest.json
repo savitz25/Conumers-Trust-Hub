@@ -1,0 +1,315 @@
+{
+  "contract": "ath-mn-network-release-v1",
+  "state_code": "MN",
+  "state_name": "Minnesota",
+  "ask_canonical": "https://www.asktrusthub.com/minnesota",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "release_gate": {
+    "passed": true,
+    "blocker": null,
+    "certification_basis": "Six independent specialist certificates; A-B1 Lender PASS"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "certified_release_sha": "6c03a2d34bb7532b97914d3318974f6b3733baf4",
+      "fingerprint": "fbd810749239faa78696c44b882c7aa0b18411bccae556115b65890a605521ab",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.movetrusthub.com/minnesota",
+      "snapshot_version": "move-mn-state-intel-v1",
+      "source_clocks": {
+        "statutes_edition": "2025 Minnesota Statutes",
+        "mndot_pages_as_of": null,
+        "retrievedAt": "2026-09-26T13:40:00Z",
+        "federal_overlay_observedAt": "2026-09-26T13:20:00Z",
+        "permit_roster_as_of": null,
+        "generatedAt": "2026-09-26T14:10:00Z"
+      },
+      "capability_summary": "Minnesota HHG permit verification through MnDOT",
+      "grain": "MnDOT verification capability; no permit census acquired. A permit is not a USDOT or MC number.",
+      "gaps": [
+        {
+          "capability": "active HHG permit roster",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "carrier tariff corpus",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "provider enforcement actions",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "complaint outcomes",
+          "state": "REQUEST_ONLY"
+        },
+        {
+          "capability": "combined state + FMCSA mover count",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "certified_release_sha": "d4cc8bcb5bae8fbf9b698165e908e58d05339fe4",
+      "fingerprint": "e1c89c65a4d4b87497ef267f122dc7d53be9583e5e51e78a77f5f4847a6872c8",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.lendertrusthub.com/minnesota",
+      "snapshot_version": "lender-mn-state-intel-v1",
+      "source_clocks": {
+        "licensing": "NMLS Consumer Access (live search; no bulk file)",
+        "statutes": "2025 Minnesota Statutes",
+        "commerce_enforcement": "signed dates per action; CARDS query retrieved 2026-09-26T15:05:00Z",
+        "hmda": "HMDA 2025"
+      },
+      "capability_summary": "184,549 Minnesota HMDA applications in 2025",
+      "grain": "Application activity for Minnesota properties, not a count of licensed lenders, companies or MLOs.",
+      "gaps": [
+        {
+          "capability": "bulk mortgage license roster",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "combined lender census",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "production_deployment": "dpl_BaRjKL4FmsLkfiRX9e7K3w9CmYAQ",
+      "certified_ledger": {
+        "HMDA_2025_APPLICATIONS": 184549,
+        "ENFORCEMENT_COUNTS": [
+          50,
+          37,
+          13,
+          15,
+          22,
+          5,
+          0
+        ],
+        "GRAPH_WRITES": 0,
+        "NET_NEW_CANONICAL_ORGANIZATIONS": 0,
+        "CLAIM_ELIGIBILITY_BROADENED": false
+      },
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "certified_release_sha": "f2e56d552ea5176ba7ec8a4906a1760a76b46bfa",
+      "fingerprint": "7f9ba09a491f185178a511ede5c08311ec767362459ecce8aa8c2f044fa1105f",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.contractortrusthub.com/minnesota",
+      "snapshot_version": "contractor-mn-state-intel-v1",
+      "source_clocks": {
+        "dli_export_retrievedAt": "2026-09-26T14:11:34Z",
+        "dli_prints_as_of": null,
+        "export_member_datetime": "2026-09-26T04:32:00",
+        "enforcement_retrievedAt": "2026-09-26T14:11:34Z",
+        "enforcement_action_range": [
+          "2024-01-05",
+          "2026-08-31"
+        ],
+        "generatedAt": "2026-09-26T16:30:00Z"
+      },
+      "capability_summary": "10,923 DLI Residential Building Contractor credentials with status “Issued”",
+      "grain": "Issued business-class credentials, not unique companies or all DLI credentials. Individual credentials are not business profiles.",
+      "gaps": [
+        {
+          "capability": "enforcement before 2024",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "electrical / plumbing / other trade enforcement lists",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "order text / per-order detail",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "complaint records",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "local (city/county) permits and licensing",
+          "state": "UNKNOWN"
+        },
+        {
+          "capability": "name-only enforcement attachment",
+          "state": "UNSUPPORTED"
+        },
+        {
+          "capability": "combined Minnesota contractor total",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "certified_release_sha": "c150a4c4e89a0932af9fc5d41461d78a50496c78",
+      "fingerprint": "6ecbdbb8406a95152e1503977a57f1e87b6f9060c1b5a739a8d791e51a2911e2",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.insurancetrusthub.com/minnesota",
+      "snapshot_version": "insurance-mn-state-intel-v1",
+      "source_clocks": {
+        "retrievedAt": "2026-09-26T12:00:00Z",
+        "source_as_of": null,
+        "enforcement_window": "2022 through current 2026 (CARDS)"
+      },
+      "capability_summary": "Minnesota Commerce insurer, producer and agency verification",
+      "grain": "Verification capabilities only. Insurers, agencies and producers are separate populations.",
+      "gaps": [
+        {
+          "capability": "company bulk roster",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "producer bulk roster",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "agency bulk roster",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "product-line authority",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "enforcement index",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "financial examination index",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "financial statement index",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "complaint outcomes",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "name-only joins",
+          "state": "UNSUPPORTED"
+        },
+        {
+          "capability": "combined Minnesota insurance total",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "certified_release_sha": "97663823fb289ed1daaedd7e2cbff62d8345e1cb",
+      "fingerprint": "b453a290198d834945104aa81f2942bd1fb3bc0fda33fff8cb51fb4d18e9e223",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.seniortrusthub.com/minnesota",
+      "snapshot_version": "senior-mn-state-intel-v1",
+      "source_clocks": {
+        "mdh_directory_retrievedAt": "2026-09-26T14:14:50Z",
+        "mdh_directory_updated": "daily; export prints no as-of date",
+        "annual_directory_as_of": "2026-03-13",
+        "mdh_findings_retrievedAt": "2026-09-26T14:20:33Z",
+        "cms_clocks": "separate per CMS class (cmsOverlay.clocks)",
+        "generatedAt": "2026-09-26T15:00:00Z"
+      },
+      "capability_summary": "1,571 Minnesota Assisted Living Facility licenses",
+      "grain": "This MDH license class only. Dementia care and all other care classes remain separate and are never summed. State licensure is not CMS certification.",
+      "gaps": [
+        {
+          "capability": "fines and license actions",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "closed or expired licenses",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "evaluation / investigation document text",
+          "state": "NOT_ACQUIRED"
+        },
+        {
+          "capability": "combined Minnesota senior-facility or bed total",
+          "state": "UNSUPPORTED"
+        },
+        {
+          "capability": "name-only state-CMS matching",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "certified_release_sha": "693eb80e0083f4cf3ad20069d20f0ccca1435ae2",
+      "fingerprint": "5e60cddd13ec5a9c2efc786f722ff8df4e5aa0bae5f83cf1adedf6f22f2ed3c3",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "independent_certification": "PASS",
+      "canonical_state_url": "https://www.investortrusthub.com/minnesota",
+      "snapshot_version": "investor-mn-state-intel-v1",
+      "source_clocks": {
+        "iapd_state_sourceAsOf": "2026-09-17",
+        "iapd_state_accepted_retrievedAt": "2026-09-17T15:15:00Z",
+        "iapd_state_reverified_sha256_on": "2026-09-26",
+        "iapd_sec_sourceAsOf": "2026-09-18",
+        "iapd_sec_retrievedAt": "2026-09-25T18:53:55Z",
+        "iapd_sec_accepted_09_17_unavailable": true,
+        "v1_roster_sourceAsOf": "2026-08-27",
+        "statute_retrievedAt": "2026-09-26T15:19:35Z",
+        "commerce_pages_checkedAt": "2026-09-26",
+        "cards_retrievedAt": "2026-09-26T15:14:12Z",
+        "enforcement_first_signed_date": "2022-01-28",
+        "enforcement_latest_signed_date": "2026-06-24",
+        "snapshotAsOf": "2026-09-26",
+        "generatedAt": "2026-09-26T15:30:01Z",
+        "no_universal_minnesota_investor_clock": true,
+        "retrieval_is_not_registration_effective_date": true
+      },
+      "capability_summary": "333 Minnesota state investment-adviser firms with IAPD status APPROVED",
+      "grain": "Minnesota state IA firm registration with IAPD status APPROVED. ERA, notice filing and principal-office lenses are not added.",
+      "gaps": [
+        {
+          "capability": "combined IA, ERA, notice and principal-office total",
+          "state": "UNSUPPORTED"
+        },
+        {
+          "capability": "investment advice or provider ranking",
+          "state": "UNSUPPORTED"
+        }
+      ],
+      "capability_state": "INDEPENDENTLY_CERTIFIED"
+    }
+  ],
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "These different source grains cannot be summed."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  },
+  "trust_score": false,
+  "paid_ranking": false,
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false
+}

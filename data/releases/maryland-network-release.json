@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-MD-001",
+  "contract": "ath-md-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "75919474c14e90b5a212b13c422142a5c17f0264",
+  "manifest": "data/network/maryland-publication-manifest.json",
+  "semantic_fingerprint": "8939455f758927732ac3d3b81b2d26ccf452d5bb6bca4f4db3195e1ca06541a4",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

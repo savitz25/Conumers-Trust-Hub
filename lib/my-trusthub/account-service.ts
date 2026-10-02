@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { accountRuntime, admitted, captchaState, emailRequestAllowed, enabled, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
+import { accountFormAvailable, accountRuntime, admitted, captchaState, emailRequestAllowed, enabled, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
 
 export type AccountOperation = 'signup' | 'login' | 'link' | 'recovery' | 'password';
 export type AccountResult = { message?: string; error?: string; destination?: string; completion?: 'login' | 'password' };
@@ -14,7 +14,7 @@ const classify = (error: { status?: number } | null): Diagnostic => error?.statu
 /** SDK-injected for deterministic tests. No credentials or provider messages leave this boundary. */
 export async function runAccountOperation(operation: AccountOperation, form: FormData, auth: AuthApi, env: AccountEnv, diagnostic: (d: Diagnostic) => void): Promise<AccountResult> {
   const runtime = accountRuntime(env);
-  if (!enabled(env.MY_TRUSTHUB_ENABLED) || !runtime) return { error: 'Account access is unavailable in this environment.' };
+  if (!accountFormAvailable(operation, env) || !runtime) return { error: 'Account access is unavailable in this environment.' };
   const next = safeReturn(form.get('next'));
   const email = String(form.get('email') ?? '').trim().toLowerCase();
   const password = String(form.get('password') ?? ''); // Never trim a password.

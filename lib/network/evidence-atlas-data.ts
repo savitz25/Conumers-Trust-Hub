@@ -53,7 +53,7 @@ const ROWS: Cell[] = [
   { hubId: 'insurance', familyId: 'permits', status: 'not_applicable', why: 'Not a permit research hub.' },
   { hubId: 'insurance', familyId: 'local_regulatory', status: 'planned', why: 'No county market inference from addresses or appointments.' },
 
-  { hubId: 'contractor', familyId: 'identity', status: 'available', why: 'State-configured official license/registration extracts in 10 live states.', destination: 'https://www.contractortrusthub.com/verify', sourceFamilyId: 'state-contractor-boards' },
+  { hubId: 'contractor', familyId: 'identity', status: 'available', why: 'State-configured official license/registration extracts in the live Verify states.', destination: 'https://www.contractortrusthub.com/verify', sourceFamilyId: 'state-contractor-boards' },
   { hubId: 'contractor', familyId: 'credential', status: 'available', why: 'Board status where the extract includes it. Active is not endorsement.', destination: 'https://www.contractortrusthub.com/verify', sourceFamilyId: 'state-contractor-boards' },
   { hubId: 'contractor', familyId: 'licensing', status: 'available', why: 'State-specific occupation/class codes. Roofing in Florida is CCC+RC, not RR.', destination: 'https://www.contractortrusthub.com/verify', sourceFamilyId: 'fl-dbpr' },
   { hubId: 'contractor', familyId: 'registration', status: 'partial', why: 'Washington is L&I registration, not a Florida-style CILB license.' },

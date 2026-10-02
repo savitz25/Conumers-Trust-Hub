@@ -8,6 +8,7 @@ import {
   saveCanaryEntityAction,
   updatePrivateNoteAction,
   saveMoveInventorySessionAction,
+  unsaveSavedEntityAction,
 } from "@/app/my/actions";
 import { AnalyticsForm } from "@/components/analytics/analytics-form";
 import { ProjectAddForm } from "@/components/analytics/tracked-action-form";
@@ -21,12 +22,22 @@ import {
 } from "@/components/my-trusthub/my-shell";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
+import { IsolatedSaved } from '@/components/my-trusthub/isolated-saved';
+
+const HUB_LABEL: Record<string, string> = {
+  move: "Move Trust Hub", insurance: "Insurance Trust Hub", lender: "Lender Trust Hub",
+  contractor: "Contractor Trust Hub", senior: "Senior Trust Hub", investor: "Investor Trust Hub",
+};
 
 export default async function SavedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string }>;
+  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string; unsaved?: string }>;
 }) {
+  if (process.env.VERCEL_ENV === 'preview' && process.env.MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED === 'true') {
+    const { unsaved, error } = await searchParams;
+    return <IsolatedSaved query={{ unsaved, error }} />;
+  }
   const { adapter, user } = await requireWorkspace();
   const [query, saved, projects, notes, sessions] = await Promise.all([
     searchParams,
@@ -48,8 +59,10 @@ export default async function SavedPage({
       </PageHeading>
       {query.handoff === "failed" ? <p className="myth-warning" role="alert">This handoff is unavailable, expired, or already used. Return to the Contractor profile and try Save again.</p> : null}
       {query.handoff === "saved" ? <p className="myth-notice" role="status">Contractor profile saved to My TrustHub. Existing Saves are kept once. Watching is a separate choice.</p> : null}
+      {query.unsaved === "1" ? <p className="myth-notice" role="status">Removed from My TrustHub. Any copy saved on your device stays on that device.</p> : null}
+      {error === "unsave" ? <p className="myth-warning" role="alert">That profile could not be removed. If it is filed in a Project, remove it from the Project first.</p> : null}
       {importState === "invalid" ? <p className="myth-warning" role="alert">That guest research could not be restored safely.</p> : null}
-      {error ? <p className="myth-warning" role="alert">That change could not be completed. Refresh and try again.</p> : null}
+      {error && error !== "unsave" ? <p className="myth-warning" role="alert">That change could not be completed. Refresh and try again.</p> : null}
       {session === "saved" ? <p className="myth-notice" role="status">Research session saved privately.</p> : null}
       {sessionError ? <p className="myth-warning" role="alert">That research session could not be saved safely.</p> : null}
       {sessionImport === "invalid" ? <p className="myth-warning" role="alert">That guest research session was incompatible or invalid.</p> : null}
@@ -104,13 +117,13 @@ export default async function SavedPage({
             <span>{active.length}</span>
           </div>
           {active.length ? active.map((item) => (
-            <div className="myth-saved-block" key={item.saved_entity_id}>
+            <div className="myth-saved-block" key={item.saved_entity_id} data-saved-entity={item.saved_entity_id}>
               <div className="myth-row">
                 <Bookmark aria-hidden="true" />
                 <span>
                   <strong>{item.canonical_name}</strong>
                   <small>
-                    {item.primary_hub} ·{" "}
+                    Saved from {HUB_LABEL[item.primary_hub] ?? item.primary_hub} ·{" "}
                     {item.project_ids.length
                       ? `${item.project_ids.length} Projects`
                       : "Unfiled"}
@@ -119,6 +132,12 @@ export default async function SavedPage({
                     <em>Identity review required</em>
                   ) : null}
                 </span>
+                {!item.project_ids.length ? (
+                  <form action={unsaveSavedEntityAction} className="myth-actions">
+                    <input type="hidden" name="savedEntityId" value={item.saved_entity_id} />
+                    <button className="myth-secondary" type="submit" aria-label={`Unsave ${item.canonical_name}`}>Unsave</button>
+                  </form>
+                ) : null}
               </div>
               <details className="myth-inline-details">
                 <summary>Projects and private notes</summary>

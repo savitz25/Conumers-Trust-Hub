@@ -1,0 +1,303 @@
+{
+  "state_code": "GA",
+  "state_name": "Georgia",
+  "ask_path": "/georgia",
+  "ask_canonical": "https://www.asktrusthub.com/georgia",
+  "version": "ath-ga-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_atlanta_routes": false,
+  "georgia_local_phase": "NO",
+  "georgia_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PREVIEW_READY",
+  "ask_production": null,
+  "conceptual_statement": "Georgia research stays in six specialist grains: DPS MCA household-goods identities, unlicensed-practice cease-and-desist orders, NMLS mortgage licensing, OCI insurer events, CMS care settings, and Securities Division orders. Ask routes to those pages. It does not add them into one Georgia business, provider, or professional total.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /georgia pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, before Ask /georgia is indexable. Any one specialist failure fails the gate.",
+    "verified_at": "2026-09-24T13:05:14.831Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "move",
+      "display": "380 distinct Georgia DPS MCA identities",
+      "grain": "Licensed household-goods certificate identity, not USDOT. 572 deduped location rows. Exact USDOT joins: 0. Listing is not inferred Active status."
+    },
+    {
+      "hub_id": "contractor",
+      "display": "36 board-published unlicensed-practice cease-and-desist orders",
+      "grain": "Not a contractor census. Statewide licensing rosters were not acquired. Orders are not joined to profiles by name."
+    },
+    {
+      "hub_id": "lender",
+      "display": "Georgia DBF mortgage licensing is verified through NMLS",
+      "grain": "No acquired Georgia company census. Mortgage broker, mortgage lender, branch, and MLO stay separate. HMDA is not a lender count."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "9 standalone OCI receivership events acquired",
+      "grain": "7 index companies since September 2010 plus 2 later announcements. Exact NAIC attachments: 0. Not a Georgia insurer, agency, or producer census."
+    },
+    {
+      "hub_id": "senior",
+      "display": "356 CMS Nursing Homes in Georgia",
+      "grain": "Separately 105 CMS Home Health and 261 CMS Hospice. Do not publish 722 Georgia senior facilities. State care-setting rosters were not acquired."
+    },
+    {
+      "hub_id": "investor",
+      "display": "57 Georgia Securities Division order documents",
+      "grain": "Standalone events. Exact profile attachments: 0. A caption is not a finding. 364 SEC/IARD Georgia principal-office firms are not state registration."
+    }
+  ],
+  "what_makes_georgia_different": [
+    "Move: the public identity is the Georgia DPS MCA, not a USDOT. Tariff No. 7 effective 2026-01-13 covers intrastate household goods.",
+    "Contractor: the acquired state evidence is 36 cease-and-desist orders, not a license roster.",
+    "Lender: DBF uses NMLS. No second Georgia lender census was built.",
+    "Insurance: HB410 eliminated branch-agency licensing. Receivership events stay unattached.",
+    "Senior: CMS nursing home, home health, and hospice stay separate from unacquired DCH state classes.",
+    "Investor: IARD, IAPD, and BrokerCheck remain the identity spine. The state layer is the Securities Orders index."
+  ],
+  "hub_expansion_ledgers": {
+    "move": {
+      "GA_DPS_HHG_LISTING_ROWS": 572,
+      "GA_DPS_HHG_DISTINCT_MCA": 380,
+      "GA_DPS_HHG_EXACT_USDOT_JOINS": 0,
+      "TARIFF_NO_7_EFFECTIVE": "2026-01-13",
+      "COMPLAINT_DISPOSITIONS": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "contractor": {
+      "CEASE_AND_DESIST_ORDERS": 36,
+      "ACQUIRED_LICENSE_ROWS": 0,
+      "STATEWIDE_ROSTER": "NOT_ACQUIRED",
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "lender": {
+      "GEORGIA_ROSTER": "NOT_ACQUIRED",
+      "STATE_CONTEXT": "DBF_USES_NMLS",
+      "FINAL_ORDER_EXTRACT": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "insurance": {
+      "RECEIVERSHIP_INDEX": 7,
+      "LATER_RECEIVERSHIP_ANNOUNCEMENTS": 2,
+      "EXACT_NAIC_ATTACHMENTS": 0,
+      "AGENCY_ROSTER": "NOT_ACQUIRED",
+      "PRODUCER_ROSTER": "NOT_ACQUIRED",
+      "COMPANY_ROSTER": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "senior": {
+      "CMS_NURSING_HOMES": 356,
+      "CMS_HOME_HEALTH": 105,
+      "CMS_HOSPICE": 261,
+      "NET_NEW_GEORGIA_STATE_PROVIDER_ROWS": 0,
+      "STATE_ROSTERS": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "investor": {
+      "PRINCIPAL_OFFICE_SEC_IARD_FIRMS": 364,
+      "SECURITIES_ORDER_DOCUMENTS": 57,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "STATE_IA_ROSTER": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "The six hubs contain companies, people, facilities, license identities, location rows, evidence events, enforcement orders, and federal activity observations. Those grains cannot be summed into Georgia businesses, providers, licensed companies, professionals, or Trust Hub records."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_WORK_NEEDED_NOW": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/georgia",
+      "snapshot_version": "move-ga-state-intel-v1",
+      "fingerprint": "5619950c36c6cdd7b3f6df516585920c2c7aa245c2a2e82b4f03bc1ec4275e6b",
+      "certified_release_sha": "2aeffc4fdb9af39017ca8c313f922d653e921cb9",
+      "plain_question": "Who holds a Georgia household-goods certificate?",
+      "research_topics": [
+        "DPS licensed movers list",
+        "MCA identity",
+        "Tariff No. 7"
+      ],
+      "coverage_summary": "380 distinct MCA identities from 572 location rows.",
+      "coverage_limitation": "MCA is not USDOT. Complaint dispositions were not acquired.",
+      "verified_facts": [
+        "572 listing rows",
+        "380 distinct MCA",
+        "0 USDOT joins"
+      ],
+      "routing_intents": [
+        "movers Georgia",
+        "Georgia MCA",
+        "moving tariff Georgia"
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/georgia",
+      "snapshot_version": "contractor-ga-state-intel-v1",
+      "fingerprint": "2c74394b6ee2bbcbc4756d91416e234b4c43df0309a19a0c90f1b235eab7872a",
+      "certified_release_sha": "9b6ee8e45edebfe62d143443137a4a87ffcc8bf0",
+      "plain_question": "What Georgia contractor evidence is public?",
+      "research_topics": [
+        "Credential classes",
+        "Cease-and-desist orders"
+      ],
+      "coverage_summary": "36 unlicensed-practice cease-and-desist orders.",
+      "coverage_limitation": "Not a license census. Name-only joins are not used.",
+      "verified_facts": [
+        "36 cease-and-desist orders",
+        "license roster not acquired"
+      ],
+      "routing_intents": [
+        "contractors Georgia",
+        "Georgia cease and desist contractor"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lending",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/georgia",
+      "snapshot_version": "GA-LEND-001",
+      "fingerprint": "c27d483bebafd938eba4218e05366af22d2d2a3605c6c284e259189cf33da827",
+      "certified_release_sha": "afb65b73c77fc7a0ca79fa79e030cd45a5166991",
+      "plain_question": "How is a Georgia mortgage company verified?",
+      "research_topics": [
+        "DBF",
+        "NMLS Consumer Access",
+        "HMDA activity"
+      ],
+      "coverage_summary": "Georgia DBF mortgage licensing is verified through NMLS.",
+      "coverage_limitation": "No Georgia-only company census. Broker, lender, branch, and MLO stay separate.",
+      "verified_facts": [
+        "NMLS is the public license system",
+        "no combined lender total"
+      ],
+      "routing_intents": [
+        "mortgage lender Georgia",
+        "NMLS Georgia",
+        "HMDA Georgia"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/georgia",
+      "snapshot_version": "insurance-ga-state-intel-v1",
+      "fingerprint": "64c082caedf4f9c15f12ee28df61f11fced3bb6c3728a864e313a8cc4cbd2608",
+      "certified_release_sha": "0bb9c96920c0b7de140a7e0fd1975e9a9959eba9",
+      "plain_question": "What Georgia insurance evidence is on the record?",
+      "research_topics": [
+        "OCI",
+        "Sircon",
+        "Receiverships",
+        "HB410 principal agency"
+      ],
+      "coverage_summary": "9 standalone receivership events. Rosters were not acquired.",
+      "coverage_limitation": "No NAIC attachments. Not an insurer, agency, or producer census.",
+      "verified_facts": [
+        "7 index receiverships",
+        "2 later announcements",
+        "0 NAIC attachments"
+      ],
+      "routing_intents": [
+        "insurance agency Georgia",
+        "Georgia receivership",
+        "insurance producer Georgia"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/georgia",
+      "snapshot_version": "senior-ga-state-intel-v1",
+      "fingerprint": "1820ee3a2f723f411dc59654e5633144adaba6be7a79f9cc673b469ee4ec476e",
+      "certified_release_sha": "a341b5f6010f2b29724208273691a7c0bb9ab668",
+      "plain_question": "Which Georgia care settings are in the federal record?",
+      "research_topics": [
+        "CMS Nursing Homes",
+        "CMS Home Health",
+        "CMS Hospice"
+      ],
+      "coverage_summary": "356 CMS Nursing Homes, 105 Home Health, 261 Hospice.",
+      "coverage_limitation": "State Personal Care Home, Assisted Living, and other DCH rosters were not acquired.",
+      "verified_facts": [
+        "356 nursing homes",
+        "105 home health",
+        "261 hospice"
+      ],
+      "routing_intents": [
+        "nursing homes Georgia",
+        "assisted living Georgia",
+        "hospice Georgia"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Professionals",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/georgia",
+      "snapshot_version": "investor-ga-state-intel-v1",
+      "fingerprint": "f1c44afc81eb7be3d774c91fb3928e01a4a6542511ea5dde0d079b79f41dbea6",
+      "certified_release_sha": "32dd2e35c12f8071ec9a234d930c62ad83082d35",
+      "plain_question": "What Georgia securities evidence is published?",
+      "research_topics": [
+        "Securities Division",
+        "IARD",
+        "IAPD",
+        "BrokerCheck"
+      ],
+      "coverage_summary": "57 order documents, unattached. 364 principal-office firms are not registration.",
+      "coverage_limitation": "State adviser and broker-dealer rosters were not acquired. A caption is not a finding.",
+      "verified_facts": [
+        "57 order documents",
+        "0 profile attachments",
+        "364 principal-office firms"
+      ],
+      "routing_intents": [
+        "investment adviser Georgia",
+        "securities enforcement Georgia",
+        "state registered adviser Georgia"
+      ]
+    }
+  ]
+}

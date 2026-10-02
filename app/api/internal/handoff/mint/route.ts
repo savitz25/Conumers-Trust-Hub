@@ -7,7 +7,7 @@ import { customerHub } from '@/lib/customer/hub-registry';
 import { resolveProfileForHandoffMint } from '@/lib/customer/handoff-mint-resolution';
 import { customerLog } from '@/lib/customer/log';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
-import { HOME_STATE_FL, SOURCE_FL_DBPR, type HandoffPayload } from '@/lib/customer/types';
+import { SOURCE_FL_DBPR, contractorClaimState, type HandoffPayload } from '@/lib/customer/types';
 import { contractorMintIdentity } from '@/lib/customer/contractor-handoff';
 
 export const runtime = 'nodejs';
@@ -39,11 +39,21 @@ export async function POST(request: Request) {
     providerClass?: 'nursing_home'|'home_health'|'hospice';
     entityType?: string;
     canonicalProfileUrl?: string;
+    acquisitionSource?: string;
   };
   if (!body.nativeProfileId) {
     return NextResponse.json({ ok: false, error: 'nativeProfileId required' }, { status: 400 });
   }
 
+  // ATH-CLAIM-V2-001R4 — trusted attribution. This route is reachable only with the operator secret or a staff
+  // session, never by a claimant's browser, so it is the one place an operator may label a handoff
+  // manual_outreach (or internal_test for QA). The value is SIGNED into the token; nothing downstream trusts a
+  // query string. organic/email_campaign/unknown are not assignable here.
+  const OPERATOR_SOURCES = ['manual_outreach', 'internal_test'] as const;
+  if (body.acquisitionSource !== undefined && !(OPERATOR_SOURCES as readonly string[]).includes(body.acquisitionSource)) {
+    return NextResponse.json({ ok: false, error: 'unsupported_acquisition_source' }, { status: 400 });
+  }
+  const operatorSource = body.acquisitionSource as (typeof OPERATOR_SOURCES)[number] | undefined;
   const capability=customerHub(body.hubId||'contractor');
   if(!capability)return NextResponse.json({ok:false,error:'unsupported_customer_hub'},{status:400});
   if(capability.hubId==='investor'&&body.entityType&&body.entityType!=='firm')return NextResponse.json({ok:false,error:'unsupported_source'},{status:400});
@@ -55,7 +65,7 @@ export async function POST(request: Request) {
       v:2,aud:'asktrusthub' as const,
       hub_id: capability.hubId,
       native_profile_id: body.nativeProfileId,
-      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':capability.hubId==='insurance'?'naic':'cms'),home_state:capability.hubId==='contractor'?HOME_STATE_FL:null,
+      slug: body.slug || '',external_key:body.externalKey||'',source_system:body.sourceSystem||(capability.hubId==='contractor'?SOURCE_FL_DBPR:capability.hubId==='move'?'fmcsa':capability.hubId==='lender'?'nmls':capability.hubId==='investor'?'sec_iard':capability.hubId==='insurance'?'naic':'cms'),home_state:capability.hubId==='contractor'?contractorClaimState(body.sourceSystem||SOURCE_FL_DBPR):null,
       identifier_namespace:capability.identifierNamespace,entity_class:capability.hubId==='senior'?body.providerClass:capability.identityClass,provider_class:body.providerClass,canonical_profile_url:canonicalProfileUrl,display_name:undefined,iat:0,exp:0,nonce:''
     };
   const directory=compositeCustomerDirectory(cthReadDirectory);
@@ -74,7 +84,8 @@ export async function POST(request: Request) {
     nativeProfileId: profile.id,
     slug: profile.slug,
     externalKey: profile.externalKey,
-    sourceSystem:profile.sourceSystem,homeState:profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:('entityClass' in profile?profile.entityClass:'contractor') as HandoffPayload['entity_class'],providerClass:body.providerClass,canonicalProfileUrl:'canonicalUrl' in profile?String(profile.canonicalUrl):undefined,displayName:profile.displayName,
+    sourceSystem:profile.sourceSystem,homeState:capability.hubId==='contractor'?contractorClaimState(profile.sourceSystem):profile.homeState,identifierNamespace:capability.identifierNamespace,entityClass:('entityClass' in profile?profile.entityClass:'contractor') as HandoffPayload['entity_class'],providerClass:body.providerClass,canonicalProfileUrl:'canonicalUrl' in profile?String(profile.canonicalUrl):undefined,displayName:profile.displayName,
+    acquisitionSource: operatorSource,
   });
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.asktrusthub.com';
   return NextResponse.json({
@@ -87,6 +98,7 @@ export async function POST(request: Request) {
       slug: minted.payload.slug,
       external_key: minted.payload.external_key,
       exp: minted.payload.exp,
+      acquisition_source: minted.payload.acquisition_source ?? null,
     },
   });
 }

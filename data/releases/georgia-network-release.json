@@ -1,0 +1,28 @@
+{
+  "ticket": "ATH-GA-001",
+  "version": "ath-ga-network-release-v1",
+  "contract": "ath-ga-network-release-v1",
+  "ask_canonical": "https://www.asktrusthub.com/georgia",
+  "scope": "STATE_LEVEL_ONLY",
+  "required_hubs": ["contractor", "move", "senior", "lender", "insurance", "investor"],
+  "local_work_needed_now": "NO",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "CLOSED_PRODUCTION_VERIFIED",
+  "release_gate_passed": true,
+  "ask_fingerprint": "d7e748dda20762d39b49750777950b5a6e3ed653681fa3ae778f99e3f69263dd",
+  "ask_production": {
+    "verified_at": "2026-09-24T13:26:26Z",
+    "merge_sha": "f478b2f43beecaa564571ff4124f2c122b7ba2b3",
+    "pr": 200,
+    "deployment_id": 6638655763,
+    "environment": "Production",
+    "deployed_sha": "f478b2f43beecaa564571ff4124f2c122b7ba2b3",
+    "unique_deployment_url": "https://conumers-trust-g8cz5rijr-savitz25-s-projects.vercel.app",
+    "live_route": "https://www.asktrusthub.com/georgia",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/georgia",
+    "robots": "index, follow",
+    "sso": false
+  }
+}

@@ -147,7 +147,7 @@ export function businessReplyEmail(opts:{kind:'submitted'|'changes'|'approved'|'
 }
 
 export function regulatoryAlertEmail(opts:{profileName:string;title:string;summary:string;source:string;detectedAt:string;effectiveAt:string|null;manageUrl:string}) {
-  const source=opts.source==='fl_dbpr'?'Florida DBPR':opts.source;
+  const source=opts.source==='fl_dbpr'?'Florida DBPR':opts.source==='nj_dca'?'New Jersey DCA':opts.source;
   const details=`${opts.title} for ${opts.profileName}. ${opts.summary} Source: ${source}. Detected: ${new Date(opts.detectedAt).toLocaleDateString('en-US')}.${opts.effectiveAt?` Source/effective date: ${new Date(opts.effectiveAt).toLocaleDateString('en-US')}.`:''}`;
   return {
     subject:`Official record change detected for ${opts.profileName}`,

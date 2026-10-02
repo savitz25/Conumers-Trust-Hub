@@ -30,8 +30,10 @@ export class ProfileTransferModel {
     return grant;
   }
   prepareGuestProfileTransfer(raw: unknown, bff: AuthorizedSpecialist, registry: TrustedOriginRegistry, now: number, trustedTask: ProfileReturnTask) {
+    const trustedDestination = profileReturnDestination(trustedTask, registry);
     if (!isGuestStageInput(raw) || raw.sourceHub !== bff.hub || !bff.browserBinding || !bff.scopes.includes('transfer:stage') ||
-        bff.environment !== registry.environment || !Number.isFinite(now) || !profileReturnDestination(trustedTask, registry) ||
+        bff.environment !== registry.environment || !Number.isFinite(now) || !trustedDestination ||
+        trustedDestination !== profileReturnDestination(raw.returnTask, registry) ||
         raw.returnTask.hub !== trustedTask.hub || raw.returnTask.canonicalSlug !== trustedTask.canonicalSlug ||
         profileKey(raw.returnTask.profile) !== profileKey(trustedTask.profile)) this.#deny();
     const input = structuredClone(raw);

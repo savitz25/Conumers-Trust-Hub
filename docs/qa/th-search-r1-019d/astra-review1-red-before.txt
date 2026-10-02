@@ -1,0 +1,278 @@
+✖ R1-fix. VIP/V.I.P. survives a DIFFERING legal suffix, case, and combinations -- not just the identical-suffix case (4.4985ms)
+✖ R1-fix cross-hub regression: unrelated initialisms, mid-word overlap, separated initials and numeric-leading names are unaffected across hubs (0.6272ms)
+✖ R2-fix. the real adapter, mergeHubPage and buildNameResultsView chain to the Ask cap with a working native-search continuation (19.6366ms)
+✔ R2-fix negative: no continuation URL from the hub means no continuation is fabricated (0.5037ms)
+✖ R3-fix A. NO_MATCH with nonempty candidates, and CANDIDATES with zero rows, are contract failures -- never silently accepted (1.538ms)
+✖ R3-fix A. a success-shaped body behind a non-200 status is never accepted (0.6162ms)
+✖ R3-fix B. a non-array or primitive-only candidates field is a contract failure, never a silently completed miss (0.5589ms)
+✖ R3-fix B. pagination inconsistent with the request or the actual row count is a contract failure (0.8223ms)
+✖ R3-fix C. unsupported key namespaces and unknown publication states are dropped, not admitted (0.8962ms)
+✖ R3-fix D. a method paired with a field the released engine could never produce is dropped, not merely the intact-vs-deleted-block case (0.939ms)
+✖ R3-fix E. a GLEIF destination always takes the LEI-bound path, even when mislabeled PROFILE; a real PROFILE link is unaffected (0.8207ms)
+✖ R3-fix E. the RESEARCH continuation is dropped, not just left on the wrong origin, when its query does not match the searched name (0.5939ms)
+✖ R3-fix: identifier syntax and duplicates are enforced without inventing new identifier shapes (0.5075ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 1
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 899.6583
+
+✖ failing tests:
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:3454
+✖ R1-fix. VIP/V.I.P. survives a DIFFERING legal suffix, case, and combinations -- not just the identical-suffix case (4.4985ms)
+  AssertionError [ERR_ASSERTION]: differing legal suffix must not defeat initialism equivalence
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:60:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:5418
+✖ R1-fix cross-hub regression: unrelated initialisms, mid-word overlap, separated initials and numeric-leading names are unaffected across hubs (0.6272ms)
+  AssertionError [ERR_ASSERTION]: an initialism embedded mid-word is not a word-boundary match
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:79:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:7542
+✖ R2-fix. the real adapter, mergeHubPage and buildNameResultsView chain to the Ask cap with a working native-search continuation (19.6366ms)
+  AssertionError [ERR_ASSERTION]: R2: the continuation is present on page 1, not just the final page
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:111:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:10226
+✖ R3-fix A. NO_MATCH with nonempty candidates, and CANDIDATES with zero rows, are contract failures -- never silently accepted (1.538ms)
+  AssertionError [ERR_ASSERTION]: NO_MATCH claiming a record is contradictory, not a match
+  + actual - expected
+  
+    [
+  +   'COMPLETED_WITH_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'invalid_response'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:139:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_WITH_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'invalid_response' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:11111
+✖ R3-fix A. a success-shaped body behind a non-200 status is never accepted (0.6162ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'COMPLETED_WITH_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'unavailable'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:146:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_WITH_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'unavailable' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:11461
+✖ R3-fix B. a non-array or primitive-only candidates field is a contract failure, never a silently completed miss (0.5589ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'COMPLETED_NO_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'invalid_response'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:151:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_NO_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'invalid_response' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:12401
+✖ R3-fix B. pagination inconsistent with the request or the actual row count is a contract failure (0.8223ms)
+  AssertionError [ERR_ASSERTION]: a page-1 body answering a page-2 request is not validated as that page
+  + actual - expected
+  
+    [
+  +   'COMPLETED_WITH_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'invalid_response'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:160:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_WITH_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'invalid_response' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:13794
+✖ R3-fix C. unsupported key namespaces and unknown publication states are dropped, not admitted (0.8962ms)
+  AssertionError [ERR_ASSERTION]: a branch/person-shaped namespace is never a supported institution key
+  + actual - expected
+  
+    [
+  +   'COMPLETED_WITH_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'invalid_response'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:172:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_WITH_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'invalid_response' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:14970
+✖ R3-fix D. a method paired with a field the released engine could never produce is dropped, not merely the intact-vs-deleted-block case (0.939ms)
+  AssertionError [ERR_ASSERTION]: the match BLOCK is intact -- only the field/method pairing is impossible
+  + actual - expected
+  
+    [
+  +   'COMPLETED_WITH_CANDIDATES',
+  +   undefined
+  -   'TECHNICAL_FAILURE',
+  -   'invalid_response'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:185:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'COMPLETED_WITH_CANDIDATES', undefined ],
+    expected: [ 'TECHNICAL_FAILURE', 'invalid_response' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:16178
+✖ R3-fix E. a GLEIF destination always takes the LEI-bound path, even when mislabeled PROFILE; a real PROFILE link is unaffected (0.8207ms)
+  AssertionError [ERR_ASSERTION]: a PROFILE-labeled action pointed at GLEIF with the WRONG LEI fragment must not be waved through
+  + actual - expected
+  
+  + {
+  +   href: 'https://search.gleif.org/#/record/DIFFERENT0000000000',
+  +   label: 'Verify with the official source',
+  +   type: 'OFFICIAL_SOURCE'
+  + }
+  - null
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:198:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { type: 'OFFICIAL_SOURCE', href: 'https://search.gleif.org/#/record/DIFFERENT0000000000', label: 'Verify with the official source' },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:17632
+✖ R3-fix E. the RESEARCH continuation is dropped, not just left on the wrong origin, when its query does not match the searched name (0.5939ms)
+  AssertionError [ERR_ASSERTION]: a continuation scoped to a DIFFERENT name is never offered as this search's way forward
+  + actual - expected
+  
+  + {
+  +   href: 'https://www.lendertrusthub.com/ask?q=SomeoneElse',
+  +   label: 'Continue research on LenderTrustHub',
+  +   type: 'RESEARCH'
+  + }
+  - null
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:210:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { type: 'RESEARCH', href: 'https://www.lendertrusthub.com/ask?q=SomeoneElse', label: 'Continue research on LenderTrustHub' },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at lib\network\name-candidates\th-search-r1-019d-review1.test.ts:2:18096
+✖ R3-fix: identifier syntax and duplicates are enforced without inventing new identifier shapes (0.5075ms)
+  AssertionError [ERR_ASSERTION]: a malformed LEI is dropped -- the card itself is not erased
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (C:\Users\makei\consumers-trust-hub-r1-019d\lib\network\name-candidates\th-search-r1-019d-review1.test.ts:215:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

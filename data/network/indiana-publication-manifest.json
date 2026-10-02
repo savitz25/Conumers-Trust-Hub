@@ -1,0 +1,57 @@
+{
+  "contract": "ath-in-network-release-v1",
+  "ticket": "ATH-IN-001",
+  "state_code": "IN",
+  "state_name": "Indiana",
+  "ask_canonical": "https://www.asktrusthub.com/indiana",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "62b2cdd0a9cefb9255e3b09548795a351b9279f2", "canonical_state_url": "https://www.movetrusthub.com/indiana",
+      "capability_summary": "Indiana DOR household-goods authority verification",
+      "grain": "Indiana DOR operating authority verification is available. Form E insurance filing and tariff requirements are known. No statewide household-goods mover roster or count was acquired; USDOT and MC bridges were not acquired.",
+      "source_clocks": { "dor_authority_status": null, "specialist_release": "62b2cdd0a9cefb9255e3b09548795a351b9279f2" },
+      "gaps": [{ "capability": "statewide HHG mover roster/count", "state": "NOT_ACQUIRED" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "8575bc3fd10fb3751bf7cd2952410458e8db3b2c", "canonical_state_url": "https://www.contractortrusthub.com/indiana",
+      "capability_summary": "500 active Indiana-address Plumbing Corporation credential entries",
+      "grain": "Plumbing Corporation credential-class entries, not all contractors or unique statewide construction businesses. Out-of-state Plumbing Corporation entries: 69. Journeyman Plumber: 3,628 Indiana-address and 434 out-of-state; Plumbing Apprentice: 3,508 and 164; Apprenticeship Program: 16 and 2. Plumbing Contractor count was not acquired. Indiana does not license most general, electrical or HVAC construction contractors statewide; those classes are primarily local. Separately, 159 Plumbing Commission discipline documents cover 2022–2026.",
+      "source_clocks": { "credential_status_date": null, "discipline_window": "2022-2026", "specialist_release": "8575bc3fd10fb3751bf7cd2952410458e8db3b2c" },
+      "gaps": [{ "capability": "Plumbing Contractor count", "state": "NOT_ACQUIRED" }, { "capability": "statewide general/electrical/HVAC contractor census", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "38b91f316d6902543035ff152f6a172e61254c0f", "canonical_state_url": "https://www.lendertrusthub.com/indiana",
+      "capability_summary": "490 Indiana DFI Mortgage Lender listing rows / 489 distinct companies",
+      "grain": "DFI Mortgage Lender listing, not an SOS Loan Broker census or HMDA activity. Twenty-three listed companies have Indiana addresses. The Loan Broker roster was not acquired; 12 company Loan Broker enforcement orders remain a separate order grain. In 2025, Indiana-property HMDA activity contains 285,688 applications, 177,798 originations, 46,696 denials, 907 LEIs and 92 counties.",
+      "source_clocks": { "dfi_listing_retrieval": null, "loan_broker_order_dates": "per order", "hmda_vintage": "2025", "specialist_release": "38b91f316d6902543035ff152f6a172e61254c0f" },
+      "gaps": [{ "capability": "Loan Broker roster", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "33c176213aeb02651c91c48fdd82215bf3e57e14", "canonical_state_url": "https://www.insurancetrusthub.com/indiana",
+      "capability_summary": "1,173 Indiana DOI enforcement-index rows, 2022–2026",
+      "grain": "Enforcement index/action rows, not insurer population or current license authority. The financial-exam layer has 517 report-year links, including 98 dated 2022–2026, and 183 distinct NAIC codes; 166 exactly overlap existing legal-insurer identities. A current company roster was not acquired.",
+      "source_clocks": { "enforcement_window": "2022-2026", "financial_exam_report_dates": "per report", "company_status_date": null, "specialist_release": "33c176213aeb02651c91c48fdd82215bf3e57e14" },
+      "gaps": [{ "capability": "current company roster", "state": "NOT_ACQUIRED" }, { "capability": "agency/producer bulk rosters", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "9b35178e40b054783ba4b655fc7fb03d3286239e", "canonical_state_url": "https://www.seniortrusthub.com/indiana",
+      "capability_summary": "507 Indiana Comprehensive Care directory rows",
+      "grain": "Comprehensive Care is one licensed facility class, not a combined senior total. It has 59,891 licensed beds. Residential Care is a separate 230-row source class and may relate to assisted-living needs; it is not labeled as a standalone Assisted Living license. Home Health Agency has 361 rows and Hospice 113.",
+      "source_clocks": { "facility_directory_date": null, "provider_status_dates": "per source", "specialist_release": "9b35178e40b054783ba4b655fc7fb03d3286239e" },
+      "gaps": [{ "capability": "combined Indiana senior population", "state": "REJECTED" }, { "capability": "standalone Assisted Living license class", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "9a6681377e442151e969e1ea8422ac5f7c6e2a5d", "canonical_state_url": "https://www.investortrusthub.com/indiana",
+      "capability_summary": "369 Indiana state IA firm CRDs with status APPROVED",
+      "grain": "State IA APPROVED firms are distinct from 2,008 federal-covered notice FILED firms, 22 active ERAs and 160 Indiana principal-office firms. Do not add the lenses. Indiana Securities Division has 65 action-index rows dated 2022–2026, with five exact firm-CRD links and no adverse profile attachments.",
+      "source_clocks": { "registration_source_date": null, "action_window": "2022-2026", "action_dates": "per row", "specialist_release": "9a6681377e442151e969e1ea8422ac5f7c6e2a5d" },
+      "gaps": [{ "capability": "BD/agent/IAR bulk rosters", "state": "NOT_ACQUIRED" }, { "capability": "provider examination/complaint rows", "state": "NOT_ACQUIRED" }]
+    }
+  ]
+}

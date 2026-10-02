@@ -1,0 +1,57 @@
+{
+  "contract": "ath-wi-network-release-v1",
+  "ticket": "ATH-WI-001",
+  "state_code": "WI",
+  "state_name": "Wisconsin",
+  "ask_canonical": "https://www.asktrusthub.com/wisconsin",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "4ea562022b22f3041856b33790df5a768f6b765e", "canonical_state_url": "https://www.movetrusthub.com/wisconsin",
+      "capability_summary": "WisDOT LC authority verification",
+      "grain": "Wisconsin intrastate Local Cartage authority is broader than household-goods moving. No household-goods-specific statewide roster or count was acquired. LC, USDOT and MC are distinct. Form E insurance filing is required.",
+      "source_clocks": { "regulatory_source_retrieval": "2026-09-29", "authority_status_date": null },
+      "gaps": [{ "capability": "statewide LC roster", "state": "NOT_ACQUIRED" }, { "capability": "household-goods-specific roster/count", "state": "NOT_ACQUIRED" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint/enforcement rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "bcf259ae737e032c761c2c68e2e647cc1c0d6981", "canonical_state_url": "https://www.contractortrusthub.com/wisconsin",
+      "capability_summary": "9,895 active Dwelling Contractor credential-class entries",
+      "grain": "DSPS class total, not an acquired row-level roster or deduplicated company count. Other distinct class totals: Dwelling Contractor Restricted 66, Electrical Contractor 3,507, HVAC Contractor 2,804, HVAC Qualifier 608, Master Electrician 6,121, Journeyman Electrician 7,423 and Master Plumber 2,890.",
+      "source_clocks": { "dsps_count_date": "2026-09-22", "disciplinary_order_dates": null },
+      "gaps": [{ "capability": "row-level credential rosters", "state": "NOT_ACQUIRED" }, { "capability": "disciplinary order rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "da676f739f72e345940c13619e48ff66214424f0", "canonical_state_url": "https://www.lendertrusthub.com/wisconsin",
+      "capability_summary": "226,408 Wisconsin-property HMDA applications in 2025",
+      "grain": "HMDA activity, not a license census: 154,296 originations, 31,362 denials, 843 LEIs and 72 counties. NMLS license verification is separate. Two selected DFI mortgage-servicing settlement announcements are not an enforcement census.",
+      "source_clocks": { "hmda_vintage": "2025", "dfi_settlement_dates": "per announcement", "license_verification_as_of": null },
+      "gaps": [{ "capability": "state licensing roster/class counts", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "d86bc5e0972ab72a5b308e698564157141b0a367", "canonical_state_url": "https://www.insurancetrusthub.com/wisconsin",
+      "capability_summary": "1,551 OCI insurer-category entries as of December 31, 2025",
+      "grain": "OCI Table A category entries, not unique insurers or a company-level NAIC roster. Separate indices contain 103 market-conduct rows and 171 financial-exam rows. Agency and producer verification is separate.",
+      "source_clocks": { "oci_table_a_as_of": "2025-12-31", "market_conduct_report_dates": "per index row", "financial_exam_report_dates": "per index row" },
+      "gaps": [{ "capability": "company-level NAIC roster", "state": "NOT_ACQUIRED" }, { "capability": "agency/producer rosters", "state": "NOT_ACQUIRED" }, { "capability": "provider enforcement corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "4fab19fd55f34433cf5bd6ecc231b431eb441c15", "canonical_state_url": "https://www.seniortrusthub.com/wisconsin",
+      "capability_summary": "2,479 Wisconsin Adult Family Home directory rows",
+      "grain": "One statewide facility class, not a senior-provider total. Other separate classes: Community-Based Residential Facility 1,534, Residential Care Apartment Complex 360, Nursing Home 334, Hospice 100 and Home Health Agency 133. There are 96 survey-document additions with 95 exact-license matches.",
+      "source_clocks": { "facility_directory_clock": "per specialist source", "survey_document_dates": "per document", "specialist_release": "4fab19fd55f34433cf5bd6ecc231b431eb441c15" },
+      "gaps": [{ "capability": "complete inspection index", "state": "NOT_ACQUIRED" }, { "capability": "bounded enforcement corpus", "state": "NOT_ACQUIRED" }, { "capability": "provider complaint outcomes", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "90e4edcd63bede842493c5e95a241af87b10c544", "canonical_state_url": "https://www.investortrusthub.com/wisconsin",
+      "capability_summary": "95 Wisconsin DFI administrative-order index rows, 2022–2026",
+      "grain": "Index rows, not unique firms, final findings or a complete adverse-event census. Twenty-six rows contain CRD-column text; exact adverse profile attachments are zero. A separate SEC/IARD geography lens has 211 Wisconsin principal-office firms; office location does not establish Wisconsin registration.",
+      "source_clocks": { "principal_office_source_as_of": "2026-08-27", "administrative_order_dates": "2022–2026, per index row", "dfi_retrieval": "2026-09-29" },
+      "gaps": [{ "capability": "state IA / notice / ERA counts", "state": "NOT_ACQUIRED" }, { "capability": "BD/agent/IAR bulk rosters", "state": "NOT_ACQUIRED" }, { "capability": "provider exam/complaint rows", "state": "NOT_ACQUIRED" }]
+    }
+  ]
+}

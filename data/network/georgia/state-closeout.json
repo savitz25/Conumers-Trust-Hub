@@ -1,0 +1,38 @@
+{
+  "ticket": "ATH-GA-001",
+  "state": "GA",
+  "status": "CLOSED_PRODUCTION_VERIFIED",
+  "note": "GEORGIA STATEWIDE EXPANSION CLOSED — PRODUCTION VERIFIED. Specialist 6/6 Production pages remain live. Ask /georgia is Production-certified. Publication semantic fingerprint is unchanged.",
+  "contract": "ath-ga-network-release-v1",
+  "network_contract": "ath-ga-network-release-v1",
+  "ask_path": "/georgia",
+  "ask_route": "/georgia",
+  "ask_canonical": "https://www.asktrusthub.com/georgia",
+  "scope": "STATE_LEVEL_ONLY",
+  "local_work_needed_now": "NO",
+  "local_work_decision": "NO",
+  "cross_hub_record_total": null,
+  "cross_hub_record_total_status": "REJECTED",
+  "ask_graph_writes": 0,
+  "ask_claim_eligibility_broadened": false,
+  "publication_manifest_fingerprint": "d7e748dda20762d39b49750777950b5a6e3ed653681fa3ae778f99e3f69263dd",
+  "ask_production": {
+    "verified_at": "2026-09-24T13:26:26Z",
+    "merge_sha": "f478b2f43beecaa564571ff4124f2c122b7ba2b3",
+    "pr": 200,
+    "deployment_id": 6638655763,
+    "environment": "Production",
+    "deployed_sha": "f478b2f43beecaa564571ff4124f2c122b7ba2b3",
+    "unique_deployment_url": "https://conumers-trust-g8cz5rijr-savitz25-s-projects.vercel.app",
+    "live_route": "https://www.asktrusthub.com/georgia",
+    "http_status": 200,
+    "canonical": "https://www.asktrusthub.com/georgia",
+    "robots": "index, follow",
+    "sso": false
+  },
+  "network_release_gate": {
+    "passed": true,
+    "required_hubs": 6,
+    "verified_at": "2026-09-24T13:05:14.831Z"
+  }
+}

@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createHash } from 'node:crypto';
 import { ProfileTransferModel } from './v2-3-profile-transfer.model.ts';
-import { TRANSFER_VERSION, KEEP_LOCAL_COPY, PRODUCTION_ORIGINS, isGuestStageInput, isContinuationInput, isConsumeInput,
-  isCommitInput, isReceiptLookup, isReceiptVerify, manifestDigest, profileReturnDestination, validateProfileReturn,
-  type GuestStageInput, type TrustedOriginRegistry, type AuthorizedSpecialist, type VerifiedParentContext, type TrustedCommitAdapter,
+import { TRANSFER_VERSION, TRANSFER_VERSION_V2, TRANSFER_VERSION_V3, KEEP_LOCAL_COPY, PRODUCTION_ORIGINS, APPROVED_PROFILE_CLASS,
+  isGuestStageInput, isGuestStageInputV2, isGuestStageInputV3, isContinuationInput, isConsumeInput,
+  isCommitInput, isReceiptLookup, isReceiptVerify, manifestDigest, profileKey, profileReturnDestination, validateProfileReturn, v3ReturnPath,
+  type GuestStageInput, type GuestStageInputV3, type ProfileReturnTaskV2, type TrustedOriginRegistry, type AuthorizedSpecialist, type VerifiedParentContext, type TrustedCommitAdapter,
 } from './v2-3-profile-transfer.ts';
-import type { TrustedProfile } from './v2-3-profile-save.ts';
+import type { SpecialistHub, TrustedProfile } from './v2-3-profile-save.ts';
 
 const ref = (s: string) => s.repeat(43);
 const profile: TrustedProfile = { hub: 'insurance', nativeId: 'provider-native-id', profileClass: 'agency', published: true,
@@ -15,7 +17,8 @@ const item = { localItemId: 'local-a', revision: 'revision-2', digest: 'a'.repea
 const stage: GuestStageInput = { version: TRANSFER_VERSION, sourceHub: 'insurance', audience: 'ask', selected: [item],
   returnTask: { kind: 'profile', hub: 'insurance', canonicalSlug: 'agency-profile', profile: identity } };
 const registry: TrustedOriginRegistry = { environment: 'isolated', isolatedBackendVerified: true,
-  origins: { move: 'http://localhost:3001', insurance: 'http://localhost:3003', lender: 'http://localhost:3002' } };
+  origins: { move: 'http://localhost:3001', insurance: 'http://localhost:3003', lender: 'http://localhost:3002',
+    contractor: 'http://localhost:3004', senior: 'http://localhost:3005', investor: 'http://localhost:3006' } };
 const bff: AuthorizedSpecialist = { hub: 'insurance', browserBinding: ref('b'), environment: 'isolated', scopes: ['transfer:stage', 'receipt:verify'] };
 const ctx: VerifiedParentContext = { admitted: true, subject: 'consumer-a', authenticatedHub: 'insurance', browserBinding: ref('b'),
   environment: 'isolated', accountContextRef: ref('c'), scopes: ['saved:write'] };
@@ -47,7 +50,7 @@ test('C02 no arbitrary providers paths or normalized traversal/backslash/externa
 });
 test('C03 Move and Lender keep distinct reviewed routes, identity-bound destination', () => {
   for (const [hub, prefix] of [['move', 'companies'], ['lender', 'lenders']] as const) {
-    const task = { ...stage.returnTask, hub, profile: { ...identity, hub } };
+    const task: ProfileReturnTaskV2 = { kind: 'profile', hub, canonicalSlug: 'agency-profile', profile: { hub, nativeId: identity.nativeId, profileClass: identity.profileClass } };
     assert.equal(validateProfileReturn(`/${prefix}/agency-profile`, task, registry), `${registry.origins[hub]}/${prefix}/agency-profile`);
     assert.equal(validateProfileReturn('/providers/agency-profile', task, registry), null);
   }
@@ -152,4 +155,80 @@ test('C14 no Project is required, another owner Project fails separately, no pri
   assert.equal(deniedProject.parent.outcome,'already_saved'); assert.equal(deniedProject.project.outcome,'failed');
   assert.doesNotMatch(JSON.stringify(deniedProject),/consumer-a|subject|email|notes/);
   assert.equal(f.model.savedCount,1); assert.equal(f.model.watches,0);
+});
+
+const sixOrigins = {
+  move: 'http://localhost:3001', insurance: 'http://localhost:3003', lender: 'http://localhost:3002',
+  contractor: 'http://localhost:3004', senior: 'http://localhost:3005', investor: 'http://localhost:3006',
+};
+const wide: TrustedOriginRegistry = { environment: 'isolated', isolatedBackendVerified: true, origins: sixOrigins };
+function v3Stage(hub: SpecialistHub, slug: string, nativeId: string, profileClass = APPROVED_PROFILE_CLASS[hub]): GuestStageInputV3 {
+  const profile = { hub, nativeId, profileClass };
+  const item = { localItemId: slug, revision: 'rev-1', digest: 'a'.repeat(64), profile };
+  return { version: TRANSFER_VERSION_V3, sourceHub: hub, audience: 'ask', selected: [item],
+    returnTask: { kind: 'profile', hub, canonicalSlug: slug, profile, returnPath: v3ReturnPath(hub, slug, nativeId) ?? '' } };
+}
+const moveV2: GuestStageInput = { version: TRANSFER_VERSION_V2, sourceHub: 'move', audience: 'ask', selected: [{ ...item, profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' } }],
+  returnTask: { kind: 'profile', hub: 'move', canonicalSlug: 'hindman-isaacs-moving-storage-inc', profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' } } };
+
+test('V01 version 2 Move stays accepted and its digest bytes omit returnPath', () => {
+  assert.equal(isGuestStageInput(moveV2), true);
+  assert.equal(isGuestStageInputV2(moveV2), true);
+  assert.equal(isGuestStageInputV3(moveV2), false);
+  const legacy = createHash('sha256').update(JSON.stringify([TRANSFER_VERSION_V2, 'move', 'ask',
+    moveV2.selected.map(i => [i.localItemId, i.revision, i.digest, i.profile.hub, i.profile.nativeId, i.profile.profileClass]),
+    ['profile', 'move', 'hindman-isaacs-moving-storage-inc', profileKey(moveV2.returnTask.profile)]])).digest('hex');
+  assert.equal(manifestDigest(moveV2), legacy);
+  assert.equal(profileReturnDestination(moveV2.returnTask, wide), 'http://localhost:3001/companies/hindman-isaacs-moving-storage-inc');
+});
+test('V02 version 3 Move is distinct, and each version rejects the other shape', () => {
+  const moveV3 = v3Stage('move', 'hindman-isaacs-moving-storage-inc', 'usdot-1002530');
+  assert.equal(isGuestStageInputV3(moveV3), true);
+  assert.equal(isGuestStageInputV2(moveV3), false);
+  assert.notEqual(manifestDigest(moveV2), manifestDigest(moveV3));
+  assert.equal(isGuestStageInputV3(stage), false);
+  assert.equal(isGuestStageInputV2(moveV3), false);
+  assert.equal(isGuestStageInput({ ...moveV2, returnTask: { ...moveV2.returnTask, returnPath: '/companies/hindman-isaacs-moving-storage-inc' } }), false);
+  assert.equal(isGuestStageInput({ ...moveV3, version: TRANSFER_VERSION_V2 }), false);
+});
+test('V03 six-hub return paths, national Lender, and Senior CCN segment', () => {
+  const insurance = v3Stage('insurance', 'agency-profile', 'provider-native-id');
+  const lender = v3Stage('lender', 'national-bank', 'institution-100');
+  const contractor = v3Stage('contractor', 'roof-co', 'license-9');
+  const investor = v3Stage('investor', 'advisory-firm', 'crd-42');
+  const senior = v3Stage('senior', 'harbor-facility', 'AB12CD');
+  for (const [input, path] of [[insurance, '/providers/agency-profile'], [lender, '/lender/national-bank'], [contractor, '/contractors/roof-co'], [investor, '/firm/advisory-firm'], [senior, '/facility/cms/AB12CD/harbor-facility']] as const) {
+    assert.equal(isGuestStageInput(input), true, input.sourceHub);
+    assert.equal(profileReturnDestination(input.returnTask, wide), wide.origins[input.sourceHub] + path);
+    assert.equal(validateProfileReturn(path, input.returnTask, wide), wide.origins[input.sourceHub] + path);
+  }
+  const legacyLender = { ...lender, version: TRANSFER_VERSION_V2, returnTask: { kind: 'profile' as const, hub: 'lender' as const, canonicalSlug: 'national-bank', profile: lender.returnTask.profile } };
+  assert.equal(isGuestStageInput(legacyLender), false);
+  assert.equal(profileReturnDestination(legacyLender.returnTask, wide), 'http://localhost:3002/lenders/national-bank');
+  assert.equal(isGuestStageInput({ ...lender, returnTask: { ...lender.returnTask, returnPath: '/lenders/national-bank' } }), false);
+  assert.equal(isGuestStageInput(v3Stage('senior', 'harbor-facility', 'sunrise')), false);
+  assert.equal(isGuestStageInput({ ...senior, returnTask: { ...senior.returnTask, returnPath: '/facility/harbor-facility' } }), false);
+  assert.equal(isGuestStageInput(v3Stage('lender', 'national-bank', 'institution-100', 'mover')), false);
+  assert.equal(isGuestStageInput({ ...lender, returnTask: { ...lender.returnTask, returnPath: '/lender/../admin' } }), false);
+  assert.equal(validateProfileReturn('/lender/national-bank?saved=1', lender.returnTask, wide), null);
+  assert.equal(validateProfileReturn('/lender/national-bank#done', lender.returnTask, wide), null);
+  assert.equal(profileReturnDestination(senior.returnTask, { ...wide, origins: { ...sixOrigins, senior: '' } }), null);
+  assert.equal(profileReturnDestination(lender.returnTask, { ...wide, environment: 'production', origins: { ...PRODUCTION_ORIGINS, lender: PRODUCTION_ORIGINS.move } }), null);
+  assert.equal(profileReturnDestination(lender.returnTask, { ...wide, environment: 'production', origins: PRODUCTION_ORIGINS }), PRODUCTION_ORIGINS.lender + '/lender/national-bank');
+});
+test('V04 version 3 Save still requires a parent receipt and creates no Watch', () => {
+  const input = v3Stage('move', 'hindman-isaacs-moving-storage-inc', 'usdot-1002530');
+  const moveProfile: TrustedProfile = { ...input.returnTask.profile, published: true, supportedClass: true, binding: { id: 'reviewed', networkEntityId: 'network-a', status: 'accepted' } };
+  const moveBff: AuthorizedSpecialist = { ...bff, hub: 'move' };
+  const moveCtx: VerifiedParentContext = { ...ctx, authenticatedHub: 'move' };
+  const model = new ProfileTransferModel();
+  const staged = model.prepareGuestProfileTransfer(input, moveBff, wide, 0, input.returnTask);
+  const continuation = model.prepareProfileSaveContinuation({ sourceHub: 'move', audience: 'ask', transferRef: staged.transferRef, manifestDigest: staged.manifestDigest }, moveBff, 1);
+  model.consumeProfileSaveContinuation({ continuationRef: continuation.continuationRef, issuer: 'move', audience: 'ask', browserProof: moveBff.browserBinding }, moveCtx, 2);
+  assert.equal(model.getProfileSaveReceipt({ requestKey: 'request-v3', accountContextRef: moveCtx.accountContextRef }, moveCtx), null);
+  assert.equal(model.savedCount, 0);
+  const receipt = model.commitProfileSave({ requestKey: 'request-v3', accountContextRef: moveCtx.accountContextRef, transferRef: staged.transferRef, manifestDigest: staged.manifestDigest, item: input.selected[0] }, moveCtx, { resolveCurrent: () => moveProfile, ownsProject: () => false }, 3);
+  assert.equal(receipt.parent.outcome, 'saved');
+  assert.equal(model.savedCount, 1);
+  assert.equal(model.watches + model.alerts, 0);
 });

@@ -4,6 +4,7 @@ import {
   HOME_STATE_FL,
   HUB_CONTRACTOR,
   SOURCE_FL_DBPR,
+  contractorCredentialPairAllowed,
   type CustomerHubId,
   type HandoffPayload,
 } from './types.ts';
@@ -17,7 +18,13 @@ export type HandoffVerifyFailure =
   | 'unsupported_hub'
   | 'unsupported_state'
   | 'unsupported_source'
-  | 'reused_nonce';
+  | 'reused_nonce'
+  | 'misconfigured';
+
+/** ATH-CLAIM-V2-001R4: verification fails closed on the same minimum as minting. */
+export const MIN_HANDOFF_SECRET_LENGTH = 32;
+/** Bounded before any parsing/HMAC work; real v2 tokens are well under 2 KB. */
+export const MAX_HANDOFF_TOKEN_LENGTH = 4096;
 
 export class HandoffError extends Error {
   readonly code: HandoffVerifyFailure;
@@ -48,10 +55,10 @@ function isCompleteV2(payload: HandoffPayload): boolean {
     ? { namespace: 'credential', entityClass: 'contractor' }
     : null;
   if (!capability) return true;
+  // ATH-CLAIM-V2-FLNJ-001: FL (fl_dbpr) unchanged; NJ accepted only as (nj_dca, NJ). Any other pair is malformed.
   return payload.identifier_namespace === capability.namespace
     && payload.entity_class === capability.entityClass
-    && payload.source_system === SOURCE_FL_DBPR
-    && payload.home_state === HOME_STATE_FL
+    && contractorCredentialPairAllowed(payload.source_system, payload.home_state)
     && typeof payload.canonical_profile_url === 'string'
     && payload.canonical_profile_url.length > 0
     && typeof payload.display_name === 'string'
@@ -76,6 +83,9 @@ export function mintHandoffToken(
     canonicalProfileUrl?: string;
     displayName?: string;
     version?: 1 | 2;
+    /** ATH-CLAIM-V2-001R2 (Q2) — trusted-server-only. The public Contractor route never sets this to anything
+     * but "organic"; other values are only ever produced by direct, non-public calls to this function. */
+    acquisitionSource?: string;
   }
 ): { token: string; payload: HandoffPayload } {
   if (!secret || secret.length < 32) {
@@ -102,6 +112,7 @@ export function mintHandoffToken(
     provider_class: input.providerClass,
     canonical_profile_url: input.canonicalProfileUrl,
     display_name: input.displayName,
+    acquisition_source: input.acquisitionSource,
     iat: Math.floor(now.getTime() / 1000),
     exp: Math.floor(now.getTime() / 1000) + ttl,
     nonce: input.nonce ?? randomToken(24),
@@ -116,6 +127,8 @@ export function parseAndAuthenticateHandoff(
   token: string,
   now: Date = new Date()
 ): HandoffPayload {
+  if (!secret || secret.length < MIN_HANDOFF_SECRET_LENGTH) throw new HandoffError('misconfigured');
+  if (typeof token !== 'string' || token.length === 0 || token.length > MAX_HANDOFF_TOKEN_LENGTH) throw new HandoffError('malformed');
   const parts = token.split('.');
   if (parts.length !== 2 || !parts[0] || !parts[1]) {
     throw new HandoffError('malformed');
@@ -134,6 +147,17 @@ export function parseAndAuthenticateHandoff(
   if (payload.v === 1 && payload.source_system !== SOURCE_FL_DBPR) throw new HandoffError('unsupported_source');
   if (payload.v === 2 && !isCompleteV2(payload)) throw new HandoffError('malformed');
   return payload;
+}
+
+/**
+ * ATH-CLAIM-V2-FLNJ-001R1 (double-intent P1) — identity peek WITHOUT authentication. Only ever applied to a token
+ * that came out of an HMAC-signed receipt cookie, and only to compare hub/profile ids; never to grant anything.
+ */
+export function peekHandoffIdentity(token: string): { hub_id: string; native_profile_id: string } | null {
+  if (typeof token !== 'string' || token.length === 0 || token.length > MAX_HANDOFF_TOKEN_LENGTH) return null;
+  const payload = decodePayload(token.split('.')[0] ?? '');
+  if (!payload || typeof payload.hub_id !== 'string' || typeof payload.native_profile_id !== 'string') return null;
+  return { hub_id: payload.hub_id, native_profile_id: payload.native_profile_id.toLowerCase() };
 }
 
 export function mutateHandoffToken(

@@ -1,3 +1,10 @@
+import { mnIdentifier, mnRefusal, mnCaveat, classifyMnHub, queryLooksLikeMinnesota, mnSpecialistUrl } from './mn-network.ts';
+import { miIdentifier, miRefusal, miCaveat, classifyMiHub, queryLooksLikeMichigan, miSpecialistUrl } from './mi-network.ts';
+import { ctIdentifier, ctRefusal, ctCaveat, classifyCtHub, queryLooksLikeConnecticut, ctSpecialistUrl } from './ct-network.ts';
+import { mdIdentifier, mdRefusal, mdCaveat, classifyMdHub, queryLooksLikeMaryland, mdSpecialistUrl } from './md-network.ts';
+import { wiIdentifier, wiRefusal, wiCaveat, classifyWiHub, queryLooksLikeWisconsin, wiSpecialistUrl } from './wi-network.ts';
+import { inIdentifier, inRefusal, inCaveat, classifyInHub, queryLooksLikeIndiana, inSpecialistUrl } from './in-network.ts';
+import { rewriteMoveSpecialistHref } from './move-origin.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
 import { parseNetworkAsk, type ParsedNetworkAsk } from './ask-parse.ts';
@@ -72,6 +79,31 @@ import { orCaveatForHub, orSpecialistUrl, routeOrAsk } from './or-network.ts';
 import { paCaveatForHub, paSpecialistUrl, routePaAsk } from './pa-network.ts';
 import { ncCaveatForHub, ncSpecialistUrl, routeNcAsk } from './nc-network.ts';
 import { ohCaveatForHub, ohSpecialistUrl, routeOhAsk } from './oh-network.ts';
+import { gaCaveatForHub, gaSpecialistUrl, routeGaAsk } from './ga-network.ts';
+import { maCaveatForHub, maSpecialistUrl, routeMaAsk } from './ma-network.ts';
+import {
+  queryLooksLikeTennessee,
+  routeTnAsk,
+  TN_SEMANTIC_GUARDRAILS,
+  tnBareLicenseAmbiguous,
+  tnGatewayOnlyQuery,
+  tnCaveatForHub,
+  tnExactCredentialRoute,
+  tnLabeledIdentifier,
+  tnSpecialistUrl,
+} from './tn-network.ts';
+import {
+  NV_SEMANTIC_GUARDRAILS,
+  nvBareLicenseAmbiguous,
+  nvCaveatForHub,
+  nvExactCredentialRoute,
+  nvGatewayOnlyQuery,
+  nvIdentifierRoute,
+  nvLabeledIdentifier,
+  nvSpecialistUrl,
+  queryLooksLikeNevada,
+  routeNvAsk,
+} from './nv-network.ts';
 import { isSpecificIdentityRequest, requestedIdentityName, type AskDiagnostics, type AskResultClass, type IdentityResolutionClass } from './result-contract.ts';
 import { fetchMoveNetworkIdentity, MOVE_NETWORK_RESOLVER_VERSION, type MoveNetworkResolverOutcome } from './move-network-resolver.ts';
 import {
@@ -203,6 +235,15 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'OR') return '/oregon';
   if (parsed.geography?.stateCode === 'PA') return '/pennsylvania';
   if (parsed.geography?.stateCode === 'NC') return '/north-carolina';
+  if (parsed.geography?.stateCode === 'MA') return '/massachusetts';
+  if (parsed.geography?.stateCode === 'TN') return '/tennessee';
+  if (parsed.geography?.stateCode === 'NV') return '/nevada';
+  if (parsed.geography?.stateCode === 'MN') return '/minnesota';
+  if (parsed.geography?.stateCode === 'MI') return '/michigan';
+  if (parsed.geography?.stateCode === 'CT') return '/connecticut';
+  if (parsed.geography?.stateCode === 'MD') return '/maryland';
+  if (parsed.geography?.stateCode === 'WI') return '/wisconsin';
+  if (parsed.geography?.stateCode === 'IN') return '/indiana';
   return undefined;
 }
 
@@ -337,7 +378,7 @@ function moveHubPlan(parsed: ParsedNetworkAsk): NetworkAskHubPlan {
       capabilityStatus: 'handoff',
       mode: 'auto_transport_handoff',
       structuredFilters: { researchCategory: 'auto_transport', role },
-      destination: MOVE_COMPANY_RESEARCH_ROUTE,
+      destination: rewriteMoveSpecialistHref(MOVE_COMPANY_RESEARCH_ROUTE),
       reason: 'MoveTrustHub owns mover identity, publication, regulatory-role, and source-backed Auto Transport qualification. Ask routes to that accepted specialist cohort and does not construct it.',
       whatItCanAnswer: 'Continue on MoveTrustHub to research its source-backed 268-company Auto Transport cohort. The cohort includes carriers, brokers, dual-role identities, and identities with an unknown regulatory role; use the role shown on each result.',
       geographyCapability: 'Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.',
@@ -1298,6 +1339,387 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
       const primary = parsed.suggestedHubs[0];
       hubs = hubs.map((h) => (h.hubId === primary ? annotateOh(h, ohCaveatForHub(primary)) : h));
     }
+  }
+
+  if (parsed.geography?.stateCode === 'GA') {
+    const gaRoute = routeGaAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateGa = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : gaSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? gaSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (gaRoute) {
+      const already = hubs.some((h) => h.hubId === gaRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: gaRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[gaRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: gaRoute.destination,
+            reason: gaRoute.caveat,
+            whatItCanAnswer: `Georgia research on ${NETWORK_PUBLIC_NAMES[gaRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Georgia',
+          },
+          ...hubs,
+        ];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === gaRoute.hubId ? annotateGa(h, gaRoute.caveat) : h));
+      }
+    } else if (parsed.suggestedHubs[0] && !/\b(usdot|crd|nmls|naic|npn|ccn)\b/i.test(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateGa(h, gaCaveatForHub(primary)) : h));
+    }
+  }
+
+  if (parsed.geography?.stateCode === 'MA') {
+    const maRoute = routeMaAsk(parsed.query);
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateMa = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : maSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? maSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    if (maRoute) {
+      const ranking = /does not select a winner/.test(maRoute.caveat);
+      const already = hubs.some((h) => h.hubId === maRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: maRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[maRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: maRoute.destination,
+            reason: maRoute.caveat,
+            whatItCanAnswer: `Massachusetts research on ${NETWORK_PUBLIC_NAMES[maRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Massachusetts',
+          },
+          ...hubs,
+        ];
+      } else if (ranking) {
+        hubs = hubs.map((h) =>
+          h.hubId === maRoute.hubId
+            ? {
+                ...h,
+                capabilityStatus: 'handoff' as const,
+                destination: maRoute.destination,
+                reason: `${h.reason} ${maRoute.caveat}`,
+                compareHref: maRoute.destination,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === maRoute.hubId), ...hubs.filter((h) => h.hubId !== maRoute.hubId)];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === maRoute.hubId ? annotateMa(h, maRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === maRoute.hubId), ...hubs.filter((h) => h.hubId !== maRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0] && !/\b(usdot|dot|mc|nmls|naic|npn|ccn|crd|sec(?:\s+number|\s+file)?|hic|csl)\b/i.test(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateMa(h, maCaveatForHub(primary)) : h));
+    }
+  }
+
+  // A full state name outranks a bare code in the shared geography fallback ("movers CA and
+  // Tennessee" parses as TN); Tennessee only annotates when Tennessee itself was named first.
+  if (parsed.geography?.stateCode === 'TN' && queryLooksLikeTennessee(parsed.query)) {
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateTn = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : tnSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? tnSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    const exact = tnExactCredentialRoute(parsed.query);
+    const tnRoute = routeTnAsk(parsed.query);
+    const gatewayOnly = tnGatewayOnlyQuery(parsed.query);
+    if (tnBareLicenseAmbiguous(parsed.query)) {
+      // ATH-TN-001: a bare Tennessee license number is never guessed across hubs.
+      const clarification = TN_SEMANTIC_GUARDRAILS.bare_license_ambiguous;
+      const primary = hubs[0]?.hubId ?? parsed.suggestedHubs[0] ?? 'contractor';
+      hubs = [
+        {
+          hubId: primary,
+          name: NETWORK_PUBLIC_NAMES[primary],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          failKind: 'hard',
+          destination: undefined,
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          preview: { headline: clarification, grain: 'fail_closed', limitation: clarification },
+        },
+      ];
+    } else if (gatewayOnly) {
+      // ATH-TN-001: no specialist is claimed; the Tennessee gateway (placeLensHref) owns the answer.
+      hubs = [];
+    } else if (exact) {
+      const rest = hubs.filter((h) => h.hubId !== exact.hubId);
+      hubs = [
+        {
+          hubId: exact.hubId,
+          name: NETWORK_PUBLIC_NAMES[exact.hubId],
+          capabilityStatus: 'handoff',
+          destination: exact.destination,
+          reason: exact.caveat,
+          whatItCanAnswer: `Exact Tennessee credential lookup on ${NETWORK_PUBLIC_NAMES[exact.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          compareHref: tnSpecialistUrl(exact.hubId),
+        },
+        ...rest,
+      ];
+    } else if (tnRoute) {
+      const ranking = /does not select a winner/.test(tnRoute.caveat);
+      const already = hubs.some((h) => h.hubId === tnRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: tnRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[tnRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: tnRoute.destination,
+            reason: tnRoute.caveat,
+            whatItCanAnswer: `Tennessee research on ${NETWORK_PUBLIC_NAMES[tnRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Tennessee',
+          },
+          ...hubs,
+        ];
+      } else if (ranking) {
+        hubs = hubs.map((h) =>
+          h.hubId === tnRoute.hubId
+            ? {
+                ...h,
+                capabilityStatus: 'handoff' as const,
+                destination: tnRoute.destination,
+                reason: `${h.reason} ${tnRoute.caveat}`,
+                compareHref: tnRoute.destination,
+              }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === tnRoute.hubId), ...hubs.filter((h) => h.hubId !== tnRoute.hubId)];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === tnRoute.hubId ? annotateTn(h, tnRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === tnRoute.hubId), ...hubs.filter((h) => h.hubId !== tnRoute.hubId)];
+      }
+    } else if (parsed.suggestedHubs[0] && !tnLabeledIdentifier(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateTn(h, tnCaveatForHub(primary)) : h));
+    }
+  }
+
+  // ATH-NV-001: Nevada annotates only when Nevada itself was named first (or a Nevada city with a
+  // vertical and no other state); exact identifiers outrank Nevada vertical routing.
+  const nvContext = parsed.geography?.stateCode === 'NV' && queryLooksLikeNevada(parsed.query);
+  if (nvContext) {
+    const specificDestination = (dest?: string) =>
+      Boolean(dest && (/\/ask(\?|$)/i.test(dest) || /\/api\/ask/i.test(dest) || /\/verify(\?|$)/i.test(dest)));
+    const annotateNv = (hub: NetworkAskHubPlan, caveat: string): NetworkAskHubPlan => {
+      const keepDestination = hub.capabilityStatus === 'execute' || specificDestination(hub.destination);
+      return {
+        ...hub,
+        destination: keepDestination ? hub.destination : nvSpecialistUrl(hub.hubId),
+        reason: `${hub.reason} ${caveat}`,
+        compareHref: keepDestination ? nvSpecialistUrl(hub.hubId) : hub.compareHref,
+      };
+    };
+    const exact = nvExactCredentialRoute(parsed.query);
+    const nvRoute = routeNvAsk(parsed.query);
+    const gatewayOnly = nvGatewayOnlyQuery(parsed.query);
+    if (exact) {
+      const rest = hubs.filter((h) => h.hubId !== exact.hubId);
+      hubs = [
+        {
+          hubId: exact.hubId,
+          name: NETWORK_PUBLIC_NAMES[exact.hubId],
+          capabilityStatus: 'handoff',
+          destination: exact.destination,
+          reason: exact.caveat,
+          whatItCanAnswer: `Exact Nevada credential lookup on ${NETWORK_PUBLIC_NAMES[exact.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          compareHref: nvSpecialistUrl(exact.hubId),
+        },
+        ...rest,
+      ];
+    } else if (nvBareLicenseAmbiguous(parsed.query)) {
+      // ATH-NV-001: a bare Nevada license number is never guessed across hubs.
+      const clarification = NV_SEMANTIC_GUARDRAILS.bare_license_ambiguous;
+      const primary = hubs[0]?.hubId ?? parsed.suggestedHubs[0] ?? 'contractor';
+      hubs = [
+        {
+          hubId: primary,
+          name: NETWORK_PUBLIC_NAMES[primary],
+          capabilityStatus: 'unsupported',
+          mode: 'fail_closed',
+          failKind: 'hard',
+          destination: undefined,
+          reason: clarification,
+          whatItCanAnswer: clarification,
+          geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          preview: { headline: clarification, grain: 'fail_closed', limitation: clarification },
+        },
+      ];
+    } else if (gatewayOnly) {
+      // ATH-NV-001: no specialist is claimed; the Nevada gateway (placeLensHref) owns the answer.
+      hubs = [];
+    } else if (nvRoute) {
+      const ranking = /does not select a winner/.test(nvRoute.caveat);
+      const already = hubs.some((h) => h.hubId === nvRoute.hubId);
+      if (!already) {
+        hubs = [
+          {
+            hubId: nvRoute.hubId,
+            name: NETWORK_PUBLIC_NAMES[nvRoute.hubId],
+            capabilityStatus: 'handoff',
+            destination: nvRoute.destination,
+            reason: nvRoute.caveat,
+            whatItCanAnswer: `Nevada research on ${NETWORK_PUBLIC_NAMES[nvRoute.hubId]}. Ask does not invent specialist facts.`,
+            geographyCapability: parsed.geography?.meaning ?? 'Nevada',
+          },
+          ...hubs.filter((h) => h.hubId !== nvRoute.hubId),
+        ];
+      } else if (ranking) {
+        hubs = hubs.map((h) =>
+          h.hubId === nvRoute.hubId
+            ? { ...h, capabilityStatus: 'handoff' as const, destination: nvRoute.destination, reason: `${h.reason} ${nvRoute.caveat}`, compareHref: nvRoute.destination }
+            : h,
+        );
+        hubs = [...hubs.filter((h) => h.hubId === nvRoute.hubId), ...hubs.filter((h) => h.hubId !== nvRoute.hubId)];
+      } else {
+        hubs = hubs.map((h) => (h.hubId === nvRoute.hubId ? annotateNv(h, nvRoute.caveat) : h));
+        hubs = [...hubs.filter((h) => h.hubId === nvRoute.hubId), ...hubs.filter((h) => h.hubId !== nvRoute.hubId)];
+      }
+      // A single-vertical Nevada question claims one specialist, not the shared place fan-out.
+      if (!/\b(and|or|compare|versus|vs\.?)\b/i.test(parsed.query)) hubs = hubs.filter((h) => h.hubId === nvRoute.hubId);
+    } else if (parsed.suggestedHubs[0] && !nvLabeledIdentifier(parsed.query)) {
+      const primary = parsed.suggestedHubs[0];
+      hubs = hubs.map((h) => (h.hubId === primary ? annotateNv(h, nvCaveatForHub(primary)) : h));
+    }
+  } else {
+    // ATH-NV-001: Nevada-only identifier formats (NTA CPCN, HCQC credential, SEC file number) name their
+    // hub even without Nevada context; shared-parser identifier families keep their own routing.
+    const identifierRoute = parsed.intent === 'identifier' && !parsed.identifier?.ambiguous ? undefined : nvIdentifierRoute(parsed.query, queryLooksLikeTennessee(parsed.query));
+    if (identifierRoute) {
+      hubs = [
+        {
+          hubId: identifierRoute.hubId,
+          name: NETWORK_PUBLIC_NAMES[identifierRoute.hubId],
+          capabilityStatus: 'handoff',
+          destination: identifierRoute.destination,
+          reason: identifierRoute.caveat,
+          whatItCanAnswer: `Exact identifier lookup on ${NETWORK_PUBLIC_NAMES[identifierRoute.hubId]}. Ask does not invent specialist facts.`,
+          geographyCapability: parsed.geography?.meaning ?? 'Identifier routing — not geography.',
+          compareHref: nvSpecialistUrl(identifierRoute.hubId),
+        },
+        ...hubs.filter((h) => h.hubId !== identifierRoute.hubId),
+      ];
+    }
+  }
+
+  // Minnesota is a source gateway. Exact credential handoffs never promote individual rows
+  // into company headlines, and refusals cannot execute a provider search.
+  const mnId = mnIdentifier(parsed.query);
+  const mnRefused = mnRefusal(parsed.query);
+  if (mnId || mnRefused || queryLooksLikeMinnesota(parsed.query)) {
+    const hub = mnId?.hub ?? classifyMnHub(parsed.query);
+    if (hub) {
+      const reason = mnRefused ?? `${mnId ? `Exact ${mnId.type} ${mnId.value}. ` : ''}${mnCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:mnRefused?'unsupported':'handoff',
+        ...(mnRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:mnRefused?undefined:mnSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:mnId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (mnRefused) parsed.interpretationLines.push({label:'Research boundary',value:mnRefused});
+  }
+
+  // Michigan remains a six-hub source gateway. Exact IDs hand off to the specialist's
+  // canonical state page; no specialist rows or graph entities are copied into Ask.
+  const miId = miIdentifier(parsed.query);
+  const miRefused = miRefusal(parsed.query);
+  if (miId || miRefused || queryLooksLikeMichigan(parsed.query)) {
+    const hub = miId?.hub ?? classifyMiHub(parsed.query);
+    if (hub) {
+      const reason = miRefused ?? `${miId ? `Exact ${miId.type} ${miId.value}. ` : ''}${miCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:miRefused?'unsupported':'handoff',
+        ...(miRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:miRefused?undefined:miSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:miId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (miRefused) parsed.interpretationLines.push({label:'Research boundary',value:miRefused});
+  }
+
+  // Connecticut is a six-hub gateway; no state rows or graph entities are copied into Ask.
+  const ctId = ctIdentifier(parsed.query);
+  const ctRefused = ctRefusal(parsed.query);
+  if (ctId || ctRefused || queryLooksLikeConnecticut(parsed.query)) {
+    const hub = ctId?.hub ?? classifyCtHub(parsed.query);
+    if (hub) {
+      const reason = ctRefused ?? `${ctId ? `Exact ${ctId.type} ${ctId.value}. ` : ''}${ctCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:ctRefused?'unsupported':'handoff',
+        ...(ctRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:ctRefused?undefined:ctSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:ctId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (ctRefused) parsed.interpretationLines.push({label:'Research boundary',value:ctRefused});
+  }
+
+  // Maryland remains a six-hub gateway; specialist rows and graph entities stay with their owners.
+  const mdId = mdIdentifier(parsed.query);
+  const mdRefused = mdRefusal(parsed.query);
+  if (mdId || mdRefused || queryLooksLikeMaryland(parsed.query)) {
+    const hub = mdId?.hub ?? classifyMdHub(parsed.query);
+    if (hub) {
+      const reason = mdRefused ?? `${mdId ? `Exact ${mdId.type} ${mdId.value}. ` : ''}${mdCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:mdRefused?'unsupported':'handoff',
+        ...(mdRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:mdRefused?undefined:mdSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:mdId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (mdRefused) parsed.interpretationLines.push({label:'Research boundary',value:mdRefused});
+  }
+
+  // Wisconsin is a six-hub gateway; specialists retain their source records and identities.
+  const wiId = wiIdentifier(parsed.query);
+  const wiRefused = wiRefusal(parsed.query);
+  if (wiId || wiRefused || queryLooksLikeWisconsin(parsed.query)) {
+    const hub = wiId?.hub ?? classifyWiHub(parsed.query);
+    if (hub) {
+      const reason = wiRefused ?? `${wiId ? `Exact ${wiId.type} ${wiId.value}. ` : ''}${wiCaveat(hub)}`;
+      hubs = [{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:wiRefused?'unsupported':'handoff',
+        ...(wiRefused ? {mode:'fail_closed',failKind:'hard'} : {}),
+        destination:wiRefused?undefined:wiSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning ?? 'Exact identifier; not geography.',
+        preview:{headline:reason,grain:wiId?.type ?? 'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    } else hubs = [];
+    if (wiRefused) parsed.interpretationLines.push({label:'Research boundary',value:wiRefused});
+  }
+
+  // Indiana is a six-hub gateway; specialist rows and current authority remain with their owners.
+  const inId=inIdentifier(parsed.query);
+  const inRefused=inRefusal(parsed.query);
+  if(inId||inRefused||queryLooksLikeIndiana(parsed.query)){
+    const hub=inId?.hub??classifyInHub(parsed.query);
+    if(hub){
+      const reason=inRefused??`${inId?`Exact ${inId.type} ${inId.value}. `:''}${inCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:inRefused?'unsupported':'handoff',
+        ...(inRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:inRefused?undefined:inSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:inId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(inRefused)parsed.interpretationLines.push({label:'Research boundary',value:inRefused});
   }
 
   const requested = requestedLegalJurisdiction(parsed.query);

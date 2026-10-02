@@ -1,0 +1,402 @@
+{
+  "state_code": "TN",
+  "state_name": "Tennessee",
+  "ask_path": "/tennessee",
+  "ask_canonical": "https://www.asktrusthub.com/tennessee",
+  "version": "ath-tn-network-release-v1",
+  "scope": "STATE_LEVEL_ONLY",
+  "hardcoded_county_routes": false,
+  "hardcoded_city_routes": false,
+  "tennessee_local_phase": "NO",
+  "tennessee_local_phase_status": "NOT_STARTED",
+  "trust_score": false,
+  "paid_ranking": false,
+  "status": "ASK_PUBLICATION_CONTRACT",
+  "ask_production": null,
+  "conceptual_statement": "Tennessee research stays in six specialist products: the Revenue Intrastate Authority framework for movers, TDFI mortgage regulation and orders, the Board for Licensing Contractors license dashboard and discipline, TDCI's licensed insurance companies and company records, HFC care classes beside CMS, and separate Tennessee adviser registration lenses and Securities Division orders. Ask routes to those pages. It does not copy their records or add them into one Tennessee total.",
+  "release_gate": {
+    "passed": true,
+    "required_hubs": [
+      "contractor",
+      "move",
+      "senior",
+      "lender",
+      "insurance",
+      "investor"
+    ],
+    "blocker": null,
+    "rule": "All six specialist /tennessee pages must return HTTP 200 as intended state intelligence pages, indexable and self-canonical, and every hub must be CLOSED_PRODUCTION_VERIFIED at its certified SHA and fingerprint, before Ask /tennessee is indexable. Any one specialist failure fails the gate.",
+    "verified_at": "2026-09-25T15:36:36.514Z"
+  },
+  "intelligence_strip": [
+    {
+      "hub_id": "move",
+      "display": "Tennessee Intrastate Authority: framework known, public roster not published",
+      "grain": "Tennessee Revenue (Motor Carrier Section) Intrastate Authority. No public roster or carrier search, so no Tennessee mover count. Not USDOT or MC; exact USDOT/MC joins 0. The former household-goods rule was repealed effective 2026-03-09."
+    },
+    {
+      "hub_id": "lender",
+      "display": "10 TDFI mortgage-related enforcement orders listed (9 retrieved)",
+      "grain": "Order documents, standalone; 0 exact NMLS attachments. No Tennessee bulk license roster exists; licensing is verified on NMLS Consumer Access. HMDA 2025 (302,219 applications) is federal activity, not licensing."
+    },
+    {
+      "hub_id": "contractor",
+      "display": "29,096 Tennessee Contractor license numbers",
+      "grain": "Board for Licensing Contractors dashboard ($25,000+ Contractor license only; 20,460 Active as published). Home Improvement, LLE and LLP are separate credentials not acquired. 679 discipline rows (Jan 2024-Aug 2026) are standalone events."
+    },
+    {
+      "hub_id": "insurance",
+      "display": "2,029 distinct NAIC codes on TDCI's List of Licensed Insurance Companies",
+      "grain": "As of 2026-08-31; 2,115 listed rows across 13 company types, never summed; 72 placeholder-NAIC reinsurer/captive rows are not identities. Activity events, company actions and examinations are separate. Agency and producer bulk not acquired."
+    },
+    {
+      "hub_id": "senior",
+      "display": "326 HFC Nursing Home licenses",
+      "grain": "One HFC facility class (July 2026 bed report; 36,730 licensed beds). 331 ACLFs, 39 RHAs, county Home Health/Hospice lists and CMS (303/128/61) stay separate. Proven exact state-to-CMS bridges: 0, which is not zero overlap."
+    },
+    {
+      "hub_id": "investor",
+      "display": "327 APPROVED Tennessee state IA firms",
+      "grain": "State registration only (IAPD 2026-09-17). 38 ERA, 2,685 notice filings and 264 principal-office firms are separate lenses. 273 Consent Order and 52 Cease and Desist listings are separate archives; 3 exact firm-CRD links."
+    }
+  ],
+  "what_makes_tennessee_different": [
+    "Move: Tennessee Revenue grants Intrastate Authority but publishes no roster or search, and the household-goods consumer rule was repealed effective 2026-03-09.",
+    "Lender: TDFI regulates mortgage lenders, brokers, servicers and MLOs but publishes no bulk license file; NMLS Consumer Access is the verification path.",
+    "Contractor: the $25,000 Contractor license is one of four credentials; Home Improvement applies only in nine counties, and LLE/LLP only where the state Fire Prevention division inspects.",
+    "Insurance: TDCI publishes a NAIC-keyed licensed-company list plus separate activity, action and examination records.",
+    "Senior: HFC (consolidated July 1, 2024) licenses Nursing Homes, Assisted Care Living Facilities and Residential Homes for the Aged as separate classes beside CMS.",
+    "Investor: state IA, ERA, notice and principal-office lenses come from IAPD; the Securities Division keeps Consent and Cease and Desist Orders as separate archives."
+  ],
+  "hub_expansion_ledgers": {
+    "move": {
+      "TN_INTRASTATE_AUTHORITY_BULK": "NOT_ACQUIRED",
+      "TN_AUTHORITY_ROSTER_ROWS": null,
+      "EXACT_USDOT_JOINS": 0,
+      "EXACT_MC_JOINS": 0,
+      "HOUSEHOLD_GOODS_RULE_STATUS": "REPEALED_EFFECTIVE_2026_03_09",
+      "TARIFF_INDEX": "NOT_ACQUIRED",
+      "COMPLAINT_OUTCOMES": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "lender": {
+      "TN_BULK_LICENSE_ROSTER": "NOT_ACQUIRED",
+      "MLO_BULK": "NOT_ACQUIRED",
+      "BRANCH_CENSUS": "NOT_ACQUIRED",
+      "TDFI_ORDERS_LISTED": 10,
+      "TDFI_ORDERS_RETRIEVED": 9,
+      "MORTGAGE_RELATED_ORDERS": 1,
+      "EXACT_NMLS_ATTACHMENTS": 0,
+      "TDFI_ENFORCEMENT_2024_2026": "UNKNOWN",
+      "HMDA_2025_APPLICATIONS": 302219,
+      "COMPLAINTS": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "contractor": {
+      "CONTRACTOR_LICENSE_NUMBERS": 29096,
+      "CONTRACTOR_ACTIVE_AS_PUBLISHED": 20460,
+      "QUALIFYING_AGENT_LINKS": 32941,
+      "HOME_IMPROVEMENT_ROSTER": "NOT_ACQUIRED",
+      "LLE_ROSTER": "NOT_ACQUIRED",
+      "LLP_ROSTER": "NOT_ACQUIRED",
+      "DISCIPLINE_ROWS_2024_2026": 679,
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "COMPLAINT_RECORDS": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "insurance": {
+      "LISTED_ROWS": 2115,
+      "DISTINCT_NAIC": 2029,
+      "PLACEHOLDER_NAIC_ROWS": 72,
+      "EXACT_EXISTING_LEGAL_INSURER_MATCHES": 2022,
+      "UNMATCHED_NAIC": 7,
+      "ACTIVITY_EVENT_ROWS": 83,
+      "COMPANY_ACTION_INDEX_LINES": 234,
+      "EXAMINATION_LISTINGS": 293,
+      "PRODUCER_DISCIPLINE_ENTRIES": 1148,
+      "AGENCY_BULK": "NOT_ACQUIRED",
+      "PRODUCER_BULK": "NOT_ACQUIRED",
+      "COMPANY_COMPLAINT_DATA": "NOT_ACQUIRED",
+      "EXACT_PROFILE_ATTACHMENTS": 0,
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "senior": {
+      "CMS_NURSING_HOMES": 303,
+      "CMS_HOME_HEALTH": 128,
+      "CMS_HOSPICE": 61,
+      "HFC_NURSING_HOME_LICENSES": 326,
+      "HFC_NURSING_HOME_BEDS": 36730,
+      "HFC_ACLF": 331,
+      "HFC_ACLF_BEDS": 23081,
+      "HFC_RHA": 39,
+      "HFC_RHA_BEDS": 795,
+      "HOME_HEALTH_AGENCIES_AS_PRINTED": 176,
+      "HOME_HEALTH_COUNTY_ROWS": 2487,
+      "HOSPICE_AGENCIES_AS_PRINTED": 63,
+      "HOSPICE_COUNTY_ROWS": 732,
+      "HFC_ACTION_ROWS_2024_2026": 201,
+      "EXACT_STATE_CMS_BRIDGES": 0,
+      "ADULT_CARE_HOME_ROSTER": "NOT_ACQUIRED",
+      "COMPLAINTS": "REQUEST_ONLY",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    },
+    "investor": {
+      "STATE_IA_ROWS": 328,
+      "STATE_IA_APPROVED": 327,
+      "STATE_IA_TERMREQUEST": 1,
+      "ERA_ACTIVE": 38,
+      "FEDERAL_NOTICE_FILINGS": 2685,
+      "PRINCIPAL_OFFICE_ROSTER": 264,
+      "APPROVED_STATE_IA_NOTICE_EXACT_CRD_OVERLAP": 3,
+      "CONSENT_ORDER_LISTINGS": 273,
+      "CEASE_AND_DESIST_LISTINGS": 52,
+      "FINAL_ADMINISTRATIVE_ORDERS": 79,
+      "INITIAL_ORDERS": 1,
+      "EXACT_FIRM_CRD_LINKS": 3,
+      "PROFILE_ATTACHMENTS": 0,
+      "IAR_POPULATION": "NOT_ACQUIRED",
+      "STATE_BD_AGENT_BULK": "NOT_ACQUIRED",
+      "GRAPH_WRITES": 0,
+      "CLAIM_ELIGIBILITY_BROADENED": false
+    }
+  },
+  "expansion_ledger": {
+    "do_not_sum_hubs": true,
+    "CROSS_HUB_RECORD_TOTAL": {
+      "status": "REJECTED",
+      "value": null,
+      "explanation": "Tennessee evidence uses incompatible grains: an authority framework without a roster, mortgage enforcement orders, federal HMDA activity, contractor license numbers, qualifying-agent links, discipline events, insurer NAIC identities, insurance events and examinations, nursing-home licenses, ACLFs, homes for the aged, licensed beds, agency-by-county service rows, facility actions, adviser registrations, ERA and notice filings, and securities order listings. They cannot be summed into Tennessee businesses, providers, licensed professionals, or Trust Hub records."
+    },
+    "ASK_GRAPH_WRITES": 0,
+    "ASK_CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_WORK_NEEDED_NOW": "NO"
+  },
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "Moving",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.movetrusthub.com/tennessee",
+      "snapshot_version": "move-tn-state-intel-v1",
+      "fingerprint": "aa892cceecbc7ad96f9e9df43f9f941e5e9df24f6622ff23bc1fb66751d63b69",
+      "certified_release_sha": "b72c3c0aabf0813358a8f622be68f4b2fe4302a4",
+      "source_clocks": {
+        "source_as_of": null,
+        "retrieved_at": "2026-09-24T19:37:12Z",
+        "rules_retrieved_at": "2026-09-24T19:41:47Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T19:45:42Z"
+      },
+      "plain_question": "How does Tennessee Intrastate Authority work for household-goods movers?",
+      "research_topics": [
+        "Intrastate Authority",
+        "Form H cargo insurance",
+        "Rule 1340-06-01"
+      ],
+      "coverage_summary": "Capability layer: authority framework, insurance and current rules. No public roster.",
+      "coverage_limitation": "No Tennessee authority roster or search exists publicly; counts are unknown, not zero. Tariff index not acquired. Complaint outcomes request-only.",
+      "verified_facts": [
+        "Intrastate Authority framework KNOWN",
+        "Roster NOT_ACQUIRED",
+        "0 USDOT joins",
+        "0 MC joins"
+      ],
+      "routing_intents": [
+        "movers Tennessee",
+        "Tennessee intrastate authority",
+        "household goods mover Tennessee",
+        "moving complaints Tennessee"
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "Lending",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.lendertrusthub.com/tennessee",
+      "snapshot_version": "lender-tn-state-intel-v1",
+      "fingerprint": "cb713c0a555163348f74e4679e66182cd55739b079178a469dd5d39e9ce1d66a",
+      "certified_release_sha": "54b11a9c12bf03042f1bb3ff1af60a0005d6d04a",
+      "source_clocks": {
+        "licensing": "NMLS Consumer Access (live search; no bulk file)",
+        "enforcement_index_retrieved_at": "2026-09-24T17:08:00Z",
+        "hmda": "HMDA 2025",
+        "generated_at": "2026-09-24T19:48:00Z"
+      },
+      "plain_question": "How is mortgage lending licensed in Tennessee?",
+      "research_topics": [
+        "TDFI mortgage licensing",
+        "NMLS verification",
+        "TDFI enforcement",
+        "HMDA activity"
+      ],
+      "coverage_summary": "TDFI regulation mapped; licensing verified on NMLS Consumer Access; 10 enforcement orders listed.",
+      "coverage_limitation": "No Tennessee bulk license roster. Enforcement 2024-2026 unknown. Complaints request-only. HMDA is federal activity.",
+      "verified_facts": [
+        "10 orders listed",
+        "0 exact NMLS attachments",
+        "HMDA 2025 302,219 applications"
+      ],
+      "routing_intents": [
+        "mortgage lender Tennessee",
+        "mortgage loan originator Tennessee",
+        "Tennessee mortgage enforcement",
+        "HMDA Tennessee"
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "Contractors",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.contractortrusthub.com/tennessee",
+      "snapshot_version": "contractor-tn-state-intel-v1",
+      "fingerprint": "f9ff8de0df88d4f59ae19efea15aae25cac4ca42a02c4f9439f7d50959a0e680",
+      "certified_release_sha": "d36047b72a69374514ee32b9aededc36c4318944",
+      "source_clocks": {
+        "dashboard_retrieved_at": "2026-09-24T21:09:18Z",
+        "dashboard_source_as_of": null,
+        "discipline_window": "January 2024 - August 2026",
+        "generated_at": "2026-09-24T21:27:00Z"
+      },
+      "plain_question": "Which Tennessee Contractor licenses are on the Board's dashboard?",
+      "research_topics": [
+        "Contractor license",
+        "Home Improvement",
+        "LLE / LLP",
+        "Board discipline"
+      ],
+      "coverage_summary": "29,096 Contractor license numbers; exact license-number lookup.",
+      "coverage_limitation": "Home Improvement, LLE and LLP rosters not acquired. Discipline is standalone (no license numbers printed). Complaint records not acquired.",
+      "verified_facts": [
+        "29,096 license numbers",
+        "679 discipline rows",
+        "0 name attachments"
+      ],
+      "routing_intents": [
+        "contractor Tennessee",
+        "home improvement license Tennessee",
+        "contractor discipline Tennessee",
+        "Tennessee contractor license 1742"
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "Insurance",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.insurancetrusthub.com/tennessee",
+      "snapshot_version": "insurance-tn-state-intel-v1",
+      "fingerprint": "bb82b021809e2deaf5355dd8d30e5d751483f51cb708a9c77bf79fad8eed1bf8",
+      "certified_release_sha": "a52b69d53e408d18f3ef5d64f38d40e57f8e1c41",
+      "source_clocks": {
+        "source_as_of": "2026-08-31",
+        "retrieved_at": "2026-09-25T12:30:25Z",
+        "snapshot_as_of": "2026-09-25",
+        "generated_at": "2026-09-25T12:44:08Z"
+      },
+      "plain_question": "Which insurance companies does TDCI list as licensed in Tennessee?",
+      "research_topics": [
+        "Licensed companies",
+        "NAIC identity",
+        "Company actions",
+        "Examinations"
+      ],
+      "coverage_summary": "2,029 distinct NAIC codes on the TDCI licensed-company list.",
+      "coverage_limitation": "Company types are never summed. Agency and producer bulk not acquired. Company complaint data not acquired.",
+      "verified_facts": [
+        "2,115 listed rows",
+        "2,029 distinct NAIC",
+        "72 placeholder rows excluded"
+      ],
+      "routing_intents": [
+        "insurance companies Tennessee",
+        "NAIC Tennessee",
+        "Tennessee insurance company actions",
+        "insurance agent Tennessee"
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "Senior Care",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.seniortrusthub.com/tennessee",
+      "snapshot_version": "senior-tn-state-intel-v1",
+      "fingerprint": "f95d81b37f042879e0259bf8d833e0e89122e8a44e55030aa281ca044b047ea9",
+      "certified_release_sha": "e5ba724a9209422e15c80c4d112afba1cd57b1f8",
+      "source_clocks": {
+        "hfc_report_month": "2026-07",
+        "hh_hospice_list_source_as_of": "2024-02-07 / 2024-03-06",
+        "retrieved_at": "2026-09-24T21:55:44Z",
+        "snapshot_as_of": "2026-09-24",
+        "generated_at": "2026-09-24T22:30:00Z"
+      },
+      "plain_question": "Which Tennessee nursing homes, ACLFs and homes for the aged are HFC-licensed?",
+      "research_topics": [
+        "HFC nursing homes",
+        "Assisted Care Living Facilities",
+        "Residential Homes for the Aged",
+        "HFC facility actions"
+      ],
+      "coverage_summary": "326 HFC Nursing Home licenses; ACLF, RHA, Home Health, Hospice and CMS separate.",
+      "coverage_limitation": "No combined senior-facility or bed total. Home Health/Hospice lists date from 2024. Complaints request-only. Exact HFC-to-CMS join unknown.",
+      "verified_facts": [
+        "326 nursing home licenses",
+        "331 ACLFs",
+        "39 RHAs",
+        "0 proven state-to-CMS bridges"
+      ],
+      "routing_intents": [
+        "nursing homes Tennessee",
+        "assisted living Tennessee",
+        "home for the aged Tennessee",
+        "Tennessee nursing home enforcement"
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "Investment Professionals",
+      "publication_status": "live",
+      "specialist_status": "CLOSED_PRODUCTION_VERIFIED",
+      "canonical_state_url": "https://www.investortrusthub.com/tennessee",
+      "snapshot_version": "investor-tn-state-intel-v1",
+      "fingerprint": "a2332c25eb07803d5e126c0a1935c3e8e0d9268d2fd9f3790e90fce65545f54e",
+      "certified_release_sha": "506ba754a21105c309c87757b8f57fdb41e39b34",
+      "source_clocks": {
+        "iapd_source_as_of": "2026-09-17",
+        "enforcement_retrieved_at": "2026-09-25T12:30:07Z",
+        "snapshot_as_of": "2026-09-25",
+        "generated_at": "2026-09-25T12:39:27Z"
+      },
+      "plain_question": "Which firms are APPROVED Tennessee state investment advisers?",
+      "research_topics": [
+        "State IA",
+        "ERA",
+        "Federal notice",
+        "Principal office",
+        "Consent / C&D orders"
+      ],
+      "coverage_summary": "327 APPROVED state IA firms. ERA, notice and principal office separate.",
+      "coverage_limitation": "IAR and broker-dealer populations not acquired. Order identifiers read for 2024-2026 only. Listings are not matters.",
+      "verified_facts": [
+        "327 APPROVED",
+        "38 ERA",
+        "2,685 notice filings",
+        "3 exact firm-CRD links"
+      ],
+      "routing_intents": [
+        "investment adviser Tennessee",
+        "RIA Tennessee",
+        "Tennessee Consent Order",
+        "Tennessee Cease and Desist Order"
+      ]
+    }
+  ]
+}

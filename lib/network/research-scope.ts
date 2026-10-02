@@ -1,6 +1,8 @@
 import type { AskResearchPlan, AskRequestedGeography } from './research-planner.ts';
 import { geographyCapability, type AskGeographyMeaning, type ExecutableGeographyKind } from './geography-capabilities.ts';
 import { resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
+import { wiSeniorStateResearch } from './wi-network.ts';
+import { inResearchHandoff } from './in-network.ts';
 
 export type NormalizedResearchGeography={kind:ExecutableGeographyKind|'region'|'route';display:string;stateCode?:string;stateName?:string;county?:string;city?:string;zip?:string;origin?:string;destination?:string};
 export type AskScopeResolutionState='EXACT'|'DETERMINISTIC_EQUIVALENT'|'CLARIFICATION_REQUIRED'|'CAPABILITY_UNSUPPORTED'|'BROADENING_REQUIRES_CONSENT'|'INVALID_GEOGRAPHY';
@@ -42,6 +44,25 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
   const base={version:'ask-execution-scope-v1' as const,requestedGeography:requested,normalizedRequestedGeography:normalized,requestedGeographyMeaning:meaning,executionGeographyMeaning:meaning,transformation:'NONE' as AskScopeTransformation,consentRequired:false,disclosureRequired:false,reasonCodes:[] as string[]};
   if(!requested)return {...base,resolutionState:'EXACT',executionAllowed:true};
   if(plan.reasonCodes.includes('CARE_TASK')&&requested.resolution!=='RESOLVED')return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:'Retain the requested location and choose its state or clarify the unsupported local scope before provider research runs.',reasonCodes:['UNRESOLVED_CARE_LOCATION']};
+  const indiana=inResearchHandoff(plan);
+  if(indiana&&normalized?.stateCode==='IN'){
+    const state={kind:'state' as const,display:'Indiana',stateCode:'IN',stateName:'Indiana'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Indiana statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Indiana statewide specialist research; no city provider search or city page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'INDIANA_STATE_RESEARCH_HANDOFF':'INDIANA_CITY_CONTEXT_HANDOFF']};
+  }
+  const wiSenior=wiSeniorStateResearch(plan);
+  if(wiSenior&&normalized?.stateCode==='WI'){
+    const state={kind:'state' as const,display:'Wisconsin',stateCode:'WI',stateName:'Wisconsin'};
+    return {...base,executionGeography:state,executionGeographyMeaning:'RECORDED_PROVIDER_LOCATION' as const,
+      resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?`Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub. Ask provides a research handoff; no provider cohort is executed.`:
+        `${normalized.display} is context only. Wisconsin statewide ${wiSenior.label} evidence is available at SeniorTrustHub; no city provider search or city page is implied.`,
+      reasonCodes:[normalized.kind==='state'?'WISCONSIN_SENIOR_STATE_RESEARCH':'WISCONSIN_SENIOR_CITY_CONTEXT_HANDOFF']};
+  }
   if(!capability||!normalized)return {...base,resolutionState:'CAPABILITY_UNSUPPORTED',executionAllowed:false,reasonCodes:['NO_SPECIALIST_GEOGRAPHY_CAPABILITY']};
   if(normalized.kind==='route'&&plan.executionMode==='IDENTITY')return {...base,resolutionState:'EXACT',executionAllowed:true,disclosureRequired:true,disclosure:`Route or service-territory capability is not verified from this source. ${capability.disclosure}`,reasonCodes:['IDENTITY_LOOKUP_ROUTE_CONTEXT_ONLY']};
   if(meaning==='SERVICE_TERRITORY'||meaning==='ORIGIN_DESTINATION')return {...base,resolutionState:'CAPABILITY_UNSUPPORTED',executionAllowed:false,disclosureRequired:true,disclosure:capability.disclosure,reasonCodes:['SERVICE_SCOPE_NOT_SOURCE_SUPPORTED']};
