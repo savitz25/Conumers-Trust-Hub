@@ -77,7 +77,14 @@ function MetricBlock({ metric, size }: { metric: NetworkMetric; size: 'lg' | 'md
   );
 }
 
-export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentation }) {
+export function SpecialistNetworkCard({
+  card,
+  stateResearch,
+}: {
+  card: SpecialistHubPresentation;
+  /** Ask-derived network state coverage for this hub (canonical catalog + accepted contract paths). */
+  stateResearch?: { published: number; national: number; total: number; href: string };
+}) {
   const generatedDay = card.generatedAt.slice(0, 10);
   return (
     <article
@@ -96,6 +103,18 @@ export function SpecialistNetworkCard({ card }: { card: SpecialistHubPresentatio
         <p className="mt-2 rounded-lg bg-amber-50 px-2 py-1 text-xs text-amber-900">
           Showing last-known-good specialist snapshot. Upstream publication temporarily unavailable.
         </p>
+      ) : null}
+
+      {stateResearch ? (
+        <a
+          href={stateResearch.href}
+          data-network-state-research={card.hub}
+          className="mt-3 inline-flex min-h-11 items-center self-start rounded-full bg-indigo-50 px-3 text-xs font-semibold"
+          style={{ color: ASK_BRAND.indigo }}
+        >
+          State research in {stateResearch.published} of {stateResearch.total} network states
+          {stateResearch.national > 0 ? ` · national research in ${stateResearch.national}` : ''}
+        </a>
       ) : null}
 
       {card.universes.length > 0 ? (
