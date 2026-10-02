@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, Sparkles, X } from 'lucide-react';
 import { useAskChat } from '@/components/ask-chat/ask-chat-context';
 import { BrandLogo } from '@/components/brand-logo';
+import { MyTrustHubNavLink } from '@/components/my-trusthub/my-trusthub-nav-link';
 import { SwitchHubMenu } from '@/components/switch-hub-menu';
 import { ASK_HEADER_CONCIERGE, ASK_HEADER_NAV } from '@/lib/design/ask-design-system';
 import { cn } from '@/lib/utils';
@@ -82,10 +83,12 @@ export function Navbar() {
             <Sparkles className="h-4 w-4" aria-hidden />
             {ASK_HEADER_CONCIERGE.label}
           </button>
+          <MyTrustHubNavLink variant="desktop" />
           <SwitchHubMenu />
         </div>
 
         <div className="th-header-mobile-actions">
+          <MyTrustHubNavLink variant="mobile-header" />
           <button
             type="button"
             onClick={() => openChat()}
@@ -119,6 +122,7 @@ export function Navbar() {
           />
           <div id={drawerId} className="th-drawer" role="dialog" aria-modal="true" aria-label="Ask Trust Hub menu">
             <nav aria-label="Mobile" className="flex flex-col">
+              <MyTrustHubNavLink variant="drawer" onNavigate={() => setOpen(false)} />
               {ASK_HEADER_NAV.map((item) => (
                 <Link
                   key={item.href}

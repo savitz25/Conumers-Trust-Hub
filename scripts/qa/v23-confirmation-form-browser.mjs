@@ -33,7 +33,7 @@ try{
  page.setDefaultTimeout(10000);
  // fixture() executed POST continuationRef -> 303 and captured its cookie.
  await page.goto(ASK_PREVIEW+PROFILE_CONFIRM_PATH);
- assert.match(await page.locator('body').innerText(),/move: usdot-1002530/);
+ assert.match(await page.locator('body').innerText(),/Move Trust Hub · USDOT 1002530/);
  assert.equal(await page.locator('select[name=project]').inputValue(),'');
  assert.equal(await page.locator('select[name=project] option').count(),1);
  assert.equal(f.backend.count('saves'),0);
