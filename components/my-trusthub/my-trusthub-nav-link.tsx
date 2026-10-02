@@ -78,17 +78,20 @@ export function MyTrustHubNavLink({
     );
   }
 
+  // The reference shell is tight between 1024 and 1400px: keep the icon-only
+  // control there and show the label once the nav has room.
   return (
     <Link
       href={href}
       prefetch={false}
       onClick={onNavigate}
-      className={cn('th-btn-secondary', className)}
+      className={cn('th-btn-secondary !px-3 min-[1400px]:!px-[14px]', className)}
       title={title}
+      aria-label="My TrustHub"
       data-mth-entry={signedIn ? 'workspace' : 'sign-in'}
     >
       <ShieldCheck className="h-4 w-4 text-[var(--th-accent)]" aria-hidden />
-      My TrustHub
+      <span className="hidden min-[1400px]:inline">My TrustHub</span>
     </Link>
   );
 }
