@@ -237,6 +237,30 @@ export class ProductionMyTrustHubAdapter {
     return rows<SavedEntityRow>(await this.rpc("list_saved_entities"));
   }
 
+  /**
+   * Unsave: soft-removes one Saved entity the signed-in user owns through the
+   * P12 `remove_saved_entity` RPC. The expected row version is read first under
+   * the owner-only RLS select policy so a concurrent change fails closed.
+   */
+  async removeSavedEntity(savedEntityId: string, expectedVersion?: number): Promise<number> {
+    let version = expectedVersion;
+    if (version === undefined) {
+      const current = await this.client
+        .schema("consumer")
+        .from("consumer_saved_entities")
+        .select("id,row_version,removed_at")
+        .eq("id", savedEntityId);
+      if (current.error) fail(current.error);
+      const row = one<{ row_version: number | string; removed_at: string | null }>(current.data);
+      if (!row || row.removed_at) throw new Error("My TrustHub Saved entity was not found");
+      version = Number(row.row_version);
+    }
+    return Number(await this.rpc("remove_saved_entity", {
+      p_saved_entity_id: savedEntityId,
+      p_expected_row_version: version,
+    }));
+  }
+
   async saveEntity(bindingId: string): Promise<string> {
     const result = one<{ saved_entity_id: string }>(
       await this.rpc("save_entity", {
@@ -582,6 +606,20 @@ export class ProductionMyTrustHubAdapter {
     return rows<GuestImportPreviewRow>(
       await this.rpc("preview_guest_import", { p_payload: payload }),
     );
+  }
+
+  async guestImportReceiptItems(importId: string, sessions = false): Promise<string[]> {
+    // Existing browser SELECT grants and owner RLS; no privileged credential or new RPC.
+    const table = sessions ? 'consumer_guest_session_import_items' : 'consumer_guest_import_items';
+    const result = await this.client.schema('consumer').from(table)
+      .select('client_item_id,selected,result_status').eq('import_id', importId);
+    if (result.error) fail(result.error);
+    return rows<{ client_item_id: string; selected: boolean; result_status: string }>(result.data)
+      // A pre-existing duplicate may have older session content. Keep that local
+      // item unless this exact request's receipt proves it was imported. Replays
+      // of a successful request retain the original 'imported' receipt status.
+      .filter(row => row.selected && row.result_status === 'imported')
+      .map(row => row.client_item_id);
   }
 
   async commitGuestImport(input: {

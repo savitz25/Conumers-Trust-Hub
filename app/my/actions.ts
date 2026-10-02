@@ -4,20 +4,12 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-  isApprovedCanaryEmail,
-  isMyTrustHubCanaryOnly,
-} from "@/lib/my-trusthub/canary-access";
-import {
   assertMyTrustHubFeature,
-  getMyTrustHubFeatureFlags,
 } from "@/lib/my-trusthub/feature-flags";
-import {
-  getMyTrustHubSupabasePublishableKey,
-  getMyTrustHubSupabaseUrl,
-} from "@/lib/my-trusthub/runtime-config";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
-import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
+import { accountAction, signOutAccountAction } from './account-actions';
 import { DBPR_LOOKUP_CONSENT } from "@/lib/my-trusthub/dbpr-lookup";
+import type { ImportCommitResult } from '@/lib/my-trusthub/guest-retirement';
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -89,53 +81,12 @@ async function safeMutation<T>(event: string, errorPath: string, mutation: () =>
 }
 
 export async function requestMagicLinkAction(formData: FormData) {
-  assertMyTrustHubFeature("MY_TRUSTHUB_ENABLED");
-  const email = textField(formData, "email", 254).toLowerCase();
-  if (!/^\S+@\S+\.\S+$/.test(email)) redirect("/my/sign-in?error=invalid");
-
-  const flags = getMyTrustHubFeatureFlags();
-  const canaryOnly = isMyTrustHubCanaryOnly();
-  if (canaryOnly && !isApprovedCanaryEmail(email)) {
-    redirect("/my/sign-in?sent=1");
-  }
-  if (!canaryOnly && !flags.MY_TRUSTHUB_SIGNUP_ENABLED) {
-    redirect("/my/sign-in?sent=1");
-  }
-
-  const client = await createMyTrustHubSupabaseClient();
-  const url = getMyTrustHubSupabaseUrl();
-  const key = getMyTrustHubSupabasePublishableKey();
-  if (!client || !url || !key) redirect("/my/sign-in?error=unavailable");
-  const captchaToken = String(formData.get("captchaToken") ?? "").trim();
-  if (process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY && !captchaToken) redirect("/my/sign-in?error=captcha");
-
-  const origin = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
-  const { error } = await client.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback?next=/my`,
-      shouldCreateUser: flags.MY_TRUSTHUB_SIGNUP_ENABLED && !canaryOnly,
-      ...(captchaToken ? { captchaToken } : {}),
-    },
-  });
-  if (error) {
-    const safeMessage = error.message.replaceAll(email, "[redacted-email]");
-    console.error(JSON.stringify({
-      level: "error",
-      event: "my_trusthub_magic_link_failed",
-      code: error.code ?? "unknown",
-      status: error.status ?? null,
-      message: safeMessage,
-    }));
-    redirect("/my/sign-in?error=delivery");
-  }
-  redirect("/my/sign-in?sent=1");
+  const result = await accountAction('link', {}, formData);
+  redirect(result.error ? '/my/sign-in?error=unavailable' : '/my/sign-in?sent=1');
 }
 
 export async function signOutAction() {
-  const client = await createMyTrustHubSupabaseClient();
-  if (client) await client.auth.signOut();
-  redirect("/my");
+  await signOutAccountAction();
 }
 
 export async function saveCanaryEntityAction(formData: FormData) {
@@ -283,27 +234,30 @@ export async function previewGuestImportAction(rawPayload: string): Promise<Gues
   }
 }
 
-export async function commitGuestImportAction(formData: FormData) {
-  assertMyTrustHubFeature("MY_TRUSTHUB_SAVED_ENABLED");
-  const adapter = await requiredAdapter();
+export async function commitGuestImportAction(formData: FormData): Promise<ImportCommitResult> {
   try {
+    assertMyTrustHubFeature("MY_TRUSTHUB_SAVED_ENABLED");
+    const adapter = await requiredAdapter();
+    const user = await adapter.getUser();
+    if (!user || formData.get('expectedUserId') !== user.id) return { ok: false, error: 'Your account changed. Review the destination account and research again.' };
     const payload = guestPayload(textField(formData, "payload", 262144));
-    const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean);
-    if (!selectedItemIds.length) redirect("/my/saved?import=none");
+    const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean).sort();
+    if (!selectedItemIds.length) return { ok: false, error: 'Select research to import.' };
     const importProjectId = optionalUuidField(formData, "projectId");
-    await adapter.commitGuestImport({
+    const receipt = await adapter.commitGuestImport({
       payload,
       selectedItemIds,
       idempotencyKey: uuidField(formData, "idempotencyKey"),
       projectId: importProjectId,
     });
+    if (typeof receipt?.import_id !== 'string') return { ok: false, error: 'Import was not acknowledged. Your local research is unchanged.' };
+    const itemIds = await adapter.guestImportReceiptItems(receipt.import_id);
     revalidatePath("/my");
     revalidatePath("/my/saved");
     revalidatePath("/my/projects");
-    redirect(importProjectId ? "/my/saved?import=complete&import_project=1" : "/my/saved?import=complete");
-  } catch (error) {
-    if (error && typeof error === "object" && "digest" in error) throw error;
-    redirect("/my/saved?import=invalid");
+    return { ok: true, acknowledgment: { ownerId: user.id, itemIds, importId: receipt.import_id } };
+  } catch {
+    return { ok: false, error: 'Import could not be confirmed. Your local research is unchanged; retry after signing in if needed.' };
   }
 }
 
@@ -388,19 +342,22 @@ export async function previewGuestSessionImportAction(rawPayload: string): Promi
   }
 }
 
-export async function commitGuestSessionImportAction(formData: FormData) {
-  assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
-  const adapter = await requiredAdapter();
+export async function commitGuestSessionImportAction(formData: FormData): Promise<ImportCommitResult> {
   try {
+    assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
+    const adapter = await requiredAdapter();
+    const user = await adapter.getUser();
+    if (!user || formData.get('expectedUserId') !== user.id) return { ok: false, error: 'Your account changed. Review the destination account and research again.' };
     const payload = sessionGuestPayload(textField(formData, "payload", 262144));
-    const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean);
-    if (!selectedItemIds.length) redirect("/my/saved?session_import=none");
-    await adapter.commitGuestSessionImport({ payload, selectedItemIds, projectId: optionalUuidField(formData, "projectId"), idempotencyKey: uuidField(formData, "idempotencyKey") });
+    const selectedItemIds = formData.getAll("selectedItemId").map(String).filter(Boolean).sort();
+    if (!selectedItemIds.length) return { ok: false, error: 'Select research to import.' };
+    const receipt = await adapter.commitGuestSessionImport({ payload, selectedItemIds, projectId: optionalUuidField(formData, "projectId"), idempotencyKey: uuidField(formData, "idempotencyKey") });
+    if (typeof receipt?.import_id !== 'string') return { ok: false, error: 'Import was not acknowledged. Your local research is unchanged.' };
+    const itemIds = await adapter.guestImportReceiptItems(receipt.import_id, true);
     revalidatePath("/my"); revalidatePath("/my/saved"); revalidatePath("/my/projects");
-    redirect("/my/saved?session_import=complete");
-  } catch (error) {
-    if (error && typeof error === "object" && "digest" in error) throw error;
-    redirect("/my/saved?session_import=invalid");
+    return { ok: true, acknowledgment: { ownerId: user.id, itemIds, importId: receipt.import_id } };
+  } catch {
+    return { ok: false, error: 'Import could not be confirmed. Your local research is unchanged; retry after signing in if needed.' };
   }
 }
 

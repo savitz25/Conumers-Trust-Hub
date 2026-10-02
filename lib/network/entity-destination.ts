@@ -6,6 +6,7 @@
  * A research identity is never treated as a published profile.
  */
 
+import { moveOrigin, rewriteMoveSpecialistHref } from './move-origin.ts';
 import { CANONICAL_ORIGINS, NETWORK_PUBLIC_NAMES, type SpecialistHubId } from './registry.ts';
 
 export const ENTITY_DESTINATION_CONTRACT = 'network-entity-destination-v1' as const;
@@ -78,16 +79,21 @@ export function isUnpublishedResearchIdentity(input: Pick<EntityNavInput, 'publi
 
 export function absoluteSpecialistUrl(hubId: SpecialistHubId, href?: string | null): string | undefined {
   if (!href) return undefined;
-  if (/^https?:\/\//i.test(href)) return href;
+  if (/^https?:\/\//i.test(href)) return hubId === 'move' ? rewriteMoveSpecialistHref(href) : href;
   if (!href.startsWith('/')) return undefined;
-  return `${CANONICAL_ORIGINS[hubId]}${href}`;
+  const origin = hubId === 'move' ? moveOrigin() : CANONICAL_ORIGINS[hubId];
+  return `${origin}${href}`;
+}
+
+function originAllowed(hubId: SpecialistHubId, parsedOrigin: string): boolean {
+  if (parsedOrigin === new URL(CANONICAL_ORIGINS[hubId]).origin) return true;
+  return hubId === 'move' && parsedOrigin === new URL(moveOrigin()).origin;
 }
 
 function isCanonicalProfileUrl(hubId: SpecialistHubId, url: string): boolean {
   try {
     const parsed = new URL(url);
-    const origin = CANONICAL_ORIGINS[hubId];
-    if (parsed.origin !== new URL(origin).origin) return false;
+    if (!originAllowed(hubId, parsed.origin)) return false;
     return PROFILE_PATH[hubId].test(parsed.pathname);
   } catch {
     return false;
@@ -129,7 +135,7 @@ function identifierQuery(id: StableIdentifier): string {
 }
 
 export function specialistHandoffUrl(input: EntityNavInput, ctx: DestinationContext): string {
-  const origin = CANONICAL_ORIGINS[input.hubId];
+  const origin = input.hubId === 'move' ? moveOrigin() : CANONICAL_ORIGINS[input.hubId];
   const q =
     (input.identifier ? identifierQuery(input.identifier) : undefined) ||
     ctx.searchQuery ||

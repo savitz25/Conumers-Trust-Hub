@@ -1,3 +1,5 @@
+import { moveOrigin } from '../network/move-origin.ts';
+
 /**
  * Stage B.2 / Stage A′ — shared non-PII journey param contract (Ask side).
  * Specialist hubs parse the same query keys.
@@ -200,7 +202,8 @@ export function withJourneyParams(path: string, ctx: JourneyContext): string {
 
 export function absoluteHubUrl(hub: JourneyHub, pathWithQuery: string): string {
   const path = pathWithQuery.startsWith('/') ? pathWithQuery : `/${pathWithQuery}`;
-  return `${HUB_ORIGIN[hub]}${path}`;
+  const origin = hub === 'move' ? moveOrigin() : HUB_ORIGIN[hub];
+  return `${origin}${path}`;
 }
 
 /** Lender: county → state → national hub. */

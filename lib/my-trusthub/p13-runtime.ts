@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { isMyTrustHubFeatureEnabled } from "./feature-flags";
 
 export function contractorSaveEnabled() {
-  return isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SAVED_ENABLED") &&
+  return process.env.VERCEL_ENV === 'production' && isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SAVED_ENABLED") &&
     isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED");
 }
 

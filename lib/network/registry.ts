@@ -1,3 +1,5 @@
+import { moveOrigin } from './move-origin.ts';
+
 /**
  * Ask Network V2 — checked-in canonical registry.
  * Source of truth: docs/ASK-NETWORK-CONTRACT.md
@@ -127,7 +129,12 @@ export function specialistEntries(): NetworkRegistryEntry[] {
 }
 
 export function switcherEntries(): NetworkRegistryEntry[] {
-  return NETWORK_HUB_IDS.map((id) => NETWORK_REGISTRY[id]);
+  return NETWORK_HUB_IDS.map((id) => {
+    const entry = NETWORK_REGISTRY[id];
+    if (id !== 'move') return entry;
+    const url = moveOrigin();
+    return url === entry.url ? entry : { ...entry, url };
+  });
 }
 
 export function isNetworkHubId(value: string): value is NetworkHubId {

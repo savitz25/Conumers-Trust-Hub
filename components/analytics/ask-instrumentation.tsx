@@ -112,7 +112,11 @@ export function captureProjectItemAdded(surface: 'my_saved' | 'my_project_detail
   captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROJECT_ITEM_ADDED, { surface, auth_state: 'authenticated', outcome: 'success', project_context_present: true });
 }
 
-/** Sign-in link requested (pre-existing event name). An intent: delivery and sign-in are not yet known. */
+/** V2-2 definition cutover: new-registration intent only; never account-created success. */
 export function captureSignupStarted(surface = 'my_sign_in'): void {
   captureTrustEvent(TRUSTHUB_EVENTS.ACCOUNT_SIGNUP_STARTED, { surface, auth_state: 'guest', outcome: 'intent' });
+}
+
+export function captureLoginStarted(): void {
+  captureTrustEvent(TRUSTHUB_EVENTS.ACCOUNT_LOGIN_STARTED, { surface: 'my_sign_in', auth_state: 'guest', outcome: 'intent' });
 }

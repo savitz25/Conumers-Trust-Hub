@@ -1,4 +1,5 @@
 import { LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
+import Link from 'next/link';
 import { cancelWorkspaceDeletionAction, removeWatchNotificationOverrideAction, requestDeletionConfirmationAction, requestExportAction, requestWorkspaceDeletionAction, setWatchNotificationOverrideAction, signOutAction, updateNotificationPreferencesAction } from "@/app/my/actions";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
 import { notFound } from "next/navigation";
@@ -23,6 +24,7 @@ export default async function YouPage({ searchParams }: { searchParams: Promise<
       <PageHeading eyebrow="ACCOUNT / PRIVACY" title="You">
         Your consumer research account and the privacy boundaries that protect it.
       </PageHeading>
+      <section className="myth-panel"><h2>Password</h2><p>Add or change the password for this account without changing your saved research. A recent verified sign-in is required.</p><Link href="/my/reset-password?next=%2Fmy%2Fyou">Set or change password</Link></section>
       <section className="myth-grid">
         {preferences ? <article className="myth-panel myth-span-three">
           <div className="myth-panel-heading"><h2><ShieldCheck aria-hidden="true" />Notification preferences</h2></div>

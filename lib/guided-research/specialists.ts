@@ -1,3 +1,4 @@
+import { rewriteMoveSpecialistHref } from '../network/move-origin.ts';
 import type { GuidedChoice, GuidedExecutionResult, GuidedRefinement, GuidedResearchSession, GuidedResultRow, GuidedResultState } from './contract.ts';
 import {US_JURISDICTIONS} from '../network/us-jurisdictions.ts';
 import {planAskResearch} from '../network/research-planner.ts';
@@ -149,7 +150,7 @@ async function executeMove(session: GuidedResearchSession): Promise<GuidedExecut
   if (state !== 'SUPPORTED_RESULTS') {
     const result = failure(session, state, outcome.latencyMs, state.toLowerCase(), records(payload.limitations).length ? undefined : (Array.isArray(payload.limitations) ? String(payload.limitations[0] ?? '') : undefined));
     result.limitations = Array.isArray(payload.limitations) ? payload.limitations.filter((x): x is string => typeof x === 'string') : [];
-    result.destinations = Object.entries(record(payload.destinations)).flatMap(([key, href]) => typeof href === 'string' ? [{ type: key === 'verifyDot' ? 'VERIFY' as const : 'DIRECTORY' as const, href, label: key === 'verifyDot' ? 'Verify USDOT or MC' : 'Research recorded headquarters' }] : []);
+    result.destinations = Object.entries(record(payload.destinations)).flatMap(([key, href]) => typeof href === 'string' ? [{ type: key === 'verifyDot' ? 'VERIFY' as const : 'DIRECTORY' as const, href: rewriteMoveSpecialistHref(href), label: key === 'verifyDot' ? 'Verify USDOT or MC' : 'Research recorded headquarters' }] : []);
     if (state === 'UNSUPPORTED_CAPABILITY') result.consumerMessage = result.limitations[0] ?? 'MoveTrustHub can research identities and recorded headquarters, but not service territory or route availability.';
     return result;
   }
@@ -161,7 +162,7 @@ async function executeMove(session: GuidedResearchSession): Promise<GuidedExecut
       identifier: usdot ? { label: 'USDOT', value: usdot } : mc ? { label: 'MC', value: mc } : undefined,
       classLabel: text(row.role), recordedLocation: text(hq.raw), status: text(row.authorityState), sourceDate: text(row.sourceLastChecked),
       whyShown: text(row.whyMatched) ?? 'Matched the source-owned MoveTrustHub execution filters.',
-      destination: { type: 'PROFILE', href: text(row.canonicalProfileUrl)!, label: 'Open MoveTrustHub profile' },
+      destination: { type: 'PROFILE', href: rewriteMoveSpecialistHref(text(row.canonicalProfileUrl)!), label: 'Open MoveTrustHub profile' },
       facts: [mc ? { label: 'MC', value: mc } : null, text(row.role) ? { label: 'Role', value: text(row.role)! } : null].filter(Boolean) as Array<{label:string;value:string}>,
     };
   }).filter((row) => Boolean(row.destination?.href));

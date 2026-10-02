@@ -7,6 +7,7 @@ import { createPageMetadata } from '@/lib/seo/metadata';
 import { shareRouteOgImage } from '@/lib/seo/share-hub';
 import { getAllJourneySlugs, getJourneyBySlug } from '@/lib/growth/journeys';
 import { ASK_BRAND, ASK_SHADOW } from '@/lib/design/ask-design-system';
+import { rewriteMoveSpecialistHref } from '@/lib/network/move-origin';
 import { ASK_NETWORK_OWNERSHIP_SHORT } from '@/lib/network/standard-version';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -121,7 +122,7 @@ export default async function JourneyPage({ params }: Props) {
                 </ul>
               ) : null}
               <a
-                href={step.href}
+                href={rewriteMoveSpecialistHref(step.href)}
                 rel="noopener noreferrer"
                 className="btn-primary mt-6 inline-flex min-h-11 w-full justify-center sm:w-auto"
               >

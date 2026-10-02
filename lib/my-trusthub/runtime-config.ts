@@ -1,7 +1,6 @@
 import "server-only";
 
-const EXPECTED_MY_TRUSTHUB_PROJECT_HOST =
-  "qvvxvbcdmbjzrgvwjatw.supabase.co";
+import { accountRuntime } from './account-policy';
 
 export interface MyTrustHubRuntimeReadiness {
   supabaseConfigured: boolean;
@@ -11,17 +10,7 @@ export interface MyTrustHubRuntimeReadiness {
 }
 
 export function getMyTrustHubSupabaseUrl(): string | null {
-  const value = process.env.NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL?.trim();
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" &&
-      url.hostname === EXPECTED_MY_TRUSTHUB_PROJECT_HOST
-      ? url.toString().replace(/\/$/, "")
-      : null;
-  } catch {
-    return null;
-  }
+  return accountRuntime(process.env)?.backend ?? null;
 }
 
 export function getMyTrustHubSupabasePublishableKey(): string | null {

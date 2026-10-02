@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   Bookmark,
@@ -12,14 +13,22 @@ import {
 import { isMyTrustHubCanaryOnly } from "@/lib/my-trusthub/canary-access";
 import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
+import { homeWorkspaceGate } from "@/lib/my-trusthub/workspace-gate";
 import { SessionCard } from "@/components/my-trusthub/session-card";
 
 export default async function MyTrustHubHome() {
+  const featureEnabled = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ENABLED");
   const adapter = await getEnabledAdapter();
   const user = adapter ? await adapter.getUser() : null;
+  const gate = homeWorkspaceGate({
+    featureEnabled,
+    adapterAvailable: Boolean(adapter),
+    userPresent: Boolean(user),
+  });
+  if (gate.kind === "redirect") redirect(gate.href);
   const canaryOnly = isMyTrustHubCanaryOnly();
 
-  if (!adapter || !user) {
+  if (gate.kind === "lander" || !adapter || !user) {
     return (
       <main className="myth-lander">
         <div className="myth-lander-inner">
@@ -38,6 +47,7 @@ export default async function MyTrustHubHome() {
             Sign in to My TrustHub
             <ArrowRight aria-hidden="true" size={18} />
           </Link>
+          <Link className="myth-secondary" href="/my/create-account">Create account</Link>
           <p className="myth-disclosure">
             TrustHub organizes research. It does not approve, rank, or recommend
             your selection.
