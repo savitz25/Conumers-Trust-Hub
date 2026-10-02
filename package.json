@@ -79,7 +79,7 @@
     "check:ath-md-001": "node --experimental-strip-types --test lib/network/ath-md-001.test.ts lib/network/ath-ct-001.test.ts lib/network/ath-mi-001.test.ts lib/guided-research/ath-mi-001r.test.ts lib/network/ath-mn-001.test.ts lib/network/ath-nv-001.test.ts lib/network/ath-tn-001.test.ts lib/network/ath-ma-001.test.ts lib/network/ath-ga-001.test.ts",
     "check:ath-nv-001": "node --experimental-strip-types --test lib/network/ath-nv-001.test.ts",
     "verify:tn-network": "node scripts/verify-tennessee-network.mjs",
-    "check:th-homepage-sync-001": "node --experimental-strip-types --test lib/network/th-homepage-sync-001.test.ts",
+    "check:th-homepage-sync-001": "node --experimental-strip-types --test lib/network/th-homepage-sync-001.test.ts lib/network/ask-b1-network-depth.test.ts",
     "verify:oh-network": "node scripts/verify-ohio-network.mjs",
     "test:pa-rel-001": "node --experimental-strip-types --test lib/network/pa-rel-001.test.ts",
     "verify:pa-network": "node scripts/verify-pennsylvania-network.mjs",
