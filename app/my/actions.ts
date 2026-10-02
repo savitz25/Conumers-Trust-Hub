@@ -168,6 +168,20 @@ export async function addSavedToProjectAction(formData: FormData) {
   revalidatePath(`/my/projects/${projectId}`);
 }
 
+/** Unsave: soft-remove one Saved profile the signed-in user owns. The P12 RPC
+ * refuses rows still filed in a Project, and Watches are untouched because
+ * Save never started one. */
+export async function unsaveSavedEntityAction(formData: FormData) {
+  assertMyTrustHubFeature("MY_TRUSTHUB_SAVED_ENABLED");
+  const adapter = await requiredAdapter();
+  await safeMutation("my_trusthub_unsave_failed", "/my/saved?error=unsave", () => adapter.removeSavedEntity(
+    uuidField(formData, "savedEntityId"),
+  ));
+  revalidatePath("/my");
+  revalidatePath("/my/saved");
+  redirect("/my/saved?unsaved=1");
+}
+
 export async function removeSavedFromProjectAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_PROJECTS_ENABLED");
   const adapter = await requiredAdapter();

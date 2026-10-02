@@ -1,6 +1,6 @@
 import { hash, RuntimeError } from './runtime.ts';
 import { PreviewStore, randomRef } from './preview-store.ts';
-import { ASK_PREVIEW, MOVE_PREVIEW, GRANT_BROWSER_PATH, opaque } from './isolated-config.ts';
+import { GRANT_BROWSER_PATH, opaque } from './isolated-config.ts';
 import type { BrowserParent, Confirmation } from './browser.ts';
 import { PRIVATE_HEADERS } from './http.ts';
 import { boundedBody } from './service-assertion.ts';
@@ -32,7 +32,7 @@ export class CurrentGrants {
     if (!opaque(continuationRef) || !g || g.browser !== browser) throw new RuntimeError('unauthorized');
     const ref = randomRef(), value = { continuationRef, browser, expiresAt: Date.now() + 90000 };
     await this.store.put('challenge:' + ref, value, value.expiresAt, true);
-    return { target: ASK_PREVIEW + GRANT_BROWSER_PATH, fields: { challengeRef: ref } };
+    return { target: this.store.target.parentOrigin + GRANT_BROWSER_PATH, fields: { challengeRef: ref } };
   }
   async authorize(challengeRef: string, parent: BrowserParent | null): Promise<string> {
     if (!opaque(challengeRef)) throw new RuntimeError('unauthorized');
@@ -58,10 +58,10 @@ export class CurrentGrants {
     return { proof: p, grant: g };
   }
   async browser(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-    if (url.origin !== ASK_PREVIEW || url.pathname !== GRANT_BROWSER_PATH || url.search) throw new RuntimeError('invalid');
+    const url = new URL(request.url), pins = this.store.target;
+    if (url.origin !== pins.parentOrigin || url.pathname !== GRANT_BROWSER_PATH || url.search) throw new RuntimeError('invalid');
     if (request.method === 'POST') {
-      if (request.headers.get('origin') !== MOVE_PREVIEW || request.headers.get('content-type')?.split(';')[0] !== 'application/x-www-form-urlencoded') throw new RuntimeError('unauthorized');
+      if (request.headers.get('origin') !== pins.moveOrigin || request.headers.get('content-type')?.split(';')[0] !== 'application/x-www-form-urlencoded') throw new RuntimeError('unauthorized');
       const form = new URLSearchParams((await boundedBody(request, 1024)).toString('utf8'));
       const ref = form.get('challengeRef');
       if ([...form.keys()].join() !== 'challengeRef' || !opaque(ref) || !await this.store.read('challenge:' + ref)) throw new RuntimeError('unauthorized');
@@ -73,7 +73,7 @@ export class CurrentGrants {
     const parent = await this.parent(request);
     const proofRef = await this.authorize(ref ?? '', parent), nonce = randomRef();
     const message = JSON.stringify({ type: 'v23-current-grant', proofRef });
-    return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My TrustHub confirmation</title><p role="status">Your current account was checked. You can return to Move.</p><script nonce="${nonce}">if(window.opener)window.opener.postMessage(${message},${JSON.stringify(MOVE_PREVIEW)});window.close();</script></html>`,
+    return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My TrustHub confirmation</title><p role="status">Your current account was checked. You can return to Move.</p><script nonce="${nonce}">if(window.opener)window.opener.postMessage(${message},${JSON.stringify(pins.moveOrigin)});window.close();</script></html>`,
       { headers: { ...PRIVATE_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cross-Origin-Opener-Policy': 'unsafe-none',
         'Content-Security-Policy': `default-src 'none'; script-src 'nonce-${nonce}'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`,
         'Set-Cookie': `${COOKIE}=; Path=${GRANT_BROWSER_PATH}; HttpOnly; Secure; SameSite=Lax; Max-Age=0` } });

@@ -1,4 +1,4 @@
-import { ISOLATED_PROJECT, PARENT_LOGIN, type Env } from './isolated-config.ts';
+import { ISOLATED_TARGET, type DeploymentTarget, type Env } from './isolated-config.ts';
 
 export type DatabaseConnectionMode = 'DIRECT' | 'SUPAVISOR_SESSION';
 export type DatabaseConnectionConfig = {
@@ -10,10 +10,10 @@ export type DatabaseConnectionConfig = {
  * Two slots time out that bind and Confirm Save returns 503. */
 export const RUNTIME_POOL_MAX = 3;
 
-/** Strict preview-only database endpoint contract. Transaction-mode poolers
- * (port 6543), arbitrary pooler hosts, query parameters and production refs
- * are rejected before pg receives any credential. */
-export function databaseConnectionConfig(env: Env): DatabaseConnectionConfig | null {
+/** Strict per-target database endpoint contract. Transaction-mode poolers
+ * (port 6543), arbitrary pooler hosts, query parameters and any project other
+ * than the target's are rejected before pg receives any credential. */
+export function databaseConnectionConfig(env: Env, target: DeploymentTarget = ISOLATED_TARGET): DatabaseConnectionConfig | null {
   const mode = env.MY_TRUSTHUB_V23_DATABASE_CONNECTION_MODE as DatabaseConnectionMode | undefined;
   const raw = env.MY_TRUSTHUB_V23_PARENT_DATABASE_URL;
   const ca = env.MY_TRUSTHUB_V23_DATABASE_CA_PEM;
@@ -23,13 +23,13 @@ export function databaseConnectionConfig(env: Env): DatabaseConnectionConfig | n
     if (!['postgres:', 'postgresql:'].includes(url.protocol) || url.port !== '5432' ||
         url.pathname !== '/postgres' || !url.password || url.search || url.hash || url.hostname.endsWith('.')) return null;
     if (mode === 'DIRECT') {
-      const host = `db.${ISOLATED_PROJECT}.supabase.co`;
-      if (url.hostname !== host || url.username !== PARENT_LOGIN) return null;
-      return { mode, host, port: 5432, database: 'postgres', user: PARENT_LOGIN, password: decodeURIComponent(url.password), ca };
+      const host = `db.${target.project}.supabase.co`;
+      if (url.hostname !== host || url.username !== target.login) return null;
+      return { mode, host, port: 5432, database: 'postgres', user: target.login, password: decodeURIComponent(url.password), ca };
     }
     const pinned = env.MY_TRUSTHUB_V23_SUPAVISOR_SESSION_HOST?.trim().toLowerCase();
     if (!pinned || url.hostname !== pinned || !/^aws-[0-9]+-[a-z0-9-]+\.pooler\.supabase\.com$/.test(pinned) ||
-        url.username !== `${PARENT_LOGIN}.${ISOLATED_PROJECT}`) return null;
+        url.username !== `${target.login}.${target.project}`) return null;
     return { mode, host: pinned, port: 5432, database: 'postgres', user: url.username, password: decodeURIComponent(url.password), ca };
   } catch { return null; }
 }

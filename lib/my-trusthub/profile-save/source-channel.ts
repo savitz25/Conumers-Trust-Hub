@@ -1,5 +1,5 @@
 import { ASSERTION_HEADER, boundedBody, signAssertion, type AssertionKey, type Scope } from './service-assertion.ts';
-import { MOVE_PREVIEW, SOURCE_PATH } from './isolated-config.ts';
+import { ISOLATED_TARGET, SOURCE_PATH, type DeploymentTarget } from './isolated-config.ts';
 import { RuntimeError } from './runtime.ts';
 import type { ProfileIdentity } from '../contracts/v2-3-profile-save.ts';
 
@@ -11,13 +11,15 @@ export type Publication = { identity: ProfileIdentity; canonicalSlug: string; pu
 /** The response is from the exact TLS origin; redirects are forbidden. No user
  * token/cookie is forwarded. Protection bypass, when needed, is scoped here. */
 export class SourceChannel {
-  readonly key: AssertionKey; readonly bypass?: string; readonly send: typeof fetch;
-  constructor(key: AssertionKey, bypass?: string, send: typeof fetch = fetch) { this.key = key; this.bypass = bypass; this.send = send; }
+  readonly key: AssertionKey; readonly bypass?: string; readonly send: typeof fetch; readonly target: DeploymentTarget;
+  constructor(key: AssertionKey, bypass?: string, send: typeof fetch = fetch, target: DeploymentTarget = ISOLATED_TARGET) {
+    this.key = key; this.bypass = bypass; this.send = send; this.target = target;
+  }
   async call(body: unknown, scope: Scope, browser: string, session: string | null = null): Promise<unknown> {
-    const bytes = Buffer.from(JSON.stringify(body)), target = MOVE_PREVIEW + SOURCE_PATH;
+    const bytes = Buffer.from(JSON.stringify(body)), target = this.target.moveOrigin + SOURCE_PATH;
     const response = await this.send(target, { method: 'POST', body: bytes, cache: 'no-store', redirect: 'error',
       signal: AbortSignal.timeout(5000), headers: { 'Content-Type': 'application/json',
-        [ASSERTION_HEADER]: signAssertion(this.key, 'ask', target, scope, bytes, browser, session),
+        [ASSERTION_HEADER]: signAssertion(this.key, 'ask', target, scope, bytes, browser, session, null, Date.now(), this.target),
         ...(this.bypass ? { 'x-vercel-protection-bypass': this.bypass } : {}) } });
     if (!response.ok || response.headers.get('content-type')?.split(';')[0] !== 'application/json') throw new RuntimeError('unavailable');
     const result = JSON.parse((await boundedBody(response)).toString('utf8'));

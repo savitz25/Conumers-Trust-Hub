@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ProductionMyTrustHubAdapter } from '@/lib/my-trusthub/production-adapter';
 import { hostedRuntime } from '@/lib/my-trusthub/profile-save/hosted-runtime';
-import { ASK_PREVIEW, uuid } from '@/lib/my-trusthub/profile-save/isolated-config';
+import { sqlName, uuid } from '@/lib/my-trusthub/profile-save/isolated-config';
 
 /**
  * Unsave from the isolated preview Saved surface. The verified parent session
@@ -19,11 +19,11 @@ export async function unsaveIsolatedProfileAction(formData: FormData) {
   if (!uuid(savedEntityId)) redirect('/my/saved?error=unsave');
   const runtime = await hostedRuntime();
   if (!runtime) redirect('/my/saved?error=unavailable');
-  const request = new Request(ASK_PREVIEW + '/my/saved', { headers: await headers() });
+  const request = new Request(runtime.target.parentOrigin + '/my/saved', { headers: await headers() });
   const parent = await runtime.parent(request);
   if (!parent) redirect('/my/sign-in?next=%2Fmy%2Fsaved');
   const owned = await runtime.store.authorized(async (db) =>
-    (await db.query<{ saved_entity_id: string }>('select saved_entity_id from v23_private.preview_saved($1,$2)', [parent.subject, parent.session]))
+    (await db.query<{ saved_entity_id: string }>(`select saved_entity_id from ${sqlName(runtime.target, 'saved')}($1,$2)`, [parent.subject, parent.session]))
       .rows.some((row) => row.saved_entity_id === savedEntityId));
   if (!owned) redirect('/my/saved?error=unsave');
   let outcome: 'removed' | 'failed' = 'failed';

@@ -5,9 +5,12 @@ import {PostgresConfirmationStore} from './confirmation-store.ts';
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import type {BrowserBindings,Confirmation,BrowserParent} from './browser.ts';
 import type {TrustedOriginRegistry} from '../contracts/v2-3-profile-transfer.ts';
-import {deploymentEnabled} from './isolated-config.ts';
+import {deploymentEnabled,ISOLATED_TARGET,type DeploymentTarget} from './isolated-config.ts';
+import {PARENT_ORIGIN} from '../account-policy.ts';
 export type IsolatedAdapterPorts={
   approvedParentOrigin:string;
+  /** Resolved deployment target; defaults to the isolated preview pair. */
+  target?:DeploymentTarget;
   registry:TrustedOriginRegistry;
   /** Operator must verify dedicated/session affinity; transaction poolers are
    * incompatible with the cross-transaction browser serialization lock. */
@@ -21,8 +24,12 @@ export type IsolatedAdapterPorts={
   store?: BrowserBindings['store'];
 };
 export function isolatedBrowserBindings(env:Record<string,string|undefined>,p:IsolatedAdapterPorts|null):BrowserBindings|null{
-  if(!p||!deploymentEnabled(env)||p.registry.environment!=='isolated'||!p.registry.isolatedBackendVerified||
-    p.approvedParentOrigin!==env.MY_TRUSTHUB_TEST_ORIGIN||p.sessionAffinity!=='dedicated')return null;
+  const target=p?.target??ISOLATED_TARGET;
+  if(!p||!deploymentEnabled(env)||p.registry.environment!==target.kind||p.sessionAffinity!=='dedicated')return null;
+  // Isolated: the reviewed test origin and a verified isolated backend. Production:
+  // the canonical parent origin only, and never a "verified isolated" claim.
+  if(target.kind==='isolated'&&(!p.registry.isolatedBackendVerified||p.approvedParentOrigin!==env.MY_TRUSTHUB_TEST_ORIGIN))return null;
+  if(target.kind==='production'&&(p.registry.isolatedBackendVerified||p.approvedParentOrigin!==PARENT_ORIGIN||env.VERCEL_ENV!=='production'))return null;
   const backend=new AuthorizedPostgresBackend(p.postgres);
   return {origin:p.approvedParentOrigin,registry:p.registry,source:p.source,parent:p.parent,projects:p.projects,
     acknowledge:p.acknowledge,store:p.store??new PostgresConfirmationStore(p.postgres.pool,p.sessionAffinity),now:Date.now,

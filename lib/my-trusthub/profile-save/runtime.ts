@@ -18,11 +18,18 @@ const deny = (code: RuntimeErrorCode = 'unauthorized'): never => { throw new Run
 export const hash = (input: string) => createHash('sha256').update(input).digest('hex');
 const opaque = () => randomBytes(32).toString('base64url');
 
+/** A registry is trusted only in its own shape: an isolated registry must carry
+ * the reviewed isolated-backend attestation, and a production registry must not
+ * claim one. No other environment value exists. */
+export const trustedRegistry = (registry: { environment: string; isolatedBackendVerified: boolean }): boolean =>
+  registry.environment === 'isolated' ? registry.isolatedBackendVerified === true
+    : registry.environment === 'production' && registry.isolatedBackendVerified === false;
+
 /** Auth adapter output ONLY. Never construct from JSON, headers or URL claims.
  * sessionBinding changes on logout/account/session switch, not token refresh.
  */
 export type VerifiedCaller = {
-  hub: SpecialistHub; browserBinding: string; environment: 'isolated';
+  hub: SpecialistHub; browserBinding: string; environment: 'isolated' | 'production';
   scopes: readonly string[];
   parent?: { subject: string; sessionBinding: string; admitted: true };
   /** Server-side reference to a fresh P13 exchange, not the guest continuation. */
@@ -82,8 +89,8 @@ export class ParentProfileSaveRuntime {
    * grant. Confirms an already committed context for the same current session. */
   async resumeConfirmedContext(ref:string):Promise<boolean>{
     const who=await this.options.authenticate();
-    if(!this.options.enabled||this.options.registry.environment!=='isolated'||!this.options.registry.isolatedBackendVerified||
-      !who?.parent?.admitted||who.environment!=='isolated'||!who.scopes.includes('saved:write')||!who.selectionConfirmed||who.confirmedAccountContextRef!==ref||
+    if(!this.options.enabled||!trustedRegistry(this.options.registry)||
+      !who?.parent?.admitted||who.environment!==this.options.registry.environment||!who.scopes.includes('saved:write')||!who.selectionConfirmed||who.confirmedAccountContextRef!==ref||
       !/^[A-Za-z0-9_-]{43}$/.test(ref)||!who.confirmedTransferRef)deny();
     const caller=structuredClone(who!);
     return this.options.backend.transaction(async tx=>{
@@ -96,9 +103,9 @@ export class ParentProfileSaveRuntime {
 
   async execute(operation: Operation, raw: unknown): Promise<unknown> {
     const { registry, backend } = this.options;
-    if (!this.options.enabled || registry.environment !== 'isolated' || !registry.isolatedBackendVerified) deny('disabled');
+    if (!this.options.enabled || !trustedRegistry(registry)) deny('disabled');
     const caller = await this.options.authenticate();
-    if (!caller || caller.environment !== 'isolated' || !SPECIALIST_HUBS.includes(caller.hub) ||
+    if (!caller || caller.environment !== registry.environment || !SPECIALIST_HUBS.includes(caller.hub) ||
         !/^[A-Za-z0-9_-]{43}$/.test(caller.browserBinding)) deny();
     const c = caller!;
     const now = (this.options.now ?? Date.now)();

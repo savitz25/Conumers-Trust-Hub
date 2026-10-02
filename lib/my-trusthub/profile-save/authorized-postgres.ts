@@ -20,7 +20,7 @@ export class AuthorizedPostgresBackend implements RuntimeBackend {
   private readonly ports:AuthorizedPostgresPorts;
   constructor(ports:AuthorizedPostgresPorts){this.ports=ports;}
   private async authorized<T>(a:RuntimeAuthorization|undefined,work:(db:TransactionConnection,proof:P13Proof|null,projectId:string|null)=>Promise<T>):Promise<T>{
-    if(!a||a.caller.environment!=='isolated'||!await this.ports.verify(a))throw new RuntimeError('unauthorized');
+    if(!a||!['isolated','production'].includes(a.caller.environment)||!await this.ports.verify(a))throw new RuntimeError('unauthorized');
     const who=structuredClone(a.caller),input=structuredClone(a.input) as Record<string,unknown>;
     if(!/^[A-Za-z0-9_-]{43}$/.test(who.browserBinding)|| (who.parent&&!uuid(who.parent.subject)))throw new RuntimeError('unauthorized');
     const proof=a.operation==='consumeProfileSaveContinuation'&&who.exchange?await this.ports.exchange(who.exchange,a):null;

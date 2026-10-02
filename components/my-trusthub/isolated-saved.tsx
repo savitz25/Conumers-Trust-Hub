@@ -4,22 +4,22 @@ import { Bookmark, LockKeyhole } from 'lucide-react';
 import { unsaveIsolatedProfileAction } from '@/app/my/isolated-actions';
 import { MyTrustHubEmpty, MyTrustHubShell, PageHeading } from '@/components/my-trusthub/my-shell';
 import { hostedRuntime } from '@/lib/my-trusthub/profile-save/hosted-runtime';
-import { ASK_PREVIEW, MOVE_PREVIEW } from '@/lib/my-trusthub/profile-save/isolated-config';
+import { sqlName } from '@/lib/my-trusthub/profile-save/isolated-config';
 
 const HUB_LABEL: Record<string, string> = {
   move: 'Move Trust Hub', insurance: 'Insurance Trust Hub', lender: 'Lender Trust Hub',
   contractor: 'Contractor Trust Hub', senior: 'Senior Trust Hub', investor: 'Investor Trust Hub',
 };
 const hubLabel = (hub: string) => HUB_LABEL[hub] ?? hub;
-const hubHome = (hub: string) => (hub === 'move' ? MOVE_PREVIEW : null);
 
 export type IsolatedSavedQuery = { unsaved?: string; error?: string };
 
 /** Save-only preview surface. Does not load absent Sessions/Watch/Alert schemas
  * or expose the internal canary binding form. Production keeps its own page. */
 export async function IsolatedSaved({ query = {} }: { query?: IsolatedSavedQuery }) {
-  const request = new Request(ASK_PREVIEW + '/my/saved', { headers: await headers() });
   const runtime = await hostedRuntime();
+  const request = new Request((runtime?.target.parentOrigin ?? 'https://unavailable.invalid') + '/my/saved', { headers: await headers() });
+  const hubHome = (hub: string) => (hub === 'move' && runtime ? runtime.target.moveOrigin : null);
   if (!runtime) {
     return (
       <main className="myth-auth-page">
@@ -45,7 +45,7 @@ export async function IsolatedSaved({ query = {} }: { query?: IsolatedSavedQuery
     );
   }
   const saved = await runtime.store.authorized(async (db) => (await db.query<{ saved_entity_id: string; canonical_name: string; primary_hub: string; saved_at: string }>(
-    'select * from v23_private.preview_saved($1,$2)', [parent.subject, parent.session])).rows);
+    `select * from ${sqlName(runtime.target, 'saved')}($1,$2)`, [parent.subject, parent.session])).rows);
   const current = await runtime.parent(request);
   if (current?.subject !== parent.subject || current.session !== parent.session) {
     return (

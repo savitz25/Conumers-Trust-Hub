@@ -5,7 +5,7 @@ import { PreviewStore, PreviewConfirmationStore, randomRef } from './preview-sto
 import { isolatedBrowserBindings } from './isolated-adapters.ts';
 import { CurrentGrants } from './current-grant.ts';
 import { SourceChannel, TEST_PROFILE, TEST_SLUG, exactTestProfile } from './source-channel.ts';
-import { ASK_PREVIEW, MOVE_PREVIEW, API_PATH, GRANT_API_PATH, isolatedConfig, opaque, type Env } from './isolated-config.ts';
+import { API_PATH, GRANT_API_PATH, deploymentConfig, opaque, sqlName, type DeploymentConfig, type DeploymentTarget, type Env } from './isolated-config.ts';
 import { verifyAssertion, boundedBody, type AssertionKey } from './service-assertion.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -38,18 +38,18 @@ const diagnosticCode = (error: unknown): string => {
 export class PreviewAssembly {
   readonly store: PreviewStore;
   readonly grants: CurrentGrants;
-  readonly config: NonNullable<ReturnType<typeof isolatedConfig>>;
+  readonly config: DeploymentConfig; readonly target: DeploymentTarget;
   readonly env: Env; readonly pool: TransactionPool; readonly source: SourceChannel;
   readonly moveKey: AssertionKey; readonly parent: BrowserBindings['parent'];
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent']) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent;
-    const c = isolatedConfig(env); if (!c) throw new RuntimeError('unavailable');
-    this.config = c; this.store = new PreviewStore(pool); this.grants = new CurrentGrants(this.store, parent);
+    const c = deploymentConfig(env); if (!c) throw new RuntimeError('unavailable');
+    this.config = c; this.target = c.target; this.store = new PreviewStore(pool, c.target); this.grants = new CurrentGrants(this.store, parent);
   }
   async binding(db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
     const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
-      const r = await d.query<{ id: string; network_entity_id: string; binding_status: 'accepted' }>('select * from v23_private.preview_move_binding()', []);
+      const r = await d.query<{ id: string; network_entity_id: string; binding_status: 'accepted' }>(`select * from ${sqlName(this.target, 'move_binding')}()`, []);
       if (r.rows.length !== 1 || r.rows[0].binding_status !== 'accepted') throw new RuntimeError('unavailable');
       return { id: r.rows[0].id, networkEntityId: r.rows[0].network_entity_id, status: r.rows[0].binding_status };
     };
@@ -57,7 +57,7 @@ export class PreviewAssembly {
   }
   async projects(parent: BrowserParent): Promise<Project[]> {
     if (!await this.store.live(parent.subject, parent.session)) throw new RuntimeError('unauthorized');
-    const rows = await this.store.authorized(async db => (await db.query<{ project_id: string; name: string }>('select * from v23_private.preview_projects($1,$2)', [parent.subject, parent.session])).rows);
+    const rows = await this.store.authorized(async db => (await db.query<{ project_id: string; name: string }>(`select * from ${sqlName(this.target, 'projects')}($1,$2)`, [parent.subject, parent.session])).rows);
     const key = 'projects:' + hash(parent.subject + ':' + parent.session);
     return await this.store.record<ProjectList>(key, async prior => {
       const items = rows.map(r => ({ ref: prior?.items.find(p => p.id === r.project_id)?.ref ?? randomRef(), id: r.project_id, label: r.name }));
@@ -76,18 +76,19 @@ export class PreviewAssembly {
         stage = 'lock_transport';
         await db.query('select pg_advisory_xact_lock(hashtextextended($1,0))', ['v23-preview:' + key]);
         stage = 'read_transport';
-        const prior = (await db.query<{ payload: Exchange }>('select payload from v23_private.preview_transport_records where key_hash=$1', [key])).rows[0]?.payload;
+        const transport = sqlName(this.target, 'transport_records');
+        const prior = (await db.query<{ payload: Exchange }>(`select payload from ${transport} where key_hash=$1`, [key])).rows[0]?.payload;
         if (prior) {
           if (prior.parent.subject !== p.subject || prior.parent.session !== p.sessionBinding || prior.expiresAt <= Date.now()) throw new RuntimeError('expired');
           return prior.proof;
         }
         stage = 'issue_context';
-        const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: ASK_PREVIEW, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-        const issued = await db.query<{ issued: boolean }>('select v23_private.preview_issue_context($1,$2,$3) as issued', [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
+        const issued = await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'issue_context')}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding]);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
-        await db.query('insert into v23_private.preview_transport_records(key_hash,payload,expires_at) values($1,$2,to_timestamp($3/1000.0))', [key, JSON.stringify(value), value.expiresAt]);
+        await db.query(`insert into ${transport}(key_hash,payload,expires_at) values($1,$2,to_timestamp($3/1000.0))`, [key, JSON.stringify(value), value.expiresAt]);
         return proof;
       });
     } catch (error) {
@@ -110,13 +111,13 @@ export class PreviewAssembly {
       }, exchange: (ref, a) => this.exchange(ref, a) };
   }
   async browserBindings(request: Request): Promise<BrowserBindings | null> {
-    if (new URL(request.url).origin !== ASK_PREVIEW) return null;
+    if (new URL(request.url).origin !== this.target.parentOrigin) return null;
     // Caller-specific backend is constructed only on explicit confirmation.
-    const binding = isolatedBrowserBindings(this.env, { approvedParentOrigin: ASK_PREVIEW, registry: this.config.registry,
+    const binding = isolatedBrowserBindings(this.env, { approvedParentOrigin: this.target.parentOrigin, target: this.target, registry: this.config.registry,
       sessionAffinity: 'dedicated', postgres: this.ports(async () => false, randomRef()),
-      parent: this.parent, projects: p => this.projects(p), store: new PreviewConfirmationStore(this.pool),
+      parent: this.parent, projects: p => this.projects(p), store: new PreviewConfirmationStore(this.pool, this.target),
       source: async (r, ref) => {
-        if (r.headers.get('origin') !== MOVE_PREVIEW) return null;
+        if (r.headers.get('origin') !== this.target.moveOrigin) return null;
         const link = await this.store.read<Link>('continuation:' + ref);
         if (!link || link.expiresAt <= Date.now()) return null;
         const s = await this.source.call({ action: 'source', continuationRef: ref }, 'source:read', link.browser) as SourceSnapshot;
@@ -133,7 +134,7 @@ export class PreviewAssembly {
     binding.confirmed = (c, p) => this.grants.remember(c, p);
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
-      const who: VerifiedCaller = { hub: 'move', browserBinding: c.source.browserProof, environment: 'isolated', scopes: ['saved:write', 'receipt:verify'],
+      const who: VerifiedCaller = { hub: 'move', browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
         parent: { subject: p.subject, sessionBinding: p.session, admitted: true }, exchange: c.contextCandidateRef,
         selectionConfirmed: true, confirmedTransferRef: c.source.transferRef, confirmedAccountContextRef: c.contextCandidateRef };
       const verify = async (a: RuntimeAuthorization) => JSON.stringify(a.caller) === JSON.stringify(who) && equal(await this.parent(r), p);
@@ -147,8 +148,8 @@ export class PreviewAssembly {
     const bytes = await boundedBody(request, 65536), e = JSON.parse(bytes.toString('utf8'));
     const stage = ['prepareGuestProfileTransfer', 'prepareProfileSaveContinuation'].includes(e?.operation);
     if (!stage && !['getProfileSaveReceipt', 'verifyProfileSaveReceipt'].includes(e?.operation)) throw new RuntimeError('unauthorized');
-    const claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store);
-    let who: VerifiedCaller = { hub: 'move', browserBinding: claims.browser, environment: 'isolated', scopes: ['transfer:stage'] };
+    const claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
+    let who: VerifiedCaller = { hub: 'move', browserBinding: claims.browser, environment: this.target.kind, scopes: ['transfer:stage'] };
     const valid = async () => {
       if (Date.now() >= claims.exp * 1000) return false;
       if (stage) return claims.session === null && claims.grant === null;
@@ -190,7 +191,7 @@ export class PreviewAssembly {
     const bytes = await boundedBody(request, 4096), body: unknown = JSON.parse(bytes.toString('utf8'));
     if (!object(body)) throw new RuntimeError('invalid');
     const binding = body.action === 'binding';
-    const c = await verifyAssertion(request, bytes, this.moveKey, 'move', binding ? 'transfer:stage' : 'receipt:verify', this.store);
+    const c = await verifyAssertion(request, bytes, this.moveKey, 'move', binding ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     if (c.session !== null || c.grant !== null) throw new RuntimeError('invalid');
     let result: unknown;
     if (binding && exact(body, ['action'])) {
