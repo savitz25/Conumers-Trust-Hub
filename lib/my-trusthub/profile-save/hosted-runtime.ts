@@ -4,6 +4,7 @@ import { createPrivateKey, createPublicKey } from 'node:crypto';
 import { PreviewAssembly } from './preview-assembly.ts';
 import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
+import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -105,6 +106,22 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
       for (const row of rows) await adapter.removeSavedEntity(row.saved_entity_id);
       return rows.length > 0;
     });
+    // Optional. A missing or unusable lender key leaves Move running and rejects lender handoffs.
+    const lenderPins = lenderPinsFor(target);
+    const lenderKid = (env.MY_TRUSTHUB_V23_LENDER_KEY_ID ?? '').trim();
+    const lenderPem = env.MY_TRUSTHUB_V23_LENDER_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (lenderPins && /^[A-Za-z0-9_-]{1,64}$/.test(lenderKid) && lenderPem.includes('PUBLIC KEY')) {
+      try {
+        const lenderPublic = createPublicKey(lenderPem);
+        const lenderSpki = String(lenderPublic.export({ type: 'spki', format: 'pem' }));
+        const askSpki = String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' }));
+        const moveSpki = String(movePublic.export({ type: 'spki', format: 'pem' }));
+        if (lenderPublic.asymmetricKeyType === 'ed25519' && lenderSpki !== askSpki && lenderSpki !== moveSpki) {
+          runtime.lenderKey = { kid: lenderKid, pem: lenderPem };
+          runtime.lenderSource = new LenderSourceChannel(key, fetch, lenderPins);
+        }
+      } catch { /* lender verify key is absent or not ed25519 */ }
+    }
     // The exact mover binding resolver must be installed and executable. A
     // syntactically impossible identity returns no row and reveals nothing.
     // Publication and binding are proved per profile on every Save.

@@ -7,6 +7,10 @@ import { CurrentGrants } from './current-grant.ts';
 import { SourceChannel, moveSourceIdentifier, supportedMoveProfile, type Publication } from './source-channel.ts';
 import { API_PATH, GRANT_API_PATH, deploymentConfig, opaque, sqlName, type DeploymentConfig, type DeploymentTarget, type Env } from './isolated-config.ts';
 import { verifyAssertion, boundedBody, type AssertionKey } from './service-assertion.ts';
+import { verifyLenderAssertion } from './lender-assertion.ts';
+import { LenderSourceChannel, isLenderMarketplaceIdentity, isLenderMarketplaceStage, lenderPinsFor } from './lender-channel.ts';
+import { LENDER_BINDING_SQL, classifyLenderRows, type LenderBindingRow } from './lender-binding.ts';
+import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
 import type { P13Proof } from './p12-p13.ts';
@@ -47,6 +51,8 @@ export class PreviewAssembly {
   readonly env: Env; readonly pool: TransactionPool; readonly source: SourceChannel;
   readonly moveKey: AssertionKey; readonly parent: BrowserBindings['parent'];
   readonly removeSaved?: RemoveSaved;
+  lenderKey: AssertionKey | null = null;
+  lenderSource: LenderSourceChannel | null = null;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
@@ -68,6 +74,18 @@ export class PreviewAssembly {
       if (r.rows.length !== 1 || b.binding_status !== 'accepted' || b.entity_status !== 'active' ||
         b.specialist_entity_id !== profile.nativeId || b.source_identifier !== moveSourceIdentifier(profile)) throw new RuntimeError('unavailable');
       return { id: b.id, networkEntityId: b.network_entity_id, status: 'accepted' as const };
+    };
+    return db ? query(db) : this.store.authorized(query);
+  }
+  /** Exact marketplace binding. Zero, several, review_required, or any
+   * disagreement is not eligible. The NMLS comes from the signed manifest. */
+  async lenderBinding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
+    if (!isLenderMarketplaceIdentity(profile)) throw new RuntimeError('unavailable');
+    const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
+      const found = await d.query<LenderBindingRow>(LENDER_BINDING_SQL, [profile.nativeId]);
+      const decision = classifyLenderRows(profile.nativeId, found.rows);
+      if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
+      return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const };
     };
     return db ? query(db) : this.store.authorized(query);
   }
@@ -123,15 +141,25 @@ export class PreviewAssembly {
   private ports(verify: AuthorizedPostgresPorts['verify'], browser: string): AuthorizedPostgresPorts {
     return { pool: this.pool, verify,
       profile: async (identity, db) => {
-        if (!supportedMoveProfile(identity)) return null;
-        await this.publication(browser, identity);
-        return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.binding(identity, db) };
+        if (identity.hub === 'move') {
+          if (!supportedMoveProfile(identity)) return null;
+          await this.publication(browser, identity);
+          return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.binding(identity, db) };
+        }
+        if (identity.hub !== 'lender' || !isLenderMarketplaceIdentity(identity) || !this.lenderSource) return null;
+        await this.lenderSource.publication(browser, identity);
+        return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.lenderBinding(identity, db) };
       },
-      // The return path is Move's canonical profile for this identity, from Move.
+      // The return path is the specialist's canonical profile for this identity.
       returnTask: async identity => {
-        if (!supportedMoveProfile(identity)) return null;
-        const slug = (await this.publication(browser, identity)).canonicalSlug;
-        return { kind: 'profile', hub: 'move', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/companies/${slug}` };
+        if (identity.hub === 'move') {
+          if (!supportedMoveProfile(identity)) return null;
+          const slug = (await this.publication(browser, identity)).canonicalSlug;
+          return { kind: 'profile', hub: 'move', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/companies/${slug}` };
+        }
+        if (identity.hub !== 'lender' || !isLenderMarketplaceIdentity(identity) || !this.lenderSource) return null;
+        const slug = (await this.lenderSource.publication(browser, identity)).canonicalSlug;
+        return { kind: 'profile', hub: 'lender', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/lenders/${slug}` };
       },
       project: async (ref, a) => {
         const p = a.caller.parent; if (!p) return null;
@@ -146,18 +174,28 @@ export class PreviewAssembly {
       sessionAffinity: 'dedicated', postgres: this.ports(async () => false, randomRef()),
       parent: this.parent, projects: p => this.projects(p), store: new PreviewConfirmationStore(this.pool, this.target),
       source: async (r, ref) => {
-        if (r.headers.get('origin') !== this.target.moveOrigin) return null;
-        const link = await this.store.read<Link>('continuation:' + ref);
+        const origin = r.headers.get('origin');
+        const move = origin === this.target.moveOrigin;
+        const lender = Boolean(this.lenderSource) && origin === PRODUCTION_ORIGINS.lender;
+        if (!move && !lender) return null;
+        const link = await this.store.read<StageLink>('continuation:' + ref);
         if (!link || link.expiresAt <= Date.now()) return null;
-        const s = await this.source.call({ action: 'source', continuationRef: ref }, 'source:read', link.browser) as SourceSnapshot;
+        const channel = lender ? this.lenderSource! : this.source;
+        const sourceBody = lender && link.manifest
+          ? { action: 'source', continuationRef: ref, transferRef: link.transferRef, manifest: link.manifest, manifestDigest: link.manifestDigest, expiresAt: link.expiresAt }
+          : { action: 'source', continuationRef: ref };
+        const s = await channel.call(sourceBody, 'source:read', link.browser) as SourceSnapshot;
         if (!s || s.browserProof !== link.browser || s.transferRef !== link.transferRef || s.manifestDigest !== link.manifestDigest ||
-          s.expiresAt > link.expiresAt || !isGuestStageInput(s.manifest) || manifestDigest(s.manifest) !== link.manifestDigest ||
-          s.manifest.selected.some(i => !supportedMoveProfile(i.profile))) return null;
+          s.expiresAt > link.expiresAt || !isGuestStageInput(s.manifest) || manifestDigest(s.manifest) !== link.manifestDigest) return null;
+        if (move && s.manifest.selected.some(i => !supportedMoveProfile(i.profile))) return null;
+        if (lender && !isLenderMarketplaceStage(s.manifest)) return null;
         return s;
       },
       acknowledge: async (s, receipts, p) => {
         if (!equal(await this.parent(request), p)) throw new RuntimeError('unauthorized');
-        await this.source.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
+        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : this.source;
+        if (!channel) throw new RuntimeError('unavailable');
+        await channel.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
       }, authenticate: async () => null });
     if (!binding) return null;
     binding.confirmed = (c, p) => this.grants.remember(c, p);
@@ -165,14 +203,20 @@ export class PreviewAssembly {
     // network entity and the live verified session. Never a posted identifier.
     binding.unsave = async (r, c, p) => {
       const selected = c.source.manifest.selected;
-      if (!this.removeSaved || selected.length !== 1 || !supportedMoveProfile(selected[0].profile) ||
+      const profile = selected[0]?.profile;
+      const moveProfile = !!profile && supportedMoveProfile(profile);
+      const lenderProfile = !!profile && isLenderMarketplaceIdentity(profile);
+      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile) ||
         !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
-      const outcome = await this.removeSaved(p, (await this.binding(selected[0].profile)).networkEntityId);
+      const networkEntityId = moveProfile ? (await this.binding(profile)).networkEntityId : (await this.lenderBinding(profile!)).networkEntityId;
+      const outcome = await this.removeSaved(p, networkEntityId);
       return outcome === 'in_project' ? 'in_project' : outcome ? 'removed' : 'not_saved';
     };
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
-      const who: VerifiedCaller = { hub: 'move', browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
+      const sourceHub = c.source.manifest.sourceHub;
+      if (sourceHub !== 'move' && sourceHub !== 'lender') throw new RuntimeError('unauthorized');
+      const who: VerifiedCaller = { hub: sourceHub, browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
         parent: { subject: p.subject, sessionBinding: p.session, admitted: true }, exchange: c.contextCandidateRef,
         selectionConfirmed: true, confirmedTransferRef: c.source.transferRef, confirmedAccountContextRef: c.contextCandidateRef };
       const verify = async (a: RuntimeAuthorization) => JSON.stringify(a.caller) === JSON.stringify(who) && equal(await this.parent(r), p);
@@ -186,8 +230,16 @@ export class PreviewAssembly {
     const bytes = await boundedBody(request, 65536), e = JSON.parse(bytes.toString('utf8'));
     const stage = ['prepareGuestProfileTransfer', 'prepareProfileSaveContinuation'].includes(e?.operation);
     if (!stage && !['getProfileSaveReceipt', 'verifyProfileSaveReceipt'].includes(e?.operation)) throw new RuntimeError('unauthorized');
-    const claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
-    let who: VerifiedCaller = { hub: 'move', browserBinding: claims.browser, environment: this.target.kind, scopes: ['transfer:stage'] };
+    let claims;
+    let serviceHub: 'move' | 'lender' = 'move';
+    try {
+      claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
+    } catch (moveError) {
+      if (!this.lenderKey || !lenderPinsFor(this.target)) throw moveError;
+      claims = await verifyLenderAssertion(request, bytes, this.lenderKey, 'lender', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), lenderPinsFor(this.target)!);
+      serviceHub = 'lender';
+    }
+    let who: VerifiedCaller = { hub: serviceHub, browserBinding: claims.browser, environment: this.target.kind, scopes: ['transfer:stage'] };
     const valid = async () => {
       if (Date.now() >= claims.exp * 1000) return false;
       if (stage) return claims.session === null && claims.grant === null;
@@ -208,7 +260,11 @@ export class PreviewAssembly {
     const execute = rt.execute.bind(rt);
     rt.execute = async (operation: Operation, input: unknown) => {
       if (operation !== e.operation || JSON.stringify(input) !== JSON.stringify(e.input)) throw new RuntimeError('unauthorized');
-      if (operation === 'prepareGuestProfileTransfer' && (!isGuestStageInput(input) || input.selected.some(i => !supportedMoveProfile(i.profile)))) throw new RuntimeError('invalid');
+      if (operation === 'prepareGuestProfileTransfer') {
+        if (!isGuestStageInput(input)) throw new RuntimeError('invalid');
+        if (serviceHub === 'move' && (input.sourceHub !== 'move' || input.selected.some(i => !supportedMoveProfile(i.profile)))) throw new RuntimeError('invalid');
+        if (serviceHub === 'lender' && !isLenderMarketplaceStage(input)) throw new RuntimeError('invalid');
+      }
       const result = await execute(operation, input);
       if (operation === 'prepareGuestProfileTransfer') {
         const link = { ...(result as Link), browser: claims.browser, manifest: input as GuestStageInput };

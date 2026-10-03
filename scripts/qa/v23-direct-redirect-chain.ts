@@ -62,15 +62,20 @@ const move = await listen((q, r) => {
   if (q.url === '/favicon.ico') { r.writeHead(204); return void r.end(); }
   profileLoads.push(q.url!);
   r.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-  r.end(`<!doctype html><title>source</title><p>source ${q.url}</p><a id="nav" href="/my-move" style="position:fixed;left:0;top:0;width:200px;height:100px;display:block">My Move</a><script>
+  r.end(`<!doctype html><title>source</title><p>source ${q.url}</p><a id="nav" href="${AWAY}" style="position:fixed;left:0;top:0;width:200px;height:100px;display:block">Away</a><script>
     function go(ref,intent){const f=document.createElement('form');f.method='POST';f.action=${JSON.stringify(`http://127.0.0.1:${ask.port}${PROFILE_CONFIRM_PATH}`)};
       for(const [n,v] of [['continuationRef',ref],['intent',intent]]){const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;f.append(i);}
       document.body.append(f);f.submit();}
   </script>`);
 });
-const askOrigin = `http://127.0.0.1:${ask.port}`, moveOrigin = `http://localhost:${move.port}`, PROFILE = '/companies/fixture-mover';
+const lenderMode = process.argv.includes('--lender');
+const askOrigin = `http://127.0.0.1:${ask.port}`, moveOrigin = `http://localhost:${move.port}`;
+const PROFILE = lenderMode ? '/lenders/pacific-trust-mortgage' : '/companies/fixture-mover';
+const AWAY = lenderMode ? '/my-lending' : '/my-move';
 
-const f = await fixture({ origin: askOrigin, sourceOrigin: moveOrigin });
+const f = await fixture(lenderMode
+  ? { origin: askOrigin, sourceOrigin: moveOrigin, hub: 'lender', slug: 'pacific-trust-mortgage', nativeId: 'nmls:1984721' }
+  : { origin: askOrigin, sourceOrigin: moveOrigin });
 // The verified parent is whoever the browser's own session cookie names.
 f.b.parent = async request => {
   const sid = request.headers.get('cookie')?.split(';').map(v => v.trim()).find(v => v.startsWith('sid='))?.slice(4);
@@ -118,6 +123,8 @@ try {
   assert.equal(chain(await click('save')), CHAIN, 'Save: cross-site POST carries no session; the same-site GET does');
   assert.equal(f.backend.count('saves'), 1);
   assert.equal(profileLoads.at(-1), PROFILE);
+  assert.equal(chain(await click('save')), CHAIN, 'repeated Save');
+  assert.equal(f.backend.count('saves'), 1, 'repeated Save stays one parent row');
 
   // 2. One-click Unsave: same chain, owner-scoped row removed, acknowledged to the source.
   assert.equal(chain(await click('unsave')), CHAIN, 'Unsave: removal runs on the follow-up GET under the verified session');
@@ -145,7 +152,7 @@ try {
     postDelay = 0;
     await sleep(2000);
     assert.equal(chain(hops.slice(from)), 'POST:no-session:303', 'interrupted chain: POST 303 and no follow-up GET');
-    assert.equal(profileLoads.at(-1), '/my-move');
+    assert.equal(profileLoads.at(-1), AWAY);
     assert.equal(f.backend.count('saves'), 1, 'interrupted chain removes nothing');
     assert.equal(f.released.length, released, 'interrupted chain is never acknowledged');
   }
@@ -162,7 +169,7 @@ try {
   assert.equal(chain(await click('unsave')), 'POST:no-session:303 > GET:no-session:303');
   assert.equal(f.backend.count('saves'), 1); assert.equal(f.released.length, released);
   socket.close();
-  console.log('PASS v23-direct-redirect-chain (real Chrome)');
+  console.log('PASS v23-direct-redirect-chain (real Chrome)' + (lenderMode ? ' lender' : ' move'));
 } catch (error) { failure = error; }
 finally {
   chrome.kill(); ask.close(); move.close(); f.close();

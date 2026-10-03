@@ -11,6 +11,8 @@ import { profileKey } from '../../lib/my-trusthub/contracts/v2-3-profile-transfe
 export class SqliteHarnessBackend implements RuntimeBackend {
   readonly db: DatabaseSync;
   profiles = new Map<string, TrustedProfile>();
+  /** Marketplace return slug. Move keeps using nativeId and is not listed here. */
+  slugs = new Map<string, string>();
   failReceipt = false;
   projectFails = false;
   exchangeSubject: string | null = null;
@@ -50,7 +52,15 @@ export class SqliteHarnessBackend implements RuntimeBackend {
           this.db.prepare('INSERT INTO objects VALUES(?,?,?) ON CONFLICT(kind,key) DO UPDATE SET value=excluded.value').run(kind, key, JSON.stringify(value));
         },
         resolveProfile: async p => this.profiles.get(profileKey(p)) ?? null,
-        resolveReturnTask: async p => this.profiles.has(profileKey(p)) ? { kind: 'profile', hub: 'move', canonicalSlug: p.nativeId, profile: p } : null,
+        resolveReturnTask: async p => {
+          if (!this.profiles.has(profileKey(p))) return null;
+          if (p.hub === 'lender' && p.profileClass === 'marketplace_company') {
+            const slug = this.slugs.get(profileKey(p));
+            if (!slug) return null;
+            return { kind: 'profile' as const, hub: 'lender' as const, canonicalSlug: slug, profile: p, returnPath: `/lenders/${slug}` };
+          }
+          return { kind: 'profile' as const, hub: 'move' as const, canonicalSlug: p.nativeId, profile: p };
+        },
         consumeP13: async (exchange, caller) => {
           if (this.db.prepare('SELECT 1 FROM consumed WHERE exchange=?').get(exchange)) throw new RuntimeError('conflict');
           this.db.prepare('INSERT INTO consumed VALUES(?)').run(exchange);

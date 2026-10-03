@@ -55,4 +55,55 @@ select e.id, 'lender', 'marketplace_company', 'nmls:' || v.nmls,
     on e.primary_hub = 'lender'
    and e.canonical_public_profile_ref = v.return_path
    and e.status = 'active';
+
+-- The runtime login cannot select network tables. This read-only wrapper is
+-- the same shape as prod_move_binding_for. It writes nothing.
+do $$ begin
+  if to_regrole('myth_v23_prod_reader') is null or to_regrole('myth_v23_authorizer') is null or to_regrole('myth_v23_executor') is null then
+    raise exception 'V23_PROD_LENDER_RESOLVER_PRECONDITION_FAIL';
+  end if;
+  if to_regprocedure('v23_private.prod_lender_nmls_binding_for(text)') is not null
+     or exists(select 1 from pg_policies where schemaname='network' and policyname in ('prod_lender_nmls_bindings','prod_lender_nmls_entities')) then
+    raise exception 'V23_PROD_LENDER_RESOLVER_PRECONDITION_FAIL: already applied; review, do not re-create';
+  end if;
+end $$;
+
+create policy prod_lender_nmls_bindings on network.network_entity_bindings for select to myth_v23_prod_reader
+ using(hub='lender' and (identifier_namespace='nmls' or specialist_entity_id ~ '^nmls:[1-9][0-9]{2,11}$'));
+create policy prod_lender_nmls_entities on network.network_entities for select to myth_v23_prod_reader
+ using(exists(select 1 from network.network_entity_bindings b where b.network_entity_id=network_entities.id
+   and b.hub='lender' and (b.identifier_namespace='nmls' or b.specialist_entity_id ~ '^nmls:[1-9][0-9]{2,11}$')));
+
+create function v23_private.prod_lender_nmls_binding_for(native_id text)
+returns table(id uuid, network_entity_id uuid, binding_status text, specialist_entity_type text, specialist_entity_id text,
+  identifier_namespace text, source_identifier text, jurisdiction text, entity_status text)
+language sql stable security definer set search_path=pg_catalog,network as $$
+ select b.id, e.id, b.binding_status, b.specialist_entity_type, b.specialist_entity_id,
+   b.identifier_namespace, b.source_identifier, b.jurisdiction, e.status
+ from network.network_entity_bindings b
+ join network.network_entities e on e.id=b.network_entity_id
+ where $1 ~ '^nmls:[1-9][0-9]{2,11}$'
+   and b.hub='lender'
+   and (b.specialist_entity_id=$1 or (b.identifier_namespace='nmls' and b.source_identifier=substr($1,6)))
+   and b.binding_status in ('accepted','review_required')
+   and b.valid_from<=statement_timestamp() and (b.valid_to is null or b.valid_to>statement_timestamp())
+ order by b.id limit 3;
+$$;
+revoke all on function v23_private.prod_lender_nmls_binding_for(text) from public, anon, authenticated;
+grant execute on function v23_private.prod_lender_nmls_binding_for(text) to myth_v23_authorizer, myth_v23_executor;
+grant create on schema v23_private to myth_v23_prod_reader;
+grant myth_v23_prod_reader to current_user with admin false, inherit false, set true granted by current_user;
+alter function v23_private.prod_lender_nmls_binding_for(text) owner to myth_v23_prod_reader;
+revoke create on schema v23_private from myth_v23_prod_reader;
+revoke myth_v23_prod_reader from current_user granted by current_user;
+
+do $$ begin
+  if has_function_privilege('public','v23_private.prod_lender_nmls_binding_for(text)','EXECUTE')
+     or has_function_privilege('anon','v23_private.prod_lender_nmls_binding_for(text)','EXECUTE')
+     or has_function_privilege('authenticated','v23_private.prod_lender_nmls_binding_for(text)','EXECUTE')
+     or not has_function_privilege('myth_v23_authorizer','v23_private.prod_lender_nmls_binding_for(text)','EXECUTE')
+     or not has_function_privilege('myth_v23_executor','v23_private.prod_lender_nmls_binding_for(text)','EXECUTE') then
+    raise exception 'V23_PROD_LENDER_RESOLVER_ACL_FAIL';
+  end if;
+end $$;
 commit;

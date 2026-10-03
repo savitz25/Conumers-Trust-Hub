@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
 import { ProfileTransferModel } from './v2-3-profile-transfer.model.ts';
-import { TRANSFER_VERSION, TRANSFER_VERSION_V2, TRANSFER_VERSION_V3, KEEP_LOCAL_COPY, PRODUCTION_ORIGINS, APPROVED_PROFILE_CLASS,
+import { TRANSFER_VERSION, TRANSFER_VERSION_V2, TRANSFER_VERSION_V3, KEEP_LOCAL_COPY, PRODUCTION_ORIGINS, APPROVED_PROFILE_CLASS, LENDER_MARKETPLACE_CLASS, lenderMarketplaceReturnPath,
   isGuestStageInput, isGuestStageInputV2, isGuestStageInputV3, isContinuationInput, isConsumeInput,
   isCommitInput, isReceiptLookup, isReceiptVerify, manifestDigest, profileKey, profileReturnDestination, validateProfileReturn, v3ReturnPath,
   type GuestStageInput, type GuestStageInputV3, type ProfileReturnTaskV2, type TrustedOriginRegistry, type AuthorizedSpecialist, type VerifiedParentContext, type TrustedCommitAdapter,
@@ -215,6 +215,19 @@ test('V03 six-hub return paths, national Lender, and Senior CCN segment', () => 
   assert.equal(profileReturnDestination(senior.returnTask, { ...wide, origins: { ...sixOrigins, senior: '' } }), null);
   assert.equal(profileReturnDestination(lender.returnTask, { ...wide, environment: 'production', origins: { ...PRODUCTION_ORIGINS, lender: PRODUCTION_ORIGINS.move } }), null);
   assert.equal(profileReturnDestination(lender.returnTask, { ...wide, environment: 'production', origins: PRODUCTION_ORIGINS }), PRODUCTION_ORIGINS.lender + '/lender/national-bank');
+});
+test('V03b marketplace lender returns to /lenders and rejects a national or tampered path', () => {
+  const slug = 'pacific-trust-mortgage';
+  const profile = { hub: 'lender' as const, nativeId: 'nmls:1984721', profileClass: LENDER_MARKETPLACE_CLASS };
+  const item = { localItemId: slug, revision: 'rev-1', digest: 'a'.repeat(64), profile };
+  const stage: GuestStageInputV3 = { version: TRANSFER_VERSION_V3, sourceHub: 'lender', audience: 'ask', selected: [item],
+    returnTask: { kind: 'profile', hub: 'lender', canonicalSlug: slug, profile, returnPath: lenderMarketplaceReturnPath(slug) ?? '' } };
+  assert.equal(isGuestStageInput(stage), true);
+  assert.equal(profileReturnDestination(stage.returnTask, wide), wide.origins.lender + '/lenders/pacific-trust-mortgage');
+  assert.equal(isGuestStageInput({ ...stage, returnTask: { ...stage.returnTask, returnPath: '/lender/pacific-trust-mortgage' } }), false);
+  assert.equal(isGuestStageInput({ ...stage, returnTask: { ...stage.returnTask, profile: { ...profile, nativeId: 'nmls:3030' } } }), false);
+  assert.equal(isGuestStageInput({ ...stage, returnTask: { ...stage.returnTask, profile: { ...profile, profileClass: 'national_institution' }, returnPath: '/lenders/pacific-trust-mortgage' } }), false);
+  assert.equal(isGuestStageInput({ ...stage, selected: [{ ...item, profile: { ...profile, nativeId: '3030' } }] }), false);
 });
 test('V04 version 3 Save still requires a parent receipt and creates no Watch', () => {
   const input = v3Stage('move', 'hindman-isaacs-moving-storage-inc', 'usdot-1002530');

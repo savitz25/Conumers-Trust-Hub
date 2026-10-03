@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { profileCapability } from '../contracts/v2-3-profile-save.ts';
 import { resolveExactProfile } from './identity.ts';
-import { classifyLenderRows, lenderNativeId, type LenderBindingRow } from './lender-binding.ts';
+import { classifyLenderRows, LENDER_BINDING_SQL, lenderNativeId, type LenderBindingRow } from './lender-binding.ts';
 import type { FoundationSql } from './p12-p13.ts';
 
 const nativeId = lenderNativeId('1984721');
@@ -49,11 +49,11 @@ test('missing, ambiguous, review_required, wrong class, and disagreement are den
   assert.equal(deniedReason('nmls:1984721', [row({ entity_status: 'retired' })]), 'inactive');
 });
 
-test('lender resolution uses the NMLS query and does not admit review_required as a save', async () => {
-  const calls: unknown[][] = [];
+test('lender resolution uses the NMLS function and does not admit review_required as a save', async () => {
+  const calls: Array<{ text: string; values: unknown[] }> = [];
   const sql: FoundationSql = {
-    async query<T>(_text: string, values: unknown[]) {
-      calls.push(values);
+    async query<T>(text: string, values: unknown[]) {
+      calls.push({ text, values });
       return { rows: [row({ binding_status: 'review_required' })] as T[] };
     },
   };
@@ -61,7 +61,8 @@ test('lender resolution uses the NMLS query and does not admit review_required a
   const profile = await resolveExactProfile(identity, {
     resolve: async () => ({ identity, published: true, supportedClass: true }),
   }, sql);
-  assert.deepEqual(calls[0], ['marketplace_company', 'nmls:1984721', 'nmls', '1984721']);
+  assert.equal(calls[0]?.text, LENDER_BINDING_SQL);
+  assert.deepEqual(calls[0]?.values, ['nmls:1984721']);
   assert.equal(profile?.binding?.status, 'review_required');
   assert.equal(profile ? profileCapability(profile) : '', 'IDENTITY_REVIEW_REQUIRED');
 });

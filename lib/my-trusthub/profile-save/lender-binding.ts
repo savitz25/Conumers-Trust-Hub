@@ -54,15 +54,11 @@ export function classifyLenderRows(nativeId: string, rows: readonly LenderBindin
   return { outcome: 'eligible', id: row.id, networkEntityId: row.network_entity_id };
 }
 
-const LENDER_BINDING_SQL = `select b.id, b.network_entity_id, b.binding_status, b.specialist_entity_type,
-  b.specialist_entity_id, b.identifier_namespace, b.source_identifier, b.jurisdiction, e.status as entity_status
- from network.network_entity_bindings b
- join network.network_entities e on e.id=b.network_entity_id
- where b.hub='lender' and b.specialist_entity_type=$1 and b.specialist_entity_id=$2
-   and b.identifier_namespace=$3 and b.source_identifier=$4 and b.jurisdiction='US'
-   and b.valid_from<=statement_timestamp() and (b.valid_to is null or b.valid_to>statement_timestamp())
-   and b.binding_status in ('accepted','review_required')
- limit 3`;
+/** Security-definer read. The runtime role cannot select network tables.
+ * Packet 12 creates this function. It is not applied by the deploy. */
+export const LENDER_BINDING_SQL = `select id, network_entity_id, binding_status, specialist_entity_type,
+  specialist_entity_id, identifier_namespace, source_identifier, jurisdiction, entity_status
+ from v23_private.prod_lender_nmls_binding_for($1)`;
 
 export async function resolveLenderMarketplaceProfile(
   identity: ProfileIdentity,
@@ -81,12 +77,7 @@ export async function resolveLenderMarketplaceProfile(
     binding: null,
   };
   if (!profile.published || !profile.supportedClass) return profile;
-  const found = await sql.query<LenderBindingRow>(LENDER_BINDING_SQL, [
-    LENDER_PROFILE_CLASS,
-    identity.nativeId,
-    LENDER_NMLS_NAMESPACE,
-    nmls,
-  ]);
+  const found = await sql.query<LenderBindingRow>(LENDER_BINDING_SQL, [identity.nativeId]);
   const decision = classifyLenderRows(identity.nativeId, found.rows);
   if (decision.outcome === 'denied' && decision.reason === 'ambiguous') throw new RuntimeError('conflict');
   if (decision.outcome === 'eligible') {

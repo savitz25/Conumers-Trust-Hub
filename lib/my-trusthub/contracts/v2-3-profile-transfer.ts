@@ -25,6 +25,9 @@ export const APPROVED_PROFILE_CLASS = {
 } as const satisfies Record<SpecialistHub, string>;
 const SENIOR_CCN = /^[A-Z0-9]{6}$/;
 const SLUG = /^[A-Za-z0-9][A-Za-z0-9_-]{0,159}$/;
+/** Marketplace company identity. National /lender/{slug} stays a separate grain. */
+export const LENDER_MARKETPLACE_CLASS = 'marketplace_company';
+const NMLS_COMPANY = /^nmls:[1-9][0-9]{2,11}$/;
 export const PRODUCTION_ORIGINS = {
   move: 'https://www.movetrusthub.com',
   insurance: 'https://www.insurancetrusthub.com',
@@ -84,6 +87,9 @@ function exact(v: unknown, required: string[], optional: string[] = []): v is Re
 const specialistHub = (v: unknown): v is SpecialistHub => SPECIALIST_HUBS.includes(v as SpecialistHub);
 const v2RouteHub = (v: unknown): v is V2RouteHub => v === 'move' || v === 'insurance' || v === 'lender';
 const v2StageHub = (v: unknown): v is GuestStageInputV2['sourceHub'] => v === 'move' || v === 'insurance';
+export function lenderMarketplaceReturnPath(canonicalSlug: string): string | null {
+  return SLUG.test(canonicalSlug) ? `/lenders/${canonicalSlug}` : null;
+}
 export function v3ReturnPath(hub: SpecialistHub, canonicalSlug: string, nativeId: string): string | null {
   if (!SLUG.test(canonicalSlug)) return null;
   if (hub === 'move') return `/companies/${canonicalSlug}`;
@@ -105,7 +111,11 @@ export function isReturnTaskV2(v: unknown): v is ProfileReturnTaskV2 {
 }
 export function isReturnTaskV3(v: unknown): v is ProfileReturnTaskV3 {
   if (!exact(v, ['kind', 'hub', 'canonicalSlug', 'profile', 'returnPath']) || v.kind !== 'profile' || !specialistHub(v.hub) || !SLUG.test(String(v.canonicalSlug))) return false;
-  if (!isProfileIdentity(v.profile) || v.profile.hub !== v.hub || v.profile.profileClass !== APPROVED_PROFILE_CLASS[v.hub]) return false;
+  if (!isProfileIdentity(v.profile) || v.profile.hub !== v.hub) return false;
+  if (v.hub === 'lender' && v.profile.profileClass === LENDER_MARKETPLACE_CLASS) {
+    return NMLS_COMPANY.test(v.profile.nativeId) && v.returnPath === lenderMarketplaceReturnPath(String(v.canonicalSlug));
+  }
+  if (v.profile.profileClass !== APPROVED_PROFILE_CLASS[v.hub]) return false;
   if (v.hub === 'senior' && !SENIOR_CCN.test(v.profile.nativeId)) return false;
   return v.returnPath === v3ReturnPath(v.hub, String(v.canonicalSlug), v.profile.nativeId);
 }
@@ -120,7 +130,9 @@ function stageShape(v: unknown, version: string, returnTask: (value: unknown) =>
       !v.selected.length || v.selected.length > MAX_ITEMS || !returnTask(v.returnTask) || (v.returnTask as ProfileReturnTask).hub !== v.sourceHub) return false;
   if (!v.selected.every(i => isSelectedItem(i) && i.profile.hub === v.sourceHub)) return false;
   const items = v.selected as SelectedItem[], task = v.returnTask as ProfileReturnTask;
-  if (task.hub === 'senior' || v.version === TRANSFER_VERSION_V3) {
+  if (task.hub === 'lender' && task.profile.profileClass === LENDER_MARKETPLACE_CLASS) {
+    if (!NMLS_COMPANY.test(task.profile.nativeId) || items.some(i => i.profile.profileClass !== LENDER_MARKETPLACE_CLASS || !NMLS_COMPANY.test(i.profile.nativeId))) return false;
+  } else if (task.hub === 'senior' || v.version === TRANSFER_VERSION_V3) {
     const expected = APPROVED_PROFILE_CLASS[task.hub];
     if (task.profile.profileClass !== expected || items.some(i => i.profile.profileClass !== expected)) return false;
     if (task.hub === 'senior' && items.some(i => !SENIOR_CCN.test(i.profile.nativeId))) return false;
