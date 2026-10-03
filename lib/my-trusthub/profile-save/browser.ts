@@ -3,7 +3,7 @@
  * reviewed isolated bindings, never to posted subject IDs or an Origin alone. */
 import { randomBytes } from 'node:crypto';
 import { PRIVATE_HEADERS } from './http.ts';
-import { RuntimeError, type ParentProfileSaveRuntime } from './runtime.ts';
+import { RuntimeError, trustedRegistry, type ParentProfileSaveRuntime } from './runtime.ts';
 import { isGuestStageInput, manifestDigest, profileReturnDestination,
   type GuestStageInput, type ItemReceipt, type TrustedOriginRegistry } from '../contracts/v2-3-profile-transfer.ts';
 export const PROFILE_CONFIRM_PATH = '/my/profile-save';
@@ -75,8 +75,13 @@ async function form(request:Request){
   finally{reader.releaseLock();}
   return new URLSearchParams(Buffer.concat(chunks).toString('utf8'));
 }
+/** Browser bindings are admitted only in their own registry shape: isolated
+ * must carry the isolated-backend attestation; production must not. Every
+ * later check (exact origins, continuation, browser proof, CSRF, session and
+ * account revalidation, acknowledgement) is unchanged for both. */
+export const trustedBrowserRegistry = (registry: TrustedOriginRegistry): boolean => trustedRegistry(registry);
 export async function handleProfileConfirmation(request:Request,b:BrowserBindings|null):Promise<Response>{
-  if(!b || b.registry.environment!=='isolated'||!b.registry.isolatedBackendVerified)return unavailable();
+  if(!b || !trustedBrowserRegistry(b.registry))return unavailable();
   const url=new URL(request.url);
   if(url.origin!==b.origin||url.pathname!==PROFILE_CONFIRM_PATH)return html('<p class="eyebrow">My TrustHub</p><h1>Invalid request</h1><p>Start again from the profile you want to keep.</p>',400,'Invalid request');
   // A verified email/PKCE callback may add this bounded outcome marker. Strip it
