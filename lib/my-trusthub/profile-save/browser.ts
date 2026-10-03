@@ -50,9 +50,10 @@ export interface BrowserBindings {
   confirmed?(confirmation:Confirmation,parent:BrowserParent):Promise<void>;
   /** Owner-scoped removal of the Saved row for the exact bound profile, through
    * the verified parent's own session. Resolves only when the account verifiably
-   * holds no active Saved row for it afterwards (`not_saved`: it held none);
-   * anything else throws. Absent means Unsave changes nothing. */
-  unsave?(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<'removed'|'not_saved'>;
+   * holds no active Saved row for it afterwards (`not_saved`: it held none).
+   * `in_project`: the row is filed in a Project and was deliberately left
+   * untouched. Anything else throws. Absent means Unsave changes nothing. */
+  unsave?(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<'removed'|'not_saved'|'in_project'>;
   now():number;
 }
 // Native form navigations under no-referrer send Origin:null. Preserve the exact
@@ -142,7 +143,17 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         if(posted)throw new RuntimeError('invalid');
         try{
           if(!b.unsave)throw new RuntimeError('unavailable');
-          await b.unsave(request,c,parent);
+          if(await b.unsave(request,c,parent)==='in_project'){
+            // Existing conflict rule: a profile filed in a Project is never
+            // silently detached. Say so here; nothing is acknowledged, so the
+            // source keeps showing that it may still be saved in the account.
+            const from=hubLabel(c.source.manifest.sourceHub);
+            return html(`<p class="eyebrow">My TrustHub</p><h1>Still saved in My TrustHub</h1>
+<div class="status warn" role="status"><span aria-hidden="true">!</span><span>This profile is filed in one of your Projects, so it was not removed from your account.</span></div>
+<p>It was removed from this device on ${escape(from)}. To unsave it here too, remove it from the Project first, then choose Unsave.</p>
+<div class="actions"><a class="btn accent" href="/my/saved">Open Saved Research</a> <a class="btn secondary" href="${escape(direct)}">Return to Move profile</a></div>
+<p class="note">Nothing was removed from your Projects. Unsave never changes a Watch.</p>`,200,'Still saved in My TrustHub');
+          }
           if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
           // Tell the source the account no longer holds this profile. Without
           // this signed acknowledgement the source keeps treating it as saved

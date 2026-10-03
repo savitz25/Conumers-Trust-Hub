@@ -7,7 +7,8 @@ import { btree_gist } from '@electric-sql/pglite/contrib/btree_gist';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { PreviewAssembly } from '../../lib/my-trusthub/profile-save/preview-assembly.ts';
 import { PreviewStore, PreviewConfirmationStore, randomRef } from '../../lib/my-trusthub/profile-save/preview-store.ts';
-import { SourceChannel, TEST_PROFILE, TEST_SLUG } from '../../lib/my-trusthub/profile-save/source-channel.ts';
+import { SourceChannel } from '../../lib/my-trusthub/profile-save/source-channel.ts';
+import { TEST_PROFILE, TEST_SLUG } from '../../lib/my-trusthub/profile-save/reference-profile.fixture.ts';
 import { verifiedParent } from '../../lib/my-trusthub/profile-save/verified-parent.ts';
 import { handleProfileConfirmation } from '../../lib/my-trusthub/profile-save/browser.ts';
 import { handleProfileSave } from '../../lib/my-trusthub/profile-save/http.ts';
@@ -60,6 +61,8 @@ try {
   const exp = Math.floor(Date.now() / 1000) + 60;
   await db.query('select v23_private.preview_session_install_mac($1)', [sessionMacKey(signing.privateKey.pem)]);
   await createPacketBinding(db);
+  // The runtime resolves the binding through the exact-mover resolver.
+  await db.exec(readFileSync(root + 'move-binding-resolver-forward.sql', 'utf8'));
   await assertionFailureCases(db);
   const pool = { connect: async () => ({ query: (sql, values) => db.query(sql, values), release() {} }) };
   const store = new PreviewStore(pool), confirmations = new PreviewConfirmationStore(pool);
@@ -204,6 +207,9 @@ try {
     (select count(*)::int from consumer.consumer_project_saved_entities) memberships,
     (select count(*)::int from consumer.packet_reference_fixture) other_references`);
   assert.deepEqual(references.rows, [{ projects: 2, memberships: 1, other_references: 1 }]);
+  // The closeout packet below is the original preview packet; remove the resolver's three objects first.
+  await db.exec(`drop function v23_private.preview_move_binding_for(text);
+    drop policy preview_move_mover_bindings on network.network_entity_bindings; drop policy preview_move_mover_entities on network.network_entities;`);
   await platformAclCases(db);
   await closeoutPacket(db);
   assert.deepEqual(await db.query('select * from consumer.consumer_saved_entities'), research);

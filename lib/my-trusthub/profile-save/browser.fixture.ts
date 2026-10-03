@@ -23,7 +23,7 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   const continuation=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:stage.transferRef,manifestDigest:stage.manifestDigest}) as {continuationRef:string};
   // Source snapshot is obtained by a separate mocked authenticated service, NOT
   // by reading the parent's SQLite tables. Concrete service credentials NOT RUN.
-  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0,unsaves=0,refuseUnsave=false;
+  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0,unsaves=0,refuseUnsave=false,filed=false;
   const released:string[]=[];
   const first:SourceSnapshot={...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)} as SourceSnapshot;
   const sources=new Map<string,SourceSnapshot>([[continuation.continuationRef,first]]);
@@ -33,7 +33,7 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
     runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:c.contextCandidateRef??'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
     acknowledge:async(_s,receipts)=>{acks++;if(receipts.every(r=>r.parent.outcome==='local_only'))released.push(receipts[0]!.requestKey);},
     // Owner-scoped removal stand-in: only the verified parent's own row.
-    unsave:async(_r,_c,p)=>{unsaves++;if(refuseUnsave)throw new Error('Saved entity still belongs to one or more Projects');
+    unsave:async(_r,_c,p)=>{unsaves++;if(filed)return 'in_project';if(refuseUnsave)throw new Error('My TrustHub data request failed');
       return Number(backend.db.prepare('DELETE FROM saves WHERE subject=?').run(p.subject).changes)>0?'removed':'not_saved';}};
   const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
   const arrivalBody=(ref:string,intent?:string)=>new URLSearchParams({continuationRef:ref,...(intent?{intent}:{})}).toString();
@@ -57,6 +57,6 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   };
   return {b,backend,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,stage:stage2,get acks(){return acks;},get unsaves(){return unsaves;},
     /** Request keys the parent acknowledged as no longer saved in the account. */
-    released,refuseUnsave(value=true){refuseUnsave=value;},
+    released,refuseUnsave(value=true){refuseUnsave=value;},fileInProject(value=true){filed=value;},
     login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
 }

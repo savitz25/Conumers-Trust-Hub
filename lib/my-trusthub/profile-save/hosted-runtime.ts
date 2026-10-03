@@ -2,7 +2,7 @@ import 'server-only';
 import { Pool } from 'pg';
 import { createPrivateKey, createPublicKey } from 'node:crypto';
 import { PreviewAssembly } from './preview-assembly.ts';
-import { PreviewStore, randomRef } from './preview-store.ts';
+import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
@@ -99,11 +99,17 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         `select saved_entity_id from ${sqlName(target, 'saved')}($1,$2)`, [parent.subject, parent.session])).rows.map(row => row.saved_entity_id)));
       const rows = (await adapter.listSavedEntities()).filter(row => !row.removed_at && owned.has(row.saved_entity_id) &&
         (row.stored_network_entity_id === networkEntityId || row.resolved_network_entity_id === networkEntityId));
+      // Filed in a Project: the P12 rule refuses the removal. Report it rather
+      // than attempt it; memberships are never changed from here.
+      if (rows.some(row => row.project_ids.length > 0)) return 'in_project';
       for (const row of rows) await adapter.removeSavedEntity(row.saved_entity_id);
       return rows.length > 0;
     });
-    // Missing binding or unwired/non-publishable source is unavailable everywhere.
-    await runtime.binding(); await source.publication(randomRef());
+    // The exact mover binding resolver must be installed and executable. A
+    // syntactically impossible identity returns no row and reveals nothing.
+    // Publication and binding are proved per profile on every Save.
+    const resolver = await store.authorized(async db => (await db.query<{ n: number }>(`select count(*)::int as n from ${sqlName(target, 'move_binding_for')}($1)`, ['usdot-0'])).rows[0]?.n);
+    if (resolver !== 0) return null;
     return runtime;
   } catch { return null; }
 }

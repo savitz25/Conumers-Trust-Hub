@@ -116,3 +116,30 @@ policies and the one-row attestation table) with a resolver over the real
 production mover publication source, and remove
 `NEXT_PUBLIC_MOVE_PARENT_SAVE_CANARY_SLUGS`. Journey QA then samples Hindman
 plus two more published movers.
+
+## Move widening — any eligible published mover
+
+The runtime no longer pins the Hindman profile. For every Save it takes the
+identity from the verified, signed Move manifest (`move` / `mover` /
+`usdot-<number>`), re-proves publication with Move over the signed source
+channel, and resolves the binding through
+`v23_private.prod_move_binding_for(text)`. A Save is admitted only for exactly
+one current binding that is accepted, class mover, namespace `fmcsa.usdot`,
+jurisdiction `US`, on an active entity, and agrees with the identity on both the
+native id and the number. Zero, several, `review_required` or any disagreement
+fails closed. Browser-supplied ids, names and emails are never looked up.
+
+Operator packets (canary flags OFF while applying):
+
+| File | Purpose |
+| --- | --- |
+| `09-ask-prod-move-binding-resolver-forward.sql` | Two read policies for the nologin reader and the exact resolver function. Verifies the Hindman reference resolves identically. Marker `V23_PROD_MOVE_BINDING_RESOLVER_APPLIED`. |
+| `09-ask-prod-move-binding-resolver-rollback.sql` | Drops exactly those three objects. |
+| `10-ask-prod-move-mover-binding.sql` | Per mover: read-only preflight, then one entity + one accepted binding when none exists. Needed for `gentle-giant-moving` (USDOT 373544) and `caraway-moving-inc` (USDOT 1684331). |
+
+Until 09 is applied the deployed application reports the profile-save runtime
+as unavailable (it probes the resolver on every request); the canary must stay
+OFF until then. The isolated preview pair needs
+`../final-parent-wiring/move-binding-resolver-forward.sql` for the same reason.
+
+Local proof: `npm run check:my-trusthub-v2-3-widening`.

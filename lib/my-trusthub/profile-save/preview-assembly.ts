@@ -4,13 +4,13 @@ import { ParentProfileSaveRuntime, RuntimeError, hash, type VerifiedCaller, type
 import { PreviewStore, PreviewConfirmationStore, randomRef } from './preview-store.ts';
 import { isolatedBrowserBindings } from './isolated-adapters.ts';
 import { CurrentGrants } from './current-grant.ts';
-import { SourceChannel, TEST_PROFILE, TEST_SLUG, exactTestProfile } from './source-channel.ts';
+import { SourceChannel, moveSourceIdentifier, supportedMoveProfile, type Publication } from './source-channel.ts';
 import { API_PATH, GRANT_API_PATH, deploymentConfig, opaque, sqlName, type DeploymentConfig, type DeploymentTarget, type Env } from './isolated-config.ts';
 import { verifyAssertion, boundedBody, type AssertionKey } from './service-assertion.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
 import type { P13Proof } from './p12-p13.ts';
-import type { TrustedProfile } from '../contracts/v2-3-profile-save.ts';
+import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-save.ts';
 import { isGuestStageInput, manifestDigest, type GuestStageInput } from '../contracts/v2-3-profile-transfer.ts';
 import type { Operation } from './interface.ts';
 import { PRIVATE_HEADERS } from './http.ts';
@@ -21,9 +21,10 @@ type Exchange = { parent: BrowserParent; proof: P13Proof; expiresAt: number };
 type Project = { ref: string; id: string; label: string };
 type ProjectList = { items: Project[] };
 /** Removes the verified parent's own Saved row for one network entity through
- * that user's session. Returns false when the account holds no such row and
- * throws when a row exists but could not be removed. */
-export type RemoveSaved = (parent: BrowserParent, networkEntityId: string) => Promise<boolean>;
+ * that user's session. Returns false when the account holds no such row,
+ * 'in_project' when the row is filed in a Project (left untouched), and throws
+ * when a row exists but could not be removed. */
+export type RemoveSaved = (parent: BrowserParent, networkEntityId: string) => Promise<boolean | 'in_project'>;
 const equal = (a: BrowserParent | null, b: BrowserParent) => a?.subject === b.subject && a.session === b.session;
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
 const exact = (x: Record<string, unknown>, keys: string[]) => Object.keys(x).sort().join() === keys.sort().join();
@@ -52,13 +53,31 @@ export class PreviewAssembly {
     const c = deploymentConfig(env); if (!c) throw new RuntimeError('unavailable');
     this.config = c; this.target = c.target; this.store = new PreviewStore(pool, c.target); this.grants = new CurrentGrants(this.store, parent);
   }
-  async binding(db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
+  /** Exact mover binding for one verified Move identity. The resolver returns
+   * every current accepted or review_required binding that claims this USDOT
+   * identity (at most three); eligibility is exactly one, accepted, on an
+   * active entity, agreeing with the identity on both the native id and the
+   * source identifier. Zero, several, review_required or any disagreement is
+   * not eligible. The identity never comes from a browser. */
+  async binding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
+    if (!supportedMoveProfile(profile)) throw new RuntimeError('unavailable');
     const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
-      const r = await d.query<{ id: string; network_entity_id: string; binding_status: 'accepted' }>(`select * from ${sqlName(this.target, 'move_binding')}()`, []);
-      if (r.rows.length !== 1 || r.rows[0].binding_status !== 'accepted') throw new RuntimeError('unavailable');
-      return { id: r.rows[0].id, networkEntityId: r.rows[0].network_entity_id, status: r.rows[0].binding_status };
+      const r = await d.query<{ id: string; network_entity_id: string; binding_status: string; specialist_entity_id: string; source_identifier: string; entity_status: string }>(
+        `select * from ${sqlName(this.target, 'move_binding_for')}($1)`, [profile.nativeId]);
+      const b = r.rows[0];
+      if (r.rows.length !== 1 || b.binding_status !== 'accepted' || b.entity_status !== 'active' ||
+        b.specialist_entity_id !== profile.nativeId || b.source_identifier !== moveSourceIdentifier(profile)) throw new RuntimeError('unavailable');
+      return { id: b.id, networkEntityId: b.network_entity_id, status: 'accepted' as const };
     };
     return db ? query(db) : this.store.authorized(query);
+  }
+  /** One publication proof per profile per request. */
+  private readonly publications = new Map<string, Promise<Publication>>();
+  private publication(browser: string, profile: ProfileIdentity): Promise<Publication> {
+    const key = browser + ':' + profile.nativeId;
+    let proof = this.publications.get(key);
+    if (!proof) { proof = this.source.publication(browser, profile); this.publications.set(key, proof); proof.catch(() => this.publications.delete(key)); }
+    return proof;
   }
   async projects(parent: BrowserParent): Promise<Project[]> {
     if (!await this.store.live(parent.subject, parent.session)) throw new RuntimeError('unauthorized');
@@ -104,11 +123,16 @@ export class PreviewAssembly {
   private ports(verify: AuthorizedPostgresPorts['verify'], browser: string): AuthorizedPostgresPorts {
     return { pool: this.pool, verify,
       profile: async (identity, db) => {
-        if (!exactTestProfile(identity)) return null;
-        await this.source.publication(browser);
-        return { ...TEST_PROFILE, published: true, supportedClass: true, binding: await this.binding(db) };
+        if (!supportedMoveProfile(identity)) return null;
+        await this.publication(browser, identity);
+        return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.binding(identity, db) };
       },
-      returnTask: async identity => exactTestProfile(identity) ? { kind: 'profile', hub: 'move', profile: TEST_PROFILE, canonicalSlug: TEST_SLUG, returnPath: `/companies/${TEST_SLUG}` } : null,
+      // The return path is Move's canonical profile for this identity, from Move.
+      returnTask: async identity => {
+        if (!supportedMoveProfile(identity)) return null;
+        const slug = (await this.publication(browser, identity)).canonicalSlug;
+        return { kind: 'profile', hub: 'move', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/companies/${slug}` };
+      },
       project: async (ref, a) => {
         const p = a.caller.parent; if (!p) return null;
         const items = await this.projects({ subject: p.subject, session: p.sessionBinding, label: '' });
@@ -128,7 +152,7 @@ export class PreviewAssembly {
         const s = await this.source.call({ action: 'source', continuationRef: ref }, 'source:read', link.browser) as SourceSnapshot;
         if (!s || s.browserProof !== link.browser || s.transferRef !== link.transferRef || s.manifestDigest !== link.manifestDigest ||
           s.expiresAt > link.expiresAt || !isGuestStageInput(s.manifest) || manifestDigest(s.manifest) !== link.manifestDigest ||
-          s.manifest.selected.some(i => !exactTestProfile(i.profile))) return null;
+          s.manifest.selected.some(i => !supportedMoveProfile(i.profile))) return null;
         return s;
       },
       acknowledge: async (s, receipts, p) => {
@@ -141,9 +165,10 @@ export class PreviewAssembly {
     // network entity and the live verified session. Never a posted identifier.
     binding.unsave = async (r, c, p) => {
       const selected = c.source.manifest.selected;
-      if (!this.removeSaved || selected.length !== 1 || !exactTestProfile(selected[0].profile) ||
+      if (!this.removeSaved || selected.length !== 1 || !supportedMoveProfile(selected[0].profile) ||
         !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
-      return await this.removeSaved(p, (await this.binding()).networkEntityId) ? 'removed' : 'not_saved';
+      const outcome = await this.removeSaved(p, (await this.binding(selected[0].profile)).networkEntityId);
+      return outcome === 'in_project' ? 'in_project' : outcome ? 'removed' : 'not_saved';
     };
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
@@ -183,7 +208,7 @@ export class PreviewAssembly {
     const execute = rt.execute.bind(rt);
     rt.execute = async (operation: Operation, input: unknown) => {
       if (operation !== e.operation || JSON.stringify(input) !== JSON.stringify(e.input)) throw new RuntimeError('unauthorized');
-      if (operation === 'prepareGuestProfileTransfer' && (!isGuestStageInput(input) || input.selected.some(i => !exactTestProfile(i.profile)))) throw new RuntimeError('invalid');
+      if (operation === 'prepareGuestProfileTransfer' && (!isGuestStageInput(input) || input.selected.some(i => !supportedMoveProfile(i.profile)))) throw new RuntimeError('invalid');
       const result = await execute(operation, input);
       if (operation === 'prepareGuestProfileTransfer') {
         const link = { ...(result as Link), browser: claims.browser, manifest: input as GuestStageInput };
@@ -207,8 +232,11 @@ export class PreviewAssembly {
     const c = await verifyAssertion(request, bytes, this.moveKey, 'move', binding ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     if (c.session !== null || c.grant !== null) throw new RuntimeError('invalid');
     let result: unknown;
-    if (binding && exact(body, ['action'])) {
-      await this.source.publication(c.browser); result = { profile: TEST_PROFILE, binding: await this.binding() };
+    if (binding && exact(body, ['action', 'profile']) && supportedMoveProfile(body.profile)) {
+      // Move asks for one exact identity it has signed for; publication is re-proved with Move.
+      const profile = body.profile;
+      await this.publication(c.browser, profile);
+      result = { profile: { hub: profile.hub, nativeId: profile.nativeId, profileClass: profile.profileClass }, binding: await this.binding(profile) };
     } else if (body.action === 'challenge' && exact(body, ['action', 'continuationRef']) && opaque(body.continuationRef)) {
       result = await this.grants.challenge(body.continuationRef, c.browser);
     } else if (body.action === 'resolve' && exact(body, ['action', 'continuationRef', 'proofRef']) && opaque(body.continuationRef) && opaque(body.proofRef)) {

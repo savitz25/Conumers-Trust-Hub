@@ -47,9 +47,18 @@ test('OC-C one-click Unsave with a verified parent session removes only that own
 test('OC-C2 a refused or signed-out Unsave is never acknowledged: the source keeps treating the profile as saved here',async()=>{
   const f=await fixture({environment:'production',intent:'save'});try{
     f.login();back(await f.get());assert.equal(f.backend.count('saves'),1);
-    // Removal refused by the account (for example still filed in a Project).
+    // Removal failed in the account.
     f.refuseUnsave();back(await (await f.again('unsave')).get());
     assert.equal(f.backend.count('saves'),1);assert.equal(f.released.length,0);
+    // Filed in a Project: the conflict is protected and the customer is told
+    // exactly that, with the way back to the profile. Nothing is acknowledged.
+    f.refuseUnsave(false);f.fileInProject();
+    const filed=await (await f.again('unsave')).get();assert.equal(filed.status,200);
+    const page=await filed.text();
+    assert.match(page,/Still saved in My TrustHub/);assert.match(page,/filed in one of your Projects/);assert.match(page,/href="\/my\/saved"/);
+    assert.ok(page.includes(`href="${RETURN}"`));
+    assert.equal(f.backend.count('saves'),1);assert.equal(f.backend.count('memberships'),0);assert.equal(f.released.length,0);
+    f.fileInProject(false);
     // Signed out: nothing is removed and nothing is acknowledged.
     f.refuseUnsave(false);f.logout();back(await (await f.again('unsave')).get());
     assert.equal(f.backend.count('saves'),1);assert.equal(f.released.length,0);

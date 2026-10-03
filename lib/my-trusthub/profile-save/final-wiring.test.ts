@@ -6,7 +6,8 @@ import { accountRuntime, accountFormAvailable } from '../account-policy.ts';
 import { runAccountOperation, type AuthApi } from '../account-service.ts';
 import { ASSERTION_HEADER, signAssertion, verifyAssertion, type Scope } from './service-assertion.ts';
 import { verifiedParent } from './verified-parent.ts';
-import { SourceChannel, TEST_PROFILE, TEST_SLUG } from './source-channel.ts';
+import { SourceChannel } from './source-channel.ts';
+import { TEST_PROFILE, TEST_SLUG } from './reference-profile.fixture.ts';
 
 export const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222';
 export const fixtureEnv: Env = { VERCEL_ENV: 'preview', NEXT_PUBLIC_SITE_URL: ASK_PREVIEW, MY_TRUSTHUB_TEST_ORIGIN: ASK_PREVIEW,
@@ -101,8 +102,13 @@ test('F04 source callback pins network target and rejects stale/unpublished/mism
     assert.equal(init?.cache, 'no-store'); assert.equal(new Headers(init?.headers).has('cookie'), false);
     return Response.json({ ok: true, result: { identity: TEST_PROFILE, canonicalSlug: TEST_SLUG, publicationState: 'PUBLISHABLE', reviewedClass: 'mover', checkedAt: Date.now(), ...patch } });
   });
-  assert.equal((await source.publication('b'.repeat(43))).publicationState, 'PUBLISHABLE');
-  for (patch of [{ publicationState: 'INDEXABLE' }, { checkedAt: Date.now() - 6000 }, { canonicalSlug: 'different' }, { identity: { ...TEST_PROFILE, nativeId: 'different' } }]) await assert.rejects(source.publication('b'.repeat(43)));
+  assert.equal((await source.publication('b'.repeat(43), TEST_PROFILE)).publicationState, 'PUBLISHABLE');
+  for (patch of [{ publicationState: 'INDEXABLE' }, { publicationState: 'INGESTED' }, { reviewedClass: 'broker' }, { checkedAt: Date.now() - 6000 }, { canonicalSlug: 'Not A Slug' }, { canonicalSlug: '' },
+    { identity: { ...TEST_PROFILE, nativeId: 'different' } }, { identity: { ...TEST_PROFILE, nativeId: 'usdot-373544' } }]) await assert.rejects(source.publication('b'.repeat(43), TEST_PROFILE));
+  // Only the exact supported identity grain is ever asked about.
+  patch = {};
+  for (const bad of [{ ...TEST_PROFILE, profileClass: 'broker' }, { ...TEST_PROFILE, hub: 'lender' }, { ...TEST_PROFILE, nativeId: 'hindman' }, { ...TEST_PROFILE, nativeId: 'usdot-0' }, { ...TEST_PROFILE, extra: 1 }])
+    await assert.rejects(source.publication('b'.repeat(43), bad as never));
 });
 
 test('F05 Save master never opens isolated signup, email, recovery or credential changes', async () => {
