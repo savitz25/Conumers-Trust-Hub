@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { User } from "@supabase/supabase-js";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
+import { savedProjectIds } from "@/lib/my-trusthub/saved-project-ids";
 import type { AlertDetail, AlertListRequest, AlertsOverview, ConsumerAlert, SetAlertReadStateRequest, WatchCheckState, WatchObservationHistoryEntry } from "@/lib/my-trusthub/alert-contract";
 import type { NotificationPreferences, WatchNotificationOverride } from "@/lib/my-trusthub/notification-contract";
 
@@ -234,7 +235,9 @@ export class ProductionMyTrustHubAdapter {
   }
 
   async listSavedEntities(): Promise<SavedEntityRow[]> {
-    return rows<SavedEntityRow>(await this.rpc("list_saved_entities"));
+    // A NULL element is never a Project membership (see savedProjectIds).
+    return rows<SavedEntityRow>(await this.rpc("list_saved_entities"))
+      .map((row) => ({ ...row, project_ids: savedProjectIds(row.project_ids) }));
   }
 
   /**

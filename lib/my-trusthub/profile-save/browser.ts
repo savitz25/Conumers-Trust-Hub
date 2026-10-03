@@ -49,8 +49,10 @@ export interface BrowserBindings {
   acknowledge(source:SourceSnapshot,receipts:ItemReceipt[],parent:BrowserParent):Promise<void>;
   confirmed?(confirmation:Confirmation,parent:BrowserParent):Promise<void>;
   /** Owner-scoped removal of the Saved row for the exact bound profile, through
-   * the verified parent's own session. Absent means Unsave changes nothing. */
-  unsave?(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<boolean>;
+   * the verified parent's own session. Resolves only when the account verifiably
+   * holds no active Saved row for it afterwards (`not_saved`: it held none);
+   * anything else throws. Absent means Unsave changes nothing. */
+  unsave?(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<'removed'|'not_saved'>;
   now():number;
 }
 // Native form navigations under no-referrer send Origin:null. Preserve the exact
@@ -138,8 +140,18 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
       c.parent=parent;
       if(direct&&c.intent==='unsave'){
         if(posted)throw new RuntimeError('invalid');
-        try{await b.unsave?.(request,c,parent);}
-        catch(error){console.warn(JSON.stringify({event:'my_trusthub_v23_direct_failure',stage:'unsave',code:diagnosticCode(error)}));}
+        try{
+          if(!b.unsave)throw new RuntimeError('unavailable');
+          await b.unsave(request,c,parent);
+          if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
+          // Tell the source the account no longer holds this profile. Without
+          // this signed acknowledgement the source keeps treating it as saved
+          // here, so an interrupted or refused Unsave is never reported as done.
+          if(!c.contextCandidateRef){c.contextCandidateRef=opaque();await checkpoint();}
+          await b.acknowledge(c.source,c.source.manifest.selected.map((item,index)=>({receiptRef:opaque(),requestKey:c.requestPrefix+':'+index,
+            accountContextRef:c.contextCandidateRef!,manifestDigest:c.source.manifestDigest,item,parent:{outcome:'local_only'},
+            project:{outcome:'not_requested'},localCopy:'keep'} satisfies ItemReceipt)),parent);
+        }catch(error){console.warn(JSON.stringify({event:'my_trusthub_v23_direct_failure',stage:'unsave',code:diagnosticCode(error)}));}
         return back();
       }
       const projects=direct?[]:(await b.projects(parent)).slice(0,25).filter(p=>valid(p.ref));

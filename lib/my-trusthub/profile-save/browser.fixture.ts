@@ -23,16 +23,18 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   const continuation=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:stage.transferRef,manifestDigest:stage.manifestDigest}) as {continuationRef:string};
   // Source snapshot is obtained by a separate mocked authenticated service, NOT
   // by reading the parent's SQLite tables. Concrete service credentials NOT RUN.
-  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0,unsaves=0;
+  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0,unsaves=0,refuseUnsave=false;
+  const released:string[]=[];
   const first:SourceSnapshot={...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)} as SourceSnapshot;
   const sources=new Map<string,SourceSnapshot>([[continuation.continuationRef,first]]);
   const b:BrowserBindings={origin,registry,now:()=>now,source:async(_r,ref)=>sources.get(ref)??first,
     parent:async()=>parent,projects:async()=>options.zeroProjects?[]:[{ref:'p'.repeat(43),label:'Test Project'}],
     store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null,async()=>{const c=records.get(k);if(c)checkpoints.push(structuredClone(c));})},
     runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:c.contextCandidateRef??'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
-    acknowledge:async()=>{acks++;},
+    acknowledge:async(_s,receipts)=>{acks++;if(receipts.every(r=>r.parent.outcome==='local_only'))released.push(receipts[0]!.requestKey);},
     // Owner-scoped removal stand-in: only the verified parent's own row.
-    unsave:async(_r,_c,p)=>{unsaves++;return Number(backend.db.prepare('DELETE FROM saves WHERE subject=?').run(p.subject).changes)>0;}};
+    unsave:async(_r,_c,p)=>{unsaves++;if(refuseUnsave)throw new Error('Saved entity still belongs to one or more Projects');
+      return Number(backend.db.prepare('DELETE FROM saves WHERE subject=?').run(p.subject).changes)>0?'removed':'not_saved';}};
   const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
   const arrivalBody=(ref:string,intent?:string)=>new URLSearchParams({continuationRef:ref,...(intent?{intent}:{})}).toString();
   const arrival=await handleProfileConfirmation(post(arrivalBody(continuation.continuationRef,options.intent),'',sourceOrigin),b);
@@ -41,14 +43,20 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   const confirm=async(project='')=>{const page=await (await get()).text();const csrf=/name="csrf" value="([^"]+)"/.exec(page)?.[1];return handleProfileConfirmation(post(new URLSearchParams({csrf:csrf??'',confirm:'yes',project}).toString(),cookie),b);};
   // A later click from the same source profile: fresh stage, continuation and request prefix.
   let clicks=0;
-  const again=async(intent?:DirectIntent)=>{
+  const stage2=async()=>{
     const s=await runtime.execute('prepareGuestProfileTransfer',manifest) as GuestStageRef;
     const k=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:s.transferRef,manifestDigest:s.manifestDigest}) as {continuationRef:string};
     sources.set(k.continuationRef,{...k,...s,manifest,browserProof:caller.browserBinding,requestPrefix:String(++clicks).repeat(43).slice(0,43)} as SourceSnapshot);
+    return k;
+  };
+  const again=async(intent?:DirectIntent)=>{
+    const k=await stage2();
     const r=await handleProfileConfirmation(post(arrivalBody(k.continuationRef,intent),'',sourceOrigin),b);
     assert.equal(r.status,303);const next=r.headers.get('set-cookie')!.split(';')[0];
     return {cookie:next,get:()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie:next}}),b)};
   };
-  return {b,backend,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,get acks(){return acks;},get unsaves(){return unsaves;},
+  return {b,backend,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,stage:stage2,get acks(){return acks;},get unsaves(){return unsaves;},
+    /** Request keys the parent acknowledged as no longer saved in the account. */
+    released,refuseUnsave(value=true){refuseUnsave=value;},
     login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
 }

@@ -21,7 +21,8 @@ type Exchange = { parent: BrowserParent; proof: P13Proof; expiresAt: number };
 type Project = { ref: string; id: string; label: string };
 type ProjectList = { items: Project[] };
 /** Removes the verified parent's own Saved row for one network entity through
- * that user's session. Returns false when the account holds no such row. */
+ * that user's session. Returns false when the account holds no such row and
+ * throws when a row exists but could not be removed. */
 export type RemoveSaved = (parent: BrowserParent, networkEntityId: string) => Promise<boolean>;
 const equal = (a: BrowserParent | null, b: BrowserParent) => a?.subject === b.subject && a.session === b.session;
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -141,8 +142,8 @@ export class PreviewAssembly {
     binding.unsave = async (r, c, p) => {
       const selected = c.source.manifest.selected;
       if (!this.removeSaved || selected.length !== 1 || !exactTestProfile(selected[0].profile) ||
-        !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) return false;
-      return this.removeSaved(p, (await this.binding()).networkEntityId);
+        !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
+      return await this.removeSaved(p, (await this.binding()).networkEntityId) ? 'removed' : 'not_saved';
     };
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');

@@ -33,11 +33,32 @@ test('OC-C one-click Unsave with a verified parent session removes only that own
     assert.equal(f.unsaves,1);assert.equal(f.backend.count('saves'),1);
     f.login();const unsave=await f.again('unsave');back(await unsave.get());
     assert.equal(f.unsaves,2);assert.equal(f.backend.count('saves'),0);
+    // Each verified Unsave is acknowledged to the source as "not in this account";
+    // account B held no row, account A's was removed.
+    assert.equal(f.released.length,2);
     // The Unsave arrival never accepts a posted confirmation and never saves.
     assert.equal((await handleProfileConfirmation(f.post('csrf=x&confirm=yes',unsave.cookie),f.b)).status,503);
     assert.equal(f.backend.count('saves'),0);
     // Save is available again afterwards.
     back(await (await f.again('save')).get());assert.equal(f.backend.count('saves'),1);
+  }finally{f.close();}
+});
+
+test('OC-C2 a refused or signed-out Unsave is never acknowledged: the source keeps treating the profile as saved here',async()=>{
+  const f=await fixture({environment:'production',intent:'save'});try{
+    f.login();back(await f.get());assert.equal(f.backend.count('saves'),1);
+    // Removal refused by the account (for example still filed in a Project).
+    f.refuseUnsave();back(await (await f.again('unsave')).get());
+    assert.equal(f.backend.count('saves'),1);assert.equal(f.released.length,0);
+    // Signed out: nothing is removed and nothing is acknowledged.
+    f.refuseUnsave(false);f.logout();back(await (await f.again('unsave')).get());
+    assert.equal(f.backend.count('saves'),1);assert.equal(f.released.length,0);
+    // Arrival alone (the cross-site POST) removes nothing; only the follow-up GET does.
+    f.login();const pending=await f.again('unsave');
+    assert.equal(f.backend.count('saves'),1);assert.equal(f.released.length,0);
+    back(await pending.get());assert.equal(f.backend.count('saves'),0);assert.equal(f.released.length,1);
+    // Reload of the same Unsave: still acknowledged, nothing else changes.
+    back(await pending.get());assert.equal(f.backend.count('saves'),0);assert.equal(f.released.length,2);
   }finally{f.close();}
 });
 

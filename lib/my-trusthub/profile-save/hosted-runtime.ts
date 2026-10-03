@@ -94,7 +94,7 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
       // in the signed-in user's own list; removal is the P12 RPC as that user.
       const { ProductionMyTrustHubAdapter } = await import('../production-adapter');
       const adapter = await ProductionMyTrustHubAdapter.create();
-      if (!adapter) return false;
+      if (!adapter) throw new Error('unavailable');
       const owned = new Set(await store.authorized(async db => (await db.query<{ saved_entity_id: string }>(
         `select saved_entity_id from ${sqlName(target, 'saved')}($1,$2)`, [parent.subject, parent.session])).rows.map(row => row.saved_entity_id)));
       const rows = (await adapter.listSavedEntities()).filter(row => !row.removed_at && owned.has(row.saved_entity_id) &&
