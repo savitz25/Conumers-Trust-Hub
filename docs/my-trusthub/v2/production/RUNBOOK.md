@@ -143,3 +143,37 @@ OFF until then. The isolated preview pair needs
 `../final-parent-wiring/move-binding-resolver-forward.sql` for the same reason.
 
 Local proof: `npm run check:my-trusthub-v2-3-widening`.
+
+## Move exact-USDOT binding expansion (packet 11, PREPARED — not applied)
+
+Bulk form of packet 10 for every PUBLISHABLE supported mover that Move
+identifies by exactly one USDOT number. Identity is `move` / `mover` /
+`fmcsa.usdot` / `US` / `usdot-<number>` only; nothing is connected by name.
+
+| File | Purpose |
+| --- | --- |
+| Move repo `scripts/qa/mth-exact-usdot-candidates.ts` | Read-only enumeration of production `public.companies` (anon key), judged by the Save path's own `evaluatePublishedMover`. |
+| `scripts/release/mth-v2-exact-usdot-packet.mjs` | Deterministic transform of that enumeration into the two generated files below. |
+| `11-move-exact-usdot-candidates.sql` (generated) | Session-local temp table of candidates + manifest sha256. |
+| `11-move-exact-usdot-evidence.csv` (generated) | Row-level Move verdict for every PUBLISHABLE supported mover. |
+| `11-ask-prod-move-exact-usdot-reconcile.sql` | Read-only classification: ALREADY_ACCEPTED / SAFE_NEW_BINDING / CONFLICT / REVIEW_REQUIRED / AMBIGUOUS. |
+| `11-ask-prod-move-exact-usdot-batch-forward.sql` | One serializable transaction: one entity + one accepted binding per SAFE_NEW_BINDING row, INSERT only. Marker `V23_PROD_MOVE_EXACT_USDOT_BATCH_APPLIED`. |
+| `11-ask-prod-move-exact-usdot-batch-rollback.sql` | Retires exactly the receipt's bindings (validity closed, entity retired). No DELETE. Marker `V23_PROD_MOVE_EXACT_USDOT_BATCH_RETIRED`. |
+| `11-move-exact-usdot-RECEIPT-TEMPLATE.md` | Operator receipt. |
+
+Order: 09 applied → regenerate the candidates if older than 24 h → one psql
+session: candidates, reconcile, review counts and non-safe rows, then (only
+with a separate mutation authorization) the forward file within two minutes of
+the reconciliation → export the receipt → revoke the temporary
+`myth_identity_governor` membership. Movers already bound by packet 10 simply
+classify ALREADY_ACCEPTED; packet 10 stays valid for single movers.
+
+Shipped manifest (enumerated 2026-10-03T20:17Z): 5,957 company rows, 5,022
+PUBLISHABLE, 4,727 supported movers, 4,312 exact-USDOT candidates, 373 held for
+a missing USDOT, `MOVE_NAME_COLLISION_HOLD` = 42 (identical legal name on more
+than one mover), 0 USDOTs on more than one Move row. The Move holds are not Ask
+classes: the Ask classification is unknown until the reconcile file is run on
+production. The enumeration itself is kept in the Move repo at
+`docs/my-trusthub-v2-production/exact-usdot-enumeration-2026-10-03.json`.
+
+Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
