@@ -31,15 +31,22 @@ test('exact accepted NMLS binding is eligible and a repeated read is the same ro
   if (once.outcome === 'eligible' && twice.outcome === 'eligible') assert.equal(once.id, twice.id);
 });
 
+function deniedReason(nativeId: string, rows: LenderBindingRow[]) {
+  const decision = classifyLenderRows(nativeId, rows);
+  assert.equal(decision.outcome, 'denied');
+  if (decision.outcome !== 'denied') throw new Error('expected a denial');
+  return decision.reason;
+}
+
 test('missing, ambiguous, review_required, wrong class, and disagreement are denied', () => {
-  assert.equal(classifyLenderRows('nmls:1984721', []).reason, 'missing');
-  assert.equal(classifyLenderRows('nmls:1984721', [row(), row({ id: 'binding-2' })]).reason, 'ambiguous');
-  assert.equal(classifyLenderRows('nmls:1984721', [row({ binding_status: 'review_required' })]).reason, 'review_required');
-  assert.equal(classifyLenderRows('nmls:1984721', [row({ specialist_entity_type: 'national_institution' })]).reason, 'wrong_class');
-  assert.equal(classifyLenderRows('nmls:1984721', [row({ source_identifier: '3030' })]).reason, 'identity_disagreement');
-  assert.equal(classifyLenderRows('nmls:1984721', [row({ identifier_namespace: 'fmcsa.usdot' })]).reason, 'identity_disagreement');
-  assert.equal(classifyLenderRows('slug:pacific-trust-mortgage', [row()]).reason, 'identity_disagreement');
-  assert.equal(classifyLenderRows('nmls:1984721', [row({ entity_status: 'retired' })]).reason, 'inactive');
+  assert.equal(deniedReason('nmls:1984721', []), 'missing');
+  assert.equal(deniedReason('nmls:1984721', [row(), row({ id: 'binding-2' })]), 'ambiguous');
+  assert.equal(deniedReason('nmls:1984721', [row({ binding_status: 'review_required' })]), 'review_required');
+  assert.equal(deniedReason('nmls:1984721', [row({ specialist_entity_type: 'national_institution' })]), 'wrong_class');
+  assert.equal(deniedReason('nmls:1984721', [row({ source_identifier: '3030' })]), 'identity_disagreement');
+  assert.equal(deniedReason('nmls:1984721', [row({ identifier_namespace: 'fmcsa.usdot' })]), 'identity_disagreement');
+  assert.equal(deniedReason('slug:pacific-trust-mortgage', [row()]), 'identity_disagreement');
+  assert.equal(deniedReason('nmls:1984721', [row({ entity_status: 'retired' })]), 'inactive');
 });
 
 test('lender resolution uses the NMLS query and does not admit review_required as a save', async () => {
