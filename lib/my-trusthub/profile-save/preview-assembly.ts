@@ -20,6 +20,9 @@ type StageLink = Link & { manifest: GuestStageInput };
 type Exchange = { parent: BrowserParent; proof: P13Proof; expiresAt: number };
 type Project = { ref: string; id: string; label: string };
 type ProjectList = { items: Project[] };
+/** Removes the verified parent's own Saved row for one network entity through
+ * that user's session. Returns false when the account holds no such row. */
+export type RemoveSaved = (parent: BrowserParent, networkEntityId: string) => Promise<boolean>;
 const equal = (a: BrowserParent | null, b: BrowserParent) => a?.subject === b.subject && a.session === b.session;
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
 const exact = (x: Record<string, unknown>, keys: string[]) => Object.keys(x).sort().join() === keys.sort().join();
@@ -41,9 +44,10 @@ export class PreviewAssembly {
   readonly config: DeploymentConfig; readonly target: DeploymentTarget;
   readonly env: Env; readonly pool: TransactionPool; readonly source: SourceChannel;
   readonly moveKey: AssertionKey; readonly parent: BrowserBindings['parent'];
+  readonly removeSaved?: RemoveSaved;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
-    moveKey: AssertionKey, parent: BrowserBindings['parent']) {
-    this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent;
+    moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
+    this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
     const c = deploymentConfig(env); if (!c) throw new RuntimeError('unavailable');
     this.config = c; this.target = c.target; this.store = new PreviewStore(pool, c.target); this.grants = new CurrentGrants(this.store, parent);
   }
@@ -132,6 +136,14 @@ export class PreviewAssembly {
       }, authenticate: async () => null });
     if (!binding) return null;
     binding.confirmed = (c, p) => this.grants.remember(c, p);
+    // One-click Unsave: the exact reviewed profile, the accepted binding's
+    // network entity and the live verified session. Never a posted identifier.
+    binding.unsave = async (r, c, p) => {
+      const selected = c.source.manifest.selected;
+      if (!this.removeSaved || selected.length !== 1 || !exactTestProfile(selected[0].profile) ||
+        !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) return false;
+      return this.removeSaved(p, (await this.binding()).networkEntityId);
+    };
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
       const who: VerifiedCaller = { hub: 'move', browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],

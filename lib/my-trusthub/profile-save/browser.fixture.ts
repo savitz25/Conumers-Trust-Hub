@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import {mkdtempSync} from 'node:fs';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type BrowserParent,type Confirmation} from './browser.ts';
+import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type BrowserParent,type Confirmation,type DirectIntent,type SourceSnapshot} from './browser.ts';
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import {SqliteHarnessBackend} from '../../../scripts/qa/v23-sqlite-backend.ts';
 import {TRANSFER_VERSION,profileKey,type GuestStageInput,type GuestStageRef} from '../contracts/v2-3-profile-transfer.ts';
-export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean}={}){
+export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent}={}){
   let now=1000,parent:BrowserParent|null=null;
   const environment=options.environment??'isolated';
   // Production registries name the canonical origins and carry no isolated attestation.
@@ -23,17 +23,32 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   const continuation=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:stage.transferRef,manifestDigest:stage.manifestDigest}) as {continuationRef:string};
   // Source snapshot is obtained by a separate mocked authenticated service, NOT
   // by reading the parent's SQLite tables. Concrete service credentials NOT RUN.
-  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0;
-  const b:BrowserBindings={origin,registry,now:()=>now,source:async()=>({...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)}),
+  const records=new Map<string,Confirmation>();const checkpoints:Confirmation[]=[];let acks=0,unsaves=0;
+  const first:SourceSnapshot={...continuation,...stage,manifest,browserProof:caller.browserBinding,requestPrefix:'r'.repeat(43)} as SourceSnapshot;
+  const sources=new Map<string,SourceSnapshot>([[continuation.continuationRef,first]]);
+  const b:BrowserBindings={origin,registry,now:()=>now,source:async(_r,ref)=>sources.get(ref)??first,
     parent:async()=>parent,projects:async()=>options.zeroProjects?[]:[{ref:'p'.repeat(43),label:'Test Project'}],
     store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null,async()=>{const c=records.get(k);if(c)checkpoints.push(structuredClone(c));})},
-    runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
-    acknowledge:async()=>{acks++;}};
+    runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:c.contextCandidateRef??'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
+    acknowledge:async()=>{acks++;},
+    // Owner-scoped removal stand-in: only the verified parent's own row.
+    unsave:async(_r,_c,p)=>{unsaves++;return Number(backend.db.prepare('DELETE FROM saves WHERE subject=?').run(p.subject).changes)>0;}};
   const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
-  const arrival=await handleProfileConfirmation(post(new URLSearchParams({continuationRef:continuation.continuationRef}).toString(),'',sourceOrigin),b);
+  const arrivalBody=(ref:string,intent?:string)=>new URLSearchParams({continuationRef:ref,...(intent?{intent}:{})}).toString();
+  const arrival=await handleProfileConfirmation(post(arrivalBody(continuation.continuationRef,options.intent),'',sourceOrigin),b);
   assert.equal(arrival.status,303);const cookie=arrival.headers.get('set-cookie')!.split(';')[0];
   const get=()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie}}),b);
   const confirm=async(project='')=>{const page=await (await get()).text();const csrf=/name="csrf" value="([^"]+)"/.exec(page)?.[1];return handleProfileConfirmation(post(new URLSearchParams({csrf:csrf??'',confirm:'yes',project}).toString(),cookie),b);};
-  return {b,backend,get,confirm,post,cookie,records,origin,continuation,checkpoints,get acks(){return acks;},
+  // A later click from the same source profile: fresh stage, continuation and request prefix.
+  let clicks=0;
+  const again=async(intent?:DirectIntent)=>{
+    const s=await runtime.execute('prepareGuestProfileTransfer',manifest) as GuestStageRef;
+    const k=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:'move',audience:'ask',transferRef:s.transferRef,manifestDigest:s.manifestDigest}) as {continuationRef:string};
+    sources.set(k.continuationRef,{...k,...s,manifest,browserProof:caller.browserBinding,requestPrefix:String(++clicks).repeat(43).slice(0,43)} as SourceSnapshot);
+    const r=await handleProfileConfirmation(post(arrivalBody(k.continuationRef,intent),'',sourceOrigin),b);
+    assert.equal(r.status,303);const next=r.headers.get('set-cookie')!.split(';')[0];
+    return {cookie:next,get:()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie:next}}),b)};
+  };
+  return {b,backend,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,get acks(){return acks;},get unsaves(){return unsaves;},
     login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
 }

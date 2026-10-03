@@ -22,7 +22,14 @@ const escape = (v: string) => v.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;
 export type BrowserParent = {subject:string;session:string;label:string};
 export type SourceSnapshot = {continuationRef:string;transferRef:string;manifest:GuestStageInput;
   manifestDigest:string;browserProof:string;expiresAt:number;requestPrefix:string};
-export type Confirmation = {source:SourceSnapshot;csrf:string;expiresAt:number;requestPrefix:string;
+/** One-click Save / Unsave from the source profile. `save` commits as soon as a
+ * verified parent session is present and otherwise returns to the profile
+ * without interrupting; `save_signin` shows the sign-in step first; `unsave`
+ * removes the owner's Saved row for the exact bound profile. A continuation
+ * that carries no intent keeps the explicit confirmation form. */
+export const DIRECT_INTENTS = ['save','save_signin','unsave'] as const;
+export type DirectIntent = typeof DIRECT_INTENTS[number];
+export type Confirmation = {source:SourceSnapshot;csrf:string;expiresAt:number;requestPrefix:string;intent?:DirectIntent;
   parent?:BrowserParent;contextCandidateRef?:string;accountContextRef?:string;projectRef?:string;receipts?:ItemReceipt[]};
 export interface BrowserBindings {
   origin:string;registry:TrustedOriginRegistry;
@@ -41,6 +48,9 @@ export interface BrowserBindings {
    * Durable parent outcome stands even if delivery fails; allow safe retry. */
   acknowledge(source:SourceSnapshot,receipts:ItemReceipt[],parent:BrowserParent):Promise<void>;
   confirmed?(confirmation:Confirmation,parent:BrowserParent):Promise<void>;
+  /** Owner-scoped removal of the Saved row for the exact bound profile, through
+   * the verified parent's own session. Absent means Unsave changes nothing. */
+  unsave?(request:Request,confirmation:Confirmation,parent:BrowserParent):Promise<boolean>;
   now():number;
 }
 // Native form navigations under no-referrer send Origin:null. Preserve the exact
@@ -96,14 +106,19 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
     const posted=request.method==='POST'?await form(request):null;
     if(request.method!=='GET'&&request.method!=='POST')return html('<p class="eyebrow">My TrustHub</p><h1>Method not allowed</h1>',405,'Method not allowed');
     if(posted?.has('continuationRef')){
-      if([...posted.keys()].length!==1||!valid(posted.get('continuationRef')))throw new RuntimeError('invalid');
+      const keys=[...posted.keys()],intent=posted.get('intent');
+      if(keys.length>2||new Set(keys).size!==keys.length||keys.some(k=>k!=='continuationRef'&&k!=='intent')||
+        !valid(posted.get('continuationRef'))||(intent!==null&&!(DIRECT_INTENTS as readonly string[]).includes(intent)))throw new RuntimeError('invalid');
       // Source port verifies actual hub/channel/browser proof, not just this POST.
       const source=await b.source(request,posted.get('continuationRef')!);
       if(!source||source.continuationRef!==posted.get('continuationRef')||!valid(source.transferRef)||
         !valid(source.browserProof)||!valid(source.requestPrefix)||!isGuestStageInput(source.manifest)||source.manifestDigest!==manifestDigest(source.manifest)||
         source.expiresAt<=b.now()||source.expiresAt>b.now()+600000||
         request.headers.get('origin')!==b.registry.origins[source.manifest.sourceHub])throw new RuntimeError('unauthorized');
-      const key=opaque();await b.store.put(key,{source,csrf:opaque(),expiresAt:source.expiresAt,requestPrefix:source.requestPrefix});
+      // A direct intent always returns to the one reviewed source profile.
+      if(intent&&(source.manifest.selected.length!==1||!profileReturnDestination(source.manifest.returnTask,b.registry)))throw new RuntimeError('invalid');
+      const key=opaque();await b.store.put(key,{source,csrf:opaque(),expiresAt:source.expiresAt,requestPrefix:source.requestPrefix,
+        ...(intent?{intent:intent as DirectIntent}:{})});
       const response=new Response(null,{status:303,headers:{...PRIVATE_HEADERS,Location:PROFILE_CONFIRM_PATH}});
       response.headers.set('Set-Cookie',`${COOKIE}=${key}; Path=${PROFILE_CONFIRM_PATH}; HttpOnly; SameSite=Lax; Max-Age=600${url.protocol==='https:'?'; Secure':''}`);
       return response;
@@ -113,14 +128,28 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
     return await b.store.withRecord(key,async(c,checkpoint)=>{
       if(!c||c.expiresAt<=b.now())return html('<p class="eyebrow">My TrustHub</p><h1>This confirmation expired</h1><p class="lead">Your local research is unchanged.</p><p>Confirmations stay open for ten minutes. Start again from the profile to keep it in My TrustHub.</p>',410,'Confirmation expired');
       const parent=await b.parent(request);
+      const direct=c.intent?profileReturnDestination(c.source.manifest.returnTask,b.registry):null;
+      const back=()=>new Response(null,{status:303,headers:{...PRIVATE_HEADERS,Location:direct!}});
+      // Signed out on a one-click Save or Unsave: nothing is asked here. The
+      // device copy already changed on the source profile; return to it.
+      if(!parent&&direct&&c.intent!=='save_signin')return back();
       if(!parent)return html(`<p class="eyebrow">My TrustHub</p><h1>Keep profiles in My TrustHub</h1><p class="lead">Sign in to your My TrustHub account to finish keeping this research.</p><p>No profiles have been saved to your account by this step. Your device copy stays on this device either way.</p><div class="actions"><a class="btn accent" href="/my/sign-in?next=%2Fmy%2Fprofile-save">Sign in to continue</a></div><p class="note">One account across every TrustHub site. Save never starts a Watch.</p>`,200,'Sign in to continue');
       if(c.parent&&!same(parent,c.parent))return html('<p class="eyebrow">My TrustHub</p><h1>Your account changed</h1><p class="lead">This confirmation was started under a different account.</p><p>Start a fresh confirmation from the profile. Device research is retained.</p>',409,'Account changed');
       c.parent=parent;
-      const projects=(await b.projects(parent)).slice(0,25).filter(p=>valid(p.ref));
-      if(posted){
-        if(request.headers.get('origin')!==b.origin||posted.get('csrf')!==c.csrf||posted.get('confirm')!=='yes'||
-          [...posted.keys()].some(k=>!['csrf','confirm','project'].includes(k))||new Set(posted.keys()).size!==[...posted.keys()].length)throw new RuntimeError('unauthorized');
-        const project=posted.get('project')||undefined;
+      if(direct&&c.intent==='unsave'){
+        if(posted)throw new RuntimeError('invalid');
+        try{await b.unsave?.(request,c,parent);}
+        catch(error){console.warn(JSON.stringify({event:'my_trusthub_v23_direct_failure',stage:'unsave',code:diagnosticCode(error)}));}
+        return back();
+      }
+      const projects=direct?[]:(await b.projects(parent)).slice(0,25).filter(p=>valid(p.ref));
+      // One-click Save: the verified session is the confirmation. No form, no
+      // Project, same continuation consume and idempotent owner-scoped commit.
+      const auto=!!direct&&!posted&&!c.receipts;
+      if(posted||auto)try{
+        if(posted&&(request.headers.get('origin')!==b.origin||posted.get('csrf')!==c.csrf||posted.get('confirm')!=='yes'||
+          [...posted.keys()].some(k=>!['csrf','confirm','project'].includes(k))||new Set(posted.keys()).size!==[...posted.keys()].length))throw new RuntimeError('unauthorized');
+        const project=posted?.get('project')||undefined;
         if(project&&!projects.some(p=>p.ref===project))throw new RuntimeError('unauthorized');
         if(c.accountContextRef&&c.projectRef!==project)throw new RuntimeError('conflict');
         if(!c.contextCandidateRef){c.contextCandidateRef=opaque();c.projectRef=project;await checkpoint();}
@@ -152,6 +181,21 @@ export async function handleProfileConfirmation(request:Request,b:BrowserBinding
         c.receipts=receipts;
         await checkpoint();
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
+      }catch(error){
+        if(!auto)throw error;
+        // Parent Save did not complete. The source profile reports device-only.
+        console.warn(JSON.stringify({event:'my_trusthub_v23_direct_failure',stage:'save',code:diagnosticCode(error)}));
+        return back();
+      }
+      if(c.receipts&&direct){
+        if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');
+        // The source learns of a one-click Save only when every profile is in
+        // the account; anything else stays a device-only Save there.
+        if(c.receipts.every(r=>['saved','already_saved'].includes(r.parent.outcome)))try{
+          await b.confirmed?.(c,parent);
+          await b.acknowledge(c.source,c.receipts,parent);
+        }catch(error){console.warn(JSON.stringify({event:'my_trusthub_v23_direct_failure',stage:'acknowledge',code:diagnosticCode(error)}));}
+        return back();
       }
       if(c.receipts){
         if(!same(await b.parent(request),parent))throw new RuntimeError('unauthorized');

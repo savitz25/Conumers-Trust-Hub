@@ -89,6 +89,18 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         bind: (sub, sid, exp) => store.bind(sub, sid, exp, sessionMac(key.pem, sub, sid, exp, target.project)),
         live: (sub, sid) => store.live(sub, sid),
       }, target) : null;
+    }, async (parent, networkEntityId) => {
+      // Owner-scoped: the row must be in the verified session's active Saves and
+      // in the signed-in user's own list; removal is the P12 RPC as that user.
+      const { ProductionMyTrustHubAdapter } = await import('../production-adapter');
+      const adapter = await ProductionMyTrustHubAdapter.create();
+      if (!adapter) return false;
+      const owned = new Set(await store.authorized(async db => (await db.query<{ saved_entity_id: string }>(
+        `select saved_entity_id from ${sqlName(target, 'saved')}($1,$2)`, [parent.subject, parent.session])).rows.map(row => row.saved_entity_id)));
+      const rows = (await adapter.listSavedEntities()).filter(row => !row.removed_at && owned.has(row.saved_entity_id) &&
+        (row.stored_network_entity_id === networkEntityId || row.resolved_network_entity_id === networkEntityId));
+      for (const row of rows) await adapter.removeSavedEntity(row.saved_entity_id);
+      return rows.length > 0;
     });
     // Missing binding or unwired/non-publishable source is unavailable everywhere.
     await runtime.binding(); await source.publication(randomRef());
