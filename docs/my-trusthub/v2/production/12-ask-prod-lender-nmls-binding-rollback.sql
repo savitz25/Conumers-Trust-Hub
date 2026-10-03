@@ -27,9 +27,9 @@ begin
     raise exception 'Explicit production authorization required: set v23.approved_project';
   end if;
   if (nmls, profile_ref) not in (
-    ('1984721', '/lenders/pacific-trust-mortgage'),
-    ('2239104', '/lenders/metro-home-finance'),
-    ('1673842', '/lenders/lone-star-lending')
+    ('2767', '/lenders/freedom-mortgage'),
+    ('174457', '/lenders/loandepot'),
+    ('2611', '/lenders/guaranteed-rate')
   ) then
     raise exception 'Supply one forward receipt row: NMLS and canonical profile ref must be the same canary';
   end if;

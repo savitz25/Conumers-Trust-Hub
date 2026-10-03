@@ -31,7 +31,7 @@ do $$ begin
     select 1 from network.network_entity_bindings
      where hub = 'lender'
        and identifier_namespace = 'nmls'
-       and source_identifier in ('1984721', '2239104', '1673842')
+       and source_identifier in ('2767', '174457', '2611')
        and (valid_to is null or valid_to > statement_timestamp())
   ) then
     raise exception 'Existing lender NMLS binding requires steward review; no merge';
@@ -40,9 +40,9 @@ do $$ begin
     select 1 from network.network_entities
      where status = 'active'
        and canonical_public_profile_ref in (
-         '/lenders/pacific-trust-mortgage',
-         '/lenders/metro-home-finance',
-         '/lenders/lone-star-lending'
+         '/lenders/freedom-mortgage',
+         '/lenders/loandepot',
+         '/lenders/guaranteed-rate'
        )
   ) then
     raise exception 'Existing canonical profile ref requires steward review; no merge';
@@ -60,9 +60,9 @@ with inserted_entity as (
   insert into network.network_entities (
     entity_type, canonical_name, primary_hub, jurisdiction, canonical_public_profile_ref, status
   ) values
-    ('organization', 'Pacific Trust Mortgage', 'lender', 'US', '/lenders/pacific-trust-mortgage', 'active'),
-    ('organization', 'Metro Home Finance', 'lender', 'US', '/lenders/metro-home-finance', 'active'),
-    ('organization', 'Lone Star Lending', 'lender', 'US', '/lenders/lone-star-lending', 'active')
+    ('organization', 'Freedom Mortgage', 'lender', 'US', '/lenders/freedom-mortgage', 'active'),
+    ('organization', 'loanDepot', 'lender', 'US', '/lenders/loandepot', 'active'),
+    ('organization', 'Guaranteed Rate', 'lender', 'US', '/lenders/guaranteed-rate', 'active')
   returning id, canonical_public_profile_ref
 ), inserted_binding as (
   insert into network.network_entity_bindings (
@@ -75,9 +75,9 @@ with inserted_entity as (
          'lender_trust_hub_catalog',
          'Marketplace company. Exact numeric NMLS. Slug is the return path only.'
     from (values
-      ('1984721', '/lenders/pacific-trust-mortgage'),
-      ('2239104', '/lenders/metro-home-finance'),
-      ('1673842', '/lenders/lone-star-lending')
+      ('2767', '/lenders/freedom-mortgage'),
+      ('174457', '/lenders/loandepot'),
+      ('2611', '/lenders/guaranteed-rate')
     ) as v(nmls, return_path)
     join inserted_entity e on e.canonical_public_profile_ref = v.return_path
   returning id, network_entity_id, source_identifier
@@ -93,9 +93,9 @@ do $$ declare n integer; begin
      or exists (
        select 1 from pg_temp.v23lender_receipt
         where (nmls, canonical_public_profile_ref) not in (
-          ('1984721', '/lenders/pacific-trust-mortgage'),
-          ('2239104', '/lenders/metro-home-finance'),
-          ('1673842', '/lenders/lone-star-lending')
+          ('2767', '/lenders/freedom-mortgage'),
+          ('174457', '/lenders/loandepot'),
+          ('2611', '/lenders/guaranteed-rate')
         )
      ) then
     raise exception 'Lender receipt must be exactly the three created canary bindings, got %', n;

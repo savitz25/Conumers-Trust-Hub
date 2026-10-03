@@ -11,7 +11,7 @@ select source_identifier, specialist_entity_id, identifier_namespace, jurisdicti
   from network.network_entity_bindings
  where hub = 'lender'
    and identifier_namespace = 'nmls'
-   and source_identifier in ('1984721', '2239104', '1673842')
+   and source_identifier in ('2767', '174457', '2611')
    and (valid_to is null or valid_to > statement_timestamp())
  group by 1, 2, 3, 4, 5
  order by 1;
@@ -20,8 +20,8 @@ select id, canonical_name, status, canonical_public_profile_ref
   from network.network_entities
  where status = 'active'
    and canonical_public_profile_ref in (
-     '/lenders/pacific-trust-mortgage',
-     '/lenders/metro-home-finance',
-     '/lenders/lone-star-lending'
+     '/lenders/freedom-mortgage',
+     '/lenders/loandepot',
+     '/lenders/guaranteed-rate'
    )
  order by canonical_public_profile_ref, id;
