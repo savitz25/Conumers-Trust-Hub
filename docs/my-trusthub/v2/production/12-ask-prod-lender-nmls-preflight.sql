@@ -1,7 +1,8 @@
 -- MY TRUSTHUB V2 — LENDER NMLS PREFLIGHT (READ ONLY).
 -- Operator session on qvvxvbcdmbjzrgvwjatw. Do not apply the binding packet
--- until this returns zero rows for each candidate. Any row is a hold.
--- This file does not insert, update, or delete.
+-- until BOTH result sets return zero rows. Any row is a hold for that candidate.
+-- The second result set is an exact canonical_public_profile_ref match.
+-- It is not a name match. This file does not insert, update, or delete.
 --
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 
@@ -14,3 +15,13 @@ select source_identifier, specialist_entity_id, identifier_namespace, jurisdicti
    and (valid_to is null or valid_to > statement_timestamp())
  group by 1, 2, 3, 4, 5
  order by 1;
+
+select id, canonical_name, status, canonical_public_profile_ref
+  from network.network_entities
+ where status = 'active'
+   and canonical_public_profile_ref in (
+     '/lenders/pacific-trust-mortgage',
+     '/lenders/metro-home-finance',
+     '/lenders/lone-star-lending'
+   )
+ order by canonical_public_profile_ref, id;

@@ -1,17 +1,25 @@
 -- MY TRUSTHUB V2 — THREE LENDER MARKETPLACE BINDINGS (FORWARD, operator).
 -- NOT APPLIED by this build. Broad Lender parent sync stays off.
--- Each insert runs only when that NMLS has zero current lender rows.
+-- Each insert runs only when that NMLS has zero current lender rows and
+-- none of the three exact canonical profile refs is already an active entity.
 -- An existing row aborts the transaction. No name, slug, or email match.
--- Slug is the public return path only.
+-- No merge. Slug is the public return path only.
 --
 -- The operator sets both guards after a read of 12-ask-prod-lender-nmls-preflight.sql
 -- and a NMLS Consumer Access check. This file does not set them.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 --   select set_config('v23bind.nmls_consumer_access_checked','true',false);
+--
+-- The statement result is the rollback target. One receipt row per created binding:
+--   nmls, binding_id, network_entity_id, canonical_public_profile_ref
+-- The same rows remain in pg_temp.v23lender_receipt until the session ends.
+--   \copy (select nmls, binding_id, network_entity_id, canonical_public_profile_ref
+--          from pg_temp.v23lender_receipt order by nmls) to '12-receipt-<date>.csv' csv header
 
 begin;
 set local statement_timeout = '15s';
 set local lock_timeout = '3s';
+lock table network.network_entities, network.network_entity_bindings in share row exclusive mode;
 do $$ begin
   if current_setting('v23.approved_project', true) is distinct from 'qvvxvbcdmbjzrgvwjatw' then
     raise exception 'Explicit production authorization required: set v23.approved_project';
@@ -28,33 +36,71 @@ do $$ begin
   ) then
     raise exception 'Existing lender NMLS binding requires steward review; no merge';
   end if;
+  if exists (
+    select 1 from network.network_entities
+     where status = 'active'
+       and canonical_public_profile_ref in (
+         '/lenders/pacific-trust-mortgage',
+         '/lenders/metro-home-finance',
+         '/lenders/lone-star-lending'
+       )
+  ) then
+    raise exception 'Existing canonical profile ref requires steward review; no merge';
+  end if;
 end $$;
 
-insert into network.network_entities (
-  entity_type, canonical_name, primary_hub, jurisdiction, canonical_public_profile_ref, status
-) values
-  ('organization', 'Pacific Trust Mortgage', 'lender', 'US', '/lenders/pacific-trust-mortgage', 'active'),
-  ('organization', 'Metro Home Finance', 'lender', 'US', '/lenders/metro-home-finance', 'active'),
-  ('organization', 'Lone Star Lending', 'lender', 'US', '/lenders/lone-star-lending', 'active');
+create temp table v23lender_receipt (
+  nmls text primary key,
+  binding_id uuid not null unique,
+  network_entity_id uuid not null unique,
+  canonical_public_profile_ref text not null unique
+) on commit preserve rows;
 
-insert into network.network_entity_bindings (
-  network_entity_id, hub, specialist_entity_type, specialist_entity_id,
-  identifier_namespace, source_identifier, jurisdiction, binding_status,
-  valid_from, provenance_ref, resolution_note
+with inserted_entity as (
+  insert into network.network_entities (
+    entity_type, canonical_name, primary_hub, jurisdiction, canonical_public_profile_ref, status
+  ) values
+    ('organization', 'Pacific Trust Mortgage', 'lender', 'US', '/lenders/pacific-trust-mortgage', 'active'),
+    ('organization', 'Metro Home Finance', 'lender', 'US', '/lenders/metro-home-finance', 'active'),
+    ('organization', 'Lone Star Lending', 'lender', 'US', '/lenders/lone-star-lending', 'active')
+  returning id, canonical_public_profile_ref
+), inserted_binding as (
+  insert into network.network_entity_bindings (
+    network_entity_id, hub, specialist_entity_type, specialist_entity_id,
+    identifier_namespace, source_identifier, jurisdiction, binding_status,
+    valid_from, provenance_ref, resolution_note
+  )
+  select e.id, 'lender', 'marketplace_company', 'nmls:' || v.nmls,
+         'nmls', v.nmls, 'US', 'accepted', transaction_timestamp(),
+         'lender_trust_hub_catalog',
+         'Marketplace company. Exact numeric NMLS. Slug is the return path only.'
+    from (values
+      ('1984721', '/lenders/pacific-trust-mortgage'),
+      ('2239104', '/lenders/metro-home-finance'),
+      ('1673842', '/lenders/lone-star-lending')
+    ) as v(nmls, return_path)
+    join inserted_entity e on e.canonical_public_profile_ref = v.return_path
+  returning id, network_entity_id, source_identifier
 )
-select e.id, 'lender', 'marketplace_company', 'nmls:' || v.nmls,
-       'nmls', v.nmls, 'US', 'accepted', transaction_timestamp(),
-       'lender_trust_hub_catalog',
-       'Marketplace company. Exact numeric NMLS. Slug is the return path only.'
-  from (values
-    ('1984721', '/lenders/pacific-trust-mortgage'),
-    ('2239104', '/lenders/metro-home-finance'),
-    ('1673842', '/lenders/lone-star-lending')
-  ) as v(nmls, return_path)
-  join network.network_entities e
-    on e.primary_hub = 'lender'
-   and e.canonical_public_profile_ref = v.return_path
-   and e.status = 'active';
+insert into pg_temp.v23lender_receipt (nmls, binding_id, network_entity_id, canonical_public_profile_ref)
+select b.source_identifier, b.id, b.network_entity_id, e.canonical_public_profile_ref
+  from inserted_binding b
+  join inserted_entity e on e.id = b.network_entity_id;
+
+do $$ declare n integer; begin
+  select count(*) into n from pg_temp.v23lender_receipt;
+  if n <> 3
+     or exists (
+       select 1 from pg_temp.v23lender_receipt
+        where (nmls, canonical_public_profile_ref) not in (
+          ('1984721', '/lenders/pacific-trust-mortgage'),
+          ('2239104', '/lenders/metro-home-finance'),
+          ('1673842', '/lenders/lone-star-lending')
+        )
+     ) then
+    raise exception 'Lender receipt must be exactly the three created canary bindings, got %', n;
+  end if;
+end $$;
 
 -- The runtime login cannot select network tables. This read-only wrapper is
 -- the same shape as prod_move_binding_for. It writes nothing.
@@ -106,4 +152,8 @@ do $$ begin
     raise exception 'V23_PROD_LENDER_RESOLVER_ACL_FAIL';
   end if;
 end $$;
+
+select nmls, binding_id, network_entity_id, canonical_public_profile_ref
+  from pg_temp.v23lender_receipt
+ order by nmls;
 commit;
