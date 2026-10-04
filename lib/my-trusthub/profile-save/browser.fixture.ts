@@ -6,7 +6,7 @@ import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import {SqliteHarnessBackend} from '../../../scripts/qa/v23-sqlite-backend.ts';
 import {TRANSFER_VERSION,TRANSFER_VERSION_V3,profileKey,type GuestStageInput,type GuestStageRef} from '../contracts/v2-3-profile-transfer.ts';
-export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance'|'contractor';slug?:string}={}){
+export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance'|'contractor';slug?:string;beforeConsume?:(caller:VerifiedCaller)=>void}={}){
   let now=1000,parent:BrowserParent|null=null;
   const environment=options.environment??'isolated';
   const hub=options.hub??'move';
@@ -37,6 +37,10 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
   backend.profiles.set(profileKey(identity),{...identity,published:true,supportedClass:true,binding:{id:'fixture-binding',networkEntityId:'fixture-entity',status:'accepted'}});
   if(hub==='lender'||hub==='insurance'||hub==='contractor')backend.slugs.set(profileKey(identity),slug);
   let caller:VerifiedCaller={hub,browserBinding:'b'.repeat(43),environment,scopes:['transfer:stage','saved:write','receipt:verify']};
+  if(options.beforeConsume){
+    const run=backend.transaction.bind(backend);
+    backend.transaction=(work)=>run(async tx=>work({...tx,consumeP13:async(exchange,who)=>{options.beforeConsume!(who);return tx.consumeP13(exchange,who);}}));
+  }
   const runtime=new ParentProfileSaveRuntime({enabled:true,backend,registry,now:()=>now,authenticate:async()=>caller});
   const stage=await runtime.execute('prepareGuestProfileTransfer',manifest) as GuestStageRef;
   const continuation=await runtime.execute('prepareProfileSaveContinuation',{sourceHub:manifest.sourceHub,audience:'ask',transferRef:stage.transferRef,manifestDigest:stage.manifestDigest}) as {continuationRef:string};

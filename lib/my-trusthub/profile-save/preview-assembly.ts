@@ -16,7 +16,7 @@ import { guestStageFromInsuranceManifest, isClosedInsuranceManifest, isInsurance
 import { verifyContractorAssertion } from './contractor-assertion.ts';
 import { ContractorSourceChannel, contractorPinsFor, isContractorIdentity, isContractorStage } from './contractor-channel.ts';
 import { CONTRACTOR_BINDING_SQL, classifyContractorRows, parseContractorNativeId, type ContractorBindingRow } from './contractor-binding.ts';
-import { issueSharedAccountContext } from './contractor-context-seam.ts';
+import { accountContextIssueCall } from './contractor-context-seam.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -160,10 +160,11 @@ export class PreviewAssembly {
         }
         stage = 'issue_context';
         const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-        // Contractor account context still uses the shared issuer. The switch to
-        // GB2's per-hub issuer is issueSharedAccountContext, after that contract
-        // admits hub contractor. This call stays three arguments.
-        const issued = await db.query<{ issued: boolean }>(issueSharedAccountContext(this.target), [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        // The hub is the caller verified from the signed assertion and stored stage.
+        // It is not read from the browser, and it is not a key of this proof.
+        const hub = a.caller.hub;
+        const issue = accountContextIssueCall(this.target, hub, proof, p.subject, p.sessionBinding);
+        const issued = await db.query<{ issued: boolean }>(issue.text, issue.values);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };

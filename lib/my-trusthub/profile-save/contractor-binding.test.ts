@@ -10,7 +10,7 @@ import {
   parseContractorNativeId, type ContractorBindingRow,
 } from './contractor-binding.ts';
 import { isContractorStage } from './contractor-channel.ts';
-import { CONTRACTOR_CONTEXT_HUB, issueSharedAccountContext } from './contractor-context-seam.ts';
+import { CONTRACTOR_CONTEXT_HUB, accountContextIssueQuery } from './contractor-context-seam.ts';
 import { PRODUCTION_TARGET } from './isolated-config.ts';
 import type { FoundationSql } from './p12-p13.ts';
 import { RuntimeError } from './runtime.ts';
@@ -139,7 +139,7 @@ test('resolution uses the DBPR function, fails closed on several rows, and does 
   void many;
 });
 
-test('packet 16 is prepared only and the shared context seam stays the three-argument issuer', () => {
+test('packet 16 is prepared only and contractor requests the shared hub issuer', () => {
   const preflight = readFileSync(new URL('../../../docs/my-trusthub/v2/production/16-ask-prod-contractor-dbpr-preflight.sql', import.meta.url), 'utf8');
   const forward = readFileSync(new URL('../../../docs/my-trusthub/v2/production/16-ask-prod-contractor-dbpr-binding-forward.sql', import.meta.url), 'utf8');
   const rollback = readFileSync(new URL('../../../docs/my-trusthub/v2/production/16-ask-prod-contractor-dbpr-binding-rollback.sql', import.meta.url), 'utf8');
@@ -159,9 +159,16 @@ test('packet 16 is prepared only and the shared context seam stays the three-arg
   assert.equal(/\bdelete\b/i.test(rollback), false);
   assert.equal(rollback.includes('valid_to = clock_timestamp()'), true);
   assert.equal(rollback.includes('consumer.consumer_saved_entities'), true);
-  assert.equal(issueSharedAccountContext(PRODUCTION_TARGET), 'select v23_private.prod_issue_context($1,$2,$3) as issued');
+  assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, CONTRACTOR_CONTEXT_HUB), { text: 'select v23_private.prod_hub_issue_context($1,$2,$3,$4) as issued', hubArgument: true });
+  assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'move'), { text: 'select v23_private.prod_issue_context($1,$2,$3) as issued', hubArgument: false });
   assert.equal(CONTRACTOR_CONTEXT_HUB, 'contractor');
-  assert.equal(assembly.includes('hub_issue_context'), false);
+  assert.match(assembly, /const hub = a\.caller\.hub;/);
+  assert.match(assembly, /accountContextIssueCall\(this\.target, hub, proof, p\.subject, p\.sessionBinding\)/);
+  assert.equal(assembly.includes('issueSharedAccountContext'), false);
+  for (const packet of [preflight, forward, rollback]) {
+    assert.equal(packet.includes('hub_issue_context'), false);
+    assert.equal(packet.includes('issue_context'), false);
+  }
   assert.equal(assembly.includes("serviceHub === 'insurance' ? { ...link, requestPrefix: randomRef() }"), true);
   assert.equal(assembly.includes('prod_investor'), false);
 });
