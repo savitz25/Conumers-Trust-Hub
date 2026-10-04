@@ -5,6 +5,7 @@ import { PreviewAssembly } from './preview-assembly.ts';
 import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
+import { insurancePinsFor } from './insurance-assertion.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -121,6 +122,23 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
           runtime.lenderSource = new LenderSourceChannel(key, fetch, lenderPins);
         }
       } catch { /* lender verify key is absent or not ed25519 */ }
+    }
+    // Optional. A missing insurance verify key leaves Move and Lender running.
+    // This does not call Insurance and does not admit a canary allowlist.
+    const insurancePins = insurancePinsFor(target);
+    const insuranceKid = (env.MY_TRUSTHUB_V23_INSURANCE_KEY_ID ?? '').trim();
+    const insurancePem = env.MY_TRUSTHUB_V23_INSURANCE_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (insurancePins && /^[A-Za-z0-9_-]{1,64}$/.test(insuranceKid) && insurancePem.includes('PUBLIC KEY')) {
+      try {
+        const insurancePublic = createPublicKey(insurancePem);
+        const insuranceSpki = String(insurancePublic.export({ type: 'spki', format: 'pem' }));
+        const askSpki = String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' }));
+        const moveSpki = String(movePublic.export({ type: 'spki', format: 'pem' }));
+        const lenderSpki = runtime.lenderKey ? String(createPublicKey(runtime.lenderKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        if (insurancePublic.asymmetricKeyType === 'ed25519' && insuranceSpki !== askSpki && insuranceSpki !== moveSpki && insuranceSpki !== lenderSpki) {
+          runtime.insuranceKey = { kid: insuranceKid, pem: insurancePem };
+        }
+      } catch { /* insurance verify key is absent or not ed25519 */ }
     }
     // The exact mover binding resolver must be installed and executable. A
     // syntactically impossible identity returns no row and reveals nothing.

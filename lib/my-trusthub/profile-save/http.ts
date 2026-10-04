@@ -1,4 +1,5 @@
 import { OPERATIONS, PROFILE_SAVE_RUNTIME_VERSION, type Operation } from './interface.ts';
+import { isClosedInsuranceManifest } from './insurance-manifest.ts';
 import { ParentProfileSaveRuntime, RuntimeError } from './runtime.ts';
 export const PRIVATE_HEADERS = { 'Cache-Control': 'private, no-store, max-age=0', 'Referrer-Policy': 'no-referrer',
   'X-Content-Type-Options': 'nosniff', 'X-Robots-Tag': 'noindex, nofollow, noarchive' };
@@ -7,6 +8,8 @@ export type HttpBindings = {
   /** Must authenticate Origin/CSRF for browser OR narrow BFF service credentials.
    * Produces a runtime with a fresh verified channel, never a request principal. */
   runtimeForRequest(request: Request): Promise<ParentProfileSaveRuntime | null>;
+  /** Verified Insurance closed manifest. Absent on Move and Lender requests. */
+  acceptInsuranceManifest?(request: Request): Promise<{ transferRef: string; manifestDigest: string; continuationRef: string; expiresAt: number } | null>;
 };
 const response = (body: unknown, status: number) => Response.json(body, { status, headers: PRIVATE_HEADERS });
 export async function handleProfileSave(request: Request, bindings: HttpBindings): Promise<Response> {
@@ -27,12 +30,18 @@ export async function handleProfileSave(request: Request, bindings: HttpBindings
       }
     } finally { reader.releaseLock(); }
     const bytes = Buffer.concat(chunks);
-    const runtime = await bindings.runtimeForRequest(new Request(request.url, {method:request.method,headers:request.headers,body:bytes,signal:request.signal}));
-    if (!runtime) return response({ ok: false, error: 'unavailable' }, 503);
     let envelope: unknown;
     try { envelope = JSON.parse(bytes.toString('utf8')); }
     catch { return response({ ok: false, error: 'invalid' }, 400); }
     if (!envelope || typeof envelope !== 'object' || Array.isArray(envelope)) return response({ ok: false, error: 'invalid' }, 400);
+    if (isClosedInsuranceManifest(envelope)) {
+      if (!bindings.acceptInsuranceManifest) return response({ ok: false, error: 'invalid' }, 400);
+      const accepted = await bindings.acceptInsuranceManifest(new Request(request.url, { method: request.method, headers: request.headers, body: bytes, signal: request.signal }));
+      if (!accepted) return response({ ok: false, error: 'unauthorized' }, 403);
+      return response({ ok: true, operation: 'prepareGuestProfileTransfer', result: accepted }, 200);
+    }
+    const runtime = await bindings.runtimeForRequest(new Request(request.url, {method:request.method,headers:request.headers,body:bytes,signal:request.signal}));
+    if (!runtime) return response({ ok: false, error: 'unavailable' }, 503);
     const e = envelope as Record<string, unknown>;
     if (Object.keys(e).length !== 3 || !Object.hasOwn(e, 'input') ||
         e.version !== PROFILE_SAVE_RUNTIME_VERSION || !OPERATIONS.includes(e.operation as Operation))
