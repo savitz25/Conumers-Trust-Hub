@@ -177,3 +177,60 @@ production. The enumeration itself is kept in the Move repo at
 `docs/my-trusthub-v2-production/exact-usdot-enumeration-2026-10-03.json`.
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
+
+## Per-hub account context for Lender and Insurance (packet 15, PREPARED — not applied)
+
+**Defect.** `v23_private.prod_issue_context` issues the one-time account context
+as issuer hub `move` from the Move origin, always. The Save commit consumes it
+as the hub of the verified caller (`v23_private.consume_context` →
+`ops.consume_consumer_auth_handoff`, expected issuer = caller hub). Move issues
+and consumes as `move`, so it works. For Lender or Insurance the consume
+returns `INVALID_AUDIENCE`, `consume_context` raises 42501, no Saved row is
+written and nothing is acknowledged. Packets 12 and 13 do not change this.
+Reproduced on the embedded database with packets 02/03/04/05/09/12/13
+unmodified, for Lender on the unmodified runtime and for Insurance once its
+stage could run on one connection (below).
+
+**Contract after the fix.** A context is issued for exactly one hub and is
+consumable only as that hub. The hub is the one the runtime verified from the
+specialist's signed assertion and arrival origin; it is never a browser field
+and never read from the proof.
+
+| Hub | Issuer function | Issued as | Origin | Consumed as |
+| --- | --- | --- | --- | --- |
+| Move | `prod_issue_context` (unchanged) | `move` | deployment pin | `move` |
+| Lender | `prod_hub_issue_context(…, 'lender')` | `lender` | `https://www.lendertrusthub.com` | `lender` |
+| Insurance | `prod_hub_issue_context(…, 'insurance')` | `insurance` | `https://www.insurancetrusthub.com` | `insurance` |
+
+Single use, the 90 second lifetime, the state/nonce binding, the hub check at
+consume time and five-strikes revocation are unchanged.
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `15-ask-prod-hub-account-context-forward.sql` | One new function, `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`, owned by `myth_v23_foundation`, EXECUTE for `myth_v23_authorizer` only. Accepts `lender` and `insurance`; every other hub, including `move`, is refused. | `V23_PROD_HUB_CONTEXT_APPLIED` |
+| `15-ask-prod-hub-account-context-rollback.sql` | Drops exactly that function. Lender and Insurance then fail closed; Move is unaffected. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
+
+Order for a Lender or Insurance canary: deploy this Ask build, apply packet 15,
+apply packet 12 and/or 13, exchange keys, then open that specialist's release
+gate. Until packet 15 is applied a Lender or Insurance Save stays a device Save.
+
+**Two more Insurance changes in the same build (application only, no SQL):**
+
+1. *Acknowledgement.* Ask did not tell Insurance the outcome (the call was
+   skipped). Insurance reports an account Save or Unsave only on Ask's signed
+   `source:ack` call, so Ask now sends it (`insurance-channel.ts`), and the
+   request keys of an Insurance Save start with the browser proof Insurance
+   signed, which is what Insurance's source route checks. Checked against the
+   Insurance repository's own handler code.
+2. *One connection per stage.* The Insurance return-path lookup opened a second
+   pooled connection inside the stage transaction (pool size 3). It now reads
+   on the transaction's own connection.
+
+**For Investor (draft PR #230).** That branch carries its own issuer
+(`prod_investor_issue_context`, packet 14) and edits the same issuer-selection
+line in `preview-assembly.ts`. When it is rebased onto this change it keeps its
+dedicated function and adds an `investor` branch to the selection; it must not
+route `investor` through `prod_hub_issue_context`, which refuses it. The
+return-task port now also receives the transaction connection.
+
+Local proof: `npm run check:my-trusthub-v2-hub-context`.
