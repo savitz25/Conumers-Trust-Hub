@@ -244,6 +244,31 @@ try {
   assert.deepEqual(await consume(moveProof, 'move'), { ok: true, error_code: null });
   console.log("PASS root cause: prod_issue_context issues as hub 'move'; consuming it as lender or insurance is INVALID_AUDIENCE, as move it succeeds");
 
+  // The commit wraps that refusal. consume_context is what the Save calls, and
+  // it raises 42501 ('P13 denied') when the issued hub is not the caller hub.
+  // No Saved row is written. This is the unmodified issuer, before packet 15.
+  const denied = proofFor();
+  await quiet();
+  await store.authorized(d => d.query('select v23_private.prod_issue_context($1,$2,$3)', [JSON.stringify(denied), A, sidA]));
+  const savedBeforeDenial = await snapshot();
+  const lenderAuthority = { hub: 'lender', audience: 'ask', service: 'svc:trusthub:lender:bff:v1', scopes: ['saved:write'],
+    subject: A, session: 'ab'.repeat(32), browser: 'cd'.repeat(32), operation: 'consumeProfileSaveContinuation', exchangeProof: denied };
+  await db.exec('begin');
+  await db.query('set local role myth_v23_authorizer');
+  await db.query('insert into v23_private.transaction_authority(backend,transaction_id,authority) values(pg_backend_pid(),txid_current(),$1)', [JSON.stringify(lenderAuthority)]);
+  await db.query('set local role myth_v23_executor');
+  await assert.rejects(db.query('select v23_private.consume_context($1)', [JSON.stringify(denied)]),
+    error => error.code === '42501' && /P13 denied/.test(error.message));
+  await db.exec('rollback');
+  assert.equal(await snapshot(), savedBeforeDenial);
+  // The refused consume rolls back, so the move-issued context is still issued.
+  // Remove only that fixture before the packet-15 issued-row snapshot.
+  const leftover = (await db.query(`select id, intent_id from ops.consumer_auth_handoffs where code_hash=ops.hash_handoff_secret($1)`, [denied.code])).rows[0];
+  await db.query(`delete from ops.consumer_handoff_events where handoff_kind='auth' and handoff_ref=$1`, [leftover.id]);
+  await db.query('delete from ops.consumer_auth_handoffs where id=$1', [leftover.id]);
+  await db.query('delete from ops.consumer_browser_handoff_intents where id=$1', [leftover.intent_id]);
+  console.log('PASS known failure: consuming the move-issued context as lender raises 42501 and writes no Saved row');
+
   // ---- packet 15 --------------------------------------------------------
   await assert.rejects(db.exec(contextRollback), /nothing to remove/); await db.exec('rollback');
   await db.exec(`set v23.approved_project=''`);
