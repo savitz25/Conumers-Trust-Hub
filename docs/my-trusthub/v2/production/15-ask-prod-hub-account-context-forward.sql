@@ -24,9 +24,13 @@
 -- from the specialist's signed assertion.
 --
 -- WHAT DOES NOT CHANGE: prod_issue_context() (Move keeps using it, unmodified),
--- consume_context(), the hub check at consume time, single use, the 90 second
--- lifetime, the state and nonce binding, every table, policy, role and row.
--- A context issued for one hub is still consumable only as that hub.
+-- prod_investor_issue_context(), consume_context(), v23_private.authority()
+-- (still move, insurance, and lender only), the hub check at consume time,
+-- single use, the 90 second lifetime, the state and nonce binding, every
+-- table, policy, role and row. A context issued for one hub is still
+-- consumable only as that hub. Packet 15 does not make a Contractor Saveable.
+-- Packet 16 must authorize hub contractor, profile class contractor_profile,
+-- and namespace fl.dbpr.license before consume_context can commit one.
 --
 -- Rollback: 15-ask-prod-hub-account-context-rollback.sql.
 begin;
