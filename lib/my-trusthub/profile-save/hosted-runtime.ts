@@ -6,6 +6,7 @@ import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
 import { insurancePinsFor } from './insurance-assertion.ts';
+import { InvestorSourceChannel, investorPinsFor } from './investor-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -139,6 +140,24 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
           runtime.insuranceKey = { kid: insuranceKid, pem: insurancePem };
         }
       } catch { /* insurance verify key is absent or not ed25519 */ }
+    }
+    // Optional. A missing or unusable Investor verify key leaves every other hub
+    // running and rejects Investor handoffs. The key must be its own ed25519 key.
+    const investorPins = investorPinsFor(target);
+    const investorKid = (env.MY_TRUSTHUB_V23_INVESTOR_KEY_ID ?? '').trim();
+    const investorPem = env.MY_TRUSTHUB_V23_INVESTOR_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (investorPins && /^[A-Za-z0-9_-]{1,64}$/.test(investorKid) && investorPem.includes('PUBLIC KEY')) {
+      try {
+        const investorPublic = createPublicKey(investorPem);
+        const spki = (pem: string) => String(createPublicKey(pem).export({ type: 'spki', format: 'pem' }));
+        const investorSpki = String(investorPublic.export({ type: 'spki', format: 'pem' }));
+        const others = [String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' })), String(movePublic.export({ type: 'spki', format: 'pem' })),
+          ...(runtime.lenderKey ? [spki(runtime.lenderKey.pem)] : []), ...(runtime.insuranceKey ? [spki(runtime.insuranceKey.pem)] : [])];
+        if (investorPublic.asymmetricKeyType === 'ed25519' && !others.includes(investorSpki)) {
+          runtime.investorKey = { kid: investorKid, pem: investorPem };
+          runtime.investorSource = new InvestorSourceChannel(key, fetch, investorPins);
+        }
+      } catch { /* investor verify key is absent or not ed25519 */ }
     }
     // The exact mover binding resolver must be installed and executable. A
     // syntactically impossible identity returns no row and reveals nothing.

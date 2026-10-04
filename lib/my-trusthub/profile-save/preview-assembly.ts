@@ -13,6 +13,9 @@ import { LENDER_BINDING_SQL, classifyLenderRows, type LenderBindingRow } from '.
 import { verifyInsuranceAssertion, insurancePinsFor } from './insurance-assertion.ts';
 import { INSURANCE_BINDING_SQL, classifyInsuranceRows, parseInsuranceSpecialistEntityId, type InsuranceBindingRow } from './insurance-binding.ts';
 import { guestStageFromInsuranceManifest, isClosedInsuranceManifest, isInsuranceProviderStage } from './insurance-manifest.ts';
+import { verifyInvestorAssertion } from './investor-assertion.ts';
+import { InvestorSourceChannel, isInvestorOfficialFirmIdentity, isInvestorOfficialFirmStage, investorPinsFor } from './investor-channel.ts';
+import { INVESTOR_BINDING_SQL, classifyInvestorRows, investorCanonicalSlug, investorReturnPath, parseInvestorNativeId, type InvestorBindingRow } from './investor-binding.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -57,6 +60,8 @@ export class PreviewAssembly {
   lenderKey: AssertionKey | null = null;
   lenderSource: LenderSourceChannel | null = null;
   insuranceKey: AssertionKey | null = null;
+  investorKey: AssertionKey | null = null;
+  investorSource: InvestorSourceChannel | null = null;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
@@ -105,6 +110,18 @@ export class PreviewAssembly {
     };
     return db ? query(db) : this.store.authorized(query);
   }
+  /** Exact official-firm binding. Zero, several, review_required, or any
+   * disagreement is not eligible. The CRD comes from the signed manifest. */
+  async investorBinding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
+    if (!isInvestorOfficialFirmIdentity(profile)) throw new RuntimeError('unavailable');
+    const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
+      const found = await d.query<InvestorBindingRow>(INVESTOR_BINDING_SQL, [profile.nativeId]);
+      const decision = classifyInvestorRows(profile.nativeId, found.rows);
+      if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
+      return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const };
+    };
+    return db ? query(db) : this.store.authorized(query);
+  }
   /** One publication proof per profile per request. */
   private readonly publications = new Map<string, Promise<Publication>>();
   private publication(browser: string, profile: ProfileIdentity): Promise<Publication> {
@@ -142,7 +159,11 @@ export class PreviewAssembly {
         }
         stage = 'issue_context';
         const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-        const issued = await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'issue_context')}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        // The account context is consumed as the verified caller's hub, so it is
+        // issued for that hub. Investor has its own issuer (packet 14); without it
+        // the call fails and the Save fails closed.
+        const issuer = a.caller.hub === 'investor' ? 'investor_issue_context' : 'issue_context';
+        const issued = await db.query<{ issued: boolean }>(`select ${sqlName(this.target, issuer)}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding]);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
@@ -167,6 +188,11 @@ export class PreviewAssembly {
           await this.lenderSource.publication(browser, identity);
           return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.lenderBinding(identity, db) };
         }
+        if (identity.hub === 'investor') {
+          if (!isInvestorOfficialFirmIdentity(identity) || !this.investorSource) return null;
+          await this.investorSource.publication(browser, identity);
+          return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.investorBinding(identity, db) };
+        }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId) || identity.profileClass !== 'insurance_provider') return null;
         const binding = await this.insuranceBinding(identity, db);
         return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
@@ -182,6 +208,14 @@ export class PreviewAssembly {
           if (!isLenderMarketplaceIdentity(identity) || !this.lenderSource) return null;
           const slug = (await this.lenderSource.publication(browser, identity)).canonicalSlug;
           return { kind: 'profile', hub: 'lender', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/lenders/${slug}` };
+        }
+        if (identity.hub === 'investor') {
+          if (!isInvestorOfficialFirmIdentity(identity) || !this.investorSource) return null;
+          // The return path is fixed by the CRD; Investor must agree on the slug.
+          const crd = parseInvestorNativeId(identity.nativeId)!;
+          const slug = (await this.investorSource.publication(browser, identity)).canonicalSlug;
+          if (slug !== investorCanonicalSlug(crd)) return null;
+          return { kind: 'profile', hub: 'investor', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: investorReturnPath(crd) };
         }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId)) return null;
         const ref = (await this.insuranceBinding(identity)).canonicalPublicProfileRef;
@@ -205,7 +239,8 @@ export class PreviewAssembly {
         const move = origin === this.target.moveOrigin;
         const lender = Boolean(this.lenderSource) && origin === PRODUCTION_ORIGINS.lender;
         const insurance = origin === PRODUCTION_ORIGINS.insurance;
-        if (!move && !lender && !insurance) return null;
+        const investor = Boolean(this.investorSource) && origin === PRODUCTION_ORIGINS.investor;
+        if (!move && !lender && !insurance && !investor) return null;
         const link = await this.store.read<StageLink & { requestPrefix?: string }>('continuation:' + ref);
         if (insurance) {
           if (!link || link.expiresAt <= Date.now() || !link.manifest || !isInsuranceProviderStage(link.manifest)) return null;
@@ -214,8 +249,8 @@ export class PreviewAssembly {
             browserProof: link.browser, expiresAt: link.expiresAt, requestPrefix: link.requestPrefix };
         }
         if (!link || link.expiresAt <= Date.now()) return null;
-        const channel = lender ? this.lenderSource! : this.source;
-        const sourceBody = lender && link.manifest
+        const channel = lender ? this.lenderSource! : investor ? this.investorSource! : this.source;
+        const sourceBody = (lender || investor) && link.manifest
           ? { action: 'source', continuationRef: ref, transferRef: link.transferRef, manifest: link.manifest, manifestDigest: link.manifestDigest, expiresAt: link.expiresAt }
           : { action: 'source', continuationRef: ref };
         const s = await channel.call(sourceBody, 'source:read', link.browser) as SourceSnapshot;
@@ -223,12 +258,13 @@ export class PreviewAssembly {
           s.expiresAt > link.expiresAt || !isGuestStageInput(s.manifest) || manifestDigest(s.manifest) !== link.manifestDigest) return null;
         if (move && s.manifest.selected.some(i => !supportedMoveProfile(i.profile))) return null;
         if (lender && !isLenderMarketplaceStage(s.manifest)) return null;
+        if (investor && !isInvestorOfficialFirmStage(s.manifest)) return null;
         return s;
       },
       acknowledge: async (s, receipts, p) => {
         if (!equal(await this.parent(request), p)) throw new RuntimeError('unauthorized');
         if (s.manifest.sourceHub === 'insurance') throw new RuntimeError('unavailable');
-        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : this.source;
+        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : s.manifest.sourceHub === 'investor' ? this.investorSource : this.source;
         if (!channel) throw new RuntimeError('unavailable');
         await channel.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
       }, authenticate: async () => null });
@@ -242,10 +278,12 @@ export class PreviewAssembly {
       const moveProfile = !!profile && supportedMoveProfile(profile);
       const lenderProfile = !!profile && isLenderMarketplaceIdentity(profile);
       const insuranceProfile = !!profile && profile.hub === 'insurance' && parseInsuranceSpecialistEntityId(profile.nativeId) !== null;
-      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile) ||
+      const investorProfile = !!profile && isInvestorOfficialFirmIdentity(profile);
+      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile && !investorProfile) ||
         !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
       const networkEntityId = moveProfile ? (await this.binding(profile)).networkEntityId
         : lenderProfile ? (await this.lenderBinding(profile!)).networkEntityId
+        : investorProfile ? (await this.investorBinding(profile!)).networkEntityId
         : (await this.insuranceBinding(profile!)).networkEntityId;
       const outcome = await this.removeSaved(p, networkEntityId);
       return outcome === 'in_project' ? 'in_project' : outcome ? 'removed' : 'not_saved';
@@ -253,7 +291,7 @@ export class PreviewAssembly {
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
       const sourceHub = c.source.manifest.sourceHub;
-      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance') throw new RuntimeError('unauthorized');
+      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance' && sourceHub !== 'investor') throw new RuntimeError('unauthorized');
       const who: VerifiedCaller = { hub: sourceHub, browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
         parent: { subject: p.subject, sessionBinding: p.session, admitted: true }, exchange: c.contextCandidateRef,
         selectionConfirmed: true, confirmedTransferRef: c.source.transferRef, confirmedAccountContextRef: c.contextCandidateRef };
@@ -269,7 +307,7 @@ export class PreviewAssembly {
     const stage = ['prepareGuestProfileTransfer', 'prepareProfileSaveContinuation'].includes(e?.operation);
     if (!stage && !['getProfileSaveReceipt', 'verifyProfileSaveReceipt'].includes(e?.operation)) throw new RuntimeError('unauthorized');
     let claims;
-    let serviceHub: 'move' | 'lender' | 'insurance' = 'move';
+    let serviceHub: 'move' | 'lender' | 'insurance' | 'investor' = 'move';
     try {
       claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     } catch (moveError) {
@@ -278,9 +316,16 @@ export class PreviewAssembly {
         claims = await verifyLenderAssertion(request, bytes, this.lenderKey, 'lender', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), lenderPinsFor(this.target)!);
         serviceHub = 'lender';
       } catch (lenderError) {
-        if (!this.insuranceKey || !insurancePinsFor(this.target)) throw lenderError;
-        claims = await verifyInsuranceAssertion(request, bytes, this.insuranceKey, 'insurance', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), insurancePinsFor(this.target)!);
-        serviceHub = 'insurance';
+        try {
+          if (!this.insuranceKey || !insurancePinsFor(this.target)) throw lenderError;
+          claims = await verifyInsuranceAssertion(request, bytes, this.insuranceKey, 'insurance', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), insurancePinsFor(this.target)!);
+          serviceHub = 'insurance';
+        } catch (insuranceError) {
+          // Investor is tried last and only when its own verify key is installed.
+          if (!this.investorKey || !this.investorSource || !investorPinsFor(this.target)) throw insuranceError;
+          claims = await verifyInvestorAssertion(request, bytes, this.investorKey, 'investor', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), investorPinsFor(this.target)!);
+          serviceHub = 'investor';
+        }
       }
     }
     let who: VerifiedCaller = { hub: serviceHub, browserBinding: claims.browser, environment: this.target.kind, scopes: ['transfer:stage'] };
@@ -309,6 +354,7 @@ export class PreviewAssembly {
         if (serviceHub === 'move' && (input.sourceHub !== 'move' || input.selected.some(i => !supportedMoveProfile(i.profile)))) throw new RuntimeError('invalid');
         if (serviceHub === 'lender' && !isLenderMarketplaceStage(input)) throw new RuntimeError('invalid');
         if (serviceHub === 'insurance' && !isInsuranceProviderStage(input)) throw new RuntimeError('invalid');
+        if (serviceHub === 'investor' && !isInvestorOfficialFirmStage(input)) throw new RuntimeError('invalid');
       }
       const result = await execute(operation, input);
       if (operation === 'prepareGuestProfileTransfer') {

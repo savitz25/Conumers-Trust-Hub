@@ -177,3 +177,50 @@ production. The enumeration itself is kept in the Move repo at
 `docs/my-trusthub-v2-production/exact-usdot-enumeration-2026-10-03.json`.
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
+
+## Investor official-firm Save (packet 14, PREPARED — not applied, not deployed)
+
+Identity (locked): hub `investor` / class `official_firm` / namespace `sec.crd` /
+source identifier = exact numeric firm CRD / specialist entity id `crd-<CRD>` /
+jurisdiction `US`. Return path `/firm/sec-crd-<CRD>`. Never the firm row UUID,
+the name, the slug, an individual adviser CRD, a branch, a notice filing or a
+state-registration observation.
+
+Runtime rule: Ask admits an Investor Save only when (1) the stage carries a
+valid Investor ed25519 assertion, (2) the manifest is one `official_firm` whose
+slug and return path are the ones its CRD implies, (3) Investor re-proves
+publication of that exact CRD over the signed source channel, and (4)
+`v23_private.prod_investor_crd_binding_for` returns exactly one current row that
+is accepted, `official_firm`, `sec.crd`, `US`, on an active entity whose
+canonical profile ref is `/firm/sec-crd-<CRD>`, agreeing on both the native id
+and the CRD. Anything else fails closed.
+
+Operator packets, in this order, with the Investor release gate OFF:
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `14-ask-prod-investor-crd-preflight.sql` | Read only. All three result sets must be empty. | — |
+| `14-ask-prod-investor-authority-forward.sql` | Adds `investor` to the hub list of `v23_private.authority()` (one token; body otherwise identical, verified before replace). Without it the database refuses every Investor stage with `invalid authority`. | `V23_PROD_INVESTOR_AUTHORITY_APPLIED` |
+| `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Without it an Investor Save cannot obtain an account context. `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
+| `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
+
+Rollbacks: `14-ask-prod-investor-crd-binding-rollback.sql` (one receipt row per
+run; closes the binding's validity, no DELETE), `14-ask-prod-investor-context-rollback.sql`
+(drops the one function), `14-ask-prod-investor-authority-rollback.sql`
+(restores the exact three-hub body).
+
+Then: exchange keys (names in `ask-prod-env.md`), set the Ask verify key and
+the Investor variables, set the Investor release gate to the three canary
+slugs, redeploy Investor. Live proof on the three canaries; an unrelated firm
+must stay device-only.
+
+Note for the other hubs: `prod_issue_context` issues every account context as
+hub `move`, and the commit consumes it as the caller's hub. The Investor
+packet adds its own issuer for that reason. Packets 12 (Lender) and 13
+(Insurance) do not add one. Reproduced on the embedded database with packets
+02/04/05/12 exactly as in this repository: a Lender marketplace Save stages,
+then fails at `consume_continuation` with 42501, writes no Saved row and sends
+no acknowledgement. Insurance takes the same commit path. Production may differ
+only if it holds a change that is not in this repository.
+
+Local proof: `npm run check:my-trusthub-v2-investor`.

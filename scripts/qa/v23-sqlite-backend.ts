@@ -59,6 +59,11 @@ export class SqliteHarnessBackend implements RuntimeBackend {
             if (!slug) return null;
             return { kind: 'profile' as const, hub: 'lender' as const, canonicalSlug: slug, profile: p, returnPath: `/lenders/${slug}` };
           }
+          if (p.hub === 'investor' && p.profileClass === 'official_firm') {
+            const slug = this.slugs.get(profileKey(p));
+            if (!slug) return null;
+            return { kind: 'profile' as const, hub: 'investor' as const, canonicalSlug: slug, profile: p, returnPath: `/firm/${slug}` };
+          }
           if (p.hub === 'insurance' && p.profileClass === 'insurance_provider') {
             const slug = this.slugs.get(profileKey(p));
             if (!slug) return null;
