@@ -6,6 +6,7 @@ import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
 import { insurancePinsFor } from './insurance-assertion.ts';
+import { InsuranceAckChannel } from './insurance-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -137,6 +138,7 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         const lenderSpki = runtime.lenderKey ? String(createPublicKey(runtime.lenderKey.pem).export({ type: 'spki', format: 'pem' })) : '';
         if (insurancePublic.asymmetricKeyType === 'ed25519' && insuranceSpki !== askSpki && insuranceSpki !== moveSpki && insuranceSpki !== lenderSpki) {
           runtime.insuranceKey = { kid: insuranceKid, pem: insurancePem };
+          runtime.insuranceSource = new InsuranceAckChannel(key, fetch, insurancePins);
         }
       } catch { /* insurance verify key is absent or not ed25519 */ }
     }
