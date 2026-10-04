@@ -213,10 +213,15 @@ an unrecognized value, is refused by `prod_hub_issue_context`.
 
 Single use, the 90 second lifetime, the state/nonce binding, the hub check at
 consume time and five-strikes revocation are unchanged.
+
+Packet 15 stops at issuance. It does not make a Contractor Saveable.
 `v23_private.authority()` still admits only `move`, `insurance`, and `lender`.
-Packet 15 does not change it. A Contractor Save commit through
-`consume_context` stays fail-closed until a separate authority change admits
-`contractor`. This packet makes the issued context match hub `contractor`.
+Packet 15 does not add `contractor` to that function. Before a Contractor Save
+can commit, Packet 16 must separately authorize the Contractor authority
+contract: hub `contractor`, profile class `contractor_profile`, namespace
+`fl.dbpr.license`. Until that packet is applied, `consume_context` for hub
+`contractor` fails closed and writes no Saved row. That denial is intentional.
+Move keeps `prod_issue_context`. Investor keeps `prod_investor_issue_context`.
 
 | File | Purpose | Marker |
 | --- | --- | --- |
@@ -252,14 +257,11 @@ line in `preview-assembly.ts`. When it is rebased onto this change it keeps
 before a statement is sent. The return-task port now also receives the
 transaction connection.
 
-**For Contractor (draft PR #232).** `issueSharedAccountContext` still returns
-the three-argument `issue_context` call for every hub, and that branch's
-`preview-assembly.ts` uses it. After rebase, do not leave that three-argument
-call as the issuer. Call `accountContextIssueQuery` and pass the verified
-caller hub. Do not pass `move` or `investor` as `$4`. The Contractor return
-lookup on that branch still opens a second pooled connection; pass the stage
-connection the way the Insurance return task on this branch does. This branch
-does not copy the Contractor assertion, resolver, or binding.
+**For Contractor (PR #232).** Packet 16 owns the Contractor authority contract
+and the DBPR binding. Packet 15 does not. A verified contractor caller uses
+`hub_issue_context` with `$4 = contractor`. The Contractor return lookup must
+use the stage connection. This branch does not copy the Contractor assertion,
+resolver, binding, or authority function.
 
 Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
 suite is `npm run check:my-trusthub-v2-3-widening`.
