@@ -26,6 +26,33 @@ or typed once by the operator. Nothing from the preview branch is reused.
 | `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL` | `https://qvvxvbcdmbjzrgvwjatw.supabase.co` | must already be set |
 | `NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_PUBLISHABLE_KEY` | production publishable/anon key | must already be set |
 
+## Insurance provider Save (operator, not set by this deploy)
+
+Parent sync stays `OFF` and the canary stays `OFF`. Do not write these values
+until the packet 13 preflight is clean and the forward packet has been applied
+by the operator. No key material belongs in this file.
+
+Insurance project (`insurance-trust-hub`, Production scope):
+
+| Name | Notes |
+| --- | --- |
+| `MY_TRUSTHUB_V23_INSURANCE_KEY_ID` | dedicated Insurance key id, shared with Ask |
+| `MY_TRUSTHUB_V23_INSURANCE_SIGNING_PRIVATE_KEY_PEM` | ed25519 private PEM. Secret. Insurance only |
+| `MY_TRUSTHUB_V23_ASK_KEY_ID` | Ask key id, for callback verification |
+| `MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM` | Ask ed25519 public PEM |
+| `MY_TRUSTHUB_V23_PARENT_ORIGIN` | `https://www.asktrusthub.com` |
+
+Ask project (`conumers-trust-hub`, Production scope):
+
+| Name | Notes |
+| --- | --- |
+| `MY_TRUSTHUB_V23_INSURANCE_KEY_ID` | the same Insurance key id |
+| `MY_TRUSTHUB_V23_INSURANCE_VERIFY_PUBLIC_KEY_PEM` | Insurance ed25519 public PEM |
+
+The issuer is `urn:trusthub:v23:insurance:<service>`. It has no project id.
+A missing Insurance verify key leaves Move and Lender running and rejects
+Insurance handoffs. This deploy does not set either secret.
+
 Must NOT be set in production: `MY_TRUSTHUB_V23_ISOLATED_PROJECT`,
 `MY_TRUSTHUB_NONPRODUCTION_APPROVED`, `MY_TRUSTHUB_V23_MOVE_PROTECTION_BYPASS`,
 `MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS`, `MY_TRUSTHUB_TEST_*`. The code refuses the

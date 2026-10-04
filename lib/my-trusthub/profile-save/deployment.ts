@@ -1,4 +1,5 @@
 import { deploymentEnabled } from './isolated-config.ts';
+import { RuntimeError } from './runtime.ts';
 import type { HttpBindings } from './http.ts';
 
 /** Production is denied unless the explicit production handoff pins resolve.
@@ -14,6 +15,15 @@ export function deploymentBindings(env: Record<string, string | undefined> = pro
       if (!deploymentConfig(env)) return null;
       const { hostedRuntime } = await import('./hosted-runtime.ts');
       return (await hostedRuntime(env))?.serviceRuntime(request) ?? null;
+    },
+    acceptInsuranceManifest: async request => {
+      if (!enabled) return null;
+      const { deploymentConfig } = await import('./isolated-config.ts');
+      if (!deploymentConfig(env)) return null;
+      const { hostedRuntime } = await import('./hosted-runtime.ts');
+      const runtime = await hostedRuntime(env);
+      if (!runtime) throw new RuntimeError('unavailable');
+      return runtime.acceptInsuranceManifest(request);
     },
   };
 }
