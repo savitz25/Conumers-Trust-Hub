@@ -242,6 +242,11 @@ export class PreviewAssembly {
         const investor = Boolean(this.investorSource) && origin === PRODUCTION_ORIGINS.investor;
         if (!move && !lender && !insurance && !investor) return null;
         const link = await this.store.read<StageLink & { requestPrefix?: string }>('continuation:' + ref);
+        // A continuation is read only for the hub that staged it. One arriving from
+        // another hub's origin is refused here, before any specialist is called, so
+        // no hub ever receives another hub's continuation or manifest.
+        const arriving = move ? 'move' : lender ? 'lender' : insurance ? 'insurance' : 'investor';
+        if (link?.manifest && link.manifest.sourceHub !== arriving) return null;
         if (insurance) {
           if (!link || link.expiresAt <= Date.now() || !link.manifest || !isInsuranceProviderStage(link.manifest)) return null;
           if (!link.requestPrefix || !opaque(link.requestPrefix) || manifestDigest(link.manifest) !== link.manifestDigest) return null;

@@ -199,7 +199,7 @@ Operator packets, in this order, with the Investor release gate OFF:
 
 | File | Purpose | Marker |
 | --- | --- | --- |
-| `14-ask-prod-investor-crd-preflight.sql` | Read only. All three result sets must be empty. | — |
+| `14-ask-prod-investor-crd-preflight.sql` | Read only. Run first: all four result sets are empty on a clean database. Sets 1 to 3 must be empty before the binding packet; set 4 reports the authority and context packets. | — |
 | `14-ask-prod-investor-authority-forward.sql` | Adds `investor` to the hub list of `v23_private.authority()` (one token; body otherwise identical, verified before replace). Without it the database refuses every Investor stage with `invalid authority`. | `V23_PROD_INVESTOR_AUTHORITY_APPLIED` |
 | `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Without it an Investor Save cannot obtain an account context. `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
 | `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
@@ -224,3 +224,24 @@ no acknowledgement. Insurance takes the same commit path. Production may differ
 only if it holds a change that is not in this repository.
 
 Local proof: `npm run check:my-trusthub-v2-investor`.
+
+### Investor and the shared per-hub account context (draft PR #231)
+
+This branch is held until the shared Lender/Insurance account-context change
+(PR #231, packet 15) lands. It does not depend on that change to work: Investor
+has its own issuer (`prod_investor_issue_context`, packet 14). The two meet in
+three places, all in `lib/my-trusthub/profile-save/`:
+
+| Place | This branch | After PR #231 | On rebase |
+| --- | --- | --- | --- |
+| `preview-assembly.ts`, `exchange()` issuer selection | `investor` → `investor_issue_context`, everything else → `issue_context` | `move` → `issue_context`; `lender`/`insurance` → `hub_issue_context(…, hub)`; anything else refused | keep #231's selection and add `investor` → `investor_issue_context` to it, including in the "refused" guard. Never route `investor` through `prod_hub_issue_context`: packet 15 refuses it |
+| `authorized-postgres.ts`, `returnTask` port | `(identity)` | `(identity, db)` | take #231's signature; the Investor return task needs no database read |
+| `preview-assembly.ts` / `hosted-runtime.ts`, hub fields and imports | adds `investorKey`, `investorSource` | adds `insuranceSource` | keep both |
+
+Packet 14 and packet 15 touch different objects and can be applied in either
+order. Nothing in packet 14 changes if packet 15 is applied first.
+
+Also in this branch (shared code, one guard): a continuation is read only for
+the hub that staged it. Before it, an Investor (or Lender) continuation arriving
+with another hub's Origin was refused only after Ask had called that other
+hub's source channel with it; now nothing is sent.

@@ -17,7 +17,7 @@
 -- and is checked by the runtime; it is not an identity.
 --
 -- The operator sets both guards after reading 14-ask-prod-investor-crd-preflight.sql
--- (all three result sets empty) and confirming each firm CRD on SEC IAPD
+-- (result sets 1 to 3 empty) and confirming each firm CRD on SEC IAPD
 -- (adviserinfo.sec.gov). This file does not set them.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 --   select set_config('v23bind.sec_iapd_checked','true',false);

@@ -16,7 +16,8 @@ import { PreviewStore, randomRef } from '../../lib/my-trusthub/profile-save/prev
 import { SourceChannel } from '../../lib/my-trusthub/profile-save/source-channel.ts';
 import { InvestorSourceChannel } from '../../lib/my-trusthub/profile-save/investor-channel.ts';
 import { INVESTOR_PRODUCTION_PINS, signInvestorAssertion, verifyInvestorAssertion } from '../../lib/my-trusthub/profile-save/investor-assertion.ts';
-import { signLenderAssertion } from '../../lib/my-trusthub/profile-save/lender-assertion.ts';
+import { LENDER_PRODUCTION_PINS, signLenderAssertion } from '../../lib/my-trusthub/profile-save/lender-assertion.ts';
+import { LenderSourceChannel } from '../../lib/my-trusthub/profile-save/lender-channel.ts';
 import { handleProfileConfirmation } from '../../lib/my-trusthub/profile-save/browser.ts';
 import { handleProfileSave } from '../../lib/my-trusthub/profile-save/http.ts';
 import { ASSERTION_HEADER, signAssertion } from '../../lib/my-trusthub/profile-save/service-assertion.ts';
@@ -48,6 +49,11 @@ const AMBIGUOUS = firm('7770002', 'FIXTURE AMBIGUOUS FIRM');
 const WRONG_CLASS = firm('7770003', 'FIXTURE REPRESENTATIVE');
 const WRONG_REF = firm('7770004', 'FIXTURE WRONG PROFILE REF');
 const RETIRED = firm('7770005', 'FIXTURE RETIRED ENTITY');
+const WRONG_JURISDICTION = firm('7770006', 'FIXTURE STATE JURISDICTION');
+const WRONG_CRD = firm('7770007', 'FIXTURE OTHER CRD');
+const HINDMAN = { slug: 'hindman-isaacs-moving-storage-inc', legalName: 'HINDMAN & ISAACS MOVING & STORAGE INC', profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' } };
+const FREEDOM = { slug: 'freedom-mortgage', profile: { hub: 'lender', nativeId: 'nmls:2767', profileClass: 'marketplace_company' } };
+const MOVE_ORIGIN = 'https://www.movetrusthub.com', LENDER_ORIGIN = 'https://www.lendertrusthub.com';
 function keys(kid) {
   const pair = generateKeyPairSync('ed25519');
   return { privateKey: { kid, pem: pair.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString() },
@@ -83,7 +89,19 @@ try {
   const ask = keys('ask-fixture'), move = keys('move-fixture'), investor = keys('investor-fixture');
   await db.exec(`set v23.approved_project='${PRODUCTION}'`);
   await db.exec(read('02-ask-prod-ports-forward.sql'));
+  // Nothing of packet 14 is applied yet: the preflight is empty in all four result sets.
+  const preflightSets = async () => (await db.exec(read('14-ask-prod-investor-crd-preflight.sql'))).map(r => r.rows.length);
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 0]);
+  // The other hubs' own packets, unmodified, for the regression at the end.
+  await db.exec(`set v23.binding_creation_authorized='true'; set v23bind.candidate_unchanged='true'; set v23bind.evidence_ref='local-sql-packet-fixture-only';
+    select set_config('v23bind.preflight_checked_at',clock_timestamp()::text,false);`);
+  await db.exec(read('03-ask-prod-move-binding-forward.sql')); await db.exec('reset role');
+  await db.exec(`set v23.binding_creation_authorized=''`);
   await db.exec(read('04-ask-prod-runtime-role-forward.sql'));
+  await db.exec(read('09-ask-prod-move-binding-resolver-forward.sql'));
+  await db.exec(`set v23bind.nmls_consumer_access_checked='true'`);
+  await db.exec(read('12-ask-prod-lender-nmls-binding-forward.sql'));
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 0]); // other hubs' identities never look like an Investor claim
   await db.query(`select set_config('v23.install_session_mac',$1,false)`, [createHash('sha256').update(ask.privateKey.pem).digest('hex')]);
   await db.exec(read('05-ask-prod-session-mac-install.sql'));
   // The database itself refuses the Investor hub until the authority packet is applied.
@@ -119,8 +137,7 @@ try {
   console.log('PASS production ports, runtime role and session authority packets apply on the embedded database');
 
   // Packet 14: preflight is clean, forward refuses without both guards, applies once, and returns the receipt.
-  const preflightSets = async () => (await db.exec(read('14-ask-prod-investor-crd-preflight.sql'))).map(r => r.rows.length);
-  assert.deepEqual(await preflightSets(), [0, 0, 0]);
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 2]); // authority and context are in place, bindings are not
   const forward = read('14-ask-prod-investor-crd-binding-forward.sql');
   const identityRows = async () => JSON.stringify((await db.query(`select (select count(*)::int from network.network_entities) e,(select count(*)::int from network.network_entity_bindings) b`)).rows[0]);
   const empty = await identityRows();
@@ -133,14 +150,14 @@ try {
   assert.deepEqual(receipt.map(r => [r.crd, r.canonical_public_profile_ref]), [['104571', '/firm/sec-crd-104571'], ['106176', '/firm/sec-crd-106176'], ['110441', '/firm/sec-crd-110441']]);
   assert.deepEqual((await db.query(`select e.entity_type,e.canonical_name,e.primary_hub,e.jurisdiction,e.canonical_public_profile_ref,e.status,b.hub,b.specialist_entity_type,
       b.specialist_entity_id,b.identifier_namespace,b.source_identifier,b.jurisdiction as binding_jurisdiction,b.binding_status,b.valid_to,b.provenance_ref
-    from network.network_entity_bindings b join network.network_entities e on e.id=b.network_entity_id order by b.source_identifier::bigint`)).rows,
+    from network.network_entity_bindings b join network.network_entities e on e.id=b.network_entity_id where b.hub='investor' order by b.source_identifier::bigint`)).rows,
     [METWEST, WEINBERGER, WESTERN].map(f => ({ entity_type: 'organization', canonical_name: f.legalName, primary_hub: 'investor', jurisdiction: 'US',
       canonical_public_profile_ref: '/firm/' + f.slug, status: 'active', hub: 'investor', specialist_entity_type: 'official_firm', specialist_entity_id: 'crd-' + f.crd,
       identifier_namespace: 'sec.crd', source_identifier: f.crd, binding_jurisdiction: 'US', binding_status: 'accepted', valid_to: null, provenance_ref: 'investor_trust_hub_firms' })));
   const applied = await identityRows();
   await assert.rejects(db.exec(forward), /already applied|requires steward review/); await db.exec('rollback');
   assert.equal(await identityRows(), applied);
-  assert.deepEqual(await preflightSets(), [3, 3, 3]); // after apply the preflight reports every claim and the resolver objects
+  assert.deepEqual(await preflightSets(), [3, 3, 3, 2]); // after apply the preflight reports every claim and every packet-14 object
   console.log('PASS packet 14: clean preflight, guarded forward, exactly three firm CRD bindings, receipt returned, re-run refused');
 
   // Resolver contract, as the runtime login's roles. One exact identity in; no name, slug or uuid lookup.
@@ -165,13 +182,15 @@ try {
     values('organization',$1,'investor','US',$2,$3) returning id`, [f.legalName, ref, status])).rows[0].id;
   const bind = (entityId, f, status, patch = {}) => db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,
     identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref) values($1,'investor',$2,$3,'sec.crd',$4,$5,$6,now()-interval '1 minute','fixture-only')`,
-    [entityId, patch.type ?? 'official_firm', patch.nativeId ?? f.profile.nativeId, f.crd, 'jurisdiction' in patch ? patch.jurisdiction : 'US', status]);
+    [entityId, patch.type ?? 'official_firm', patch.nativeId ?? f.profile.nativeId, patch.crd ?? f.crd, 'jurisdiction' in patch ? patch.jurisdiction : 'US', status]);
   await bind(await entity(REVIEW), REVIEW, 'review_required');
   await bind(await entity(AMBIGUOUS), AMBIGUOUS, 'accepted');
   await bind(await entity({ ...AMBIGUOUS, legalName: AMBIGUOUS.legalName + ' (second claim)' }, 'active', '/firm/second-claim'), AMBIGUOUS, 'accepted', { nativeId: 'fixture-other-id', jurisdiction: null });
   await bind(await entity(WRONG_CLASS), WRONG_CLASS, 'accepted', { type: 'representative' });
   await bind(await entity(WRONG_REF, 'active', '/firm/some-other-profile'), WRONG_REF, 'accepted');
   await bind(await entity(RETIRED, 'retired'), RETIRED, 'accepted');
+  await bind(await entity(WRONG_JURISDICTION), WRONG_JURISDICTION, 'accepted', { jurisdiction: 'CA' }); // a state observation is not the US firm identity
+  await bind(await entity(WRONG_CRD), WRONG_CRD, 'accepted', { crd: '7770099' }); // native id and CRD disagree
 
   // Session authority and the verified parent.
   const sidA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', sidB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', exp = Math.floor(Date.now() / 1000) + 110;
@@ -181,7 +200,9 @@ try {
 
   // Investor source channel fixture: Investor's own verdict per identity. It
   // verifies Ask's signature exactly as the Investor route does.
-  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, WRONG_CLASS, WRONG_REF, RETIRED].map(f => [f.profile.nativeId, f.slug]));
+  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, WRONG_CLASS, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CRD].map(f => [f.profile.nativeId, f.slug]));
+  /** How Investor's publication re-proof misbehaves, when it does. */
+  let publicationFault = null;
   const acknowledged = []; const investorCalls = [];
   const seenNonces = new Set();
   const investorFetch = async (target, init) => {
@@ -190,6 +211,16 @@ try {
     const claims = await verifyInvestorAssertion(new Request(target, { method: 'POST', headers: init.headers, body: bytes }), bytes, ask.publicKey, 'ask', scope,
       { claim: async k => !seenNonces.has(k) && !!seenNonces.add(k) });
     investorCalls.push(body.action);
+    if (body.action === 'resolve' && publicationFault) {
+      if (publicationFault === 'network') throw new TypeError('fetch failed');
+      if (publicationFault === 'http500') return new Response('upstream error', { status: 500 });
+      if (publicationFault === 'not_json') return new Response('<html>ok</html>', { status: 200, headers: { 'content-type': 'text/html' } });
+      if (publicationFault === 'refused') return Response.json({ ok: false, error: 'unauthorized' }, { status: 403 });
+      const good = { identity: body.profile, canonicalSlug: published.get(body.profile.nativeId), publicationState: 'PUBLISHABLE', reviewedClass: 'official_firm', checkedAt: Date.now() };
+      const bad = { stale: { checkedAt: Date.now() - 60_000 }, future: { checkedAt: Date.now() + 60_000 }, not_publishable: { publicationState: 'INGESTED' },
+        state_adviser: { reviewedClass: 'state_adviser_firm' }, other_identity: { identity: { ...body.profile, nativeId: 'crd-104571' } }, no_slug: { canonicalSlug: undefined } }[publicationFault];
+      return Response.json({ ok: true, result: { ...good, ...bad } });
+    }
     if (body.action === 'resolve') {
       const slug = body.profile?.hub === 'investor' && body.profile.profileClass === 'official_firm' ? published.get(body.profile.nativeId) : null;
       if (!slug) return Response.json({ ok: false, error: 'unavailable' }, { status: 503 });
@@ -200,7 +231,22 @@ try {
     if (body.action === 'acknowledge') { acknowledged.push(body.receipts.map(r => r.parent.outcome).join()); return Response.json({ ok: true, result: { watchCreated: false } }); }
     throw Error('Unexpected source operation');
   };
-  const moveSource = new SourceChannel(ask.privateKey, undefined, async () => { throw Error('Move must not be contacted on an Investor Save'); }, PRODUCTION_TARGET);
+  // Move and Lender source fixtures for the regression. Neither may be contacted on an Investor Save.
+  const otherHubCalls = []; let moveSnapshot = null;
+  const moveSource = new SourceChannel(ask.privateKey, undefined, async (_target, init) => {
+    const body = JSON.parse(Buffer.from(init.body).toString()); otherHubCalls.push('move:' + body.action);
+    if (body.action === 'resolve') return Response.json({ ok: true, result: { identity: body.profile, canonicalSlug: HINDMAN.slug, publicationState: 'PUBLISHABLE', reviewedClass: 'mover', checkedAt: Date.now() } });
+    if (body.action === 'source') return Response.json({ ok: true, result: moveSnapshot });
+    acknowledged.push('move:' + body.receipts.map(r => r.parent.outcome).join()); return Response.json({ ok: true });
+  }, PRODUCTION_TARGET);
+  const lenderFetch = async (_target, init) => {
+    const body = JSON.parse(Buffer.from(init.body).toString()); otherHubCalls.push('lender:' + body.action);
+    if (body.action === 'resolve') return Response.json({ ok: true, result: { identity: body.profile, canonicalSlug: FREEDOM.slug, publicationState: 'PUBLISHABLE', reviewedClass: 'marketplace_company', checkedAt: Date.now() } });
+    if (body.action === 'source') return Response.json({ ok: true, result: { continuationRef: body.continuationRef, transferRef: body.transferRef, manifest: body.manifest,
+      manifestDigest: body.manifestDigest, browserProof: lenderBrowser, expiresAt: body.expiresAt, requestPrefix: lenderBrowser } });
+    acknowledged.push('lender:' + body.receipts.map(r => r.parent.outcome).join()); return Response.json({ ok: true, result: { watchCreated: false } });
+  };
+  const lender = keys('lender-fixture'); let lenderBrowser = null;
   let parent = null;
   const asUser = (subject, sql, values = []) => db.transaction(async tx => {
     await tx.query(`select set_config('request.jwt.claim.sub',$1,true),set_config('request.jwt.claims',$2,true)`, [subject, JSON.stringify({ sub: subject })]);
@@ -220,6 +266,7 @@ try {
   let investorConfigured = true;
   const runtime = () => {
     const assembly = new PreviewAssembly(ENV, pool, moveSource, move.publicKey, async () => parent, removeSaved);
+    assembly.lenderKey = lender.publicKey; assembly.lenderSource = new LenderSourceChannel(ask.privateKey, lenderFetch, LENDER_PRODUCTION_PINS);
     if (investorConfigured) { assembly.investorKey = investor.publicKey; assembly.investorSource = new InvestorSourceChannel(ask.privateKey, investorFetch, INVESTOR_PRODUCTION_PINS); }
     return assembly;
   };
@@ -297,6 +344,14 @@ try {
   await denied(WRONG_CLASS, 'wrong binding class');
   await denied(WRONG_REF, 'binding on another profile ref');
   await denied(RETIRED, 'retired entity');
+  await denied(WRONG_JURISDICTION, 'binding under a state jurisdiction');
+  await denied(WRONG_CRD, 'binding whose CRD disagrees with the native id');
+  // Publication re-proof failures: Investor down, erroring, answering garbage, or answering for something else.
+  for (const fault of ['network', 'http500', 'not_json', 'refused', 'stale', 'future', 'not_publishable', 'state_adviser', 'other_identity', 'no_slug']) {
+    publicationFault = fault;
+    await denied(WESTERN, 'publication re-proof: ' + fault);
+  }
+  publicationFault = null;
   // A firm that stops being published at Investor is denied even with an accepted binding.
   published.delete(WESTERN.profile.nativeId);
   await denied(WESTERN, 'unpublished at Investor');
@@ -304,7 +359,7 @@ try {
   published.set(WESTERN.profile.nativeId, 'sec-crd-104571');
   await denied(WESTERN, 'Investor reports another canonical slug');
   published.set(WESTERN.profile.nativeId, WESTERN.slug);
-  console.log('PASS denials: missing, review_required, ambiguous, wrong class, other profile ref, retired entity, unpublished and slug disagreement write nothing');
+  console.log('PASS denials: missing, review_required, ambiguous, wrong class, wrong jurisdiction, wrong CRD, other profile ref, retired entity, unpublished, slug disagreement and ten publication re-proof failures write nothing');
 
   // Tampered or foreign stages never get past the signed service boundary.
   await quiet();
@@ -322,6 +377,15 @@ try {
       selected: [{ localItemId: 'x', revision: '1', digest: 'a'.repeat(64), profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' } }],
       returnTask: { kind: 'profile', hub: 'move', profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' }, canonicalSlug: 'x', returnPath: '/companies/x' } }],
   ]) assert.notEqual(await stageStatus(input), 200, label);
+  // A valid Investor assertion is bound to its exact body, its lifetime and one use.
+  assert.notEqual(await stageStatus(good, () => investorSigned(Buffer.from(JSON.stringify({ version: PROFILE_SAVE_RUNTIME_VERSION, operation: 'prepareGuestProfileTransfer', input: manifestFor(METWEST) })))), 200, 'assertion signed for another body');
+  assert.notEqual(await stageStatus(good, bytes => signInvestorAssertion(investor.privateKey, 'investor', ASK + API_PATH, 'transfer:stage', bytes, browser, null, null, Date.now() - 40_000)), 200, 'expired assertion');
+  assert.notEqual(await stageStatus(good, bytes => signInvestorAssertion(investor.privateKey, 'investor', ASK + API_PATH, 'receipt:verify', bytes, browser)), 200, 'wrong scope');
+  assert.notEqual(await stageStatus(good, bytes => investorSigned(bytes).slice(0, -4) + 'AAAA'), 200, 'altered signature');
+  assert.notEqual(await stageStatus(good, () => ''), 200, 'no assertion');
+  let replayed = null;
+  assert.equal(await stageStatus(good, bytes => (replayed = investorSigned(bytes))), 200);
+  assert.notEqual(await stageStatus(good, () => replayed), 200, 'replayed assertion');
   // The same manifest under any other signature is refused: unknown Investor key, Move key, Lender-shaped token.
   assert.notEqual(await stageStatus(good, bytes => investorSigned(bytes, keys('investor-fixture').privateKey)), 200);
   assert.notEqual(await stageStatus(good, bytes => signAssertion(move.privateKey, 'move', ASK + API_PATH, 'transfer:stage', bytes, browser, null, null, Date.now(), PRODUCTION_TARGET)), 200);
@@ -347,6 +411,9 @@ try {
   assert.equal((await db.query("select count(*)::int n from information_schema.tables where table_schema in ('consumer','ops','network','v23_private') and table_name ~* '(watch|alert)'")).rows[0].n, 0);
   assert.equal((await db.query('select count(*)::int n from v23_private.transaction_authority')).rows[0].n, 0);
   assert.deepEqual([...new Set(investorCalls)].sort(), ['acknowledge', 'resolve', 'source']);
+  // Neither Move nor Lender was contacted on any Investor request, including the
+  // Investor continuations that arrived from their origins above.
+  assert.deepEqual(otherHubCalls, []);
   console.log('PASS signed-out Save changes nothing; zero Watch/Alert relations; no leaked transaction authority; Move never contacted');
 
   // Rollback: one receipt row per execution closes exactly that binding; the firm stops being eligible.
@@ -373,6 +440,44 @@ try {
   assert.equal(await snapshot(), afterRollback); assert.deepEqual(acknowledged, []);
   assert.equal((await active(A)).includes(METWEST.legalName), true); // Saved research is preserved
   console.log('PASS rollback: exactly one receipt binding closed, nothing deleted, firm no longer eligible, existing Saved research preserved, re-run refused');
+
+  // ---- Regression: Move and Lender behave identically with and without the Investor key ----
+  const moveSigned = (bytes, b) => signAssertion(move.privateKey, 'move', ASK + API_PATH, 'transfer:stage', bytes, b, null, null, Date.now(), PRODUCTION_TARGET);
+  const lenderSigned = (bytes, b) => signLenderAssertion(lender.privateKey, 'lender', ASK + API_PATH, 'transfer:stage', bytes, b);
+  async function otherClick(m, hub, origin, returnPath, intent, sign) {
+    const b = randomRef(); if (hub === 'lender') lenderBrowser = b;
+    const manifest = { version: 'v2-3/selected-profiles/3', sourceHub: hub, audience: 'ask', selected: [{ localItemId: m.slug, revision: hub === 'move' ? 'a'.repeat(64) : '1', digest: 'a'.repeat(64), profile: m.profile }],
+      returnTask: { kind: 'profile', hub, profile: m.profile, canonicalSlug: m.slug, returnPath } };
+    const stage = await service('prepareGuestProfileTransfer', manifest, bytes => sign(bytes, b));
+    if (stage.status !== 200) return { stage: stage.status };
+    const continuation = await service('prepareProfileSaveContinuation', { sourceHub: hub, audience: 'ask', transferRef: stage.body.result.transferRef, manifestDigest: stage.body.result.manifestDigest }, bytes => sign(bytes, b));
+    if (hub === 'move') moveSnapshot = { ...continuation.body.result, transferRef: stage.body.result.transferRef, manifest, manifestDigest: stage.body.result.manifestDigest, browserProof: b, requestPrefix: randomRef() };
+    const arrival = new Request(ASK + '/my/profile-save', { method: 'POST', body: new URLSearchParams({ continuationRef: continuation.body.result.continuationRef, intent }), headers: { origin } });
+    const arrived = await handleProfileConfirmation(arrival, await runtime().browserBindings(arrival));
+    const get = new Request(ASK + '/my/profile-save', { headers: { cookie: arrived.headers.get('set-cookie').split(';')[0] } });
+    const done = await handleProfileConfirmation(get, await runtime().browserBindings(get));
+    return { stage: 200, arrival: arrived.status, status: done.status, location: done.headers.get('location') };
+  }
+  parent = { subject: B, session: sidB, label: 'Fixture B' };
+  const regression = {};
+  for (const configured of [false, true]) {
+    investorConfigured = configured;
+    await quiet(); acknowledged.length = 0;
+    const moveSave = await otherClick(HINDMAN, 'move', MOVE_ORIGIN, '/companies/' + HINDMAN.slug, 'save', moveSigned);
+    const savedAfterSave = (await active(B)).includes(HINDMAN.legalName);
+    const moveUnsave = await otherClick(HINDMAN, 'move', MOVE_ORIGIN, '/companies/' + HINDMAN.slug, 'unsave', moveSigned);
+    const savedAfterUnsave = (await active(B)).includes(HINDMAN.legalName);
+    const lenderSave = await otherClick(FREEDOM, 'lender', LENDER_ORIGIN, '/lenders/' + FREEDOM.slug, 'save', lenderSigned);
+    regression[configured] = JSON.stringify({ moveSave, savedAfterSave, moveUnsave, savedAfterUnsave, lenderSave, acknowledged: [...acknowledged] });
+  }
+  assert.equal(regression[false], regression[true]);
+  const withoutInvestor = JSON.parse(regression[false]);
+  assert.deepEqual(withoutInvestor.moveSave, { stage: 200, arrival: 303, status: 303, location: MOVE_ORIGIN + '/companies/' + HINDMAN.slug });
+  assert.deepEqual([withoutInvestor.savedAfterSave, withoutInvestor.savedAfterUnsave], [true, false]);
+  assert.deepEqual(withoutInvestor.acknowledged.filter(a => a.startsWith('move:')), ['move:saved', 'move:local_only']);
+  assert.equal(withoutInvestor.lenderSave.stage, 200); // the signed Lender stage is accepted exactly as before
+  investorConfigured = true; parent = { subject: A, session: sidA, label: 'Fixture A' };
+  console.log('PASS regression: Move Save and Unsave complete, and a Lender stage is accepted, identically with and without the Investor verify key');
 
   // Without the two database packets the Investor path fails closed, and Move's issuer is still there.
   const beforePackets = await snapshot();

@@ -1,8 +1,10 @@
 -- MY TRUSTHUB V2 — INVESTOR FIRM CRD PREFLIGHT (READ ONLY).
--- Operator session on qvvxvbcdmbjzrgvwjatw. Do not apply the binding packet
--- until ALL THREE result sets return zero rows. Any row is a hold for that
--- candidate and needs steward review. This file does not insert, update, or
--- delete.
+-- Operator session on qvvxvbcdmbjzrgvwjatw. Run it before any packet 14 file:
+-- on a database where nothing of packet 14 is applied, all four result sets
+-- are empty. Do not apply the binding packet unless result sets 1 to 3 are
+-- empty; any row there is a hold for that candidate and needs steward review.
+-- Result set 4 only reports which of the authority and context packets are
+-- already in place. This file does not insert, update, or delete.
 --
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 --
@@ -35,3 +37,11 @@ select 'function' as object, 'v23_private.prod_investor_crd_binding_for(text)' a
 union all
 select 'policy', policyname from pg_policies
  where schemaname = 'network' and policyname in ('prod_investor_crd_bindings', 'prod_investor_crd_entities');
+
+-- 4. The authority and context packets must not be applied yet. A row here
+--    means that packet is already in place: skip it, do not re-apply it.
+select '14-ask-prod-investor-authority-forward.sql' as already_applied
+ where position($t$'lender','investor')$t$ in (select prosrc from pg_proc where oid = to_regprocedure('v23_private.authority()'))) > 0
+union all
+select '14-ask-prod-investor-context-forward.sql'
+ where to_regprocedure('v23_private.prod_investor_issue_context(jsonb,uuid,uuid)') is not null;
