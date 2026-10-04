@@ -22,6 +22,7 @@ import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-
 import { isGuestStageInput, manifestDigest, type GuestStageInput } from '../contracts/v2-3-profile-transfer.ts';
 import type { Operation } from './interface.ts';
 import { PRIVATE_HEADERS } from './http.ts';
+import { accountContextIssueQuery } from './hub-account-context.ts';
 
 type Link = { browser: string; transferRef: string; manifestDigest: string; expiresAt: number };
 type StageLink = Link & { manifest: GuestStageInput };
@@ -145,16 +146,16 @@ export class PreviewAssembly {
         stage = 'issue_context';
         const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
         // The context is consumed as the verified caller's hub, so it is issued for
-        // that hub. The hub is the one verified from the specialist's signed
-        // assertion and the arrival origin, never a browser field. Move keeps its
-        // own issuer unchanged; Lender and Insurance use the per-hub issuer
-        // (packet 15), which refuses every other hub. Without it the call fails
-        // and the Save fails closed.
+        // that hub. The hub is a.caller.hub, which the server set from the verified
+        // specialist assertion and the stored stage. It is never a browser field
+        // and never a key of this proof. Move keeps issue_context. Investor keeps
+        // investor_issue_context. Lender, Insurance, and Contractor use packet 15.
+        // Any other hub fails closed before a statement is sent.
         const hub = a.caller.hub;
-        if (hub !== 'move' && hub !== 'lender' && hub !== 'insurance') throw new RuntimeError('unavailable');
-        const issued = hub === 'move'
-          ? await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'issue_context')}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding])
-          : await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'hub_issue_context')}($1,$2,$3,$4) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding, hub]);
+        const issue = accountContextIssueQuery(this.target, hub);
+        const issued = await db.query<{ issued: boolean }>(issue.text, issue.hubArgument
+          ? [JSON.stringify(proof), p.subject, p.sessionBinding, hub]
+          : [JSON.stringify(proof), p.subject, p.sessionBinding]);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
