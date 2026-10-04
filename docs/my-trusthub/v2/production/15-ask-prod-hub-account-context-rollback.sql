@@ -4,9 +4,10 @@
 --
 -- Removes exactly the one function created by
 -- 15-ask-prod-hub-account-context-forward.sql. No row is touched and
--- prod_issue_context() is untouched, so Move is unaffected. After it, a Lender
--- or Insurance Save cannot obtain an account context and fails closed (device
--- Save only). Turn the Lender and Insurance release gates off first.
+-- prod_issue_context() is untouched, so Move is unaffected. After it, a Lender,
+-- Insurance, or Contractor Save cannot obtain an account context and fails
+-- closed (device Save only). Turn those release gates off first. Investor keeps
+-- prod_investor_issue_context; this rollback does not drop it.
 begin;
 set local statement_timeout = '15s';
 set local lock_timeout = '3s';

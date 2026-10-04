@@ -4,6 +4,9 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { InsuranceAckChannel, INSURANCE_SOURCE_PATH } from './insurance-channel.ts';
 import { INSURANCE_PRODUCTION_PINS, verifyInsuranceAssertion } from './insurance-assertion.ts';
+import { accountContextIssueQuery, SHARED_HUB_ACCOUNT_CONTEXT } from './hub-account-context.ts';
+import { PRODUCTION_TARGET } from './isolated-config.ts';
+import { RuntimeError } from './runtime.ts';
 import type { ItemReceipt } from '../contracts/v2-3-profile-transfer.ts';
 
 const browser = 'b'.repeat(43), session = 'f'.repeat(64), continuation = 'k'.repeat(43);
@@ -75,14 +78,19 @@ test('nothing is sent for a receipt Insurance would not accept, and a refused or
   await assert.rejects(() => new InsuranceAckChannel(ask.privateKey, stranger.send).acknowledge(continuation, [receipt('saved')], browser, session));
 });
 
-test('the account context is issued for the verified caller hub; Move keeps its own issuer', () => {
+test('the account context is issued for the verified caller hub; Move and Investor keep their own issuers', () => {
   const assembly = readFileSync(new URL('./preview-assembly.ts', import.meta.url), 'utf8');
   assert.match(assembly, /const hub = a\.caller\.hub;/);
-  assert.match(assembly, /if \(hub !== 'move' && hub !== 'lender' && hub !== 'insurance'\) throw new RuntimeError\('unavailable'\);/);
-  assert.match(assembly, /hub === 'move'\s*\? await db\.query<\{ issued: boolean \}>\(`select \$\{sqlName\(this\.target, 'issue_context'\)\}\(\$1,\$2,\$3\) as issued`/);
-  assert.match(assembly, /sqlName\(this\.target, 'hub_issue_context'\)\}\(\$1,\$2,\$3,\$4\) as issued`, \[JSON\.stringify\(proof\), p\.subject, p\.sessionBinding, hub\]/);
+  assert.match(assembly, /const issue = accountContextIssueQuery\(this\.target, hub\);/);
+  assert.match(assembly, /issue\.hubArgument\s*\? \[JSON\.stringify\(proof\), p\.subject, p\.sessionBinding, hub\]/);
+  assert.doesNotMatch(assembly, /issueSharedAccountContext/);
   // An Insurance acknowledgement is no longer skipped.
   assert.doesNotMatch(assembly, /sourceHub === 'insurance'\) throw new RuntimeError\('unavailable'\)/);
   assert.match(assembly, /requestPrefix: claims\.browser/);
   assert.match(assembly, /requestPrefix: link\.browser/);
+  const shared = 'select v23_private.prod_hub_issue_context($1,$2,$3,$4) as issued';
+  assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'move'), { text: 'select v23_private.prod_issue_context($1,$2,$3) as issued', hubArgument: false });
+  assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'investor'), { text: 'select v23_private.prod_investor_issue_context($1,$2,$3) as issued', hubArgument: false });
+  for (const hub of SHARED_HUB_ACCOUNT_CONTEXT) assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, hub), { text: shared, hubArgument: true }, hub);
+  for (const hub of ['senior', 'ask', '', 'move ', 'LENDER', 'investor ']) assert.throws(() => accountContextIssueQuery(PRODUCTION_TARGET, hub), (error: unknown) => error instanceof RuntimeError && error.message === 'unavailable');
 });

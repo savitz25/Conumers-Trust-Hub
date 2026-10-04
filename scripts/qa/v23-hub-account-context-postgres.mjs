@@ -28,7 +28,7 @@ import { sessionMac } from '../../lib/my-trusthub/profile-save/session-authority
 import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save/interface.ts';
 
 const PRODUCTION = 'qvvxvbcdmbjzrgvwjatw';
-const ASK = 'https://www.asktrusthub.com', MOVE = 'https://www.movetrusthub.com', LENDER = 'https://www.lendertrusthub.com', INSURANCE = 'https://www.insurancetrusthub.com';
+const ASK = 'https://www.asktrusthub.com', MOVE = 'https://www.movetrusthub.com', LENDER = 'https://www.lendertrusthub.com', INSURANCE = 'https://www.insurancetrusthub.com', CONTRACTOR = 'https://www.contractortrusthub.com';
 const prod = 'docs/my-trusthub/v2/production/';
 const read = file => readFileSync(prod + file, 'utf8').replace(/\r\n/g, '\n');
 const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222';
@@ -280,24 +280,34 @@ try {
   assert.equal(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'), 'null');
   await db.exec(contextForward);
   assert.equal(await issuer('v23_private.prod_issue_context(jsonb,uuid,uuid)'), moveIssuerBefore);
-  assert.equal(JSON.parse(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)')).owner, 'myth_v23_foundation');
-  console.log('PASS packet 15: one new function owned by the foundation role, guarded, re-run refused, rollback removes only it, the Move issuer is byte-identical');
+  const hubFn = JSON.parse(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'));
+  assert.equal(hubFn.owner, 'myth_v23_foundation');
+  assert.match(hubFn.prosrc, /when 'contractor' then 'https:\/\/www\.contractortrusthub\.com'/);
+  assert.match(hubFn.prosrc, /proof \? 'hub'/);
+  assert.doesNotMatch(hubFn.prosrc, /proof->>'(hub|issuer|issuerHub|sourceHub)'/);
+  console.log('PASS packet 15: one new function owned by the foundation role, guarded, re-run refused, rollback removes only it, the Move issuer is byte-identical, Contractor origin is pinned inside the function');
 
-  // I/J/K/L at the SQL contract, on contexts issued by the new function.
+  // Shared hub allowlist. Contractor is admitted. Move, Investor, and any
+  // browser-supplied hub key are refused. The lender five-strike sequence below
+  // is unchanged and does not consume the Contractor context.
   const issue = (proof, hub, subject = A, session = sidA) => store.authorized(d => d.query('select v23_private.prod_hub_issue_context($1,$2,$3,$4)', [JSON.stringify(proof), subject, session, hub]));
   await quiet();
-  for (const hub of ['move', 'investor', 'contractor', 'senior', 'ask', '', 'LENDER', 'lender ', null]) await assert.rejects(issue(proofFor(), hub), /hub/, String(hub));
+  for (const hub of ['move', 'investor', 'senior', 'ask', '', 'LENDER', 'lender ', 'contractor ', null]) await assert.rejects(issue(proofFor(), hub), /hub/, String(hub));
+  for (const key of ['hub', 'issuer', 'issuerHub', 'sourceHub']) await assert.rejects(issue({ ...proofFor(), [key]: 'contractor' }, 'contractor'), /hub/, key);
   await assert.rejects(issue(proofFor(), 'lender', A, '99999999-9999-4999-8999-999999999999'), /session/); // no live verified session
   await assert.rejects(issue({ ...proofFor(), targetOrigin: LENDER }, 'lender'), /origin/);
+  await assert.rejects(issue({ ...proofFor(), targetOrigin: CONTRACTOR }, 'contractor'), /origin/);
   await assert.rejects(issue({ ...proofFor(), code: 'short' }, 'lender'), /proof/);
   for (const role of ['myth_v23_executor', 'anon', 'authenticated']) {
     await db.exec(`begin; set local role ${role}`);
     await assert.rejects(db.query('select v23_private.prod_hub_issue_context($1,$2,$3,$4)', [JSON.stringify(proofFor()), A, sidA, 'lender'])); await db.exec('rollback');
   }
-  const lenderProof = proofFor(), insuranceProof = proofFor();
-  await issue(lenderProof, 'lender'); await issue(insuranceProof, 'insurance');
+  const lenderProof = proofFor(), insuranceProof = proofFor(), contractorProof = proofFor();
+  await issue(lenderProof, 'lender'); await issue(insuranceProof, 'insurance'); await issue(contractorProof, 'contractor');
+  assert.equal((await db.query(`select nonce_hash = ops.hash_handoff_secret($2) as nonce_bound from ops.consumer_auth_handoffs where code_hash=ops.hash_handoff_secret($1)`, [contractorProof.code, contractorProof.nonce])).rows[0].nonce_bound, true);
   assert.deepEqual((await db.query(`select issuer_hub,initiating_origin,audience_hub,target_origin,extract(epoch from expires_at-created_at)::int as ttl from ops.consumer_auth_handoffs
     where status='issued' order by issuer_hub`)).rows, [
+    { issuer_hub: 'contractor', initiating_origin: CONTRACTOR, audience_hub: 'ask', target_origin: ASK, ttl: 90 },
     { issuer_hub: 'insurance', initiating_origin: INSURANCE, audience_hub: 'ask', target_origin: ASK, ttl: 90 },
     { issuer_hub: 'lender', initiating_origin: LENDER, audience_hub: 'ask', target_origin: ASK, ttl: 90 }]);
   // I. wrong hub: a Lender context is not a Move or Insurance context, and the reverse.
@@ -320,7 +330,49 @@ try {
   const stale = proofFor(); await issue(stale, 'insurance');
   await db.query(`update ops.consumer_auth_handoffs set created_at=created_at-interval '2 minutes',expires_at=expires_at-interval '2 minutes' where code_hash=ops.hash_handoff_secret($1)`, [stale.code]);
   assert.deepEqual(await consume(stale, 'insurance'), { ok: false, error_code: 'HANDOFF_EXPIRED' });
-  console.log('PASS context contract: issued only for lender or insurance with the pinned origin and a live session; wrong hub, tampered, reused and expired contexts are all refused');
+  console.log('PASS context contract: lender, insurance, and contractor issued at their pinned origins with a 90 second lifetime; move, investor, senior, empty, unknown, and browser hub keys are refused; wrong hub, tampered, reused, and expired contexts are refused');
+
+  // I-L. Contractor handoff contract. Consume is ops.consume_consumer_auth_handoff,
+  // the call consume_context makes after authority(). authority() still admits
+  // only move, insurance, and lender, so consume_context as contractor fails
+  // closed and writes no Saved row. This block does not touch the lender
+  // five-strike proof above.
+  await quiet();
+  const savedBeforeContractor = await snapshot();
+  assert.deepEqual(await consume(contractorProof, 'contractor'), { ok: true, error_code: null });
+  assert.deepEqual(await consume(contractorProof, 'contractor'), { ok: false, error_code: 'HANDOFF_ALREADY_USED' });
+  const cross = proofFor(); await issue(cross, 'contractor');
+  for (const hub of ['lender', 'insurance', 'move', 'investor']) assert.deepEqual(await consume(cross, hub), { ok: false, error_code: 'INVALID_AUDIENCE' }, hub);
+  const lenderAsContractor = proofFor(); await issue(lenderAsContractor, 'lender');
+  assert.deepEqual(await consume(lenderAsContractor, 'contractor'), { ok: false, error_code: 'INVALID_AUDIENCE' });
+  const insuranceAsContractor = proofFor(); await issue(insuranceAsContractor, 'insurance');
+  assert.deepEqual(await consume(insuranceAsContractor, 'contractor'), { ok: false, error_code: 'INVALID_AUDIENCE' });
+  const moveAsContractor = proofFor();
+  await store.authorized(d => d.query('select v23_private.prod_issue_context($1,$2,$3)', [JSON.stringify(moveAsContractor), A, sidA]));
+  assert.deepEqual(await consume(moveAsContractor, 'contractor'), { ok: false, error_code: 'INVALID_AUDIENCE' });
+  const tamperedContractor = proofFor(); await issue(tamperedContractor, 'contractor');
+  assert.deepEqual(await consume(tamperedContractor, 'contractor', { state: randomRef() }), { ok: false, error_code: 'INVALID_STATE' });
+  assert.deepEqual(await consume(tamperedContractor, 'contractor', { nonce: randomRef() }), { ok: false, error_code: 'INVALID_STATE' });
+  const expiredContractor = proofFor(); await issue(expiredContractor, 'contractor');
+  await db.query(`update ops.consumer_auth_handoffs set created_at=created_at-interval '2 minutes',expires_at=expires_at-interval '2 minutes' where code_hash=ops.hash_handoff_secret($1)`, [expiredContractor.code]);
+  assert.deepEqual(await consume(expiredContractor, 'contractor'), { ok: false, error_code: 'HANDOFF_EXPIRED' });
+  const revokedContractor = proofFor(); await issue(revokedContractor, 'contractor');
+  for (const hub of ['move', 'lender', 'insurance', 'investor', 'senior']) assert.deepEqual(await consume(revokedContractor, hub), { ok: false, error_code: 'INVALID_AUDIENCE' });
+  assert.deepEqual(await consume(revokedContractor, 'contractor'), { ok: false, error_code: 'INVALID_STATE' });
+  assert.equal(await snapshot(), savedBeforeContractor);
+  const authorityProof = proofFor();
+  await issue(authorityProof, 'contractor');
+  const contractorAuthority = { hub: 'contractor', audience: 'ask', service: 'svc:trusthub:contractor:bff:v1', scopes: ['saved:write'],
+    subject: A, session: 'ab'.repeat(32), browser: 'cd'.repeat(32), operation: 'consumeProfileSaveContinuation', exchangeProof: authorityProof };
+  await db.exec('begin');
+  await db.query('set local role myth_v23_authorizer');
+  await db.query('insert into v23_private.transaction_authority(backend,transaction_id,authority) values(pg_backend_pid(),txid_current(),$1)', [JSON.stringify(contractorAuthority)]);
+  await db.query('set local role myth_v23_executor');
+  await assert.rejects(db.query('select v23_private.consume_context($1)', [JSON.stringify(authorityProof)]),
+    error => error.code === '42501' && /invalid authority/.test(error.message));
+  await db.exec('rollback');
+  assert.equal(await snapshot(), savedBeforeContractor);
+  console.log('PASS I-L Contractor: issued at https://www.contractortrusthub.com, consumed only as contractor, cross-hub either way is INVALID_AUDIENCE, reuse/expiry/tamper/five-strike unchanged; consume_context still refuses contractor at authority() and writes no Saved row');
 
   // ---- AFTER packet 15: the whole chain per hub -------------------------
   await db.exec('delete from ops.consumer_auth_handoffs; delete from ops.consumer_browser_handoff_intents');
@@ -431,4 +483,4 @@ try {
   assert.equal((await db.query('select count(*)::int n from v23_private.transaction_authority')).rows[0].n, 0);
   console.log('PASS P: zero Watch/Alert relations; no leaked transaction authority');
 } finally { await db.close(); }
-console.log('PASS per-hub account context (Move, Lender, Insurance; production target, embedded database)');
+console.log('PASS per-hub account context (Move, Lender, Insurance, Contractor handoff; production target, embedded database)');
