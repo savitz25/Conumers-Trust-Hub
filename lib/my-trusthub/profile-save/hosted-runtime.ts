@@ -6,6 +6,7 @@ import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
 import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
 import { insurancePinsFor } from './insurance-assertion.ts';
+import { ContractorSourceChannel, contractorPinsFor } from './contractor-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -139,6 +140,25 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
           runtime.insuranceKey = { kid: insuranceKid, pem: insurancePem };
         }
       } catch { /* insurance verify key is absent or not ed25519 */ }
+    }
+    // Optional. A missing contractor verify key leaves Move, Lender, and Insurance running.
+    // This build does not create the key and does not activate the contractor canary.
+    const contractorPins = contractorPinsFor(target);
+    const contractorKid = (env.MY_TRUSTHUB_V23_CONTRACTOR_KEY_ID ?? '').trim();
+    const contractorPem = env.MY_TRUSTHUB_V23_CONTRACTOR_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (contractorPins && /^[A-Za-z0-9_-]{1,64}$/.test(contractorKid) && contractorPem.includes('PUBLIC KEY')) {
+      try {
+        const contractorPublic = createPublicKey(contractorPem);
+        const contractorSpki = String(contractorPublic.export({ type: 'spki', format: 'pem' }));
+        const askSpki = String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' }));
+        const moveSpki = String(movePublic.export({ type: 'spki', format: 'pem' }));
+        const lenderSpki = runtime.lenderKey ? String(createPublicKey(runtime.lenderKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        const insuranceSpki = runtime.insuranceKey ? String(createPublicKey(runtime.insuranceKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        if (contractorPublic.asymmetricKeyType === 'ed25519' && contractorSpki !== askSpki && contractorSpki !== moveSpki && contractorSpki !== lenderSpki && contractorSpki !== insuranceSpki) {
+          runtime.contractorKey = { kid: contractorKid, pem: contractorPem };
+          runtime.contractorSource = new ContractorSourceChannel(key, fetch, contractorPins);
+        }
+      } catch { /* contractor verify key is absent or not ed25519 */ }
     }
     // The exact mover binding resolver must be installed and executable. A
     // syntactically impossible identity returns no row and reveals nothing.
