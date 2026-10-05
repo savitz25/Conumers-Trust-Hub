@@ -6,32 +6,36 @@ import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import {SqliteHarnessBackend} from '../../../scripts/qa/v23-sqlite-backend.ts';
 import {TRANSFER_VERSION,TRANSFER_VERSION_V3,profileKey,type GuestStageInput,type GuestStageRef} from '../contracts/v2-3-profile-transfer.ts';
-export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance';slug?:string}={}){
+export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance'|'senior';slug?:string}={}){
   let now=1000,parent:BrowserParent|null=null;
   const environment=options.environment??'isolated';
   const hub=options.hub??'move';
   // Production registries name the canonical origins and carry no isolated attestation.
   const origin=options.origin??(environment==='production'?'https://www.asktrusthub.com':'http://127.0.0.1:4520');
-  const sourceOrigin=options.sourceOrigin??(environment==='production'?(hub==='lender'?'https://www.lendertrusthub.com':hub==='insurance'?'https://www.insurancetrusthub.com':'https://www.movetrusthub.com'):'http://127.0.0.1:4521');
+  const sourceOrigin=options.sourceOrigin??(environment==='production'?(hub==='lender'?'https://www.lendertrusthub.com':hub==='insurance'?'https://www.insurancetrusthub.com':hub==='senior'?'https://www.seniortrusthub.com':'https://www.movetrusthub.com'):'http://127.0.0.1:4521');
   const registry={environment,isolatedBackendVerified:options.isolatedBackendVerified??(environment==='isolated'),origins:{
-    move:hub==='lender'||hub==='insurance'?(environment==='production'?'https://www.movetrusthub.com':'http://127.0.0.1:4591'):sourceOrigin,
+    move:hub==='lender'||hub==='insurance'||hub==='senior'?(environment==='production'?'https://www.movetrusthub.com':'http://127.0.0.1:4591'):sourceOrigin,
     insurance:hub==='insurance'?sourceOrigin:'http://127.0.0.1:4522',
     lender:hub==='lender'?sourceOrigin:'http://127.0.0.1:4523',
-    contractor:'http://127.0.0.1:4524',senior:'http://127.0.0.1:4525',investor:'http://127.0.0.1:4529'}};
-  const slug=options.slug??(hub==='insurance'?'asfin-llc-l106287':'pacific-trust-mortgage');
+    contractor:'http://127.0.0.1:4524',senior:hub==='senior'?sourceOrigin:'http://127.0.0.1:4525',investor:'http://127.0.0.1:4529'}};
+  const slug=options.slug??(hub==='insurance'?'asfin-llc-l106287':hub==='senior'?'burns-nursing-home-inc':'pacific-trust-mortgage');
   const identity=hub==='lender'
     ? {hub:'lender' as const,nativeId:options.nativeId??'nmls:1984721',profileClass:'marketplace_company'}
     : hub==='insurance'
       ? {hub:'insurance' as const,nativeId:options.nativeId??'state-license:FL:L106287',profileClass:'insurance_provider'}
-      : {hub:'move' as const,nativeId:options.nativeId??'fixture-mover',profileClass:'mover'};
+      : hub==='senior'
+        ? {hub:'senior' as const,nativeId:options.nativeId??'015009',profileClass:'cms_facility'}
+        : {hub:'move' as const,nativeId:options.nativeId??'fixture-mover',profileClass:'mover'};
   const manifest:GuestStageInput=hub==='lender'
     ? {version:TRANSFER_VERSION_V3,sourceHub:'lender',audience:'ask',selected:[{localItemId:slug,revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'lender',canonicalSlug:slug,profile:identity,returnPath:`/lenders/${slug}`}}
     : hub==='insurance'
       ? {version:TRANSFER_VERSION_V3,sourceHub:'insurance',audience:'ask',selected:[{localItemId:slug,revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'insurance',canonicalSlug:slug,profile:identity,returnPath:`/providers/${slug}`}}
-      : {version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:identity.nativeId,profile:identity}};
+      : hub==='senior'
+        ? {version:TRANSFER_VERSION_V3,sourceHub:'senior',audience:'ask',selected:[{localItemId:identity.nativeId,revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'senior',canonicalSlug:slug,profile:identity,returnPath:`/facility/cms/${identity.nativeId}/${slug}`}}
+        : {version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:identity.nativeId,profile:identity}};
   const backend=new SqliteHarnessBackend(join(mkdtempSync(join(tmpdir(),'b4-browser-')),'qa.sqlite'));
   backend.profiles.set(profileKey(identity),{...identity,published:true,supportedClass:true,binding:{id:'fixture-binding',networkEntityId:'fixture-entity',status:'accepted'}});
-  if(hub==='lender'||hub==='insurance')backend.slugs.set(profileKey(identity),slug);
+  if(hub==='lender'||hub==='insurance'||hub==='senior')backend.slugs.set(profileKey(identity),slug);
   let caller:VerifiedCaller={hub,browserBinding:'b'.repeat(43),environment,scopes:['transfer:stage','saved:write','receipt:verify']};
   const runtime=new ParentProfileSaveRuntime({enabled:true,backend,registry,now:()=>now,authenticate:async()=>caller});
   const stage=await runtime.execute('prepareGuestProfileTransfer',manifest) as GuestStageRef;

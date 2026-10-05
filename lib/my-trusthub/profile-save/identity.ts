@@ -4,6 +4,7 @@ import type { FoundationSql } from './p12-p13.ts';
 import { RuntimeError } from './runtime.ts';
 import { resolveLenderMarketplaceProfile } from './lender-binding.ts';
 import { INSURANCE_PROFILE_CLASS, resolveInsuranceProviderProfile } from './insurance-binding.ts';
+import { resolveSeniorProfile } from './senior-binding.ts';
 
 /** Must be supplied by the reviewed per-hub public profile mapper. No slug->ID,
  * publication or class guess is made here. Read inside the commit transaction
@@ -17,6 +18,7 @@ export async function resolveExactProfile(identity: ProfileIdentity, publication
   if (profileKey(current.identity) !== profileKey(identity)) throw new RuntimeError('invalid');
   if (identity.hub === 'lender') return resolveLenderMarketplaceProfile(identity, publication, sql);
   if (identity.hub === 'insurance' && identity.profileClass === INSURANCE_PROFILE_CLASS) return resolveInsuranceProviderProfile(identity, publication, sql);
+  if (identity.hub === 'senior') return resolveSeniorProfile(identity, publication, sql);
   const profile: TrustedProfile = { ...current.identity, published: current.published, supportedClass: current.supportedClass, binding: null };
   if (!profile.published || !profile.supportedClass) return profile;
   const r = await sql.query<{ id: string; network_entity_id: string; binding_status: 'accepted' | 'review_required' }>(
