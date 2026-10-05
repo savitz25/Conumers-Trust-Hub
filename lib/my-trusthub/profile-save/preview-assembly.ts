@@ -13,6 +13,10 @@ import { LENDER_BINDING_SQL, classifyLenderRows, type LenderBindingRow } from '.
 import { verifyInsuranceAssertion, insurancePinsFor } from './insurance-assertion.ts';
 import { INSURANCE_BINDING_SQL, classifyInsuranceRows, parseInsuranceSpecialistEntityId, type InsuranceBindingRow } from './insurance-binding.ts';
 import { guestStageFromInsuranceManifest, isClosedInsuranceManifest, isInsuranceProviderStage } from './insurance-manifest.ts';
+import { verifyContractorAssertion } from './contractor-assertion.ts';
+import { ContractorSourceChannel, contractorPinsFor, isContractorIdentity, isContractorStage } from './contractor-channel.ts';
+import { CONTRACTOR_BINDING_SQL, classifyContractorRows, parseContractorNativeId, type ContractorBindingRow } from './contractor-binding.ts';
+import type { InsuranceAckChannel } from './insurance-channel.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -21,6 +25,7 @@ import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-
 import { isGuestStageInput, manifestDigest, type GuestStageInput } from '../contracts/v2-3-profile-transfer.ts';
 import type { Operation } from './interface.ts';
 import { PRIVATE_HEADERS } from './http.ts';
+import { accountContextIssueQuery } from './hub-account-context.ts';
 
 type Link = { browser: string; transferRef: string; manifestDigest: string; expiresAt: number };
 type StageLink = Link & { manifest: GuestStageInput };
@@ -57,6 +62,9 @@ export class PreviewAssembly {
   lenderKey: AssertionKey | null = null;
   lenderSource: LenderSourceChannel | null = null;
   insuranceKey: AssertionKey | null = null;
+  contractorKey: AssertionKey | null = null;
+  contractorSource: ContractorSourceChannel | null = null;
+  insuranceSource: InsuranceAckChannel | null = null;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
@@ -105,6 +113,18 @@ export class PreviewAssembly {
     };
     return db ? query(db) : this.store.authorized(query);
   }
+  /** Exact Florida DBPR binding. Zero, several, review_required, inactive, or
+   * any disagreement is not eligible. The license comes from the signed manifest. */
+  async contractorBinding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']> & { canonicalPublicProfileRef: string }> {
+    if (!parseContractorNativeId(profile.nativeId) || profile.hub !== 'contractor' || profile.profileClass !== 'contractor_profile') throw new RuntimeError('unavailable');
+    const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
+      const found = await d.query<ContractorBindingRow>(CONTRACTOR_BINDING_SQL, [profile.nativeId]);
+      const decision = classifyContractorRows(profile.nativeId, found.rows);
+      if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
+      return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const, canonicalPublicProfileRef: decision.canonicalPublicProfileRef };
+    };
+    return db ? query(db) : this.store.authorized(query);
+  }
   /** One publication proof per profile per request. */
   private readonly publications = new Map<string, Promise<Publication>>();
   private publication(browser: string, profile: ProfileIdentity): Promise<Publication> {
@@ -142,7 +162,17 @@ export class PreviewAssembly {
         }
         stage = 'issue_context';
         const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-        const issued = await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'issue_context')}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        // The context is consumed as the verified caller's hub, so it is issued for
+        // that hub. The hub is a.caller.hub, which the server set from the verified
+        // specialist assertion and the stored stage. It is never a browser field
+        // and never a key of this proof. Move keeps issue_context. Investor keeps
+        // investor_issue_context. Lender, Insurance, and Contractor use packet 15.
+        // Any other hub fails closed before a statement is sent.
+        const hub = a.caller.hub;
+        const issue = accountContextIssueQuery(this.target, hub);
+        const issued = await db.query<{ issued: boolean }>(issue.text, issue.hubArgument
+          ? [JSON.stringify(proof), p.subject, p.sessionBinding, hub]
+          : [JSON.stringify(proof), p.subject, p.sessionBinding]);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
@@ -167,12 +197,19 @@ export class PreviewAssembly {
           await this.lenderSource.publication(browser, identity);
           return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding: await this.lenderBinding(identity, db) };
         }
+        if (identity.hub === 'contractor') {
+          if (!isContractorIdentity(identity) || !this.contractorSource) return null;
+          const proof = await this.contractorSource.publication(browser, identity);
+          const binding = await this.contractorBinding(identity, db);
+          if (binding.canonicalPublicProfileRef !== `/contractors/${proof.canonicalSlug}`) throw new RuntimeError('unavailable');
+          return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
+        }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId) || identity.profileClass !== 'insurance_provider') return null;
         const binding = await this.insuranceBinding(identity, db);
         return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
       },
       // The return path is the specialist's canonical profile for this identity.
-      returnTask: async identity => {
+      returnTask: async (identity, db) => {
         if (identity.hub === 'move') {
           if (!supportedMoveProfile(identity)) return null;
           const slug = (await this.publication(browser, identity)).canonicalSlug;
@@ -183,8 +220,16 @@ export class PreviewAssembly {
           const slug = (await this.lenderSource.publication(browser, identity)).canonicalSlug;
           return { kind: 'profile', hub: 'lender', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/lenders/${slug}` };
         }
+        if (identity.hub === 'contractor') {
+          if (!isContractorIdentity(identity) || !this.contractorSource) return null;
+          const proof = await this.contractorSource.publication(browser, identity);
+          const ref = (await this.contractorBinding(identity, db)).canonicalPublicProfileRef;
+          if (ref !== `/contractors/${proof.canonicalSlug}`) throw new RuntimeError('unavailable');
+          const slug = ref.slice('/contractors/'.length);
+          return { kind: 'profile', hub: 'contractor', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: ref };
+        }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId)) return null;
-        const ref = (await this.insuranceBinding(identity)).canonicalPublicProfileRef;
+        const ref = (await this.insuranceBinding(identity, db)).canonicalPublicProfileRef;
         const slug = ref.slice('/providers/'.length);
         return { kind: 'profile', hub: 'insurance', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: ref };
       },
@@ -205,7 +250,8 @@ export class PreviewAssembly {
         const move = origin === this.target.moveOrigin;
         const lender = Boolean(this.lenderSource) && origin === PRODUCTION_ORIGINS.lender;
         const insurance = origin === PRODUCTION_ORIGINS.insurance;
-        if (!move && !lender && !insurance) return null;
+        const contractor = Boolean(this.contractorSource) && origin === PRODUCTION_ORIGINS.contractor;
+        if (!move && !lender && !insurance && !contractor) return null;
         const link = await this.store.read<StageLink & { requestPrefix?: string }>('continuation:' + ref);
         if (insurance) {
           if (!link || link.expiresAt <= Date.now() || !link.manifest || !isInsuranceProviderStage(link.manifest)) return null;
@@ -214,8 +260,8 @@ export class PreviewAssembly {
             browserProof: link.browser, expiresAt: link.expiresAt, requestPrefix: link.requestPrefix };
         }
         if (!link || link.expiresAt <= Date.now()) return null;
-        const channel = lender ? this.lenderSource! : this.source;
-        const sourceBody = lender && link.manifest
+        const channel = contractor ? this.contractorSource! : lender ? this.lenderSource! : this.source;
+        const sourceBody = (lender || contractor) && link.manifest
           ? { action: 'source', continuationRef: ref, transferRef: link.transferRef, manifest: link.manifest, manifestDigest: link.manifestDigest, expiresAt: link.expiresAt }
           : { action: 'source', continuationRef: ref };
         const s = await channel.call(sourceBody, 'source:read', link.browser) as SourceSnapshot;
@@ -223,12 +269,18 @@ export class PreviewAssembly {
           s.expiresAt > link.expiresAt || !isGuestStageInput(s.manifest) || manifestDigest(s.manifest) !== link.manifestDigest) return null;
         if (move && s.manifest.selected.some(i => !supportedMoveProfile(i.profile))) return null;
         if (lender && !isLenderMarketplaceStage(s.manifest)) return null;
+        if (contractor && (!isContractorStage(s.manifest) || !s.requestPrefix || s.requestPrefix !== s.browserProof)) return null;
         return s;
       },
       acknowledge: async (s, receipts, p) => {
         if (!equal(await this.parent(request), p)) throw new RuntimeError('unauthorized');
-        if (s.manifest.sourceHub === 'insurance') throw new RuntimeError('unavailable');
-        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : this.source;
+        if (s.manifest.sourceHub === 'insurance') {
+          // Insurance reports an account outcome only on this signed call.
+          if (!this.insuranceSource) throw new RuntimeError('unavailable');
+          await this.insuranceSource.acknowledge(s.continuationRef, receipts, s.browserProof, hash(p.session));
+          return;
+        }
+        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : s.manifest.sourceHub === 'contractor' ? this.contractorSource : this.source;
         if (!channel) throw new RuntimeError('unavailable');
         await channel.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
       }, authenticate: async () => null });
@@ -242,10 +294,12 @@ export class PreviewAssembly {
       const moveProfile = !!profile && supportedMoveProfile(profile);
       const lenderProfile = !!profile && isLenderMarketplaceIdentity(profile);
       const insuranceProfile = !!profile && profile.hub === 'insurance' && parseInsuranceSpecialistEntityId(profile.nativeId) !== null;
-      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile) ||
+      const contractorProfile = !!profile && isContractorIdentity(profile);
+      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile && !contractorProfile) ||
         !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
       const networkEntityId = moveProfile ? (await this.binding(profile)).networkEntityId
         : lenderProfile ? (await this.lenderBinding(profile!)).networkEntityId
+        : contractorProfile ? (await this.contractorBinding(profile!)).networkEntityId
         : (await this.insuranceBinding(profile!)).networkEntityId;
       const outcome = await this.removeSaved(p, networkEntityId);
       return outcome === 'in_project' ? 'in_project' : outcome ? 'removed' : 'not_saved';
@@ -253,7 +307,7 @@ export class PreviewAssembly {
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
       const sourceHub = c.source.manifest.sourceHub;
-      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance') throw new RuntimeError('unauthorized');
+      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance' && sourceHub !== 'contractor') throw new RuntimeError('unauthorized');
       const who: VerifiedCaller = { hub: sourceHub, browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
         parent: { subject: p.subject, sessionBinding: p.session, admitted: true }, exchange: c.contextCandidateRef,
         selectionConfirmed: true, confirmedTransferRef: c.source.transferRef, confirmedAccountContextRef: c.contextCandidateRef };
@@ -269,7 +323,7 @@ export class PreviewAssembly {
     const stage = ['prepareGuestProfileTransfer', 'prepareProfileSaveContinuation'].includes(e?.operation);
     if (!stage && !['getProfileSaveReceipt', 'verifyProfileSaveReceipt'].includes(e?.operation)) throw new RuntimeError('unauthorized');
     let claims;
-    let serviceHub: 'move' | 'lender' | 'insurance' = 'move';
+    let serviceHub: 'move' | 'lender' | 'insurance' | 'contractor' = 'move';
     try {
       claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     } catch (moveError) {
@@ -278,9 +332,15 @@ export class PreviewAssembly {
         claims = await verifyLenderAssertion(request, bytes, this.lenderKey, 'lender', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), lenderPinsFor(this.target)!);
         serviceHub = 'lender';
       } catch (lenderError) {
-        if (!this.insuranceKey || !insurancePinsFor(this.target)) throw lenderError;
-        claims = await verifyInsuranceAssertion(request, bytes, this.insuranceKey, 'insurance', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), insurancePinsFor(this.target)!);
-        serviceHub = 'insurance';
+        try {
+          if (!this.insuranceKey || !insurancePinsFor(this.target)) throw lenderError;
+          claims = await verifyInsuranceAssertion(request, bytes, this.insuranceKey, 'insurance', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), insurancePinsFor(this.target)!);
+          serviceHub = 'insurance';
+        } catch (insuranceError) {
+          if (!this.contractorKey || !contractorPinsFor(this.target)) throw insuranceError;
+          claims = await verifyContractorAssertion(request, bytes, this.contractorKey, 'contractor', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), contractorPinsFor(this.target)!);
+          serviceHub = 'contractor';
+        }
       }
     }
     let who: VerifiedCaller = { hub: serviceHub, browserBinding: claims.browser, environment: this.target.kind, scopes: ['transfer:stage'] };
@@ -309,6 +369,7 @@ export class PreviewAssembly {
         if (serviceHub === 'move' && (input.sourceHub !== 'move' || input.selected.some(i => !supportedMoveProfile(i.profile)))) throw new RuntimeError('invalid');
         if (serviceHub === 'lender' && !isLenderMarketplaceStage(input)) throw new RuntimeError('invalid');
         if (serviceHub === 'insurance' && !isInsuranceProviderStage(input)) throw new RuntimeError('invalid');
+        if (serviceHub === 'contractor' && !isContractorStage(input)) throw new RuntimeError('invalid');
       }
       const result = await execute(operation, input);
       if (operation === 'prepareGuestProfileTransfer') {
@@ -319,7 +380,7 @@ export class PreviewAssembly {
         const v = input as { transferRef: string; manifestDigest: string }, link = await this.store.read<StageLink>('stage:' + v.transferRef);
         if (!link || link.browser !== claims.browser || link.manifestDigest !== v.manifestDigest) throw new RuntimeError('unauthorized');
         const cont = result as { continuationRef: string; expiresAt: number };
-        const stored = serviceHub === 'insurance' ? { ...link, requestPrefix: randomRef() } : link;
+        const stored = serviceHub === 'insurance' ? { ...link, requestPrefix: link.browser } : link;
         await this.store.put('continuation:' + cont.continuationRef, stored, cont.expiresAt, true);
       }
       return result;
@@ -346,7 +407,9 @@ export class PreviewAssembly {
       backend: new AuthorizedPostgresBackend(this.ports(async a => JSON.stringify(a.caller) === JSON.stringify(who), claims.browser)),
       authenticate: async () => who });
     const prepared = await rt.execute('prepareGuestProfileTransfer', stageInput) as Link;
-    const link = { ...prepared, browser: claims.browser, manifest: stageInput, requestPrefix: randomRef() };
+    // Request keys start with the browser proof Insurance signed, so Insurance can
+    // tie the acknowledgement to the handoff it staged (same rule as Lender).
+    const link = { ...prepared, browser: claims.browser, manifest: stageInput, requestPrefix: claims.browser };
     await this.store.put('stage:' + link.transferRef, link, link.expiresAt, true);
     const cont = await rt.execute('prepareProfileSaveContinuation', {
       sourceHub: 'insurance', audience: 'ask', transferRef: prepared.transferRef, manifestDigest: prepared.manifestDigest,
