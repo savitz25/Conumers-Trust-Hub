@@ -163,12 +163,35 @@ test('packet 16 is prepared only and contractor requests the shared hub issuer',
   assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'move'), { text: 'select v23_private.prod_issue_context($1,$2,$3) as issued', hubArgument: false });
   assert.equal(CONTRACTOR_CONTEXT_HUB, 'contractor');
   assert.match(assembly, /const hub = a\.caller\.hub;/);
-  assert.match(assembly, /accountContextIssueCall\(this\.target, hub, proof, p\.subject, p\.sessionBinding\)/);
+  assert.match(assembly, /const issue = accountContextIssueQuery\(this\.target, hub\);/);
+  assert.match(assembly, /issue\.hubArgument\s*\? \[JSON\.stringify\(proof\), p\.subject, p\.sessionBinding, hub\]/);
   assert.equal(assembly.includes('issueSharedAccountContext'), false);
-  for (const packet of [preflight, forward, rollback]) {
+  const authorityForward = readFileSync(new URL('../../../docs/my-trusthub/v2/production/16-ask-prod-contractor-authority-forward.sql', import.meta.url), 'utf8');
+  const authorityRollback = readFileSync(new URL('../../../docs/my-trusthub/v2/production/16-ask-prod-contractor-authority-rollback.sql', import.meta.url), 'utf8');
+  for (const packet of [preflight, forward, rollback, authorityForward, authorityRollback]) {
     assert.equal(packet.includes('hub_issue_context'), false);
     assert.equal(packet.includes('issue_context'), false);
   }
-  assert.equal(assembly.includes("serviceHub === 'insurance' ? { ...link, requestPrefix: randomRef() }"), true);
+  assert.equal(assembly.includes("serviceHub === 'insurance' ? { ...link, requestPrefix: link.browser }"), true);
+  assert.equal(assembly.includes("requestPrefix: claims.browser"), true);
+  assert.equal(assembly.includes("sourceHub === 'insurance') throw new RuntimeError('unavailable')"), false);
   assert.equal(assembly.includes('prod_investor'), false);
+  const returnTask = assembly.slice(assembly.indexOf('returnTask: async'), assembly.indexOf('project: async'));
+  assert.match(returnTask, /this\.contractorBinding\(identity, db\)/);
+  assert.equal(returnTask.split('this.contractorBinding(identity, db)').join('').includes('this.contractorBinding(identity)'), false);
+  assert.match(preflight, /binding_status = 'review_required'/);
+  assert.match(preflight, /ALREADY_APPLIED_HOLD/);
+  assert.match(preflight, /not a silent skip/);
+  assert.match(preflight, /Do not treat result 5 as clean/);
+  const authorityBody = authorityForward.slice(authorityForward.indexOf('create or replace function v23_private.authority()'), authorityForward.lastIndexOf('do $$ begin'));
+  assert.match(authorityBody, /c->>'hub' in \('move','insurance','lender','contractor'\)/);
+  assert.match(authorityBody, /contractor_profile/);
+  assert.match(authorityBody, /fl\\\.dbpr\\\.license/);
+  assert.equal(authorityBody.includes('senior'), false);
+  assert.equal(authorityBody.includes('investor'), false);
+  assert.match(authorityForward, /already applied; review, do not re-apply/);
+  assert.match(authorityRollback, /c->>'hub' in \('move','insurance','lender'\)/);
+  assert.equal(/\bdelete\b/i.test(authorityRollback), false);
+  assert.equal(authorityForward.includes('NOT APPLIED'), true);
+  assert.equal(authorityRollback.includes('NOT APPLIED'), true);
 });

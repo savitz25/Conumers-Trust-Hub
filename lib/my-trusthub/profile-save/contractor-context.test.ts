@@ -127,10 +127,11 @@ test('the exchange uses the verified caller hub and packet 16 adds no context SQ
   const assembly = readFileSync(new URL('./preview-assembly.ts', import.meta.url), 'utf8');
   const exchange = assembly.slice(assembly.indexOf('private async exchange'), assembly.indexOf('private ports('));
   assert.match(exchange, /const hub = a\.caller\.hub;/);
-  assert.match(exchange, /accountContextIssueCall\(this\.target, hub, proof, p\.subject, p\.sessionBinding\)/);
+  assert.match(exchange, /const issue = accountContextIssueQuery\(this\.target, hub\);/);
+  assert.match(exchange, /issue\.hubArgument\s*\? \[JSON\.stringify\(proof\), p\.subject, p\.sessionBinding, hub\]/);
   assert.match(exchange, /targetOrigin: this\.target\.parentOrigin/);
   assert.doesNotMatch(exchange, /sourceHub|issuerHub|headers\.get\('origin'\)/);
-  const packet = ['16-ask-prod-contractor-dbpr-preflight.sql', '16-ask-prod-contractor-dbpr-binding-forward.sql', '16-ask-prod-contractor-dbpr-binding-rollback.sql'];
+  const packet = ['16-ask-prod-contractor-dbpr-preflight.sql', '16-ask-prod-contractor-dbpr-binding-forward.sql', '16-ask-prod-contractor-dbpr-binding-rollback.sql', '16-ask-prod-contractor-authority-forward.sql', '16-ask-prod-contractor-authority-rollback.sql'];
   for (const name of packet) {
     const sql = readFileSync(new URL(`../../../docs/my-trusthub/v2/production/${name}`, import.meta.url), 'utf8');
     assert.equal(sql.includes('hub_issue_context'), false, name);
