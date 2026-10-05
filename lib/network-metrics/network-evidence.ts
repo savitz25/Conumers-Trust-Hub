@@ -152,12 +152,12 @@ export function buildAskNetworkEvidenceInventory(
 export const ASK_NETWORK_STATES = listAskNetworkStates();
 
 const ADAPTER_PATHS: Partial<Record<SpecialistHubId, string[]>> = {
-  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
-  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
-  move: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
-  lender: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
-  insurance: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
-  investor: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana'],
+  contractor: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
+  senior: ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
+  move: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
+  lender: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
+  insurance: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
+  investor: ['/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/alabama'],
 };
 
 function specialistPaths(contract: LoadedSpecialistContract): string[] {
