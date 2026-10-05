@@ -10,10 +10,13 @@
 --
 -- Result 1: exact active Senior cms.ccn binding collisions (same specialist id
 --           on hub senior, same namespace+CCN, or the same CCN filed under
---           another namespace or another hub).
+--           another namespace or another hub). Comparison uses the canonical
+--           identifier: source_identifier_normalized, which is
+--           lower(btrim(source_identifier)), and lower(btrim(specialist_entity_id)).
+--           Case or padding variants of one CCN are the same logical claim.
 -- Result 2: canonical public profile-ref collisions on an active entity.
 -- Result 3: ambiguous network ownership (more than one current binding for one
---           CCN, or more than one active entity for one profile ref).
+--           logical CCN, or more than one active entity for one profile ref).
 -- Result 4: existing accepted bindings for the three CCNs.
 -- Result 5: review_required conflicts for the three CCNs.
 -- Result 6: authority readiness (one row; see 17-ask-prod-senior-authority-forward.sql).
@@ -24,21 +27,21 @@ select hub, specialist_entity_type, specialist_entity_id, identifier_namespace, 
   from network.network_entity_bindings
  where (valid_to is null or valid_to > statement_timestamp())
    and (
-     (hub = 'senior' and specialist_entity_id in ('015009', '055223', '155805'))
+     (hub = 'senior' and lower(btrim(specialist_entity_id)) in ('015009', '055223', '155805'))
      or (
        hub = 'senior'
        and identifier_namespace = 'cms.ccn'
-       and source_identifier in ('015009', '055223', '155805')
+       and source_identifier_normalized in ('015009', '055223', '155805')
      )
      or (
        hub = 'senior'
        and identifier_namespace is distinct from 'cms.ccn'
-       and source_identifier in ('015009', '055223', '155805')
+       and source_identifier_normalized in ('015009', '055223', '155805')
      )
      or (
        hub is distinct from 'senior'
        and identifier_namespace = 'cms.ccn'
-       and source_identifier in ('015009', '055223', '155805')
+       and source_identifier_normalized in ('015009', '055223', '155805')
      )
    )
  group by 1, 2, 3, 4, 5, 6
@@ -55,13 +58,19 @@ select id, status, primary_hub, canonical_public_profile_ref
    )
  order by canonical_public_profile_ref, id;
 
--- Result 3
-select 'binding' as kind, source_identifier as owner_key, count(*) as rows
-  from network.network_entity_bindings
- where (valid_to is null or valid_to > statement_timestamp())
-   and hub = 'senior'
-   and (specialist_entity_id in ('015009', '055223', '155805') or source_identifier in ('015009', '055223', '155805'))
- group by source_identifier
+-- Result 3. One binding row is counted once per logical CCN it claims.
+-- A single accepted row whose specialist id and source identifier are the
+-- same canary stays at count 1 and is not an ambiguity hold.
+select 'binding' as kind, c.ccn as owner_key, count(*) as rows
+  from network.network_entity_bindings b
+  cross join (values ('015009'), ('055223'), ('155805')) as c(ccn)
+ where (b.valid_to is null or b.valid_to > statement_timestamp())
+   and b.hub = 'senior'
+   and (
+     lower(btrim(b.specialist_entity_id)) = c.ccn
+     or b.source_identifier_normalized = c.ccn
+   )
+ group by c.ccn
  having count(*) > 1
 union all
 select 'profile_ref', canonical_public_profile_ref, count(*)
@@ -82,7 +91,10 @@ select id as binding_id, network_entity_id, specialist_entity_type, specialist_e
  where (valid_to is null or valid_to > statement_timestamp())
    and hub = 'senior'
    and binding_status = 'accepted'
-   and (specialist_entity_id in ('015009', '055223', '155805') or source_identifier in ('015009', '055223', '155805'))
+   and (
+     lower(btrim(specialist_entity_id)) in ('015009', '055223', '155805')
+     or source_identifier_normalized in ('015009', '055223', '155805')
+   )
  order by source_identifier, id;
 
 -- Result 5
@@ -91,7 +103,10 @@ select id as binding_id, network_entity_id, specialist_entity_type, specialist_e
  where (valid_to is null or valid_to > statement_timestamp())
    and hub = 'senior'
    and binding_status = 'review_required'
-   and (specialist_entity_id in ('015009', '055223', '155805') or source_identifier in ('015009', '055223', '155805'))
+   and (
+     lower(btrim(specialist_entity_id)) in ('015009', '055223', '155805')
+     or source_identifier_normalized in ('015009', '055223', '155805')
+   )
  order by source_identifier, id;
 
 -- Result 6: authority readiness. v23_private.authority() must be installed.

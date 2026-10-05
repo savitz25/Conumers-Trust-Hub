@@ -36,9 +36,9 @@ do $$ begin
     select 1 from network.network_entity_bindings
      where (valid_to is null or valid_to > statement_timestamp())
        and (
-         (hub = 'senior' and specialist_entity_id in ('015009', '055223', '155805'))
-         or (hub = 'senior' and source_identifier in ('015009', '055223', '155805'))
-         or (identifier_namespace = 'cms.ccn' and source_identifier in ('015009', '055223', '155805'))
+         (hub = 'senior' and lower(btrim(specialist_entity_id)) in ('015009', '055223', '155805'))
+         or (hub = 'senior' and source_identifier_normalized in ('015009', '055223', '155805'))
+         or (identifier_namespace = 'cms.ccn' and source_identifier_normalized in ('015009', '055223', '155805'))
        )
   ) then
     raise exception 'Existing Senior CMS CCN binding requires steward review; no merge';
@@ -124,10 +124,10 @@ do $$ begin
 end $$;
 
 create policy prod_senior_ccn_bindings on network.network_entity_bindings for select to myth_v23_prod_reader
- using(hub='senior' and (identifier_namespace='cms.ccn' or specialist_entity_id ~ '^[A-Z0-9]{6}$'));
+ using(hub='senior' and (identifier_namespace='cms.ccn' or specialist_entity_id ~ '^[A-Za-z0-9]{6}$'));
 create policy prod_senior_ccn_entities on network.network_entities for select to myth_v23_prod_reader
  using(exists(select 1 from network.network_entity_bindings b where b.network_entity_id=network_entities.id
-   and b.hub='senior' and (b.identifier_namespace='cms.ccn' or b.specialist_entity_id ~ '^[A-Z0-9]{6}$')));
+   and b.hub='senior' and (b.identifier_namespace='cms.ccn' or b.specialist_entity_id ~ '^[A-Za-z0-9]{6}$')));
 
 create function v23_private.prod_senior_ccn_binding_for(native_id text)
 returns table(id uuid, network_entity_id uuid, binding_status text, specialist_entity_type text, specialist_entity_id text,
@@ -137,13 +137,13 @@ language sql stable security definer set search_path=pg_catalog,network as $$
    b.identifier_namespace, b.source_identifier, b.jurisdiction, e.status, e.canonical_public_profile_ref
  from network.network_entity_bindings b
  join network.network_entities e on e.id=b.network_entity_id
- where $1 ~ '^[A-Z0-9]{6}$'
+ where $1 ~ '^[A-Za-z0-9]{6}$'
    and b.hub = 'senior'
    and b.binding_status in ('accepted','review_required')
    and b.valid_from <= statement_timestamp() and (b.valid_to is null or b.valid_to > statement_timestamp())
    and (
-     b.specialist_entity_id = $1
-     or (b.identifier_namespace = 'cms.ccn' and b.source_identifier = $1)
+     lower(btrim(b.specialist_entity_id)) = lower(btrim($1))
+     or (b.identifier_namespace = 'cms.ccn' and b.source_identifier_normalized = lower(btrim($1)))
    )
  order by b.id limit 3;
 $$;

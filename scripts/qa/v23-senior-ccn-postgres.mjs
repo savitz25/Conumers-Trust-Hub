@@ -32,6 +32,7 @@ import { ASSERTION_HEADER, signAssertion } from '../../lib/my-trusthub/profile-s
 import { API_PATH, PRODUCTION_TARGET } from '../../lib/my-trusthub/profile-save/isolated-config.ts';
 import { sessionMac } from '../../lib/my-trusthub/profile-save/session-authority.ts';
 import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save/interface.ts';
+import { classifySeniorRows } from '../../lib/my-trusthub/profile-save/senior-binding.ts';
 
 const PRODUCTION = 'qvvxvbcdmbjzrgvwjatw';
 const ASK = 'https://www.asktrusthub.com', SENIOR = 'https://www.seniortrusthub.com';
@@ -215,6 +216,49 @@ try {
   await bind(await entity(WRONG_JURISDICTION), WRONG_JURISDICTION, 'accepted', { jurisdiction: 'FL' }); // a state observation is not the federal CMS identity
   await bind(await entity(WRONG_CCN), WRONG_CCN, 'accepted', { ccn: '777099' }); // native id and CCN disagree
   await bind(await entity(WRONG_NAMESPACE), WRONG_NAMESPACE, 'accepted', { namespace: 'fl.ahca.license' }); // a state-license namespace under the same digits
+  // C-B2: two current accepted cms.ccn claims for one logical CCN, differing only by case,
+  // under two jurisdiction keys so the accepted-binding exclusion allows both rows.
+  const ALPHA = facility('AB12CD', 'ALPHA CASE NURSING HOME', 'alpha-case-nursing-home');
+  const EXACT_ALPHA = facility('CD34EF', 'EXACT ALPHA NURSING HOME', 'exact-alpha-nursing-home');
+  await bind(await entity(ALPHA), ALPHA, 'accepted');
+  await bind(await entity({ ...ALPHA, legalName: 'ALPHA CASE NURSING HOME LOWER' }, 'active', '/facility/cms/AB12CD/alpha-case-lower-claim'), ALPHA, 'accepted', { nativeId: 'ab12cd', ccn: 'ab12cd', jurisdiction: 'AL' });
+  await bind(await entity(EXACT_ALPHA), EXACT_ALPHA, 'accepted');
+  const caseRows = async (id) => await resolve(id);
+  const upperCaseRows = await caseRows('AB12CD');
+  const lowerCaseRows = await caseRows('ab12cd');
+  assert.equal(upperCaseRows.length, 2, 'uppercase lookup must see both case variants');
+  assert.equal(lowerCaseRows.length, 2, 'lowercase lookup must see both case variants');
+  assert.equal(classifySeniorRows('AB12CD', upperCaseRows).outcome, 'denied');
+  assert.equal(classifySeniorRows('AB12CD', upperCaseRows).reason, 'ambiguous');
+  assert.equal(classifySeniorRows('ab12cd', lowerCaseRows).reason, 'ambiguous');
+  const exactAlphaUpper = await caseRows('CD34EF');
+  const exactAlphaLower = await caseRows('cd34ef');
+  assert.equal(exactAlphaUpper.length, 1);
+  assert.equal(exactAlphaLower.length, 1);
+  assert.equal(exactAlphaUpper[0].id, exactAlphaLower[0].id);
+  assert.equal(classifySeniorRows('CD34EF', exactAlphaUpper).outcome, 'eligible');
+  assert.equal(classifySeniorRows('cd34ef', exactAlphaLower).outcome, 'eligible');
+  console.log('PASS case normalization: one alphanumeric CCN resolves from either case; upper/lower accepted claims are ambiguous');
+
+  // Preflight must report the same logical CCN the resolver would collide on.
+  // A second current claim stored with padding is invisible to a raw equality
+  // check and visible once both sides use lower(btrim(...)). The window is
+  // then closed, the same way packet 17 rollback closes a binding.
+  const paddedEntity = (await db.query(`insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction,canonical_public_profile_ref,status)
+    values('organization','BURNS NURSING HOME PADDED','senior','US','/facility/cms/015009/burns-nursing-home-padded','active') returning id`)).rows[0].id;
+  const paddedBinding = (await db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,
+    identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
+    values($1,'senior','cms_facility',' 015009','cms.ccn',' 015009','AL','accepted',now()-interval '1 minute','fixture-only') returning id`, [paddedEntity])).rows[0].id;
+  const dirtyPreflight = await preflightSets();
+  const ambiguity = (await db.exec(read('17-ask-prod-senior-ccn-preflight.sql')))[2].rows;
+  assert.ok(dirtyPreflight[2] >= 1, 'preflight result 3 must see the padded logical duplicate');
+  assert.ok(ambiguity.some(r => r.owner_key === '015009' && Number(r.rows) > 1), JSON.stringify(ambiguity));
+  assert.equal((await resolve('015009')).length, 2, 'resolver and preflight agree that the padded claim collides');
+  const closed = await db.query(`update network.network_entity_bindings set valid_to = clock_timestamp() where id = $1 and valid_to is null returning id`, [paddedBinding]);
+  assert.equal(closed.rows.length, 1);
+  assert.deepEqual(await preflightSets(), [3, 3, 0, 3, 0, 1]);
+  assert.equal((await resolve('015009')).length, 1);
+  console.log('PASS preflight: a padded claim of a canary CCN is the same logical identity the resolver collides on');
 
   // Session authority and the verified parent.
   const sidA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', sidB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', exp = Math.floor(Date.now() / 1000) + 110;
@@ -224,7 +268,7 @@ try {
 
   // Senior source channel fixture: Senior's own verdict per identity. It
   // verifies Ask's signature exactly as the Senior route does.
-  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, WRONG_CLASS, HOSPICE, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CCN, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
+  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, ALPHA, WRONG_CLASS, HOSPICE, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CCN, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
   /** How Senior's publication re-proof misbehaves, when it does. */
   let publicationFault = null;
   const acknowledged = []; const seniorCalls = [];
@@ -388,6 +432,7 @@ try {
   await denied(UNBOUND, 'missing binding');
   await denied(REVIEW, 'review_required binding');
   await denied(AMBIGUOUS, 'ambiguous binding');
+  await denied(ALPHA, 'upper/lower duplicate accepted claims');
   await denied(WRONG_CLASS, 'home health agency (CCN, wrong class and route)');
   await denied(HOSPICE, 'hospice (CCN, wrong class and route)');
   await denied(WRONG_REF, 'binding on another profile ref');
