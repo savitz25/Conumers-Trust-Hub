@@ -286,3 +286,91 @@ that preflight passes. Packet 17 stays a separate operator step.
 
 Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
 suite is `npm run check:my-trusthub-v2-3-widening`.
+
+## Investor official-firm Save (packet 14 context + bindings, packet 19 authority; PREPARED — not applied, not deployed)
+
+Identity (locked): hub `investor` / class `official_firm` / namespace `sec.crd` /
+source identifier = exact numeric firm CRD / specialist entity id `crd-<CRD>` /
+jurisdiction `US`. Return path `/firm/sec-crd-<CRD>`. Never the firm row UUID,
+the name, the slug, an individual adviser CRD, a branch, a notice filing or a
+state-registration observation.
+
+Runtime rule: Ask admits an Investor Save only when (1) the stage carries a
+valid Investor ed25519 assertion, (2) the manifest is one `official_firm` whose
+slug and return path are the ones its CRD implies, (3) Investor re-proves
+publication of that exact CRD over the signed source channel, and (4)
+`v23_private.prod_investor_crd_binding_for` returns exactly one current row that
+is accepted, `official_firm`, `sec.crd`, `US`, on an active entity whose
+canonical profile ref is `/firm/sec-crd-<CRD>`, agreeing on both the native id
+and the CRD. Anything else fails closed.
+
+Network authority is packet 19 (PR #236, certified head
+`3b565707946b7c93252b767cf10aa185336ec8b1`). The packet 14 authority files are
+**SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION**. They are kept as the
+audited predecessor and are not part of this order.
+
+Operator packets, in this order, with the Investor release gate OFF:
+
+| Step | File | Purpose | Marker |
+| --- | --- | --- | --- |
+| 1 | `14-ask-prod-investor-crd-preflight.sql` | Read only. On a clean database sets 1, 2, 3 and 5 are empty and set 4 is one row `baseline` / `PROCEED`. Sets 1 to 3 must be empty before the binding packet. Set 4 must not say `HOLD` (see below). | — |
+| 2 | `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Investor stays on this issuer; it is never routed through `prod_hub_issue_context` (packets 15/18). `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
+| 3 | `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. Does not call or need `authority()`. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
+| — | ~~`14-ask-prod-investor-authority-forward.sql`~~ | Not applied. Superseded. | — |
+| later | `19-ask-prod-network-authority-preflight.sql`, then `-forward.sql` | Network step, after every hub's binding packets: the one six-hub authority (move, insurance, lender, investor `official_firm` / `crd-<CRD>`, contractor, senior). Until it runs, the database refuses every Investor stage with `invalid authority`. | `V23_PROD_NETWORK_AUTHORITY_APPLIED` |
+
+Preflight set 4 (authority state) compares the installed `authority()` body,
+whitespace removed, with the three reviewed bodies:
+
+| `authority_state` | `disposition` | Meaning |
+| --- | --- | --- |
+| `baseline` | `PROCEED` | Migration three-hub body. Investor context and binding packets may run. Authority comes later from packet 19. |
+| `network_final` | `FINAL` | Packet 19 body. Network authority is final. Apply no authority file. |
+| `legacy_packet14` | `HOLD` | The superseded packet 14 four-hub body is installed. Stop. Converge with the packet 19 preflight and forward after review (packet 19 accepts this body as a reviewed predecessor). Do not run the packet 14 authority rollback. |
+| `unknown` | `HOLD` | Any other body, or none. Stop and get review. |
+
+Rollbacks, each owned separately:
+
+| Artifact | Rollback | Note |
+| --- | --- | --- |
+| Investor bindings | `14-ask-prod-investor-crd-binding-rollback.sql` | One receipt row per run; closes the binding's validity, no DELETE. |
+| Investor context issuer | `14-ask-prod-investor-context-rollback.sql` | Drops the one function. Nothing else uses it. |
+| Network authority | `19-ask-prod-network-authority-rollback.sql` | The only authority rollback. Restores the three-hub body from the packet 19 body only; affects every hub packet 19 admits. |
+| ~~Packet 14 authority~~ | ~~`14-ask-prod-investor-authority-rollback.sql`~~ | Superseded. Not a safe undo after packet 19: it refuses the packet 19 body. |
+
+No step deletes Saved research. After any successful consumer Investor Save,
+each of the three rollbacks above needs steward review first: the binding
+rollback (for the firm whose Saved rows point at that binding), the context
+rollback (no further Investor Saves can commit), and the network authority
+rollback (stages for every non-Move hub it admits then fail closed; packet 19
+raises `V23_PROD_NETWORK_AUTHORITY_ROLLBACK_STEWARD`). Saved rows stay in place.
+
+Then: exchange keys (names in `ask-prod-env.md`), set the Ask verify key and
+the Investor variables, set the Investor release gate to the three canary
+slugs, redeploy Investor. Live proof on the three canaries; an unrelated firm
+must stay device-only.
+
+Account context: Investor keeps its dedicated issuer
+`prod_investor_issue_context` (step 2). It is never routed through the shared
+`prod_hub_issue_context` (packets 15 and 18), which refuses `investor`.
+
+Local proof: `npm run check:my-trusthub-v2-investor`.
+
+### Investor and the shared per-hub account context (packets 15 and 18, on main)
+
+The shared router is `accountContextIssueQuery` in
+`lib/my-trusthub/profile-save/hub-account-context.ts`: `move` →
+`issue_context`; `investor` → `investor_issue_context`; `lender`,
+`insurance`, `contractor`, `senior` → `hub_issue_context` with the verified
+hub as `$4`; anything else fails closed before a statement is sent. This branch
+adds no issuer selection of its own. It adds the Investor assertion key and
+source channel beside Lender's and Insurance's in `preview-assembly.ts` and
+`hosted-runtime.ts`, and the Investor acknowledgement beside Insurance's.
+
+Packet 14 touches none of the packet 15 or 18 objects. They apply in either
+order.
+
+Also in this branch (shared code, one guard): a continuation is read only for
+the hub that staged it. Before it, an Investor (or Lender) continuation arriving
+with another hub's Origin was refused only after Ask had called that other
+hub's source channel with it; now nothing is sent.

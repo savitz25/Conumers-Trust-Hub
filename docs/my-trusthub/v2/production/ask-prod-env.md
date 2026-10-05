@@ -61,3 +61,35 @@ production target if the first two are present.
 Admission: production `/my` keeps its existing account policy
 (`MY_TRUSTHUB_ACCESS_MODE` and canary/invitation lists). The Journey QA account
 must already be admitted there.
+
+## Investor official-firm Save (prepared, OFF)
+
+Names only. No key material exists and none belongs in this file. Nothing here
+is set by the deploy, and Ask refuses every Investor handoff until all of it is
+in place and packet 14 has been applied by the operator.
+
+Investor project (`investor-trust-hub-web`, Production scope):
+
+| Name | Notes |
+| --- | --- |
+| `MY_TRUSTHUB_V23_INVESTOR_KEY_ID` | dedicated Investor key id, shared with Ask |
+| `MY_TRUSTHUB_V23_INVESTOR_SIGNING_PRIVATE_KEY_PEM` | ed25519 private PEM. Secret. Investor only |
+| `MY_TRUSTHUB_V23_ASK_KEY_ID` | Ask key id, for source-channel verification |
+| `MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM` | Ask ed25519 public PEM |
+| `MY_TRUSTHUB_V23_PARENT_ORIGIN` | `https://www.asktrusthub.com` |
+| `NEXT_PUBLIC_INVESTOR_PARENT_SAVE_ENABLED` | `1` to enable (release gate, Investor side) |
+| `MTH_INVESTOR_PARENT_SAVE_MODE` | `production` |
+| `NEXT_PUBLIC_INVESTOR_PARENT_SAVE_CANARY_SLUGS` | `sec-crd-106176,sec-crd-104571,sec-crd-110441` for the canary |
+
+Ask project (`conumers-trust-hub`, Production scope):
+
+| Name | Notes |
+| --- | --- |
+| `MY_TRUSTHUB_V23_INVESTOR_KEY_ID` | the same Investor key id |
+| `MY_TRUSTHUB_V23_INVESTOR_VERIFY_PUBLIC_KEY_PEM` | Investor ed25519 public PEM |
+
+The issuer is `urn:trusthub:v23:qvvxvbcdmbjzrgvwjatw:investor` and the claim
+set carries `investor_origin` (never `move_origin` or `lender_origin`). The
+Investor verify key must be its own ed25519 key: a key equal to the Ask, Move,
+Lender or Insurance key is ignored. A missing Investor verify key leaves every
+other hub running and rejects Investor handoffs.
