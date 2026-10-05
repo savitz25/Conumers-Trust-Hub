@@ -13,7 +13,7 @@ import { ASK_NETWORK_STATES } from '../network-metrics/network-evidence.ts';
 import { planAskResearch } from './research-planner.ts';
 
 const routing:Array<[typeof AL_HUBS[number],string[]]>=[
-  ['move',['mover Alabama','household goods in al','USDOT 1234567 Alabama','mover AL']],
+  ['move',['mover Alabama','household goods in al','USDOT 1234567 Alabama','mover AL','MOVERS IN ALABAMA','mover IN AL']],
   ['contractor',['contractor Alabama','electrical contractor Alabama','HVAC contractor Alabama','plumbing contractor Alabama']],
   ['lender',['mortgage lender Alabama','loan broker Alabama','NMLS 3030 AL','within al mortgage']],
   ['insurance',['insurance company Alabama','NAIC 10064 Alabama','NPN 20000635 Alabama','state of al insurance company']],
@@ -39,6 +39,7 @@ test('lowercase al, bare mobile, and another state named first stay outside the 
   assert.equal(alGeography('nursing home Mobile, Alabama')?.city,'Mobile');
   assert.equal(alGeography('nursing home mobile alabama')?.city,'Mobile');
   assert.equal(alGeography('nursing home Birmingham')?.stateCode,'AL');
+  assert.equal(planAskResearch('movers Indiana').requestedGeography?.stateCode,'IN');
 });
 
 test('class-plus-Alabama precedes name candidates; an actual company name remains eligible',()=>{

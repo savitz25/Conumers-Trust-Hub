@@ -32,7 +32,9 @@ export function alPublicationSemanticFingerprint(value=manifest):string{
 export const AL_PUBLICATION_FINGERPRINT = alPublicationSemanticFingerprint();
 export const AL_RANKING_REFUSAL = 'Ask does not rank, recommend or select an Alabama provider winner. Best, safest, top-rated, #1, Trust Score, paid ranking and sponsored ranking are not established. Research source evidence instead.';
 
-const CODE_SEARCH = US_JURISDICTIONS.filter(j=>!['OR','ME','OK','HI','MA','ID'].includes(j.code)).map(j=>({j,re:new RegExp(`\\b${j.code}\\b`)}));
+// Bare IN is the English word "in" when typed in uppercase ("MOVERS IN ALABAMA").
+// Indiana queries use the full state name and are resolved before this function.
+const CODE_SEARCH = US_JURISDICTIONS.filter(j=>!['OR','ME','OK','HI','MA','ID','IN'].includes(j.code)).map(j=>({j,re:new RegExp(`\\b${j.code}\\b`)}));
 const NAME_SEARCH = US_JURISDICTIONS.map(j=>({j,re:new RegExp(`\\b${j.name}\\b`,'i')}));
 const CITY = /\b(birmingham|montgomery|huntsville|tuscaloosa)\b/i;
 const MOBILE_ALABAMA = /\bmobile,?\s+alabama\b/i;
