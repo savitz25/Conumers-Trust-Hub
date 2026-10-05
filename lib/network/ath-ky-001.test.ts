@@ -100,7 +100,8 @@ test('Kentucky manifest retains six frozen grains, independent clocks, and no gr
   assert.match(M.hubs[5].grain,/not dropped/);
   assert.match(M.hubs[5].grain,/different clock/);
   assert.doesNotMatch(published,/1,173|1,174|1,678|1173|1174|1678/);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'kentucky');
+  assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='kentucky'));
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'alabama');
   assert.equal(ASK_NETWORK_STATES.length,ASK_PUBLISHED_STATE_CATALOG.length);
   assert.match(askStateExplorerEyebrow(),new RegExp(`^${ASK_PUBLISHED_STATE_CATALOG.length}-state network explorer$`));
   const evidence=readFileSync('lib/network-metrics/network-evidence.ts','utf8');

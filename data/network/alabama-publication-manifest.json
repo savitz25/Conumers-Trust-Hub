@@ -1,0 +1,57 @@
+{
+  "contract": "ath-al-network-release-v1",
+  "ticket": "ATH-AL-001",
+  "state_code": "AL",
+  "state_name": "Alabama",
+  "ask_canonical": "https://www.asktrusthub.com/alabama",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "452a08dd8c407f4e1e87b5866e26605bee65c6fb", "canonical_state_url": "https://www.movetrusthub.com/alabama",
+      "capability_summary": "APSC household-goods certificate or permit verification is known",
+      "grain": "No statewide household-goods roster was acquired. Missing is not zero and is not a mover count. The published cargo minimum is $5,000. A minimum is a filing rule, not proof that a carrier is insured today. The older host apsc.alabama.gov did not respond and is not a roster.",
+      "source_clocks": { "apsc_pages_retrieved": "2026-10-05", "hhg_roster": null, "specialist_release": "452a08dd8c407f4e1e87b5866e26605bee65c6fb" },
+      "gaps": [{ "capability": "statewide household-goods roster", "state": "NOT_ACQUIRED" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "1cda07a7d0bead85595027e3d06cb0cdddb92ede", "canonical_state_url": "https://www.contractortrusthub.com/alabama",
+      "capability_summary": "8,848 ALBGC license rows, with 3,312 explicitly labeled subcontractor specialty rows kept separate",
+      "grain": "8,848 is the parsed license-row count and the distinct-license count. 3,312 rows carry an explicit subcontractor specialty label. 5,536 other rows stay unclassified. The source has no prime-contractor label. HBLB, AECB, HACR, and PGFB rosters were not acquired.",
+      "source_clocks": { "albgc_roster_retrieved": "2026-10-05", "other_boards": null, "specialist_release": "1cda07a7d0bead85595027e3d06cb0cdddb92ede" },
+      "gaps": [{ "capability": "HBLB, AECB, HACR, and PGFB rosters", "state": "NOT_ACQUIRED" }, { "capability": "prime-contractor label", "state": "NOT_IN_SOURCE" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "4efb1efc3dcd2a3999a155d35f4591816cb27f85", "canonical_state_url": "https://www.lendertrusthub.com/alabama",
+      "capability_summary": "19,619 Bureau of Loans licensees as of June 30, 2025, which is not a mortgage-lender census",
+      "grain": "The composition includes Mortgage Brokers Licensing Act rows of 518 and S.A.F.E. Act originators of 14,836. Those two figures are not added. 88 commercial banks are a separate grain. The 2025 HMDA county-file sum is 206,604 applications and is not a lender census.",
+      "source_clocks": { "bureau_of_loans": "2025-06-30", "banking_report_letter": "2025-12-31", "hmda_vintage": "2025", "specialist_release": "4efb1efc3dcd2a3999a155d35f4591816cb27f85" },
+      "gaps": [{ "capability": "mortgage-lender census", "state": "NOT_LABELED" }, { "capability": "NMLS bulk roster", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "52a7905922ed845de9b64ba9d6cf32a6e96ef27f", "canonical_state_url": "https://www.insurancetrusthub.com/alabama",
+      "capability_summary": "2024 annual-report company-type columns print 2,571, which is not an authorized-insurer census",
+      "grain": "Domestic 402, foreign 2,102, alien 61, and other 6 stay inside that printed company-type total. License Type 241,269 and Business Type 14,309 are separate rows and are not added. The narrative 262,664 is licensees who can sell insurance. Producer, agency, and adjuster rosters were not acquired.",
+      "source_clocks": { "annual_report_year": "2024", "report_retrieved": "2026-10-05", "producer_roster": null, "specialist_release": "52a7905922ed845de9b64ba9d6cf32a6e96ef27f" },
+      "gaps": [{ "capability": "producer, agency, and adjuster rosters", "state": "NOT_ACQUIRED" }, { "capability": "authorized-insurer census", "state": "NOT_LABELED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "ed144256ae717845579531bcfb682d27ab26a993", "canonical_state_url": "https://www.seniortrusthub.com/alabama",
+      "capability_summary": "232 nursing-home directory rows, kept separate from 187 assisted-living, 107 specialty-care assisted-living, 197 home-health, and 188 hospice rows",
+      "grain": "Licensed-bed sums stay with their class: nursing homes 27,342, assisted living 7,446, and specialty-care assisted living 3,499. Hospice prints both a 99 export bed sum and a 100 statistical-summary bed figure. These classes are not one senior population. Adult day care was not in the directory. Inspection and complaint rows were not acquired.",
+      "source_clocks": { "adph_directory_retrieved": "2026-10-05", "adult_day": null, "specialist_release": "ed144256ae717845579531bcfb682d27ab26a993" },
+      "gaps": [{ "capability": "combined Alabama senior population", "state": "REJECTED" }, { "capability": "inspection and complaint rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "7f386118cea5f6868e14945fbcab09beb95a2012", "canonical_state_url": "https://www.investortrusthub.com/alabama",
+      "capability_summary": "165 Alabama state IA firm CRDs with status APPROVED",
+      "grain": "State IA APPROVED firms are separate from 1,639 FILED SEC notice firms, 21 active ERA firms, and 98 principal-office firms. Principal office is geography, not Alabama registration. The 2025-2026 administrative-action index has 33 documents. A cease-and-desist is not a final adjudication. IAR, broker-dealer, and agent rosters were not acquired.",
+      "source_clocks": { "iapd_jurisdiction": "2026-09-17", "principal_office_roster": "2026-08-27", "order_index_retrieved": "2026-10-05", "specialist_release": "7f386118cea5f6868e14945fbcab09beb95a2012" },
+      "gaps": [{ "capability": "IAR, broker-dealer, and agent rosters", "state": "NOT_ACQUIRED" }, { "capability": "canonical spine membership of the 165 firm CRDs", "state": "NOT_READ" }]
+    }
+  ]
+}

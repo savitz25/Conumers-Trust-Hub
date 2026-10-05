@@ -4,6 +4,7 @@ import { resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts'
 import { wiSeniorStateResearch } from './wi-network.ts';
 import { kyResearchHandoff } from './ky-network.ts';
 import { laResearchHandoff } from './la-network.ts';
+import { alResearchHandoff } from './al-network.ts';
 import { inResearchHandoff } from './in-network.ts';
 
 export type NormalizedResearchGeography={kind:ExecutableGeographyKind|'region'|'route';display:string;stateCode?:string;stateName?:string;county?:string;city?:string;zip?:string;origin?:string;destination?:string};
@@ -46,6 +47,15 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
   const base={version:'ask-execution-scope-v1' as const,requestedGeography:requested,normalizedRequestedGeography:normalized,requestedGeographyMeaning:meaning,executionGeographyMeaning:meaning,transformation:'NONE' as AskScopeTransformation,consentRequired:false,disclosureRequired:false,reasonCodes:[] as string[]};
   if(!requested)return {...base,resolutionState:'EXACT',executionAllowed:true};
   if(plan.reasonCodes.includes('CARE_TASK')&&requested.resolution!=='RESOLVED')return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:'Retain the requested location and choose its state or clarify the unsupported local scope before provider research runs.',reasonCodes:['UNRESOLVED_CARE_LOCATION']};
+  const alabama=alResearchHandoff(plan);
+  if(alabama&&normalized?.stateCode==='AL'){
+    const state={kind:'state' as const,display:'Alabama',stateCode:'AL',stateName:'Alabama'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Alabama statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Alabama statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'ALABAMA_STATE_RESEARCH_HANDOFF':'ALABAMA_CITY_CONTEXT_HANDOFF']};
+  }
   const kentucky=kyResearchHandoff(plan);
   if(kentucky&&normalized?.stateCode==='KY'){
     const state={kind:'state' as const,display:'Kentucky',stateCode:'KY',stateName:'Kentucky'};

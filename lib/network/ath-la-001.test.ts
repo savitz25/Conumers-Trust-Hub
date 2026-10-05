@@ -94,9 +94,11 @@ test('Louisiana manifest retains six frozen grains, independent clocks, and no g
   assert.match(M.hubs[3].grain,/not a company census and not a producer census/);
   assert.match(M.hubs[4].grain,/not one combined senior total/);
   assert.match(M.hubs[5].grain,/overlap of approved state IA and notice is 11 and is not dropped from either side/);
-  assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='louisiana'));
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'alabama');
+  assert.equal(ASK_NETWORK_STATES.length,27);
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='kentucky'));
-  assert.match(askStateExplorerEyebrow(),/^\d+-state network explorer$/);
+  assert.match(askStateExplorerEyebrow(),/^27-state network explorer$/);
+
 });
 
 test('Louisiana gateway publishes one statewide route and no local pages',()=>{
