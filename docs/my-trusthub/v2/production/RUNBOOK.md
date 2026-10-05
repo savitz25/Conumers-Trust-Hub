@@ -213,14 +213,14 @@ an unrecognized value, is refused by `prod_hub_issue_context`.
 
 Single use, the 90 second lifetime, the state/nonce binding, the hub check at
 consume time and five-strikes revocation are unchanged.
-`v23_private.authority()` still admits only `move`, `insurance`, and `lender`
-until packet 16 is applied. Packet 15 does not change it. A Contractor Save
-commit through `consume_context` stays fail-closed until
-`16-ask-prod-contractor-authority-forward.sql` admits the contractor contract
-(`contractor` / `contractor_profile` / `fl.dbpr.license`) and no other hub.
-That file is prepared, not applied. `16-ask-prod-contractor-authority-rollback.sql`
-restores the three-hub body. This packet makes the issued context match hub
-`contractor`.
+`v23_private.authority()` on the current production baseline admits `move`,
+`insurance`, and `lender`. Packet 15 does not change it. A Contractor Save
+commit through `consume_context` stays fail-closed until packet 19 admits the
+contractor contract (`contractor` / `contractor_profile` / `fl.dbpr.license`)
+inside the six-hub network authority. `16-ask-prod-contractor-authority-forward.sql`
+and `16-ask-prod-contractor-authority-rollback.sql` are superseded by packet 19
+and are not applied in production. This packet makes the issued context match
+hub `contractor`. Packet 15 remains separately required for Contractor account-context issuance.
 
 | File | Purpose | Marker |
 | --- | --- | --- |
@@ -267,3 +267,52 @@ does not copy the Contractor assertion, resolver, or binding.
 
 Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
 suite is `npm run check:my-trusthub-v2-3-widening`.
+
+## Contractor production SQL (packet 16 bindings, packet 19 authority)
+
+SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION:
+
+- `16-ask-prod-contractor-authority-forward.sql`
+- `16-ask-prod-contractor-authority-rollback.sql`
+
+Both files stay in the repository for provenance and recovery. They are not in
+the production activation order. Packet 19
+(`19-ask-prod-network-authority-forward.sql`) is the only production authority
+transition. It admits `contractor` / `contractor_profile` / `fl.dbpr.license`
+together with move, insurance, lender, investor, and senior.
+
+Production SQL, in this order:
+
+1. `16-ask-prod-contractor-dbpr-preflight.sql` while `v23_private.authority()`
+   is still the three-hub baseline (`move`, `insurance`, `lender`). Result 5
+   must be `BASELINE_NO_AUTHORITY_CONFLICT`. That row is not an authority
+   conflict. Packet 19 is the future authority step.
+2. `16-ask-prod-contractor-dbpr-binding-forward.sql` (the Contractor binding).
+3. Other hub binding packets as applicable.
+4. `19-ask-prod-network-authority-forward.sql`.
+
+There is no packet 16 authority forward in this order. Packet 15 remains separately required for Contractor account-context issuance. The binding forward does not call `authority()`.
+
+After packet 19, result 5 is `NETWORK_AUTHORITY_FINAL` when the installed body
+lists `move`, `insurance`, `lender`, `investor`, `contractor`, `senior` and
+carries the contractor guard `contractor_profile` / `fl.dbpr.license`. That
+state is ready. Packet 16 authority is not missing.
+
+`LEGACY_PACKET16_AUTHORITY_HOLD` means the old packet 16 contractor authority
+body is installed. Hold, and converge with packet 19. Do not re-apply packet
+16 authority.
+
+`UNKNOWN_AUTHORITY_HOLD` means stop. The body is not the three-hub baseline,
+the packet 19 final body, or the legacy packet 16 contractor body. No mutation.
+
+### Rollback after packet 19
+
+Contractor-specific rollback is
+`16-ask-prod-contractor-dbpr-binding-rollback.sql`, and only with steward
+review after a consumer Save. It closes that binding. It does not delete Saved research.
+
+Network authority rollback is `19-ask-prod-network-authority-rollback.sql`.
+That is a network-level steward decision.
+
+`16-ask-prod-contractor-authority-rollback.sql` is not the production rollback
+after packet 19.

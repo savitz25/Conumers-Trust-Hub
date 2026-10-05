@@ -1,6 +1,9 @@
-// Local embedded PostgreSQL ONLY. Applies the real packet 15 issuer and the
-// real packet 16 authority and binding files. Nothing here contacts a hosted
-// database, creates a production key, or turns the contractor canary on.
+// Local embedded PostgreSQL ONLY. Applies the real packet 15 issuer, the real
+// packet 16 binding files, and the retained packet 16 authority SQL as a local
+// fixture so consume_context can be exercised. That authority fixture is not
+// the production activation order. Production authority is packet 19.
+// Nothing here contacts a hosted database, creates a production key, or turns
+// the contractor canary on.
 import assert from 'node:assert/strict';
 import { createHash, generateKeyPairSync, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -247,11 +250,82 @@ try {
   }
   const selectSets = results => results.filter(r => Array.isArray(r.rows) && Array.isArray(r.fields) && r.fields.length > 0);
   const preflight = async () => selectSets(await db.exec(read('16-ask-prod-contractor-dbpr-preflight.sql')));
+  const authorityRow = sets => {
+    const rows = sets.flatMap(r => r.rows).filter(row => row.disposition);
+    assert.equal(rows.length, 1, JSON.stringify(sets.map(r => r.rows)));
+    return rows[0];
+  };
+  const packet19StandIn = `
+    create or replace function v23_private.authority() returns jsonb language plpgsql security invoker
+    set search_path=pg_catalog,v23_private as $authority$
+    declare c jsonb; op text;
+    begin
+      if c is null or not coalesce(c->>'hub' in ('move','insurance','lender','investor','contractor','senior') and c->>'audience'='ask', false) then
+        raise exception 'invalid authority' using errcode='42501';
+      end if;
+      if c->>'hub' = 'contractor' and c#>>'{profile,profileClass}' is distinct from 'contractor_profile' then
+        raise exception 'invalid authority' using errcode='42501';
+      end if;
+      if c->>'hub' = 'contractor' and c#>>'{profile,identifierNamespace}' is distinct from 'fl.dbpr.license' then
+        raise exception 'invalid authority' using errcode='42501';
+      end if;
+      return c;
+    end $authority$;`;
+  const sixHubWithoutGuard = `
+    create or replace function v23_private.authority() returns jsonb language plpgsql security invoker
+    set search_path=pg_catalog,v23_private as $authority$
+    declare c jsonb;
+    begin
+      if c->>'hub' in ('move','insurance','lender','investor','contractor','senior') then return c; end if;
+      return c;
+    end $authority$;`;
+  const unknownBody = `
+    create or replace function v23_private.authority() returns jsonb language plpgsql security invoker
+    set search_path=pg_catalog,v23_private as $authority$
+    declare c jsonb;
+    begin
+      if c->>'hub' in ('move','insurance') then return c; end if;
+      raise exception 'invalid authority' using errcode='42501';
+    end $authority$;`;
+  async function classifyWhile(sql) {
+    const saved = (await db.query(`select pg_get_functiondef(to_regprocedure('v23_private.authority()')) as def`)).rows[0].def;
+    try {
+      await db.exec(sql);
+      return authorityRow(await preflight());
+    } finally {
+      await db.exec(saved);
+    }
+  }
 
   const before = await preflight();
   assert.ok(before.length >= 5, 'preflight returned ' + before.length + ' sets');
-  assert.ok(before.every(r => r.rows.length === 0), 'preflight was not empty before packet 16: ' + JSON.stringify(before.map(r => r.rows)));
-  console.log('PASS packet 16 preflight is empty before the authority and binding packets, including the already-applied authority hold');
+  const baseline = authorityRow(before);
+  assert.equal(baseline.disposition, 'BASELINE_NO_AUTHORITY_CONFLICT');
+  assert.match(baseline.operator_instruction, /No authority conflict/);
+  assert.match(baseline.operator_instruction, /Packet 19 is the future authority step/);
+  assert.match(baseline.operator_instruction, /Do not apply 16-ask-prod-contractor-authority-forward\.sql/);
+  assert.ok(before.filter(r => !r.rows.some(row => row.disposition)).every(r => r.rows.length === 0), JSON.stringify(before.map(r => r.rows)));
+  console.log('PASS baseline authority state: no conflict; packet 19 is the future authority step');
+
+  const finalAuthority = await classifyWhile(packet19StandIn);
+  assert.equal(finalAuthority.disposition, 'NETWORK_AUTHORITY_FINAL');
+  assert.match(finalAuthority.operator_instruction, /Network authority final/);
+  assert.match(finalAuthority.operator_instruction, /Ready/);
+  assert.match(finalAuthority.operator_instruction, /Packet 16 authority is not missing/);
+  assert.doesNotMatch(finalAuthority.operator_instruction, /packet 16 authority is missing/i);
+  const bareSix = await classifyWhile(sixHubWithoutGuard);
+  assert.equal(bareSix.disposition, 'UNKNOWN_AUTHORITY_HOLD');
+  assert.match(bareSix.operator_instruction, /HOLD/);
+  assert.match(bareSix.operator_instruction, /STOP/);
+  assert.match(bareSix.operator_instruction, /No mutation/);
+  const unknown = await classifyWhile(unknownBody);
+  assert.equal(unknown.disposition, 'UNKNOWN_AUTHORITY_HOLD');
+  assert.match(unknown.operator_instruction, /HOLD/);
+  assert.match(unknown.operator_instruction, /STOP/);
+  assert.match(unknown.operator_instruction, /No mutation/);
+  const restoredBaseline = authorityRow(await preflight());
+  assert.equal(restoredBaseline.disposition, 'BASELINE_NO_AUTHORITY_CONFLICT');
+  console.log('PASS packet 19 body is network authority final; a six-hub body without the contractor guard and any other unknown body are HOLD STOP');
 
   await quiet();
   const savedBefore = await snapshot();
@@ -282,11 +356,14 @@ try {
   await db.exec(authorityForward);
   await assert.rejects(db.exec(authorityForward), /already applied; review, do not re-apply/); await db.exec('rollback');
   const held = await preflight();
-  const holds = held.filter(r => r.rows.some(row => row.disposition === 'ALREADY_APPLIED_HOLD'));
+  const holds = held.filter(r => r.rows.some(row => row.disposition === 'LEGACY_PACKET16_AUTHORITY_HOLD'));
   assert.equal(holds.length, 1);
   assert.equal(holds[0].rows.length, 1);
+  assert.match(holds[0].rows[0].operator_instruction, /HOLD/);
+  assert.match(holds[0].rows[0].operator_instruction, /Converge with packet 19/);
+  assert.match(holds[0].rows[0].operator_instruction, /Do not apply 16-ask-prod-contractor-authority-forward\.sql/);
   assert.ok(held.filter(r => r !== holds[0]).every(r => r.rows.length === 0), JSON.stringify(held.map(r => r.rows)));
-  console.log('PASS contractor authority forward applies once, a second apply is a hold, and preflight reports ALREADY_APPLIED_HOLD instead of a clean skip');
+  console.log('PASS legacy packet 16 authority body is HOLD and points at packet 19; the local fixture still refuses a second apply');
 
   const accepted = await readAuthority(authorityFor('contractor', 'prepareGuestProfileTransfer', manifestFor(ROOF), ['transfer:stage']));
   assert.equal(accepted.hub, 'contractor');
@@ -685,6 +762,9 @@ try {
 
   const moveBeforeRollback = await snapshot();
   await db.exec(authorityRollback);
+  const rolledToBaseline = authorityRow(await preflight());
+  assert.equal(rolledToBaseline.disposition, 'BASELINE_NO_AUTHORITY_CONFLICT');
+  assert.match(rolledToBaseline.operator_instruction, /Packet 19 is the future authority step/);
   await rejectAuthority(authorityFor('contractor', 'consumeProfileSaveContinuation', {}, ['saved:write']), /invalid authority/);
   assert.equal((await readAuthority(authorityFor('move', 'consumeProfileSaveContinuation', {}, ['saved:write']))).hub, 'move');
   assert.equal((await readAuthority(authorityFor('lender', 'consumeProfileSaveContinuation', {}, ['saved:write']))).hub, 'lender');
@@ -700,7 +780,9 @@ try {
   assert.deepEqual(acknowledged, [['move', 'saved']]);
   await db.exec(authorityForward);
   await assert.rejects(db.exec(authorityForward), /already applied; review, do not re-apply/); await db.exec('rollback');
-  console.log('PASS authority rollback restores the three-hub refusal, move still saves, and the forward packet applies again only from that restored body');
+  const afterAuthorityRollback = authorityRow(await preflight());
+  assert.equal(afterAuthorityRollback.disposition, 'LEGACY_PACKET16_AUTHORITY_HOLD');
+  console.log('PASS retained packet 16 authority rollback still restores the three-hub body in this local fixture, move still saves, and re-applying that predecessor returns the legacy hold; it is not the production rollback after packet 19');
 
   const plumbing = receipt.rows.find(r => r.external_key === 'CFC1427249');
   const beforeBindingRollback = await snapshot();
