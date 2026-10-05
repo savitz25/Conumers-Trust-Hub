@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-LA-001",
+  "contract": "ath-la-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "14f50a5944c3600e9a7a5093b06b69740222283d",
+  "manifest": "data/network/louisiana-publication-manifest.json",
+  "semantic_fingerprint": "19d6af54c7af1547593d5cab4b29b6b2917f4f4fff9218254d444d262df95581",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}
