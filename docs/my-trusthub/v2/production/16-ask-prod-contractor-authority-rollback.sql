@@ -1,10 +1,16 @@
--- MY TRUSTHUB V2 — REMOVE THE CONTRACTOR CONTRACT FROM THE V2-3 TRANSACTION AUTHORITY (ROLLBACK, operator).
--- Packet 16. NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw.
+-- SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION
+-- The production authority transition is 19-ask-prod-network-authority-forward.sql.
+-- This file remains the audited packet 16 predecessor for provenance and recovery.
+-- It is not the production rollback after packet 19. Packet 19 rollback restores
+-- the three-hub body only from the packet 19 body. This rollback refuses any other body.
+-- MY TRUSTHUB V2 — REMOVE THE CONTRACTOR CONTRACT FROM THE V2-3 TRANSACTION AUTHORITY (ROLLBACK, retained predecessor).
+-- Packet 16. NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw. Do not apply this file in production.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 --
--- Restores v23_private.authority() to the reviewed three-hub body (move,
--- insurance, lender). Runs only when the installed body is exactly the
--- contractor body written by 16-ask-prod-contractor-authority-forward.sql.
+-- Predecessor behavior only. Restores v23_private.authority() to the reviewed
+-- three-hub body (move, insurance, lender). Runs only when the installed body
+-- is exactly the contractor body written by 16-ask-prod-contractor-authority-forward.sql.
+-- This is not the production rollback after packet 19.
 -- After it, a contractor stage or consume_context is refused inside the
 -- database again. Move, insurance, and lender keep the checks they had before
 -- the forward packet. Owner, ACL, and every row are unchanged.

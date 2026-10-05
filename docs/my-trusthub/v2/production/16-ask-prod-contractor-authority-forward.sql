@@ -1,14 +1,17 @@
--- MY TRUSTHUB V2 — ADMIT THE CONTRACTOR CONTRACT TO THE V2-3 TRANSACTION AUTHORITY (FORWARD, operator).
--- Packet 16. NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw.
+-- SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION
+-- The production authority transition is 19-ask-prod-network-authority-forward.sql.
+-- This file remains the audited packet 16 predecessor for provenance and recovery.
+-- It is not in the production activation order. Packet 19 admits contractor.
+-- MY TRUSTHUB V2 — ADMIT THE CONTRACTOR CONTRACT TO THE V2-3 TRANSACTION AUTHORITY (FORWARD, retained predecessor).
+-- Packet 16. NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw. Do not apply this file in production.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
 --
--- Packet 15 can issue a contractor account context. v23_private.authority()
--- (migration 20260919205200) still accepts only hub move, insurance, or lender,
--- so consume_context as contractor fails closed with invalid authority before
--- any Saved row can commit. This file is that authority change. It does not
--- change packet 15 and it does not create an account-context function.
+-- Packet 15 can issue a contractor account context. The statements below are
+-- the audited packet 16 predecessor, kept for provenance and recovery.
+-- Production does not run this file. Packet 19 is the authority transition.
+-- It does not change packet 15 and it does not create an account-context function.
 --
--- WHAT CHANGES: one function body. The reviewed three-hub checks stay. The hub
+-- Predecessor behavior: one function body. The reviewed three-hub checks stay. The hub
 -- list gains contractor, and a contractor-only guard admits a carried profile
 -- only when it is hub contractor, profile class contractor_profile, and native
 -- id fl.dbpr.license:<DBPR key>. Consume and continuation carry no profile;
