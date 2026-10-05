@@ -1,0 +1,57 @@
+{
+  "contract": "ath-ms-network-release-v1",
+  "ticket": "ATH-MS-001",
+  "state_code": "MS",
+  "state_name": "Mississippi",
+  "ask_canonical": "https://www.asktrusthub.com/mississippi",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "37c925e077232170c4ee67ff0cf26608d8afe260", "canonical_state_url": "https://www.movetrusthub.com/mississippi",
+      "capability_summary": "Household-goods certificate roster not acquired",
+      "grain": "Mississippi intrastate household-goods carriers need a certificate of public convenience and necessity. The current statewide certificate roster was not acquired, and missing is not zero. A contract-carrier permit is a separate authority. Passenger authority and other property authority are separate and are not a count of movers. The published cargo and liability figures are proof-of-insurance requirements, not a carrier's current insurance status. FMCSA interstate authority and a USDOT or MC number are federal identifiers, not the state certificate.",
+      "source_clocks": { "guidelines_retrieved": "2026-10-05", "certificate_roster": null, "specialist_release": "37c925e077232170c4ee67ff0cf26608d8afe260" },
+      "gaps": [{ "capability": "current household-goods certificate roster", "state": "NOT_ACQUIRED" }, { "capability": "current contract-carrier permit roster", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "ea0e165bd579c2ca3f529c0eb79ab45ad538d2ff", "canonical_state_url": "https://www.contractortrusthub.com/mississippi",
+      "capability_summary": "3,425 printed Licensed rows on the 14 Aug 2026 MSBOC export",
+      "grain": "3,425 is the printed Licensed status on that saved file. It is not a live census as of 5 Oct 2026. 8,242 unique keys cover every printed status and are not the licensed count. Commercial and residential labels stay separate. Class, qualifying party, county, expiration, issue date, and violations were not in the export. Secondary boards were not acquired.",
+      "source_clocks": { "msboc_export_saved": "2026-08-14", "live_recount": null, "specialist_release": "ea0e165bd579c2ca3f529c0eb79ab45ad538d2ff" },
+      "gaps": [{ "capability": "class, qualifier, county, expiration, and violation fields", "state": "NOT_IN_SOURCE" }, { "capability": "factory-built, elevator, and electronic-protection boards", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "05206d912c2a58b242c97334664f4650a60f34cd", "canonical_state_url": "https://www.lendertrusthub.com/mississippi",
+      "capability_summary": "7,093 mortgage lenders, branches, and loan originators, not split",
+      "grain": "The DBCF FY2025 annual report, as of 30 Jun 2025, prints 7,093 mortgage lenders, branches, and loan originators. Broker, lender, servicer, branch, and originator are not split. 2,092 consumer-finance companies are a separate class. The printed 9,185 is those two sentences and is not a third population. 53 state-chartered banks are not mortgage licenses. HMDA 2025 county-file applications, originations, and denials are market activity, not a license census. The NMLS bulk roster was not acquired.",
+      "source_clocks": { "dbcf_fiscal_year_end": "2025-06-30", "hmda_county_file": "2025", "nmls_bulk_roster": null, "specialist_release": "05206d912c2a58b242c97334664f4650a60f34cd" },
+      "gaps": [{ "capability": "separate lender, broker, branch, and originator rosters", "state": "NOT_ACQUIRED" }, { "capability": "NMLS bulk roster", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "228dd8ced67bad4e48d0e1c3cdebef2a32bde1f9", "canonical_state_url": "https://www.insurancetrusthub.com/mississippi",
+      "capability_summary": "2,129 licensed-company rows, kept separate from 10,645 producer entities",
+      "grain": "The MID licensed-company list retrieved 5 Oct 2026 has 2,129 rows. The Insurance Producer Entity file saved 13 Aug 2026 has 10,645 rows. Those populations are not added. Individual producers, adjusters, surplus-lines licensees, appointments, and enforcement actions were not acquired. Fire Marshal licenses are not producer licenses.",
+      "source_clocks": { "company_list_retrieved": "2026-10-05", "producer_entity_file_saved": "2026-08-13", "individual_producer_roster": null, "specialist_release": "228dd8ced67bad4e48d0e1c3cdebef2a32bde1f9" },
+      "gaps": [{ "capability": "individual producer, adjuster, surplus-lines, and appointment rosters", "state": "NOT_ACQUIRED" }, { "capability": "enforcement action corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "2888dac858d794c3c240caf5ee9a78309ea05177", "canonical_state_url": "https://www.seniortrusthub.com/mississippi",
+      "capability_summary": "209 nursing facilities, kept separate from 195 personal care homes",
+      "grain": "The MSDH directory dated 18 Sep 2026 prints 209 nursing facilities, 195 personal care homes, 49 home health agencies, 98 hospices, and 14 ICF/IID providers. These classes are not one senior population. The Alzheimers-unit mark and the personal-care Alzheimer units are attributes, not extra facilities. Home-health branches are not agencies. The listed home-health parts do not equal the printed 49, and the missing rows were not invented. Survey, complaint, and enforcement rows were not acquired. CMS was not bridged. Administrators are not facilities.",
+      "source_clocks": { "directory_date": "2026-09-18", "directory_retrieved": "2026-10-05", "survey_corpus": null, "specialist_release": "2888dac858d794c3c240caf5ee9a78309ea05177" },
+      "gaps": [{ "capability": "combined Mississippi senior population", "state": "REJECTED" }, { "capability": "survey, complaint, and enforcement corpora", "state": "NOT_ACQUIRED" }, { "capability": "CMS bridge", "state": "NOT_ATTEMPTED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "ca3be460e8279b0ad9ec8f05893a17eb3570b33e", "canonical_state_url": "https://www.investortrusthub.com/mississippi",
+      "capability_summary": "67 Mississippi state-registered IA firm CRDs with status APPROVED",
+      "grain": "67 is the APPROVED state-IA firm-CRD count from the IAPD jurisdiction filter. Federal notice filings, 1,199 FILED, and active ERA firms, 3, are separate. Principal-office geography is 35 firms as of 27 Aug 2026 and is not Mississippi registration. These lenses are not added. Securities orders were not acquired. A cease-and-desist is not a final adjudication. IAR, broker-dealer, and agent rosters were not acquired. Spine membership was not read.",
+      "source_clocks": { "iapd_jurisdiction": "2026-09-17", "principal_office_roster": "2026-08-27", "securities_orders": null, "specialist_release": "ca3be460e8279b0ad9ec8f05893a17eb3570b33e" },
+      "gaps": [{ "capability": "securities order corpus", "state": "NOT_ACQUIRED" }, { "capability": "IAR, broker-dealer, and agent rosters", "state": "NOT_ACQUIRED" }, { "capability": "canonical spine membership of the 67 firm CRDs", "state": "NOT_READ" }]
+    }
+  ]
+}

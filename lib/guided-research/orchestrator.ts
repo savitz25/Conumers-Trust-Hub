@@ -13,6 +13,7 @@ import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/m
 import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -291,6 +292,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const mississippi=msResearchHandoff(session.researchPlan);
+  if(mississippi&&session.hub===mississippi.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${msCaveat(mississippi.hub,session.originalQuestion)} ${city?`${city} is context only; no city or county page was executed. `:''}Continue at ${mississippi.label} Mississippi. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:mississippi.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Mississippi ${mississippi.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Mississippi statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-ms-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:mississippi.href,label:`Open ${mississippi.label} Mississippi`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:mississippi.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const southCarolina=scResearchHandoff(session.researchPlan);
   if(southCarolina&&session.hub===southCarolina.hub){

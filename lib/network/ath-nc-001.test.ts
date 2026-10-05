@@ -259,7 +259,7 @@ test('state page inventory adds North Carolina once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'NC').length, 1);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'north-carolina'));
   assert.equal(ASK_NETWORK_STATES.length, 28);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'south-carolina');
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'mississippi');
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
 
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/north-carolina'), true);
