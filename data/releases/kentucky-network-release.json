@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-KY-001",
+  "contract": "ath-ky-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "494f4321fea5daf5d690b0c29e9bc3b8707ae1a7",
+  "manifest": "data/network/kentucky-publication-manifest.json",
+  "semantic_fingerprint": "fe4d731aac2c235abe93f1239fa6105ed95e7f81894219e20cc75960855fc4b3",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

@@ -3,6 +3,7 @@ import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksL
 import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
 import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksLikeMaryland, classifyMdHub } from './md-network.ts';
 import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
+import { kyAmbiguousNumber, kyIdentifier, kyRefusal, kyRankingAsked, queryLooksLikeKentucky, classifyKyHub } from './ky-network.ts';
 import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksLikeLouisiana, classifyLaHub } from './la-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
@@ -326,6 +327,25 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const kyId=kyIdentifier(originalQuestion);
+  const kentucky=queryLooksLikeKentucky(originalQuestion);
+  const kyBlocked=kyRefusal(originalQuestion);
+  const kyHub=kyId?.hub??(kentucky?classifyKyHub(originalQuestion):undefined);
+  const kyNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const kySeparateTask=Boolean(kyId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!kySeparateTask&&(kyId||kyBlocked||(kentucky&&!kyNamed&&(kyHub||/^(Kentucky|KY)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:kyAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':kyRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':kyId?'IDENTIFIER_LOOKUP':kyHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:kyHub,candidateHubs:kyHub?[kyHub]:[],identifier:kyId?{type:kyId.type,value:kyId.value,raw:kyId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:kyBlocked?['sourceOrScope']:[],executionAllowed:!kyBlocked&&Boolean(kyHub),
+      executionMode:kyBlocked||!kyHub?'CLARIFY':kyId?'IDENTIFIER':'COHORT',
+      clarificationReason:kyBlocked??(!kyHub?'Open /kentucky for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[kyId?'EXACT_IDENTIFIER_RECOGNIZED':'KENTUCKY_RESEARCH_ROUTING',...(kyBlocked?['KENTUCKY_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:kyId?'EXACT_IDENTIFIER':'COHORT'};
+  }
   const laId=laIdentifier(originalQuestion);
   const louisiana=queryLooksLikeLouisiana(originalQuestion);
   const laBlocked=laRefusal(originalQuestion);
