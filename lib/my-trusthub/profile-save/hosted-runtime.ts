@@ -8,6 +8,7 @@ import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
 import { insurancePinsFor } from './insurance-assertion.ts';
 import { InsuranceAckChannel } from './insurance-channel.ts';
 import { InvestorSourceChannel, investorPinsFor } from './investor-channel.ts';
+import { SeniorSourceChannel, seniorPinsFor } from './senior-channel.ts';
 import { ContractorSourceChannel, contractorPinsFor } from './contractor-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
@@ -180,6 +181,27 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
           runtime.investorSource = new InvestorSourceChannel(key, fetch, investorPins);
         }
       } catch { /* investor verify key is absent or not ed25519 */ }
+    }
+    // Optional. A missing Senior verify key leaves Move, Lender, Insurance, and Investor running.
+    // This build does not create the key and does not activate Senior parent sync or the canary.
+    const seniorPins = seniorPinsFor(target);
+    const seniorKid = (env.MY_TRUSTHUB_V23_SENIOR_KEY_ID ?? '').trim();
+    const seniorPem = env.MY_TRUSTHUB_V23_SENIOR_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (seniorPins && /^[A-Za-z0-9_-]{1,64}$/.test(seniorKid) && seniorPem.includes('PUBLIC KEY')) {
+      try {
+        const seniorPublic = createPublicKey(seniorPem);
+        const seniorSpki = String(seniorPublic.export({ type: 'spki', format: 'pem' }));
+        const askSpki = String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' }));
+        const moveSpki = String(movePublic.export({ type: 'spki', format: 'pem' }));
+        const lenderSpki = runtime.lenderKey ? String(createPublicKey(runtime.lenderKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        const insuranceSpki = runtime.insuranceKey ? String(createPublicKey(runtime.insuranceKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        const investorSpki = runtime.investorKey ? String(createPublicKey(runtime.investorKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        const contractorSpki = runtime.contractorKey ? String(createPublicKey(runtime.contractorKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        if (seniorPublic.asymmetricKeyType === 'ed25519' && seniorSpki !== askSpki && seniorSpki !== moveSpki && seniorSpki !== lenderSpki && seniorSpki !== insuranceSpki && seniorSpki !== investorSpki && seniorSpki !== contractorSpki) {
+          runtime.seniorKey = { kid: seniorKid, pem: seniorPem };
+          runtime.seniorSource = new SeniorSourceChannel(key, fetch, seniorPins);
+        }
+      } catch { /* senior verify key is absent or not ed25519 */ }
     }
     // The exact mover binding resolver must be installed and executable. A
     // syntactically impossible identity returns no row and reveals nothing.
