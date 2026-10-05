@@ -177,3 +177,46 @@ production. The enumeration itself is kept in the Move repo at
 `docs/my-trusthub-v2-production/exact-usdot-enumeration-2026-10-03.json`.
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
+
+## Packet 19 — network authority finalization
+
+Packet 19 is the one production transition of `v23_private.authority()` from the
+reviewed three-hub body (`move`, `insurance`, `lender`) to the six-hub body.
+It does not issue account context, create bindings, write Saved research, or
+create keys. Packets 14, 16, and 17 authority forwards do not compose; they
+are superseded by this packet. Their binding and resolver files stay.
+
+| File | Purpose |
+| --- | --- |
+| `19-ask-prod-network-authority-preflight.sql` | Read-only. Accepts only a reviewed predecessor. Sets `v23.network_authority_state` and `v23.network_authority_hubs`. Marker `V23_PROD_NETWORK_AUTHORITY_PREFLIGHT_PASS`. |
+| `19-ask-prod-network-authority-forward.sql` | Replaces `authority()` with one six-hub body. Second run stops. Marker `V23_PROD_NETWORK_AUTHORITY_APPLIED`. |
+| `19-ask-prod-network-authority-rollback.sql` | Restores the three-hub body only when the installed body is the packet 19 body. No DELETE. Marker `V23_PROD_NETWORK_AUTHORITY_ROLLED_BACK`. |
+
+Final contracts, and no others: `move`, `insurance`, and `lender` keep the
+reviewed checks with no new class predicate. `investor` is `official_firm` /
+`sec.crd` (`crd-<CRD>`). `contractor` is `contractor_profile` /
+`fl.dbpr.license:<DBPR key>`. `senior` is `cms_facility` / `cms.ccn` (the bare
+CCN). The hub is the authorizer's transaction row. A browser field cannot
+select it.
+
+Production SQL order, with the current hub preflight files left as they are:
+
+1. Hub preflights, while `authority()` is still the three-hub body.
+2. Hub binding packets, any order among packet 14, 16, and 17 bindings.
+   Binding forwards do not read `authority()`. They do require
+   `myth_v23_prod_reader` from packet 02, which production already has.
+3. Packet 19 preflight (`state=baseline`), then the packet 19 forward.
+4. Keys, gates, and canaries. Not part of this packet.
+
+Do not apply `14-ask-prod-investor-authority-forward.sql`,
+`16-ask-prod-contractor-authority-forward.sql`, or
+`17-ask-prod-senior-authority-forward.sql`, or their rollbacks, in production.
+After any successful Investor, Contractor, or Senior consumer Save, packet 19
+rollback requires explicit steward review. The rollback restores the function
+and does not delete Saved rows.
+
+The current hub preflights mis-report if they are run after packet 19. The
+owner edits are in `19-NETWORK-AUTHORITY.md`. This runbook does not change
+those packets.
+
+Local proof: `npm run check:my-trusthub-v2-network-authority`.
