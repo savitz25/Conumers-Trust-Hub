@@ -13,6 +13,7 @@ import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/m
 import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { laResearchHandoff, laCaveat } from '../network/la-network.ts';
 import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 import { rewriteMoveSpecialistHref } from '../network/move-origin.ts';
 
@@ -286,6 +287,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const louisiana=laResearchHandoff(session.researchPlan);
+  if(louisiana&&session.hub===louisiana.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${laCaveat(louisiana.hub,session.originalQuestion)} ${city?`${city} is context only; no city or parish page was executed. `:''}Continue at ${louisiana.label} Louisiana. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:louisiana.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Louisiana ${louisiana.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Louisiana statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-la-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:louisiana.href,label:`Open ${louisiana.label} Louisiana`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:louisiana.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const indiana=inResearchHandoff(session.researchPlan);
   if(indiana&&session.hub===indiana.hub){

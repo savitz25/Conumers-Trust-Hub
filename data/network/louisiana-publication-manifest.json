@@ -1,0 +1,57 @@
+{
+  "contract": "ath-la-network-release-v1",
+  "ticket": "ATH-LA-001",
+  "state_code": "LA",
+  "state_name": "Louisiana",
+  "ask_canonical": "https://www.asktrusthub.com/louisiana",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "0e0340c11c19741c9255dcf2870d60fb752d268b", "canonical_state_url": "https://www.movetrusthub.com/louisiana",
+      "capability_summary": "LPSC household-goods authority verification is known",
+      "grain": "Louisiana LPSC household-goods authority verification is known. No statewide household-goods roster was acquired. The written-estimate order is July 12, 2013. This is not a mover census and not an insurance-minimum figure.",
+      "source_clocks": { "lpsc_page_retrieved": "2026-10-05", "written_estimate_order": "2013-07-12", "hhg_roster": null, "specialist_release": "0e0340c11c19741c9255dcf2870d60fb752d268b" },
+      "gaps": [{ "capability": "statewide HHG mover roster/count", "state": "NOT_ACQUIRED" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "913c97fd8627c1ffa222055c1fe43c4f6d45f1ca", "canonical_state_url": "https://www.contractortrusthub.com/louisiana",
+      "capability_summary": "19,898 commercial LSLBC certificate rows, kept separate from 4,701 residential, 1,501 home improvement, and 269 mold",
+      "grain": "Those four counts are certificate rows. 26,369 is the certificate-row total, not a company census. Plumbing Board person licenses were not acquired. Classifications and qualifying parties were not acquired.",
+      "source_clocks": { "lslbc_active_roster_retrieved": "2026-10-05", "plumbing_board_person_licenses": null, "specialist_release": "913c97fd8627c1ffa222055c1fe43c4f6d45f1ca" },
+      "gaps": [{ "capability": "Plumbing Board person licenses", "state": "NOT_ACQUIRED" }, { "capability": "classifications and qualifying parties", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "66701e6f9d79848616c4cd6d0aa68625f496e56c", "canonical_state_url": "https://www.lendertrusthub.com/louisiana",
+      "capability_summary": "9,812 Louisiana OFI originator-under-lender row items",
+      "grain": "9,812 is a row-item count, not a lender census and not a person census. Distinct companies and distinct persons were not acquired. The 920 licensee-exam rows are not a class count and are not added to 9,812. 2025 HMDA Louisiana-property observations: 132,458 applications. NMLS bulk was not acquired.",
+      "source_clocks": { "ofi_originator_table_updated": "2026-10-05T06:26", "ofi_licensee_exam_table_updated": "2026-10-05T06:26", "hmda_vintage": "2025", "nmls_bulk": null, "specialist_release": "66701e6f9d79848616c4cd6d0aa68625f496e56c" },
+      "gaps": [{ "capability": "distinct company and person census", "state": "NOT_ACQUIRED" }, { "capability": "NMLS bulk roster", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "53eba72847d732ebaa8efaff3d2cdee1a5f7d62e", "canonical_state_url": "https://www.insurancetrusthub.com/louisiana",
+      "capability_summary": "1,926 risk-bearing category entries and 862 non-risk-bearing registration entries in LDI Table 17",
+      "grain": "2,788 is the printed FY2025 sum only. It is not a company census and not a producer census. Producer, agency, adjuster, and appointment counts were not acquired.",
+      "source_clocks": { "fiscal_year_end": "2025-06-30", "report_letter": "2026-02-16", "table_retrieved": "2026-10-05", "specialist_release": "53eba72847d732ebaa8efaff3d2cdee1a5f7d62e" },
+      "gaps": [{ "capability": "producer/agency/adjuster/appointment counts", "state": "NOT_ACQUIRED" }, { "capability": "company NAIC roster and action corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "42cb68be0fc27b964405a6fe60baa2462477b9bb", "canonical_state_url": "https://www.seniortrusthub.com/louisiana",
+      "capability_summary": "266 nursing-home rows, kept separate from 164 adult residential care, 196 home health, 127 hospice, 28 adult day health care, and 450 ICF/IID",
+      "grain": "These six LDH directory classes are not one combined senior total and are not deduplicated campuses. Inspections, complaints, and enforcement rows were not acquired.",
+      "source_clocks": { "ldh_directory_retrieved": "2026-10-05", "inspections": null, "specialist_release": "42cb68be0fc27b964405a6fe60baa2462477b9bb" },
+      "gaps": [{ "capability": "combined Louisiana senior population", "state": "REJECTED" }, { "capability": "inspection/complaint/enforcement rows", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "40c5614dee85143cb92707bd699fc7fef0272c96", "canonical_state_url": "https://www.investortrusthub.com/louisiana",
+      "capability_summary": "617 Louisiana state IA firm CRDs with status APPROVED",
+      "grain": "State IA APPROVED firms are separate from 3,348 federal notice FILED firms, 14 active ERAs, and 84 principal-office firms. The overlap of approved state IA and notice is 11 and is not dropped from either side. ERA intersections are empty. IAR, broker-dealer, and agent rosters were not acquired.",
+      "source_clocks": { "iapd_jurisdiction": "2026-09-17", "principal_office_roster": "2026-08-27", "order_index": null, "specialist_release": "40c5614dee85143cb92707bd699fc7fef0272c96" },
+      "gaps": [{ "capability": "IAR/broker-dealer/agent rosters", "state": "NOT_ACQUIRED" }, { "capability": "order corpus", "state": "NOT_ACQUIRED" }]
+    }
+  ]
+}
