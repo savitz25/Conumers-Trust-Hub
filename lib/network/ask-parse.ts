@@ -53,6 +53,7 @@ import { ctGeography, ctIdentifier, ctSpecialistUrl } from './ct-network.ts';
 import { mdGeography, mdIdentifier, mdSpecialistUrl } from './md-network.ts';
 import { wiGeography, wiIdentifier, wiSpecialistUrl } from './wi-network.ts';
 import { inGeography, inIdentifier, inSpecialistUrl } from './in-network.ts';
+import { kyGeography, kyIdentifier, kySpecialistUrl } from './ky-network.ts';
 import { laGeography, laIdentifier, laSpecialistUrl } from './la-network.ts';
 import { alGeography, alIdentifier, alSpecialistUrl } from './al-network.ts';
 import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
@@ -122,6 +123,9 @@ function geography(q: string): ParsedGeography | undefined {
   if (inGeo) return inGeo;
   const alGeo = alGeography(q);
   if (alGeo) return alGeo;
+  const kyGeo = kyGeography(q);
+  if (kyGeo) return kyGeo;
+
   const laGeo = laGeography(q);
   if (laGeo) return laGeo;
   if (/\b(rochester|bloomington)\b/i.test(q) && !US_JURISDICTIONS.some(j => new RegExp(`\\b${j.name}\\b`, 'i').test(q) || new RegExp(`\\b${j.code}\\b`).test(q))) return { meaning: 'Ambiguous city; specify its state.' };
@@ -750,9 +754,11 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const wiId = wiIdentifier(query);
   const inId = inIdentifier(query);
   const alId = alIdentifier(query);
+  const kyId = kyIdentifier(query);
   const laId = laIdentifier(query);
-  const scopedId = mnId ?? miId ?? ctId ?? mdId ?? wiId ?? inId ?? alId ?? laId;
-  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : mdId ? mdSpecialistUrl(mdId.hub) : wiId ? wiSpecialistUrl(wiId.hub) : inId ? inSpecialistUrl(inId.hub) : alId ? alSpecialistUrl(alId.hub) : laId ? laSpecialistUrl(laId.hub) : undefined;
+  const scopedId = mnId ?? miId ?? ctId ?? mdId ?? wiId ?? inId ?? alId ?? kyId ?? laId;
+  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : mdId ? mdSpecialistUrl(mdId.hub) : wiId ? wiSpecialistUrl(wiId.hub) : inId ? inSpecialistUrl(inId.hub) : alId ? alSpecialistUrl(alId.hub) : kyId ? kySpecialistUrl(kyId.hub) : laId ? laSpecialistUrl(laId.hub) : undefined;
+
   const id = scopedId ? { family: { id: scopedId.type, hubId: scopedId.hub, label: scopedId.type, examples: [scopedId.raw], pattern: /./, live: false, destinationHint: specialistUrl!, note: 'Exact source identifier; specialist verification, not a business name.' }, raw: scopedId.raw, ambiguous: false, note: 'Exact source identifier.' } : matchIdentifier(query);
 
   const nameCheck =

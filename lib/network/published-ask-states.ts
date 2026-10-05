@@ -29,6 +29,7 @@ import { mdReleaseGatePassed } from './md-network.ts';
 import { wiReleaseGatePassed } from './wi-network.ts';
 import { inReleaseGatePassed } from './in-network.ts';
 import { laReleaseGatePassed } from './la-network.ts';
+import { kyReleaseGatePassed } from './ky-network.ts';
 import { alReleaseGatePassed } from './al-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 
@@ -65,6 +66,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'WI', slug: 'wisconsin', name: 'Wisconsin', gate: wiReleaseGatePassed },
   { code: 'IN', slug: 'indiana', name: 'Indiana', gate: inReleaseGatePassed },
   { code: 'LA', slug: 'louisiana', name: 'Louisiana', gate: laReleaseGatePassed },
+  { code: 'KY', slug: 'kentucky', name: 'Kentucky', gate: kyReleaseGatePassed },
   { code: 'AL', slug: 'alabama', name: 'Alabama', gate: alReleaseGatePassed },
 ];
 

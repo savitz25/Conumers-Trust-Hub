@@ -41,7 +41,10 @@ test('Massachusetts manifest rejects a cross-hub total and keeps six hubs', () =
   assert.equal(existsSync('app/massachusetts/boston'), false);
   assert.equal(existsSync('app/boston'), false);
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'alabama');
-  assert.equal(ASK_NETWORK_STATES.length, 26);
+  assert.equal(ASK_NETWORK_STATES.length, 27);
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'louisiana'));
+  assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
+
 });
 
 test('Massachusetts page has no ranking schema and is cataloged once', () => {
@@ -53,7 +56,8 @@ test('Massachusetts page has no ranking schema and is cataloged once', () => {
   assert.match(sitemap, /askStateSitemapEntries/);
   const paths = askStateSitemapEntries().map((entry) => entry.path);
   assert.equal(paths.filter((path) => path === '/massachusetts').length, 1);
-  assert.match(askStateExplorerEyebrow(), /26-state network explorer/);
+  assert.match(askStateExplorerEyebrow(), /27-state network explorer/);
+
 });
 
 test('Massachusetts routing preserves grains and does not intercept identifiers', () => {
@@ -121,7 +125,8 @@ test('Massachusetts routing preserves grains and does not intercept identifiers'
 test('existing state routes stay registered ahead of Massachusetts', () => {
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'alabama'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama'],
+
   );
 });
 

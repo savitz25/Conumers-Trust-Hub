@@ -14,6 +14,8 @@ import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
+import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
+
 import { laResearchHandoff, laCaveat } from '../network/la-network.ts';
 import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 import { rewriteMoveSpecialistHref } from '../network/move-origin.ts';
@@ -300,6 +302,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
       destinations:[{type:'STATE_RESEARCH',href:alabama.href,label:`Open ${alabama.label} Alabama`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:alabama.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const kentucky=kyResearchHandoff(session.researchPlan);
+  if(kentucky&&session.hub===kentucky.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${kyCaveat(kentucky.hub,session.originalQuestion)} ${city?`${city} is context only; no city or county page was executed. `:''}Continue at ${kentucky.label} Kentucky. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:kentucky.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Kentucky ${kentucky.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Kentucky statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-ky-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:kentucky.href,label:`Open ${kentucky.label} Kentucky`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:kentucky.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const louisiana=laResearchHandoff(session.researchPlan);
   if(louisiana&&session.hub===louisiana.hub){

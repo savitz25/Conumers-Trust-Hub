@@ -1,0 +1,57 @@
+{
+  "contract": "ath-ky-network-release-v1",
+  "ticket": "ATH-KY-001",
+  "state_code": "KY",
+  "state_name": "Kentucky",
+  "ask_canonical": "https://www.asktrusthub.com/kentucky",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "ef7a9d8b027ec85d38b37040b640aa3c46fdd585", "canonical_state_url": "https://www.movetrusthub.com/kentucky",
+      "capability_summary": "42 Kentucky intrastate household-goods certificate rows",
+      "grain": "42 is the September 1, 2026 KYTC household-goods certificate listing. Status is not printed. A certificate is not FMCSA interstate authority, not UCR, not other Kentucky motor-carrier authority, and not proof of current insurance or tariff compliance. Exact USDOT/MC bridges were not acquired. The November 1, 2023 PDF was not parsed into this count.",
+      "source_clocks": { "kytc_listing_footer": "2026-09-01", "prior_pdf_not_parsed": "2023-11-01", "usdot_mc_bridges": null, "specialist_release": "ef7a9d8b027ec85d38b37040b640aa3c46fdd585" },
+      "gaps": [{ "capability": "certificate status", "state": "NOT_ON_LIST" }, { "capability": "exact USDOT/MC bridges", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "fdfc76ce16e6f91f70ca928f4ca8918f591c2c7c", "canonical_state_url": "https://www.contractortrusthub.com/kentucky",
+      "capability_summary": "8,360 Active Kentucky DHBC electrical, HVAC, and plumbing license rows",
+      "grain": "8,360 is the arithmetic sum of Active license rows already in production: electrical 3,884, HVAC 2,699, and plumbing 1,777. It is not a company census and not a statewide general-contractor count. Kentucky has no statewide general contractor license. The live database was not re-counted on 2026-10-05. Master electricians, apprentices, journeymen, inspectors, fire credentials, and manufactured housing were not in this load.",
+      "source_clocks": { "product_record_note": "Not re-extracted on 2026-10-05", "page_publication": "2026-10-05", "live_database_recount": null, "specialist_release": "fdfc76ce16e6f91f70ca928f4ca8918f591c2c7c" },
+      "gaps": [{ "capability": "statewide general contractor license", "state": "DOES_NOT_EXIST" }, { "capability": "fire and manufactured housing", "state": "NOT_ACQUIRED" }, { "capability": "discipline", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "82f0ace97e411768e1bafd2a5328abea42f8c61a", "canonical_state_url": "https://www.lendertrusthub.com/kentucky",
+      "capability_summary": "1,929 Kentucky mortgage company and branch rows in the 2025 DFI annual report",
+      "grain": "1,929 includes companies and branches and is not a distinct-company count. Mortgage brokers are 229 and stay separate. Mortgage loan originators are 10,097 persons. The printed company-plus-broker sum is 2,158. The license-type grand total 13,081 is not a lender census. 2025 HMDA Kentucky observations are 172,675 applications, 100,355 originations, and 32,254 denials. 751 LEI rows are reporting identities, not licenses. NMLS bulk was not acquired.",
+      "source_clocks": { "dfi_annual_report": "2025-12-31", "hmda_vintage": "2025", "nmls_bulk": null, "specialist_release": "82f0ace97e411768e1bafd2a5328abea42f8c61a" },
+      "gaps": [{ "capability": "distinct companies", "state": "NOT_ACQUIRED" }, { "capability": "mortgage banker and servicer counts", "state": "NOT_SEPARATED" }, { "capability": "NMLS bulk roster", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "4d59339e19964ca64a49a8bf5c089f77d132c9c3", "canonical_state_url": "https://www.insurancetrusthub.com/kentucky",
+      "capability_summary": "1,734 Kentucky domestic and licensed foreign insurers in the NAIC 2024 key facts",
+      "grain": "81 domestic insurers are inside the 1,734, not added to it. Captives are 32 and are excluded. Calendar-year 2024 complaints are 2,521 and are not the October 14, 2025 hearing figure. DOI employment 104 is staff, not licensees. Producer, agency, adjuster, and surplus-lines rows were not acquired. A market-conduct examination is not an enforcement action. Domestic exam reports are not public under KRS 304.2-270.",
+      "source_clocks": { "naic_data_year": "2024", "market_conduct": null, "producer_roster": null, "specialist_release": "4d59339e19964ca64a49a8bf5c089f77d132c9c3" },
+      "gaps": [{ "capability": "producer/agency/adjuster/surplus-lines rows", "state": "NOT_ACQUIRED" }, { "capability": "market-conduct examination corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "a9049afac58c65055e726c981aa1279c80a610a4", "canonical_state_url": "https://www.seniortrusthub.com/kentucky",
+      "capability_summary": "312 Kentucky long-term care facility rows in the October 2026 directory",
+      "grain": "312 long-term care facility rows are separate from 247 assisted-living type rows, 47 personal care homes, 24 family care homes, 112 adult day health rows, 91 home health rows, 27 hospice rows, and 313 personal services agency licenses. The miscellaneous directory has 1,671 rows and is not a senior census. These classes are not one Kentucky senior total. Certified beds sum to 26,236 across 286 numeric rows; 26 facility rows leave the bed cell blank, and blank is not zero. CMS bridges were not attempted. Medicaid enrollment is not facility licensure. The inspection corpus was not acquired.",
+      "source_clocks": { "directory_sheet": "October 2026", "inspections": null, "cms_bridges": null, "specialist_release": "a9049afac58c65055e726c981aa1279c80a610a4" },
+      "gaps": [{ "capability": "combined Kentucky senior population", "state": "REJECTED" }, { "capability": "inspection corpus", "state": "NOT_ACQUIRED" }, { "capability": "CMS bridges", "state": "NOT_ATTEMPTED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "1e715d9f7084d23a3a829fefabb743b5e9952594", "canonical_state_url": "https://www.investortrusthub.com/kentucky",
+      "capability_summary": "150 Kentucky state IA firm CRDs with status APPROVED",
+      "grain": "150 APPROVED state IA firm CRDs are separate from 1,528 federal notice FILED firms, 9 active ERAs, and 89 principal-office firms as of 2026-08-27. The APPROVED and notice overlap is 1 (CRD 316840) and is not dropped. DFI's December 31, 2025 state-registered IA total is 159 and is a different clock, as are 1,430 federal covered notice filings, 1,382 broker-dealer firms, 182,894 broker-dealer agent persons, and 7,359 investment adviser representatives. Those persons are not firms. The order corpus was not acquired. A nationwide restitution order's Kentucky allocation was not determined.",
+      "source_clocks": { "iapd_jurisdiction": "2026-09-17", "principal_office_roster": "2026-08-27", "dfi_annual_report": "2025-12-31", "order_corpus": null, "specialist_release": "1e715d9f7084d23a3a829fefabb743b5e9952594" },
+      "gaps": [{ "capability": "DFI bulk broker-dealer, agent, and IAR rosters", "state": "NOT_ACQUIRED" }, { "capability": "order corpus", "state": "NOT_ACQUIRED" }, { "capability": "Kentucky allocation of a nationwide restitution order", "state": "NOT_DETERMINED" }]
+    }
+  ]
+}

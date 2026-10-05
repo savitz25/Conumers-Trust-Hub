@@ -39,7 +39,8 @@ test('Ask homepage/footer/sitemap/Places derive from the canonical published-sta
   for (const state of gated.filter((row) => row.slug !== 'florida')) {
     assert.ok(listPlaceLensIndex().some((item) => item.href === state.href), state.href);
   }
-  assert.match(askStateExplorerEyebrow(), /26-state network explorer/);
+  assert.match(askStateExplorerEyebrow(), /27-state network explorer/);
+
 });
 
 test('discovery surfaces do not keep a second Ask state slug list', () => {

@@ -11,6 +11,8 @@ import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
+import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
+
 import { laResearchHandoff, laCaveat } from '../network/la-network.ts';
 import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 
@@ -502,6 +504,10 @@ export function createGuidedSession(question:string):GuidedResearchSession|null{
   const alabama=alResearchHandoff(session.researchPlan);
   if(alabama)return {...session,hub:alabama.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${alCaveat(alabama.hub,question)} Continue at ${alabama.label} Alabama: ${alabama.href}. Ask has not executed a provider cohort.`};
+  const kentucky=kyResearchHandoff(session.researchPlan);
+  if(kentucky)return {...session,hub:kentucky.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`${kyCaveat(kentucky.hub,question)} Continue at ${kentucky.label} Kentucky: ${kentucky.href}. Ask has not executed a provider cohort.`};
+
   const louisiana=laResearchHandoff(session.researchPlan);
   if(louisiana)return {...session,hub:louisiana.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${laCaveat(louisiana.hub,question)} Continue at ${louisiana.label} Louisiana: ${louisiana.href}. Ask has not executed a provider cohort.`};

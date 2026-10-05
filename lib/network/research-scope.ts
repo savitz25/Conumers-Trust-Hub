@@ -2,6 +2,7 @@ import type { AskResearchPlan, AskRequestedGeography } from './research-planner.
 import { geographyCapability, type AskGeographyMeaning, type ExecutableGeographyKind } from './geography-capabilities.ts';
 import { resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 import { wiSeniorStateResearch } from './wi-network.ts';
+import { kyResearchHandoff } from './ky-network.ts';
 import { laResearchHandoff } from './la-network.ts';
 import { alResearchHandoff } from './al-network.ts';
 import { inResearchHandoff } from './in-network.ts';
@@ -54,6 +55,15 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
       disclosure:normalized.kind==='state'?'Alabama statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
         `${normalized.display} is context only. Continue with Alabama statewide specialist research; no city or county page was executed.`,
       reasonCodes:[normalized.kind==='state'?'ALABAMA_STATE_RESEARCH_HANDOFF':'ALABAMA_CITY_CONTEXT_HANDOFF']};
+  }
+  const kentucky=kyResearchHandoff(plan);
+  if(kentucky&&normalized?.stateCode==='KY'){
+    const state={kind:'state' as const,display:'Kentucky',stateCode:'KY',stateName:'Kentucky'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Kentucky statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Kentucky statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'KENTUCKY_STATE_RESEARCH_HANDOFF':'KENTUCKY_CITY_CONTEXT_HANDOFF']};
   }
   const louisiana=laResearchHandoff(plan);
   if(louisiana&&normalized?.stateCode==='LA'){

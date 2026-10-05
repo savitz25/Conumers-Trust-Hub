@@ -102,8 +102,9 @@ test('Alabama manifest retains six frozen grains, independent clocks, and no gra
   assert.doesNotMatch(JSON.stringify(M),/1913|1,913|1804/);
   assert.notEqual(M.hubs[5].certified_release_sha,'0000000000000000000000000000000000000000');
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'alabama');
-  assert.equal(ASK_NETWORK_STATES.length,26);
-  assert.match(askStateExplorerEyebrow(),/^26-state network explorer$/);
+  assert.equal(ASK_NETWORK_STATES.length,27);
+  assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='kentucky'));
+  assert.match(askStateExplorerEyebrow(),/^27-state network explorer$/);
 });
 
 test('Alabama gateway publishes one statewide route and no local pages',()=>{
