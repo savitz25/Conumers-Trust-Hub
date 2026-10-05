@@ -7,6 +7,7 @@
 // channels are explicit fixtures. Nothing here contacts a hosted database or
 // any specialist.
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { createHash, generateKeyPairSync } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
@@ -477,6 +478,144 @@ try {
   await db.exec(contextForward);
   await expectHub(LOANDEPOT, 'save', 'already_saved'); await expectHub(IMT, 'save', 'already_saved');
   console.log('PASS N/O: no acknowledgement without a committed Saved state (denied binding, signed out, missing issuer); a failed consume writes no Saved row');
+
+  // ---- packet 18: admit senior on the shared issuer. Packet 15 files stay. ----
+  const SENIOR = 'https://www.seniortrusthub.com';
+  const seniorPreflight = read('18-ask-prod-senior-hub-context-preflight.sql');
+  const seniorForward = read('18-ask-prod-senior-hub-context-forward.sql');
+  const seniorRollback = read('18-ask-prod-senior-hub-context-rollback.sql');
+  const authorityBefore18 = await issuer('v23_private.authority()');
+  const moveBefore18 = await issuer('v23_private.prod_issue_context(jsonb,uuid,uuid)');
+  await db.exec(seniorPreflight);
+  await assert.rejects(issue(proofFor(), 'senior'), /hub/);
+  await db.exec(seniorForward);
+  await assert.rejects(db.exec(seniorForward), /not the frozen packet 15 body/); await db.exec('rollback');
+  await assert.rejects(db.exec(seniorPreflight), /not the frozen packet 15 body/); await db.exec('rollback');
+  const admittedFn = JSON.parse(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'));
+  assert.equal(admittedFn.owner, 'myth_v23_foundation');
+  assert.match(admittedFn.prosrc, /when 'senior' then 'https:\/\/www\.seniortrusthub\.com'/);
+  assert.match(admittedFn.prosrc, /when 'lender' then 'https:\/\/www\.lendertrusthub\.com'/);
+  assert.match(admittedFn.prosrc, /when 'insurance' then 'https:\/\/www\.insurancetrusthub\.com'/);
+  assert.match(admittedFn.prosrc, /when 'contractor' then 'https:\/\/www\.contractortrusthub\.com'/);
+  assert.equal(await issuer('v23_private.authority()'), authorityBefore18);
+  assert.equal(await issuer('v23_private.prod_issue_context(jsonb,uuid,uuid)'), moveBefore18);
+  await quiet();
+  for (const hub of ['move', 'investor', 'ask', '', 'LENDER', 'senior ', 'Senior', 'lender,senior', '*', null]) await assert.rejects(issue(proofFor(), hub), /hub/, String(hub));
+  for (const key of ['hub', 'issuer', 'issuerHub', 'sourceHub']) await assert.rejects(issue({ ...proofFor(), [key]: 'senior' }, 'senior'), /hub/, key);
+  await assert.rejects(issue({ ...proofFor(), targetOrigin: SENIOR }, 'senior'), /origin/);
+  await assert.rejects(issue({ ...proofFor(), targetOrigin: 'https://seniortrusthub.com' }, 'senior'), /origin/);
+  const lenderAfter = proofFor(), insuranceAfter = proofFor(), contractorAfter = proofFor(), seniorProof = proofFor();
+  await issue(lenderAfter, 'lender'); await issue(insuranceAfter, 'insurance'); await issue(contractorAfter, 'contractor'); await issue(seniorProof, 'senior');
+  assert.equal((await db.query(`select nonce_hash = ops.hash_handoff_secret($2) as nonce_bound from ops.consumer_auth_handoffs where code_hash=ops.hash_handoff_secret($1)`, [seniorProof.code, seniorProof.nonce])).rows[0].nonce_bound, true);
+  assert.deepEqual((await db.query(`select issuer_hub,initiating_origin,audience_hub,target_origin,extract(epoch from expires_at-created_at)::int as ttl from ops.consumer_auth_handoffs where code_hash=ops.hash_handoff_secret($1)`, [seniorProof.code])).rows, [
+    { issuer_hub: 'senior', initiating_origin: SENIOR, audience_hub: 'ask', target_origin: ASK, ttl: 90 }]);
+  assert.deepEqual(await consume(seniorProof, 'senior'), { ok: true, error_code: null });
+  assert.deepEqual(await consume(seniorProof, 'senior'), { ok: false, error_code: 'HANDOFF_ALREADY_USED' });
+  const seniorCross = proofFor(); await issue(seniorCross, 'senior');
+  for (const hub of ['lender', 'insurance', 'contractor', 'move']) assert.deepEqual(await consume(seniorCross, hub), { ok: false, error_code: 'INVALID_AUDIENCE' }, hub);
+  for (const [proof, hub] of [[lenderAfter, 'lender'], [insuranceAfter, 'insurance'], [contractorAfter, 'contractor']]) {
+    assert.deepEqual(await consume(proof, 'senior'), { ok: false, error_code: 'INVALID_AUDIENCE' }, hub);
+  }
+  const seniorTamper = proofFor(); await issue(seniorTamper, 'senior');
+  assert.deepEqual(await consume(seniorTamper, 'senior', { state: randomRef() }), { ok: false, error_code: 'INVALID_STATE' });
+  assert.deepEqual(await consume(seniorTamper, 'senior', { nonce: randomRef() }), { ok: false, error_code: 'INVALID_STATE' });
+  const seniorExpired = proofFor(); await issue(seniorExpired, 'senior');
+  await db.query(`update ops.consumer_auth_handoffs set created_at=created_at-interval '2 minutes',expires_at=expires_at-interval '2 minutes' where code_hash=ops.hash_handoff_secret($1)`, [seniorExpired.code]);
+  assert.deepEqual(await consume(seniorExpired, 'senior'), { ok: false, error_code: 'HANDOFF_EXPIRED' });
+  console.log('PASS packet 18 issuance: senior is issued only at https://www.seniortrusthub.com; lender, insurance, and contractor stay on their pins; cross-hub, browser hub, browser origin, expiry, reuse, tamper, and nonce checks hold');
+
+  // Rollback restores the frozen three-hub function and does not drop it.
+  const savedBeforeRollback = await snapshot();
+  await db.exec(seniorRollback);
+  assert.notEqual(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'), 'null');
+  const restored = JSON.parse(await issuer('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'));
+  assert.doesNotMatch(restored.prosrc, /senior/);
+  assert.match(restored.prosrc, /when 'contractor' then 'https:\/\/www\.contractortrusthub\.com'/);
+  await assert.rejects(issue(proofFor(), 'senior'), /hub/);
+  const lenderRestored = proofFor(); await issue(lenderRestored, 'lender');
+  assert.deepEqual(await consume(lenderRestored, 'lender'), { ok: true, error_code: null });
+  await assert.rejects(db.exec(seniorRollback), /not the packet 18 body/); await db.exec('rollback');
+  assert.equal(await snapshot(), savedBeforeRollback);
+  assert.equal(await issuer('v23_private.authority()'), authorityBefore18);
+  assert.equal(await issuer('v23_private.prod_issue_context(jsonb,uuid,uuid)'), moveBefore18);
+  console.log('PASS packet 18 rollback: the shared issuer is the frozen three-hub function again, senior is denied, the function remains, Saved research is untouched');
+
+  await db.exec(seniorPreflight);
+  await db.exec(seniorForward);
+  // Packet 15 + 18 without Packet 17: issuance works, the Saved commit does not.
+  const savedBeforeAuthority = await snapshot();
+  const ackBefore = acknowledged.length;
+  const deniedSenior = proofFor();
+  await issue(deniedSenior, 'senior');
+  const seniorAuthority = { hub: 'senior', audience: 'ask', service: 'svc:trusthub:senior:bff:v1', scopes: ['saved:write'],
+    subject: A, session: 'ab'.repeat(32), browser: 'cd'.repeat(32), operation: 'consumeProfileSaveContinuation', exchangeProof: deniedSenior };
+  await db.exec('begin');
+  await db.query('set local role myth_v23_authorizer');
+  await db.query('insert into v23_private.transaction_authority(backend,transaction_id,authority) values(pg_backend_pid(),txid_current(),$1)', [JSON.stringify(seniorAuthority)]);
+  await db.query('set local role myth_v23_executor');
+  await assert.rejects(db.query('select v23_private.consume_context($1)', [JSON.stringify(deniedSenior)]),
+    error => error.code === '42501' && /invalid authority/.test(error.message));
+  await db.exec('rollback');
+  assert.equal(await snapshot(), savedBeforeAuthority);
+  assert.equal(acknowledged.length, ackBefore);
+  console.log('PASS packet 18 without packet 17: senior context is issued, consume_context raises invalid authority, no Saved row and no acknowledgement');
+
+  // Packet 17 is read from the pinned PR #233 commit. This branch does not edit those files.
+  const PACKET17 = '16a35a6d9ac7cfcc8c1c6fd415f9ab04d07c1532';
+  const packet17 = name => execFileSync('git', ['show', `${PACKET17}:docs/my-trusthub/v2/production/${name}`], { encoding: 'utf8' }).replace(/\r\n/g, '\n');
+  await db.exec(packet17('17-ask-prod-senior-authority-forward.sql'));
+  await db.exec(`set v23bind.senior_ccn_checked='true'`);
+  await db.exec(packet17('17-ask-prod-senior-ccn-binding-forward.sql'));
+  const resolved = async ccn => (await db.query('select specialist_entity_id,identifier_namespace,source_identifier,jurisdiction,specialist_entity_type,canonical_public_profile_ref from v23_private.prod_senior_ccn_binding_for($1)', [ccn])).rows;
+  assert.deepEqual(await resolved('015009'), [{ specialist_entity_id: '015009', identifier_namespace: 'cms.ccn', source_identifier: '015009', jurisdiction: 'US', specialist_entity_type: 'cms_facility', canonical_public_profile_ref: '/facility/cms/015009/burns-nursing-home-inc' }]);
+  assert.equal((await resolved('055223'))[0].canonical_public_profile_ref, '/facility/cms/055223/san-jacinto-valley-post-acute');
+  assert.equal((await resolved('155805'))[0].canonical_public_profile_ref, '/facility/cms/155805/addison-pointe-health-and-rehabilitation-center');
+  const bindingId = (await db.query('select id from v23_private.prod_senior_ccn_binding_for($1)', ['015009'])).rows[0].id;
+  const accountContextRef = randomRef(), transferRef = randomRef();
+  const browser = 'cd'.repeat(32), session = 'ab'.repeat(32);
+  const digest = 'a'.repeat(64);
+  const item = { localItemId: '015009', revision: '1', digest: 'b'.repeat(64), profile: { hub: 'senior', nativeId: '015009', profileClass: 'cms_facility' } };
+  const sha = value => createHash('sha256').update(value).digest('hex');
+  const expiresAt = Date.now() + 600000;
+  const seniorBase = { hub: 'senior', audience: 'ask', service: 'svc:trusthub:senior:bff:v1', browser };
+  // Stage and grant go through stamp_record under the real operations. A bare
+  // insert has no transaction authority, so the stamp refuses it.
+  const withAuthority = async (authority, work) => {
+    await db.exec('begin');
+    try {
+      await db.query('set local role myth_v23_authorizer');
+      await db.query('insert into v23_private.transaction_authority(backend,transaction_id,authority) values(pg_backend_pid(),txid_current(),$1)', [JSON.stringify(authority)]);
+      await db.query('set local role myth_v23_executor');
+      const value = await work();
+      await db.query('set local role myth_v23_authorizer');
+      await db.query('delete from v23_private.save_validation where backend=pg_backend_pid() and transaction_id=txid_current()');
+      await db.query('delete from v23_private.exchange_validation where backend=pg_backend_pid() and transaction_id=txid_current()');
+      await db.query('delete from v23_private.transaction_authority where backend=pg_backend_pid() and transaction_id=txid_current()');
+      await db.exec('commit');
+      return value;
+    } catch (error) {
+      await db.exec('rollback');
+      throw error;
+    }
+  };
+  await withAuthority({ ...seniorBase, scopes: ['transfer:stage'], operation: 'prepareGuestProfileTransfer' }, () => db.query(
+    'insert into ops.v23_profile_runtime_records(kind,key_hash,payload) values($1,$2,$3)',
+    ['stage', sha(transferRef), JSON.stringify({ input: { selected: [item] }, digest, expiresAt, browser })]));
+  const canaryProof = proofFor();
+  await quiet();
+  await issue(canaryProof, 'senior');
+  await withAuthority({ ...seniorBase, scopes: ['saved:write'], subject: A, session, operation: 'consumeProfileSaveContinuation', exchangeProof: canaryProof }, async () => {
+    await db.query('select v23_private.consume_context($1)', [JSON.stringify(canaryProof)]);
+    await db.query('insert into ops.v23_profile_runtime_records(kind,key_hash,payload) values($1,$2,$3)', [
+      'grant', sha(accountContextRef), JSON.stringify({ stageKey: sha(transferRef), session, browser, expiresAt, subject: A, hub: 'senior' }),
+    ]);
+  });
+  const saved = await withAuthority({ ...seniorBase, scopes: ['saved:write'], subject: A, session, operation: 'commitProfileSave',
+    input: { accountContextRef, transferRef, manifestDigest: digest, item } }, () => db.query('select saved_entity_id,created from v23_private.save_profile($1)', [bindingId]));
+  assert.equal(saved.rows[0].created, true);
+  assert.deepEqual((await saves()).filter(r => r.canonical_name === 'BURNS NURSING HOME, INC.'), [{ canonical_name: 'BURNS NURSING HOME, INC.', source_hub: 'senior', active: true }]);
+  assert.equal(acknowledged.length, ackBefore);
+  console.log('PASS packet 15+18+17: CMS CCN 015009 commits one Senior Saved row through save_profile; acknowledgement stays with the specialist channel and was not sent by SQL');
 
   // P. No Watch or Alert relation exists on this path and no transaction authority leaks.
   assert.equal((await db.query("select count(*)::int n from information_schema.tables where table_schema in ('consumer','ops','network','v23_private') and table_name ~* '(watch|alert)'")).rows[0].n, 0);

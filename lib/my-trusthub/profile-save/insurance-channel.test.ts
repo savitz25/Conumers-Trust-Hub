@@ -92,5 +92,5 @@ test('the account context is issued for the verified caller hub; Move and Invest
   assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'move'), { text: 'select v23_private.prod_issue_context($1,$2,$3) as issued', hubArgument: false });
   assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, 'investor'), { text: 'select v23_private.prod_investor_issue_context($1,$2,$3) as issued', hubArgument: false });
   for (const hub of SHARED_HUB_ACCOUNT_CONTEXT) assert.deepEqual(accountContextIssueQuery(PRODUCTION_TARGET, hub), { text: shared, hubArgument: true }, hub);
-  for (const hub of ['senior', 'ask', '', 'move ', 'LENDER', 'investor ']) assert.throws(() => accountContextIssueQuery(PRODUCTION_TARGET, hub), (error: unknown) => error instanceof RuntimeError && error.message === 'unavailable');
+  for (const hub of ['ask', '', 'move ', 'LENDER', 'investor ', 'Senior', 'senior ']) assert.throws(() => accountContextIssueQuery(PRODUCTION_TARGET, hub), (error: unknown) => error instanceof RuntimeError && error.message === 'unavailable');
 });
