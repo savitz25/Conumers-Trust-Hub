@@ -13,6 +13,7 @@ import { mnIdentifier, mnRefusal, mnSpecialistUrl, mnCaveat } from '../network/m
 import { mdSpecialistUrl } from '../network/md-network.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
 
@@ -290,6 +291,18 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const southCarolina=scResearchHandoff(session.researchPlan);
+  if(southCarolina&&session.hub===southCarolina.hub){
+    const city=session.researchPlan.requestedGeography?.city;
+    const message=`${scCaveat(southCarolina.hub,session.originalQuestion)} ${city?`${city} is context only; no city or county page was executed. `:''}Continue at ${southCarolina.label} South Carolina. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:southCarolina.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`South Carolina ${southCarolina.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'South Carolina statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-sc-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:southCarolina.href,label:`Open ${southCarolina.label} South Carolina`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:southCarolina.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const alabama=alResearchHandoff(session.researchPlan);
   if(alabama&&session.hub===alabama.hub){

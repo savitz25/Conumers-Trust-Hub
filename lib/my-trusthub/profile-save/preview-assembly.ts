@@ -20,6 +20,9 @@ import { INVESTOR_BINDING_SQL, classifyInvestorRows, investorCanonicalSlug, inve
 import { verifySeniorAssertion } from './senior-assertion.ts';
 import { SeniorSourceChannel, seniorPinsFor, isSeniorIdentity, isSeniorStage } from './senior-channel.ts';
 import { SENIOR_BINDING_SQL, classifySeniorRows, parseSeniorNativeId, type SeniorBindingRow } from './senior-binding.ts';
+import { verifyContractorAssertion } from './contractor-assertion.ts';
+import { ContractorSourceChannel, contractorPinsFor, isContractorIdentity, isContractorStage } from './contractor-channel.ts';
+import { CONTRACTOR_BINDING_SQL, classifyContractorRows, parseContractorNativeId, type ContractorBindingRow } from './contractor-binding.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -70,6 +73,8 @@ export class PreviewAssembly {
   investorSource: InvestorSourceChannel | null = null;
   seniorKey: AssertionKey | null = null;
   seniorSource: SeniorSourceChannel | null = null;
+  contractorKey: AssertionKey | null = null;
+  contractorSource: ContractorSourceChannel | null = null;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
@@ -130,7 +135,6 @@ export class PreviewAssembly {
     };
     return db ? query(db) : this.store.authorized(query);
   }
-
   /** Exact CMS CCN binding for one nursing-home profile. Zero, several,
    * review_required, inactive, or any disagreement is not eligible. The CCN
    * comes from the signed manifest, never from the browser. */
@@ -139,6 +143,18 @@ export class PreviewAssembly {
     const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
       const found = await d.query<SeniorBindingRow>(SENIOR_BINDING_SQL, [profile.nativeId]);
       const decision = classifySeniorRows(profile.nativeId, found.rows);
+      if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
+      return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const, canonicalPublicProfileRef: decision.canonicalPublicProfileRef };
+    };
+    return db ? query(db) : this.store.authorized(query);
+  }
+  /** Exact Florida DBPR binding. Zero, several, review_required, inactive, or
+   * any disagreement is not eligible. The license comes from the signed manifest. */
+  async contractorBinding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']> & { canonicalPublicProfileRef: string }> {
+    if (!parseContractorNativeId(profile.nativeId) || profile.hub !== 'contractor' || profile.profileClass !== 'contractor_profile') throw new RuntimeError('unavailable');
+    const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
+      const found = await d.query<ContractorBindingRow>(CONTRACTOR_BINDING_SQL, [profile.nativeId]);
+      const decision = classifyContractorRows(profile.nativeId, found.rows);
       if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
       return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const, canonicalPublicProfileRef: decision.canonicalPublicProfileRef };
     };
@@ -230,6 +246,13 @@ export class PreviewAssembly {
           if (binding.canonicalPublicProfileRef !== `/facility/cms/${identity.nativeId}/${proof.canonicalSlug}`) throw new RuntimeError('unavailable');
           return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
         }
+        if (identity.hub === 'contractor') {
+          if (!isContractorIdentity(identity) || !this.contractorSource) return null;
+          const proof = await this.contractorSource.publication(browser, identity);
+          const binding = await this.contractorBinding(identity, db);
+          if (binding.canonicalPublicProfileRef !== `/contractors/${proof.canonicalSlug}`) throw new RuntimeError('unavailable');
+          return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
+        }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId) || identity.profileClass !== 'insurance_provider') return null;
         const binding = await this.insuranceBinding(identity, db);
         return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
@@ -265,6 +288,14 @@ export class PreviewAssembly {
           const ref = `/facility/cms/${identity.nativeId}/${slug}`;
           return { kind: 'profile', hub: 'senior', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: ref };
         }
+        if (identity.hub === 'contractor') {
+          if (!isContractorIdentity(identity) || !this.contractorSource) return null;
+          const proof = await this.contractorSource.publication(browser, identity);
+          const ref = (await this.contractorBinding(identity, db)).canonicalPublicProfileRef;
+          if (ref !== `/contractors/${proof.canonicalSlug}`) throw new RuntimeError('unavailable');
+          const slug = ref.slice('/contractors/'.length);
+          return { kind: 'profile', hub: 'contractor', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: ref };
+        }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId)) return null;
         const ref = (await this.insuranceBinding(identity, db)).canonicalPublicProfileRef;
         const slug = ref.slice('/providers/'.length);
@@ -289,12 +320,13 @@ export class PreviewAssembly {
         const insurance = origin === PRODUCTION_ORIGINS.insurance;
         const investor = Boolean(this.investorSource) && origin === PRODUCTION_ORIGINS.investor;
         const senior = Boolean(this.seniorSource) && origin === PRODUCTION_ORIGINS.senior;
-        if (!move && !lender && !insurance && !investor && !senior) return null;
+        const contractor = Boolean(this.contractorSource) && origin === PRODUCTION_ORIGINS.contractor;
+        if (!move && !lender && !insurance && !investor && !senior && !contractor) return null;
         const link = await this.store.read<StageLink & { requestPrefix?: string }>('continuation:' + ref);
         // A continuation is read only for the hub that staged it. One arriving from
         // another hub's origin is refused here, before any specialist is called, so
         // no hub ever receives another hub's continuation or manifest.
-        const arriving = move ? 'move' : lender ? 'lender' : insurance ? 'insurance' : investor ? 'investor' : 'senior';
+        const arriving = move ? 'move' : lender ? 'lender' : insurance ? 'insurance' : investor ? 'investor' : senior ? 'senior' : 'contractor';
         if (link?.manifest && link.manifest.sourceHub !== arriving) return null;
         if (insurance) {
           if (!link || link.expiresAt <= Date.now() || !link.manifest || !isInsuranceProviderStage(link.manifest)) return null;
@@ -306,8 +338,8 @@ export class PreviewAssembly {
         // A Senior hand-off is accepted only from the Senior origin, and the Senior
         // origin carries only Senior hand-offs. No other hub is contacted for it.
         if ((link.manifest?.sourceHub === 'senior') !== senior) return null;
-        const channel = senior ? this.seniorSource! : lender ? this.lenderSource! : investor ? this.investorSource! : this.source;
-        const sourceBody = (lender || investor || senior) && link.manifest
+        const channel = senior ? this.seniorSource! : lender ? this.lenderSource! : investor ? this.investorSource! : contractor ? this.contractorSource! : this.source;
+        const sourceBody = (lender || investor || senior || contractor) && link.manifest
           ? { action: 'source', continuationRef: ref, transferRef: link.transferRef, manifest: link.manifest, manifestDigest: link.manifestDigest, expiresAt: link.expiresAt }
           : { action: 'source', continuationRef: ref };
         const s = await channel.call(sourceBody, 'source:read', link.browser) as SourceSnapshot;
@@ -317,6 +349,7 @@ export class PreviewAssembly {
         if (lender && !isLenderMarketplaceStage(s.manifest)) return null;
         if (investor && !isInvestorOfficialFirmStage(s.manifest)) return null;
         if (senior && (!isSeniorStage(s.manifest) || !s.requestPrefix || s.requestPrefix !== s.browserProof)) return null;
+        if (contractor && (!isContractorStage(s.manifest) || !s.requestPrefix || s.requestPrefix !== s.browserProof)) return null;
         return s;
       },
       acknowledge: async (s, receipts, p) => {
@@ -327,7 +360,7 @@ export class PreviewAssembly {
           await this.insuranceSource.acknowledge(s.continuationRef, receipts, s.browserProof, hash(p.session));
           return;
         }
-        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : s.manifest.sourceHub === 'investor' ? this.investorSource : s.manifest.sourceHub === 'senior' ? this.seniorSource : this.source;
+        const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : s.manifest.sourceHub === 'investor' ? this.investorSource : s.manifest.sourceHub === 'senior' ? this.seniorSource : s.manifest.sourceHub === 'contractor' ? this.contractorSource : this.source;
         if (!channel) throw new RuntimeError('unavailable');
         await channel.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
       }, authenticate: async () => null });
@@ -343,12 +376,14 @@ export class PreviewAssembly {
       const insuranceProfile = !!profile && profile.hub === 'insurance' && parseInsuranceSpecialistEntityId(profile.nativeId) !== null;
       const investorProfile = !!profile && isInvestorOfficialFirmIdentity(profile);
       const seniorProfile = !!profile && isSeniorIdentity(profile);
-      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile && !investorProfile && !seniorProfile) ||
+      const contractorProfile = !!profile && isContractorIdentity(profile);
+      if (!this.removeSaved || selected.length !== 1 || (!moveProfile && !lenderProfile && !insuranceProfile && !investorProfile && !seniorProfile && !contractorProfile) ||
         !equal(await this.parent(r), p) || !await this.store.live(p.subject, p.session)) throw new RuntimeError('unauthorized');
       const networkEntityId = moveProfile ? (await this.binding(profile)).networkEntityId
         : lenderProfile ? (await this.lenderBinding(profile!)).networkEntityId
         : investorProfile ? (await this.investorBinding(profile!)).networkEntityId
         : seniorProfile ? (await this.seniorBinding(profile!)).networkEntityId
+        : contractorProfile ? (await this.contractorBinding(profile!)).networkEntityId
         : (await this.insuranceBinding(profile!)).networkEntityId;
       const outcome = await this.removeSaved(p, networkEntityId);
       return outcome === 'in_project' ? 'in_project' : outcome ? 'removed' : 'not_saved';
@@ -356,7 +391,7 @@ export class PreviewAssembly {
     binding.runtime = async (r, c, p) => {
       if (!c.contextCandidateRef || !equal(await this.parent(r), p) || !equal(c.parent ?? null, p)) throw new RuntimeError('unauthorized');
       const sourceHub = c.source.manifest.sourceHub;
-      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance' && sourceHub !== 'investor' && sourceHub !== 'senior') throw new RuntimeError('unauthorized');
+      if (sourceHub !== 'move' && sourceHub !== 'lender' && sourceHub !== 'insurance' && sourceHub !== 'investor' && sourceHub !== 'contractor' && sourceHub !== 'senior') throw new RuntimeError('unauthorized');
       const who: VerifiedCaller = { hub: sourceHub, browserBinding: c.source.browserProof, environment: this.target.kind, scopes: ['saved:write', 'receipt:verify'],
         parent: { subject: p.subject, sessionBinding: p.session, admitted: true }, exchange: c.contextCandidateRef,
         selectionConfirmed: true, confirmedTransferRef: c.source.transferRef, confirmedAccountContextRef: c.contextCandidateRef };
@@ -372,7 +407,7 @@ export class PreviewAssembly {
     const stage = ['prepareGuestProfileTransfer', 'prepareProfileSaveContinuation'].includes(e?.operation);
     if (!stage && !['getProfileSaveReceipt', 'verifyProfileSaveReceipt'].includes(e?.operation)) throw new RuntimeError('unauthorized');
     let claims;
-    let serviceHub: 'move' | 'lender' | 'insurance' | 'investor' | 'senior' = 'move';
+    let serviceHub: 'move' | 'lender' | 'insurance' | 'investor' | 'contractor' | 'senior' = 'move';
     try {
       claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     } catch (moveError) {
@@ -387,14 +422,20 @@ export class PreviewAssembly {
           serviceHub = 'insurance';
         } catch (insuranceError) {
           try {
-            // Investor is tried next and only when its own verify key is installed; Senior after it, only with its own key.
-            if (!this.investorKey || !this.investorSource || !investorPinsFor(this.target)) throw insuranceError;
-            claims = await verifyInvestorAssertion(request, bytes, this.investorKey, 'investor', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), investorPinsFor(this.target)!);
-            serviceHub = 'investor';
-          } catch (investorError) {
-            if (!this.seniorKey || !seniorPinsFor(this.target)) throw investorError;
-            claims = await verifySeniorAssertion(request, bytes, this.seniorKey, 'senior', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), seniorPinsFor(this.target)!);
-            serviceHub = 'senior';
+            if (!this.contractorKey || !contractorPinsFor(this.target)) throw insuranceError;
+            claims = await verifyContractorAssertion(request, bytes, this.contractorKey, 'contractor', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), contractorPinsFor(this.target)!);
+            serviceHub = 'contractor';
+          } catch (contractorError) {
+            try {
+              // Investor keeps its own verifier. Senior follows it and uses only its own key.
+              if (!this.investorKey || !this.investorSource || !investorPinsFor(this.target)) throw contractorError;
+              claims = await verifyInvestorAssertion(request, bytes, this.investorKey, 'investor', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), investorPinsFor(this.target)!);
+              serviceHub = 'investor';
+            } catch (investorError) {
+              if (!this.seniorKey || !seniorPinsFor(this.target)) throw investorError;
+              claims = await verifySeniorAssertion(request, bytes, this.seniorKey, 'senior', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), seniorPinsFor(this.target)!);
+              serviceHub = 'senior';
+            }
           }
         }
       }
@@ -426,6 +467,7 @@ export class PreviewAssembly {
         if (serviceHub === 'lender' && !isLenderMarketplaceStage(input)) throw new RuntimeError('invalid');
         if (serviceHub === 'insurance' && !isInsuranceProviderStage(input)) throw new RuntimeError('invalid');
         if (serviceHub === 'investor' && !isInvestorOfficialFirmStage(input)) throw new RuntimeError('invalid');
+        if (serviceHub === 'contractor' && !isContractorStage(input)) throw new RuntimeError('invalid');
         if (serviceHub === 'senior' && !isSeniorStage(input)) throw new RuntimeError('invalid');
       }
       const result = await execute(operation, input);

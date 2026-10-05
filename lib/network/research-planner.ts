@@ -5,6 +5,7 @@ import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksL
 import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
 import { kyAmbiguousNumber, kyIdentifier, kyRefusal, kyRankingAsked, queryLooksLikeKentucky, classifyKyHub } from './ky-network.ts';
 import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksLikeLouisiana, classifyLaHub } from './la-network.ts';
+import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
 import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
@@ -328,6 +329,25 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const scId=scIdentifier(originalQuestion);
+  const southCarolina=queryLooksLikeSouthCarolina(originalQuestion);
+  const scBlocked=scRefusal(originalQuestion);
+  const scHub=scId?.hub??(southCarolina?classifyScHub(originalQuestion):undefined);
+  const scNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const scSeparateTask=Boolean(scId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!scSeparateTask&&(scId||scBlocked||(southCarolina&&!scNamed&&(scHub||/^(South Carolina|SC)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:scAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':scRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':scId?'IDENTIFIER_LOOKUP':scHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:scHub,candidateHubs:scHub?[scHub]:[],identifier:scId?{type:scId.type,value:scId.value,raw:scId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:scBlocked?['sourceOrScope']:[],executionAllowed:!scBlocked&&Boolean(scHub),
+      executionMode:scBlocked||!scHub?'CLARIFY':scId?'IDENTIFIER':'COHORT',
+      clarificationReason:scBlocked??(!scHub?'Open /south-carolina for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[scId?'EXACT_IDENTIFIER_RECOGNIZED':'SOUTH_CAROLINA_RESEARCH_ROUTING',...(scBlocked?['SOUTH_CAROLINA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:scId?'EXACT_IDENTIFIER':'COHORT'};
+  }
   const alId=alIdentifier(originalQuestion);
   const alabama=queryLooksLikeAlabama(originalQuestion);
   const alBlocked=alRefusal(originalQuestion);

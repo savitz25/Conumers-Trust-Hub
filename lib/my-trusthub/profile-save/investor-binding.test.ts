@@ -252,6 +252,6 @@ test('production only: the Investor origin is in the production registry and pin
     MY_TRUSTHUB_V23_PRODUCTION_PROJECT: 'qvvxvbcdmbjzrgvwjatw', MY_TRUSTHUB_V23_SESSION_AFFINITY: 'dedicated' });
   assert.ok(production);
   assert.equal(production.registry.origins.investor, 'https://www.investortrusthub.com');
-  // Senior registers its own production origin; Contractor is not registered here.
-  assert.deepEqual([production.registry.origins.contractor, production.registry.origins.senior], ['', 'https://www.seniortrusthub.com']);
+  assert.equal(production.registry.origins.contractor, 'https://www.contractortrusthub.com');
+  assert.equal(production.registry.origins.senior, 'https://www.seniortrusthub.com');
 });

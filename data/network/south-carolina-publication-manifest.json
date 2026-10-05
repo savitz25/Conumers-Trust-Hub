@@ -1,0 +1,57 @@
+{
+  "contract": "ath-sc-network-release-v1",
+  "ticket": "ATH-SC-001",
+  "state_code": "SC",
+  "state_name": "South Carolina",
+  "ask_canonical": "https://www.asktrusthub.com/south-carolina",
+  "scope": "STATE_LEVEL_ONLY",
+  "status": "PR_REVIEW_PENDING",
+  "hardcoded_city_routes": false,
+  "hardcoded_county_routes": false,
+  "release_gate": { "passed": true, "blocker": null },
+  "expansion_ledger": { "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null }, "ASK_GRAPH_WRITES": 0, "CLAIM_ELIGIBILITY_BROADENED": false, "LOCAL_PHASE": "NO" },
+  "hubs": [
+    {
+      "hub_id": "move", "hub_name": "MoveTrustHub", "certified_release_sha": "5d45bdeff0ac4b971a7946b1bf87732168265ac2", "canonical_state_url": "https://www.movetrusthub.com/south-carolina",
+      "capability_summary": "150 Class E household-goods certificate rows",
+      "grain": "The ORS active workbook has 150 Class E household-goods rows and 149 distinct certificate numbers. One certificate number is two CRM records of one provider. Three Class E hazardous-materials rows in the same workbook are not household goods. The filename token is not a certificate effective date. The workbook has no address, phone, USDOT, or MC. PSC dockets, tariffs, insurance filings, complaints, and UCR were not used as the current roster.",
+      "source_clocks": { "ors_workbook_filename_token": "2026-08-04", "certificate_effective_date": null, "crm_modified_on": "2025-10-23/2026-07-28", "specialist_release": "5d45bdeff0ac4b971a7946b1bf87732168265ac2" },
+      "gaps": [{ "capability": "USDOT and MC on the Class E roster", "state": "NOT_IN_SOURCE" }, { "capability": "PSC docket, tariff, complaint, and UCR roster", "state": "NOT_USED" }]
+    },
+    {
+      "hub_id": "contractor", "hub_name": "ContractorTrustHub", "certified_release_sha": "25dbabf51419b09463da9296ce528034a02b0f2a", "canonical_state_url": "https://www.contractortrusthub.com/south-carolina",
+      "capability_summary": "11,161 General Contractor and 7,988 Mechanical Contractor printed lines, kept separate from 7,231 Home Builders",
+      "grain": "These are printed lines from two boards in the FY2025 LLR annual report. They are not one South Carolina contractor census. Electrical 1,269, plumbing 903, and HVAC 842 are separate Residential Builders Commission lines and are not added to the Contractors' Licensing Board lines. The Home Inspector cell prints \"1,60\" and is not a count. The boards' printed totals are not republished because they do not equal the listed lines, and the two boards are not added. No free bulk roster was acquired. A lookup screen is not a roster.",
+      "source_clocks": { "llr_annual_report": "2024-07-01/2025-06-30", "report_retrieved": "2026-10-05", "bulk_roster": null, "specialist_release": "25dbabf51419b09463da9296ce528034a02b0f2a" },
+      "gaps": [{ "capability": "free statewide license roster", "state": "NOT_ACQUIRED" }, { "capability": "residential builders list on the paid CD", "state": "NOT_FILED" }]
+    },
+    {
+      "hub_id": "lender", "hub_name": "LenderTrustHub", "certified_release_sha": "933b747361fced30b53d1690c4cc919420e7e0df", "canonical_state_url": "https://www.lendertrusthub.com/south-carolina",
+      "capability_summary": "564 SC-BFI Mortgage Lender / Servicer license rows",
+      "grain": "One license class. 562 rows are Approved and 2 are Approved - Deficient. Lender and servicer are not split. Broker, branch, and originator rosters were not acquired. 14 South Carolina office addresses are not the license count. HMDA applications are market activity, not licensure. Supervised consumer lending was not merged into this roster.",
+      "source_clocks": { "approved_as_of": "2026-09-03", "page_link_label": "2026-09-02", "hmda_geography_snapshot": "2026-08-30", "specialist_release": "933b747361fced30b53d1690c4cc919420e7e0df" },
+      "gaps": [{ "capability": "mortgage broker roster", "state": "NOT_ACQUIRED" }, { "capability": "branch and originator rosters", "state": "NOT_ACQUIRED" }, { "capability": "supervised consumer lender roster", "state": "NOT_MERGED" }]
+    },
+    {
+      "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "certified_release_sha": "1d5118251ad000dc7a271ed275f7ce65c687cbcb", "canonical_state_url": "https://www.insurancetrusthub.com/south-carolina",
+      "capability_summary": "317 domestic insurers and 2,229 domestic and licensed foreign insurers in the 2024 NAIC key facts",
+      "grain": "Captives, 230, are excluded from that 2,229 and stay separate. The April 2026 DOI company-type list is a different clock. Its rows, including P&C 933, Property 7, and Eligible Surplus Lines Insurer 302, are not added to 2,229. Property is not folded into P&C. Eligible Surplus Lines Insurer rows are not surplus-lines brokers. Producer, agency, adjuster, and appointment rosters were not acquired. The NAIC complaint count of 5,324 is not a finding of wrongdoing.",
+      "source_clocks": { "naic_data_year": "2024", "naic_pdf_created": "2026-03-10", "doi_list_header": "2026-04", "producer_roster": null, "specialist_release": "1d5118251ad000dc7a271ed275f7ce65c687cbcb" },
+      "gaps": [{ "capability": "producer, agency, adjuster, and appointment rosters", "state": "NOT_ACQUIRED" }, { "capability": "market-conduct and enforcement corpus", "state": "NOT_ACQUIRED" }]
+    },
+    {
+      "hub_id": "senior", "hub_name": "SeniorTrustHub", "certified_release_sha": "45e23fd5a127ecb72bc3cbb9e0aca87a09db7f71", "canonical_state_url": "https://www.seniortrusthub.com/south-carolina",
+      "capability_summary": "192 nursing-home license rows, kept separate from 428 Community Residential Care Facility rows",
+      "grain": "Nursing-home licensed beds sum to 20,576. A blank institutional-bed cell is not zero. Community Residential Care Facility may be marketed as assisted living and is not an assisted-living census. CRC total beds are numeric on 155 rows and blank on 273; blank is not zero. Home health is 106 rows and is not in-home care. Hospice facilities are 13 and hospice programs are 98. Adult day care is 96 rows. In-home care is 1,403 license rows; the licensed-number sentinel is not a bed count. Intermediate care facilities of 15 or fewer are 56 rows and 16 or more are 8 rows. These classes are not one senior population. CMS was not bridged. Inspection, complaint, and enforcement corpora were not acquired.",
+      "source_clocks": { "arcgis_data_last_edit": "2026-10-05T16:13:47.060Z", "roster_retrieved": "2026-10-05", "webpage_update_is_not_the_roster_clock": "true", "specialist_release": "45e23fd5a127ecb72bc3cbb9e0aca87a09db7f71" },
+      "gaps": [{ "capability": "combined South Carolina senior population", "state": "REJECTED" }, { "capability": "inspection, complaint, and enforcement corpora", "state": "NOT_ACQUIRED" }, { "capability": "CMS bridge", "state": "NOT_ATTEMPTED" }]
+    },
+    {
+      "hub_id": "investor", "hub_name": "InvestorTrustHub", "certified_release_sha": "c53b4d4dd6d83eee0e9210b2bd34d3b0edbd0bfe", "canonical_state_url": "https://www.investortrusthub.com/south-carolina",
+      "capability_summary": "320 South Carolina state-registered IA firm CRDs with status APPROVED",
+      "grain": "321 state-registration rows include 1 CONDREST, which is not in the 320. Federal notice filings, 2,715 FILED, and active ERA firms, 19, are separate. Principal-office geography is 122 firms as of 2026-08-27 and is not South Carolina registration. A separate MainAddr recount was not used as this count. The 2025 and 2026 securities index has 25 documents and is not a finding census. A cease-and-desist is not a final adjudication. IAR, broker-dealer, and agent rosters were not acquired.",
+      "source_clocks": { "iapd_jurisdiction": "2026-09-17", "principal_office_roster": "2026-08-27", "order_index_retrieved": "2026-10-05", "specialist_release": "c53b4d4dd6d83eee0e9210b2bd34d3b0edbd0bfe" },
+      "gaps": [{ "capability": "IAR, broker-dealer, and agent rosters", "state": "NOT_ACQUIRED" }, { "capability": "canonical spine membership of the 320 firm CRDs", "state": "NOT_READ" }]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import { insurancePinsFor } from './insurance-assertion.ts';
 import { InsuranceAckChannel } from './insurance-channel.ts';
 import { InvestorSourceChannel, investorPinsFor } from './investor-channel.ts';
 import { SeniorSourceChannel, seniorPinsFor } from './senior-channel.ts';
+import { ContractorSourceChannel, contractorPinsFor } from './contractor-channel.ts';
 import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
@@ -144,6 +145,24 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         }
       } catch { /* insurance verify key is absent or not ed25519 */ }
     }
+    // Optional. A missing contractor verify key leaves every other hub running.
+    // This build does not create the key and does not activate the contractor canary.
+    const contractorPins = contractorPinsFor(target);
+    const contractorKid = (env.MY_TRUSTHUB_V23_CONTRACTOR_KEY_ID ?? '').trim();
+    const contractorPem = env.MY_TRUSTHUB_V23_CONTRACTOR_VERIFY_PUBLIC_KEY_PEM ?? '';
+    if (contractorPins && /^[A-Za-z0-9_-]{1,64}$/.test(contractorKid) && contractorPem.includes('PUBLIC KEY')) {
+      try {
+        const contractorPublic = createPublicKey(contractorPem);
+        const spki = (pem: string) => String(createPublicKey(pem).export({ type: 'spki', format: 'pem' }));
+        const contractorSpki = String(contractorPublic.export({ type: 'spki', format: 'pem' }));
+        const others = [String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' })), String(movePublic.export({ type: 'spki', format: 'pem' })),
+          ...(runtime.lenderKey ? [spki(runtime.lenderKey.pem)] : []), ...(runtime.insuranceKey ? [spki(runtime.insuranceKey.pem)] : [])];
+        if (contractorPublic.asymmetricKeyType === 'ed25519' && !others.includes(contractorSpki)) {
+          runtime.contractorKey = { kid: contractorKid, pem: contractorPem };
+          runtime.contractorSource = new ContractorSourceChannel(key, fetch, contractorPins);
+        }
+      } catch { /* contractor verify key is absent or not ed25519 */ }
+    }
     // Optional. A missing or unusable Investor verify key leaves every other hub
     // running and rejects Investor handoffs. The key must be its own ed25519 key.
     const investorPins = investorPinsFor(target);
@@ -155,7 +174,8 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         const spki = (pem: string) => String(createPublicKey(pem).export({ type: 'spki', format: 'pem' }));
         const investorSpki = String(investorPublic.export({ type: 'spki', format: 'pem' }));
         const others = [String(createPublicKey(askPrivate).export({ type: 'spki', format: 'pem' })), String(movePublic.export({ type: 'spki', format: 'pem' })),
-          ...(runtime.lenderKey ? [spki(runtime.lenderKey.pem)] : []), ...(runtime.insuranceKey ? [spki(runtime.insuranceKey.pem)] : [])];
+          ...(runtime.lenderKey ? [spki(runtime.lenderKey.pem)] : []), ...(runtime.insuranceKey ? [spki(runtime.insuranceKey.pem)] : []),
+          ...(runtime.contractorKey ? [spki(runtime.contractorKey.pem)] : [])];
         if (investorPublic.asymmetricKeyType === 'ed25519' && !others.includes(investorSpki)) {
           runtime.investorKey = { kid: investorKid, pem: investorPem };
           runtime.investorSource = new InvestorSourceChannel(key, fetch, investorPins);
@@ -176,7 +196,8 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         const lenderSpki = runtime.lenderKey ? String(createPublicKey(runtime.lenderKey.pem).export({ type: 'spki', format: 'pem' })) : '';
         const insuranceSpki = runtime.insuranceKey ? String(createPublicKey(runtime.insuranceKey.pem).export({ type: 'spki', format: 'pem' })) : '';
         const investorSpki = runtime.investorKey ? String(createPublicKey(runtime.investorKey.pem).export({ type: 'spki', format: 'pem' })) : '';
-        if (seniorPublic.asymmetricKeyType === 'ed25519' && seniorSpki !== askSpki && seniorSpki !== moveSpki && seniorSpki !== lenderSpki && seniorSpki !== insuranceSpki && seniorSpki !== investorSpki) {
+        const contractorSpki = runtime.contractorKey ? String(createPublicKey(runtime.contractorKey.pem).export({ type: 'spki', format: 'pem' })) : '';
+        if (seniorPublic.asymmetricKeyType === 'ed25519' && seniorSpki !== askSpki && seniorSpki !== moveSpki && seniorSpki !== lenderSpki && seniorSpki !== insuranceSpki && seniorSpki !== investorSpki && seniorSpki !== contractorSpki) {
           runtime.seniorKey = { kid: seniorKid, pem: seniorPem };
           runtime.seniorSource = new SeniorSourceChannel(key, fetch, seniorPins);
         }
