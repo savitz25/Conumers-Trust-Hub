@@ -76,6 +76,55 @@ test('A exact CMS nursing-home CCNs are accepted; the slug and name are not the 
   }
 });
 
+test('alphanumeric CCN case variants use the canonical identifier', () => {
+  const ref = '/facility/cms/AB12CD/alpha-case-nursing-home';
+  const stored = row({
+    specialist_entity_id: 'AB12CD', source_identifier: 'AB12CD', canonical_public_profile_ref: ref,
+  });
+  assert.deepEqual(parseSeniorNativeId('AB12CD'), { ccn: 'ab12cd' });
+  assert.deepEqual(parseSeniorNativeId('ab12cd'), { ccn: 'ab12cd' });
+  assert.equal(seniorProfileRefCcn(ref), 'ab12cd');
+  assert.equal(seniorProfileRefCcn('/facility/cms/ab12cd/alpha-case-nursing-home'), 'ab12cd');
+  for (const presented of ['AB12CD', 'ab12cd']) {
+    const decision = classifySeniorRows(presented, [stored]);
+    assert.equal(decision.outcome, 'eligible', presented);
+    assert.equal(seniorReturnAgrees(decision, ref), true);
+  }
+  const lowerStored = row({
+    id: 'binding-2', network_entity_id: 'entity-2', specialist_entity_id: 'ab12cd', source_identifier: 'ab12cd',
+    jurisdiction: 'AL', canonical_public_profile_ref: '/facility/cms/AB12CD/alpha-case-lower-claim',
+  });
+  assert.equal(denied('AB12CD', [stored, lowerStored]), 'ambiguous');
+  assert.equal(denied('ab12cd', [stored, lowerStored]), 'ambiguous');
+  assert.equal(denied('CD34EF', []), 'missing');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF', binding_status: 'review_required',
+    canonical_public_profile_ref: '/facility/cms/CD34EF/exact-alpha-nursing-home',
+  })]), 'review_required');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF', entity_status: 'retired',
+    canonical_public_profile_ref: '/facility/cms/CD34EF/exact-alpha-nursing-home',
+  })]), 'inactive');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF', identifier_namespace: 'fl.ahca.license',
+    canonical_public_profile_ref: '/facility/cms/CD34EF/exact-alpha-nursing-home',
+  })]), 'identity_disagreement');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF', specialist_entity_type: 'home_health',
+    canonical_public_profile_ref: '/facility/cms/CD34EF/exact-alpha-nursing-home',
+  })]), 'wrong_class');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF', jurisdiction: 'FL',
+    canonical_public_profile_ref: '/facility/cms/CD34EF/exact-alpha-nursing-home',
+  })]), 'identity_disagreement');
+  assert.equal(denied('CD34EF', [row({
+    specialist_entity_id: 'CD34EF', source_identifier: 'CD34EF',
+    canonical_public_profile_ref: '/facility/cms/015009/exact-alpha-nursing-home',
+  })]), 'identity_disagreement');
+  assert.equal(isSeniorStage(stage('AB12CD', 'alpha-case-nursing-home')), true);
+  assert.equal(isSeniorStage(stage('ab12cd', 'alpha-case-nursing-home')), false);
+});
+
 test('B C D wrong CCN, wrong namespace and wrong class are denied', () => {
   // B. another CCN's row answering for this CCN, in either identifier column or the profile ref.
   assert.equal(denied('015009', [row({ source_identifier: '055223' })]), 'identity_disagreement');
@@ -236,6 +285,16 @@ test('packet 17 is prepared only: preflight, binding forward/rollback, authority
   assert.equal(forward.includes('NOT APPLIED'), true);
   assert.equal(forward.includes('n <> 3'), true);
   assert.equal(forward.includes('prod_senior_ccn_binding_for'), true);
+  assert.equal(forward.includes('source_identifier_normalized'), true);
+  assert.equal(preflight.includes('source_identifier_normalized'), true);
+  assert.equal(preflight.includes('lower(btrim(specialist_entity_id))'), true);
+  assert.equal(preflight.includes('lower(btrim(b.specialist_entity_id))'), true);
+  assert.equal(forward.includes('lower(btrim($1))'), true);
+  assert.equal(forward.includes("btrim(specialist_entity_id) ~ '^[A-Za-z0-9]{6}$'"), true);
+  assert.equal(forward.includes("btrim(b.specialist_entity_id) ~ '^[A-Za-z0-9]{6}$'"), true);
+  assert.equal(forward.includes("specialist_entity_id ~ '^[A-Za-z0-9]{6}$'"), false);
+  assert.equal(authority.includes('source_identifier_normalized'), false);
+  assert.equal(authorityRollback.includes('source_identifier_normalized'), false);
   assert.equal(forward.includes("'senior', 'cms_facility'"), true);
   assert.equal(forward.includes("'cms.ccn'"), true);
   assert.equal(/ilike|similarity|levenshtein|lower\(canonical_name\)|canonical_name\s*=/.test(forward), false);

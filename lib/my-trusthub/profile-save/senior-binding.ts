@@ -13,8 +13,14 @@ export const SENIOR_JURISDICTION = 'US';
 /** CMS nursing-home grain. Slug, name, address, and the provider UUID are not this id. */
 export const SENIOR_SPECIALIST_ENTITY_ID_FORMAT = '<CMS CCN: six letters or digits>';
 
-const CCN = /^[A-Z0-9]{6}$/;
-const PROFILE_REF = /^\/facility\/cms\/([A-Z0-9]{6})\/[a-z0-9][a-z0-9-]{0,79}$/;
+/** Six letters or digits, either case. Comparison uses the canonical lowercase form. */
+const CCN = /^[A-Za-z0-9]{6}$/;
+const PROFILE_REF = /^\/facility\/cms\/([A-Za-z0-9]{6})\/[a-z0-9][a-z0-9-]{0,79}$/;
+
+/** Same canonical form as `source_identifier_normalized`: lower(btrim(source_identifier)). */
+function canonicalSeniorCcn(value: string): string | null {
+  return typeof value === 'string' && CCN.test(value) ? value.toLowerCase() : null;
+}
 
 export type SeniorBindingRow = {
   id: string;
@@ -36,16 +42,18 @@ export type SeniorBindingDecision =
 export function seniorParentSyncEnabled(): false { return false; }
 export function seniorCanaryEnabled(): false { return false; }
 
-/** The native id is the bare CCN. No prefix, no state id, no UUID. */
+/** The native id is the bare CCN. No prefix, no state id, no UUID.
+ * The returned ccn is the canonical form, matching source_identifier_normalized. */
 export function parseSeniorNativeId(nativeId: string): { ccn: string } | null {
-  return typeof nativeId === 'string' && CCN.test(nativeId) ? { ccn: nativeId } : null;
+  const ccn = canonicalSeniorCcn(nativeId);
+  return ccn ? { ccn } : null;
 }
 
 /** The CCN inside a canonical nursing-home profile ref, or null. Home health
- * and hospice routes are not this grain. */
+ * and hospice routes are not this grain. The result is the canonical form. */
 export function seniorProfileRefCcn(ref: string): string | null {
   const match = PROFILE_REF.exec(ref);
-  return match ? match[1]! : null;
+  return match ? canonicalSeniorCcn(match[1]!) : null;
 }
 
 /** One exact accepted row on an active entity is eligible. Every other shape is denied. */
@@ -61,8 +69,8 @@ export function classifySeniorRows(nativeId: string, rows: readonly SeniorBindin
   if (
     row.binding_status !== 'accepted' ||
     row.identifier_namespace !== SENIOR_CCN_NAMESPACE ||
-    row.source_identifier !== parsed.ccn ||
-    row.specialist_entity_id !== parsed.ccn ||
+    canonicalSeniorCcn(row.source_identifier) !== parsed.ccn ||
+    canonicalSeniorCcn(row.specialist_entity_id) !== parsed.ccn ||
     row.jurisdiction !== SENIOR_JURISDICTION ||
     seniorProfileRefCcn(row.canonical_public_profile_ref) !== parsed.ccn
   ) {
