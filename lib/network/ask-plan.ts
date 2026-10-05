@@ -4,6 +4,7 @@ import { ctIdentifier, ctRefusal, ctCaveat, classifyCtHub, queryLooksLikeConnect
 import { mdIdentifier, mdRefusal, mdCaveat, classifyMdHub, queryLooksLikeMaryland, mdSpecialistUrl } from './md-network.ts';
 import { wiIdentifier, wiRefusal, wiCaveat, classifyWiHub, queryLooksLikeWisconsin, wiSpecialistUrl } from './wi-network.ts';
 import { inIdentifier, inRefusal, inCaveat, classifyInHub, queryLooksLikeIndiana, inSpecialistUrl } from './in-network.ts';
+import { kyIdentifier, kyRefusal, kyCaveat, classifyKyHub, queryLooksLikeKentucky, kySpecialistUrl } from './ky-network.ts';
 import { laIdentifier, laRefusal, laCaveat, classifyLaHub, queryLooksLikeLouisiana, laSpecialistUrl } from './la-network.ts';
 import { rewriteMoveSpecialistHref } from './move-origin.ts';
 import { capabilityFor } from './capability-registry.ts';
@@ -245,6 +246,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'MD') return '/maryland';
   if (parsed.geography?.stateCode === 'WI') return '/wisconsin';
   if (parsed.geography?.stateCode === 'IN') return '/indiana';
+  if (parsed.geography?.stateCode === 'KY') return '/kentucky';
   if (parsed.geography?.stateCode === 'LA') return '/louisiana';
   return undefined;
 }
@@ -1722,6 +1724,21 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:inId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
     if(inRefused)parsed.interpretationLines.push({label:'Research boundary',value:inRefused});
+  }
+
+  // Kentucky is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const kyId=kyIdentifier(parsed.query);
+  const kyRefused=kyRefusal(parsed.query);
+  if(kyId||kyRefused||queryLooksLikeKentucky(parsed.query)){
+    const hub=kyId?.hub??classifyKyHub(parsed.query);
+    if(hub){
+      const reason=kyRefused??`${kyId?`Exact ${kyId.type} ${kyId.value}. `:''}${kyCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:kyRefused?'unsupported':'handoff',
+        ...(kyRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:kyRefused?undefined:kySpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:kyId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(kyRefused)parsed.interpretationLines.push({label:'Research boundary',value:kyRefused});
   }
 
   // Louisiana is a six-hub gateway. Specialist grains stay separate and are not summed.
