@@ -1,7 +1,8 @@
 // Local embedded PostgreSQL ONLY. Proves the Ask side of the Investor
 // official-firm Save on the PRODUCTION target shape: the real identity
-// migrations, the real production packets 01/02/04/05, and the real packet 14
-// (three firm CRD bindings + resolver), then the production assembly end to
+// migrations, the real production packets 01/02/04/05, the real packet 14
+// (Investor context issuer, three firm CRD bindings + resolver) and packet 19
+// as the only network authority, then the production assembly end to
 // end: an Investor-signed stage, the top-level arrival, Save, repeated Save,
 // Unsave, and every denial. Auth and the Investor source channel are explicit
 // fixtures. Nothing here contacts a hosted database, Ask, or Investor.
@@ -51,6 +52,9 @@ const WRONG_REF = firm('7770004', 'FIXTURE WRONG PROFILE REF');
 const RETIRED = firm('7770005', 'FIXTURE RETIRED ENTITY');
 const WRONG_JURISDICTION = firm('7770006', 'FIXTURE STATE JURISDICTION');
 const WRONG_CRD = firm('7770007', 'FIXTURE OTHER CRD');
+const PERSON = firm('7770008', 'FIXTURE INDIVIDUAL ADVISER');
+const BRANCH = firm('7770009', 'FIXTURE BRANCH OFFICE');
+const WRONG_NAMESPACE = firm('7770010', 'FIXTURE FINRA NAMESPACE');
 const HINDMAN = { slug: 'hindman-isaacs-moving-storage-inc', legalName: 'HINDMAN & ISAACS MOVING & STORAGE INC', profile: { hub: 'move', nativeId: 'usdot-1002530', profileClass: 'mover' } };
 const FREEDOM = { slug: 'freedom-mortgage', profile: { hub: 'lender', nativeId: 'nmls:2767', profileClass: 'marketplace_company' } };
 const MOVE_ORIGIN = 'https://www.movetrusthub.com', LENDER_ORIGIN = 'https://www.lendertrusthub.com';
@@ -69,12 +73,57 @@ function keys(kid) {
   assert.ok(!/\bdelete\s+from\b|\btruncate\b|\bon\s+conflict\b|\bupdate\s+network\./i.test(forward), 'forward is INSERT only');
   assert.ok(!/\bdelete\s+from\b|\btruncate\b|\bdrop\b|\binsert\s+into\b/i.test(rollback), 'rollback closes a validity window and nothing else');
   assert.ok(!/\b(insert|update|delete|create|alter|drop|grant)\b/i.test(preflight), 'preflight is read only');
-  console.log('PASS packet 14 text: locked identity contract, INSERT-only forward, validity-only rollback, read-only preflight');
+  // Packet 19 owns authority. The packet 14 authority files carry the banner and stay out of the production order.
+  for (const f of ['14-ask-prod-investor-authority-forward.sql', '14-ask-prod-investor-authority-rollback.sql'])
+    assert.ok(read(f).startsWith('-- SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION\n'), f);
+  assert.ok(!/14-ask-prod-investor-authority/.test(preflight.replace(/'[^']*'/g, '')), 'preflight never instructs an authority apply outside its messages');
+  // The packet 19 files here are byte-identical copies of the certified PR #236 head 3b565707946b7c93252b767cf10aa185336ec8b1.
+  for (const [f, sha] of [['19-ask-prod-network-authority-forward.sql', '30e1e557b169d3890b850d45c4fdc3c31d2b18bddc4f23c74e9ac33767c4c06c'],
+    ['19-ask-prod-network-authority-preflight.sql', '8326b58efad23103c3b630e9c5c162a382534895fc54aeb8e1c80b6dc8f683db'],
+    ['19-ask-prod-network-authority-rollback.sql', 'ed830ee1b294c9a2b2a77f05c2c55eb7636bbb8d063887c0fe6d41414551c242']])
+    assert.equal(createHash('sha256').update(read(f)).digest('hex'), sha, f + ' is not the certified packet 19 file');
+  console.log('PASS packet 14 text: locked identity contract, INSERT-only forward, validity-only rollback, read-only preflight, authority files superseded by the certified packet 19');
 }
 
 const bootstrap = new PGlite();
 const emptyCluster = await bootstrap.dumpDataDir();
 await bootstrap.close();
+
+// The documented production order on its own database: Investor preflight on the
+// three-hub baseline, the Investor context issuer, the Investor bindings, and only
+// then packet 19. No packet 14 authority file is applied.
+{
+  const order = new PGlite({ database: 'postgres', loadDataDir: emptyCluster, extensions: { btree_gist, pgcrypto } });
+  try {
+    await order.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin;
+      create schema auth; create table auth.users(id uuid primary key);
+      create table auth.sessions(id uuid primary key,user_id uuid references auth.users,not_after timestamptz);
+      create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+      create function auth.jwt() returns jsonb language sql stable as $$select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb$$;`);
+    for (const f of ['20260907160000_my_trusthub_identity_foundation.sql', '20260907190000_my_trusthub_saved_projects_guest_import.sql',
+      '20260907220000_my_trusthub_cross_hub_handoffs.sql', '20260919205200_my_trusthub_v23_transaction_capability.sql',
+      '20261003170000_my_trusthub_saved_project_ids.sql']) await order.exec(readFileSync('supabase/migrations/' + f, 'utf8'));
+    await order.exec(`set v23.approved_project='${PRODUCTION}'`);
+    await order.exec(read('02-ask-prod-ports-forward.sql'));
+    await order.exec(read('04-ask-prod-runtime-role-forward.sql'));
+    const sets = async () => (await order.exec(read('14-ask-prod-investor-crd-preflight.sql'))).map(r => r.rows);
+    const authority = async () => (await sets())[3].map(r => r.authority_state + '/' + r.disposition);
+    let s = await sets();
+    assert.deepEqual(s.map(r => r.length), [0, 0, 0, 1, 0]);
+    assert.deepEqual(await authority(), ['baseline/PROCEED']);
+    await order.exec(read('14-ask-prod-investor-context-forward.sql'));
+    await order.exec(`set v23bind.sec_iapd_checked='true'`);
+    await order.exec(read('14-ask-prod-investor-crd-binding-forward.sql'));
+    s = await sets();
+    assert.deepEqual(s.map(r => r.length), [3, 3, 3, 1, 1]);
+    assert.deepEqual(await authority(), ['baseline/PROCEED'], 'the Investor packets never touch authority()');
+    await order.exec(read('19-ask-prod-network-authority-preflight.sql'));
+    assert.equal((await order.query(`select current_setting('v23.network_authority_state') s`)).rows[0].s, 'baseline');
+    await order.exec(read('19-ask-prod-network-authority-forward.sql'));
+    assert.deepEqual(await authority(), ['network_final/FINAL']);
+    console.log('PASS production order: Investor preflight PROCEED on the baseline, context issuer, bindings, then packet 19; preflight reports FINAL after it; no packet 14 authority file applied');
+  } finally { await order.close(); }
+}
 const db = new PGlite({ database: 'postgres', loadDataDir: emptyCluster, extensions: { btree_gist, pgcrypto } });
 try {
   await db.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin;
@@ -89,9 +138,10 @@ try {
   const ask = keys('ask-fixture'), move = keys('move-fixture'), investor = keys('investor-fixture');
   await db.exec(`set v23.approved_project='${PRODUCTION}'`);
   await db.exec(read('02-ask-prod-ports-forward.sql'));
-  // Nothing of packet 14 is applied yet: the preflight is empty in all four result sets.
+  // Nothing of packet 14 is applied yet: result sets 1-3 and 5 are empty; set 4 is the one authority row.
   const preflightSets = async () => (await db.exec(read('14-ask-prod-investor-crd-preflight.sql'))).map(r => r.rows.length);
-  assert.deepEqual(await preflightSets(), [0, 0, 0, 0]);
+  const authorityState = async () => { const r = (await db.exec(read('14-ask-prod-investor-crd-preflight.sql')))[3].rows; assert.equal(r.length, 1); return r[0]; };
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 1, 0]);
   // The other hubs' own packets, unmodified, for the regression at the end.
   await db.exec(`set v23.binding_creation_authorized='true'; set v23bind.candidate_unchanged='true'; set v23bind.evidence_ref='local-sql-packet-fixture-only';
     select set_config('v23bind.preflight_checked_at',clock_timestamp()::text,false);`);
@@ -101,24 +151,76 @@ try {
   await db.exec(read('09-ask-prod-move-binding-resolver-forward.sql'));
   await db.exec(`set v23bind.nmls_consumer_access_checked='true'`);
   await db.exec(read('12-ask-prod-lender-nmls-binding-forward.sql'));
-  assert.deepEqual(await preflightSets(), [0, 0, 0, 0]); // other hubs' identities never look like an Investor claim
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 1, 0]); // other hubs' identities never look like an Investor claim
   await db.query(`select set_config('v23.install_session_mac',$1,false)`, [createHash('sha256').update(ask.privateKey.pem).digest('hex')]);
   await db.exec(read('05-ask-prod-session-mac-install.sql'));
-  // The database itself refuses the Investor hub until the authority packet is applied.
-  const authorityForward = read('14-ask-prod-investor-authority-forward.sql'), authorityRollback = read('14-ask-prod-investor-authority-rollback.sql');
+  // Network authority. Packet 19 is the only production transition; the packet 14
+  // authority files are superseded and used here only to build the legacy state.
+  const legacyForward = read('14-ask-prod-investor-authority-forward.sql'), legacyRollback = read('14-ask-prod-investor-authority-rollback.sql');
+  const networkPreflight = read('19-ask-prod-network-authority-preflight.sql');
+  const networkForward = read('19-ask-prod-network-authority-forward.sql'), networkRollback = read('19-ask-prod-network-authority-rollback.sql');
   const authorityBody = async () => (await db.query(`select prosrc,proowner::regrole::text as owner,proacl::text as acl,prosecdef from pg_proc where oid=to_regprocedure('v23_private.authority()')`)).rows.map(r => ({ ...r, prosrc: r.prosrc.replace(/\r\n/g, '\n') }))[0]; // line endings of the checkout are not part of the contract
+  const normalized = text => createHash('md5').update(text.replace(/\s+/g, '')).digest('hex');
+  const pinned = Object.fromEntries([...read('14-ask-prod-investor-crd-preflight.sql').matchAll(/when '([0-9a-f]{32})' then '([a-z0-9_]+)'/g)].map(m => [m[2], m[1]]));
+  const networkState = async () => { await db.exec(networkPreflight); return (await db.query(`select current_setting('v23.network_authority_state') s`)).rows[0].s; };
+  const state = async (expected, disposition, label) => {
+    const row = await authorityState();
+    assert.deepEqual([row.authority_state, row.disposition], [expected, disposition], label);
+    return row;
+  };
   const reviewed = await authorityBody();
   assert.ok(reviewed.prosrc.includes(`c->>'hub' in ('move','insurance','lender') and`));
-  await assert.rejects(db.exec(authorityRollback), /not the four-hub body|already the three-hub body/); await db.exec('rollback');
-  await db.exec(authorityForward);
-  const widened = await authorityBody();
-  assert.equal(widened.prosrc, reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','investor')`));
-  assert.deepEqual([widened.owner, widened.acl, widened.prosecdef], [reviewed.owner, reviewed.acl, reviewed.prosecdef]);
-  await assert.rejects(db.exec(authorityForward), /already applied/); await db.exec('rollback');
-  await db.exec(authorityRollback);
+  // A. The three-hub baseline: no hold, the Investor packets may run, authority comes later from packet 19.
+  assert.equal(pinned.baseline, normalized(reviewed.prosrc), 'pinned baseline hash is the installed migration body');
+  assert.match((await state('baseline', 'PROCEED', 'baseline')).next_step, /19-ask-prod-network-authority-forward\.sql/);
+  assert.equal(await networkState(), 'baseline');
+  // C. The superseded packet 14 four-hub body is a legacy HOLD that points at packet 19.
+  await db.exec(legacyForward);
+  assert.equal(pinned.legacy_packet14, normalized((await authorityBody()).prosrc), 'pinned legacy hash is the packet 14 body');
+  assert.match((await state('legacy_packet14', 'HOLD', 'legacy packet 14')).next_step, /19-ask-prod-network-authority-preflight\.sql/);
+  assert.equal(await networkState(), 'packet14_authority');
+  await db.exec(legacyRollback);
   assert.deepEqual(await authorityBody(), reviewed);
-  await db.exec(authorityForward);
-  console.log('PASS authority packet: one token added to the reviewed body, owner and ACL unchanged, re-run refused, rollback restores the exact prior function');
+  // D. Anything else is unknown and a HOLD. Whitespace alone is not a different body.
+  const swap = async (mutate, expected, disposition, label) => {
+    await db.exec('begin');
+    await mutate();
+    const row = await authorityState();
+    await db.exec('rollback');
+    assert.deepEqual([row.authority_state, row.disposition], [expected, disposition], label);
+    assert.deepEqual(await authorityBody(), reviewed, label + ' left nothing behind');
+  };
+  const replaceBody = async text => {
+    await db.query(`select set_config('v23.fixture_body',$1,true)`, [text]);
+    await db.exec(`do $f$ begin execute format('create or replace function v23_private.authority() returns jsonb language plpgsql security invoker set search_path=pg_catalog,v23_private as %L', current_setting('v23.fixture_body')); end $f$;`);
+  };
+  await swap(() => replaceBody(reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','senior')`)), 'unknown', 'HOLD', 'packet 17-style list');
+  await swap(() => replaceBody(reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','investor','contractor','senior')`)), 'unknown', 'HOLD', 'six-hub list without the packet 19 guards');
+  await swap(() => replaceBody(reviewed.prosrc.replace(`c->>'audience'='ask'`, `c->>'audience' is not null`)), 'unknown', 'HOLD', 'weakened audience check');
+  await swap(() => db.exec(`alter function v23_private.authority() rename to authority_moved`), 'unknown', 'HOLD', 'missing authority()');
+  await swap(() => replaceBody(reviewed.prosrc.replace(/\n/g, '\n  ')), 'baseline', 'PROCEED', 'whitespace-only difference');
+  // B. Packet 19 from the baseline: network authority final; the packet 14 authority files refuse after it.
+  await db.exec(networkForward);
+  const final = await authorityBody();
+  assert.equal(pinned.network_final, normalized(final.prosrc), 'pinned final hash is the packet 19 body');
+  assert.deepEqual([final.owner, final.acl, final.prosecdef], [reviewed.owner, reviewed.acl, reviewed.prosecdef]);
+  assert.match((await state('network_final', 'FINAL', 'packet 19')).next_step, /Apply no authority file/);
+  assert.equal(await networkState(), 'applied');
+  await assert.rejects(db.exec(legacyForward)); await db.exec('rollback');
+  await assert.rejects(db.exec(legacyRollback)); await db.exec('rollback');
+  await assert.rejects(db.exec(networkForward), /already applied/); await db.exec('rollback');
+  assert.deepEqual(await authorityBody(), final);
+  // Packet 19 rollback restores the baseline; a legacy packet 14 apply converges through packet 19 to the same final body.
+  await db.exec(networkRollback);
+  // Packet 19 restores the migration body up to trailing whitespace; owner, ACL and the normalized body are the same.
+  const sameUpToWhitespace = (a, b) => assert.deepEqual({ ...a, prosrc: normalized(a.prosrc) }, { ...b, prosrc: normalized(b.prosrc) });
+  sameUpToWhitespace(await authorityBody(), reviewed);
+  await state('baseline', 'PROCEED', 'after packet 19 rollback');
+  await db.exec(legacyForward);
+  await db.exec(networkForward);
+  assert.deepEqual(await authorityBody(), final);
+  await state('network_final', 'FINAL', 'legacy apply converged through packet 19');
+  console.log('PASS network authority: preflight set 4 classifies baseline PROCEED, packet 19 FINAL, legacy packet 14 HOLD, and a list edit, a six-hub list without guards, a weakened check or a missing function HOLD; packet 19 owns authority, the packet 14 authority files refuse after it, and a legacy apply converges to the same final body');
   // The Investor account-context issuer: one new function, the Move issuer untouched.
   const contextForward = read('14-ask-prod-investor-context-forward.sql'), contextRollback = read('14-ask-prod-investor-context-rollback.sql');
   const moveIssuer = async () => JSON.stringify((await db.query(`select prosrc,proowner::regrole::text as owner,proacl::text as acl from pg_proc where oid=to_regprocedure('v23_private.prod_issue_context(jsonb,uuid,uuid)')`)).rows[0]);
@@ -137,7 +239,8 @@ try {
   console.log('PASS production ports, runtime role and session authority packets apply on the embedded database');
 
   // Packet 14: preflight is clean, forward refuses without both guards, applies once, and returns the receipt.
-  assert.deepEqual(await preflightSets(), [0, 0, 0, 2]); // authority and context are in place, bindings are not
+  assert.deepEqual(await preflightSets(), [0, 0, 0, 1, 1]); // packet 19 authority and the Investor context are in place, bindings are not
+  await state('network_final', 'FINAL', 'before the binding packet');
   const forward = read('14-ask-prod-investor-crd-binding-forward.sql');
   const identityRows = async () => JSON.stringify((await db.query(`select (select count(*)::int from network.network_entities) e,(select count(*)::int from network.network_entity_bindings) b`)).rows[0]);
   const empty = await identityRows();
@@ -157,7 +260,7 @@ try {
   const applied = await identityRows();
   await assert.rejects(db.exec(forward), /already applied|requires steward review/); await db.exec('rollback');
   assert.equal(await identityRows(), applied);
-  assert.deepEqual(await preflightSets(), [3, 3, 3, 2]); // after apply the preflight reports every claim and every packet-14 object
+  assert.deepEqual(await preflightSets(), [3, 3, 3, 1, 1]); // after apply the preflight reports every claim and every packet-14 object
   console.log('PASS packet 14: clean preflight, guarded forward, exactly three firm CRD bindings, receipt returned, re-run refused');
 
   // Resolver contract, as the runtime login's roles. One exact identity in; no name, slug or uuid lookup.
@@ -181,8 +284,8 @@ try {
   const entity = async (f, status = 'active', ref = '/firm/' + f.slug) => (await db.query(`insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction,canonical_public_profile_ref,status)
     values('organization',$1,'investor','US',$2,$3) returning id`, [f.legalName, ref, status])).rows[0].id;
   const bind = (entityId, f, status, patch = {}) => db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,
-    identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref) values($1,'investor',$2,$3,'sec.crd',$4,$5,$6,now()-interval '1 minute','fixture-only')`,
-    [entityId, patch.type ?? 'official_firm', patch.nativeId ?? f.profile.nativeId, patch.crd ?? f.crd, 'jurisdiction' in patch ? patch.jurisdiction : 'US', status]);
+    identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref) values($1,'investor',$2,$3,$7,$4,$5,$6,now()-interval '1 minute','fixture-only')`,
+    [entityId, patch.type ?? 'official_firm', patch.nativeId ?? f.profile.nativeId, patch.crd ?? f.crd, 'jurisdiction' in patch ? patch.jurisdiction : 'US', status, patch.namespace ?? 'sec.crd']);
   await bind(await entity(REVIEW), REVIEW, 'review_required');
   await bind(await entity(AMBIGUOUS), AMBIGUOUS, 'accepted');
   await bind(await entity({ ...AMBIGUOUS, legalName: AMBIGUOUS.legalName + ' (second claim)' }, 'active', '/firm/second-claim'), AMBIGUOUS, 'accepted', { nativeId: 'fixture-other-id', jurisdiction: null });
@@ -191,6 +294,9 @@ try {
   await bind(await entity(RETIRED, 'retired'), RETIRED, 'accepted');
   await bind(await entity(WRONG_JURISDICTION), WRONG_JURISDICTION, 'accepted', { jurisdiction: 'CA' }); // a state observation is not the US firm identity
   await bind(await entity(WRONG_CRD), WRONG_CRD, 'accepted', { crd: '7770099' }); // native id and CRD disagree
+  await bind(await entity(PERSON), PERSON, 'accepted', { type: 'individual_adviser' }); // a person is not the firm grain
+  await bind(await entity(BRANCH), BRANCH, 'accepted', { type: 'branch_office' }); // a branch is not the firm grain
+  await bind(await entity(WRONG_NAMESPACE), WRONG_NAMESPACE, 'accepted', { namespace: 'finra.crd' }); // same digits under another namespace
 
   // Session authority and the verified parent.
   const sidA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', sidB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', exp = Math.floor(Date.now() / 1000) + 110;
@@ -200,7 +306,7 @@ try {
 
   // Investor source channel fixture: Investor's own verdict per identity. It
   // verifies Ask's signature exactly as the Investor route does.
-  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, WRONG_CLASS, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CRD].map(f => [f.profile.nativeId, f.slug]));
+  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, WRONG_CLASS, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CRD, PERSON, BRANCH, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
   /** How Investor's publication re-proof misbehaves, when it does. */
   let publicationFault = null;
   const acknowledged = []; const investorCalls = [];
@@ -346,6 +452,9 @@ try {
   await denied(RETIRED, 'retired entity');
   await denied(WRONG_JURISDICTION, 'binding under a state jurisdiction');
   await denied(WRONG_CRD, 'binding whose CRD disagrees with the native id');
+  await denied(PERSON, 'binding for an individual adviser');
+  await denied(BRANCH, 'binding for a branch office');
+  await denied(WRONG_NAMESPACE, 'binding under another namespace');
   // Publication re-proof failures: Investor down, erroring, answering garbage, or answering for something else.
   for (const fault of ['network', 'http500', 'not_json', 'refused', 'stale', 'future', 'not_publishable', 'state_adviser', 'other_identity', 'no_slug']) {
     publicationFault = fault;
@@ -359,7 +468,7 @@ try {
   published.set(WESTERN.profile.nativeId, 'sec-crd-104571');
   await denied(WESTERN, 'Investor reports another canonical slug');
   published.set(WESTERN.profile.nativeId, WESTERN.slug);
-  console.log('PASS denials: missing, review_required, ambiguous, wrong class, wrong jurisdiction, wrong CRD, other profile ref, retired entity, unpublished, slug disagreement and ten publication re-proof failures write nothing');
+  console.log('PASS denials: missing, review_required, ambiguous, wrong class, individual adviser, branch office, wrong namespace, wrong jurisdiction, wrong CRD, other profile ref, retired entity, unpublished, slug disagreement and ten publication re-proof failures write nothing');
 
   // Tampered or foreign stages never get past the signed service boundary.
   await quiet();
@@ -371,6 +480,9 @@ try {
     ['return path of another firm', { ...good, returnTask: { ...good.returnTask, returnPath: '/firm/' + METWEST.slug } }],
     ['name-style slug', { ...good, returnTask: { ...good.returnTask, canonicalSlug: 'weinberger-asset-management', returnPath: '/firm/weinberger-asset-management' }, selected: [{ ...good.selected[0], localItemId: 'weinberger-asset-management' }] }],
     ['representative class', { ...good, returnTask: { ...good.returnTask, profile: { ...WEINBERGER.profile, profileClass: 'representative' } }, selected: [{ ...good.selected[0], profile: { ...WEINBERGER.profile, profileClass: 'representative' } }] }],
+    ['individual adviser class', { ...good, returnTask: { ...good.returnTask, profile: { ...WEINBERGER.profile, profileClass: 'individual_adviser' } }, selected: [{ ...good.selected[0], profile: { ...WEINBERGER.profile, profileClass: 'individual_adviser' } }] }],
+    ['branch office class', { ...good, returnTask: { ...good.returnTask, profile: { ...WEINBERGER.profile, profileClass: 'branch_office' } }, selected: [{ ...good.selected[0], profile: { ...WEINBERGER.profile, profileClass: 'branch_office' } }] }],
+    ['sec.crd-prefixed native id', { ...good, returnTask: { ...good.returnTask, profile: { ...WEINBERGER.profile, nativeId: 'sec.crd:106176' } }, selected: [{ ...good.selected[0], profile: { ...WEINBERGER.profile, nativeId: 'sec.crd:106176' } }] }],
     ['uuid native id', { ...good, returnTask: { ...good.returnTask, profile: { ...WEINBERGER.profile, nativeId: receipt[0].network_entity_id } }, selected: [{ ...good.selected[0], profile: { ...WEINBERGER.profile, nativeId: receipt[0].network_entity_id } }] }],
     ['two selected items', { ...good, selected: [good.selected[0], { ...manifestFor(METWEST).selected[0] }] }],
     ['Move manifest under an Investor signature', { version: 'v2-3/selected-profiles/3', sourceHub: 'move', audience: 'ask',
@@ -487,10 +599,11 @@ try {
   await click(WEINBERGER, 'save'); await click(WESTERN, 'save');
   assert.deepEqual(acknowledged, []);
   assert.equal(await snapshot(), beforePackets);
-  await db.exec(authorityRollback);
+  await db.exec(networkRollback); // packet 19 is the only network authority rollback
+  await state('baseline', 'PROCEED', 'after the network authority rollback');
   await quiet();
   assert.notEqual((await service('prepareGuestProfileTransfer', manifestFor(WEINBERGER))).status, 200);
   assert.equal((await db.query(`select to_regprocedure('v23_private.prod_issue_context(jsonb,uuid,uuid)') is not null as present`)).rows[0].present, true);
-  console.log('PASS packet dependence: without the context issuer no Save is committed or acknowledged; without the authority packet the database refuses the Investor stage');
+  console.log('PASS packet dependence: without the context issuer no Save is committed or acknowledged; without packet 19 authority the database refuses the Investor stage');
 } finally { await db.close(); }
 console.log('PASS Investor official-firm Save (Ask side, production target, embedded database)');

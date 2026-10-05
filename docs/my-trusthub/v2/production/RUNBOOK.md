@@ -178,7 +178,7 @@ production. The enumeration itself is kept in the Move repo at
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
 
-## Investor official-firm Save (packet 14, PREPARED — not applied, not deployed)
+## Investor official-firm Save (packet 14 context + bindings, packet 19 authority; PREPARED — not applied, not deployed)
 
 Identity (locked): hub `investor` / class `official_firm` / namespace `sec.crd` /
 source identifier = exact numeric firm CRD / specialist entity id `crd-<CRD>` /
@@ -195,19 +195,46 @@ is accepted, `official_firm`, `sec.crd`, `US`, on an active entity whose
 canonical profile ref is `/firm/sec-crd-<CRD>`, agreeing on both the native id
 and the CRD. Anything else fails closed.
 
+Network authority is packet 19 (PR #236, certified head
+`3b565707946b7c93252b767cf10aa185336ec8b1`). The packet 14 authority files are
+**SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION**. They are kept as the
+audited predecessor and are not part of this order.
+
 Operator packets, in this order, with the Investor release gate OFF:
 
-| File | Purpose | Marker |
-| --- | --- | --- |
-| `14-ask-prod-investor-crd-preflight.sql` | Read only. Run first: all four result sets are empty on a clean database. Sets 1 to 3 must be empty before the binding packet; set 4 reports the authority and context packets. | — |
-| `14-ask-prod-investor-authority-forward.sql` | Adds `investor` to the hub list of `v23_private.authority()` (one token; body otherwise identical, verified before replace). Without it the database refuses every Investor stage with `invalid authority`. | `V23_PROD_INVESTOR_AUTHORITY_APPLIED` |
-| `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Without it an Investor Save cannot obtain an account context. `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
-| `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
+| Step | File | Purpose | Marker |
+| --- | --- | --- | --- |
+| 1 | `14-ask-prod-investor-crd-preflight.sql` | Read only. On a clean database sets 1, 2, 3 and 5 are empty and set 4 is one row `baseline` / `PROCEED`. Sets 1 to 3 must be empty before the binding packet. Set 4 must not say `HOLD` (see below). | — |
+| 2 | `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Investor stays on this issuer; it is never routed through `prod_hub_issue_context` (packets 15/18). `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
+| 3 | `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. Does not call or need `authority()`. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
+| — | ~~`14-ask-prod-investor-authority-forward.sql`~~ | Not applied. Superseded. | — |
+| later | `19-ask-prod-network-authority-preflight.sql`, then `-forward.sql` | Network step, after every hub's binding packets: the one six-hub authority (move, insurance, lender, investor `official_firm` / `crd-<CRD>`, contractor, senior). Until it runs, the database refuses every Investor stage with `invalid authority`. | `V23_PROD_NETWORK_AUTHORITY_APPLIED` |
 
-Rollbacks: `14-ask-prod-investor-crd-binding-rollback.sql` (one receipt row per
-run; closes the binding's validity, no DELETE), `14-ask-prod-investor-context-rollback.sql`
-(drops the one function), `14-ask-prod-investor-authority-rollback.sql`
-(restores the exact three-hub body).
+Preflight set 4 (authority state) compares the installed `authority()` body,
+whitespace removed, with the three reviewed bodies:
+
+| `authority_state` | `disposition` | Meaning |
+| --- | --- | --- |
+| `baseline` | `PROCEED` | Migration three-hub body. Investor context and binding packets may run. Authority comes later from packet 19. |
+| `network_final` | `FINAL` | Packet 19 body. Network authority is final. Apply no authority file. |
+| `legacy_packet14` | `HOLD` | The superseded packet 14 four-hub body is installed. Stop. Converge with the packet 19 preflight and forward after review (packet 19 accepts this body as a reviewed predecessor). Do not run the packet 14 authority rollback. |
+| `unknown` | `HOLD` | Any other body, or none. Stop and get review. |
+
+Rollbacks, each owned separately:
+
+| Artifact | Rollback | Note |
+| --- | --- | --- |
+| Investor bindings | `14-ask-prod-investor-crd-binding-rollback.sql` | One receipt row per run; closes the binding's validity, no DELETE. |
+| Investor context issuer | `14-ask-prod-investor-context-rollback.sql` | Drops the one function. Nothing else uses it. |
+| Network authority | `19-ask-prod-network-authority-rollback.sql` | The only authority rollback. Restores the three-hub body from the packet 19 body only; affects every hub packet 19 admits. |
+| ~~Packet 14 authority~~ | ~~`14-ask-prod-investor-authority-rollback.sql`~~ | Superseded. Not a safe undo after packet 19: it refuses the packet 19 body. |
+
+No step deletes Saved research. After any successful consumer Investor Save,
+each of the three rollbacks above needs steward review first: the binding
+rollback (for the firm whose Saved rows point at that binding), the context
+rollback (no further Investor Saves can commit), and the network authority
+rollback (stages for every non-Move hub it admits then fail closed; packet 19
+raises `V23_PROD_NETWORK_AUTHORITY_ROLLBACK_STEWARD`). Saved rows stay in place.
 
 Then: exchange keys (names in `ask-prod-env.md`), set the Ask verify key and
 the Investor variables, set the Investor release gate to the three canary

@@ -1,3 +1,12 @@
+-- SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION
+-- The production authority transition is 19-ask-prod-network-authority-forward.sql.
+-- This file remains the audited predecessor. Its rollback is not a safe undo
+-- after packet 19: packet 19 rollback restores the three-hub body only from the
+-- packet 19 body, and this rollback refuses any other body.
+-- Not part of the production activation order. Kept for history and recovery
+-- evidence only: packet 19 forward accepts this file's four-hub body as a
+-- reviewed predecessor if it was ever applied by mistake.
+--
 -- MY TRUSTHUB V2 — ADMIT THE INVESTOR HUB TO THE V2-3 TRANSACTION AUTHORITY (FORWARD, operator).
 -- NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);
