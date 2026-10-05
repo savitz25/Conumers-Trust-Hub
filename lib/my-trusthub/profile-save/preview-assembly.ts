@@ -149,8 +149,9 @@ export class PreviewAssembly {
         // that hub. The hub is a.caller.hub, which the server set from the verified
         // specialist assertion and the stored stage. It is never a browser field
         // and never a key of this proof. Move keeps issue_context. Investor keeps
-        // investor_issue_context. Lender, Insurance, and Contractor use packet 15.
-        // Any other hub fails closed before a statement is sent.
+        // investor_issue_context. Lender, Insurance, Contractor, and Senior use
+        // hub_issue_context. Packet 18 admits senior. Any other hub fails closed
+        // before a statement is sent.
         const hub = a.caller.hub;
         const issue = accountContextIssueQuery(this.target, hub);
         const issued = await db.query<{ issued: boolean }>(issue.text, issue.hubArgument

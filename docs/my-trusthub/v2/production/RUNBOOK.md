@@ -263,5 +263,26 @@ and the DBPR binding. Packet 15 does not. A verified contractor caller uses
 use the stage connection. This branch does not copy the Contractor assertion,
 resolver, binding, or authority function.
 
+## Senior on the shared issuer (packet 18, PREPARED — not applied)
+
+Packet 15 remains the frozen three-hub function. Packet 18 replaces that
+installed function with the same body plus one exact arm, `senior` →
+`https://www.seniortrusthub.com`. It does not create `prod_senior_issue_context`.
+Move stays on `prod_issue_context`. Investor stays on
+`prod_investor_issue_context`. `v23_private.authority()` is not modified.
+Packet 17 owns Senior authority and the CMS CCN bindings. Until Packet 17 is
+applied, a Senior context can be issued and `consume_context` still fails
+closed with no Saved row and no acknowledgement.
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `18-ask-prod-senior-hub-context-preflight.sql` | Read-only. The installed shared issuer must be the frozen Packet 15 body, Senior must not already be admitted, and the three pinned origins must match. Any other body stops. | `V23_PROD_SENIOR_HUB_CONTEXT_PREFLIGHT_PASS` |
+| `18-ask-prod-senior-hub-context-forward.sql` | Replaces the shared issuer so the exact hubs are lender, insurance, contractor, and senior. | `V23_PROD_SENIOR_HUB_CONTEXT_APPLIED` |
+| `18-ask-prod-senior-hub-context-rollback.sql` | Restores the frozen three-hub function. Senior is denied again. The function is not dropped. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
+
+The verified caller hub is still `a.caller.hub`. A browser field cannot select it.
+Apply Packet 15 first. Run the Packet 18 preflight. Apply Packet 18 only when
+that preflight passes. Packet 17 stays a separate operator step.
+
 Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
 suite is `npm run check:my-trusthub-v2-3-widening`.

@@ -1,10 +1,12 @@
 import { sqlName, type DeploymentTarget } from './isolated-config.ts';
 import { RuntimeError } from './runtime.ts';
 
-/** Standard specialist hubs admitted by packet 15 (`prod_hub_issue_context`).
+/** Standard specialist hubs admitted by the shared issuer (`prod_hub_issue_context`).
+ * Packet 15 creates the function for lender, insurance, and contractor.
+ * Packet 18 adds senior. The origin stays pinned inside that function.
  * Move stays on `issue_context`. Investor stays on `investor_issue_context`.
  * The hub is the verified caller hub. It is never read from the browser or the proof. */
-export const SHARED_HUB_ACCOUNT_CONTEXT = ['lender', 'insurance', 'contractor'] as const;
+export const SHARED_HUB_ACCOUNT_CONTEXT = ['lender', 'insurance', 'contractor', 'senior'] as const;
 export type SharedHubAccountContext = typeof SHARED_HUB_ACCOUNT_CONTEXT[number];
 
 export function isSharedHubAccountContext(hub: string): hub is SharedHubAccountContext {
