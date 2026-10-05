@@ -192,7 +192,7 @@ try {
     assert.deepEqual((await resolve(f.profile.nativeId)).map(x => [x.id, x.network_entity_id, x.binding_status, x.specialist_entity_type, x.specialist_entity_id, x.identifier_namespace, x.source_identifier, x.jurisdiction, x.entity_status, x.canonical_public_profile_ref]),
       [[r.binding_id, r.network_entity_id, 'accepted', 'cms_facility', f.ccn, 'cms.ccn', f.ccn, 'US', 'active', f.ref]]);
   }
-  for (const bad of ['15009', '0150090', '%', '015009 ', "0' or '1", 'cms.ccn:015009', 'burns-nursing-home-inc', '01500g', BURNS.legalName, receipt[0].binding_id, receipt[0].network_entity_id, '105001', 'nmls:2767', ''])
+  for (const bad of ['15009', '0150090', '%', '015009 ', '01500*', ' QR90ST', 'QR-90S', 'QR90ST!', 'ＱＲ９０ＳＴ', "0' or '1", 'cms.ccn:015009', 'burns-nursing-home-inc', '01500g', BURNS.legalName, receipt[0].binding_id, receipt[0].network_entity_id, '105001', 'nmls:2767', ''])
     assert.equal((await resolve(bad)).length, 0, bad);
   for (const role of ['myth_v23_authorizer', 'myth_v23_executor']) for (const table of ['network.network_entity_bindings', 'network.network_entities']) {
     await db.exec(`begin; set local role ${role}`);
@@ -260,6 +260,46 @@ try {
   assert.equal((await resolve('015009')).length, 1);
   console.log('PASS preflight: a padded claim of a canary CCN is the same logical identity the resolver collides on');
 
+  // Other-namespace specialist id padded with spaces. Preflight folds it with
+  // lower(btrim). The reader policy must expose that same row to the resolver.
+  const crossEntity = (await db.query(`insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction,canonical_public_profile_ref,status)
+    values('organization','BURNS CROSS NAMESPACE','senior','US','/facility/cms/015009/cross-namespace-padded','active') returning id`)).rows[0].id;
+  const crossBinding = (await db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,
+    identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
+    values($1,'senior','cms_facility',' 015009 ','fl.ahca.license','XXXXXX','US','accepted',now()-interval '1 minute','fixture-cross-namespace') returning id`, [crossEntity])).rows[0].id;
+  const crossAmbiguity = (await db.exec(read('17-ask-prod-senior-ccn-preflight.sql')))[2].rows;
+  const policyGap = {
+    crossFlagged: crossAmbiguity.some(r => r.owner_key === '015009' && Number(r.rows) > 1),
+    crossResolver: (await resolve('015009')).length,
+  };
+  await db.query(`update network.network_entity_bindings set valid_to = clock_timestamp() where id = $1 and valid_to is null`, [crossBinding]);
+  assert.deepEqual(await preflightSets(), [3, 3, 0, 3, 0, 1]);
+  assert.equal((await resolve('015009')).length, 1);
+
+  const QR = facility('QR90ST', 'QR POLICY NURSING HOME', 'qr-policy-nursing-home');
+  const PAD = facility('ZX81CV', 'PADDED CMS NURSING HOME', 'padded-cms-nursing-home');
+  const SRC = facility('YW70BU', 'PADDED SOURCE NURSING HOME', 'padded-source-nursing-home');
+  const XJ = facility('VT63AS', 'CROSS JURISDICTION NURSING HOME', 'cross-jurisdiction-nursing-home');
+  const WC = facility('HK52RD', 'WRONG CLASS DUPLICATE NURSING HOME', 'wrong-class-duplicate-nursing-home');
+  const RR = facility('JP41QE', 'REVIEW DUPLICATE NURSING HOME', 'review-duplicate-nursing-home');
+  const MANY = facility('LM45NO', 'MANY CLAIMS NURSING HOME', 'many-claims-nursing-home');
+  const extra = async (f, patch, slug) => bind(await entity({ ...f, legalName: f.legalName + ' ' + slug }, 'active', '/facility/cms/' + f.ccn + '/' + slug), f, patch.status ?? 'accepted', patch);
+  await bind(await entity(QR), QR, 'accepted');
+  await extra(QR, { nativeId: ' QR90ST ', namespace: 'fl.ahca.license', ccn: 'QR90ST' }, 'qr-other-namespace');
+  await bind(await entity(PAD), PAD, 'accepted');
+  await extra(PAD, { nativeId: ' ZX81CV ', ccn: 'ZX81CV', jurisdiction: 'AL' }, 'padded-specialist');
+  await bind(await entity(SRC), SRC, 'accepted');
+  await extra(SRC, { nativeId: 'YW70BUX', ccn: ' YW70BU ', jurisdiction: 'NJ' }, 'padded-source');
+  await bind(await entity(XJ), XJ, 'accepted');
+  await extra(XJ, { nativeId: 'fixture-vt63as', ccn: 'VT63AS', jurisdiction: 'NJ' }, 'other-jurisdiction');
+  await bind(await entity(WC), WC, 'accepted');
+  await extra(WC, { nativeId: 'fixture-hk52rd', type: 'home_health', ccn: 'HK52RD', jurisdiction: 'AL' }, 'other-class');
+  await bind(await entity(RR), RR, 'accepted');
+  await extra(RR, { status: 'review_required' }, 'review-required-claim');
+  await bind(await entity(MANY), MANY, 'accepted');
+  await extra(MANY, { nativeId: 'lm45no', ccn: 'LM45NO', jurisdiction: 'NJ' }, 'second-claim');
+  await extra(MANY, { nativeId: ' LM45NO ', namespace: 'fl.ahca.license', ccn: 'LM45NO', jurisdiction: 'AL' }, 'third-claim');
+
   // Session authority and the verified parent.
   const sidA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', sidB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', exp = Math.floor(Date.now() / 1000) + 110;
   await db.query('insert into auth.users values($1),($2)', [A, B]);
@@ -268,7 +308,7 @@ try {
 
   // Senior source channel fixture: Senior's own verdict per identity. It
   // verifies Ask's signature exactly as the Senior route does.
-  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, ALPHA, WRONG_CLASS, HOSPICE, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CCN, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
+  const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, ALPHA, EXACT_ALPHA, QR, PAD, SRC, XJ, WC, RR, MANY, WRONG_CLASS, HOSPICE, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CCN, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
   /** How Senior's publication re-proof misbehaves, when it does. */
   let publicationFault = null;
   const acknowledged = []; const seniorCalls = [];
@@ -419,6 +459,21 @@ try {
   assert.equal((await saves(A)).length, 3); assert.equal((await active(A)).length, 3);
   console.log('PASS Unsave: only the owner\'s row for that facility is removed and acknowledged; re-Save restores the same row');
 
+  await quiet(); acknowledged.length = 0;
+  assert.deepEqual(await click(EXACT_ALPHA, 'save'), returned(EXACT_ALPHA));
+  assert.deepEqual(acknowledged, ['saved']);
+  const lowerAlpha = { ...EXACT_ALPHA, profile: { ...EXACT_ALPHA.profile, nativeId: 'cd34ef' } };
+  const lowerLookup = await resolve('cd34ef');
+  assert.equal(lowerLookup.length, 1);
+  assert.equal(classifySeniorRows('cd34ef', lowerLookup).outcome, 'eligible');
+  await quiet(); acknowledged.length = 0;
+  const lowerStage = await click(lowerAlpha, 'save');
+  assert.notEqual(lowerStage.stage, 200, JSON.stringify(lowerStage));
+  assert.deepEqual(acknowledged, []);
+  await quiet(); acknowledged.length = 0;
+  assert.deepEqual(await click(EXACT_ALPHA, 'unsave'), returned(EXACT_ALPHA));
+  console.log('PASS alphanumeric CCN saves from the uppercase wire; a lowercase lookup resolves and does not stage');
+
   // Denials: nothing is written and nothing is acknowledged.
   const snapshot = async () => JSON.stringify((await db.query('select id,network_entity_id,removed_at,row_version from consumer.consumer_saved_entities order by id')).rows);
   const before = await snapshot();
@@ -429,6 +484,33 @@ try {
     await click(f, 'unsave');
     assert.equal(await snapshot(), before, label + ' unsave'); assert.deepEqual(acknowledged, [], label + ' unsave acknowledgement');
   };
+  const qrRows = await resolve('QR90ST');
+  await quiet(); acknowledged.length = 0;
+  const qrSave = await click(QR, 'save');
+  const evidence = {
+    policyGap, qrRows: qrRows.length, manyRows: (await resolve('LM45NO')).length,
+    save: qrSave, ack: acknowledged.slice(), snapshotSame: (await snapshot()) === before,
+  };
+  assert.equal(evidence.policyGap.crossFlagged === true && evidence.policyGap.crossResolver === 2 && evidence.qrRows === 2 && evidence.manyRows === 3 && evidence.ack.length === 0 && evidence.snapshotSame, true, JSON.stringify(evidence));
+  assert.equal(classifySeniorRows('QR90ST', qrRows).reason, 'ambiguous');
+  const logicalClaims = async (ccn) => Number((await db.query(`select count(*)::int as n from network.network_entity_bindings
+    where hub='senior' and binding_status in ('accepted','review_required')
+      and valid_from <= statement_timestamp() and (valid_to is null or valid_to > statement_timestamp())
+      and (lower(btrim(specialist_entity_id))=lower($1) or (identifier_namespace='cms.ccn' and source_identifier_normalized=lower($1)))`, [ccn])).rows[0].n);
+  for (const [id, label] of [['015009', 'canary after the padded windows close'], ['QR90ST', 'padded other namespace'], ['ZX81CV', 'padded cms.ccn specialist'], ['YW70BU', 'padded source'], ['VT63AS', 'cross jurisdiction'], ['HK52RD', 'wrong class'], ['JP41QE', 'review_required'], ['LM45NO', 'three claims'], ['AB12CD', 'case variant'], ['CD34EF', 'clean alphanumeric']]) {
+    const seen = (await resolve(id)).length;
+    const logical = await logicalClaims(id);
+    assert.equal(seen, logical, label + ': resolver ' + seen + ', logical ' + logical);
+    if (logical > 1) assert.equal(classifySeniorRows(id, await resolve(id)).reason, 'ambiguous', label);
+  }
+  console.log('PASS padded other-namespace claim: preflight and resolver agree, Save writes nothing and acknowledges nothing');
+  await denied(QR, 'padded specialist id under another namespace');
+  await denied(PAD, 'padded specialist id under cms.ccn');
+  await denied(SRC, 'padded source identifier');
+  await denied(XJ, 'cross-jurisdiction duplicate');
+  await denied(WC, 'wrong-class logical duplicate');
+  await denied(RR, 'review_required logical duplicate');
+  await denied(MANY, 'three logical claims');
   await denied(UNBOUND, 'missing binding');
   await denied(REVIEW, 'review_required binding');
   await denied(AMBIGUOUS, 'ambiguous binding');

@@ -290,6 +290,9 @@ test('packet 17 is prepared only: preflight, binding forward/rollback, authority
   assert.equal(preflight.includes('lower(btrim(specialist_entity_id))'), true);
   assert.equal(preflight.includes('lower(btrim(b.specialist_entity_id))'), true);
   assert.equal(forward.includes('lower(btrim($1))'), true);
+  assert.equal(forward.includes("btrim(specialist_entity_id) ~ '^[A-Za-z0-9]{6}$'"), true);
+  assert.equal(forward.includes("btrim(b.specialist_entity_id) ~ '^[A-Za-z0-9]{6}$'"), true);
+  assert.equal(forward.includes("specialist_entity_id ~ '^[A-Za-z0-9]{6}$'"), false);
   assert.equal(authority.includes('source_identifier_normalized'), false);
   assert.equal(authorityRollback.includes('source_identifier_normalized'), false);
   assert.equal(forward.includes("'senior', 'cms_facility'"), true);

@@ -123,11 +123,13 @@ do $$ begin
   end if;
 end $$;
 
+-- A non-cms.ccn row is readable only when btrim(specialist_entity_id) is six
+-- letters or digits. Leading or trailing spaces must not hide that claim.
 create policy prod_senior_ccn_bindings on network.network_entity_bindings for select to myth_v23_prod_reader
- using(hub='senior' and (identifier_namespace='cms.ccn' or specialist_entity_id ~ '^[A-Za-z0-9]{6}$'));
+ using(hub='senior' and (identifier_namespace='cms.ccn' or btrim(specialist_entity_id) ~ '^[A-Za-z0-9]{6}$'));
 create policy prod_senior_ccn_entities on network.network_entities for select to myth_v23_prod_reader
  using(exists(select 1 from network.network_entity_bindings b where b.network_entity_id=network_entities.id
-   and b.hub='senior' and (b.identifier_namespace='cms.ccn' or b.specialist_entity_id ~ '^[A-Za-z0-9]{6}$')));
+   and b.hub='senior' and (b.identifier_namespace='cms.ccn' or btrim(b.specialist_entity_id) ~ '^[A-Za-z0-9]{6}$')));
 
 create function v23_private.prod_senior_ccn_binding_for(native_id text)
 returns table(id uuid, network_entity_id uuid, binding_status text, specialist_entity_type text, specialist_entity_id text,
