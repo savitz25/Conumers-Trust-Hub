@@ -25,7 +25,8 @@ export type ContractorBindingRow = {
   specialist_entity_id: string;
   identifier_namespace: string;
   source_identifier: string;
-  jurisdiction: string;
+  /** Null is a real stored claim. It is not the Florida contract. */
+  jurisdiction: string | null;
   entity_status: string;
   canonical_public_profile_ref: string;
 };

@@ -23,6 +23,7 @@ import { ASSERTION_HEADER, signAssertion, verifyAssertion } from '../../lib/my-t
 import { API_PATH, PRODUCTION_TARGET } from '../../lib/my-trusthub/profile-save/isolated-config.ts';
 import { sessionMac } from '../../lib/my-trusthub/profile-save/session-authority.ts';
 import { PROFILE_SAVE_RUNTIME_VERSION } from '../../lib/my-trusthub/profile-save/interface.ts';
+import { classifyContractorRows } from '../../lib/my-trusthub/profile-save/contractor-binding.ts';
 
 const PRODUCTION = 'qvvxvbcdmbjzrgvwjatw';
 const ASK = 'https://www.asktrusthub.com', MOVE = 'https://www.movetrusthub.com', LENDER = 'https://www.lendertrusthub.com', INSURANCE = 'https://www.insurancetrusthub.com', CONTRACTOR = 'https://www.contractortrusthub.com';
@@ -50,6 +51,12 @@ const ASFIN = { hub: 'insurance', origin: INSURANCE, slug: 'asfin-llc-l106287', 
   jurisdiction: 'FL', license: 'L106287', profile: { hub: 'insurance', nativeId: 'state-license:FL:L106287', profileClass: 'insurance_provider' } };
 const ROOF = { hub: 'contractor', origin: CONTRACTOR, slug: 'ccc057187-a-r-roofing-inc', returnPath: '/contractors/ccc057187-a-r-roofing-inc',
   legalName: 'A & R ROOFING INC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CCC057187', profileClass: 'contractor_profile' } };
+const PLUMB = { hub: 'contractor', origin: CONTRACTOR, slug: 'cfc1427249-a-sunny-plumbing-company', returnPath: '/contractors/cfc1427249-a-sunny-plumbing-company',
+  legalName: 'A SUNNY PLUMBING COMPANY', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CFC1427249', profileClass: 'contractor_profile' } };
+const ABSCO = { hub: 'contractor', origin: CONTRACTOR, slug: 'cgc1506243-abs-contracting-inc', returnPath: '/contractors/cgc1506243-abs-contracting-inc',
+  legalName: 'ABS CONTRACTING INC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CGC1506243', profileClass: 'contractor_profile' } };
+const UNBOUND = { hub: 'contractor', origin: CONTRACTOR, slug: 'cbc1268883-1776-construction-group-llc', returnPath: '/contractors/cbc1268883-1776-construction-group-llc',
+  legalName: '1776 CONSTRUCTION GROUP LLC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CBC1268883', profileClass: 'contractor_profile' } };
 
 const bootstrap = new PGlite();
 const emptyCluster = await bootstrap.dumpDataDir();
@@ -127,7 +134,7 @@ try {
     acknowledged.push(['insurance', receipt.parent.outcome]);
     return Response.json({ ok: true, result: { acknowledged: receipt.parent.outcome === 'local_only' ? 'unsave' : 'save', watchCreated: false } });
   };
-  const contractorSlugs = new Map([[ROOF.profile.nativeId, ROOF.slug], ['fl.dbpr.license:CFC1427249', 'cfc1427249-a-sunny-plumbing-company'], ['fl.dbpr.license:CGC1506243', 'cgc1506243-abs-contracting-inc']]);
+  const contractorSlugs = new Map([[ROOF.profile.nativeId, ROOF.slug], [PLUMB.profile.nativeId, PLUMB.slug], [ABSCO.profile.nativeId, ABSCO.slug], [UNBOUND.profile.nativeId, UNBOUND.slug]]);
   const contractorFetch = async (target, init) => {
     const bytes = Buffer.from(init.body), body = JSON.parse(bytes.toString());
     const claims = await verifyContractorAssertion(new Request(target, { method: 'POST', headers: init.headers, body: bytes }), bytes, ask.publicKey, 'ask', body.action === 'acknowledge' ? 'source:ack' : 'source:read', nonces);
@@ -329,6 +336,92 @@ try {
   assert.deepEqual(await active(), []);
   console.log('PASS contractor Save, repeated Save, and Unsave; context is contractor; acknowledgement follows commit; binding reads stay on one connection');
 
+  for (const canary of [PLUMB, ABSCO]) {
+    await quiet(); acknowledged.length = 0;
+    const saved = await click(canary, 'save');
+    assert.deepEqual({ stage: saved.stage, arrival: saved.arrival, status: saved.status, location: saved.location }, returned(canary), canary.slug);
+    assert.deepEqual(acknowledged, [['contractor', 'saved']], canary.slug);
+    await quiet(); acknowledged.length = 0;
+    assert.deepEqual({ ...(await click(canary, 'unsave')), bindingReads: undefined }, { ...returned(canary), bindingReads: undefined });
+    assert.deepEqual(acknowledged, [['contractor', 'local_only']], canary.slug);
+  }
+  assert.deepEqual(await active(), []);
+  console.log('PASS clean canaries CFC1427249 and CGC1506243 save and unsave');
+
+  // Same logical DBPR key, second accepted claim outside jurisdiction FL.
+  // The specialist id differs so the accepted-specialist unique index allows
+  // the row; only the namespace-and-key lookup can see it.
+  const roofReceipt = receipt.rows.find(r => r.external_key === 'CCC057187');
+  const resolveContractor = id => store.authorized(async d => (await d.query('select * from v23_private.prod_contractor_dbpr_binding_for($1)', [id])).rows);
+  const beforeDup = await snapshot();
+  async function competingClaim(label, jurisdiction) {
+    const entityId = (await db.query(`insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction,canonical_public_profile_ref,status)
+      values('organization',$1,'contractor','FL',$2,'active') returning id`, ['A & R ROOFING INC ' + label, '/contractors/ccc057187-' + label])).rows[0].id;
+    const bindingId = (await db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
+      values($1,'contractor','contractor_profile',$2,'fl.dbpr.license','CCC057187',$3,'accepted',clock_timestamp(),$4) returning id`,
+      [entityId, 'fixture:' + label, jurisdiction, 'local-' + label])).rows[0].id;
+    return bindingId;
+  }
+  async function closeClaim(bindingId) {
+    const closed = await db.query(`update network.network_entity_bindings set valid_to=clock_timestamp() where id=$1 and valid_to is null returning id`, [bindingId]);
+    assert.equal(closed.rows.length, 1);
+  }
+  async function denySave(label) {
+    await quiet(); acknowledged.length = 0;
+    const denied = await click(ROOF, 'save');
+    assert.notEqual(denied.stage, 200, label + ' ' + JSON.stringify(denied.body));
+    assert.deepEqual(acknowledged, [], label + ' acknowledgement');
+    assert.equal(await snapshot(), beforeDup, label + ' saved');
+  }
+  const seenByPreflight = async (specialistId) => (await preflight())[0].rows.some(r => r.specialist_entity_id === specialistId && r.source_identifier === 'CCC057187' && r.identifier_namespace === 'fl.dbpr.license');
+  const nullClaim = await competingClaim('null-jurisdiction', null);
+  const nullPreflight = await seenByPreflight('fixture:null-jurisdiction');
+  let rows = await resolveContractor(ROOF.profile.nativeId);
+  const nullRows = rows.length;
+  const nullClass = classifyContractorRows(ROOF.profile.nativeId, rows);
+  await closeClaim(nullClaim);
+  const njClaim = await competingClaim('nj-jurisdiction', 'NJ');
+  const njPreflight = await seenByPreflight('fixture:nj-jurisdiction');
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  const njRows = rows.length;
+  const njClass = classifyContractorRows(ROOF.profile.nativeId, rows);
+  await closeClaim(njClaim);
+  assert.equal(nullPreflight, true, 'preflight result 1 must list the null-jurisdiction claim');
+  assert.equal(njPreflight, true, 'preflight result 1 must list the NJ claim');
+  assert.equal(nullRows === 2 && njRows === 2, true, 'null rows ' + nullRows + ' ' + nullClass.outcome + '; NJ rows ' + njRows + ' ' + njClass.outcome);
+  await db.query(`update network.network_entity_bindings set valid_to=null where id=$1 and provenance_ref='local-null-jurisdiction'`, [nullClaim]);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, await resolveContractor(ROOF.profile.nativeId)).reason, 'ambiguous');
+  await denySave('FL plus null jurisdiction');
+  await closeClaim(nullClaim);
+  await db.query(`update network.network_entity_bindings set valid_to=null where id=$1 and provenance_ref='local-nj-jurisdiction'`, [njClaim]);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, await resolveContractor(ROOF.profile.nativeId)).reason, 'ambiguous');
+  await denySave('FL plus NJ');
+  await closeClaim(njClaim);
+  await db.query(`update network.network_entity_bindings set valid_to=clock_timestamp() where id=$1 and valid_to is null`, [roofReceipt.binding_id]);
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 0);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'missing');
+  await denySave('zero binding');
+  const onlyNj = await competingClaim('only-nj', 'NJ');
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1, 'a lone NJ claim must be returned');
+  assert.equal(rows[0].jurisdiction, 'NJ');
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('single NJ');
+  await closeClaim(onlyNj);
+  const onlyNull = await competingClaim('only-null', null);
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1, 'a lone null-jurisdiction claim must be returned');
+  assert.equal(rows[0].jurisdiction, null);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('single null jurisdiction');
+  await closeClaim(onlyNull);
+  await db.query(`update network.network_entity_bindings set valid_to=null where id=$1`, [roofReceipt.binding_id]);
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
+  console.log('PASS same-key claims outside FL are visible: null and NJ duplicates are ambiguous, a lone non-FL claim is denied, and preflight lists both');
+
   await quiet(); acknowledged.length = 0;
   assert.deepEqual(await click(HINDMAN, 'save'), { ...returned(HINDMAN), bindingReads: [] });
   assert.deepEqual(acknowledged, [['move', 'saved']]);
@@ -424,6 +517,25 @@ try {
   await db.exec(authorityForward);
   await assert.rejects(db.exec(authorityForward), /already applied; review, do not re-apply/); await db.exec('rollback');
   console.log('PASS authority rollback restores the three-hub refusal, move still saves, and the forward packet applies again only from that restored body');
+
+  const plumbing = receipt.rows.find(r => r.external_key === 'CFC1427249');
+  const beforeBindingRollback = await snapshot();
+  await db.query(`select set_config('v23.approved_project',$1,false), set_config('v23contractor.external_key',$2,false),
+    set_config('v23contractor.binding_id',$3,false), set_config('v23contractor.network_entity_id',$4,false),
+    set_config('v23contractor.canonical_public_profile_ref',$5,false)`,
+    [PRODUCTION, plumbing.external_key, plumbing.binding_id, plumbing.network_entity_id, plumbing.canonical_public_profile_ref]);
+  await db.exec(read('16-ask-prod-contractor-dbpr-binding-rollback.sql'));
+  assert.equal(await snapshot(), beforeBindingRollback);
+  assert.equal((await db.query(`select count(*)::int n from network.network_entities where id=$1`, [plumbing.network_entity_id])).rows[0].n, 1);
+  assert.equal((await db.query(`select count(*)::int n from network.network_entity_bindings where id=$1 and valid_to is null`, [plumbing.binding_id])).rows[0].n, 0);
+  await assert.rejects(db.exec(read('16-ask-prod-contractor-dbpr-binding-rollback.sql')), /exactly one/);
+  await db.exec('rollback');
+  await quiet(); acknowledged.length = 0;
+  const closedSave = await click(PLUMB, 'save');
+  assert.notEqual(closedSave.stage, 200, JSON.stringify(closedSave.body));
+  assert.deepEqual(acknowledged, []);
+  assert.equal(await snapshot(), beforeBindingRollback);
+  console.log('PASS packet 16 binding rollback closes one receipt binding, deletes nothing, preserves Saved research, and the closed facility is no longer eligible');
 } finally {
   await db.close();
 }

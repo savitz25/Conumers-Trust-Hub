@@ -77,6 +77,10 @@ test('B C D E F G wrong key, class, namespace, multiples, review, and inactive a
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ specialist_entity_type: 'marketplace_company' })]), 'wrong_class');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ identifier_namespace: 'nj.dca.license' })]), 'identity_disagreement');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row(), row({ id: 'binding-2' })]), 'ambiguous');
+  assert.equal(denied('fl.dbpr.license:CCC057187', [row(), row({ id: 'binding-null', specialist_entity_id: 'fixture:null', jurisdiction: null })]), 'ambiguous');
+  assert.equal(denied('fl.dbpr.license:CCC057187', [row(), row({ id: 'binding-nj', specialist_entity_id: 'fixture:nj', jurisdiction: 'NJ' })]), 'ambiguous');
+  assert.equal(denied('fl.dbpr.license:CCC057187', [row({ specialist_entity_id: 'fixture:nj', jurisdiction: 'NJ' })]), 'identity_disagreement');
+  assert.equal(denied('fl.dbpr.license:CCC057187', [row({ specialist_entity_id: 'fixture:null', jurisdiction: null })]), 'identity_disagreement');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ binding_status: 'review_required' })]), 'review_required');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ entity_status: 'retired' })]), 'inactive');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ canonical_public_profile_ref: '/providers/ccc057187-a-r-roofing-inc' })]), 'identity_disagreement');
@@ -155,6 +159,8 @@ test('packet 16 is prepared only and contractor requests the shared hub issuer',
   assert.match(preflight, /identifier_namespace is distinct from 'fl\.dbpr\.license'/);
   assert.equal(forward.includes('n <> 3'), true);
   assert.equal(forward.includes('prod_contractor_dbpr_binding_for'), true);
+  assert.equal(forward.includes("b.jurisdiction = 'FL'"), false);
+  assert.equal(preflight.includes("jurisdiction = 'FL'"), false);
   assert.equal(forward.includes('NOT APPLIED'), true);
   assert.equal(/\bdelete\b/i.test(rollback), false);
   assert.equal(rollback.includes('valid_to = clock_timestamp()'), true);

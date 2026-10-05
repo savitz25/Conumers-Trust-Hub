@@ -143,8 +143,11 @@ do $$ declare n integer; begin
 end $$;
 
 -- The runtime login cannot select network tables. This read-only wrapper
--- writes nothing. It also returns a second matching grain so the caller can
--- fail closed on disagreement or ambiguity.
+-- writes nothing. It returns every current accepted or review_required claim
+-- for this exact namespace and DBPR key, whatever jurisdiction is stored,
+-- so a second claim cannot hide behind a null or non-FL jurisdiction. The
+-- caller fails closed on disagreement or ambiguity. Eligibility still
+-- requires jurisdiction FL.
 do $$ begin
   if to_regrole('myth_v23_prod_reader') is null or to_regrole('myth_v23_authorizer') is null or to_regrole('myth_v23_executor') is null then
     raise exception 'V23_PROD_CONTRACTOR_RESOLVER_PRECONDITION_FAIL';
@@ -179,7 +182,6 @@ language sql stable security definer set search_path=pg_catalog,network as $$
      b.specialist_entity_id = $1
      or (
        b.identifier_namespace = 'fl.dbpr.license'
-       and b.jurisdiction = 'FL'
        and b.source_identifier = split_part($1, ':', 2)
      )
    )
