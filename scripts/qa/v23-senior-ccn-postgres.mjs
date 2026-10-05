@@ -7,6 +7,9 @@
 // every denial. Auth and the Senior source channel are explicit fixtures.
 // Nothing here contacts a hosted database, Ask, or Senior.
 //
+// AUTHORITY: packet 19 (PR #236, head 3b56570, certified) drives the Senior path. Packet 17's own
+// authority forward is SUPERSEDED BY PACKET 19; it appears here only in a labelled historical
+// comparison, to prove the packet 17 preflight classifies it as a legacy HOLD.
 // ACCOUNT CONTEXT: Senior uses the shared per-hub issuer that G-B2 owns
 // (packet 15). That packet is not on this branch and does not admit 'senior'
 // yet, so the first half proves the path FAILS CLOSED without it. The second
@@ -15,6 +18,7 @@
 // packet and is never shipped.
 import assert from 'node:assert/strict';
 import { createHash, generateKeyPairSync } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
 import { btree_gist } from '@electric-sql/pglite/contrib/btree_gist';
@@ -38,6 +42,10 @@ const PRODUCTION = 'qvvxvbcdmbjzrgvwjatw';
 const ASK = 'https://www.asktrusthub.com', SENIOR = 'https://www.seniortrusthub.com';
 const prod = 'docs/my-trusthub/v2/production/';
 const read = file => readFileSync(prod + file, 'utf8').replace(/\r\n/g, '\n');
+// Packet 19 is its own PR. The harness reads the certified head; a checkout without that commit cannot run this harness.
+const PACKET19_HEAD = '3b565707946b7c93252b767cf10aa185336ec8b1';
+const packet19 = file => { try { return execFileSync('git', ['show', `${PACKET19_HEAD}:${prod}${file}`], { encoding: 'utf8' }).replace(/\r\n/g, '\n'); }
+  catch { throw new Error(`packet 19 (${PACKET19_HEAD}) is not available in this checkout; fetch PR #236 to run this harness`); } };
 const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222';
 const ENV = {
   VERCEL_ENV: 'production', MY_TRUSTHUB_V23_PRODUCTION_HANDOFF_ENABLED: 'true',
@@ -103,11 +111,11 @@ try {
   const ask = keys('ask-fixture'), move = keys('move-fixture'), senior = keys('senior-fixture');
   await db.exec(`set v23.approved_project='${PRODUCTION}'`);
   await db.exec(read('02-ask-prod-ports-forward.sql'));
-  // Nothing of packet 17 is applied yet: results 1-5 are empty; result 6 is the one readiness row.
+  // Nothing of packet 17 is applied yet: results 1-5 are empty; result 6 is the one authority-state row.
   const preflightSets = async () => (await db.exec(read('17-ask-prod-senior-ccn-preflight.sql'))).map(r => r.rows.length);
   const readiness = async () => (await db.exec(read('17-ask-prod-senior-ccn-preflight.sql'))).at(-1).rows[0];
   assert.deepEqual(await preflightSets(), [0, 0, 0, 0, 0, 1]);
-  assert.deepEqual(await readiness(), { authority_installed: true, senior_admitted: false, resolver_installed: false });
+  assert.deepEqual(await readiness(), { authority_state: 'baseline', next_step: 'binding packet may proceed; authority step later = packet 19', resolver_installed: false });
   // The other hubs' own packets, unmodified, for the regression at the end.
   await db.exec(`set v23.binding_creation_authorized='true'; set v23bind.candidate_unchanged='true'; set v23bind.evidence_ref='local-sql-packet-fixture-only';
     select set_config('v23bind.preflight_checked_at',clock_timestamp()::text,false);`);
@@ -120,39 +128,58 @@ try {
   assert.deepEqual(await preflightSets(), [0, 0, 0, 0, 0, 1]); // other hubs' identities never look like a Senior claim
   await db.query(`select set_config('v23.install_session_mac',$1,false)`, [createHash('sha256').update(ask.privateKey.pem).digest('hex')]);
   await db.exec(read('05-ask-prod-session-mac-install.sql'));
-  // The database itself refuses the Senior hub until the authority packet is applied.
-  const authorityForward = read('17-ask-prod-senior-authority-forward.sql'), authorityRollback = read('17-ask-prod-senior-authority-rollback.sql');
-  const authorityBody = async () => (await db.query(`select prosrc,proowner::regrole::text as owner,proacl::text as acl,prosecdef from pg_proc where oid=to_regprocedure('v23_private.authority()')`)).rows.map(r => ({ ...r, prosrc: r.prosrc.replace(/\r\n/g, '\n') }))[0]; // line endings of the checkout are not part of the contract
+  // ---- AUTHORITY: classification by the packet 17 preflight, then packet 19 ----
+  const p19 = { preflight: packet19('19-ask-prod-network-authority-preflight.sql'), forward: packet19('19-ask-prod-network-authority-forward.sql'), rollback: packet19('19-ask-prod-network-authority-rollback.sql') };
+  const authorityBody = async () => (await db.query(`select prosrc,proowner::regrole::text as owner,proacl::text as acl,prosecdef from pg_proc where oid=to_regprocedure('v23_private.authority()')`)).rows.map(r => ({ ...r, prosrc: r.prosrc.replace(/\r\n/g, '\n') }))[0];
   const reviewed = await authorityBody();
   assert.ok(reviewed.prosrc.includes(`c->>'hub' in ('move','insurance','lender') and`));
-  await assert.rejects(db.exec(authorityRollback), /senior is not admitted/); await db.exec('rollback');
-  await db.exec(authorityForward);
-  const widened = await authorityBody();
-  assert.equal(widened.prosrc, reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','senior')`));
-  assert.deepEqual([widened.owner, widened.acl, widened.prosecdef], [reviewed.owner, reviewed.acl, reviewed.prosecdef]);
-  await assert.rejects(db.exec(authorityForward), /already applied/); await db.exec('rollback');
-  await db.exec(authorityRollback);
-  assert.deepEqual(await authorityBody(), reviewed);
-  // Order with another hub's authority packet (packet 14 adds 'investor'): this packet keeps that hub on the way in and on the way out.
   const setBody = text => db.query(`select 1 from (select set_config('v23.fixture_body',$1,true)) s`, [text]).then(() =>
     db.exec(`do $f$ begin execute format('create or replace function v23_private.authority() returns jsonb language plpgsql security invoker set search_path=pg_catalog,v23_private as %L', current_setting('v23.fixture_body')); end $f$`));
   const applyBody = async text => { await db.exec('begin'); await setBody(text); await db.exec('commit'); };
-  const fourHub = reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','investor')`);
-  await applyBody(fourHub);
-  await db.exec(authorityForward);
-  assert.equal((await authorityBody()).prosrc, reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','investor','senior')`));
-  await db.exec(authorityRollback);
-  assert.equal((await authorityBody()).prosrc, fourHub);
-  // An installed body that is not the reviewed one, or a list with an unknown hub, stops for review.
-  await applyBody(reviewed.prosrc.replace(`('move','insurance','lender')`, `('move','insurance','lender','everyone')`));
-  await assert.rejects(db.exec(authorityForward), /not a reviewed list/); await db.exec('rollback');
-  await applyBody(reviewed.prosrc.replace("'invalid authority'", "'changed'"));
-  await assert.rejects(db.exec(authorityForward), /not the reviewed body/); await db.exec('rollback');
-  await applyBody(reviewed.prosrc);
-  assert.deepEqual(await authorityBody(), reviewed);
-  await db.exec(authorityForward);
-  assert.deepEqual(await readiness(), { authority_installed: true, senior_admitted: true, resolver_installed: false });
-  console.log('PASS authority packet: one token added to the installed reviewed body, owner and ACL unchanged, re-run refused, another hub\'s token preserved, unknown bodies stop for review, rollback restores the exact prior function');
+  const state = async () => (await readiness()).authority_state;
+  const sub = (s, a, b) => { assert.ok(s.includes(a)); return s.split(a).join(b); };
+  // S. baseline
+  assert.equal(await state(), 'baseline');
+  // The Senior hub is refused by the database at baseline.
+  // U. HISTORICAL LOCAL COMPARISON ONLY: the superseded packet 17 authority forward. Its body reads as a legacy HOLD.
+  const legacy17 = read('17-ask-prod-senior-authority-forward.sql');
+  assert.ok(legacy17.startsWith('-- ====') && legacy17.includes('SUPERSEDED BY PACKET 19'));
+  await db.exec(legacy17);
+  assert.deepEqual(await readiness(), { authority_state: 'legacy_packet17_hold', next_step: 'HOLD: legacy packet 17 authority body; converge with packet 19', resolver_installed: false });
+  // ... and packet 19 converges it.
+  await db.exec(p19.preflight); await db.exec(p19.forward);
+  const final = await authorityBody();
+  assert.deepEqual([final.owner, final.acl, final.prosecdef], [reviewed.owner, reviewed.acl, reviewed.prosecdef]);
+  assert.deepEqual(await readiness(), { authority_state: 'network_authority_final', next_step: 'network authority final (packet 19); no authority step', resolver_installed: false });
+  await db.exec(p19.rollback);
+  assert.equal(await state(), 'baseline');
+  // V. unknown bodies HOLD, including ones that carry a bare 'senior' token.
+  const finalSrc = final.prosrc;
+  const unknowns = {
+    'bare senior token in an otherwise changed list': sub(reviewed.prosrc, `('move','insurance','lender')`, `('move','insurance','lender','senior','everyone')`),
+    'senior in list, a check removed': sub(sub(reviewed.prosrc, `('move','insurance','lender')`, `('move','insurance','lender','senior')`), `and c->>'service' = 'svc:trusthub:'||(c->>'hub')||':bff:v1'`, ''),
+    'packet 19 body with the lower-case Senior pattern': sub(finalSrc, `'^[A-Z0-9]{6}$'`, `'^[A-Za-z0-9]{6}$'`),
+    'packet 19 body with the cms_facility guard removed': finalSrc.split(`\n`).filter(l => !l.includes(`'cms_facility'`)).join(`\n`),
+    'senior named only in a comment': `-- 'senior' cms_facility cms.ccn\n` + reviewed.prosrc,
+    'trivial body': `begin return '{}'::jsonb; end`,
+  };
+  for (const [label, body] of Object.entries(unknowns)) {
+    await applyBody(body);
+    assert.deepEqual(await readiness(), { authority_state: 'unknown_hold', next_step: 'HOLD: unknown authority body; stop and review', resolver_installed: false }, label);
+  }
+  await applyBody(reviewed.prosrc); assert.equal(await state(), 'baseline');
+  // T. the production authority step: packet 19 from baseline.
+  await db.exec(p19.preflight); await db.exec(p19.forward);
+  assert.equal(await state(), 'network_authority_final');
+  // R (authority layer). The final authority refuses a lower-case native CCN for Senior.
+  const authorityVerdict = async c => { await db.exec('begin'); try { await db.exec('set local role myth_v23_authorizer');
+    await db.query(`insert into v23_private.transaction_authority(backend,transaction_id,authority) values(pg_backend_pid(),txid_current(),$1)`, [JSON.stringify(c)]);
+    await db.exec('set local role myth_v23_executor'); await db.query('select v23_private.authority()'); await db.exec('rollback'); return 'ok'; } catch (e) { await db.exec('rollback'); return e.message; } };
+  const commitAuth = nativeId => ({ hub: 'senior', audience: 'ask', service: 'svc:trusthub:senior:bff:v1', browser: 'a'.repeat(64), subject: A, session: 'f'.repeat(64), scopes: ['saved:write'], operation: 'commitProfileSave',
+    input: { item: { profile: { hub: 'senior', nativeId, profileClass: 'cms_facility' } } } });
+  assert.equal(await authorityVerdict(commitAuth('015009')), 'ok');
+  for (const bad of ['ab12cd', '05a123', ' 015009', 'cms.ccn:015009']) assert.equal(await authorityVerdict(commitAuth(bad)), 'invalid authority', bad);
+  console.log('PASS authority states (S T U V): baseline reads baseline; the certified packet 19 body reads network_authority_final; a superseded packet 17 body (historical comparison only) reads legacy_packet17_hold and packet 19 converges it; six unknown bodies, including a bare senior token, a lower-case Senior pattern and a removed cms_facility guard, read unknown_hold; packet 19 refuses a lower-case Senior CCN');
   const moveIssuer = async () => JSON.stringify((await db.query(`select prosrc,proowner::regrole::text as owner,proacl::text as acl from pg_proc where oid=to_regprocedure('v23_private.prod_issue_context(jsonb,uuid,uuid)')`)).rows[0]);
   const moveIssuerBefore = await moveIssuer();
   console.log('PASS production ports, runtime role and session authority packets apply on the embedded database');
@@ -180,7 +207,7 @@ try {
   await assert.rejects(db.exec(forward), /already applied|requires steward review/); await db.exec('rollback');
   assert.equal(await identityRows(), applied);
   assert.deepEqual(await preflightSets(), [3, 3, 0, 3, 0, 1]); // after apply the preflight reports every claim; no ambiguity, no review conflict
-  assert.deepEqual(await readiness(), { authority_installed: true, senior_admitted: true, resolver_installed: true });
+  assert.deepEqual(await readiness(), { authority_state: 'network_authority_final', next_step: 'network authority final (packet 19); no authority step', resolver_installed: true });
   console.log('PASS packet 17: clean preflight, guarded forward, exactly three CMS CCN bindings, receipt returned, re-run refused');
 
   // Resolver contract, as the runtime login's roles. One exact identity in; no name, slug or uuid lookup.
@@ -311,7 +338,7 @@ try {
   const published = new Map([...CANARIES, UNBOUND, REVIEW, AMBIGUOUS, ALPHA, EXACT_ALPHA, QR, PAD, SRC, XJ, WC, RR, MANY, WRONG_CLASS, HOSPICE, WRONG_REF, RETIRED, WRONG_JURISDICTION, WRONG_CCN, WRONG_NAMESPACE].map(f => [f.profile.nativeId, f.slug]));
   /** How Senior's publication re-proof misbehaves, when it does. */
   let publicationFault = null;
-  const acknowledged = []; const seniorCalls = [];
+  const acknowledged = []; const seniorCalls = []; const ackEvidence = [];
   const seenNonces = new Set();
   const seniorFetch = async (target, init) => {
     const bytes = Buffer.from(init.body), body = JSON.parse(bytes.toString());
@@ -336,7 +363,13 @@ try {
     }
     if (body.action === 'source') return Response.json({ ok: true, result: { continuationRef: body.continuationRef, transferRef: body.transferRef, manifest: body.manifest,
       manifestDigest: body.manifestDigest, browserProof: claims.browser, expiresAt: body.expiresAt, requestPrefix: claims.browser } });
-    if (body.action === 'acknowledge') { acknowledged.push(body.receipts.map(r => r.parent.outcome).join()); return Response.json({ ok: true, result: { watchCreated: false } }); }
+    if (body.action === 'acknowledge') {
+      const r0 = body.receipts[0];
+      const rows = (await db.query(`select s.removed_at is null as active from consumer.consumer_saved_entities s join network.network_entity_bindings b on b.network_entity_id=s.network_entity_id
+        where b.hub='senior' and b.specialist_entity_id=$1 and s.user_id=$2`, [r0.item.profile.nativeId, parent?.subject ?? A])).rows;
+      ackEvidence.push({ outcome: r0.parent.outcome, ccn: r0.item.profile.nativeId, activeAtAck: rows.filter(x => x.active).length });
+      acknowledged.push(body.receipts.map(r => r.parent.outcome).join()); return Response.json({ ok: true, result: { watchCreated: false } });
+    }
     throw Error('Unexpected source operation');
   };
   // Move and Lender source fixtures for the regression. Neither may be contacted on a Senior Save.
@@ -411,34 +444,33 @@ try {
   const returned = f => ({ stage: 200, arrival: 303, status: 303, location: SENIOR + f.ref });
   const quiet = () => db.exec('delete from ops.consumer_rate_limit_events; delete from ops.v23_profile_runtime_quota');
 
-  // ---- THE ACCOUNT-CONTEXT SEAM, part 1: without G-B2's per-hub issuer admitting 'senior', a Senior Save fails closed. ----
+  // ---- SHARED ACCOUNT CONTEXT (real packets from this tree) ----
   parent = { subject: A, session: sidA, label: 'Fixture A' };
+  // No shared issuer yet: the stage is admitted, the commit cannot obtain a context, nothing is saved or acknowledged.
   assert.equal((await db.query(`select to_regprocedure('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)') is null as absent`)).rows[0].absent, true);
-  for (const f of CANARIES) assert.deepEqual(await click(f, 'save'), returned(f), f.slug); // the customer is returned to the facility page
-  assert.deepEqual(await saves(), []); // nothing was saved
-  assert.deepEqual(acknowledged, []); // nothing was acknowledged
-  assert.equal(await moveIssuer(), moveIssuerBefore); // the Move issuer was not used and is unchanged
-  assert.equal((await db.query(`select count(*)::int n from ops.consumer_auth_handoffs where issuer_hub='move'`).catch(() => ({ rows: [{ n: 0 }] }))).rows[0].n, 0);
-  console.log('PASS context seam (waiting on G-B2): the stage is admitted, the commit asks the shared per-hub issuer as hub senior, the issuer is not there, nothing is saved or acknowledged, no Move context is issued');
-
-  // ---- part 2: LOCAL STAND-IN for the shared per-hub issuer, admitting only 'senior'. Not a packet. Never shipped. ----
-  {
-    const moveBody = JSON.parse(moveIssuerBefore).prosrc;
-    assert.ok(moveBody.includes("subject,'move',pin.move_origin,"));
-    const standIn = moveBody.replace("subject,'move',pin.move_origin,", "subject,p_hub,'https://www.seniortrusthub.com',")
-      .replace(/begin/, "begin\n if p_hub is distinct from 'senior' then raise exception 'hub' using errcode='42501'; end if;");
-    await db.query(`select set_config('v23.fixture_body',$1,false)`, [standIn]);
-    await db.exec(`do $f$ begin execute format('create function v23_private.prod_hub_issue_context(proof jsonb,subject uuid,session uuid,p_hub text) returns boolean language plpgsql security definer set search_path=pg_catalog,v23_private,ops as %L', current_setting('v23.fixture_body')); end $f$;
-      revoke all on function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) from public,anon,authenticated;
-      grant execute on function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) to myth_v23_authorizer;
-      alter function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) owner to myth_v23_foundation;`);
-  }
+  for (const f of CANARIES) assert.deepEqual(await click(f, 'save'), returned(f), f.slug);
+  assert.deepEqual(await saves(), []); assert.deepEqual(acknowledged, []);
+  assert.equal(await moveIssuer(), moveIssuerBefore);
+  assert.equal((await db.query(`select count(*)::int n from ops.consumer_auth_handoffs`)).rows[0].n, 0, 'no Move or other context was issued for a Senior caller');
+  // Packet 15 only: the shared issuer refuses hub senior; still nothing.
+  await db.exec(read('15-ask-prod-hub-account-context-forward.sql'));
+  await quiet();
+  for (const f of CANARIES) assert.deepEqual(await click(f, 'save'), returned(f), f.slug);
+  assert.deepEqual(await saves(), []); assert.deepEqual(acknowledged, []);
+  console.log('PASS without packet 18 (no issuer, then packet 15 alone) a Senior Save stages, returns to the profile, saves nothing and acknowledges nothing; no Move context is ever issued');
+  // Packet 18: senior joins the shared issuer with its pinned origin.
+  await db.exec(read('18-ask-prod-senior-hub-context-preflight.sql'));
+  await db.exec(read('18-ask-prod-senior-hub-context-forward.sql'));
   await quiet();
 
   // Save: each canary saves once, attributed to Senior, and returns to its canonical profile.
   for (const f of CANARIES) assert.deepEqual(await click(f, 'save'), returned(f), f.slug);
   assert.deepEqual(await saves(), [ADDISON, BURNS, SANJAC].map(f => ({ canonical_name: f.legalName, source_hub: 'senior', identity_resolution_state: 'accepted', active: true })));
   assert.deepEqual(acknowledged, ['saved', 'saved', 'saved']);
+  assert.deepEqual(ackEvidence.map(e => [e.ccn, e.outcome, e.activeAtAck]), CANARIES.map(f => [f.ccn, 'saved', 1]), 'each acknowledgement arrived after its Saved row was committed');
+  assert.deepEqual((await db.query(`select issuer_hub, initiating_origin, count(*)::int n from ops.consumer_auth_handoffs group by 1,2 order by 1`)).rows,
+    [{ issuer_hub: 'senior', initiating_origin: 'https://www.seniortrusthub.com', n: 3 }]);
+  console.log('PASS shared Senior context: every context was issued by prod_hub_issue_context as hub senior at the pinned origin https://www.seniortrusthub.com; no Move or Senior-specific issuer was used');
   console.log('PASS Save: three CMS nursing homes resolve by exact CCN, save once each, attributed to Senior, return to /facility/cms/<CCN>/<slug>, acknowledged only after the commit');
 
   // Repeated Save never duplicates; Saves are per owner.
@@ -455,6 +487,7 @@ try {
   assert.deepEqual(await click(BURNS, 'unsave'), returned(BURNS));
   assert.deepEqual(await active(A), [ADDISON.legalName, SANJAC.legalName]); assert.deepEqual(await active(B), [BURNS.legalName]);
   assert.deepEqual(acknowledged, ['local_only']);
+  assert.equal(ackEvidence.at(-1).activeAtAck, 0, 'the Unsave was acknowledged only after the row was removed');
   assert.deepEqual(await click(BURNS, 'save'), returned(BURNS));
   assert.equal((await saves(A)).length, 3); assert.equal((await active(A)).length, 3);
   console.log('PASS Unsave: only the owner\'s row for that facility is removed and acknowledged; re-Save restores the same row');
@@ -522,6 +555,8 @@ try {
   await denied(WRONG_JURISDICTION, 'binding under a state jurisdiction');
   await denied(WRONG_CCN, 'binding whose CCN disagrees with the native id');
   await denied(WRONG_NAMESPACE, 'binding under a state-license namespace');
+  published.set(ALPHA.profile.nativeId, ALPHA.slug); await denied(ALPHA, 'case duplicate (AB12CD and ab12cd both accepted)');
+  console.log('PASS case duplicate: a full Save of a CCN with an upper/lower duplicate claim writes nothing and acknowledges nothing');
   // Source re-proof failures: Senior down, erroring, answering garbage, or answering for something else.
   for (const fault of ['network', 'http500', 'not_json', 'refused', 'stale', 'future', 'not_publishable', 'home_health', 'hospice', 'other_identity', 'no_slug']) {
     publicationFault = fault;
@@ -659,9 +694,14 @@ try {
     const moveUnsave = await otherClick(HINDMAN, 'move', MOVE_ORIGIN, '/companies/' + HINDMAN.slug, 'unsave', moveSigned);
     const savedAfterUnsave = (await active(B)).includes(HINDMAN.legalName);
     const lenderSave = await otherClick(FREEDOM, 'lender', LENDER_ORIGIN, '/lenders/' + FREEDOM.slug, 'save', lenderSigned);
-    regression[configured] = JSON.stringify({ moveSave, savedAfterSave, moveUnsave, savedAfterUnsave, lenderSave, acknowledged: [...acknowledged] });
+    const lenderSaved = (await db.query(`select count(*)::int n from consumer.consumer_saved_entities where user_id=$1 and source_hub='lender' and removed_at is null`, [B])).rows[0].n;
+    const lenderUnsave = await otherClick(FREEDOM, 'lender', LENDER_ORIGIN, '/lenders/' + FREEDOM.slug, 'unsave', lenderSigned);
+    const lenderSavedAfter = (await db.query(`select count(*)::int n from consumer.consumer_saved_entities where user_id=$1 and source_hub='lender' and removed_at is null`, [B])).rows[0].n;
+    regression[configured] = JSON.stringify({ moveSave, savedAfterSave, moveUnsave, savedAfterUnsave, lenderSave, lenderSaved, lenderUnsave, lenderSavedAfter, acknowledged: [...acknowledged] });
   }
   assert.equal(regression[false], regression[true]);
+  { const r = JSON.parse(regression[false]); assert.deepEqual([r.lenderSaved, r.lenderSavedAfter], [1, 0]); assert.deepEqual(r.acknowledged, ['move:saved', 'move:local_only', 'lender:saved', 'lender:local_only']);
+    console.log('PASS Lender full Save and Unsave through packet 15 on the stack: committed, removed, acknowledged each time'); }
   const withoutSenior = JSON.parse(regression[false]);
   assert.deepEqual(withoutSenior.moveSave, { stage: 200, arrival: 303, status: 303, location: MOVE_ORIGIN + '/companies/' + HINDMAN.slug });
   assert.deepEqual([withoutSenior.savedAfterSave, withoutSenior.savedAfterUnsave], [true, false]);
@@ -670,18 +710,44 @@ try {
   seniorConfigured = true; parent = { subject: A, session: sidA, label: 'Fixture A' };
   console.log('PASS regression: Move Save and Unsave complete, and a Lender stage is accepted, identically with and without the Senior verify key');
 
+  {
+    // Signed-out continuation: save_signin with no session shows the sign-in step, then the same continuation completes after sign-in.
+    await db.exec(read('17-ask-prod-senior-ccn-binding-rollback.sql').replace(/^/, '-- not executed\n').slice(0, 0));
+    await quiet(); parent = null; acknowledged.length = 0;
+    const target = CANARIES[2];
+    assert.equal((await active(A)).includes(target.legalName), true);
+    const unsave = await click(target, 'unsave'); assert.deepEqual(unsave, returned(target)); // signed out: unsave is not acted on
+    assert.equal((await active(A)).includes(target.legalName), true); assert.deepEqual(acknowledged, []);
+    parent = { subject: A, session: sidA, label: 'Fixture A' }; await click(target, 'unsave'); assert.equal((await active(A)).includes(target.legalName), false);
+    parent = null; acknowledged.length = 0;
+    const stage = await service('prepareGuestProfileTransfer', manifestFor(target));
+    const cont = await service('prepareProfileSaveContinuation', { sourceHub: 'senior', audience: 'ask', transferRef: stage.body.result.transferRef, manifestDigest: stage.body.result.manifestDigest });
+    const arrival = new Request(ASK + '/my/profile-save', { method: 'POST', body: new URLSearchParams({ continuationRef: cont.body.result.continuationRef, intent: 'save_signin' }), headers: { origin: SENIOR } });
+    const arrived = await handleProfileConfirmation(arrival, await runtime().browserBindings(arrival));
+    assert.equal(arrived.status, 303);
+    const cookie = arrived.headers.get('set-cookie').split(';')[0];
+    const gate = await handleProfileConfirmation(new Request(ASK + '/my/profile-save', { headers: { cookie } }), await runtime().browserBindings(new Request(ASK + '/my/profile-save', { headers: { cookie } })));
+    assert.equal(gate.status, 200); assert.match(await gate.text(), /Sign in to continue/);
+    assert.equal((await active(A)).includes(target.legalName), false); assert.deepEqual(acknowledged, []);
+    parent = { subject: A, session: sidA, label: 'Fixture A' };
+    const done = await handleProfileConfirmation(new Request(ASK + '/my/profile-save', { headers: { cookie } }), await runtime().browserBindings(new Request(ASK + '/my/profile-save', { headers: { cookie } })));
+    assert.equal(done.status, 303); assert.equal(done.headers.get('location'), SENIOR + target.ref);
+    assert.equal((await active(A)).includes(target.legalName), true); assert.deepEqual(acknowledged, ['saved']);
+    console.log('PASS signed-out continuation: a signed-out Unsave changes nothing; save_signin shows the sign-in step, saves nothing until sign-in, then the same continuation commits once and is acknowledged');
+  }
+  parent = { subject: A, session: sidA, label: 'Fixture A' };
   // Without the per-hub issuer or the authority packet the Senior path fails closed, and Move's issuer is still there, unchanged.
   const beforePackets = await snapshot();
-  await db.exec(`drop function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`); // remove the local stand-in
+  await db.exec(read('18-ask-prod-senior-hub-context-rollback.sql')); // packet 18 rollback: senior leaves the shared issuer
   await quiet(); acknowledged.length = 0;
   // A Save needs an account context even for a facility that is already saved, so nothing is acknowledged.
   await click(BURNS, 'save'); await click(ADDISON, 'save');
   assert.deepEqual(acknowledged, []);
   assert.equal(await snapshot(), beforePackets);
-  await db.exec(authorityRollback);
+  await db.exec(p19.rollback); // packet 19 rollback: Senior leaves the network authority
   await quiet();
   assert.notEqual((await service('prepareGuestProfileTransfer', manifestFor(BURNS))).status, 200);
   assert.equal(await moveIssuer(), moveIssuerBefore);
   console.log('PASS packet dependence: without the shared per-hub issuer no Senior Save is committed or acknowledged; without the authority packet the database refuses the Senior stage; the Move issuer is byte-identical throughout');
 } finally { await db.close(); }
-console.log('PASS Senior CMS nursing-home Save (Ask side, production target, embedded database)');
+console.log('PASS Senior CMS nursing-home Save on the final stack (#231 + #234 + #233 + #235; packets 15 + 18 + 17 binding + 19 authority, all real)');

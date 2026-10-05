@@ -1,3 +1,10 @@
+-- ============================================================================
+-- SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION.
+-- The production authority step is 19-ask-prod-network-authority-forward.sql
+-- (one six-hub authority). This file is kept for provenance and local recovery
+-- evidence only. Packet 19's preflight recognises the body this file writes as
+-- a legacy predecessor and converges it.
+-- ============================================================================
 -- MY TRUSTHUB V2 — ADMIT THE SENIOR HUB TO THE V2-3 TRANSACTION AUTHORITY (FORWARD, operator).
 -- Packet 17. NOT APPLIED by this build. Target qvvxvbcdmbjzrgvwjatw.
 --   select set_config('v23.approved_project','qvvxvbcdmbjzrgvwjatw',false);

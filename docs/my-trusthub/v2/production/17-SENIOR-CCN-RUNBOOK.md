@@ -38,39 +38,40 @@ on main (`APPROVED_PROFILE_CLASS.senior`, `SENIOR_CCN`, `v3ReturnPath`,
 
 | File | Purpose |
 | --- | --- |
-| `17-ask-prod-senior-ccn-preflight.sql` | Read only. Results 1–5 must be empty; result 6 is the readiness row. |
-| `17-ask-prod-senior-authority-forward.sql` | Adds the one token `'senior'` to the hub list of `v23_private.authority()`. **Required**: the installed function admits move, insurance and lender only, so a Senior stage is refused in the database without it. |
-| `17-ask-prod-senior-authority-rollback.sql` | Removes that one token. |
-| `17-ask-prod-senior-ccn-binding-forward.sql` | One active organization and one accepted exact binding per canary, plus the read-only resolver `v23_private.prod_senior_ccn_binding_for(text)`. Returns three receipt rows: `ccn, binding_id, network_entity_id, canonical_public_profile_ref`. |
+| `17-ask-prod-senior-ccn-preflight.sql` | Read only. Results 1–5 must be empty. Result 6 classifies the installed `authority()` from its whole body: `baseline`, `network_authority_final` (certified packet 19), `legacy_packet17_hold`, or `unknown_hold`. A bare `senior` token is never read as final authority. |
+| `17-ask-prod-senior-ccn-binding-forward.sql` | One active organization and one accepted exact binding per canary, plus the read-only resolver `v23_private.prod_senior_ccn_binding_for(text)` (normalized CCN comparison, btrim-hardened reader policy). Returns three receipt rows: `ccn, binding_id, network_entity_id, canonical_public_profile_ref`. |
 | `17-ask-prod-senior-ccn-binding-rollback.sql` | One receipt row per execution. Closes that binding's validity window. Never deletes. Saved research is preserved. |
+| `17-ask-prod-senior-authority-forward.sql` / `-rollback.sql` | **SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION.** Kept for provenance and local recovery evidence only. |
 
-No account-context SQL is in packet 17. Packet 15 (G-B2) owns it.
+No account-context SQL is in packet 17. Packet 15 creates the shared issuer and
+packet 18 admits `senior` on it.
 
-## Order (future, operator, only on founder authorization)
+## Production order (future, operator, only on founder authorization)
 
-1. `17-…-preflight.sql` — results 1–5 empty; `authority_installed = true`.
-2. `17-…-authority-forward.sql`. If packet 14's authority packet (Investor) is
-   also to be applied, apply it **before** this one: it requires the exact
-   three-hub list, while this one accepts either reviewed list and preserves it.
-   Roll back in the reverse order.
-3. `17-…-ccn-binding-forward.sql` with both guards set. Keep the three receipt rows.
-4. Preflight again: results 1, 2 and 4 show three rows each; 3 and 5 stay empty;
-   `senior_admitted = true`, `resolver_installed = true`.
+1. Packet 15 — `15-ask-prod-hub-account-context-forward.sql` (shared account-context issuer).
+2. Packet 18 — `18-ask-prod-senior-hub-context-preflight.sql`, then `18-…-forward.sql`
+   (adds `senior -> https://www.seniortrusthub.com`).
+3. Packet 17 preflight — results 1–5 empty; result 6 `baseline`
+   (or `network_authority_final` if packet 19 is already in). Any HOLD stops.
+4. Packet 17 binding forward only — `17-ask-prod-senior-ccn-binding-forward.sql`
+   with both guards set. Keep the three receipt rows.
+5. Packet 19 — `19-ask-prod-network-authority-preflight.sql`, then `-forward.sql`
+   (the one network authority; certified PR #236 head `3b56570`).
+6. Packet 17 preflight again — results 1, 2 and 4 show three rows each; 3 and 5
+   stay empty; result 6 `network_authority_final`, `resolver_installed = true`.
+7. Keys, environment, gates and canaries later.
 
-## Waiting on the shared account context (G-B2, PR #231 / packet 15)
+Never apply `17-ask-prod-senior-authority-forward.sql` in production. If a legacy
+packet 17 authority body is ever found (`legacy_packet17_hold`), converge with
+packet 19.
 
-A Senior commit consumes its one-time account context as hub `senior`, so it
-cannot use the Move issuer. `senior-context-seam.ts` calls the shared per-hub
-issuer `v23_private.prod_hub_issue_context(proof, subject, session, hub)` with
-the hub fixed to `senior` on the server.
+## Account context
 
-Packet 15 as prepared admits `lender` and `insurance` only. Until it also maps
-`'senior' -> 'https://www.seniortrusthub.com'` (and its precondition checks that
-origin is registered), a Senior Save is staged but fails closed at the commit:
-no context, no Saved row, no acknowledgement. After rebasing onto PR #231, its
-hub guard in `preview-assembly.ts` (`hub !== 'move' && hub !== 'lender' && hub
-!== 'insurance'`) must also admit `senior`, or the Senior branch of the seam
-must stay ahead of it.
+A Senior commit consumes its account context as hub `senior`. Senior uses the
+shared hub router (`hub-account-context.ts`, `SHARED_HUB_ACCOUNT_CONTEXT`) and
+`v23_private.prod_hub_issue_context(..., 'senior')`, which packet 18 admits with
+the origin pinned to `https://www.seniortrusthub.com`. There is no Senior-specific
+issuer or selection path.
 
 ## Environment (names only; no values exist)
 
@@ -91,8 +92,7 @@ red on five docs files it does not touch; the same check fails on Senior main.
 
 `npm run check:mth-senior-ccn` — unit tests, then
 `scripts/qa/v23-senior-ccn-postgres.mjs`, which applies the real migrations and
-packets on an embedded Postgres and drives the real parent assembly: authority
+packets 15, 18, 17 (binding) and 19 (read from PR #236 head `3b56570`) on an embedded Postgres and drives the real parent assembly: authority
 packet, preflight, binding forward, resolver, fail-closed context seam, Save,
 repeated Save, Unsave, every denial, tamper cases, rollback, and Move/Lender
-regression. The harness installs a local stand-in for the shared per-hub
-issuer to prove the path after the seam; that stand-in is not a packet.
+regression. There is no stand-in issuer: packets 15 and 18 are the real ones.

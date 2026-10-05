@@ -252,8 +252,6 @@ test('the Senior account context goes through the one shared hub router, never t
   const config = productionConfig({ VERCEL_ENV: 'production' });
   assert.equal(config, null, 'production hand-off stays gated by its own explicit flags');
 });
-  assert.equal(config, null, 'production hand-off stays gated by its own explicit flags');
-});
 
 test('packet 17 is prepared only: preflight, binding forward/rollback, authority forward/rollback', () => {
   const read = (name: string) => readFileSync(new URL('../../../docs/my-trusthub/v2/production/' + name, import.meta.url), 'utf8');
@@ -302,6 +300,15 @@ test('packet 17 is prepared only: preflight, binding forward/rollback, authority
   assert.equal(rollback.includes('affected <> 1'), true);
   assert.equal(rollback.includes('consumer.consumer_saved_entities'), true);
   // Authority: one token added and removed, no shared account-context SQL.
+  // Packet 17 authority is superseded by packet 19 and marked so.
+  for (const text of [authority, authorityRollback]) assert.equal(text.startsWith('-- ====') && text.includes('SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION.'), true);
+  // The preflight classifies the whole authority body; a bare senior token is not final authority.
+  for (const marker of ["'baseline'", "'network_authority_final'", "'legacy_packet17_hold'", "'unknown_hold'", '691e2f2e05426c60af8fa3a54f38eac9', '17f464ad69f3d8c7a89dd2cf9229f112', 'fe0edfb9acf31361b92099e4cd282fb7', "is distinct from 'cms_facility'", "is distinct from 'cms.ccn'"])
+    assert.equal(preflight.includes(marker), true, marker);
+  assert.equal(preflight.includes('senior_admitted'), false);
+  const runbook = read('17-SENIOR-CCN-RUNBOOK.md');
+  assert.match(runbook, /Packet 15[\s\S]*Packet 18[\s\S]*Packet 17 preflight[\s\S]*Packet 17 binding forward only[\s\S]*Packet 19/);
+  assert.match(runbook, /Never apply `17-ask-prod-senior-authority-forward\.sql` in production/);
   assert.equal(authority.includes("'senior'"), true);
   assert.equal(authorityRollback.includes("'senior'"), true);
   for (const text of [preflight, forward, rollback, authority, authorityRollback]) {
