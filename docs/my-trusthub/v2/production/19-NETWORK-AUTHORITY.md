@@ -60,9 +60,10 @@ Final body, in list order `move`, `insurance`, `lender`, `investor`,
 - `contractor`: packet 16's guard, `contractor_profile`, native id
   `^fl\.dbpr\.license:[A-Z]{1,4}[0-9]{3,9}$`, and the same optional
   `identifierNamespace` rule for `fl.dbpr.license`.
-- `senior`: `cms_facility`, native id `^[A-Za-z0-9]{6}$` (the stacked
-  packet 17 resolver), optional `identifierNamespace` `cms.ccn`. A prefixed
-  `cms.ccn:015009` is denied. No other Senior class is admitted.
+- `senior`: `cms_facility`, native id `^[A-Z0-9]{6}$` (exactly six uppercase
+  ASCII letters or digits), optional `identifierNamespace` `cms.ccn`. A
+  prefixed `cms.ccn:015009`, a lowercase CCN, and any other Senior class are
+  denied.
 - `consumeProfileSaveContinuation` and `prepareProfileSaveContinuation` carry
   no profile. They pass on hub membership plus the existing scope checks, as
   packet 16 already does for contractor.

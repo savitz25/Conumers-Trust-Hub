@@ -40,6 +40,13 @@ assert.match(rollbackSql, /V23_PROD_NETWORK_AUTHORITY_ROLLBACK_STEWARD/);
 assert.match(forwardSql, /official_firm/);
 assert.match(forwardSql, /contractor_profile/);
 assert.match(forwardSql, /cms_facility/);
+const patternCount = (text, needle) => text.split(needle).length - 1;
+assert.equal(patternCount(forwardSql, '[A-Za-z0-9]{6}'), 0);
+assert.equal(patternCount(preflightSql, '[A-Za-z0-9]{6}'), 0);
+assert.equal(patternCount(rollbackSql, '[A-Za-z0-9]{6}'), 0);
+assert.equal(patternCount(forwardSql, '[A-Z0-9]{6}'), 6);
+assert.equal(patternCount(preflightSql, '[A-Z0-9]{6}'), 3);
+assert.equal(patternCount(rollbackSql, '[A-Z0-9]{6}'), 3);
 
 function claim(hub, operation, input = {}) {
   const staging = operation === 'prepareGuestProfileTransfer' || operation === 'prepareProfileSaveContinuation';
@@ -190,14 +197,29 @@ async function sixHubContracts(db) {
   await deny(db, claim('contractor', 'commitProfileSave', commit('contractor', 'contractor_profile', 'fl.dbpr.license:ccc057187')));
   await deny(db, claim('contractor', 'prepareGuestProfileTransfer', transfer('contractor', 'contractor_profile', 'fl.dbpr.license:CCC057187', { identifierNamespace: 'sec.crd' })));
 
-  for (const ccn of ['015009', '055223', '155805', '01500g']) {
+  const seniorAt = (operation, profileClass, nativeId, extra) => claim('senior', operation,
+    operation === 'prepareGuestProfileTransfer'
+      ? transfer('senior', profileClass, nativeId, extra)
+      : commit('senior', profileClass, nativeId, extra));
+  for (const operation of ['prepareGuestProfileTransfer', 'commitProfileSave', 'verifyProfileSaveReceipt']) {
+    await admit(db, seniorAt(operation, 'cms_facility', '015009'), 'senior');
+    await admit(db, seniorAt(operation, 'cms_facility', 'AB12CD'), 'senior');
+    for (const nativeId of ['05a123', 'ab12cd', ' AB12CD ', 'AB12C-', 'cms.ccn:015009', '０１５００９']) {
+      await deny(db, seniorAt(operation, 'cms_facility', nativeId));
+    }
+  }
+  for (const ccn of ['055223', '155805']) {
     await admit(db, claim('senior', 'commitProfileSave', commit('senior', 'cms_facility', ccn)), 'senior');
   }
   await admit(db, claim('senior', 'prepareGuestProfileTransfer', transfer('senior', 'cms_facility', '015009', { identifierNamespace: 'cms.ccn' })), 'senior');
   await admit(db, claim('senior', 'consumeProfileSaveContinuation', {}), 'senior');
   await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'home_health', '015009')));
+  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'hospice', '015009')));
+  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'assisted_living', 'AB12CD')));
+  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'state_identity', '015009')));
+  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'administrator', '015009')));
+  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'person', 'AB12CD')));
   await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'nursing_home', '055223')));
-  await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'cms_facility', 'cms.ccn:015009')));
   await deny(db, claim('senior', 'commitProfileSave', commit('senior', 'cms_facility', '0150090')));
   await deny(db, claim('senior', 'prepareGuestProfileTransfer', transfer('senior', 'cms_facility', '155805', { identifierNamespace: 'sec.crd' })));
 

@@ -168,21 +168,21 @@ begin
          or c#>>'{input,returnTask,hub}' is distinct from 'senior'
          or c#>>'{input,returnTask,profile,hub}' is distinct from 'senior'
          or c#>>'{input,returnTask,profile,profileClass}' is distinct from 'cms_facility'
-         or coalesce(c#>>'{input,returnTask,profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+         or coalesce(c#>>'{input,returnTask,profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
          or (c#>'{input,returnTask,profile}' ? 'identifierNamespace' and c#>>'{input,returnTask,profile,identifierNamespace}' is distinct from 'cms.ccn')
       then raise exception 'invalid authority' using errcode='42501'; end if;
       if exists (
         select 1 from jsonb_array_elements(c#>'{input,selected}') as item
         where item#>>'{profile,hub}' is distinct from 'senior'
            or item#>>'{profile,profileClass}' is distinct from 'cms_facility'
-           or coalesce(item#>>'{profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+           or coalesce(item#>>'{profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
            or (item->'profile' ? 'identifierNamespace' and item#>>'{profile,identifierNamespace}' is distinct from 'cms.ccn')
       ) then raise exception 'invalid authority' using errcode='42501'; end if;
     elsif op = 'commitProfileSave'
        or (op = 'verifyProfileSaveReceipt' and c#>'{input,item,profile}' is not null) then
       if c#>>'{input,item,profile,hub}' is distinct from 'senior'
          or c#>>'{input,item,profile,profileClass}' is distinct from 'cms_facility'
-         or coalesce(c#>>'{input,item,profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+         or coalesce(c#>>'{input,item,profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
          or (c#>'{input,item,profile}' ? 'identifierNamespace' and c#>>'{input,item,profile,identifierNamespace}' is distinct from 'cms.ccn')
       then raise exception 'invalid authority' using errcode='42501'; end if;
     end if;
@@ -313,21 +313,21 @@ begin
          or c#>>'{input,returnTask,hub}' is distinct from 'senior'
          or c#>>'{input,returnTask,profile,hub}' is distinct from 'senior'
          or c#>>'{input,returnTask,profile,profileClass}' is distinct from 'cms_facility'
-         or coalesce(c#>>'{input,returnTask,profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+         or coalesce(c#>>'{input,returnTask,profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
          or (c#>'{input,returnTask,profile}' ? 'identifierNamespace' and c#>>'{input,returnTask,profile,identifierNamespace}' is distinct from 'cms.ccn')
       then raise exception 'invalid authority' using errcode='42501'; end if;
       if exists (
         select 1 from jsonb_array_elements(c#>'{input,selected}') as item
         where item#>>'{profile,hub}' is distinct from 'senior'
            or item#>>'{profile,profileClass}' is distinct from 'cms_facility'
-           or coalesce(item#>>'{profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+           or coalesce(item#>>'{profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
            or (item->'profile' ? 'identifierNamespace' and item#>>'{profile,identifierNamespace}' is distinct from 'cms.ccn')
       ) then raise exception 'invalid authority' using errcode='42501'; end if;
     elsif op = 'commitProfileSave'
        or (op = 'verifyProfileSaveReceipt' and c#>'{input,item,profile}' is not null) then
       if c#>>'{input,item,profile,hub}' is distinct from 'senior'
          or c#>>'{input,item,profile,profileClass}' is distinct from 'cms_facility'
-         or coalesce(c#>>'{input,item,profile,nativeId}','') !~ '^[A-Za-z0-9]{6}$'
+         or coalesce(c#>>'{input,item,profile,nativeId}','') !~ '^[A-Z0-9]{6}$'
          or (c#>'{input,item,profile}' ? 'identifierNamespace' and c#>>'{input,item,profile,identifierNamespace}' is distinct from 'cms.ccn')
       then raise exception 'invalid authority' using errcode='42501'; end if;
     end if;
