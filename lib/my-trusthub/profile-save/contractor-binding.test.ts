@@ -85,6 +85,13 @@ test('B C D E F G wrong key, class, namespace, multiples, review, and inactive a
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ entity_status: 'retired' })]), 'inactive');
   assert.equal(denied('fl.dbpr.license:CCC057187', [row({ canonical_public_profile_ref: '/providers/ccc057187-a-r-roofing-inc' })]), 'identity_disagreement');
   assert.equal(denied('11111111-1111-4111-8111-111111111111', [row()]), 'identity_disagreement');
+  assert.equal(contractorSpecialistEntityId('ccc057187'), null);
+  assert.equal(contractorSpecialistEntityId(' CCC057187 '), null);
+  assert.equal(parseContractorNativeId('fl.dbpr.license:ccc057187'), null);
+  assert.equal(parseContractorNativeId('fl.dbpr.license: CCC057187'), null);
+  assert.equal(parseContractorNativeId(' fl.dbpr.license:CCC057187'), null);
+  assert.equal(denied('fl.dbpr.license:ccc057187', []), 'identity_disagreement');
+  assert.equal(denied(' fl.dbpr.license:CCC057187', [row()]), 'identity_disagreement');
   assert.equal(contractorReturnAgrees(classifyContractorRows('fl.dbpr.license:CCC057187', [row()]), '/contractors/someone-else'), false);
 });
 
@@ -160,11 +167,18 @@ test('packet 16 is prepared only and contractor requests the shared hub issuer',
   assert.equal(forward.includes('n <> 3'), true);
   assert.equal(forward.includes('prod_contractor_dbpr_binding_for'), true);
   assert.match(forward, /b\.source_identifier_normalized = lower\(btrim\(split_part\(\$1, ':', 2\)\)\)/);
+  assert.match(forward, /lower\(btrim\(b\.specialist_entity_id\)\) = lower\(btrim\(\$1\)\)/);
   assert.equal(forward.includes("b.source_identifier = split_part($1, ':', 2)"), false);
+  assert.equal(forward.includes('b.specialist_entity_id = $1'), false);
+  assert.match(forward, /split_part\(\$1, ':', 2\) ~ '\^\[A-Z\]\{1,4\}\[0-9\]\{3,9\}\$'/);
   assert.equal(forward.includes("source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')"), true);
   assert.equal(preflight.includes("source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')"), true);
+  assert.equal(preflight.includes("lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')"), true);
+  assert.equal(forward.includes("lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')"), true);
   assert.equal(preflight.includes("source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')"), false);
-  assert.match(forward, /identifier_namespace='fl\.dbpr\.license' or specialist_entity_id ~ '\^fl\\\.dbpr\\\.license:\[A-Z\]\{1,4\}\[0-9\]\{3,9\}\$'/);
+  assert.match(forward, /identifier_namespace='fl\.dbpr\.license' or lower\(btrim\(specialist_entity_id\)\) ~ '\^fl\\\.dbpr\\\.license:\[a-z\]\{1,4\}\[0-9\]\{3,9\}\$'/);
+  assert.match(forward, /lower\(btrim\(b\.specialist_entity_id\)\) ~ '\^fl\\\.dbpr\\\.license:\[a-z\]\{1,4\}\[0-9\]\{3,9\}\$'/);
+  assert.equal(forward.includes("specialist_entity_id ~ '^fl\\.dbpr\\.license:[A-Z]{1,4}[0-9]{3,9}$'"), false);
   assert.equal(forward.includes("b.jurisdiction = 'FL'"), false);
   assert.equal(preflight.includes("jurisdiction = 'FL'"), false);
   assert.equal(forward.includes('NOT APPLIED'), true);

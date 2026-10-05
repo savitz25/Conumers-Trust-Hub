@@ -5,13 +5,16 @@
 -- Operator session on qvvxvbcdmbjzrgvwjatw.
 --
 -- Result 1: current binding collision on a canonical specialist id, on the
--- same normalized DBPR key under fl.dbpr.license, or on that normalized key
--- under another namespace. The key is source_identifier_normalized,
--- lower(btrim(source_identifier)). A row holds the binding packet.
+-- same logical specialist id under any namespace, on the same normalized DBPR
+-- key under fl.dbpr.license, or on that normalized key under another namespace.
+-- The specialist id comparison is lower(btrim(specialist_entity_id)). The key
+-- is source_identifier_normalized, lower(btrim(source_identifier)). A row holds
+-- the binding packet.
 -- Result 2: canonical public profile-ref collision on an active entity.
 -- A row holds the binding packet.
 -- Result 3: ambiguous active ownership (more than one current binding for one
--- key, or more than one active entity for one profile ref). A row holds the binding packet.
+-- logical specialist id, or more than one active entity for one profile ref).
+-- The specialist id is lower(btrim(specialist_entity_id)). A row holds the binding packet.
 -- Result 4: review_required conflict on the exact contractor contract.
 -- A row holds the binding packet.
 -- Result 5: contractor authority is already applied. A row is a HOLD for
@@ -36,6 +39,7 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
        'fl.dbpr.license:CFC1427249',
        'fl.dbpr.license:CGC1506243'
      )
+     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'
@@ -59,15 +63,11 @@ select id, status, canonical_public_profile_ref
    )
  order by canonical_public_profile_ref, id;
 
-select 'binding' as kind, specialist_entity_id as owner_key, count(*) as rows
+select 'binding' as kind, lower(btrim(specialist_entity_id)) as owner_key, count(*) as rows
   from network.network_entity_bindings
  where (valid_to is null or valid_to > statement_timestamp())
-   and specialist_entity_id in (
-     'fl.dbpr.license:CCC057187',
-     'fl.dbpr.license:CFC1427249',
-     'fl.dbpr.license:CGC1506243'
-   )
- group by specialist_entity_id
+   and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+ group by lower(btrim(specialist_entity_id))
  having count(*) > 1
 union all
 select 'profile_ref', canonical_public_profile_ref, count(*)
@@ -94,6 +94,7 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
        'fl.dbpr.license:CFC1427249',
        'fl.dbpr.license:CGC1506243'
      )
+     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'

@@ -362,7 +362,7 @@ try {
       values('organization',$1,'contractor','FL',$2,$3) returning id`, ['A & R ROOFING INC ' + label, '/contractors/ccc057187-' + label, patch.entityStatus ?? 'active'])).rows[0].id;
     const bindingId = (await db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
       values($1,'contractor',$2,$3,$4,$5,$6,$7,clock_timestamp(),$8) returning id`,
-      [entityId, patch.type ?? 'contractor_profile', 'fixture:' + label, patch.namespace ?? 'fl.dbpr.license', patch.source, 'jurisdiction' in patch ? patch.jurisdiction : 'FL', patch.status ?? 'accepted', 'local-' + label])).rows[0].id;
+      [entityId, patch.type ?? 'contractor_profile', patch.specialistId ?? ('fixture:' + label), patch.namespace ?? 'fl.dbpr.license', patch.source, 'jurisdiction' in patch ? patch.jurisdiction : 'FL', patch.status ?? 'accepted', 'local-' + label])).rows[0].id;
     return bindingId;
   }
   async function closeClaim(bindingId) {
@@ -428,7 +428,7 @@ try {
   const logicalClaims = async () => Number((await db.query(`select count(*)::int as n from network.network_entity_bindings
     where hub='contractor' and binding_status in ('accepted','review_required')
       and valid_from <= statement_timestamp() and (valid_to is null or valid_to > statement_timestamp())
-      and (specialist_entity_id=$1 or (identifier_namespace='fl.dbpr.license' and source_identifier_normalized=lower(btrim(split_part($1,':',2)))))`,
+      and (lower(btrim(specialist_entity_id))=lower(btrim($1)) or (identifier_namespace='fl.dbpr.license' and source_identifier_normalized=lower(btrim(split_part($1,':',2)))))`,
     [ROOF.profile.nativeId])).rows[0].n);
   const policyQual = (await db.query(`select policyname, qual from pg_policies where policyname like 'prod_contractor_dbpr%' order by policyname`)).rows;
   async function normalizedProbe(label, source, jurisdiction) {
@@ -457,15 +457,69 @@ try {
     true, JSON.stringify({ policyQual, lowerEvidence, paddedEvidence }));
   console.log('PASS case and padding duplicates: preflight and the resolver both see the competing claim, and Save writes nothing');
 
+  async function readerSees(bindingId) {
+    await db.exec('begin');
+    try {
+      await db.query('set local role myth_v23_prod_reader');
+      return (await db.query('select count(*)::int as n from network.network_entity_bindings where id=$1', [bindingId])).rows[0].n;
+    } catch (error) {
+      return error.message;
+    } finally {
+      await db.exec('rollback');
+    }
+  }
+  async function specialistProbe(label, specialistId, extra = {}) {
+    const namespace = extra.namespace ?? 'nj.dca.license';
+    const bindingId = await variantClaim(label, {
+      source: extra.source ?? 'NJ-NOT-DBPR',
+      jurisdiction: 'jurisdiction' in extra ? extra.jurisdiction : 'NJ',
+      namespace,
+      specialistId,
+      status: extra.status,
+      type: extra.type,
+      entityStatus: extra.entityStatus,
+    });
+    const readerRows = await readerSees(bindingId);
+    const listed = (await preflight())[0].rows.some(r => r.specialist_entity_id === specialistId && r.identifier_namespace === namespace);
+    const resolved = await resolveContractor(ROOF.profile.nativeId);
+    await quiet(); acknowledged.length = 0;
+    const save = await click(ROOF, 'save');
+    const evidence = {
+      label, specialistId, listed, readerRows,
+      resolver: resolved.length, logical: await logicalClaims(),
+      reason: classifyContractorRows(ROOF.profile.nativeId, resolved).reason,
+      stage: save.stage, ack: acknowledged.slice(), wrote: (await snapshot()) !== beforeDup,
+      seen: resolved.map(r => r.specialist_entity_id),
+    };
+    if (evidence.wrote) {
+      await quiet(); acknowledged.length = 0;
+      await click(ROOF, 'unsave');
+    }
+    await closeClaim(bindingId);
+    return evidence;
+  }
+  const specialistDenied = evidence => evidence.listed === true && evidence.readerRows === 1 && evidence.resolver === evidence.logical && evidence.resolver === 2
+    && evidence.reason === 'ambiguous' && evidence.stage !== 200 && evidence.ack.length === 0 && evidence.wrote === false;
+  const lowerSpecialist = await specialistProbe('spec-lower', 'fl.dbpr.license:ccc057187');
+  const paddedSpecialist = await specialistProbe('spec-padded', ' fl.dbpr.license:CCC057187');
+  assert.equal(specialistDenied(lowerSpecialist) && specialistDenied(paddedSpecialist), true, JSON.stringify({ policyQual, lowerSpecialist, paddedSpecialist }));
+  const mixedSpecialist = await specialistProbe('spec-mixed', 'fl.dbpr.license:Ccc057187');
+  assert.equal(specialistDenied(mixedSpecialist), true, JSON.stringify(mixedSpecialist));
+  const upperNamespace = await specialistProbe('spec-upper-ns', 'FL.DBPR.LICENSE:CCC057187');
+  assert.equal(specialistDenied(upperNamespace), true, JSON.stringify(upperNamespace));
+  console.log('PASS specialist-id case and padding duplicates: preflight and the resolver both see the competing claim, and Save writes nothing');
+
   const lowerOpen = await variantClaim('lower-open', { source: 'ccc057187', jurisdiction: 'NJ' });
   const paddedOpen = await variantClaim('padded-open', { source: ' CCC057187 ', jurisdiction: null });
+  const specOpen = await variantClaim('spec-open', { source: 'NJ-NOT-DBPR', jurisdiction: 'NJ', namespace: 'nj.dca.license', specialistId: 'fl.dbpr.license:ccc057187' });
   rows = await resolveContractor(ROOF.profile.nativeId);
-  assert.equal(rows.length, 3);
-  assert.equal(rows.length, await logicalClaims());
+  assert.equal(rows.length, 3, 'the resolver fail-closes at limit 3 when four logical claims exist');
+  assert.equal(await logicalClaims(), 4);
   assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
-  await denySave('lowercase plus padded plus canonical');
+  await denySave('lowercase source plus padded source plus specialist id');
   await closeClaim(lowerOpen);
   await closeClaim(paddedOpen);
+  await closeClaim(specOpen);
   const nullVariant = await variantClaim('null-variant', { source: 'ccc057187', jurisdiction: null });
   rows = await resolveContractor(ROOF.profile.nativeId);
   assert.equal(rows.length, 2);
@@ -517,10 +571,38 @@ try {
   assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
   await denySave('lone padded null jurisdiction');
   await closeClaim(lonePadded);
+  const loneSpecLower = await variantClaim('lone-spec-lower', { source: 'NJ-NOT-DBPR', jurisdiction: 'NJ', namespace: 'nj.dca.license', specialistId: 'fl.dbpr.license:ccc057187' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1, 'a lone lowercase specialist id must be returned');
+  assert.equal(rows[0].specialist_entity_id, 'fl.dbpr.license:ccc057187');
+  assert.equal(rows[0].identifier_namespace, 'nj.dca.license');
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('lone lowercase specialist id');
+  await closeClaim(loneSpecLower);
+  const loneSpecPadded = await variantClaim('lone-spec-padded', { source: 'NJ-NOT-DBPR', jurisdiction: null, namespace: 'nj.dca.license', specialistId: ' fl.dbpr.license:CCC057187' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1, 'a lone padded specialist id must be returned');
+  assert.equal(rows[0].specialist_entity_id, ' fl.dbpr.license:CCC057187');
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('lone padded specialist id');
+  await closeClaim(loneSpecPadded);
   await db.query(`update network.network_entity_bindings set valid_to=null where id=$1`, [roofReceipt.binding_id]);
   rows = await resolveContractor(ROOF.profile.nativeId);
   assert.equal(rows.length, 1);
   assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
+  const reviewSpec = await specialistProbe('spec-review', 'fl.dbpr.license:ccc057187', { status: 'review_required' });
+  const inactiveSpec = await specialistProbe('spec-inactive', ' fl.dbpr.license:CCC057187', { entityStatus: 'retired' });
+  const wrongClassSpec = await specialistProbe('spec-class', 'fl.dbpr.license:Ccc057187', { type: 'marketplace_company' });
+  const nullSpec = await specialistProbe('spec-null', 'fl.dbpr.license:ccc057187', { jurisdiction: null });
+  assert.equal(specialistDenied(reviewSpec) && specialistDenied(inactiveSpec) && specialistDenied(wrongClassSpec) && specialistDenied(nullSpec), true, JSON.stringify({ reviewSpec, inactiveSpec, wrongClassSpec, nullSpec }));
+  for (const presented of ['fl.dbpr.license:ccc057187', 'fl.dbpr.license: CCC057187', ' fl.dbpr.license:CCC057187', 'fl.dbpr.license:CCC057187 ']) {
+    const found = await resolveContractor(presented);
+    assert.equal(found.length, 0, presented);
+    assert.equal(classifyContractorRows(presented, found).outcome, 'denied', presented);
+  }
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
   assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
   console.log('PASS normalized DBPR duplicates are denied, a wrong namespace stays ineligible, and the canonical FL row remains eligible');
 

@@ -37,6 +37,7 @@ do $$ begin
            'fl.dbpr.license:CFC1427249',
            'fl.dbpr.license:CGC1506243'
          )
+         or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
          or (
            hub = 'contractor'
            and identifier_namespace = 'fl.dbpr.license'
@@ -64,12 +65,8 @@ do $$ begin
   if exists (
     select 1 from network.network_entity_bindings
      where (valid_to is null or valid_to > statement_timestamp())
-       and specialist_entity_id in (
-         'fl.dbpr.license:CCC057187',
-         'fl.dbpr.license:CFC1427249',
-         'fl.dbpr.license:CGC1506243'
-       )
-     group by specialist_entity_id
+       and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+     group by lower(btrim(specialist_entity_id))
     having count(*) > 1
   ) or exists (
     select 1 from network.network_entities
@@ -144,11 +141,14 @@ end $$;
 
 -- The runtime login cannot select network tables. This read-only wrapper
 -- writes nothing. It returns every current accepted or review_required claim
--- for this namespace and DBPR key, whatever jurisdiction is stored. The key
--- comparison is source_identifier_normalized, lower(btrim(source_identifier)),
--- so a case or outer-whitespace variant cannot hide. The caller fails closed
--- on disagreement or ambiguity. Eligibility still requires jurisdiction FL
--- and the canonical DBPR key.
+-- for this namespace and DBPR key, whatever jurisdiction is stored, and every
+-- current claim whose specialist id is the same logical id. The key comparison
+-- is source_identifier_normalized, lower(btrim(source_identifier)). The
+-- specialist id comparison is lower(btrim(specialist_entity_id)) =
+-- lower(btrim(native id)). A case or outer-whitespace variant cannot hide.
+-- The presented native id stays fl.dbpr.license plus an uppercase DBPR key.
+-- The caller fails closed on disagreement or ambiguity. Eligibility still
+-- requires jurisdiction FL and the canonical DBPR key.
 do $$ begin
   if to_regrole('myth_v23_prod_reader') is null or to_regrole('myth_v23_authorizer') is null or to_regrole('myth_v23_executor') is null then
     raise exception 'V23_PROD_CONTRACTOR_RESOLVER_PRECONDITION_FAIL';
@@ -160,10 +160,10 @@ do $$ begin
 end $$;
 
 create policy prod_contractor_dbpr_bindings on network.network_entity_bindings for select to myth_v23_prod_reader
- using(hub='contractor' and (identifier_namespace='fl.dbpr.license' or specialist_entity_id ~ '^fl\.dbpr\.license:[A-Z]{1,4}[0-9]{3,9}$'));
+ using(hub='contractor' and (identifier_namespace='fl.dbpr.license' or lower(btrim(specialist_entity_id)) ~ '^fl\.dbpr\.license:[a-z]{1,4}[0-9]{3,9}$'));
 create policy prod_contractor_dbpr_entities on network.network_entities for select to myth_v23_prod_reader
  using(exists(select 1 from network.network_entity_bindings b where b.network_entity_id=network_entities.id
-   and b.hub='contractor' and (b.identifier_namespace='fl.dbpr.license' or b.specialist_entity_id ~ '^fl\.dbpr\.license:[A-Z]{1,4}[0-9]{3,9}$')));
+   and b.hub='contractor' and (b.identifier_namespace='fl.dbpr.license' or lower(btrim(b.specialist_entity_id)) ~ '^fl\.dbpr\.license:[a-z]{1,4}[0-9]{3,9}$')));
 
 create function v23_private.prod_contractor_dbpr_binding_for(native_id text)
 returns table(id uuid, network_entity_id uuid, binding_status text, specialist_entity_type text, specialist_entity_id text,
@@ -180,7 +180,7 @@ language sql stable security definer set search_path=pg_catalog,network as $$
    and b.binding_status in ('accepted','review_required')
    and b.valid_from <= statement_timestamp() and (b.valid_to is null or b.valid_to > statement_timestamp())
    and (
-     b.specialist_entity_id = $1
+     lower(btrim(b.specialist_entity_id)) = lower(btrim($1))
      or (
        b.identifier_namespace = 'fl.dbpr.license'
        and b.source_identifier_normalized = lower(btrim(split_part($1, ':', 2)))
