@@ -293,17 +293,18 @@ Production SQL, in this order:
 
 There is no packet 16 authority forward in this order. Packet 15 remains separately required for Contractor account-context issuance. The binding forward does not call `authority()`.
 
-After packet 19, result 5 is `NETWORK_AUTHORITY_FINAL` when the installed body
-lists `move`, `insurance`, `lender`, `investor`, `contractor`, `senior` and
-carries the contractor guard `contractor_profile` / `fl.dbpr.license`. That
-state is ready. Packet 16 authority is not missing.
+After packet 19, result 5 is `NETWORK_AUTHORITY_FINAL` only when
+`md5(regexp_replace(prosrc, '\s+', '', 'g'))` equals the certified packet 19
+function body. That state is ready. Packet 16 authority is not missing. A
+comment, a hub list alone, or a loosened guard does not match.
 
-`LEGACY_PACKET16_AUTHORITY_HOLD` means the old packet 16 contractor authority
+`LEGACY_PACKET16_AUTHORITY_HOLD` means the exact packet 16 contractor authority
 body is installed. Hold, and converge with packet 19. Do not re-apply packet
 16 authority.
 
-`UNKNOWN_AUTHORITY_HOLD` means stop. The body is not the three-hub baseline,
-the packet 19 final body, or the legacy packet 16 contractor body. No mutation.
+`UNKNOWN_AUTHORITY_HOLD` means stop. The body is not the exact three-hub
+baseline, the exact packet 19 final body, or the exact legacy packet 16
+contractor body. No mutation.
 
 ### Rollback after packet 19
 

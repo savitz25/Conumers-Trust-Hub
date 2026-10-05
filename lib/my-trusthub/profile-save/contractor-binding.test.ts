@@ -214,6 +214,11 @@ test('packet 16 is prepared only and contractor requests the shared hub issuer',
   assert.match(preflight, /Packet 16 authority is not missing/);
   assert.match(preflight, /No mutation/);
   assert.match(preflight, /not a silent skip/);
+  assert.match(preflight, /md5\(regexp_replace\(prosrc, '\\s\+', '', 'g'\)\)/);
+  assert.equal(preflight.includes('position('), false);
+  assert.equal(preflight.includes('691e2f2e05426c60af8fa3a54f38eac9'), true);
+  assert.equal(preflight.includes('17f464ad69f3d8c7a89dd2cf9229f112'), true);
+  assert.equal(preflight.includes('b96310263f422a646fe8d9811f3ba35f'), true);
   assert.equal(preflight.includes('ALREADY_APPLIED_HOLD'), false);
   assert.equal(preflight.includes('precondition for the authority forward packet'), false);
   assert.equal(forward.includes('SUPERSEDED BY PACKET 19'), false);

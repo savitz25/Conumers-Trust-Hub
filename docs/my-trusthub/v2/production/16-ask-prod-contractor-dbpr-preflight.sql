@@ -21,15 +21,17 @@
 -- Read only. It does not apply 16-ask-prod-contractor-authority-forward.sql
 -- and it does not instruct the operator to apply that file. Packet 19 is the
 -- only production authority transition.
--- BASELINE_NO_AUTHORITY_CONFLICT: hubs move, insurance, lender. No authority
--- conflict. Packet 19 is the future authority step.
--- NETWORK_AUTHORITY_FINAL: the packet 19 six-hub body with contractor_profile
--- and fl.dbpr.license. Network authority is final and ready. Packet 16
--- authority is not missing.
--- LEGACY_PACKET16_AUTHORITY_HOLD: the old packet 16 contractor authority body.
--- HOLD. Converge on packet 19. Do not re-apply packet 16 authority.
--- UNKNOWN_AUTHORITY_HOLD: any other body, including a missing function.
--- HOLD. STOP. No mutation.
+-- BASELINE_NO_AUTHORITY_CONFLICT: the exact three-hub migration body. No
+-- authority conflict. Binding work may proceed. Packet 19 is the future
+-- authority step.
+-- NETWORK_AUTHORITY_FINAL: the exact certified packet 19 body. Network
+-- authority is final. Do not apply a hub-specific authority forward.
+-- LEGACY_PACKET16_AUTHORITY_HOLD: the exact packet 16 contractor authority
+-- body. HOLD. Converge through packet 19. Do not re-apply packet 16 authority.
+-- UNKNOWN_AUTHORITY_HOLD: any other body, including a missing function and any
+-- edit of a reviewed body. HOLD. STOP. No mutation.
+-- The comparison is md5(regexp_replace(prosrc, '\s+', '', 'g')), the same
+-- whole-body normalization as 19-ask-prod-network-authority-preflight.sql.
 -- A HOLD is not a silent skip.
 --
 -- Do not apply the binding packet while result 1, 2, 3, or 4 has a row.
@@ -112,33 +114,13 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
  order by specialist_entity_id, identifier_namespace, source_identifier;
 
 -- Result 5. Authority status. Always one row. Read only. No mutation.
--- The six-hub list is not a substring of the packet 16 four-hub list, and the
--- three-hub baseline marker includes the closing parenthesis before audience.
-with installed as (
-  select coalesce((
-    select prosrc from pg_proc where oid = to_regprocedure('v23_private.authority()')
-  ), '') as src
-), marked as (
-  select
-    position($t$c->>'hub' in ('move','insurance','lender','investor','contractor','senior')$t$ in src) > 0 as six_hub,
-    position($t$c->>'hub' in ('move','insurance','lender','contractor')$t$ in src) > 0 as packet16_hubs,
-    position($t$c->>'hub' in ('move','insurance','lender') and c->>'audience'='ask'$t$ in src) > 0 as three_hub,
-    position($t$contractor_profile$t$ in src) > 0 as contractor_profile,
-    (position($t$fl.dbpr.license$t$ in src) > 0 or position($t$fl\.dbpr\.license$t$ in src) > 0) as dbpr_guard
-  from installed
-), classed as (
-  select case
-    when six_hub and contractor_profile and dbpr_guard then 'NETWORK_AUTHORITY_FINAL'
-    when packet16_hubs and contractor_profile and dbpr_guard then 'LEGACY_PACKET16_AUTHORITY_HOLD'
-    when three_hub and not packet16_hubs and not six_hub then 'BASELINE_NO_AUTHORITY_CONFLICT'
-    else 'UNKNOWN_AUTHORITY_HOLD'
-  end as disposition
-  from marked
-)
+-- Whole-function fingerprint: md5(regexp_replace(prosrc, '\s+', '', 'g')).
+-- Only the three reviewed bodies match. A comment, a shortened body, a loosened
+-- guard, or any other edit is UNKNOWN_AUTHORITY_HOLD.
 select disposition,
   case disposition
     when 'NETWORK_AUTHORITY_FINAL' then
-      'Network authority final. Ready. The packet 19 six-hub body is installed (move, insurance, lender, investor, contractor, senior) and the contractor guard contractor_profile / fl.dbpr.license is present. Packet 16 authority is not missing. Do not apply 16-ask-prod-contractor-authority-forward.sql.'
+      'Network authority final. Ready. The installed body is the certified packet 19 function. Packet 16 authority is not missing. Do not apply 16-ask-prod-contractor-authority-forward.sql.'
     when 'LEGACY_PACKET16_AUTHORITY_HOLD' then
       'HOLD. Legacy packet 16 authority is installed. Converge with packet 19 (19-ask-prod-network-authority-forward.sql). Do not apply 16-ask-prod-contractor-authority-forward.sql. Packet 16 authority rollback is not the production rollback.'
     when 'BASELINE_NO_AUTHORITY_CONFLICT' then
@@ -146,4 +128,19 @@ select disposition,
     else
       'HOLD. STOP. The installed authority body is not the three-hub baseline, the packet 19 final body, or the legacy packet 16 contractor body. No mutation. Do not apply 16-ask-prod-contractor-authority-forward.sql.'
   end as operator_instruction
-from classed;
+  from (
+    select case fingerprint
+             when '691e2f2e05426c60af8fa3a54f38eac9' then 'BASELINE_NO_AUTHORITY_CONFLICT'
+             when '17f464ad69f3d8c7a89dd2cf9229f112' then 'NETWORK_AUTHORITY_FINAL'
+             when 'b96310263f422a646fe8d9811f3ba35f' then 'LEGACY_PACKET16_AUTHORITY_HOLD'
+             else 'UNKNOWN_AUTHORITY_HOLD'
+           end as disposition
+      from (
+        select md5(regexp_replace(prosrc, '\s+', '', 'g')) as fingerprint
+          from pg_proc
+         where oid = to_regprocedure('v23_private.authority()')
+        union all
+        select null::text
+         where to_regprocedure('v23_private.authority()') is null
+      ) as installed
+  ) as classed;
