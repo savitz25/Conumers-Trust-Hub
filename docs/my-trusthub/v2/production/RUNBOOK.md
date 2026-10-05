@@ -177,3 +177,91 @@ production. The enumeration itself is kept in the Move repo at
 `docs/my-trusthub-v2-production/exact-usdot-enumeration-2026-10-03.json`.
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
+
+## Per-hub account context for Lender, Insurance, and Contractor (packet 15, PREPARED — not applied)
+
+**Defect.** `v23_private.prod_issue_context` issues the one-time account context
+as issuer hub `move` from the Move origin, always. The Save commit consumes it
+as the hub of the verified caller (`v23_private.consume_context` →
+`ops.consume_consumer_auth_handoff`, expected issuer = caller hub). Move issues
+and consumes as `move`, so it works. For Lender or Insurance the consume
+returns `INVALID_AUDIENCE`, `consume_context` raises 42501, no Saved row is
+written and nothing is acknowledged. The same mismatch applies to Contractor
+while it still calls `prod_issue_context`. Packets 12, 13, and 16 do not change
+this. Reproduced on the embedded database with packets 02/03/04/05/09/12/13
+unmodified, for Lender on the unmodified runtime and for Insurance once its
+stage could run on one connection (below).
+
+**Contract after the fix.** A context is issued for exactly one hub and is
+consumable only as that hub. The hub is the one the runtime verified from the
+specialist's signed assertion and the stored stage. It is never a browser field
+and never read from the proof. A proof that carries `hub`, `issuer`,
+`issuerHub`, or `sourceHub` is refused.
+
+| Hub | Issuer function | Issued as | Origin | Consumed as |
+| --- | --- | --- | --- | --- |
+| Move | `prod_issue_context` (unchanged) | `move` | deployment pin | `move` |
+| Investor | `prod_investor_issue_context` (packet 14, not this packet) | `investor` | `https://www.investortrusthub.com` | `investor` |
+| Lender | `prod_hub_issue_context(…, 'lender')` | `lender` | `https://www.lendertrusthub.com` | `lender` |
+| Insurance | `prod_hub_issue_context(…, 'insurance')` | `insurance` | `https://www.insurancetrusthub.com` | `insurance` |
+| Contractor | `prod_hub_issue_context(…, 'contractor')` | `contractor` | `https://www.contractortrusthub.com` | `contractor` |
+
+The Contractor origin is the production pin `contractorOrigin` and
+`PRODUCTION_ORIGINS.contractor`. The apex alias is registered and is not the
+pin. Anything else, including `move`, `investor`, `senior`, an empty hub, and
+an unrecognized value, is refused by `prod_hub_issue_context`.
+
+Single use, the 90 second lifetime, the state/nonce binding, the hub check at
+consume time and five-strikes revocation are unchanged.
+
+Packet 15 stops at issuance. It does not make a Contractor Saveable.
+`v23_private.authority()` still admits only `move`, `insurance`, and `lender`.
+Packet 15 does not add `contractor` to that function. Before a Contractor Save
+can commit, Packet 16 must separately authorize the Contractor authority
+contract: hub `contractor`, profile class `contractor_profile`, namespace
+`fl.dbpr.license`. Until that packet is applied, `consume_context` for hub
+`contractor` fails closed and writes no Saved row. That denial is intentional.
+Move keeps `prod_issue_context`. Investor keeps `prod_investor_issue_context`.
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `15-ask-prod-hub-account-context-forward.sql` | One new function, `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`, owned by `myth_v23_foundation`, EXECUTE for `myth_v23_authorizer` only. Accepts exactly `lender`, `insurance`, and `contractor`, each mapped to its pinned production origin. Refuses `move`, `investor`, `senior`, empty, unknown, and a proof that carries a hub field. | `V23_PROD_HUB_CONTEXT_APPLIED` |
+| `15-ask-prod-hub-account-context-rollback.sql` | Drops exactly that function. Lender, Insurance, and Contractor then fail closed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
+
+Order for a specialist canary: deploy this Ask build, apply packet 15, apply
+that specialist's binding packet, exchange keys, then open that specialist's
+release gate. Until packet 15 is applied a Lender, Insurance, or Contractor
+account-context Save stays a device Save. Do not apply packet 15 from this
+release candidate.
+
+**Two more Insurance changes in the same build (application only, no SQL):**
+
+1. *Acknowledgement.* Ask did not tell Insurance the outcome (the call was
+   skipped). Insurance reports an account Save or Unsave only on Ask's signed
+   `source:ack` call, so Ask now sends it (`insurance-channel.ts`), and the
+   request keys of an Insurance Save start with the browser proof Insurance
+   signed, which is what Insurance's source route checks. Checked against the
+   Insurance repository's own handler code.
+2. *One connection per stage.* The Insurance return-path lookup opened a second
+   pooled connection inside the stage transaction (pool size 3). It now reads
+   on the transaction's own connection.
+
+**For Investor (draft PR #230).** That branch carries its own issuer
+(`prod_investor_issue_context`, packet 14) and edits the same issuer-selection
+line in `preview-assembly.ts`. When it is rebased onto this change it keeps
+`investor_issue_context`. It must not route `investor` through
+`prod_hub_issue_context`, which refuses it. The selection lives in
+`accountContextIssueQuery`: `move` → `issue_context`, `investor` →
+`investor_issue_context`, `lender` / `insurance` / `contractor` →
+`hub_issue_context` with the verified hub as `$4`, anything else fails closed
+before a statement is sent. The return-task port now also receives the
+transaction connection.
+
+**For Contractor (PR #232).** Packet 16 owns the Contractor authority contract
+and the DBPR binding. Packet 15 does not. A verified contractor caller uses
+`hub_issue_context` with `$4 = contractor`. The Contractor return lookup must
+use the stage connection. This branch does not copy the Contractor assertion,
+resolver, binding, or authority function.
+
+Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
+suite is `npm run check:my-trusthub-v2-3-widening`.

@@ -13,6 +13,7 @@ import { LENDER_BINDING_SQL, classifyLenderRows, type LenderBindingRow } from '.
 import { verifyInsuranceAssertion, insurancePinsFor } from './insurance-assertion.ts';
 import { INSURANCE_BINDING_SQL, classifyInsuranceRows, parseInsuranceSpecialistEntityId, type InsuranceBindingRow } from './insurance-binding.ts';
 import { guestStageFromInsuranceManifest, isClosedInsuranceManifest, isInsuranceProviderStage } from './insurance-manifest.ts';
+import type { InsuranceAckChannel } from './insurance-channel.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 import type { BrowserBindings, BrowserParent, SourceSnapshot } from './browser.ts';
 import type { TransactionPool } from './postgres-backend.ts';
@@ -21,6 +22,7 @@ import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-
 import { isGuestStageInput, manifestDigest, type GuestStageInput } from '../contracts/v2-3-profile-transfer.ts';
 import type { Operation } from './interface.ts';
 import { PRIVATE_HEADERS } from './http.ts';
+import { accountContextIssueQuery } from './hub-account-context.ts';
 
 type Link = { browser: string; transferRef: string; manifestDigest: string; expiresAt: number };
 type StageLink = Link & { manifest: GuestStageInput };
@@ -57,6 +59,7 @@ export class PreviewAssembly {
   lenderKey: AssertionKey | null = null;
   lenderSource: LenderSourceChannel | null = null;
   insuranceKey: AssertionKey | null = null;
+  insuranceSource: InsuranceAckChannel | null = null;
   constructor(env: Env, pool: TransactionPool, source: SourceChannel,
     moveKey: AssertionKey, parent: BrowserBindings['parent'], removeSaved?: RemoveSaved) {
     this.env = env; this.pool = pool; this.source = source; this.moveKey = moveKey; this.parent = parent; this.removeSaved = removeSaved;
@@ -142,7 +145,17 @@ export class PreviewAssembly {
         }
         stage = 'issue_context';
         const proof = { code: randomRef(), state: randomRef(), nonce: randomRef(), intent: randomRef(), creationKey: randomUUID(), targetOrigin: this.target.parentOrigin, rateBucket: hash(p.subject + ':' + p.sessionBinding) };
-        const issued = await db.query<{ issued: boolean }>(`select ${sqlName(this.target, 'issue_context')}($1,$2,$3) as issued`, [JSON.stringify(proof), p.subject, p.sessionBinding]);
+        // The context is consumed as the verified caller's hub, so it is issued for
+        // that hub. The hub is a.caller.hub, which the server set from the verified
+        // specialist assertion and the stored stage. It is never a browser field
+        // and never a key of this proof. Move keeps issue_context. Investor keeps
+        // investor_issue_context. Lender, Insurance, and Contractor use packet 15.
+        // Any other hub fails closed before a statement is sent.
+        const hub = a.caller.hub;
+        const issue = accountContextIssueQuery(this.target, hub);
+        const issued = await db.query<{ issued: boolean }>(issue.text, issue.hubArgument
+          ? [JSON.stringify(proof), p.subject, p.sessionBinding, hub]
+          : [JSON.stringify(proof), p.subject, p.sessionBinding]);
         if (!issued.rows[0]?.issued) throw new RuntimeError('unavailable');
         stage = 'write_transport';
         const value: Exchange = { parent: { subject: p.subject, session: p.sessionBinding, label: '' }, proof, expiresAt: Date.now() + 85000 };
@@ -172,7 +185,7 @@ export class PreviewAssembly {
         return { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass, published: true, supportedClass: true, binding };
       },
       // The return path is the specialist's canonical profile for this identity.
-      returnTask: async identity => {
+      returnTask: async (identity, db) => {
         if (identity.hub === 'move') {
           if (!supportedMoveProfile(identity)) return null;
           const slug = (await this.publication(browser, identity)).canonicalSlug;
@@ -184,7 +197,7 @@ export class PreviewAssembly {
           return { kind: 'profile', hub: 'lender', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: `/lenders/${slug}` };
         }
         if (identity.hub !== 'insurance' || !parseInsuranceSpecialistEntityId(identity.nativeId)) return null;
-        const ref = (await this.insuranceBinding(identity)).canonicalPublicProfileRef;
+        const ref = (await this.insuranceBinding(identity, db)).canonicalPublicProfileRef;
         const slug = ref.slice('/providers/'.length);
         return { kind: 'profile', hub: 'insurance', profile: { hub: identity.hub, nativeId: identity.nativeId, profileClass: identity.profileClass }, canonicalSlug: slug, returnPath: ref };
       },
@@ -227,7 +240,12 @@ export class PreviewAssembly {
       },
       acknowledge: async (s, receipts, p) => {
         if (!equal(await this.parent(request), p)) throw new RuntimeError('unauthorized');
-        if (s.manifest.sourceHub === 'insurance') throw new RuntimeError('unavailable');
+        if (s.manifest.sourceHub === 'insurance') {
+          // Insurance reports an account outcome only on this signed call.
+          if (!this.insuranceSource) throw new RuntimeError('unavailable');
+          await this.insuranceSource.acknowledge(s.continuationRef, receipts, s.browserProof, hash(p.session));
+          return;
+        }
         const channel = s.manifest.sourceHub === 'lender' ? this.lenderSource : this.source;
         if (!channel) throw new RuntimeError('unavailable');
         await channel.call({ action: 'acknowledge', continuationRef: s.continuationRef, receipts }, 'source:ack', s.browserProof, hash(p.session));
@@ -319,7 +337,7 @@ export class PreviewAssembly {
         const v = input as { transferRef: string; manifestDigest: string }, link = await this.store.read<StageLink>('stage:' + v.transferRef);
         if (!link || link.browser !== claims.browser || link.manifestDigest !== v.manifestDigest) throw new RuntimeError('unauthorized');
         const cont = result as { continuationRef: string; expiresAt: number };
-        const stored = serviceHub === 'insurance' ? { ...link, requestPrefix: randomRef() } : link;
+        const stored = serviceHub === 'insurance' ? { ...link, requestPrefix: link.browser } : link;
         await this.store.put('continuation:' + cont.continuationRef, stored, cont.expiresAt, true);
       }
       return result;
@@ -346,7 +364,9 @@ export class PreviewAssembly {
       backend: new AuthorizedPostgresBackend(this.ports(async a => JSON.stringify(a.caller) === JSON.stringify(who), claims.browser)),
       authenticate: async () => who });
     const prepared = await rt.execute('prepareGuestProfileTransfer', stageInput) as Link;
-    const link = { ...prepared, browser: claims.browser, manifest: stageInput, requestPrefix: randomRef() };
+    // Request keys start with the browser proof Insurance signed, so Insurance can
+    // tie the acknowledgement to the handoff it staged (same rule as Lender).
+    const link = { ...prepared, browser: claims.browser, manifest: stageInput, requestPrefix: claims.browser };
     await this.store.put('stage:' + link.transferRef, link, link.expiresAt, true);
     const cont = await rt.execute('prepareProfileSaveContinuation', {
       sourceHub: 'insurance', audience: 'ask', transferRef: prepared.transferRef, manifestDigest: prepared.manifestDigest,
