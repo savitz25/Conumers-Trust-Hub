@@ -40,11 +40,11 @@ do $$ begin
          or (
            hub = 'contractor'
            and identifier_namespace = 'fl.dbpr.license'
-           and source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')
+           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
          )
          or (
            identifier_namespace is distinct from 'fl.dbpr.license'
-           and source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')
+           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
          )
        )
   ) then
@@ -144,10 +144,11 @@ end $$;
 
 -- The runtime login cannot select network tables. This read-only wrapper
 -- writes nothing. It returns every current accepted or review_required claim
--- for this exact namespace and DBPR key, whatever jurisdiction is stored,
--- so a second claim cannot hide behind a null or non-FL jurisdiction. The
--- caller fails closed on disagreement or ambiguity. Eligibility still
--- requires jurisdiction FL.
+-- for this namespace and DBPR key, whatever jurisdiction is stored. The key
+-- comparison is source_identifier_normalized, lower(btrim(source_identifier)),
+-- so a case or outer-whitespace variant cannot hide. The caller fails closed
+-- on disagreement or ambiguity. Eligibility still requires jurisdiction FL
+-- and the canonical DBPR key.
 do $$ begin
   if to_regrole('myth_v23_prod_reader') is null or to_regrole('myth_v23_authorizer') is null or to_regrole('myth_v23_executor') is null then
     raise exception 'V23_PROD_CONTRACTOR_RESOLVER_PRECONDITION_FAIL';
@@ -182,7 +183,7 @@ language sql stable security definer set search_path=pg_catalog,network as $$
      b.specialist_entity_id = $1
      or (
        b.identifier_namespace = 'fl.dbpr.license'
-       and b.source_identifier = split_part($1, ':', 2)
+       and b.source_identifier_normalized = lower(btrim(split_part($1, ':', 2)))
      )
    )
  order by b.id limit 3;

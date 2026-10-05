@@ -355,11 +355,14 @@ try {
   const resolveContractor = id => store.authorized(async d => (await d.query('select * from v23_private.prod_contractor_dbpr_binding_for($1)', [id])).rows);
   const beforeDup = await snapshot();
   async function competingClaim(label, jurisdiction) {
+    return variantClaim(label, { source: 'CCC057187', jurisdiction });
+  }
+  async function variantClaim(label, patch) {
     const entityId = (await db.query(`insert into network.network_entities(entity_type,canonical_name,primary_hub,jurisdiction,canonical_public_profile_ref,status)
-      values('organization',$1,'contractor','FL',$2,'active') returning id`, ['A & R ROOFING INC ' + label, '/contractors/ccc057187-' + label])).rows[0].id;
+      values('organization',$1,'contractor','FL',$2,$3) returning id`, ['A & R ROOFING INC ' + label, '/contractors/ccc057187-' + label, patch.entityStatus ?? 'active'])).rows[0].id;
     const bindingId = (await db.query(`insert into network.network_entity_bindings(network_entity_id,hub,specialist_entity_type,specialist_entity_id,identifier_namespace,source_identifier,jurisdiction,binding_status,valid_from,provenance_ref)
-      values($1,'contractor','contractor_profile',$2,'fl.dbpr.license','CCC057187',$3,'accepted',clock_timestamp(),$4) returning id`,
-      [entityId, 'fixture:' + label, jurisdiction, 'local-' + label])).rows[0].id;
+      values($1,'contractor',$2,$3,$4,$5,$6,$7,clock_timestamp(),$8) returning id`,
+      [entityId, patch.type ?? 'contractor_profile', 'fixture:' + label, patch.namespace ?? 'fl.dbpr.license', patch.source, 'jurisdiction' in patch ? patch.jurisdiction : 'FL', patch.status ?? 'accepted', 'local-' + label])).rows[0].id;
     return bindingId;
   }
   async function closeClaim(bindingId) {
@@ -421,6 +424,105 @@ try {
   assert.equal(rows.length, 1);
   assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
   console.log('PASS same-key claims outside FL are visible: null and NJ duplicates are ambiguous, a lone non-FL claim is denied, and preflight lists both');
+
+  const logicalClaims = async () => Number((await db.query(`select count(*)::int as n from network.network_entity_bindings
+    where hub='contractor' and binding_status in ('accepted','review_required')
+      and valid_from <= statement_timestamp() and (valid_to is null or valid_to > statement_timestamp())
+      and (specialist_entity_id=$1 or (identifier_namespace='fl.dbpr.license' and source_identifier_normalized=lower(btrim(split_part($1,':',2)))))`,
+    [ROOF.profile.nativeId])).rows[0].n);
+  const policyQual = (await db.query(`select policyname, qual from pg_policies where policyname like 'prod_contractor_dbpr%' order by policyname`)).rows;
+  async function normalizedProbe(label, source, jurisdiction) {
+    const bindingId = await variantClaim(label, { source, jurisdiction });
+    const listed = (await preflight())[0].rows.some(r => r.specialist_entity_id === 'fixture:' + label);
+    const resolved = await resolveContractor(ROOF.profile.nativeId);
+    await quiet(); acknowledged.length = 0;
+    const save = await click(ROOF, 'save');
+    const evidence = {
+      label, source, jurisdiction, listed,
+      resolver: resolved.length, logical: await logicalClaims(),
+      reason: classifyContractorRows(ROOF.profile.nativeId, resolved).reason,
+      stage: save.stage, ack: acknowledged.slice(), wrote: (await snapshot()) !== beforeDup,
+    };
+    if (evidence.wrote) {
+      await quiet(); acknowledged.length = 0;
+      await click(ROOF, 'unsave');
+    }
+    await closeClaim(bindingId);
+    return evidence;
+  }
+  const lowerEvidence = await normalizedProbe('lower-nj', 'ccc057187', 'NJ');
+  const paddedEvidence = await normalizedProbe('padded-al', ' CCC057187 ', 'AL');
+  assert.equal(lowerEvidence.listed === true && lowerEvidence.resolver === 2 && lowerEvidence.logical === 2 && lowerEvidence.reason === 'ambiguous' && lowerEvidence.stage !== 200 && lowerEvidence.ack.length === 0 && lowerEvidence.wrote === false
+    && paddedEvidence.listed === true && paddedEvidence.resolver === 2 && paddedEvidence.logical === 2 && paddedEvidence.reason === 'ambiguous' && paddedEvidence.stage !== 200 && paddedEvidence.ack.length === 0 && paddedEvidence.wrote === false,
+    true, JSON.stringify({ policyQual, lowerEvidence, paddedEvidence }));
+  console.log('PASS case and padding duplicates: preflight and the resolver both see the competing claim, and Save writes nothing');
+
+  const lowerOpen = await variantClaim('lower-open', { source: 'ccc057187', jurisdiction: 'NJ' });
+  const paddedOpen = await variantClaim('padded-open', { source: ' CCC057187 ', jurisdiction: null });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 3);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
+  await denySave('lowercase plus padded plus canonical');
+  await closeClaim(lowerOpen);
+  await closeClaim(paddedOpen);
+  const nullVariant = await variantClaim('null-variant', { source: 'ccc057187', jurisdiction: null });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 2);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
+  await denySave('NULL jurisdiction normalized duplicate');
+  await closeClaim(nullVariant);
+  const reviewVariant = await variantClaim('review-variant', { source: ' CCC057187 ', jurisdiction: 'NJ', status: 'review_required' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 2);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
+  await denySave('review_required normalized duplicate');
+  await closeClaim(reviewVariant);
+  const inactiveVariant = await variantClaim('inactive-variant', { source: 'ccc057187', jurisdiction: 'NJ', entityStatus: 'retired' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 2);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
+  await denySave('inactive normalized duplicate');
+  await closeClaim(inactiveVariant);
+  const wrongClassClaim = await variantClaim('wrong-class', { source: 'ccc057187', jurisdiction: 'NJ', type: 'marketplace_company' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 2);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'ambiguous');
+  await denySave('wrong-class normalized duplicate');
+  await closeClaim(wrongClassClaim);
+  const otherNamespace = await variantClaim('other-namespace', { source: 'ccc057187', jurisdiction: 'NJ', namespace: 'nj.dca.license' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
+  assert.equal(rows.some(r => r.identifier_namespace !== 'fl.dbpr.license'), false);
+  await closeClaim(otherNamespace);
+  await db.query(`update network.network_entity_bindings set valid_to=clock_timestamp() where id=$1 and valid_to is null`, [roofReceipt.binding_id]);
+  const loneLower = await variantClaim('lone-lower', { source: 'ccc057187', jurisdiction: 'NJ' });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].source_identifier, 'ccc057187');
+  assert.equal(rows[0].jurisdiction, 'NJ');
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('lone lowercase NJ');
+  await closeClaim(loneLower);
+  const lonePadded = await variantClaim('lone-padded', { source: ' CCC057187 ', jurisdiction: null });
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].jurisdiction, null);
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).reason, 'identity_disagreement');
+  await denySave('lone padded null jurisdiction');
+  await closeClaim(lonePadded);
+  await db.query(`update network.network_entity_bindings set valid_to=null where id=$1`, [roofReceipt.binding_id]);
+  rows = await resolveContractor(ROOF.profile.nativeId);
+  assert.equal(rows.length, 1);
+  assert.equal(rows.length, await logicalClaims());
+  assert.equal(classifyContractorRows(ROOF.profile.nativeId, rows).outcome, 'eligible');
+  console.log('PASS normalized DBPR duplicates are denied, a wrong namespace stays ineligible, and the canonical FL row remains eligible');
 
   await quiet(); acknowledged.length = 0;
   assert.deepEqual(await click(HINDMAN, 'save'), { ...returned(HINDMAN), bindingReads: [] });

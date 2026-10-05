@@ -159,6 +159,12 @@ test('packet 16 is prepared only and contractor requests the shared hub issuer',
   assert.match(preflight, /identifier_namespace is distinct from 'fl\.dbpr\.license'/);
   assert.equal(forward.includes('n <> 3'), true);
   assert.equal(forward.includes('prod_contractor_dbpr_binding_for'), true);
+  assert.match(forward, /b\.source_identifier_normalized = lower\(btrim\(split_part\(\$1, ':', 2\)\)\)/);
+  assert.equal(forward.includes("b.source_identifier = split_part($1, ':', 2)"), false);
+  assert.equal(forward.includes("source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')"), true);
+  assert.equal(preflight.includes("source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')"), true);
+  assert.equal(preflight.includes("source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')"), false);
+  assert.match(forward, /identifier_namespace='fl\.dbpr\.license' or specialist_entity_id ~ '\^fl\\\.dbpr\\\.license:\[A-Z\]\{1,4\}\[0-9\]\{3,9\}\$'/);
   assert.equal(forward.includes("b.jurisdiction = 'FL'"), false);
   assert.equal(preflight.includes("jurisdiction = 'FL'"), false);
   assert.equal(forward.includes('NOT APPLIED'), true);

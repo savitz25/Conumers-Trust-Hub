@@ -4,8 +4,10 @@
 -- not apply the contractor authority change.
 -- Operator session on qvvxvbcdmbjzrgvwjatw.
 --
--- Result 1: exact active binding collision (specialist id, namespace+key, or
--- the same DBPR key filed under another namespace). A row holds the binding packet.
+-- Result 1: current binding collision on a canonical specialist id, on the
+-- same normalized DBPR key under fl.dbpr.license, or on that normalized key
+-- under another namespace. The key is source_identifier_normalized,
+-- lower(btrim(source_identifier)). A row holds the binding packet.
 -- Result 2: canonical public profile-ref collision on an active entity.
 -- A row holds the binding packet.
 -- Result 3: ambiguous active ownership (more than one current binding for one
@@ -37,11 +39,11 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'
-       and source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
      )
      or (
        identifier_namespace is distinct from 'fl.dbpr.license'
-       and source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
      )
    )
  group by 1, 2, 3, 4
@@ -95,7 +97,7 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'
-       and source_identifier in ('CCC057187', 'CFC1427249', 'CGC1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
      )
    )
  order by specialist_entity_id, identifier_namespace, source_identifier;
