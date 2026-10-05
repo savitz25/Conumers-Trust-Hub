@@ -5,6 +5,7 @@ import { RuntimeError } from './runtime.ts';
 import { resolveLenderMarketplaceProfile } from './lender-binding.ts';
 import { INSURANCE_PROFILE_CLASS, resolveInsuranceProviderProfile } from './insurance-binding.ts';
 import { resolveInvestorOfficialFirmProfile } from './investor-binding.ts';
+import { resolveContractorProfile } from './contractor-binding.ts';
 
 /** Must be supplied by the reviewed per-hub public profile mapper. No slug->ID,
  * publication or class guess is made here. Read inside the commit transaction
@@ -20,6 +21,7 @@ export async function resolveExactProfile(identity: ProfileIdentity, publication
   if (identity.hub === 'insurance' && identity.profileClass === INSURANCE_PROFILE_CLASS) return resolveInsuranceProviderProfile(identity, publication, sql);
   // Investor has one class and one resolver. Anything else on this hub is not a profile.
   if (identity.hub === 'investor') return resolveInvestorOfficialFirmProfile(identity, publication, sql);
+  if (identity.hub === 'contractor') return resolveContractorProfile(identity, publication, sql);
   const profile: TrustedProfile = { ...current.identity, published: current.published, supportedClass: current.supportedClass, binding: null };
   if (!profile.published || !profile.supportedClass) return profile;
   const r = await sql.query<{ id: string; network_entity_id: string; binding_status: 'accepted' | 'review_required' }>(
