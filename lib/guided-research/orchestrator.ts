@@ -15,6 +15,7 @@ import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { moResearchHandoff, moCaveat } from '../network/mo-network.ts';
+import { okResearchHandoff, okCaveat } from '../network/ok-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -293,6 +294,17 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       interpretation:[{label:'SEC file number',value:secFileNumber}],rows:[],total:0,refinements:[],provenance:{contract:'ask-sec-file-handoff-v1'},
       limitations:['Ask does not execute SEC file lookups as CRD lookups.'],destinations:[{type:'STATE_RESEARCH',href:handoff.href,label:`Open ${handoff.label}`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'investor',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const oklahoma=okResearchHandoff(session.researchPlan);
+  if(oklahoma&&session.hub===oklahoma.hub){
+    const message=`${okCaveat(oklahoma.hub)} Continue at ${oklahoma.label} Oklahoma. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:oklahoma.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Oklahoma ${oklahoma.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Oklahoma statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-ok-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:oklahoma.href,label:`Open ${oklahoma.label} Oklahoma`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:oklahoma.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const missouri=moResearchHandoff(session.researchPlan);
   if(missouri&&session.hub===missouri.hub){

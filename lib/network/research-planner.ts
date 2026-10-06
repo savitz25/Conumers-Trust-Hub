@@ -7,6 +7,7 @@ import { kyAmbiguousNumber, kyIdentifier, kyRefusal, kyRankingAsked, queryLooksL
 import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksLikeLouisiana, classifyLaHub } from './la-network.ts';
 import { msAmbiguousNumber, msIdentifier, msRefusal, msRankingAsked, queryLooksLikeMississippi, classifyMsHub } from './ms-network.ts';
 import { moAmbiguousNumber, moIdentifier, moRefusal, moRankingAsked, queryLooksLikeMissouri, classifyMoHub } from './mo-network.ts';
+import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
 import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
 import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
@@ -331,6 +332,25 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const okId=okIdentifier(originalQuestion);
+  const oklahoma=queryLooksLikeOklahoma(originalQuestion);
+  const okBlocked=okRefusal(originalQuestion);
+  const okHub=okId?.hub??(oklahoma?classifyOkHub(originalQuestion):undefined);
+  const okNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const okSeparateTask=Boolean(okId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!okSeparateTask&&(okId||okBlocked||(oklahoma&&!okNamed&&(okHub||/^(Oklahoma|OK)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:okAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':okRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':okId?'IDENTIFIER_LOOKUP':okHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:okHub,candidateHubs:okHub?[okHub]:[],identifier:okId?{type:okId.type,value:okId.value,raw:okId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:okBlocked?['sourceOrScope']:[],executionAllowed:!okBlocked&&Boolean(okHub),
+      executionMode:okBlocked||!okHub?'CLARIFY':okId?'IDENTIFIER':'COHORT',
+      clarificationReason:okBlocked??(!okHub?'Open /oklahoma for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[okId?'EXACT_IDENTIFIER_RECOGNIZED':'OKLAHOMA_RESEARCH_ROUTING',...(okBlocked?['OKLAHOMA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:okId?'EXACT_IDENTIFIER':'COHORT'};
+  }
   const moId=moIdentifier(originalQuestion);
   const missouri=queryLooksLikeMissouri(originalQuestion);
   const moBlocked=moRefusal(originalQuestion);
