@@ -53,6 +53,7 @@ test('Kansas research and rankings fail closed without inventing local or cross-
     assert.equal(plan.requestedGeography?.stateCode, 'KS', query);
     assert.match(ksRefusal(query) ?? '', /does not rank|undefined|does not run/i, query);
   }
+  assert.match(ksRefusal('How many licensed providers are in Kansas?') ?? '', /No result here does not mean that no record exists/i);
   assert.equal(planAskResearch('best Kansas mover').primaryHub, 'move');
   const result = buildNetworkAskPlan('Kansas mortgage company license');
   assert.equal(result.hubs[0]?.hubId, 'lender');

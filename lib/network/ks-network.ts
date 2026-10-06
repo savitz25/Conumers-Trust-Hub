@@ -54,7 +54,7 @@ export function ksRefusal(query: string): string | undefined {
   if (!queryLooksLikeKansas(query)) return undefined;
   if (ksRankingAsked(query)) return 'Ask does not rank or recommend Kansas providers. No rating, Trust Score, or provider winner is established. Use Kansas specialist source evidence.';
   if (/\bhow many\b|\bcombined\b|\btotal\b.*\b(?:providers|businesses|licenses|hubs|facilities|firms|people)\b|\b(?:providers|businesses|licenses|hubs|facilities|firms|people)\b.*\btotal\b/i.test(query)) {
-    return 'A combined Kansas provider total is undefined. Carrier/tariff rows, licenses, people, facilities, firms, and market observations have different source grains and cannot be added.';
+    return 'A combined Kansas provider total is undefined. Carrier/tariff rows, licenses, people, facilities, firms, and market observations have different source grains and cannot be added. No result here does not mean that no record exists.';
   }
   return 'Ask does not run a combined Kansas licensing or provider search. Open Kansas specialist research to choose the source that owns the record. No result here does not mean that no record exists.';
 }
