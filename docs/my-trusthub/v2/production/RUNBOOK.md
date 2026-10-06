@@ -229,7 +229,7 @@ can resolve a DBPR profile. Move keeps `prod_issue_context`. Investor keeps
 | File | Purpose | Marker |
 | --- | --- | --- |
 | `15-ask-prod-hub-account-context-forward.sql` | One new function, `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`, owned by `myth_v23_foundation`, EXECUTE for `myth_v23_authorizer` only. Accepts exactly `lender`, `insurance`, and `contractor`, each mapped to its pinned production origin. Refuses `move`, `investor`, `senior`, empty, unknown, and a proof that carries a hub field. | `V23_PROD_HUB_CONTEXT_APPLIED` |
-| `15-ask-prod-hub-account-context-rollback.sql` | Drops exactly that function. Lender, Insurance, and Contractor then fail closed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
+| `15-ask-prod-hub-account-context-rollback.sql` | Drops that function only when its source bytes, signature, owner, security definer, search_path, and complete ACL are the frozen Packet 15 predecessor. A different source, including a changed origin literal or the Packet 18 body, is refused. An added, removed, or grant-option-changed privilege is refused. A null ACL is the default privilege set, not an empty grant list. Run the Packet 18 rollback first when the Senior arm is installed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
 
 Order for a specialist canary: deploy this Ask build, apply packet 15, apply
 that specialist's binding packet, exchange keys, then open that specialist's
@@ -284,7 +284,7 @@ closed with no Saved row and no acknowledgement.
 | --- | --- | --- |
 | `18-ask-prod-senior-hub-context-preflight.sql` | Read-only. The installed shared issuer must be the frozen Packet 15 body, Senior must not already be admitted, and the three pinned origins must match. Any other body stops. | `V23_PROD_SENIOR_HUB_CONTEXT_PREFLIGHT_PASS` |
 | `18-ask-prod-senior-hub-context-forward.sql` | Replaces the shared issuer so the exact hubs are lender, insurance, contractor, and senior. | `V23_PROD_SENIOR_HUB_CONTEXT_APPLIED` |
-| `18-ask-prod-senior-hub-context-rollback.sql` | Restores the frozen three-hub function. Senior is denied again. The function is not dropped. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
+| `18-ask-prod-senior-hub-context-rollback.sql` | Restores the frozen three-hub function. Senior is denied again. The function is not dropped. Run this before the Packet 15 rollback when the Senior arm is installed. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
 
 The verified caller hub is still `a.caller.hub`. A browser field cannot select it.
 Apply Packet 15 first. Run the Packet 18 preflight. Apply Packet 18 only when
