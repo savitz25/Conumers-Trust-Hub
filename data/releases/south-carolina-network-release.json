@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-SC-001",
+  "contract": "ath-sc-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "55ca1d103da9ab6dfa9ecaae5de9da031b232176",
+  "manifest": "data/network/south-carolina-publication-manifest.json",
+  "semantic_fingerprint": "0ad22006a9d0eb9239724036bef6a99146198076a9ee3f16822b3556e84313a1",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

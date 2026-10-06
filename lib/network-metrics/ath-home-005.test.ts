@@ -41,7 +41,8 @@ test('network inventory is publication gated and retains source-native grains', 
 
 test('seven-state model preserves asymmetric specialist coverage', () => {
   const states = buildAskStateCoverage(contracts);
-  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana']);
+  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/kentucky', '/alabama', '/south-carolina', '/mississippi']);
+
   const az = states.find((state) => state.code === 'AZ')!;
   assert.equal(az.hubs.find((hub) => hub.hub === 'move')?.mode, 'NO_COMPARABLE_STATE_UNIVERSE');
   assert.equal(az.hubs.find((hub) => hub.hub === 'insurance')?.mode, 'NATIONAL_ONLY');
@@ -54,7 +55,8 @@ test('seven-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'IL')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
-    if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN') {
+    if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN' || state.code === 'LA' || state.code === 'KY' || state.code === 'AL' || state.code === 'SC' || state.code === 'MS') {
+
       assert.deepEqual(state.hubs.filter((hub) => hub.mode === 'SPECIALIST_PUBLISHED').map((hub) => hub.hub).sort(), [...SPECIALIST_OWNED_HUBS].sort());
       continue; // These gateways are frozen in their network manifests, not the earlier coverage artifact.
     }

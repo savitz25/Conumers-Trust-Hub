@@ -84,7 +84,7 @@ export function productionConfig(env: Env) {
   if (!productionHandoffEnabled(env)) return null;
   return { target: PRODUCTION_TARGET, project: PRODUCTION_PROJECT, parentOrigin: PARENT_ORIGIN, moveOrigin: PRODUCTION_ORIGINS.move,
     registry: { environment: 'production' as const, isolatedBackendVerified: false,
-      origins: { move: PRODUCTION_ORIGINS.move, insurance: PRODUCTION_ORIGINS.insurance, lender: PRODUCTION_ORIGINS.lender, contractor: '', senior: '', investor: '' } } };
+      origins: { move: PRODUCTION_ORIGINS.move, insurance: PRODUCTION_ORIGINS.insurance, lender: PRODUCTION_ORIGINS.lender, contractor: PRODUCTION_ORIGINS.contractor, senior: PRODUCTION_ORIGINS.senior, investor: PRODUCTION_ORIGINS.investor } } };
 }
 
 export type DeploymentConfig = NonNullable<ReturnType<typeof isolatedConfig>> | NonNullable<ReturnType<typeof productionConfig>>;

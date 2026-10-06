@@ -4,6 +4,11 @@ import { ctIdentifier, ctRefusal, ctCaveat, classifyCtHub, queryLooksLikeConnect
 import { mdIdentifier, mdRefusal, mdCaveat, classifyMdHub, queryLooksLikeMaryland, mdSpecialistUrl } from './md-network.ts';
 import { wiIdentifier, wiRefusal, wiCaveat, classifyWiHub, queryLooksLikeWisconsin, wiSpecialistUrl } from './wi-network.ts';
 import { inIdentifier, inRefusal, inCaveat, classifyInHub, queryLooksLikeIndiana, inSpecialistUrl } from './in-network.ts';
+import { kyIdentifier, kyRefusal, kyCaveat, classifyKyHub, queryLooksLikeKentucky, kySpecialistUrl } from './ky-network.ts';
+import { laIdentifier, laRefusal, laCaveat, classifyLaHub, queryLooksLikeLouisiana, laSpecialistUrl } from './la-network.ts';
+import { msIdentifier, msRefusal, msCaveat, classifyMsHub, queryLooksLikeMississippi, msSpecialistUrl } from './ms-network.ts';
+import { scIdentifier, scRefusal, scCaveat, classifyScHub, queryLooksLikeSouthCarolina, scSpecialistUrl } from './sc-network.ts';
+import { alIdentifier, alRefusal, alCaveat, classifyAlHub, queryLooksLikeAlabama, alSpecialistUrl } from './al-network.ts';
 import { rewriteMoveSpecialistHref } from './move-origin.ts';
 import { capabilityFor } from './capability-registry.ts';
 import {decideAskExecution} from './execution-decision.ts';
@@ -244,6 +249,12 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'MD') return '/maryland';
   if (parsed.geography?.stateCode === 'WI') return '/wisconsin';
   if (parsed.geography?.stateCode === 'IN') return '/indiana';
+  if (parsed.geography?.stateCode === 'MS') return '/mississippi';
+  if (parsed.geography?.stateCode === 'SC') return '/south-carolina';
+  if (parsed.geography?.stateCode === 'AL') return '/alabama';
+  if (parsed.geography?.stateCode === 'KY') return '/kentucky';
+
+  if (parsed.geography?.stateCode === 'LA') return '/louisiana';
   return undefined;
 }
 
@@ -1720,6 +1731,81 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:inId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
     if(inRefused)parsed.interpretationLines.push({label:'Research boundary',value:inRefused});
+  }
+
+  // Mississippi is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const msId=msIdentifier(parsed.query);
+  const msRefused=msRefusal(parsed.query);
+  if(msId||msRefused||queryLooksLikeMississippi(parsed.query)){
+    const hub=msId?.hub??classifyMsHub(parsed.query);
+    if(hub){
+      const reason=msRefused??`${msId?`Exact ${msId.type} ${msId.value}. `:''}${msCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:msRefused?'unsupported':'handoff',
+        ...(msRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:msRefused?undefined:msSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:msId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(msRefused)parsed.interpretationLines.push({label:'Research boundary',value:msRefused});
+  }
+
+  // South Carolina is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const scId=scIdentifier(parsed.query);
+  const scRefused=scRefusal(parsed.query);
+  if(scId||scRefused||queryLooksLikeSouthCarolina(parsed.query)){
+    const hub=scId?.hub??classifyScHub(parsed.query);
+    if(hub){
+      const reason=scRefused??`${scId?`Exact ${scId.type} ${scId.value}. `:''}${scCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:scRefused?'unsupported':'handoff',
+        ...(scRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:scRefused?undefined:scSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:scId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(scRefused)parsed.interpretationLines.push({label:'Research boundary',value:scRefused});
+  }
+
+  // Alabama is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const alId=alIdentifier(parsed.query);
+  const alRefused=alRefusal(parsed.query);
+  if(alId||alRefused||queryLooksLikeAlabama(parsed.query)){
+    const hub=alId?.hub??classifyAlHub(parsed.query);
+    if(hub){
+      const reason=alRefused??`${alId?`Exact ${alId.type} ${alId.value}. `:''}${alCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:alRefused?'unsupported':'handoff',
+        ...(alRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:alRefused?undefined:alSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:alId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(alRefused)parsed.interpretationLines.push({label:'Research boundary',value:alRefused});
+  }
+
+  // Kentucky is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const kyId=kyIdentifier(parsed.query);
+  const kyRefused=kyRefusal(parsed.query);
+  if(kyId||kyRefused||queryLooksLikeKentucky(parsed.query)){
+    const hub=kyId?.hub??classifyKyHub(parsed.query);
+    if(hub){
+      const reason=kyRefused??`${kyId?`Exact ${kyId.type} ${kyId.value}. `:''}${kyCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:kyRefused?'unsupported':'handoff',
+        ...(kyRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:kyRefused?undefined:kySpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:kyId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(kyRefused)parsed.interpretationLines.push({label:'Research boundary',value:kyRefused});
+  }
+
+  // Louisiana is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const laId=laIdentifier(parsed.query);
+  const laRefused=laRefusal(parsed.query);
+  if(laId||laRefused||queryLooksLikeLouisiana(parsed.query)){
+    const hub=laId?.hub??classifyLaHub(parsed.query);
+    if(hub){
+      const reason=laRefused??`${laId?`Exact ${laId.type} ${laId.value}. `:''}${laCaveat(hub,parsed.query)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:laRefused?'unsupported':'handoff',
+        ...(laRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:laRefused?undefined:laSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:laId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(laRefused)parsed.interpretationLines.push({label:'Research boundary',value:laRefused});
   }
 
   const requested = requestedLegalJurisdiction(parsed.query);

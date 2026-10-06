@@ -2,6 +2,11 @@ import type { AskResearchPlan, AskRequestedGeography } from './research-planner.
 import { geographyCapability, type AskGeographyMeaning, type ExecutableGeographyKind } from './geography-capabilities.ts';
 import { resolveFloridaMunicipality } from './florida-municipality-crosswalk.ts';
 import { wiSeniorStateResearch } from './wi-network.ts';
+import { kyResearchHandoff } from './ky-network.ts';
+import { laResearchHandoff } from './la-network.ts';
+import { msResearchHandoff } from './ms-network.ts';
+import { scResearchHandoff } from './sc-network.ts';
+import { alResearchHandoff } from './al-network.ts';
 import { inResearchHandoff } from './in-network.ts';
 
 export type NormalizedResearchGeography={kind:ExecutableGeographyKind|'region'|'route';display:string;stateCode?:string;stateName?:string;county?:string;city?:string;zip?:string;origin?:string;destination?:string};
@@ -44,6 +49,51 @@ export function resolveResearchScope(plan:AskResearchPlan,consent:ScopeConsent={
   const base={version:'ask-execution-scope-v1' as const,requestedGeography:requested,normalizedRequestedGeography:normalized,requestedGeographyMeaning:meaning,executionGeographyMeaning:meaning,transformation:'NONE' as AskScopeTransformation,consentRequired:false,disclosureRequired:false,reasonCodes:[] as string[]};
   if(!requested)return {...base,resolutionState:'EXACT',executionAllowed:true};
   if(plan.reasonCodes.includes('CARE_TASK')&&requested.resolution!=='RESOLVED')return {...base,resolutionState:'CLARIFICATION_REQUIRED',executionAllowed:false,disclosureRequired:true,disclosure:'Retain the requested location and choose its state or clarify the unsupported local scope before provider research runs.',reasonCodes:['UNRESOLVED_CARE_LOCATION']};
+  const mississippi=msResearchHandoff(plan);
+  if(mississippi&&normalized?.stateCode==='MS'){
+    const state={kind:'state' as const,display:'Mississippi',stateCode:'MS',stateName:'Mississippi'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Mississippi statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Mississippi statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'MISSISSIPPI_STATE_RESEARCH_HANDOFF':'MISSISSIPPI_CITY_CONTEXT_HANDOFF']};
+  }
+  const southCarolina=scResearchHandoff(plan);
+  if(southCarolina&&normalized?.stateCode==='SC'){
+    const state={kind:'state' as const,display:'South Carolina',stateCode:'SC',stateName:'South Carolina'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'South Carolina statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with South Carolina statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'SOUTH_CAROLINA_STATE_RESEARCH_HANDOFF':'SOUTH_CAROLINA_CITY_CONTEXT_HANDOFF']};
+  }
+  const alabama=alResearchHandoff(plan);
+  if(alabama&&normalized?.stateCode==='AL'){
+    const state={kind:'state' as const,display:'Alabama',stateCode:'AL',stateName:'Alabama'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Alabama statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Alabama statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'ALABAMA_STATE_RESEARCH_HANDOFF':'ALABAMA_CITY_CONTEXT_HANDOFF']};
+  }
+  const kentucky=kyResearchHandoff(plan);
+  if(kentucky&&normalized?.stateCode==='KY'){
+    const state={kind:'state' as const,display:'Kentucky',stateCode:'KY',stateName:'Kentucky'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Kentucky statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Kentucky statewide specialist research; no city or county page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'KENTUCKY_STATE_RESEARCH_HANDOFF':'KENTUCKY_CITY_CONTEXT_HANDOFF']};
+  }
+  const louisiana=laResearchHandoff(plan);
+  if(louisiana&&normalized?.stateCode==='LA'){
+    const state={kind:'state' as const,display:'Louisiana',stateCode:'LA',stateName:'Louisiana'};
+    return {...base,executionGeography:state,resolutionState:normalized.kind==='state'?'EXACT' as const:'CLARIFICATION_REQUIRED' as const,
+      executionAllowed:normalized.kind==='state',disclosureRequired:normalized.kind!=='state',
+      disclosure:normalized.kind==='state'?'Louisiana statewide specialist research is available by handoff. Ask does not execute a provider cohort.':
+        `${normalized.display} is context only. Continue with Louisiana statewide specialist research; no city or parish page was executed.`,
+      reasonCodes:[normalized.kind==='state'?'LOUISIANA_STATE_RESEARCH_HANDOFF':'LOUISIANA_CITY_CONTEXT_HANDOFF']};
+  }
   const indiana=inResearchHandoff(plan);
   if(indiana&&normalized?.stateCode==='IN'){
     const state={kind:'state' as const,display:'Indiana',stateCode:'IN',stateName:'Indiana'};

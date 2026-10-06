@@ -178,6 +178,262 @@ production. The enumeration itself is kept in the Move repo at
 
 Local proof: `npm run check:my-trusthub-v2-exact-usdot-batch`.
 
+## Per-hub account context for Lender, Insurance, and Contractor (packet 15, PREPARED — not applied)
+
+**Defect.** `v23_private.prod_issue_context` issues the one-time account context
+as issuer hub `move` from the Move origin, always. The Save commit consumes it
+as the hub of the verified caller (`v23_private.consume_context` →
+`ops.consume_consumer_auth_handoff`, expected issuer = caller hub). Move issues
+and consumes as `move`, so it works. For Lender or Insurance the consume
+returns `INVALID_AUDIENCE`, `consume_context` raises 42501, no Saved row is
+written and nothing is acknowledged. The same mismatch applies to Contractor
+while it still calls `prod_issue_context`. Packets 12, 13, and 16 do not change
+this. Reproduced on the embedded database with packets 02/03/04/05/09/12/13
+unmodified, for Lender on the unmodified runtime and for Insurance once its
+stage could run on one connection (below).
+
+**Contract after the fix.** A context is issued for exactly one hub and is
+consumable only as that hub. The hub is the one the runtime verified from the
+specialist's signed assertion and the stored stage. It is never a browser field
+and never read from the proof. A proof that carries `hub`, `issuer`,
+`issuerHub`, or `sourceHub` is refused.
+
+| Hub | Issuer function | Issued as | Origin | Consumed as |
+| --- | --- | --- | --- | --- |
+| Move | `prod_issue_context` (unchanged) | `move` | deployment pin | `move` |
+| Investor | `prod_investor_issue_context` (packet 14, not this packet) | `investor` | `https://www.investortrusthub.com` | `investor` |
+| Lender | `prod_hub_issue_context(…, 'lender')` | `lender` | `https://www.lendertrusthub.com` | `lender` |
+| Insurance | `prod_hub_issue_context(…, 'insurance')` | `insurance` | `https://www.insurancetrusthub.com` | `insurance` |
+| Contractor | `prod_hub_issue_context(…, 'contractor')` | `contractor` | `https://www.contractortrusthub.com` | `contractor` |
+
+The Contractor origin is the production pin `contractorOrigin` and
+`PRODUCTION_ORIGINS.contractor`. The apex alias is registered and is not the
+pin. Anything else, including `move`, `investor`, `senior`, an empty hub, and
+an unrecognized value, is refused by `prod_hub_issue_context`.
+
+Single use, the 90 second lifetime, the state/nonce binding, the hub check at
+consume time and five-strikes revocation are unchanged.
+
+Packet 15 stops at issuance. It does not change `v23_private.authority()`.
+The current production baseline admits `move`, `insurance`, and `lender`.
+A Contractor Save commit through `consume_context` stays fail-closed until
+packet 19 admits the contractor contract (`contractor` / `contractor_profile` /
+`fl.dbpr.license`) inside the six-hub network authority.
+`16-ask-prod-contractor-authority-forward.sql` and
+`16-ask-prod-contractor-authority-rollback.sql` are superseded by packet 19
+and are not applied in production. Packet 15 makes the issued context match
+hub `contractor`. Packet 16 binding is still required before a Contractor Save
+can resolve a DBPR profile. Move keeps `prod_issue_context`. Investor keeps
+`prod_investor_issue_context`. Senior stays on the shared issuer from packet 18.
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `15-ask-prod-hub-account-context-forward.sql` | One new function, `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`, owned by `myth_v23_foundation`, EXECUTE for `myth_v23_authorizer` only. Accepts exactly `lender`, `insurance`, and `contractor`, each mapped to its pinned production origin. Refuses `move`, `investor`, `senior`, empty, unknown, and a proof that carries a hub field. | `V23_PROD_HUB_CONTEXT_APPLIED` |
+| `15-ask-prod-hub-account-context-rollback.sql` | Drops exactly that function. Lender, Insurance, and Contractor then fail closed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
+
+Order for a specialist canary: deploy this Ask build, apply packet 15, apply
+that specialist's binding packet, exchange keys, then open that specialist's
+release gate. Until packet 15 is applied a Lender, Insurance, or Contractor
+account-context Save stays a device Save. Do not apply packet 15 from this
+release candidate.
+
+**Two more Insurance changes in the same build (application only, no SQL):**
+
+1. *Acknowledgement.* Ask did not tell Insurance the outcome (the call was
+   skipped). Insurance reports an account Save or Unsave only on Ask's signed
+   `source:ack` call, so Ask now sends it (`insurance-channel.ts`), and the
+   request keys of an Insurance Save start with the browser proof Insurance
+   signed, which is what Insurance's source route checks. Checked against the
+   Insurance repository's own handler code.
+2. *One connection per stage.* The Insurance return-path lookup opened a second
+   pooled connection inside the stage transaction (pool size 3). It now reads
+   on the transaction's own connection.
+
+**For Investor (draft PR #230).** That branch carries its own issuer
+(`prod_investor_issue_context`, packet 14) and edits the same issuer-selection
+line in `preview-assembly.ts`. When it is rebased onto this change it keeps
+`investor_issue_context`. It must not route `investor` through
+`prod_hub_issue_context`, which refuses it. The selection lives in
+`accountContextIssueQuery`: `move` → `issue_context`, `investor` →
+`investor_issue_context`, `lender` / `insurance` / `contractor` / `senior` →
+`hub_issue_context` with the verified hub as `$4`, anything else fails closed
+before a statement is sent. The return-task port now also receives the
+transaction connection.
+
+**For Contractor (PR #232, packet 19 compatibility from PR #238).** This
+candidate includes the Contractor assertion, the DBPR resolver, the binding,
+and the superseded packet 16 authority files. Packet 16 owns the DBPR binding.
+Packet 16 authority forward and rollback are superseded by packet 19 and are
+not applied. A verified contractor caller uses `hub_issue_context` with
+`$4 = contractor`. The Contractor return lookup uses the stage connection.
+Investor stays on `prod_investor_issue_context`. Senior stays on the shared
+issuer.
+
+## Senior on the shared issuer (packet 18, PREPARED — not applied)
+
+Packet 15 remains the frozen three-hub function. Packet 18 replaces that
+installed function with the same body plus one exact arm, `senior` →
+`https://www.seniortrusthub.com`. It does not create `prod_senior_issue_context`.
+Move stays on `prod_issue_context`. Investor stays on
+`prod_investor_issue_context`. `v23_private.authority()` is not modified.
+Packet 17 owns Senior authority and the CMS CCN bindings. Until Packet 17 is
+applied, a Senior context can be issued and `consume_context` still fails
+closed with no Saved row and no acknowledgement.
+
+| File | Purpose | Marker |
+| --- | --- | --- |
+| `18-ask-prod-senior-hub-context-preflight.sql` | Read-only. The installed shared issuer must be the frozen Packet 15 body, Senior must not already be admitted, and the three pinned origins must match. Any other body stops. | `V23_PROD_SENIOR_HUB_CONTEXT_PREFLIGHT_PASS` |
+| `18-ask-prod-senior-hub-context-forward.sql` | Replaces the shared issuer so the exact hubs are lender, insurance, contractor, and senior. | `V23_PROD_SENIOR_HUB_CONTEXT_APPLIED` |
+| `18-ask-prod-senior-hub-context-rollback.sql` | Restores the frozen three-hub function. Senior is denied again. The function is not dropped. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
+
+The verified caller hub is still `a.caller.hub`. A browser field cannot select it.
+Apply Packet 15 first. Run the Packet 18 preflight. Apply Packet 18 only when
+that preflight passes. Packet 17 stays a separate operator step.
+
+Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
+suite is `npm run check:my-trusthub-v2-3-widening`.
+
+## Contractor production SQL (packet 16 bindings, packet 19 authority)
+
+SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION:
+
+- `16-ask-prod-contractor-authority-forward.sql`
+- `16-ask-prod-contractor-authority-rollback.sql`
+
+Both files stay in the repository for provenance and recovery. They are not in
+the production activation order. Packet 19
+(`19-ask-prod-network-authority-forward.sql`) is the only production authority
+transition. It admits `contractor` / `contractor_profile` / `fl.dbpr.license`
+together with move, insurance, lender, investor, and senior.
+
+Production SQL, in this order:
+
+1. `16-ask-prod-contractor-dbpr-preflight.sql` while `v23_private.authority()`
+   is still the three-hub baseline (`move`, `insurance`, `lender`). Result 5
+   must be `BASELINE_NO_AUTHORITY_CONFLICT`. That row is not an authority
+   conflict. Packet 19 is the future authority step.
+2. `16-ask-prod-contractor-dbpr-binding-forward.sql` (the Contractor binding).
+3. Other hub binding packets as applicable.
+4. `19-ask-prod-network-authority-forward.sql`.
+
+There is no packet 16 authority forward in this order. Packet 15 remains separately required for Contractor account-context issuance. The binding forward does not call `authority()`.
+
+After packet 19, result 5 is `NETWORK_AUTHORITY_FINAL` only when
+`md5(regexp_replace(prosrc, '\s+', '', 'g'))` equals the certified packet 19
+function body. That state is ready. Packet 16 authority is not missing. A
+comment, a hub list alone, or a loosened guard does not match.
+
+`LEGACY_PACKET16_AUTHORITY_HOLD` means the exact packet 16 contractor authority
+body is installed. Hold, and converge with packet 19. Do not re-apply packet
+16 authority.
+
+`UNKNOWN_AUTHORITY_HOLD` means stop. The body is not the exact three-hub
+baseline, the exact packet 19 final body, or the exact legacy packet 16
+contractor body. No mutation.
+
+### Rollback after packet 19
+
+Contractor-specific rollback is
+`16-ask-prod-contractor-dbpr-binding-rollback.sql`, and only with steward
+review after a consumer Save. It closes that binding. It does not delete Saved research.
+
+Network authority rollback is `19-ask-prod-network-authority-rollback.sql`.
+That is a network-level steward decision.
+
+`16-ask-prod-contractor-authority-rollback.sql` is not the production rollback
+after packet 19.
+
+## Investor official-firm Save (packet 14 context + bindings, packet 19 authority; PREPARED — not applied, not deployed)
+
+Identity (locked): hub `investor` / class `official_firm` / namespace `sec.crd` /
+source identifier = exact numeric firm CRD / specialist entity id `crd-<CRD>` /
+jurisdiction `US`. Return path `/firm/sec-crd-<CRD>`. Never the firm row UUID,
+the name, the slug, an individual adviser CRD, a branch, a notice filing or a
+state-registration observation.
+
+Runtime rule: Ask admits an Investor Save only when (1) the stage carries a
+valid Investor ed25519 assertion, (2) the manifest is one `official_firm` whose
+slug and return path are the ones its CRD implies, (3) Investor re-proves
+publication of that exact CRD over the signed source channel, and (4)
+`v23_private.prod_investor_crd_binding_for` returns exactly one current row that
+is accepted, `official_firm`, `sec.crd`, `US`, on an active entity whose
+canonical profile ref is `/firm/sec-crd-<CRD>`, agreeing on both the native id
+and the CRD. Anything else fails closed.
+
+Network authority is packet 19 (PR #236, certified head
+`3b565707946b7c93252b767cf10aa185336ec8b1`). The packet 14 authority files are
+**SUPERSEDED BY PACKET 19 — DO NOT APPLY IN PRODUCTION**. They are kept as the
+audited predecessor and are not part of this order.
+
+Operator packets, in this order, with the Investor release gate OFF:
+
+| Step | File | Purpose | Marker |
+| --- | --- | --- | --- |
+| 1 | `14-ask-prod-investor-crd-preflight.sql` | Read only. On a clean database sets 1, 2, 3 and 5 are empty and set 4 is one row `baseline` / `PROCEED`. Sets 1 to 3 must be empty before the binding packet. Set 4 must not say `HOLD` (see below). | — |
+| 2 | `14-ask-prod-investor-context-forward.sql` | New `v23_private.prod_investor_issue_context`: the Move issuer with hub `investor` and the pinned Investor origin. Investor stays on this issuer; it is never routed through `prod_hub_issue_context` (packets 15/18). `prod_issue_context` is not touched. | `V23_PROD_INVESTOR_CONTEXT_APPLIED` |
+| 3 | `14-ask-prod-investor-crd-binding-forward.sql` | Three canary entities + accepted `sec.crd` bindings and the exact resolver. Needs `v23bind.sec_iapd_checked=true` after confirming each CRD on SEC IAPD. Returns the receipt. Does not call or need `authority()`. | `V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED` |
+| — | ~~`14-ask-prod-investor-authority-forward.sql`~~ | Not applied. Superseded. | — |
+| later | `19-ask-prod-network-authority-preflight.sql`, then `-forward.sql` | Network step, after every hub's binding packets: the one six-hub authority (move, insurance, lender, investor `official_firm` / `crd-<CRD>`, contractor, senior). Until it runs, the database refuses every Investor stage with `invalid authority`. | `V23_PROD_NETWORK_AUTHORITY_APPLIED` |
+
+Preflight set 4 (authority state) compares the installed `authority()` body,
+whitespace removed, with the three reviewed bodies:
+
+| `authority_state` | `disposition` | Meaning |
+| --- | --- | --- |
+| `baseline` | `PROCEED` | Migration three-hub body. Investor context and binding packets may run. Authority comes later from packet 19. |
+| `network_final` | `FINAL` | Packet 19 body. Network authority is final. Apply no authority file. |
+| `legacy_packet14` | `HOLD` | The superseded packet 14 four-hub body is installed. Stop. Converge with the packet 19 preflight and forward after review (packet 19 accepts this body as a reviewed predecessor). Do not run the packet 14 authority rollback. |
+| `unknown` | `HOLD` | Any other body, or none. Stop and get review. |
+
+Rollbacks, each owned separately:
+
+| Artifact | Rollback | Note |
+| --- | --- | --- |
+| Investor bindings | `14-ask-prod-investor-crd-binding-rollback.sql` | One receipt row per run; closes the binding's validity, no DELETE. |
+| Investor context issuer | `14-ask-prod-investor-context-rollback.sql` | Drops the one function. Nothing else uses it. |
+| Network authority | `19-ask-prod-network-authority-rollback.sql` | The only authority rollback. Restores the three-hub body from the packet 19 body only; affects every hub packet 19 admits. |
+| ~~Packet 14 authority~~ | ~~`14-ask-prod-investor-authority-rollback.sql`~~ | Superseded. Not a safe undo after packet 19: it refuses the packet 19 body. |
+
+No step deletes Saved research. After any successful consumer Investor Save,
+each of the three rollbacks above needs steward review first: the binding
+rollback (for the firm whose Saved rows point at that binding), the context
+rollback (no further Investor Saves can commit), and the network authority
+rollback (stages for every non-Move hub it admits then fail closed; packet 19
+raises `V23_PROD_NETWORK_AUTHORITY_ROLLBACK_STEWARD`). Saved rows stay in place.
+
+Then: exchange keys (names in `ask-prod-env.md`), set the Ask verify key and
+the Investor variables, set the Investor release gate to the three canary
+slugs, redeploy Investor. Live proof on the three canaries; an unrelated firm
+must stay device-only.
+
+Account context: Investor keeps its dedicated issuer
+`prod_investor_issue_context` (step 2). It is never routed through the shared
+`prod_hub_issue_context` (packets 15 and 18), which refuses `investor`.
+
+Local proof: `npm run check:my-trusthub-v2-investor`.
+
+### Investor and the shared per-hub account context (packets 15 and 18, on main)
+
+The shared router is `accountContextIssueQuery` in
+`lib/my-trusthub/profile-save/hub-account-context.ts`: `move` →
+`issue_context`; `investor` → `investor_issue_context`; `lender`,
+`insurance`, `contractor`, `senior` → `hub_issue_context` with the verified
+hub as `$4`; anything else fails closed before a statement is sent. This branch
+adds no issuer selection of its own. It adds the Investor assertion key and
+source channel beside Lender's and Insurance's in `preview-assembly.ts` and
+`hosted-runtime.ts`, and the Investor acknowledgement beside Insurance's.
+This candidate also adds the Contractor assertion key and source channel in
+those same files. Contractor uses the shared issuer. The Investor issuer, the
+Insurance acknowledgement path, and the Senior shared-hub arm stay.
+
+Packet 14 touches none of the packet 15 or 18 objects. They apply in either
+order.
+
+Also in this branch (shared code, one guard): a continuation is read only for
+the hub that staged it. Before it, an Investor (or Lender) continuation arriving
+with another hub's Origin was refused only after Ask had called that other
+hub's source channel with it; now nothing is sent.
+
 ## Packet 19 — network authority finalization
 
 Packet 19 is the one production transition of `v23_private.authority()` from the

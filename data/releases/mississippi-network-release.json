@@ -1,0 +1,14 @@
+{
+  "ticket": "ATH-MS-001",
+  "contract": "ath-ms-network-release-v1",
+  "status": "PR_REVIEW_PENDING",
+  "starting_ask_main": "e6130ef5a04b0d297acf884013571ba33f576c66",
+  "manifest": "data/network/mississippi-publication-manifest.json",
+  "semantic_fingerprint": "65ca25a66afef7181449bbf33cbb50cda338a1e902b66662720ab9a3491204e3",
+  "expansion_ledger": {
+    "CROSS_HUB_RECORD_TOTAL": { "status": "REJECTED", "value": null },
+    "ASK_GRAPH_WRITES": 0,
+    "CLAIM_ELIGIBILITY_BROADENED": false,
+    "LOCAL_PHASE": "NO"
+  }
+}

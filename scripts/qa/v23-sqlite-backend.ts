@@ -59,10 +59,25 @@ export class SqliteHarnessBackend implements RuntimeBackend {
             if (!slug) return null;
             return { kind: 'profile' as const, hub: 'lender' as const, canonicalSlug: slug, profile: p, returnPath: `/lenders/${slug}` };
           }
+          if (p.hub === 'investor' && p.profileClass === 'official_firm') {
+            const slug = this.slugs.get(profileKey(p));
+            if (!slug) return null;
+            return { kind: 'profile' as const, hub: 'investor' as const, canonicalSlug: slug, profile: p, returnPath: `/firm/${slug}` };
+          }
           if (p.hub === 'insurance' && p.profileClass === 'insurance_provider') {
             const slug = this.slugs.get(profileKey(p));
             if (!slug) return null;
             return { kind: 'profile' as const, hub: 'insurance' as const, canonicalSlug: slug, profile: p, returnPath: `/providers/${slug}` };
+          }
+          if (p.hub === 'senior' && p.profileClass === 'cms_facility') {
+            const slug = this.slugs.get(profileKey(p));
+            if (!slug) return null;
+            return { kind: 'profile' as const, hub: 'senior' as const, canonicalSlug: slug, profile: p, returnPath: `/facility/cms/${p.nativeId}/${slug}` };
+          }
+          if (p.hub === 'contractor' && p.profileClass === 'contractor_profile') {
+            const slug = this.slugs.get(profileKey(p));
+            if (!slug) return null;
+            return { kind: 'profile' as const, hub: 'contractor' as const, canonicalSlug: slug, profile: p, returnPath: `/contractors/${slug}` };
           }
           return { kind: 'profile' as const, hub: 'move' as const, canonicalSlug: p.nativeId, profile: p };
         },

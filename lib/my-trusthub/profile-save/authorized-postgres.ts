@@ -11,7 +11,9 @@ export type AuthorizedPostgresPorts={
    * Must not merely echo the supplied RuntimeAuthorization. */
   verify(a:RuntimeAuthorization):Promise<boolean>;
   profile(identity:ProfileIdentity,db:TransactionConnection):Promise<TrustedProfile|null>;
-  returnTask(identity:ProfileIdentity):Promise<ProfileReturnTask|null>;
+  /** Runs inside the same authorized transaction as the stage. Any database
+   * read it needs uses that connection, never a second pooled one. */
+  returnTask(identity:ProfileIdentity,db:TransactionConnection):Promise<ProfileReturnTask|null>;
   project(ref:string,a:RuntimeAuthorization):Promise<string|null>;
   exchange(ref:string,a:RuntimeAuthorization):Promise<P13Proof|null>;
 };
@@ -68,7 +70,7 @@ export class AuthorizedPostgresBackend implements RuntimeBackend {
           return (await db.query<{payload:V}>('select payload from ops.v23_profile_runtime_records where kind=$1 and key_hash=$2',[kind,key])).rows[0]?.payload??null;},
         put:async(kind,key,value)=>{await lock(kind,key);await db.query(`insert into ops.v23_profile_runtime_records(kind,key_hash,payload) values($1,$2,$3)
           on conflict(kind,key_hash) do update set payload=excluded.payload`,[kind,key,JSON.stringify(value)]);},
-        resolveProfile:i=>this.ports.profile(i,db),resolveReturnTask:i=>this.ports.returnTask(i),
+        resolveProfile:i=>this.ports.profile(i,db),resolveReturnTask:i=>this.ports.returnTask(i,db),
         consumeP13:async()=>{const r=await db.query<{subject:string}>('select v23_private.consume_context($1) as subject',[JSON.stringify(proof)]);
           if(r.rows[0]?.subject!==a?.caller.parent?.subject)throw new RuntimeError('unauthorized');return {subject:r.rows[0].subject};},
         saveP12:async(bindingId)=>{const r=await db.query<{saved_entity_id:string;created:boolean;restored:boolean}>('select * from v23_private.save_profile($1)',[bindingId]);

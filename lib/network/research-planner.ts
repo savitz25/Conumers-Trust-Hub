@@ -3,6 +3,11 @@ import { miAmbiguousNumber, miIdentifier, miRefusal, miRankingAsked, queryLooksL
 import { ctAmbiguousNumber, ctIdentifier, ctRefusal, ctRankingAsked, queryLooksLikeConnecticut, classifyCtHub } from './ct-network.ts';
 import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksLikeMaryland, classifyMdHub } from './md-network.ts';
 import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
+import { kyAmbiguousNumber, kyIdentifier, kyRefusal, kyRankingAsked, queryLooksLikeKentucky, classifyKyHub } from './ky-network.ts';
+import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksLikeLouisiana, classifyLaHub } from './la-network.ts';
+import { msAmbiguousNumber, msIdentifier, msRefusal, msRankingAsked, queryLooksLikeMississippi, classifyMsHub } from './ms-network.ts';
+import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
+import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
@@ -325,6 +330,101 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const msId=msIdentifier(originalQuestion);
+  const mississippi=queryLooksLikeMississippi(originalQuestion);
+  const msBlocked=msRefusal(originalQuestion);
+  const msHub=msId?.hub??(mississippi?classifyMsHub(originalQuestion):undefined);
+  const msNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const msSeparateTask=Boolean(msId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!msSeparateTask&&(msId||msBlocked||(mississippi&&!msNamed&&(msHub||/^(Mississippi|MS)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:msAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':msRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':msId?'IDENTIFIER_LOOKUP':msHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:msHub,candidateHubs:msHub?[msHub]:[],identifier:msId?{type:msId.type,value:msId.value,raw:msId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:msBlocked?['sourceOrScope']:[],executionAllowed:!msBlocked&&Boolean(msHub),
+      executionMode:msBlocked||!msHub?'CLARIFY':msId?'IDENTIFIER':'COHORT',
+      clarificationReason:msBlocked??(!msHub?'Open /mississippi for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[msId?'EXACT_IDENTIFIER_RECOGNIZED':'MISSISSIPPI_RESEARCH_ROUTING',...(msBlocked?['MISSISSIPPI_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:msId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const scId=scIdentifier(originalQuestion);
+  const southCarolina=queryLooksLikeSouthCarolina(originalQuestion);
+  const scBlocked=scRefusal(originalQuestion);
+  const scHub=scId?.hub??(southCarolina?classifyScHub(originalQuestion):undefined);
+  const scNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const scSeparateTask=Boolean(scId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!scSeparateTask&&(scId||scBlocked||(southCarolina&&!scNamed&&(scHub||/^(South Carolina|SC)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:scAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':scRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':scId?'IDENTIFIER_LOOKUP':scHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:scHub,candidateHubs:scHub?[scHub]:[],identifier:scId?{type:scId.type,value:scId.value,raw:scId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:scBlocked?['sourceOrScope']:[],executionAllowed:!scBlocked&&Boolean(scHub),
+      executionMode:scBlocked||!scHub?'CLARIFY':scId?'IDENTIFIER':'COHORT',
+      clarificationReason:scBlocked??(!scHub?'Open /south-carolina for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[scId?'EXACT_IDENTIFIER_RECOGNIZED':'SOUTH_CAROLINA_RESEARCH_ROUTING',...(scBlocked?['SOUTH_CAROLINA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:scId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const alId=alIdentifier(originalQuestion);
+  const alabama=queryLooksLikeAlabama(originalQuestion);
+  const alBlocked=alRefusal(originalQuestion);
+  const alHub=alId?.hub??(alabama?classifyAlHub(originalQuestion):undefined);
+  const alNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const alSeparateTask=Boolean(alId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!alSeparateTask&&(alId||alBlocked||(alabama&&!alNamed&&(alHub||/^(Alabama|AL)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:alAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':alRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':alId?'IDENTIFIER_LOOKUP':alHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:alHub,candidateHubs:alHub?[alHub]:[],identifier:alId?{type:alId.type,value:alId.value,raw:alId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:alBlocked?['sourceOrScope']:[],executionAllowed:!alBlocked&&Boolean(alHub),
+      executionMode:alBlocked||!alHub?'CLARIFY':alId?'IDENTIFIER':'COHORT',
+      clarificationReason:alBlocked??(!alHub?'Open /alabama for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[alId?'EXACT_IDENTIFIER_RECOGNIZED':'ALABAMA_RESEARCH_ROUTING',...(alBlocked?['ALABAMA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:alId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const kyId=kyIdentifier(originalQuestion);
+  const kentucky=queryLooksLikeKentucky(originalQuestion);
+  const kyBlocked=kyRefusal(originalQuestion);
+  const kyHub=kyId?.hub??(kentucky?classifyKyHub(originalQuestion):undefined);
+  const kyNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const kySeparateTask=Boolean(kyId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!kySeparateTask&&(kyId||kyBlocked||(kentucky&&!kyNamed&&(kyHub||/^(Kentucky|KY)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:kyAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':kyRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':kyId?'IDENTIFIER_LOOKUP':kyHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:kyHub,candidateHubs:kyHub?[kyHub]:[],identifier:kyId?{type:kyId.type,value:kyId.value,raw:kyId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:kyBlocked?['sourceOrScope']:[],executionAllowed:!kyBlocked&&Boolean(kyHub),
+      executionMode:kyBlocked||!kyHub?'CLARIFY':kyId?'IDENTIFIER':'COHORT',
+      clarificationReason:kyBlocked??(!kyHub?'Open /kentucky for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[kyId?'EXACT_IDENTIFIER_RECOGNIZED':'KENTUCKY_RESEARCH_ROUTING',...(kyBlocked?['KENTUCKY_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:kyId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const laId=laIdentifier(originalQuestion);
+  const louisiana=queryLooksLikeLouisiana(originalQuestion);
+  const laBlocked=laRefusal(originalQuestion);
+  const laHub=laId?.hub??(louisiana?classifyLaHub(originalQuestion):undefined);
+  const laNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const laSeparateTask=Boolean(laId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!laSeparateTask&&(laId||laBlocked||(louisiana&&!laNamed&&(laHub||/^(Louisiana|LA)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:laAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':laRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':laId?'IDENTIFIER_LOOKUP':laHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:laHub,candidateHubs:laHub?[laHub]:[],identifier:laId?{type:laId.type,value:laId.value,raw:laId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:laBlocked?['sourceOrScope']:[],executionAllowed:!laBlocked&&Boolean(laHub),
+      executionMode:laBlocked||!laHub?'CLARIFY':laId?'IDENTIFIER':'COHORT',
+      clarificationReason:laBlocked??(!laHub?'Open /louisiana for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[laId?'EXACT_IDENTIFIER_RECOGNIZED':'LOUISIANA_RESEARCH_ROUTING',...(laBlocked?['LOUISIANA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:laId?'EXACT_IDENTIFIER':'COHORT'};
+  }
   const inId=inIdentifier(originalQuestion);
   const indiana=queryLooksLikeIndiana(originalQuestion);
   const inBlocked=inRefusal(originalQuestion);
