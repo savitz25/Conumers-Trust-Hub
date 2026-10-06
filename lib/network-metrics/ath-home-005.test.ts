@@ -55,7 +55,11 @@ test('published-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'IL')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
-    if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN' || state.code === 'LA' || state.code === 'KY' || state.code === 'AL' || state.code === 'SC' || state.code === 'MS' || state.code === 'MO' || state.code === 'OK' || state.code === 'AR' || state.code === 'UT') {
+    if (state.code === 'UT') {
+      assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
+      continue; // Utah has a gateway page; specialist metrics remain absent from this fallback inventory.
+    }
+    if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN' || state.code === 'LA' || state.code === 'KY' || state.code === 'AL' || state.code === 'SC' || state.code === 'MS' || state.code === 'MO' || state.code === 'OK' || state.code === 'AR') {
 
       assert.deepEqual(state.hubs.filter((hub) => hub.mode === 'SPECIALIST_PUBLISHED').map((hub) => hub.hub).sort(), [...SPECIALIST_OWNED_HUBS].sort());
       continue; // These gateways are frozen in their network manifests, not the earlier coverage artifact.
