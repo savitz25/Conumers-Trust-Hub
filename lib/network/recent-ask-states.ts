@@ -15,6 +15,7 @@ import { UT_PUBLICATION_MANIFEST } from './ut-network.ts';
 import { NM_PUBLICATION_MANIFEST } from './nm-network.ts';
 import { IA_PUBLICATION_MANIFEST } from './ia-network.ts';
 import { NE_PUBLICATION_MANIFEST } from './ne-network.ts';
+import { KS_PUBLICATION_MANIFEST } from './ks-network.ts';
 import { SC_PUBLICATION_MANIFEST } from './sc-network.ts';
 import { AL_PUBLICATION_MANIFEST } from './al-network.ts';
 import { KY_PUBLICATION_MANIFEST } from './ky-network.ts';
@@ -30,6 +31,7 @@ type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_sum
 
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   nebraska: NE_PUBLICATION_MANIFEST,
+  kansas: KS_PUBLICATION_MANIFEST,
   iowa: IA_PUBLICATION_MANIFEST,
   arkansas: AR_PUBLICATION_MANIFEST,
   utah: UT_PUBLICATION_MANIFEST,

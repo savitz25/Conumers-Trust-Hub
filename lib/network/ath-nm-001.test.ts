@@ -6,7 +6,7 @@ import { nmRefusal, nmReleaseGatePassed, NM_PUBLICATION_MANIFEST, queryLooksLike
 import { ASK_PUBLISHED_STATE_CATALOG, askStateExplorerEyebrow, askStateSitemapEntries, listAskNetworkStates } from './published-ask-states.ts';
 
 test('New Mexico appends one gateway and derives the explorer count', () => {
-  assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.slug, 'new-mexico');
+  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === 'new-mexico'));
   for (const slug of ['missouri', 'oklahoma', 'arkansas', 'utah']) {
     assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === slug));
   }

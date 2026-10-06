@@ -22,6 +22,7 @@ import {moRefusal} from '@/lib/network/mo-network';
 import {okRefusal} from '@/lib/network/ok-network';
 import {utRefusal} from '@/lib/network/ut-network';
 import {nmRefusal} from '@/lib/network/nm-network';
+import {ksRefusal} from '@/lib/network/ks-network';
 
 export const revalidate = 3600;
 
@@ -41,7 +42,8 @@ export default async function AskPage({
   const oklahomaRefusal=query?okRefusal(query):undefined;
   const utahRefusal=query?utRefusal(query):undefined;
   const newMexicoRefusal=query?nmRefusal(query):undefined;
-  const stateRefusal=missouriRefusal??oklahomaRefusal??utahRefusal??newMexicoRefusal;
+  const kansasRefusal=query?ksRefusal(query):undefined;
+  const stateRefusal=missouriRefusal??oklahomaRefusal??utahRefusal??newMexicoRefusal??kansasRefusal;
   // TH-SEARCH-R1-019A: ONE authoritative name-candidate decision. A supplied business/provider name
   // is searched across the network first -- no hub selection, identifier or repeated name required.
   // `hub` is only ever a real user-selected filter chip; an inferred industry is a display hint.

@@ -10,6 +10,7 @@ import { msIdentifier, msRefusal, msCaveat, classifyMsHub, queryLooksLikeMississ
 import { moIdentifier, moRefusal, moCaveat, classifyMoHub, queryLooksLikeMissouri, moSpecialistUrl } from './mo-network.ts';
 import { iaIdentifier, iaRefusal, iaCaveat, classifyIaHub, queryLooksLikeIowa, iaSpecialistUrl } from './ia-network.ts';
 import { neIdentifier, neRefusal, neCaveat, classifyNeHub, queryLooksLikeNebraska, neSpecialistUrl } from './ne-network.ts';
+import { ksRefusal, classifyKsHub, queryLooksLikeKansas } from './ks-network.ts';
 import { okIdentifier, okRefusal, okCaveat, classifyOkHub, queryLooksLikeOklahoma, okSpecialistUrl } from './ok-network.ts';
 import { arIdentifier, arRefusal, arCaveat, classifyArHub, queryLooksLikeArkansas, arSpecialistUrl } from './ar-network.ts';
 import { scIdentifier, scRefusal, scCaveat, classifyScHub, queryLooksLikeSouthCarolina, scSpecialistUrl } from './sc-network.ts';
@@ -1785,7 +1786,20 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         destination:neRefused?undefined:neSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
         preview:{headline:reason,grain:neId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
-    if(neRefused)parsed.interpretationLines.push({label:'Research boundary',value:neRefused});
+  if(neRefused)parsed.interpretationLines.push({label:'Research boundary',value:neRefused});
+  }
+
+  // Kansas has a six-hub gateway; Ask does not execute a combined Kansas provider search.
+  const ksRefused=ksRefusal(parsed.query);
+  if(ksRefused||queryLooksLikeKansas(parsed.query)){
+    const hub=classifyKsHub(parsed.query);
+    if(hub){
+      const reason=ksRefused??'Open /kansas for six separate specialist research sources. No combined total.';
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:'unsupported',mode:'fail_closed',failKind:'hard',
+        destination:undefined,reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Kansas statewide research only.',
+        preview:{headline:reason,grain:'specialist_source_gateway',limitation:'Specialist-owned evidence only; no Kansas provider search, combined total, or ranking.'}}];
+    }else hubs=[];
+    parsed.interpretationLines.push({label:'Research boundary',value:ksRefused??'Open /kansas for six separate specialist sources. No combined total.'});
   }
 
   // Iowa has a state gateway; Ask does not execute Iowa provider searches.
