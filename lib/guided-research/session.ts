@@ -13,6 +13,7 @@ import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { moResearchHandoff, moCaveat } from '../network/mo-network.ts';
 import { okResearchHandoff, okCaveat } from '../network/ok-network.ts';
+import { arResearchHandoff, arCaveat } from '../network/ar-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -511,6 +512,9 @@ export function createGuidedSession(question:string):GuidedResearchSession|null{
   const missouri=moResearchHandoff(session.researchPlan);
   if(missouri)return {...session,hub:missouri.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${moCaveat(missouri.hub)} Continue at ${missouri.label} Missouri: ${missouri.href}. Ask has not executed a provider cohort.`};
+  const arkansas=arResearchHandoff(session.researchPlan);
+  if(arkansas)return {...session,hub:arkansas.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`${arCaveat(arkansas.hub)} Continue at ${arkansas.label} Arkansas: ${arkansas.href}. Ask has not executed a provider cohort.`};
   const mississippi=msResearchHandoff(session.researchPlan);
   if(mississippi)return {...session,hub:mississippi.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${msCaveat(mississippi.hub,question)} Continue at ${mississippi.label} Mississippi: ${mississippi.href}. Ask has not executed a provider cohort.`};

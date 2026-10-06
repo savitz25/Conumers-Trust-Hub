@@ -13,7 +13,8 @@ test('Oklahoma publishes six verified specialist gateways with separate grains',
   assert.equal(OK_PUBLICATION_MANIFEST.graph_writes, 0);
   assert.equal(listGatedAskStates().filter((state) => state.code === 'OK').length, 1);
   assert.equal(askStateSitemapEntries().filter((state) => state.path === '/oklahoma').length, 1);
-  assert.equal(listGatedAskStates().at(-1)?.code, 'OK');
+  const codes = listGatedAskStates().map((state) => state.code);
+  assert.ok(codes.indexOf('AR') > codes.indexOf('OK'));
   assert.equal(ASK_PUBLISHED_STATE_CATALOG.length, listGatedAskStates().length);
   for (const hub of OK_PUBLICATION_MANIFEST.hubs) assert.equal(hub.url, okSpecialistUrl(hub.hub_id as Parameters<typeof okSpecialistUrl>[0]));
   assert.doesNotMatch(JSON.stringify(OK_PUBLICATION_MANIFEST), /3,873|4,862|1,882|AggregateRating|Trust Score/);

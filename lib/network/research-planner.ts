@@ -8,6 +8,7 @@ import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksL
 import { msAmbiguousNumber, msIdentifier, msRefusal, msRankingAsked, queryLooksLikeMississippi, classifyMsHub } from './ms-network.ts';
 import { moAmbiguousNumber, moIdentifier, moRefusal, moRankingAsked, queryLooksLikeMissouri, classifyMoHub } from './mo-network.ts';
 import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
+import { arAmbiguousNumber, arIdentifier, arRefusal, arRankingAsked, queryLooksLikeArkansas, classifyArHub } from './ar-network.ts';
 import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
 import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
@@ -369,6 +370,25 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
       clarificationReason:moBlocked??(!moHub?'Open /missouri for six separate specialist research sources. No combined total.':undefined),
       reasonCodes:[moId?'EXACT_IDENTIFIER_RECOGNIZED':'MISSOURI_RESEARCH_ROUTING',...(moBlocked?['MISSOURI_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
       legacyQueryType:moId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const arId=arIdentifier(originalQuestion);
+  const arkansas=queryLooksLikeArkansas(originalQuestion);
+  const arBlocked=arRefusal(originalQuestion);
+  const arHub=arId?.hub??(arkansas?classifyArHub(originalQuestion):undefined);
+  const arNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const arSeparateTask=Boolean(arId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!arSeparateTask&&(arId||arBlocked||(arkansas&&!arNamed&&(arHub||/^(Arkansas|AR)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:arAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':arRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':arId?'IDENTIFIER_LOOKUP':arHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:arHub,candidateHubs:arHub?[arHub]:[],identifier:arId?{type:arId.type,value:arId.value,raw:arId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:arBlocked?['sourceOrScope']:[],executionAllowed:!arBlocked&&Boolean(arHub),
+      executionMode:arBlocked||!arHub?'CLARIFY':arId?'IDENTIFIER':'COHORT',
+      clarificationReason:arBlocked??(!arHub?'Open /arkansas for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[arId?'EXACT_IDENTIFIER_RECOGNIZED':'ARKANSAS_RESEARCH_ROUTING',...(arBlocked?['ARKANSAS_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:arId?'EXACT_IDENTIFIER':'COHORT'};
   }
   const msId=msIdentifier(originalQuestion);
   const mississippi=queryLooksLikeMississippi(originalQuestion);
