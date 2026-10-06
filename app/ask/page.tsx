@@ -19,6 +19,7 @@ import {createFixtureAdaptersForScenario,fixtureModeEnabled} from '@/lib/network
 import {NameCandidateResults} from '@/components/name-candidate-results';
 import {recordNameCandidateSearch} from '@/lib/control-plane/product-events';
 import {moRefusal} from '@/lib/network/mo-network';
+import {okRefusal} from '@/lib/network/ok-network';
 
 export const revalidate = 3600;
 
@@ -35,10 +36,12 @@ export default async function AskPage({
   const route=query?buildAskResearchRoute(query):null;
   const decision=query?decideAskExecution(query,route!.plan):null;
   const missouriRefusal=query?moRefusal(query):undefined;
+  const oklahomaRefusal=query?okRefusal(query):undefined;
+  const stateRefusal=missouriRefusal??oklahomaRefusal;
   // TH-SEARCH-R1-019A: ONE authoritative name-candidate decision. A supplied business/provider name
   // is searched across the network first -- no hub selection, identifier or repeated name required.
   // `hub` is only ever a real user-selected filter chip; an inferred industry is a display hint.
-  const nameState=query&&route&&!missouriRefusal?await resolveAskNameState({query,plan:route.plan,selectedHub:typeof hub==='string'?hub:null,interpretAs:typeof interpret==='string'?interpret:null},fixtureModeEnabled()?{adapters:createFixtureAdaptersForScenario()}:{}):null;
+  const nameState=query&&route&&!stateRefusal?await resolveAskNameState({query,plan:route.plan,selectedHub:typeof hub==='string'?hub:null,interpretAs:typeof interpret==='string'?interpret:null},fixtureModeEnabled()?{adapters:createFixtureAdaptersForScenario()}:{}):null;
   const nameResults=nameState?.mode==='NAME_RESULTS'?nameState:null;
   if(nameResults)after(()=>recordNameCandidateSearch(nameResults.response));
   // Once a name search is the effective operation it is ALWAYS what renders -- candidates, a miss, a
@@ -47,7 +50,7 @@ export default async function AskPage({
   // through the explicit labeled action (interpret=category).
   const showNameCandidates=Boolean(nameResults);
   const refuseSecuritiesAdvice=Boolean(route?.plan.reasonCodes.includes('UNSUPPORTED_SECURITIES_ADVICE'));
-  const guided=query&&!missouriRefusal&&!showNameCandidates&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
+  const guided=query&&!stateRefusal&&!showNameCandidates&&!route?.journey&&!refuseSecuritiesAdvice&&decision?.mode!=='PLACE_LENS'?createGuidedSession(query):null;
   // TH-DISCOVERY-RESET-001C: real per-class provider previews for a genuinely ambiguous senior
   // care request (e.g. "senior care Florida") must be present on this first server-rendered
   // paint -- the client only re-runs the specialist on specific follow-up actions, never on the
@@ -66,6 +69,7 @@ export default async function AskPage({
         <AskQueryForm query={query}/>
         {inputError?<p role="alert" className="mb-6 rounded-xl border p-4">{inputError}</p>:null}
         {missouriRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{missouriRefusal} <a href="/missouri" className="underline">Open Missouri specialist research</a>.</p>:null}
+        {oklahomaRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{oklahomaRefusal} <a href="/oklahoma" className="underline">Open Oklahoma specialist research</a>.</p>:null}
         {nameResults?<NameCandidateResults query={query} initial={nameResults.response} alternate={nameResults.alternate}/>:null}
         {!showNameCandidates&&route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
         {showNameCandidates ? null : query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} initialResult={seniorPreview} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (
