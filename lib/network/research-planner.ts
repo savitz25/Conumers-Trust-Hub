@@ -10,6 +10,7 @@ import { moAmbiguousNumber, moIdentifier, moRefusal, moRankingAsked, queryLooksL
 import { iaAmbiguousNumber, iaIdentifier, iaRefusal, iaRankingAsked, queryLooksLikeIowa, classifyIaHub } from './ia-network.ts';
 import { neAmbiguousNumber, neIdentifier, neRefusal, neRankingAsked, queryLooksLikeNebraska, classifyNeHub } from './ne-network.ts';
 import { ksRefusal, ksRankingAsked, queryLooksLikeKansas, classifyKsHub } from './ks-network.ts';
+import { idAmbiguousNumber, idIdentifier, idRefusal, idRankingAsked, queryLooksLikeIdaho, classifyIdHub } from './id-network.ts';
 import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
 import { arAmbiguousNumber, arIdentifier, arRefusal, arRankingAsked, queryLooksLikeArkansas, classifyArHub } from './ar-network.ts';
 import { utAmbiguousNumber, utIdentifier, utRankingAsked, utRefusal, queryLooksLikeUtah, classifyUtHub } from './ut-network.ts';
@@ -459,6 +460,23 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
       clarificationReason:iaBlocked??'Open /iowa for six separate specialist research sources. No combined total.',
       reasonCodes:[iaId?'EXACT_IDENTIFIER_RECOGNIZED':'IOWA_RESEARCH_ROUTING','IOWA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
       legacyQueryType:iaId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const idId=idIdentifier(originalQuestion);
+  const idaho=queryLooksLikeIdaho(originalQuestion);
+  const idBlocked=idRefusal(originalQuestion);
+  const idHub=idId?.hub??(idaho?classifyIdHub(originalQuestion):undefined);
+  if(idId||idBlocked||idaho){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:idAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':idRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':idId?'IDENTIFIER_LOOKUP':idHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:idHub,candidateHubs:idHub?[idHub]:[],identifier:idId?{type:idId.type,value:idId.value,raw:idId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:['sourceOrScope'],executionAllowed:false,
+      executionMode:'CLARIFY',
+      clarificationReason:idBlocked??'Open /idaho for six separate specialist research sources. No combined total.',
+      reasonCodes:[idId?'EXACT_IDENTIFIER_RECOGNIZED':'IDAHO_RESEARCH_ROUTING','IDAHO_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
+      legacyQueryType:idId?'EXACT_IDENTIFIER':'COHORT'};
   }
   const arId=arIdentifier(originalQuestion);
   const arkansas=queryLooksLikeArkansas(originalQuestion);

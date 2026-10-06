@@ -23,6 +23,7 @@ import {okRefusal} from '@/lib/network/ok-network';
 import {utRefusal} from '@/lib/network/ut-network';
 import {nmRefusal} from '@/lib/network/nm-network';
 import {ksRefusal} from '@/lib/network/ks-network';
+import {idRefusal} from '@/lib/network/id-network';
 
 export const revalidate = 3600;
 
@@ -43,7 +44,8 @@ export default async function AskPage({
   const utahRefusal=query?utRefusal(query):undefined;
   const newMexicoRefusal=query?nmRefusal(query):undefined;
   const kansasRefusal=query?ksRefusal(query):undefined;
-  const stateRefusal=missouriRefusal??oklahomaRefusal??utahRefusal??newMexicoRefusal??kansasRefusal;
+  const idahoRefusal=query?idRefusal(query):undefined;
+  const stateRefusal=missouriRefusal??oklahomaRefusal??utahRefusal??newMexicoRefusal??kansasRefusal??idahoRefusal;
   // TH-SEARCH-R1-019A: ONE authoritative name-candidate decision. A supplied business/provider name
   // is searched across the network first -- no hub selection, identifier or repeated name required.
   // `hub` is only ever a real user-selected filter chip; an inferred industry is a display hint.
@@ -78,6 +80,7 @@ export default async function AskPage({
         {oklahomaRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{oklahomaRefusal} <a href="/oklahoma" className="underline">Open Oklahoma specialist research</a>.</p>:null}
         {utahRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{utahRefusal} <a href="/utah" className="underline">Open Utah specialist research</a>.</p>:null}
         {newMexicoRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{newMexicoRefusal} <a href="/new-mexico" className="underline">Open New Mexico specialist research</a>.</p>:null}
+        {idahoRefusal?<p role="alert" className="mb-6 rounded-xl border p-4">{idahoRefusal} <a href="/idaho" className="underline">Open Idaho specialist research</a>.</p>:null}
         {nameResults?<NameCandidateResults query={query} initial={nameResults.response} alternate={nameResults.alternate}/>:null}
         {!showNameCandidates&&route&&observation?<><AskRouteAnalytics observation={observation} terminal={Boolean(route.journey||(!guided&&!route.canExecute))}/>{!guided?<ResearchRouteCard route={route}/>:null}</>:null}
         {showNameCandidates ? null : query ? (route?.journey ? null : guided ? <GuidedResearch key={query} query={query} initialSession={guided} initialResult={seniorPreview} routeDestinationHrefs={[]} /> : decision?.executionAllowed||decision?.mode==='PLACE_LENS' ? <NetworkAskResult query={query} hideInterpretation /> : null) : (

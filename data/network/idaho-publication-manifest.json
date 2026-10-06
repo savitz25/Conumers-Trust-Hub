@@ -1,0 +1,72 @@
+{
+  "contract": "ath-id-network-release-v1",
+  "state_code": "ID",
+  "state_name": "Idaho",
+  "ask_canonical": "https://www.asktrusthub.com/idaho",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "422e7e03707cbd736dfe1b0ee8162a9e2235947b",
+      "url": "https://www.movetrusthub.com/idaho",
+      "summary": "No mover-specific Idaho household-goods roster was acquired. Idaho State Police classifies Household Goods and furniture moving and storage as Exempt commodities. Idaho Code 49-1233(4)(l) is financial responsibility, not a certificate. Idaho Code 61-107 remains a definition, not a license count. FMCSA, USDOT, and commercial-vehicle registration are not that roster.",
+      "capability_summary": "No mover-specific Idaho household-goods roster was acquired. Idaho State Police classifies Household Goods and furniture moving and storage as Exempt commodities. Idaho Code 49-1233(4)(l) is financial responsibility, not a certificate. Idaho Code 61-107 remains a definition, not a license count. FMCSA, USDOT, and commercial-vehicle registration are not that roster.",
+      "clock": "Commodities page datePublished 2023-12-27. Statutes site says Idaho Statutes are updated to the website July 1 following the legislative session. Retrieved 2026-10-06.",
+      "gap": "A current household-goods company roster, tariff, complaint census, and enforcement order corpus were NOT_ACQUIRED. Historical Idaho PUC permits are not a current program. Boise is geography only."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "06d2a88f9699d015ac91e301c11e461592446fb5",
+      "url": "https://www.contractortrusthub.com/idaho",
+      "summary": "The DOPL FY2025 performance report prints 20,597 Contractors Board licenses. The public program is contractor registration. Person versus business inside that count is NOT_SEPARATED. Complaints were 485 and final disciplinary actions were 15. Those are not added to 20,597. Electrical, HVAC, plumbing, and public-works licenses stay separate.",
+      "capability_summary": "The DOPL FY2025 performance report prints 20,597 Contractors Board licenses. The public program is contractor registration. Person versus business inside that count is NOT_SEPARATED. Complaints were 485 and final disciplinary actions were 15. Those are not added to 20,597. Electrical, HVAC, plumbing, and public-works licenses stay separate.",
+      "clock": "FY2025 column of the DOPL performance report. The Contractors Board row does not print its own as-of date. The division-wide June 30 active-licensee row is not a contractor count.",
+      "gap": "A named contractor roster was NOT_ACQUIRED. The public search is not a bulk census. Trade licenses were not added to the registration count."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "207a0a21190222f6a2d3c11c9e11aad3d48c13f9",
+      "url": "https://www.lendertrusthub.com/idaho",
+      "summary": "Department of Finance fiscal year 2025: licensed mortgage brokers, lenders, and servicing companies increased to 2,584. Company versus branch is NOT_SEPARATED. Mortgage loan originators are 8,641 individual licensees and are not added. Idaho Credit Code regulated lenders are 817 and are not added. The owned HMDA slice is market activity, not a license.",
+      "capability_summary": "Department of Finance fiscal year 2025: licensed mortgage brokers, lenders, and servicing companies increased to 2,584. Company versus branch is NOT_SEPARATED. Mortgage loan originators are 8,641 individual licensees and are not added. Idaho Credit Code regulated lenders are 817 and are not added. The owned HMDA slice is market activity, not a license.",
+      "clock": "Fiscal year July 1, 2024 through June 30, 2025. Letter dated October 6, 2025. HMDA slice is 2025 activity already in the repository and was not rebuilt.",
+      "gap": "Named company, branch, and originator rosters were NOT_ACQUIRED. NMLS Consumer Access is a search. Enforcement orders and a complaint count were NOT_ACQUIRED. County origination lines are not a statewide total."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "b5bb1a95b155dd5be141cd2dc60a4293a3414ac5",
+      "url": "https://www.insurancetrusthub.com/idaho",
+      "summary": "The 2024 Idaho Department of Insurance annual report prints 2,384 regulated entities and 114,549 licenses. The license stock mixes resident and nonresident business entities and individuals and is not split. The two counts are not added. Company annual statements are as of December 31, 2024. The license sentence does not print its own as-of date.",
+      "capability_summary": "The 2024 Idaho Department of Insurance annual report prints 2,384 regulated entities and 114,549 licenses. The license stock mixes resident and nonresident business entities and individuals and is not split. The two counts are not added. Company annual statements are as of December 31, 2024. The license sentence does not print its own as-of date.",
+      "clock": "Director letter dated November 1, 2025. Company annual-statement clock December 31, 2024. License-stock as-of date NOT_PRINTED.",
+      "gap": "Named insurer, producer, adjuster, and appointment rosters were NOT_ACQUIRED. An appointment is not a license. Complaints are not findings. A bulk SBS download was not acquired."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "248ba6759cb8a81aa392d56b7c5fd758fcd068f1",
+      "url": "https://www.seniortrusthub.com/idaho",
+      "summary": "Idaho Department of Health and Welfare classes were each NOT_ACQUIRED: residential assisted living, nursing homes, certified family homes, home health, hospice, adult day, and home and community based services. The public list is a WebLink browser that was not downloaded. The classes are not added.",
+      "capability_summary": "Idaho Department of Health and Welfare classes were each NOT_ACQUIRED: residential assisted living, nursing homes, certified family homes, home health, hospice, adult day, and home and community based services. The public list is a WebLink browser that was not downloaded. The classes are not added.",
+      "clock": "Find-a-facility page examined 2026-10-06. Page chrome last updated 2025-12-02 is not a roster clock.",
+      "gap": "Surveys, inspections, complaint investigations, enforcement, capacity, Medicaid participation, and CMS certification were NOT_ACQUIRED. A complaint investigation is not a violation. CMS stays a federal overlay."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "3f5aacb9e4a7cdabae5b01b06f2397ad9ef5d92f",
+      "url": "https://www.investortrusthub.com/idaho",
+      "summary": "September 17, 2026 IAPD jurisdiction feeds report 199 APPROVED Idaho state-IA firm CRDs, 1,595 FILED federal notice CRDs, and 23 ACTIVE ERA firm CRDs. One TERMREQUEST firm is not added to the approved count. APPROVED state IA and notice overlap is 0. Principal-office geography is 57 firms and is not registration.",
+      "capability_summary": "September 17, 2026 IAPD jurisdiction feeds report 199 APPROVED Idaho state-IA firm CRDs, 1,595 FILED federal notice CRDs, and 23 ACTIVE ERA firm CRDs. One TERMREQUEST firm is not added to the approved count. APPROVED state IA and notice overlap is 0. Principal-office geography is 57 firms and is not registration.",
+      "clock": "State and SEC IAPD compilation source date 2026-09-17. Retained files examined 2026-10-06.",
+      "gap": "IAR persons, broker-dealers, salespersons, examinations, and securities orders were NOT_ACQUIRED. Jurisdiction code ID selected the cohorts. Principal-office geography was not used as registration."
+    }
+  ]
+}
