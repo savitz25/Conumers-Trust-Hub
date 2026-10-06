@@ -1,6 +1,7 @@
 // Local embedded PostgreSQL only. Proves the insurance state-license binding
-// rollback closes one receipt at a time, then proves the current production
-// packet sequence returns to the three-hub baseline before any consumer Save.
+// rollback closes one receipt at a time, proves Packet 15 rollback drops only
+// the frozen three-hub issuer, then proves the current production packet
+// sequence returns to the three-hub baseline with and without Saved research.
 // Nothing here contacts a hosted database, creates a key, or applies production SQL.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -25,6 +26,20 @@ assert.match(insuranceRollback, /v_network_entity_id/);
 assert.match(insuranceRollback, /b\.jurisdiction = v_jurisdiction/);
 assert.match(insuranceRollback, /b\.source_identifier = v_license/);
 assert.doesNotMatch(insuranceRollback, /\bdeclare[\s\S]*?\bjurisdiction text\b/);
+assert.equal(createHash('sha256').update(insuranceRollback).digest('hex'), '6511d47087fff62c2fb4a290c339a52427d0d1809c9fa5dcf232a4e30d8769c9');
+
+const HUB_ROLLBACK = '15-ask-prod-hub-account-context-rollback.sql';
+const HUB = 'v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)';
+const MOVE_ISSUER = 'v23_private.prod_issue_context(jsonb,uuid,uuid)';
+const hubRollback = read(HUB_ROLLBACK);
+assert.equal(createHash('sha256').update(hubRollback).digest('hex'), '3aa8fd356b9f7119607a911502dcb04ce1e5921419efcb28e5704a9f9e71fe77');
+assert.doesNotMatch(hubRollback, /drop\s+function[\s\S]{0,200}cascade/i);
+assert.match(hubRollback, /installed shared issuer is not the frozen packet 15 body/);
+assert.match(hubRollback, /nothing to remove/);
+assert.match(hubRollback, /owner, security, or acl drifted/);
+assert.match(hubRollback, /signature drifted/);
+assert.doesNotMatch(hubRollback, /v23_private\.authority\(\)/);
+assert.doesNotMatch(hubRollback, /seniortrusthub\.com/);
 
 const migrations = [
   '20260907160000_my_trusthub_identity_foundation.sql',
@@ -99,6 +114,98 @@ async function entities(db) {
 async function watchTables(db) {
   return (await db.query(`select count(*)::int as n from information_schema.tables
     where table_schema in ('consumer','ops','network','v23_private') and table_name ~* '(watch|alert)'`)).rows[0].n;
+}
+async function hubMeta(db) {
+  return (await db.query(`select pg_get_function_identity_arguments(p.oid) as args,
+      md5(regexp_replace(p.prosrc, '\\s+', '', 'g')) as body_md5,
+      p.prosecdef, p.provolatile::text as volatile_kind, p.proowner::regrole::text as owner,
+      regexp_replace(coalesce(array_to_string(p.proconfig, ','), ''), '\\s+', '', 'g') as config,
+      l.lanname,
+      has_function_privilege('public', p.oid, 'EXECUTE') as public_exec,
+      has_function_privilege('anon', p.oid, 'EXECUTE') as anon_exec,
+      has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_exec,
+      has_function_privilege('myth_v23_executor', p.oid, 'EXECUTE') as executor_exec,
+      has_function_privilege('myth_v23_authorizer', p.oid, 'EXECUTE') as authorizer_exec,
+      has_schema_privilege('myth_v23_foundation', 'v23_private', 'CREATE') as foundation_create
+    from pg_proc p
+    join pg_language l on l.oid = p.prolang
+    where p.oid = to_regprocedure($1)`, [HUB])).rows[0] ?? null;
+}
+async function moveIssuerMeta(db) {
+  return (await db.query(`select md5(regexp_replace(prosrc, '\\s+', '', 'g')) as body_md5,
+      prosecdef, proowner::regrole::text as owner, provolatile::text as volatile_kind,
+      regexp_replace(coalesce(array_to_string(proconfig, ','), ''), '\\s+', '', 'g') as config
+    from pg_proc where oid = to_regprocedure($1)`, [MOVE_ISSUER])).rows[0] ?? null;
+}
+async function contextCounts(db) {
+  return (await db.query(`select
+    (select count(*)::int from ops.consumer_auth_handoffs) as handoffs,
+    (select count(*)::int from ops.consumer_browser_handoff_intents) as intents,
+    (select count(*)::int from ops.consumer_handoff_events) as events`)).rows[0];
+}
+async function researchSnapshot(db) {
+  return {
+    savedRows: (await db.query(`select id::text, user_id::text, network_entity_id::text, source_binding_id::text,
+      identity_resolution_state, source_hub, source_context::text, saved_at::text, updated_at::text, removed_at::text, row_version
+      from consumer.consumer_saved_entities order by id`)).rows,
+    projects: (await db.query(`select id::text, user_id::text, creation_key::text, name, life_event_type, status,
+      location_context::text, target_date::text, created_at::text, updated_at::text, completed_at::text, archived_at::text, row_version
+      from consumer.consumer_projects order by id`)).rows,
+    memberships: (await db.query(`select project_id::text, saved_entity_id::text, added_at::text, removed_at::text,
+      project_role, created_at::text, updated_at::text, row_version
+      from consumer.consumer_project_saved_entities order by project_id, saved_entity_id`)).rows,
+    notes: (await db.query(`select id::text, user_id::text, client_request_id::text, project_id::text, saved_entity_id::text,
+      note_type, body, created_at::text, updated_at::text, row_version
+      from consumer.consumer_notes order by id`)).rows,
+  };
+}
+const RESOLVERS = [
+  'v23_private.prod_move_binding()',
+  'v23_private.prod_lender_nmls_binding_for(text)',
+  'v23_private.prod_insurance_state_license_binding_for(text)',
+  'v23_private.prod_investor_crd_binding_for(text)',
+  'v23_private.prod_contractor_dbpr_binding_for(text)',
+  'v23_private.prod_senior_ccn_binding_for(text)',
+];
+async function resolverPresence(db) {
+  const rows = [];
+  for (const name of RESOLVERS) rows.push({ name, present: await present(db, name) });
+  return rows;
+}
+async function preservation(db) {
+  return {
+    hub: await hubMeta(db),
+    move: await moveIssuerMeta(db),
+    investor: await present(db, 'v23_private.prod_investor_issue_context(jsonb,uuid,uuid)'),
+    authority: await fingerprint(db),
+    bindings: await bindings(db),
+    entities: await entities(db),
+    research: await researchSnapshot(db),
+    contexts: await contextCounts(db),
+    naic: await naic(db),
+    watch: await watchTables(db),
+    resolvers: await resolverPresence(db),
+  };
+}
+async function installSavedResearch(db) {
+  const fl = (await db.query(`select binding_id::text as binding_id, network_entity_id::text as network_entity_id
+    from pg_temp.v23insurance_receipt where jurisdiction = 'FL'`)).rows[0];
+  const userId = '11111111-1111-4111-8111-111111111111';
+  await db.query('insert into auth.users(id) values ($1)', [userId]);
+  await db.query(`insert into consumer.consumer_saved_entities
+    (user_id, network_entity_id, source_binding_id, identity_resolution_state, source_hub, source_context)
+    values ($1::uuid, $2::uuid, $3::uuid, 'accepted', 'insurance', '{"fixture":"local-saved-research"}'::jsonb)
+    returning id`, [userId, fl.network_entity_id, fl.binding_id]);
+  const savedId = (await db.query('select id from consumer.consumer_saved_entities where user_id = $1::uuid', [userId])).rows[0].id;
+  await db.query(`insert into consumer.consumer_projects (user_id, creation_key, name, life_event_type)
+    values ($1::uuid, '22222222-2222-4222-8222-222222222222', 'Local insurance research', 'protecting')`, [userId]);
+  const projectId = (await db.query('select id from consumer.consumer_projects where user_id = $1::uuid', [userId])).rows[0].id;
+  await db.query(`insert into consumer.consumer_project_saved_entities (project_id, saved_entity_id, project_role)
+    values ($1, $2, 'compare')`, [projectId, savedId]);
+  await db.query(`insert into consumer.consumer_notes
+    (user_id, client_request_id, project_id, saved_entity_id, note_type, body)
+    values ($1::uuid, '33333333-3333-4333-8333-333333333333', $2, $3, 'research', 'Local fixture note on the Florida license')`,
+    [userId, projectId, savedId]);
 }
 async function present(db, signature) {
   return (await db.query('select to_regprocedure($1) is not null as present', [signature])).rows[0].present;
@@ -226,6 +333,123 @@ try {
   await receiptDb.close();
 }
 
+const absent = await open();
+try {
+  const before = await preservation(absent);
+  assert.equal(before.hub, null);
+  assert.ok(before.move);
+  await refuse(absent, HUB_ROLLBACK, /V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: nothing to remove/);
+  assert.deepEqual(await preservation(absent), before);
+  console.log('MISSING_FUNCTION_REFUSED PASS');
+} finally {
+  await absent.close();
+}
+
+const exact = await open();
+try {
+  await apply(exact, '15-ask-prod-hub-account-context-forward.sql');
+  const before = await preservation(exact);
+  assert.equal(before.hub.owner, 'myth_v23_foundation');
+  assert.equal(before.hub.prosecdef, true);
+  assert.equal(before.hub.volatile_kind, 'v');
+  assert.equal(before.hub.lanname, 'plpgsql');
+  assert.equal(before.hub.config, 'search_path=pg_catalog,v23_private,ops');
+  assert.equal(before.hub.public_exec, false);
+  assert.equal(before.hub.anon_exec, false);
+  assert.equal(before.hub.authenticated_exec, false);
+  assert.equal(before.hub.executor_exec, false);
+  assert.equal(before.hub.authorizer_exec, true);
+  assert.equal(before.hub.foundation_create, false);
+  assert.equal(before.hub.args.replace(/\s+/g, ''), 'proofjsonb,subjectuuid,sessionuuid,p_hubtext');
+  await apply(exact, HUB_ROLLBACK);
+  assert.equal(await present(exact, HUB), false);
+  assert.equal(await present(exact, MOVE_ISSUER), true);
+  assert.equal(await present(exact, 'v23_private.prod_investor_issue_context(jsonb,uuid,uuid)'), false);
+  assert.deepEqual(await moveIssuerMeta(exact), before.move);
+  assert.deepEqual(await bindings(exact), before.bindings);
+  assert.deepEqual(await entities(exact), before.entities);
+  assert.deepEqual(await researchSnapshot(exact), before.research);
+  assert.deepEqual(await contextCounts(exact), before.contexts);
+  assert.equal(await fingerprint(exact), before.authority);
+  console.log('PACKET15_EXACT_PREDECESSOR_GUARD PASS');
+} finally {
+  await exact.close();
+}
+
+const seniorDb = await open();
+try {
+  await apply(seniorDb, '15-ask-prod-hub-account-context-forward.sql');
+  const packet15 = await hubMeta(seniorDb);
+  await apply(seniorDb, '18-ask-prod-senior-hub-context-preflight.sql');
+  await apply(seniorDb, '18-ask-prod-senior-hub-context-forward.sql');
+  const before = await preservation(seniorDb);
+  assert.notEqual(before.hub.body_md5, packet15.body_md5);
+  await refuse(seniorDb, HUB_ROLLBACK, /installed shared issuer is not the frozen packet 15 body/);
+  assert.deepEqual(await preservation(seniorDb), before);
+  console.log('PACKET18_BODY_REFUSED_WITHOUT_CHANGE PASS');
+  await apply(seniorDb, '18-ask-prod-senior-hub-context-rollback.sql');
+  assert.deepEqual(await hubMeta(seniorDb), packet15);
+  await apply(seniorDb, HUB_ROLLBACK);
+  assert.equal(await present(seniorDb, HUB), false);
+  assert.equal(await present(seniorDb, MOVE_ISSUER), true);
+  assert.deepEqual(await moveIssuerMeta(seniorDb), before.move);
+  assert.deepEqual(await bindings(seniorDb), before.bindings);
+  assert.deepEqual(await entities(seniorDb), before.entities);
+  assert.deepEqual(await researchSnapshot(seniorDb), before.research);
+  assert.deepEqual(await contextCounts(seniorDb), before.contexts);
+  assert.equal(await fingerprint(seniorDb), before.authority);
+  console.log('PACKET18_THEN15_ROLLBACK PASS');
+} finally {
+  await seniorDb.close();
+}
+
+const unknown = await open();
+try {
+  await apply(unknown, '15-ask-prod-hub-account-context-forward.sql');
+  await unknown.exec(`create or replace function v23_private.prod_hub_issue_context(proof jsonb, subject uuid, session uuid, p_hub text)
+    returns boolean language plpgsql security definer set search_path = pg_catalog, v23_private, ops as $body$
+    begin
+      raise exception 'unknown body' using errcode = '42501';
+    end
+    $body$`);
+  const before = await preservation(unknown);
+  await refuse(unknown, HUB_ROLLBACK, /installed shared issuer is not the frozen packet 15 body/);
+  assert.deepEqual(await preservation(unknown), before);
+  assert.equal(await present(unknown, HUB), true);
+  console.log('UNKNOWN_BODY_REFUSED_WITHOUT_CHANGE PASS');
+} finally {
+  await unknown.close();
+}
+
+const drifted = await open();
+try {
+  await apply(drifted, '15-ask-prod-hub-account-context-forward.sql');
+  await drifted.exec('alter function v23_private.prod_hub_issue_context(jsonb, uuid, uuid, text) security invoker');
+  const before = await preservation(drifted);
+  assert.equal(before.hub.prosecdef, false);
+  await refuse(drifted, HUB_ROLLBACK, /owner, security, or acl drifted/);
+  assert.deepEqual(await preservation(drifted), before);
+  assert.equal(await present(drifted, HUB), true);
+  console.log('SECURITY_METADATA_REFUSED_WITHOUT_CHANGE PASS');
+} finally {
+  await drifted.close();
+}
+
+const acl = await open();
+try {
+  await apply(acl, '15-ask-prod-hub-account-context-forward.sql');
+  await acl.exec('revoke execute on function v23_private.prod_hub_issue_context(jsonb, uuid, uuid, text) from myth_v23_authorizer');
+  const before = await preservation(acl);
+  assert.equal(before.hub.authorizer_exec, false);
+  assert.equal(before.hub.prosecdef, true);
+  await refuse(acl, HUB_ROLLBACK, /owner, security, or acl drifted/);
+  assert.deepEqual(await preservation(acl), before);
+  assert.equal(await present(acl, HUB), true);
+  console.log('ACL_METADATA_REFUSED_WITHOUT_CHANGE PASS');
+} finally {
+  await acl.close();
+}
+
 // Reverse order required by the packets, which matches the operator list:
 // 19 first, because its rollback replaces authority() only while the installed
 // body is the packet 19 body. Binding rollbacks do not read authority() and do
@@ -235,8 +459,9 @@ try {
 // drops the function. Packet 18's issuer md5 checks are snapshots taken inside
 // the packet 18 rollback transaction, so packet 19 can roll back first.
 // Investor context rollback drops only prod_investor_issue_context and is last.
-const networkDb = await open();
-try {
+async function proveNetwork(label, withResearch) {
+  const networkDb = await open();
+  try {
   assert.equal(await fingerprint(networkDb), BASELINE_FP);
   await apply(networkDb, '12-ask-prod-lender-nmls-preflight.sql');
   await apply(networkDb, '13-ask-prod-insurance-state-license-preflight.sql');
@@ -277,14 +502,26 @@ try {
   ]);
   assert.equal(await present(networkDb, 'v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)'), true);
   assert.equal(await present(networkDb, 'v23_private.prod_investor_issue_context(jsonb,uuid,uuid)'), true);
-  console.log(`FULL_NETWORK_FORWARD PASS ${PACKET19_FP}`);
+  console.log(`FULL_NETWORK_FORWARD ${label} PASS ${PACKET19_FP}`);
 
-  const savedBefore = await saved(networkDb);
+  if (withResearch) await installSavedResearch(networkDb);
+  const researchBefore = await researchSnapshot(networkDb);
   const watchBefore = await watchTables(networkDb);
   const naicBefore = await naic(networkDb);
   const entitiesBefore = await entities(networkDb);
-  assert.equal(savedBefore.length, 0);
+  const moveBefore = await moveIssuerMeta(networkDb);
+  const resolversBefore = await resolverPresence(networkDb);
   assert.equal(watchBefore, 0);
+  assert.equal(researchBefore.savedRows.length, withResearch ? 1 : 0);
+  assert.equal(researchBefore.projects.length, withResearch ? 1 : 0);
+  assert.equal(researchBefore.memberships.length, withResearch ? 1 : 0);
+  assert.equal(researchBefore.notes.length, withResearch ? 1 : 0);
+  if (withResearch) {
+    assert.equal(researchBefore.savedRows[0].source_hub, 'insurance');
+    assert.equal(researchBefore.notes[0].note_type, 'research');
+    assert.equal(researchBefore.memberships[0].project_role, 'compare');
+    assert.equal(researchBefore.projects[0].life_event_type, 'protecting');
+  }
 
   await apply(networkDb, '19-ask-prod-network-authority-rollback.sql');
   assert.equal(await fingerprint(networkDb), BASELINE_FP);
@@ -310,6 +547,7 @@ try {
       canonical_public_profile_ref: 'v23senior.canonical_public_profile_ref',
     }, '17-ask-prod-senior-ccn-binding-rollback.sql'],
   ];
+  let closedReceipts = 0;
   for (const [hub, table, order, gucs, file] of closers) {
     const receiptRows = await rowsOf(networkDb, `select * from ${table} order by ${order}`);
     assert.equal(receiptRows.length, 3, hub);
@@ -323,9 +561,11 @@ try {
       assert.equal(diffs[0].before.open, true);
       assert.equal(diffs[0].after.open, false);
       assert.equal(diffs[0].after.status, 'active');
+      closedReceipts += 1;
     }
-    console.log(`${hub.toUpperCase()}_BINDING_ROLLBACK PASS 3`);
+    console.log(`${hub.toUpperCase()}_BINDING_ROLLBACK ${label} PASS 3`);
   }
+  assert.equal(closedReceipts, 15);
 
   await apply(networkDb, '18-ask-prod-senior-hub-context-rollback.sql');
   await apply(networkDb, '15-ask-prod-hub-account-context-rollback.sql');
@@ -341,14 +581,29 @@ try {
   assert.deepEqual(finalBindings.filter(row => row.hub !== 'move').map(row => row.open), Array(15).fill(false));
   assert.deepEqual(finalBindings.filter(row => row.hub === 'move').map(row => ({ open: row.open, status: row.status })), [{ open: true, status: 'active' }]);
   assert.equal((await networkDb.query('select count(*)::int as n from v23_private.prod_move_binding()')).rows[0].n, 1);
-  assert.deepEqual(await saved(networkDb), savedBefore);
+  assert.deepEqual(await moveIssuerMeta(networkDb), moveBefore);
+  assert.deepEqual(await researchSnapshot(networkDb), researchBefore);
   assert.deepEqual(await naic(networkDb), naicBefore);
   assert.deepEqual(await entities(networkDb), entitiesBefore);
+  assert.deepEqual(await resolverPresence(networkDb), resolversBefore);
+  assert.equal(resolversBefore.every(row => row.present), true);
   assert.equal(await watchTables(networkDb), watchBefore);
   await quiet(networkDb);
-  console.log(`FINAL_AUTHORITY_FINGERPRINT ${BASELINE_FP}`);
-  console.log('FULL_NETWORK_ROLLBACK PASS');
-  console.log('BASELINE_RESTORED PASS');
+  console.log(`FINAL_AUTHORITY_FINGERPRINT ${label} ${BASELINE_FP}`);
+  console.log(`BINDING_RECEIPTS_CLOSED ${label} ${closedReceipts}`);
+  console.log(`FULL_NETWORK_REVERSE ${label} PASS`);
+  console.log(`AUTHORITY_BASELINE_RESTORED ${label} PASS`);
+  console.log(`MOVE_BASELINE_PRESERVED ${label} PASS`);
+  console.log(`SAVED_NOTES_PROJECTS_UNCHANGED ${label} PASS`);
+  console.log(`WATCH_UNCHANGED ${label} PASS`);
+  return closedReceipts;
 } finally {
   await networkDb.close();
 }
+}
+
+const noSaveClosed = await proveNetwork('NO_SAVE', false);
+const savedClosed = await proveNetwork('SAVED_RESEARCH', true);
+assert.equal(noSaveClosed, 15);
+assert.equal(savedClosed, 15);
+console.log(`BINDING_RECEIPTS_CLOSED ${noSaveClosed}`);
