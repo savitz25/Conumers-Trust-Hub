@@ -1,0 +1,2542 @@
+{
+  "schema": "post-r1-final-cert-v2",
+  "mode": "final",
+  "askSha": "fd21da1bef54a5ef372178e181636eab5e3c0f77",
+  "startedAt": "2026-09-23T01:41:58.508Z",
+  "finishedAt": "2026-09-23T01:42:28.622Z",
+  "counts": {
+    "PASS": 28,
+    "KNOWN_LIMITATION": 0,
+    "FAIL": 0
+  },
+  "matrix": [
+    {
+      "hub": "move",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "PASS (MOV-01:SOURCE_BACKED_RESULT; MOV-03:SOURCE_BACKED_RESULT)",
+      "localGeographyStatus": "PASS (MOV-02:SOURCE_BACKED_RESULT)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [],
+      "verdict": "GREEN"
+    },
+    {
+      "hub": "lender",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "PASS (LEN-01:SOURCE_BACKED_RESULT)",
+      "localGeographyStatus": "PASS (LEN-02:HONEST_UNSUPPORTED_WITH_NEXT_ACTION; LEN-03:SOURCE_BACKED_RESULT)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [],
+      "verdict": "GREEN"
+    },
+    {
+      "hub": "insurance",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "NOT_EXERCISED",
+      "localGeographyStatus": "PASS (INS-01:HONEST_UNSUPPORTED_WITH_NEXT_ACTION; INS-02:SOURCE_BACKED_RESULT; INS-03:HONEST_UNSUPPORTED_WITH_NEXT_ACTION)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [
+        "INSURANCE_JACKSONVILLE_CROSSWALK_GAP"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "hub": "contractor",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "PASS (CON-04:SOURCE_BACKED_RESULT)",
+      "localGeographyStatus": "PASS (CON-01:SOURCE_BACKED_RESULT; CON-02:SOURCE_BACKED_RESULT; CON-03:SOURCE_BACKED_RESULT; CON-05:SOURCE_BACKED_RESULT)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [
+        "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY",
+        "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP",
+        "FL_ELECTRICAL_SOURCE_GAP"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "hub": "senior",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "PASS (SEN-01:DETERMINISTIC_CLARIFICATION)",
+      "localGeographyStatus": "PASS (SEN-02:SOURCE_BACKED_RESULT; SEN-05:HONEST_UNSUPPORTED_WITH_NEXT_ACTION)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [
+        "CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP",
+        "HOME_HEALTH_COUNTY_SERVICE_AREA",
+        "AVANTE_SIX_CHARACTER_AMBIGUITY"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "hub": "investor",
+      "specialistStatus": "RESPONDING",
+      "askRoutingStatus": "CORRECT",
+      "identityStatus": "PASS (INV-01:SOURCE_BACKED_RESULT; INV-02:SOURCE_BACKED_RESULT)",
+      "localGeographyStatus": "PASS (INV-03:SOURCE_BACKED_RESULT)",
+      "handoffStatus": "SAFE (allowlisted https, query context preserved)",
+      "knownLimitations": [],
+      "verdict": "GREEN"
+    }
+  ],
+  "records": [
+    {
+      "id": "LEN-01",
+      "query": "is rocket mortgage legit",
+      "hub": "lender",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:41:58.998Z",
+      "latencyMs": 476,
+      "surface": "GUIDED",
+      "vertical": "lender",
+      "offeredHubs": [
+        "lender"
+      ],
+      "entity": "rocket mortgage",
+      "identifier": null,
+      "product": {
+        "entityClass": "hmda_reporting_institution",
+        "researchMode": "identity_name"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:lender:identity_name",
+      "resultState": "EXACT_IDENTITY",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research a lender or NMLS ID",
+          "href": "https://www.lendertrusthub.com/ask?q=is+rocket+mortgage+legit"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open LenderTrustHub",
+          "href": "https://www.lendertrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.lendertrusthub.com/lender/rocket-mortgage"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Exact regulatory identity",
+        "1 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+        "Exact identity research is not a recommendation.",
+        "Specialist: LenderTrustHub",
+        "Lender research: identity name",
+        "Narrow these results or open a specialist profile.",
+        "Matched the selected source-owned lender evidence filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "EXACT_IDENTITY rows=1",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "LEN-02",
+      "query": "banks that do helocs in ohio",
+      "hub": "lender",
+      "kind": "cohort_state",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:41:59.016Z",
+      "latencyMs": 15,
+      "surface": "GUIDED",
+      "vertical": "lender",
+      "offeredHubs": [
+        "lender"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "Ohio",
+          "stateCode": "OH"
+        },
+        "executed": {
+          "kind": "state",
+          "display": "Ohio",
+          "stateCode": "OH"
+        },
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:lender",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+        "HMDA property geography is not lender headquarters, branch location, licensing, or current service territory."
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "CLARIFY: HMDA property geography is not lender headquarters, branch location, licensing, ",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION)"
+    },
+    {
+      "id": "LEN-03",
+      "query": "va loan lenders near fort bragg nc",
+      "hub": "lender",
+      "kind": "product_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:41:59.392Z",
+      "latencyMs": 374,
+      "surface": "GUIDED",
+      "vertical": "lender",
+      "offeredHubs": [
+        "lender"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "loanType": "VA",
+        "entityClass": "hmda_reporting_institution",
+        "researchMode": "property_market"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Fayetteville (Fort Bragg / Fort Liberty), North Carolina",
+          "stateCode": "NC",
+          "city": "Fayetteville (Fort Bragg / Fort Liberty)"
+        },
+        "executed": {
+          "kind": "state",
+          "display": "North Carolina",
+          "stateCode": "NC"
+        },
+        "session": {
+          "kind": "state",
+          "display": "NC",
+          "stateCode": "NC",
+          "meaning": "PROPERTY_GEOGRAPHY"
+        },
+        "resolutionState": "BROADENING_REQUIRES_CONSENT"
+      },
+      "capability": "guided:lender:property_market",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 375,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "CONSENT_BROADENING",
+          "label": "Research North Carolina instead",
+          "value": "scope_state:NC"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open LenderTrustHub",
+          "href": "https://www.lendertrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.lendertrusthub.com/lender/united-wholesale-mortgage",
+        "https://www.lendertrusthub.com/lender/rocket-mortgage",
+        "https://www.lendertrusthub.com/lender/navy-federal-credit-union",
+        "https://www.lendertrusthub.com/lender/newrez"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "HMDA property-market research results",
+        "375 HMDA LEI-grain records match. Property geography is not headquarters, branch location, licensing, or service territory.",
+        "Most is a raw count, not best, safest, or recommended.",
+        "HMDA is a 2025 reporting vintage, not current 2026 lending.",
+        "Property geography is not headquarters, branch location, or service territory.",
+        "Public-profile links are a publication gate. Unpublished HMDA LEIs stay unpublished.",
+        "VA splits use the corresponding orig_* / apps_* columns on the same observation grain.",
+        "Purchase/refinance originations are not populated at LEI grain and are not reconstructed.",
+        "Complete ordering is limited to valid observations in this acquired file, not all institutions or all U.S. activity. Secondary measures, where supplied, are all-loan observations; missing values remain unavailable.",
+        "Raw HMDA activity volume is not a recommendation, quality measure, or proof of current product availability.",
+        "Specialist: LenderTrustHub",
+        "Recorded geography: NC",
+        "You asked: Fayetteville (Fort Bragg / Fort Liberty), North Carolina",
+        "Research executed: North Carolina",
+        "Lender research: property market",
+        "Narrow these results or open a specialist profile.",
+        "PROPERTY_GEOGRAPHY",
+        "You asked for Fayetteville (Fort Bragg / Fort Liberty), North Carolina. You approved broader North Carolina research. HMDA property geography is not lender headquarters, branch location, licensing, or current service territory.",
+        "Matched the selected source-owned lender evidence filters.",
+        "Matched the selected source-owned lender evidence filters.",
+        "Matched the selected source-owned lender evidence filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "INS-01",
+      "query": "insurance agent in miami",
+      "hub": "insurance",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:41:59.405Z",
+      "latencyMs": 12,
+      "surface": "GUIDED",
+      "vertical": "insurance",
+      "offeredHubs": [
+        "insurance"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "insuranceEntityClass": "producer",
+        "entityClass": "producer",
+        "researchMode": "local_directory_handoff"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "session": {
+          "kind": "city",
+          "display": "Miami",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami",
+          "meaning": "Recorded city/address geography; not service territory."
+        },
+        "resolutionState": "BROADENING_REQUIRES_CONSENT"
+      },
+      "capability": "guided:insurance:local_directory_handoff",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [
+        "scope_state:FL"
+      ],
+      "nextActions": [
+        {
+          "type": "CONSENT_BROADENING",
+          "label": "Research Florida instead",
+          "value": "scope_state:FL"
+        }
+      ],
+      "destinations": [
+        "https://www.insurancetrusthub.com/ask?q=insurance%20agent%20in%20miami"
+      ],
+      "failure": {
+        "kind": "unsupported",
+        "code": "zip_directory_not_supported",
+        "message": "InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering for this request. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does. Or research Florida agencies broadly instead -- this does not establish a Miami, Florida office or service area."
+      },
+      "disclosures": [
+        "This source does not currently support that research",
+        "InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering for this request. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does. Or research Florida agencies broadly instead -- this does not establish a Miami, Florida office or service area.",
+        "InsuranceTrustHub’s structured execution contract does not support ZIP or local-directory filtering for this request. Continue directly on InsuranceTrustHub’s own ZIP directory research, which does.",
+        "Directory listing is not a regulatory identity confirmation.",
+        "Specialist: InsuranceTrustHub",
+        "Recorded geography: Miami",
+        "You asked: Miami, Florida",
+        "Insurance class: producer",
+        "Choose a source-backed research option.",
+        "Recorded city/address geography; not service territory.",
+        "Local filtering for Miami, Florida is not supported by the current specialist contract. Credential jurisdiction does not establish office location, appointments, service territory, or product availability.",
+        "limitation code: zip_directory_not_supported"
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "UNSUPPORTED_CAPABILITY (zip_directory_not_supported)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION)"
+    },
+    {
+      "id": "INS-02",
+      "query": "insurance agency in broward county",
+      "hub": "insurance",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:01.950Z",
+      "latencyMs": 2544,
+      "surface": "GUIDED",
+      "vertical": "insurance",
+      "offeredHubs": [
+        "insurance"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "insuranceEntityClass": "agency",
+        "entityClass": "agency",
+        "researchMode": "local_directory_handoff"
+      },
+      "geography": {
+        "requested": {
+          "kind": "county",
+          "display": "Broward County, Florida",
+          "stateCode": "FL",
+          "county": "Broward"
+        },
+        "session": {
+          "kind": "county",
+          "display": "Broward",
+          "stateCode": "FL",
+          "county": "Broward",
+          "meaning": "Recorded county geography; not service territory."
+        },
+        "resolutionState": "BROADENING_REQUIRES_CONSENT"
+      },
+      "capability": "guided:insurance:local_directory_handoff",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 7936,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "CONSENT_BROADENING",
+          "label": "Research Florida instead",
+          "value": "scope_state:FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open InsuranceTrustHub",
+          "href": "https://www.insurancetrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.insurancetrusthub.com/providers/insurance-company-place-inc-dba-brightway-insurance-the-dor--l131535",
+        "https://www.insurancetrusthub.com/providers/1-health-retirement-solutions-dba-1-health-insurance-retirem-l128898",
+        "https://www.insurancetrusthub.com/providers/1-prestige-auto-usa-llc-w328448",
+        "https://www.insurancetrusthub.com/providers/1-car-stop-llc-w583895",
+        "https://www.insurancetrusthub.com/providers/1-of-1-motorsports-llc-g344417",
+        "https://www.insurancetrusthub.com/providers/1-united-insurance-llc-l108236",
+        "https://www.insurancetrusthub.com/providers/1-world-insurance-dba-insurance-n-you-l115371",
+        "https://www.insurancetrusthub.com/providers/1-2-3-fast-forward-llc-l111975",
+        "https://www.insurancetrusthub.com/providers/1011-insurance-llc-dba-univista-insurance-l105668",
+        "https://www.insurancetrusthub.com/providers/108-streams-llc-l114553"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Local insurance agency directory results",
+        "7,936 verified public-directory agency record(s) have a recorded address in Broward County, Florida. This is a recorded directory address, not a confirmed service area -- a county directory record does not mean an agency serves customers throughout the county.",
+        "Recorded public-directory address is not a confirmed service area, appointment territory, or product availability.",
+        "This directory is a separate source from the regulatory credential graph and does not confirm licensing, appointments, or lines of authority.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering.",
+        "Specialist: InsuranceTrustHub",
+        "Recorded geography: Broward",
+        "You asked: Broward County, Florida",
+        "Insurance class: agency",
+        "Narrow these results or open a specialist profile.",
+        "Recorded county geography; not service territory.",
+        "Local filtering for Broward County, Florida is not supported by the current specialist contract. Credential jurisdiction does not establish office location, appointments, service territory, or product availability.",
+        "Recorded public-directory address in Broward County, Florida. A recorded address is not a confirmed service area -- a directory record does not mean this agency serves every customer in the surrounding area.",
+        "Recorded public-directory address in Broward County, Florida. A recorded address is not a confirmed service area -- a directory record does not mean this agency serves every customer in the surrounding area.",
+        "Recorded public-directory address in Broward County, Florida. A recorded address is not a confirmed service area -- a directory record does not mean this agency serves every customer in the surrounding area."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "INS-03",
+      "query": "medicare supplement agent in ohio",
+      "hub": "insurance",
+      "kind": "product_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:01.959Z",
+      "latencyMs": 8,
+      "surface": "GUIDED",
+      "vertical": "insurance",
+      "offeredHubs": [
+        "insurance"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "Ohio",
+          "stateCode": "OH"
+        },
+        "executed": {
+          "kind": "state",
+          "display": "Ohio",
+          "stateCode": "OH"
+        },
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:insurance",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Credential jurisdiction does not establish office location, appointments, service territory, or product availability.",
+        "Credential jurisdiction does not establish office location, appointments, service territory, or product availability."
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "CLARIFY: Credential jurisdiction does not establish office location, appointments, servic",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION)"
+    },
+    {
+      "id": "INS-04",
+      "query": "is state farm licensed in texas",
+      "hub": "insurance",
+      "kind": "multi_hub",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:01.968Z",
+      "latencyMs": 8,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [
+        "contractor",
+        "lender",
+        "insurance",
+        "move"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "Texas",
+          "stateCode": "TX"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "hub:contractor",
+        "hub:lender",
+        "hub:insurance",
+        "hub:move"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "This question touches more than one specialist area. Which would you like to research first?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: hub",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "CON-01",
+      "query": "general contractor in miami",
+      "hub": "contractor",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:05.941Z",
+      "latencyMs": 3971,
+      "surface": "GUIDED",
+      "vertical": "contractor",
+      "offeredHubs": [
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "trade": "general",
+        "entityClass": "credential_record"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "executed": {
+          "kind": "county",
+          "display": "Miami-Dade County, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade"
+        },
+        "session": {
+          "kind": "county",
+          "display": "Miami-Dade",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "meaning": "CREDENTIAL_GEOGRAPHY"
+        },
+        "resolutionState": "DETERMINISTIC_EQUIVALENT"
+      },
+      "capability": "guided:contractor:general",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 5535,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research contractors",
+          "href": "https://www.contractortrusthub.com/ask?q=general+contractor+in+miami"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida contractor research",
+          "href": "https://www.contractortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cgc1518044-the-certified-general-contractors-group",
+        "https://www.contractortrusthub.com/contractors/cgc1516482-the-combined-group-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1541484-09-build",
+        "https://www.contractortrusthub.com/contractors/cgc1538335-1-thousand-blocks-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1518724-1-up-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1525907-10x-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1514585-180-production-management-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1536356-1nsg-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1515544-1st-united-companies-of-south-fla-l-l-c",
+        "https://www.contractortrusthub.com/contractors/cgc1512538-2-scale-inc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Contractor credential research results",
+        "5,535 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
+        "Specialist: ContractorTrustHub",
+        "Trade: general",
+        "Recorded geography: Miami-Dade",
+        "You asked: Miami, Florida",
+        "Research executed: Miami-Dade County, Florida",
+        "Narrow these results or open a specialist profile.",
+        "CREDENTIAL_GEOGRAPHY",
+        "You asked for Miami, Florida. Research is executed using Miami-Dade County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
+    },
+    {
+      "id": "CON-02",
+      "query": "roofers in broward",
+      "hub": "contractor",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:07.370Z",
+      "latencyMs": 1427,
+      "surface": "GUIDED",
+      "vertical": "contractor",
+      "offeredHubs": [
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "trade": "roofing",
+        "entityClass": "credential_record"
+      },
+      "geography": {
+        "requested": {
+          "kind": "county",
+          "display": "Broward County, Florida",
+          "stateCode": "FL",
+          "county": "Broward"
+        },
+        "executed": {
+          "kind": "county",
+          "display": "Broward County, Florida",
+          "stateCode": "FL",
+          "county": "Broward"
+        },
+        "session": {
+          "kind": "county",
+          "display": "Broward",
+          "stateCode": "FL",
+          "county": "Broward",
+          "meaning": "CREDENTIAL_GEOGRAPHY"
+        },
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:contractor:roofing",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 924,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Broward credential research",
+          "href": "https://www.contractortrusthub.com/florida/broward"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research contractors",
+          "href": "https://www.contractortrusthub.com/ask?q=roofers+in+broward"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida contractor research",
+          "href": "https://www.contractortrusthub.com/florida"
+        }
+      ],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/rc29027885-123-roofing-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1337629-2r-builders-corp",
+        "https://www.contractortrusthub.com/contractors/ccc1335340-360-home-improvements",
+        "https://www.contractortrusthub.com/contractors/ccc1337078-360-roofing-llc",
+        "https://www.contractortrusthub.com/contractors/ccc1330448-360-roofing-services-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1328233-3d-environmental-industries-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1331212-3j-construction",
+        "https://www.contractortrusthub.com/contractors/ccc1335094-4-all-roofing-llc",
+        "https://www.contractortrusthub.com/contractors/ccc1327664-4-roofers-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1326632-50-50-roofing-consultant-service-inc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Contractor credential research results",
+        "924 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
+        "Specialist: ContractorTrustHub",
+        "Trade: roofing",
+        "Recorded geography: Broward",
+        "You asked: Broward County, Florida",
+        "Research executed: Broward County, Florida",
+        "Narrow these results or open a specialist profile.",
+        "CREDENTIAL_GEOGRAPHY",
+        "Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
+    },
+    {
+      "id": "CON-03",
+      "query": "plumber in miami",
+      "hub": "contractor",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:08.345Z",
+      "latencyMs": 974,
+      "surface": "GUIDED",
+      "vertical": "contractor",
+      "offeredHubs": [
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "trade": "plumbing",
+        "entityClass": "credential_record"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "executed": {
+          "kind": "county",
+          "display": "Miami-Dade County, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade"
+        },
+        "session": {
+          "kind": "county",
+          "display": "Miami-Dade",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "meaning": "CREDENTIAL_GEOGRAPHY"
+        },
+        "resolutionState": "DETERMINISTIC_EQUIVALENT"
+      },
+      "capability": "guided:contractor:plumbing",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 1134,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research contractors",
+          "href": "https://www.contractortrusthub.com/ask?q=plumber+in+miami"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida contractor research",
+          "href": "https://www.contractortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cfc1428587-a-rooter-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1429608-1-a-backflow-and-services-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1430177-1st-choice-plumbing-and-renovation-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1429225-2-bros-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432751-21-construction-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1431661-24-seven-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432399-360-plumbing-inc",
+        "https://www.contractortrusthub.com/contractors/cfc1430764-3rd-rock-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1430896-4-d-plumbing-llc",
+        "https://www.contractortrusthub.com/contractors/cfc1432444-4tress-construction-llc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Contractor credential research results",
+        "1,134 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
+        "Specialist: ContractorTrustHub",
+        "Trade: plumbing",
+        "Recorded geography: Miami-Dade",
+        "You asked: Miami, Florida",
+        "Research executed: Miami-Dade County, Florida",
+        "Narrow these results or open a specialist profile.",
+        "CREDENTIAL_GEOGRAPHY",
+        "You asked for Miami, Florida. Research is executed using Miami-Dade County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "knownLimitation": "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY"
+    },
+    {
+      "id": "CON-04",
+      "query": "verify contractor license CBC015082",
+      "hub": "contractor",
+      "kind": "identifier",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:12.711Z",
+      "latencyMs": 4365,
+      "surface": "GUIDED",
+      "vertical": "contractor",
+      "offeredHubs": [
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": {
+        "type": "state_contractor_license",
+        "value": "CBC015082"
+      },
+      "product": {
+        "entityClass": "credential_record"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:contractor",
+      "resultState": "EXACT_IDENTITY",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Verify a contractor credential",
+          "href": "https://www.contractortrusthub.com/verify"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research contractors",
+          "href": "https://www.contractortrusthub.com/ask?q=verify+contractor+license+CBC015082"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cbc015082-worsham-construction-company-inc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Exact regulatory identity",
+        "1 public records match these source-owned filters. Source order only — not a ranking.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
+        "Specialist: ContractorTrustHub",
+        "Narrow these results or open a specialist profile.",
+        "Matched the selected undefined source-owned trade, status, and recorded-geography filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "EXACT_IDENTITY rows=1",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP honestly disclosed",
+      "knownLimitation": "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP"
+    },
+    {
+      "id": "CON-05",
+      "query": "licensed electrician in boca raton",
+      "hub": "contractor",
+      "kind": "product_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.549Z",
+      "latencyMs": 836,
+      "surface": "GUIDED",
+      "vertical": "contractor",
+      "offeredHubs": [
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "trade": "electrical",
+        "entityClass": "credential_record"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Boca Raton, Florida",
+          "stateCode": "FL",
+          "county": "Palm Beach",
+          "city": "Boca Raton"
+        },
+        "executed": {
+          "kind": "county",
+          "display": "Palm Beach County, Florida",
+          "stateCode": "FL",
+          "county": "Palm Beach"
+        },
+        "session": {
+          "kind": "city",
+          "display": "Boca Raton",
+          "stateCode": "FL",
+          "county": "Palm Beach",
+          "city": "Boca Raton",
+          "meaning": "Recorded city/address geography; not service territory."
+        },
+        "resolutionState": "DETERMINISTIC_EQUIVALENT"
+      },
+      "capability": "guided:contractor:electrical",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 594,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research contractors",
+          "href": "https://www.contractortrusthub.com/ask?q=licensed+electrician+in+boca+raton"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida contractor research",
+          "href": "https://www.contractortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open ContractorTrustHub",
+          "href": "https://www.contractortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.contractortrusthub.com/contractors/cgc1537119-1211-illinois-st-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1534821-24hr-sliding-door-repair",
+        "https://www.contractortrusthub.com/contractors/cgc1530668-5-point-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1511854-561-roofing-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1524051-a-h-home-improvements-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1505864-a-m-total-maintenance-corp",
+        "https://www.contractortrusthub.com/contractors/cgc1521022-a-n-housing-group-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1521025-a-n-housing-group-llc",
+        "https://www.contractortrusthub.com/contractors/cgc061108-a-g-builders-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1535480-a-zitta-company-llc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Broader Florida contractor options (electrical-specific data not available)",
+        "Electrical-specific Florida credential data is not available in this source. Here are 594 general/building contractor records with recorded Boca Raton credential geography you can research instead.",
+        "Electrical-specific Florida credential data is not available in this source; these are broader general/building contractor records, not electricians specifically.",
+        "No electrical trade class was substituted or relabeled -- the underlying credential class remains general/building contractor.",
+        "Rows are neutral regulatory research results, not rankings, recommendations, or proof of workmanship.",
+        "Recorded credential/address geography is not service territory or current availability.",
+        "Credential status and source clock reflect the indexed DBPR source and should be confirmed with the official board.",
+        "Only existing public, non-thin ContractorTrustHub profiles are returned; this contract does not expand publication.",
+        "Specialist: ContractorTrustHub",
+        "Trade: electrical",
+        "Recorded geography: Boca Raton",
+        "You asked: Boca Raton, Florida",
+        "Research executed: Palm Beach County, Florida",
+        "Narrow these results or open a specialist profile.",
+        "Recorded city/address geography; not service territory.",
+        "You asked for Boca Raton, Florida. Research is executed using Palm Beach County, Florida because the accepted source operates at county grain. Credential/source geography does not establish service territory, availability, endorsement, or good standing.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters.",
+        "Matched the selected Florida source-owned trade, status, and recorded-geography filters."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation FL_ELECTRICAL_SOURCE_GAP honestly disclosed",
+      "knownLimitation": "FL_ELECTRICAL_SOURCE_GAP"
+    },
+    {
+      "id": "SEN-01",
+      "query": "is abbey delray south medicare certified",
+      "hub": "senior",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.558Z",
+      "latencyMs": 8,
+      "surface": "GUIDED",
+      "vertical": "senior",
+      "offeredHubs": [
+        "senior"
+      ],
+      "entity": "abbey delray south",
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:senior",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "nursing_home",
+        "home_health",
+        "assisted_living",
+        "hospice",
+        "explain_care"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "What kind of care are you looking for?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: providerClass",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "SEN-02",
+      "query": "hospice care for my mom in tampa",
+      "hub": "senior",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.952Z",
+      "latencyMs": 392,
+      "surface": "GUIDED",
+      "vertical": "senior",
+      "offeredHubs": [
+        "senior"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "providerClass": "hospice",
+        "careSetting": "hospice",
+        "entityClass": "hospice"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Tampa, Florida",
+          "stateCode": "FL",
+          "county": "Hillsborough",
+          "city": "Tampa"
+        },
+        "executed": {
+          "kind": "city",
+          "display": "Tampa, Florida",
+          "stateCode": "FL",
+          "county": "Hillsborough",
+          "city": "Tampa"
+        },
+        "session": {
+          "kind": "city",
+          "display": "Tampa",
+          "stateCode": "FL",
+          "city": "Tampa",
+          "meaning": "Recorded provider/office location; not service area."
+        },
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:senior:hospice",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 2,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research senior-care providers",
+          "href": "https://www.seniortrusthub.com/ask?q=Hospice+providers+in+Tampa%2C+Florida&class=hospice&state=FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Explore Florida senior-care research",
+          "href": "https://www.seniortrusthub.com/florida"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open SeniorTrustHub",
+          "href": "https://www.seniortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://www.seniortrusthub.com/hospice/cms/101557/accent-care-hospice-and-palliative-care-of-hillsboro",
+        "https://www.seniortrusthub.com/hospice/cms/101576/affinity-care-of-hillsborough-llc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Hospice research results",
+        "2 public records match these source-owned filters. Source order only — not a ranking.",
+        "Ask does not invent provider facts. Results come from structured SeniorTrustHub production data.",
+        "Missing source evidence is not zero, clean, or good standing.",
+        "CMS-reported ratings are not TrustHub recommendations.",
+        "Specialist: SeniorTrustHub",
+        "Provider class: hospice",
+        "Recorded geography: Tampa",
+        "You asked: Tampa, Florida",
+        "Research executed: Tampa, Florida",
+        "Narrow these results or open a specialist profile.",
+        "Recorded provider/office location; not service area.",
+        "Hospice office geography is not patient service availability.",
+        "The returned hospice record lists TAMPA, FL. Recorded location is not service availability.",
+        "The returned hospice record lists TAMPA, FL. Recorded location is not service availability."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=2",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "SEN-03",
+      "query": "memory care in orlando",
+      "hub": "senior",
+      "kind": "unsupported_source",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.966Z",
+      "latencyMs": 13,
+      "surface": "GUIDED",
+      "vertical": "senior",
+      "offeredHubs": [
+        "senior"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "careSetting": "memory_care",
+        "entityClass": "memory_care"
+      },
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Orlando, Florida",
+          "stateCode": "FL",
+          "county": "Orange",
+          "city": "Orlando"
+        },
+        "session": {
+          "kind": "city",
+          "display": "Orlando",
+          "stateCode": "FL",
+          "city": "Orlando",
+          "meaning": "Recorded provider/office location; not service area."
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:senior",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research senior-care providers",
+          "href": "https://www.seniortrusthub.com/ask?q=memory+care+in+orlando&state=FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open SeniorTrustHub",
+          "href": "https://www.seniortrusthub.com"
+        }
+      ],
+      "destinations": [],
+      "failure": {
+        "kind": "unsupported",
+        "code": "care_capability_unavailable",
+        "message": "This combination is not supported by the accepted source."
+      },
+      "disclosures": [
+        "This care setting or scope needs a different source",
+        "This combination is not supported by the accepted source.",
+        "No nursing-home or other provider cohort was substituted.",
+        "Requested care setting: memory_care",
+        "Requested location: Orlando, Florida",
+        "Execution: No provider retrieval ran.",
+        "The requested scope cannot be executed safely.",
+        "Recorded provider/office location; not service area.",
+        "limitation code: care_capability_unavailable"
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "UNSUPPORTED_CAPABILITY (care_capability_unavailable)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION); known limitation CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP honestly disclosed",
+      "knownLimitation": "CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP"
+    },
+    {
+      "id": "SEN-04",
+      "query": "assisted living facilities in new jersey",
+      "hub": "senior",
+      "kind": "unsupported_source",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.981Z",
+      "latencyMs": 15,
+      "surface": "GUIDED",
+      "vertical": "senior",
+      "offeredHubs": [
+        "senior"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "careSetting": "assisted_living",
+        "entityClass": "assisted_living"
+      },
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "NJ",
+          "stateCode": "NJ"
+        },
+        "session": {
+          "kind": "state",
+          "display": "NJ",
+          "stateCode": "NJ",
+          "meaning": "Recorded provider/office location; not service area."
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:senior",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research senior-care providers",
+          "href": "https://www.seniortrusthub.com/ask?q=assisted+living+facilities+in+new+jersey&state=NJ"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open SeniorTrustHub",
+          "href": "https://www.seniortrusthub.com"
+        }
+      ],
+      "destinations": [],
+      "failure": {
+        "kind": "unsupported",
+        "code": "care_capability_unavailable",
+        "message": "This combination is not supported by the accepted source."
+      },
+      "disclosures": [
+        "This care setting or scope needs a different source",
+        "This combination is not supported by the accepted source.",
+        "No nursing-home or other provider cohort was substituted.",
+        "Requested care setting: assisted_living",
+        "Requested location: NJ",
+        "Execution: No provider retrieval ran.",
+        "The requested scope cannot be executed safely.",
+        "Recorded provider/office location; not service area.",
+        "limitation code: care_capability_unavailable"
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "UNSUPPORTED_CAPABILITY (care_capability_unavailable)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION); known limitation CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP honestly disclosed",
+      "knownLimitation": "CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP"
+    },
+    {
+      "id": "SEN-05",
+      "query": "home health agencies in miami dade county",
+      "hub": "senior",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:13.996Z",
+      "latencyMs": 13,
+      "surface": "GUIDED",
+      "vertical": "senior",
+      "offeredHubs": [
+        "senior"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "providerClass": "home_health",
+        "careSetting": "home_health",
+        "entityClass": "home_health"
+      },
+      "geography": {
+        "requested": {
+          "kind": "county",
+          "display": "Miami-Dade County, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade"
+        },
+        "session": {
+          "kind": "county",
+          "display": "Miami-Dade",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "meaning": "Recorded provider/office location; not service area."
+        },
+        "resolutionState": "BROADENING_REQUIRES_CONSENT"
+      },
+      "capability": "guided:senior:home_health",
+      "resultState": "UNSUPPORTED_CAPABILITY",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "CONSENT_BROADENING",
+          "label": "Research Florida instead",
+          "value": "scope_state:FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research senior-care providers",
+          "href": "https://www.seniortrusthub.com/ask?q=Home+health+agencies+in+Miami-Dade+County%2C+Florida&class=home_health&state=FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open SeniorTrustHub",
+          "href": "https://www.seniortrusthub.com"
+        }
+      ],
+      "destinations": [],
+      "failure": {
+        "kind": "unsupported",
+        "code": "care_capability_unavailable",
+        "message": "Local filtering for Miami-Dade County, Florida is not supported by the current specialist contract. Home Health office geography is not patient service availability."
+      },
+      "disclosures": [
+        "This care setting or scope needs a different source",
+        "Local filtering for Miami-Dade County, Florida is not supported by the current specialist contract. Home Health office geography is not patient service availability.",
+        "No nursing-home or other provider cohort was substituted.",
+        "Requested care setting: home_health",
+        "Requested location: Miami-Dade County, Florida",
+        "Execution: No provider retrieval ran.",
+        "Local filtering for Miami-Dade County, Florida is not supported by the current specialist contract. Home Health office geography is not patient service availability.",
+        "Recorded provider/office location; not service area.",
+        "Local filtering for Miami-Dade County, Florida is not supported by the current specialist contract. Home Health office geography is not patient service availability.",
+        "limitation code: care_capability_unavailable"
+      ],
+      "outcomeClass": "HONEST_UNSUPPORTED_WITH_NEXT_ACTION",
+      "classDetail": "UNSUPPORTED_CAPABILITY (care_capability_unavailable)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (HONEST_UNSUPPORTED_WITH_NEXT_ACTION); known limitation HOME_HEALTH_COUNTY_SERVICE_AREA honestly disclosed",
+      "knownLimitation": "HOME_HEALTH_COUNTY_SERVICE_AREA"
+    },
+    {
+      "id": "MOV-01",
+      "query": "Senior Moving Services LLC",
+      "hub": "move",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:16.527Z",
+      "latencyMs": 2530,
+      "surface": "NAME_CANDIDATES",
+      "vertical": "move",
+      "offeredHubs": [
+        "move",
+        "lender",
+        "insurance",
+        "contractor",
+        "senior",
+        "investor"
+      ],
+      "entity": "Senior Moving Services LLC",
+      "identifier": null,
+      "product": {},
+      "geography": {},
+      "capability": "name-candidates:all",
+      "resultState": "NAME_CANDIDATES",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [
+        "https://www.movetrusthub.com/companies/senior-moving-services-llc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "move: Recorded headquarters -- not service territory",
+        "Exact company-name match"
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "NAME_CANDIDATES 1 across move",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "MOV-02",
+      "query": "movers in broward county",
+      "hub": "move",
+      "kind": "cohort_local",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:17.091Z",
+      "latencyMs": 563,
+      "surface": "GUIDED",
+      "vertical": "move",
+      "offeredHubs": [
+        "move"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "moveMode": "mover",
+        "entityClass": "mover"
+      },
+      "geography": {
+        "requested": {
+          "kind": "county",
+          "display": "Broward County, Florida",
+          "stateCode": "FL",
+          "county": "Broward"
+        },
+        "executed": {
+          "kind": "state",
+          "display": "Florida",
+          "stateCode": "FL"
+        },
+        "session": {
+          "kind": "state",
+          "display": "FL",
+          "stateCode": "FL",
+          "meaning": "RECORDED_HEADQUARTERS"
+        },
+        "resolutionState": "BROADENING_REQUIRES_CONSENT"
+      },
+      "capability": "guided:move:mover",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 482,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "CONSENT_BROADENING",
+          "label": "Research Florida instead",
+          "value": "scope_state:FL"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Verify a USDOT or MC",
+          "href": "https://www.movetrusthub.com/verify-dot"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research movers",
+          "href": "https://www.movetrusthub.com/ask?q=movers+in+broward+county"
+        }
+      ],
+      "destinations": [
+        "https://www.movetrusthub.com/companies/1-hill-s-go-minis-2-hill-s-van-service-of-marion-county",
+        "https://www.movetrusthub.com/companies/1-keepit-safe-storage-moving-2-moversone",
+        "https://www.movetrusthub.com/companies/1-white-glove-moving-storage-delivery-2-white-glove-storage-delivery",
+        "https://www.movetrusthub.com/companies/1-withers-transportation-systems-2-withers-worldwide",
+        "https://www.movetrusthub.com/companies/1776-moving-and-storage-inc",
+        "https://www.movetrusthub.com/companies/2-college-brothers-of-gainesville",
+        "https://www.movetrusthub.com/companies/24-7-logistic-services",
+        "https://www.movetrusthub.com/companies/52-checks-investments-llc",
+        "https://www.movetrusthub.com/companies/a-m-moving-storage-llc",
+        "https://www.movetrusthub.com/companies/a-better-budget-moving-labor-inc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Mover research results",
+        "482 public records match these source-owned filters. Source order only — not a ranking.",
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering.",
+        "Specialist: MoveTrustHub",
+        "Research class: mover",
+        "Recorded geography: FL",
+        "You asked: Broward County, Florida",
+        "Research executed: Florida",
+        "Narrow these results or open a specialist profile.",
+        "RECORDED_HEADQUARTERS",
+        "You asked for Broward County, Florida. You approved broader Florida research. The current accepted Move contract supports recorded-headquarters state and city, not service availability. Recorded headquarters does not establish service territory or route availability.",
+        "The published directory identity records FL as the company's headquarters/address state. This is not service-territory evidence or a recommendation.",
+        "The published directory identity records FL as the company's headquarters/address state. This is not service-territory evidence or a recommendation.",
+        "The published directory identity records FL as the company's headquarters/address state. This is not service-territory evidence or a recommendation."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "MOV-03",
+      "query": "USDOT 3244649",
+      "hub": "move",
+      "kind": "identifier",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:17.933Z",
+      "latencyMs": 840,
+      "surface": "GUIDED",
+      "vertical": "move",
+      "offeredHubs": [
+        "move"
+      ],
+      "entity": null,
+      "identifier": {
+        "type": "usdot",
+        "value": "3244649"
+      },
+      "product": {
+        "moveMode": "identifier",
+        "entityClass": "identifier"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:move:identifier",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Verify a USDOT or MC",
+          "href": "https://www.movetrusthub.com/verify-dot"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research movers",
+          "href": "https://www.movetrusthub.com/ask?q=USDOT+3244649"
+        },
+        {
+          "type": "OPEN_OFFICIAL_SOURCE",
+          "label": "Official source — FMCSA",
+          "href": "https://www.fmcsa.dot.gov/protect-your-move/search-mover"
+        }
+      ],
+      "destinations": [
+        "https://www.movetrusthub.com/companies/shifl-inc"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Exact regulatory identity",
+        "1 public records match these source-owned filters. Source order only — not a ranking.",
+        "Only identities already eligible for the public MoveTrustHub directory are returned.",
+        "Recorded headquarters is not service territory, route availability, pickup availability, or delivery availability.",
+        "A broker may arrange transportation without physically hauling the shipment.",
+        "Authority state is regulatory evidence, not approval, safety, quality, or a recommendation.",
+        "Results use neutral source order. Ratings, reputation, paid, claimed, and subscription status do not affect ordering.",
+        "Specialist: MoveTrustHub",
+        "Research class: identifier",
+        "Narrow these results or open a specialist profile.",
+        "Exact USDOT match"
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=1",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "INV-01",
+      "query": "Fisher Investments",
+      "hub": "investor",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:21.187Z",
+      "latencyMs": 3253,
+      "surface": "NAME_CANDIDATES",
+      "vertical": "investor",
+      "offeredHubs": [
+        "investor",
+        "move",
+        "lender",
+        "insurance",
+        "contractor",
+        "senior"
+      ],
+      "entity": "Fisher Investments",
+      "identifier": null,
+      "product": {},
+      "geography": {},
+      "capability": "name-candidates:all",
+      "resultState": "NAME_CANDIDATES",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [
+        "https://adviserinfo.sec.gov/firm/summary/107342"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "investor: Principal office -- not client geography",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster, its sourced firm name contains “Fisher Investments”. Matched source display name: FISHER INVESTMENTS."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "NAME_CANDIDATES 1 across investor",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "INV-02",
+      "query": "CRD 105958",
+      "hub": "investor",
+      "kind": "identifier",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:21.346Z",
+      "latencyMs": 158,
+      "surface": "GUIDED",
+      "vertical": "investor",
+      "offeredHubs": [
+        "investor"
+      ],
+      "entity": null,
+      "identifier": {
+        "type": "CRD",
+        "value": "105958"
+      },
+      "product": {
+        "investorFirmClass": "ria_and_era",
+        "entityClass": "ria_and_era",
+        "researchMode": "identifier"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:investor:identifier",
+      "resultState": "EXACT_IDENTITY",
+      "resultShape": "ROWS",
+      "total": 1,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment adviser firms",
+          "href": "https://www.investortrusthub.com/firms"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment advisers",
+          "href": "https://www.investortrusthub.com/ask?q=CRD+105958"
+        },
+        {
+          "type": "OPEN_OFFICIAL_SOURCE",
+          "label": "Official source — IAPD",
+          "href": "https://adviserinfo.sec.gov/"
+        }
+      ],
+      "destinations": [
+        "https://adviserinfo.sec.gov/firm/summary/105958"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Exact regulatory identity",
+        "1 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used.",
+        "Specialist: InvestorTrustHub",
+        "Firm class: RIA_AND_ERA",
+        "Narrow these results or open a specialist profile.",
+        "This firm matches because its organization CRD is 105958."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "EXACT_IDENTITY rows=1",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "INV-03",
+      "query": "investment advisers in california",
+      "hub": "investor",
+      "kind": "cohort_state",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:21.747Z",
+      "latencyMs": 400,
+      "surface": "GUIDED",
+      "vertical": "investor",
+      "offeredHubs": [
+        "investor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "investorFirmClass": "ria_and_era",
+        "entityClass": "ria_and_era",
+        "researchMode": "firm_cohort"
+      },
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "California",
+          "stateCode": "CA"
+        },
+        "executed": {
+          "kind": "state",
+          "display": "California",
+          "stateCode": "CA"
+        },
+        "session": {
+          "kind": "state",
+          "display": "CA",
+          "stateCode": "CA",
+          "meaning": "PRINCIPAL_OFFICE"
+        },
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:investor:firm_cohort",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 2699,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment adviser firms",
+          "href": "https://www.investortrusthub.com/firms"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment advisers",
+          "href": "https://www.investortrusthub.com/ask?q=investment+advisers+in+california"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open InvestorTrustHub",
+          "href": "https://www.investortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://adviserinfo.sec.gov/firm/summary/160657",
+        "https://adviserinfo.sec.gov/firm/summary/301237",
+        "https://adviserinfo.sec.gov/firm/summary/162351",
+        "https://adviserinfo.sec.gov/firm/summary/310628",
+        "https://adviserinfo.sec.gov/firm/summary/334546",
+        "https://adviserinfo.sec.gov/firm/summary/285866",
+        "https://adviserinfo.sec.gov/firm/summary/304532",
+        "https://adviserinfo.sec.gov/firm/summary/329523",
+        "https://adviserinfo.sec.gov/firm/summary/324187",
+        "https://adviserinfo.sec.gov/firm/summary/298053"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Investment adviser firm research results",
+        "2,699 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used.",
+        "Specialist: InvestorTrustHub",
+        "Recorded geography: CA",
+        "You asked: California",
+        "Research executed: California",
+        "Firm class: RIA_AND_ERA",
+        "Narrow these results or open a specialist profile.",
+        "PRINCIPAL_OFFICE",
+        "Principal-office geography does not establish client geography or service territory.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster, it reports its principal office in California.",
+        "This firm matches because it is classified as an ERA in the current SEC/IARD roster, it reports its principal office in California.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster, it reports its principal office in California."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "NET-01",
+      "query": "AVANTE",
+      "hub": "network",
+      "kind": "ambiguous_name",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:24.679Z",
+      "latencyMs": 2931,
+      "surface": "NAME_CANDIDATES",
+      "vertical": "insurance+contractor+investor",
+      "offeredHubs": [
+        "move",
+        "lender",
+        "insurance",
+        "contractor",
+        "senior",
+        "investor"
+      ],
+      "entity": "AVANTE",
+      "identifier": null,
+      "product": {},
+      "geography": {},
+      "capability": "name-candidates:all",
+      "resultState": "NAME_CANDIDATES",
+      "resultShape": "ROWS",
+      "total": 15,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [
+        "https://www.insurancetrusthub.com/ask?q=Find+AVANTE&selected=9e963db9-4e29-4884-9c89-68dde0911324",
+        "https://www.insurancetrusthub.com/ask?q=Find+AVANTE&selected=cf2258bb-902a-4940-bbc4-75face15f549",
+        "https://www.insurancetrusthub.com/ask?q=Find+AVANTE&selected=8c655857-4229-4fd6-a2c6-e4bfcf11c2f5",
+        "https://www.contractortrusthub.com/contractors/cbc1265708-avante-builders-inc",
+        "https://www.contractortrusthub.com/contractors/ccc1330997-avante-builders-inc",
+        "https://www.contractortrusthub.com/contractors/cgc1505503-avante-builders-inc",
+        "https://www.contractortrusthub.com/contractors/tx-tdlr-electrical-contractor-39874-ec-avante-building-services-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1528210-avante-construction-renovation",
+        "https://www.contractortrusthub.com/contractors/cgc1526821-avante-construction-llc",
+        "https://www.contractortrusthub.com/contractors/fro9095-avante-construction-llc",
+        "https://www.contractortrusthub.com/contractors/cgc1519476-avante-custom-homes-inc",
+        "https://www.contractortrusthub.com/contractors/az-az-roc-328982-avante-design-build-llc",
+        "https://www.contractortrusthub.com/contractors/tx-tsbpe-rmp-12051-avante-plumbing-company",
+        "https://adviserinfo.sec.gov/firm/summary/165358",
+        "https://adviserinfo.sec.gov/firm/summary/340973"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Name candidate: requested \"AVANTE\" matches source display_name \"AVANTE INSURANCE AGENCY, INC.\" (distinctive_token_candidate). NPN 8906996 identifies the source agency; similarity is not a license or appointment finding.",
+        "Name candidate: requested \"AVANTE\" matches source display_name \"AVANTE INSURANCE LLC\" (distinctive_token_candidate). NPN 21003188 identifies the source agency; similarity is not a license or appointment finding.",
+        "Name candidate: requested \"AVANTE\" matches source display_name \"AVANTE-NEA INSURANCE GROUP, LLC\" (distinctive_token_candidate). NPN 20464096 identifies the source agency; similarity is not a license or appointment finding.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "contractor: Recorded address on the profile. Separate from the credential jurisdiction; not service territory or current availability.",
+        "The public display name contains every required supplied word (AVANTE); each one begins or equals a word of that name.",
+        "senior: Bare six-character strings can be a nursing-home CCN, a Home Health CCN, or another identifier. Label the CCN (for example “CMS CCN 105502”) so Ask does not guess the class.",
+        "investor: Principal office -- not client geography",
+        "This firm matches because it is classified as an ERA in the current SEC/IARD roster, its sourced firm name contains “AVANTE”. Matched source legal name: AVANTE CAPITAL PARTNERS LP.",
+        "investor: Principal office -- not client geography",
+        "This firm matches because it is classified as an ERA in the current SEC/IARD roster, its sourced firm name contains “AVANTE”. Matched source legal name: AVANTE GLOBAL MANAGEMENT LP."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "NAME_CANDIDATES 15 across insurance+contractor+investor",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation AVANTE_SIX_CHARACTER_AMBIGUITY honestly disclosed",
+      "knownLimitation": "AVANTE_SIX_CHARACTER_AMBIGUITY",
+      "limitationHub": "senior"
+    },
+    {
+      "id": "NET-02",
+      "query": "electrician mortgage lender New Jersey",
+      "hub": "network",
+      "kind": "multi_hub",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:24.684Z",
+      "latencyMs": 4,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [
+        "lender",
+        "contractor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "entityClass": "mortgage_lender"
+      },
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "New Jersey",
+          "stateCode": "NJ"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "hub:lender",
+        "hub:contractor"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "This question touches more than one specialist area. Which would you like to research first?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: hub",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "NET-03",
+      "query": "NPN 00000001",
+      "hub": "network",
+      "kind": "no_result",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:25.715Z",
+      "latencyMs": 1031,
+      "surface": "GUIDED",
+      "vertical": "insurance",
+      "offeredHubs": [
+        "insurance"
+      ],
+      "entity": null,
+      "identifier": {
+        "type": "NPN",
+        "value": "00000001"
+      },
+      "product": {
+        "insuranceEntityClass": "agency",
+        "entityClass": "agency",
+        "researchMode": "identifier"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:insurance:identifier",
+      "resultState": "NO_CONFIDENT_MATCH",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research an NPN, NAIC code, agency, or insurer",
+          "href": "https://www.insurancetrusthub.com/ask?q=NPN+00000001"
+        },
+        {
+          "type": "OPEN_OFFICIAL_SOURCE",
+          "label": "Official source — state insurance department",
+          "href": "https://content.naic.org/state-insurance-departments"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open InsuranceTrustHub",
+          "href": "https://www.insurancetrusthub.com"
+        }
+      ],
+      "destinations": [],
+      "failure": {
+        "kind": "unsupported",
+        "code": "no_confident_match",
+        "message": "Person, agency, and legal insurer stay separate classes."
+      },
+      "disclosures": [
+        "No confident identity match",
+        "Person, agency, and legal insurer stay separate classes.",
+        "Person, agency, and legal insurer stay separate classes.",
+        "Credential jurisdiction is not office location or service territory.",
+        "Line of authority is not carrier appointment.",
+        "Marketplace evidence is not a state license and not certification.",
+        "Missing evidence is not a clean record.",
+        "Public people pages = 0. Public graph-agency profiles = 0.",
+        "Agency, individual producer, and legal insurer are separate entity classes.",
+        "Credential jurisdiction is not office location, domicile, service territory, or product availability.",
+        "License and line of authority are not appointments. County appointment is not service territory.",
+        "Complaint is not violation. Complaint index is not enforcement. Examination is not enforcement.",
+        "InsuranceTrustHub does not rank, recommend, score, or use paid ordering.",
+        "Specialist: InsuranceTrustHub",
+        "Insurance class: agency",
+        "Review the limitation and choose a useful next action.",
+        "limitation code: no_confident_match"
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "NO_CONFIDENT_MATCH (source-backed zero)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    },
+    {
+      "id": "NET-04",
+      "query": "restaurant health inspections in miami",
+      "hub": "network",
+      "kind": "unsupported_source",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:25.720Z",
+      "latencyMs": 4,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [
+        "contractor",
+        "lender",
+        "insurance",
+        "move"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "hub:contractor",
+        "hub:lender",
+        "hub:insurance",
+        "hub:move"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "This question touches more than one specialist area. Which would you like to research first?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: hub",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "NET-05",
+      "query": "brightway insurance jacksonville",
+      "hub": "network",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:28.063Z",
+      "latencyMs": 2343,
+      "surface": "NAME_CANDIDATES",
+      "vertical": null,
+      "offeredHubs": [
+        "insurance",
+        "move",
+        "lender",
+        "contractor",
+        "senior",
+        "investor"
+      ],
+      "entity": "brightway insurance jacksonville",
+      "identifier": null,
+      "product": {},
+      "geography": {},
+      "capability": "name-candidates:all",
+      "resultState": "NAME_CANDIDATES",
+      "resultShape": "ZERO",
+      "total": 0,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "NAME_CANDIDATES genuine network miss (all in-scope hubs completed)",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT); known limitation INSURANCE_JACKSONVILLE_CROSSWALK_GAP honestly disclosed",
+      "knownLimitation": "INSURANCE_JACKSONVILLE_CROSSWALK_GAP",
+      "limitationHub": "insurance"
+    }
+  ],
+  "backlog": [
+    {
+      "id": "OBS-F2",
+      "query": "I need a mover and a mortgage lender in New Jersey",
+      "hub": "network",
+      "kind": "multi_hub",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:28.071Z",
+      "latencyMs": 7,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "entityClass": "mover"
+      },
+      "geography": {
+        "requested": {
+          "kind": "state",
+          "display": "New Jersey",
+          "stateCode": "NJ"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "The requested local scope is not executable by this specialist."
+      ],
+      "outcomeClass": "BROKEN_HANDOFF",
+      "classDetail": "CLARIFY dead end: no choices, no next action -- \"The requested local scope is not executable by this specialist.\"",
+      "violations": [],
+      "status": "FAIL",
+      "statusReason": "BROKEN_HANDOFF not in accepted [DETERMINISTIC_CLARIFICATION]"
+    },
+    {
+      "id": "OBS-F6",
+      "query": "restaurant health inspections in miami",
+      "hub": "network",
+      "kind": "unsupported_source",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:28.076Z",
+      "latencyMs": 5,
+      "surface": "GUIDED",
+      "vertical": null,
+      "offeredHubs": [
+        "contractor",
+        "lender",
+        "insurance",
+        "move"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {},
+      "geography": {
+        "requested": {
+          "kind": "city",
+          "display": "Miami, Florida",
+          "stateCode": "FL",
+          "county": "Miami-Dade",
+          "city": "Miami"
+        },
+        "resolutionState": "CAPABILITY_UNSUPPORTED"
+      },
+      "capability": "guided:multi-hub",
+      "resultState": null,
+      "resultShape": "NONE",
+      "total": null,
+      "choices": [
+        "hub:contractor",
+        "hub:lender",
+        "hub:insurance",
+        "hub:move"
+      ],
+      "nextActions": [],
+      "destinations": [],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "This question touches more than one specialist area. Which would you like to research first?"
+      ],
+      "outcomeClass": "DETERMINISTIC_CLARIFICATION",
+      "classDetail": "CLARIFY: hub",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (DETERMINISTIC_CLARIFICATION)"
+    },
+    {
+      "id": "OBS-F4",
+      "query": "research adviser Edward Jones",
+      "hub": "investor",
+      "kind": "identity",
+      "mode": "final",
+      "checkedAt": "2026-09-23T01:42:28.596Z",
+      "latencyMs": 520,
+      "surface": "GUIDED",
+      "vertical": "investor",
+      "offeredHubs": [
+        "investor"
+      ],
+      "entity": null,
+      "identifier": null,
+      "product": {
+        "investorFirmClass": "ria_and_era",
+        "entityClass": "ria_and_era",
+        "researchMode": "firm_cohort"
+      },
+      "geography": {
+        "resolutionState": "EXACT"
+      },
+      "capability": "guided:investor:firm_cohort",
+      "resultState": "SUPPORTED_RESULTS",
+      "resultShape": "ROWS",
+      "total": 23622,
+      "choices": [],
+      "nextActions": [
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment adviser firms",
+          "href": "https://www.investortrusthub.com/firms"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Research investment advisers",
+          "href": "https://www.investortrusthub.com/ask?q=research+adviser+Edward+Jones"
+        },
+        {
+          "type": "OPEN_TRUSTHUB_DESTINATION",
+          "label": "Open InvestorTrustHub",
+          "href": "https://www.investortrusthub.com"
+        }
+      ],
+      "destinations": [
+        "https://adviserinfo.sec.gov/firm/summary/160657",
+        "https://adviserinfo.sec.gov/firm/summary/160241",
+        "https://adviserinfo.sec.gov/firm/summary/3767",
+        "https://adviserinfo.sec.gov/firm/summary/149136",
+        "https://adviserinfo.sec.gov/firm/summary/301237",
+        "https://adviserinfo.sec.gov/firm/summary/302097",
+        "https://adviserinfo.sec.gov/firm/summary/328334",
+        "https://adviserinfo.sec.gov/firm/summary/332097",
+        "https://adviserinfo.sec.gov/firm/summary/328626",
+        "https://adviserinfo.sec.gov/firm/summary/115948"
+      ],
+      "failure": {
+        "kind": null
+      },
+      "disclosures": [
+        "Investment adviser firm research results",
+        "23,622 current firm records match. Principal-office geography is not client geography or service territory; source order is not a ranking.",
+        "Ask does not invent firm facts. Results come from the current SEC/IARD extract.",
+        "RIA is not ERA. Counts stay in their class.",
+        "Principal office is not client geography.",
+        "RAUM is Item 5F(2)(c), not performance.",
+        "Item 5.E methods are not fee amounts.",
+        "Missing disclosure is not a clean history.",
+        "Public firm reports are a publication gate (Wave-1), not a ranking.",
+        "RIA and ERA remain separate source-native firm classes.",
+        "Principal office is not client geography or service territory.",
+        "RAUM is filer-reported Form ADV Item 5F(2)(c), not performance, returns, safety, or quality.",
+        "Form ADV Item 5.E compensation methods are not the exact fee a consumer will pay.",
+        "SEC registration is not approval or endorsement.",
+        "Individual investment-adviser representatives are not published by this contract.",
+        "A public Trust Report is a publication gate, not a recommendation.",
+        "No TrustHub score, paid ordering, ratings ordering, or recommendation ranking is used.",
+        "Specialist: InvestorTrustHub",
+        "Firm class: RIA_AND_ERA",
+        "Narrow these results or open a specialist profile.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster.",
+        "This firm matches because it is classified as an RIA in the current SEC/IARD roster."
+      ],
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "classDetail": "SUPPORTED_RESULTS rows=10",
+      "violations": [],
+      "status": "PASS",
+      "statusReason": "acceptable (SOURCE_BACKED_RESULT)"
+    }
+  ],
+  "flows": {
+    "stateFarmInsurance": {
+      "steps": [
+        {
+          "action": "START",
+          "ok": true,
+          "phase": "CLARIFY",
+          "choices": [
+            "hub:contractor",
+            "hub:lender",
+            "hub:insurance",
+            "hub:move"
+          ],
+          "nextActions": [],
+          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
+        },
+        {
+          "action": "SELECT_CHOICE hub:insurance",
+          "ok": true,
+          "hub": "insurance",
+          "phase": "CLARIFY",
+          "choices": [
+            "insurance_class:agency",
+            "insurance_class:legal_insurer",
+            "insurance_class:producer",
+            "insurance_mode:identifier",
+            "insurance_mode:explain"
+          ],
+          "nextActions": [],
+          "nextAction": "Choose agency, legal insurer, producer, or an exact identifier."
+        }
+      ],
+      "sessionValid": true,
+      "deadEnd": false
+    },
+    "electricianLender": {
+      "steps": [
+        {
+          "action": "START",
+          "ok": true,
+          "phase": "CLARIFY",
+          "choices": [
+            "hub:lender",
+            "hub:contractor"
+          ],
+          "nextActions": [],
+          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
+        },
+        {
+          "action": "SELECT_CHOICE hub:lender",
+          "ok": true,
+          "hub": "lender",
+          "phase": "CLARIFY",
+          "choices": [
+            "lender_mode:property_market",
+            "lender_mode:identity_name",
+            "lender_mode:identifier",
+            "lender_mode:complaints",
+            "lender_mode:explain"
+          ],
+          "nextActions": [],
+          "nextAction": "Choose property-market activity, a lender name, an identifier, or complaint evidence."
+        }
+      ],
+      "sessionValid": true,
+      "deadEnd": false
+    },
+    "electricianContractor": {
+      "steps": [
+        {
+          "action": "START",
+          "ok": true,
+          "phase": "CLARIFY",
+          "choices": [
+            "hub:lender",
+            "hub:contractor"
+          ],
+          "nextActions": [],
+          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
+        },
+        {
+          "action": "SELECT_CHOICE hub:contractor",
+          "ok": true,
+          "hub": "contractor",
+          "phase": "CLARIFY",
+          "choices": [
+            "roofing",
+            "hvac",
+            "plumbing",
+            "electrical",
+            "general",
+            "pool_spa",
+            "mechanical",
+            "other_trade"
+          ],
+          "nextActions": [],
+          "nextAction": "Tell us what kind of work you need."
+        }
+      ],
+      "sessionValid": true,
+      "deadEnd": false
+    },
+    "backlogF3": {
+      "steps": [
+        {
+          "action": "START",
+          "ok": true,
+          "phase": "CLARIFY",
+          "choices": [
+            "hub:contractor",
+            "hub:lender",
+            "hub:insurance",
+            "hub:move"
+          ],
+          "nextActions": [],
+          "nextAction": "This question touches more than one specialist area. Which would you like to research first?"
+        },
+        {
+          "action": "SELECT_CHOICE hub:insurance",
+          "ok": true,
+          "hub": "insurance",
+          "phase": "CLARIFY",
+          "choices": [
+            "insurance_class:agency",
+            "insurance_class:legal_insurer",
+            "insurance_class:producer",
+            "insurance_mode:identifier",
+            "insurance_mode:explain"
+          ],
+          "nextActions": [],
+          "nextAction": "Choose agency, legal insurer, producer, or an exact identifier."
+        },
+        {
+          "action": "SELECT_CHOICE insurance_class:legal_insurer",
+          "ok": true,
+          "hub": "insurance",
+          "phase": "CLARIFY",
+          "choices": [],
+          "nextActions": [],
+          "nextAction": "The requested scope cannot be executed safely."
+        }
+      ],
+      "sessionValid": true,
+      "deadEnd": true
+    }
+  },
+  "knownLimitations": {
+    "AVANTE_SIX_CHARACTER_AMBIGUITY": "A bare six-character name/identifier string is ambiguous for SeniorTrustHub (nursing-home CCN vs Home Health CCN vs name); Senior reports UNSUPPORTED_OPERATION with an explicit disclosure instead of guessing.",
+    "FL_ELECTRICAL_SOURCE_GAP": "Florida electrical-specific credential data is not in the CILB source; Ask either offers trade choices or clearly-labeled broader general/building contractor records, never relabeled as electricians.",
+    "NJ_LOCAL_CONTRACTOR_MUNICIPALITY": "New Jersey contractor research is state-grain only; municipality-level local filtering is not supported and is disclosed.",
+    "CMS_MEMORY_CARE_ASSISTED_LIVING_SOURCE_GAP": "Memory care and assisted living are not in CMS Care Compare (Nursing Home / Home Health / Hospice only); Ask routes and labels them but fails closed with a state-specific-source disclosure.",
+    "HOME_HEALTH_COUNTY_SERVICE_AREA": "Home Health county-grain execution is unsupported by the specialist contract; office geography is not patient service area, and the state-level broadening is offered as an explicit consent action.",
+    "INSURANCE_JACKSONVILLE_CROSSWALK_GAP": "Jacksonville is not in the Florida municipality crosswalk; \"brightway insurance jacksonville\" is searched whole as a name (entity + location are not decomposed) and reports an honest network miss rather than a fabricated match.",
+    "LENDER_MISSING_PUBLIC_DESTINATION": "Some Lender rows have no deterministic public LenderTrustHub profile mapping; Ask omits the destination rather than name-matching loosely.",
+    "CONTRACTOR_IDENTIFIER_TIMEOUT_FOLLOWUP": "Contractor exact-identifier lookups can exceed Ask's specialist budget on a genuinely cold Contractor path. Deferred; not fixed in this sprint.",
+    "CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY": "Some large supported Contractor cohorts can exceed the normal response budget on a genuinely cold first access because thousands of physically scattered pages must be read (~15-22s measured; covering-index and set-based hydration work did not remove the physical I/O). Known, deliberately deferred performance limitation. Accepted ONLY under the strict Section 3 cold-retry rule."
+  }
+}

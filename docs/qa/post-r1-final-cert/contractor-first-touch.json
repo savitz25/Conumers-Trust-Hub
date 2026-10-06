@@ -1,0 +1,61 @@
+{
+  "schema": "post-r1-final-cert-contractor-first-touch-v1",
+  "idleSinceUtc": "2026-09-23T01:43:00Z",
+  "ranAt": "2026-09-23T01:59:11.856Z",
+  "rows": [
+    {
+      "id": "CON-01",
+      "query": "general contractor in miami",
+      "status": "PASS",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "resultState": "SUPPORTED_RESULTS",
+      "total": 5535,
+      "latencyMs": 3123,
+      "trade": "general",
+      "geography": "Miami, Florida -> Miami-Dade County, Florida",
+      "nextActions": [
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION"
+      ],
+      "reason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "violations": []
+    },
+    {
+      "id": "CON-02",
+      "query": "roofers in broward",
+      "status": "PASS",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "resultState": "SUPPORTED_RESULTS",
+      "total": 924,
+      "latencyMs": 461,
+      "trade": "roofing",
+      "geography": "Broward County, Florida -> Broward County, Florida",
+      "nextActions": [
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION"
+      ],
+      "reason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "violations": []
+    },
+    {
+      "id": "CON-03",
+      "query": "plumber in miami",
+      "status": "PASS",
+      "outcomeClass": "SOURCE_BACKED_RESULT",
+      "resultState": "SUPPORTED_RESULTS",
+      "total": 1134,
+      "latencyMs": 405,
+      "trade": "plumbing",
+      "geography": "Miami, Florida -> Miami-Dade County, Florida",
+      "nextActions": [
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION",
+        "OPEN_TRUSTHUB_DESTINATION"
+      ],
+      "reason": "acceptable (SOURCE_BACKED_RESULT); known limitation CONTRACTOR_COLD_FIRST_TOUCH_IO_LATENCY honestly disclosed",
+      "violations": []
+    }
+  ]
+}
