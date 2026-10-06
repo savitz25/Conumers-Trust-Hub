@@ -47,17 +47,17 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
      specialist_entity_id in (
        'fl.dbpr.license:CCC057187',
        'fl.dbpr.license:CFC1427249',
-       'fl.dbpr.license:CGC1506243'
+       'fl.dbpr.license:CGC1517216'
      )
-     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1517216')
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'
-       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1517216')
      )
      or (
        identifier_namespace is distinct from 'fl.dbpr.license'
-       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1517216')
      )
    )
  group by 1, 2, 3, 4
@@ -69,14 +69,14 @@ select id, status, canonical_public_profile_ref
    and canonical_public_profile_ref in (
      '/contractors/ccc057187-a-r-roofing-inc',
      '/contractors/cfc1427249-a-sunny-plumbing-company',
-     '/contractors/cgc1506243-abs-contracting-inc'
+     '/contractors/cgc1517216-abaco-construction-inc'
    )
  order by canonical_public_profile_ref, id;
 
 select 'binding' as kind, lower(btrim(specialist_entity_id)) as owner_key, count(*) as rows
   from network.network_entity_bindings
  where (valid_to is null or valid_to > statement_timestamp())
-   and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+   and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1517216')
  group by lower(btrim(specialist_entity_id))
  having count(*) > 1
 union all
@@ -86,7 +86,7 @@ select 'profile_ref', canonical_public_profile_ref, count(*)
    and canonical_public_profile_ref in (
      '/contractors/ccc057187-a-r-roofing-inc',
      '/contractors/cfc1427249-a-sunny-plumbing-company',
-     '/contractors/cgc1506243-abs-contracting-inc'
+     '/contractors/cgc1517216-abaco-construction-inc'
    )
  group by canonical_public_profile_ref
  having count(*) > 1
@@ -102,13 +102,13 @@ select specialist_entity_id, identifier_namespace, source_identifier, binding_st
      specialist_entity_id in (
        'fl.dbpr.license:CCC057187',
        'fl.dbpr.license:CFC1427249',
-       'fl.dbpr.license:CGC1506243'
+       'fl.dbpr.license:CGC1517216'
      )
-     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+     or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1517216')
      or (
        hub = 'contractor'
        and identifier_namespace = 'fl.dbpr.license'
-       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
+       and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1517216')
      )
    )
  order by specialist_entity_id, identifier_namespace, source_identifier;

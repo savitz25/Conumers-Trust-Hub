@@ -26,7 +26,7 @@ assert.match(insuranceRollback, /v_network_entity_id/);
 assert.match(insuranceRollback, /b\.jurisdiction = v_jurisdiction/);
 assert.match(insuranceRollback, /b\.source_identifier = v_license/);
 assert.doesNotMatch(insuranceRollback, /\bdeclare[\s\S]*?\bjurisdiction text\b/);
-assert.equal(createHash('sha256').update(insuranceRollback).digest('hex'), '6511d47087fff62c2fb4a290c339a52427d0d1809c9fa5dcf232a4e30d8769c9');
+assert.equal(createHash('sha256').update(insuranceRollback).digest('hex'), '591992d1c3e0989b0a651f5e57e21dde1e118b9fd111af6d94cd427381c30641');
 
 const HUB_ROLLBACK = '15-ask-prod-hub-account-context-rollback.sql';
 const HUB = 'v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)';
@@ -278,7 +278,7 @@ async function insuranceForward(db) {
   await db.exec(`set v23bind.insurance_state_license_checked='true'`);
   await apply(db, '13-ask-prod-insurance-state-license-binding-forward.sql');
   return rowsOf(db, `select jurisdiction, license, binding_id::text as binding_id, network_entity_id::text as network_entity_id,
-    canonical_public_profile_ref from pg_temp.v23insurance_receipt order by jurisdiction`);
+    canonical_public_profile_ref from pg_temp.v23insurance_receipt order by jurisdiction, license`);
 }
 
 const receiptDb = await open();
@@ -286,8 +286,8 @@ try {
   const receipts = await insuranceForward(receiptDb);
   assert.deepEqual(receipts.map(row => [row.jurisdiction, row.license, row.canonical_public_profile_ref]), [
     ['FL', 'L106287', '/providers/asfin-llc-l106287'],
-    ['OH', '19068455', '/providers/j-a-sandoval-llc-19068455'],
     ['TX', '1365714', '/providers/imt-services-llc-1365714'],
+    ['TX', '9982', '/providers/bailey-insurance-risk-management-inc-9982'],
   ]);
   console.log(`INSURANCE_RECEIPTS ${JSON.stringify(receipts)}`);
   const savedBefore = await saved(receiptDb);

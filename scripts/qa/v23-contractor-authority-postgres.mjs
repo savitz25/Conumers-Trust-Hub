@@ -56,8 +56,8 @@ const ROOF = { hub: 'contractor', origin: CONTRACTOR, slug: 'ccc057187-a-r-roofi
   legalName: 'A & R ROOFING INC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CCC057187', profileClass: 'contractor_profile' } };
 const PLUMB = { hub: 'contractor', origin: CONTRACTOR, slug: 'cfc1427249-a-sunny-plumbing-company', returnPath: '/contractors/cfc1427249-a-sunny-plumbing-company',
   legalName: 'A SUNNY PLUMBING COMPANY', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CFC1427249', profileClass: 'contractor_profile' } };
-const ABSCO = { hub: 'contractor', origin: CONTRACTOR, slug: 'cgc1506243-abs-contracting-inc', returnPath: '/contractors/cgc1506243-abs-contracting-inc',
-  legalName: 'ABS CONTRACTING INC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CGC1506243', profileClass: 'contractor_profile' } };
+const ABSCO = { hub: 'contractor', origin: CONTRACTOR, slug: 'cgc1517216-abaco-construction-inc', returnPath: '/contractors/cgc1517216-abaco-construction-inc',
+  legalName: 'ABACO CONSTRUCTION INC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CGC1517216', profileClass: 'contractor_profile' } };
 const UNBOUND = { hub: 'contractor', origin: CONTRACTOR, slug: 'cbc1268883-1776-construction-group-llc', returnPath: '/contractors/cbc1268883-1776-construction-group-llc',
   legalName: '1776 CONSTRUCTION GROUP LLC', profile: { hub: 'contractor', nativeId: 'fl.dbpr.license:CBC1268883', profileClass: 'contractor_profile' } };
 
@@ -463,7 +463,7 @@ try {
     assert.deepEqual(acknowledged, [['contractor', 'local_only']], canary.slug);
   }
   assert.deepEqual(await active(), []);
-  console.log('PASS clean canaries CFC1427249 and CGC1506243 save and unsave');
+  console.log('PASS clean canaries CFC1427249 and CGC1517216 save and unsave');
 
   // Same logical DBPR key, second accepted claim outside jurisdiction FL.
   // The specialist id differs so the accepted-specialist unique index allows

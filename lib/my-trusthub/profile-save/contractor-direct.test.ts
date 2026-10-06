@@ -5,7 +5,7 @@ import { fixture } from './browser.fixture.ts';
 const CANARIES = [
   { nativeId: 'fl.dbpr.license:CCC057187', slug: 'ccc057187-a-r-roofing-inc' },
   { nativeId: 'fl.dbpr.license:CFC1427249', slug: 'cfc1427249-a-sunny-plumbing-company' },
-  { nativeId: 'fl.dbpr.license:CGC1506243', slug: 'cgc1506243-abs-contracting-inc' },
+  { nativeId: 'fl.dbpr.license:CGC1517216', slug: 'cgc1517216-abaco-construction-inc' },
 ] as const;
 
 test('I J K L signed Save and Unsave return to /contractors and do not create a Watch', async () => {

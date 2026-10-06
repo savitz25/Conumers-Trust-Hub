@@ -29,7 +29,7 @@ begin
   if (external_key, profile_ref) not in (
     ('CCC057187', '/contractors/ccc057187-a-r-roofing-inc'),
     ('CFC1427249', '/contractors/cfc1427249-a-sunny-plumbing-company'),
-    ('CGC1506243', '/contractors/cgc1506243-abs-contracting-inc')
+    ('CGC1517216', '/contractors/cgc1517216-abaco-construction-inc')
   ) then
     raise exception 'Supply one forward receipt row: DBPR key and canonical profile ref must be the same canary';
   end if;

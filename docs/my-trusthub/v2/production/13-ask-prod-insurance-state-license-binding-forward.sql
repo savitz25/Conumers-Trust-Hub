@@ -15,7 +15,7 @@
 --   jurisdiction, license, binding_id, network_entity_id, canonical_public_profile_ref
 -- The same rows remain in pg_temp.v23insurance_receipt until the session ends.
 --   \copy (select jurisdiction, license, binding_id, network_entity_id, canonical_public_profile_ref
---          from pg_temp.v23insurance_receipt order by jurisdiction) to '13-receipt-<date>.csv' csv header
+--          from pg_temp.v23insurance_receipt order by jurisdiction, license) to '13-receipt-<date>.csv' csv header
 
 begin;
 set local statement_timeout = '15s';
@@ -35,16 +35,16 @@ do $$ begin
          specialist_entity_id in (
            'state-license:FL:L106287',
            'state-license:TX:1365714',
-           'state-license:OH:19068455'
+           'state-license:TX:9982'
          )
          or (
            hub = 'insurance'
            and identifier_namespace = 'insurance.state_license'
-           and source_identifier in ('L106287', '1365714', '19068455')
+           and source_identifier in ('L106287', '1365714', '9982')
          )
          or (
            identifier_namespace = 'naic'
-           and source_identifier in ('L106287', '1365714', '19068455')
+           and source_identifier in ('L106287', '1365714', '9982')
          )
        )
   ) then
@@ -56,7 +56,7 @@ do $$ begin
        and canonical_public_profile_ref in (
          '/providers/asfin-llc-l106287',
          '/providers/imt-services-llc-1365714',
-         '/providers/j-a-sandoval-llc-19068455'
+         '/providers/bailey-insurance-risk-management-inc-9982'
        )
   ) then
     raise exception 'Existing canonical profile ref requires steward review; no merge';
@@ -78,7 +78,7 @@ with inserted_entity as (
   ) values
     ('organization', 'ASFIN LLC', 'insurance', 'FL', '/providers/asfin-llc-l106287', 'active'),
     ('organization', 'IMT SERVICES, LLC', 'insurance', 'TX', '/providers/imt-services-llc-1365714', 'active'),
-    ('organization', 'J&A SANDOVAL LLC', 'insurance', 'OH', '/providers/j-a-sandoval-llc-19068455', 'active')
+    ('organization', 'BAILEY INSURANCE & RISK MANAGEMENT INC', 'insurance', 'TX', '/providers/bailey-insurance-risk-management-inc-9982', 'active')
   returning id, canonical_public_profile_ref
 ), inserted_binding as (
   insert into network.network_entity_bindings (
@@ -94,7 +94,7 @@ with inserted_entity as (
     from (values
       ('FL', 'L106287', '/providers/asfin-llc-l106287'),
       ('TX', '1365714', '/providers/imt-services-llc-1365714'),
-      ('OH', '19068455', '/providers/j-a-sandoval-llc-19068455')
+      ('TX', '9982', '/providers/bailey-insurance-risk-management-inc-9982')
     ) as v(jurisdiction, license, return_path)
     join inserted_entity e on e.canonical_public_profile_ref = v.return_path
   returning id, network_entity_id, source_identifier, jurisdiction
@@ -114,7 +114,7 @@ do $$ declare n integer; begin
         where (jurisdiction, license, canonical_public_profile_ref) not in (
           ('FL', 'L106287', '/providers/asfin-llc-l106287'),
           ('TX', '1365714', '/providers/imt-services-llc-1365714'),
-          ('OH', '19068455', '/providers/j-a-sandoval-llc-19068455')
+          ('TX', '9982', '/providers/bailey-insurance-risk-management-inc-9982')
         )
      ) then
     raise exception 'Insurance receipt must be exactly the three created canary bindings, got %', n;
@@ -188,5 +188,5 @@ end $$;
 
 select jurisdiction, license, binding_id, network_entity_id, canonical_public_profile_ref
   from pg_temp.v23insurance_receipt
- order by jurisdiction;
+ order by jurisdiction, license;
 commit;

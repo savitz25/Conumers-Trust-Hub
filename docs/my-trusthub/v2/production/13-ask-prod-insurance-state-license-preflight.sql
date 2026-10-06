@@ -14,16 +14,16 @@ select jurisdiction, source_identifier, specialist_entity_id, identifier_namespa
      specialist_entity_id in (
        'state-license:FL:L106287',
        'state-license:TX:1365714',
-       'state-license:OH:19068455'
+       'state-license:TX:9982'
      )
      or (
        hub = 'insurance'
        and identifier_namespace = 'insurance.state_license'
-       and source_identifier in ('L106287', '1365714', '19068455')
+       and source_identifier in ('L106287', '1365714', '9982')
      )
      or (
        identifier_namespace = 'naic'
-       and source_identifier in ('L106287', '1365714', '19068455')
+       and source_identifier in ('L106287', '1365714', '9982')
      )
    )
  group by 1, 2, 3, 4, 5
@@ -35,6 +35,6 @@ select id, status, canonical_public_profile_ref
    and canonical_public_profile_ref in (
      '/providers/asfin-llc-l106287',
      '/providers/imt-services-llc-1365714',
-     '/providers/j-a-sandoval-llc-19068455'
+     '/providers/bailey-insurance-risk-management-inc-9982'
    )
  order by canonical_public_profile_ref, id;

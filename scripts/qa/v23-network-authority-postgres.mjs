@@ -187,7 +187,7 @@ async function sixHubContracts(db) {
   await deny(db, claim('investor', 'commitProfileSave', commit('investor', 'official_firm', 'sec.crd:106176')));
   await deny(db, claim('investor', 'prepareGuestProfileTransfer', transfer('investor', 'official_firm', 'crd-106176', { identifierNamespace: 'cms.ccn' })));
 
-  for (const key of ['CCC057187', 'CFC1427249', 'CGC1506243']) {
+  for (const key of ['CCC057187', 'CFC1427249', 'CGC1517216']) {
     await admit(db, claim('contractor', 'commitProfileSave', commit('contractor', 'contractor_profile', `fl.dbpr.license:${key}`)), 'contractor');
   }
   await admit(db, claim('contractor', 'prepareGuestProfileTransfer', transfer('contractor', 'contractor_profile', 'fl.dbpr.license:CCC057187', { identifierNamespace: 'fl.dbpr.license' })), 'contractor');
