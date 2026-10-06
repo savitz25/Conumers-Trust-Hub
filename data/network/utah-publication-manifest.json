@@ -1,0 +1,66 @@
+{
+  "contract": "ath-ut-network-release-v1",
+  "state_code": "UT",
+  "state_name": "Utah",
+  "ask_canonical": "https://www.asktrusthub.com/utah",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "dbff292d15973c11874810cd3c9a165552104952",
+      "url": "https://www.movetrusthub.com/utah",
+      "summary": "Reviewed UDOT and Utah Code sources describe intrastate motor-carrier safety requirements and vehicle registration separately from interstate FMCSA household-goods authority. No mover-specific statewide Utah HHG roster was identified in the reviewed state sources.",
+      "clock": "UDOT and Utah Code reviewed 2026-10-06; Utah Code §72-9-102 effective 2026-05-06. No statewide HHG-roster data clock exists.",
+      "gap": "No Utah mover-specific state roster or state HHG census is asserted. Do not substitute Utah-address FMCSA carriers. USDOT, UCR, insurance, local business requirements, vehicle registration, and federal interstate authority remain separate."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "ce3fb53a25dbe4f091a1d0f9070c93432c85dc93",
+      "url": "https://www.contractortrusthub.com/utah",
+      "summary": "Utah DOPL reports 34,341 active licensee records for its printed Contractor credential. Electrician and plumber license classes are reported separately; counts are credentials, not a deduplicated company census.",
+      "clock": "DOPL count page clock: 2026-09-26 at 01:42 a.m.; retrieved 2026-10-06.",
+      "gap": "Person versus business identities, license-row records, construction classifications, expiration dates and status history were not acquired. The Construction Business Registry is opt-in and is not a statewide licensed-contractor census."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "72f722e6dfefb0d4006c8dd0208bd3b5a99ccf7a",
+      "url": "https://www.lendertrusthub.com/utah",
+      "summary": "2025 HMDA Utah-property county aggregates report 151,347 applications, 95,932 originations, and 24,029 denials across 29 counties. HMDA is market activity, not a lender license census.",
+      "clock": "HMDA vintage 2025; county summary derived from Utah-property county rows. County sum differs from the separate LEI summary by 206 applications.",
+      "gap": "Utah DFI, Utah DRE, NMLS, mortgage companies, lenders, brokers, servicers, branches, MLO people, and regulated license classes were not acquired as one roster and must remain separate."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "01a0a0359c13ca9a11c097c3b4fc17b7ed628b63",
+      "url": "https://www.insurancetrusthub.com/utah",
+      "summary": "Utah Insurance Department's 2025 Health Market Report states that 1,466 commercial insurers were licensed at 2024 year end; 319 insurers reporting health business are a separate subset, not an additional population.",
+      "clock": "Report published 2025; insurer status point-in-time at 2024 year end; report file retrieved 2026-10-06.",
+      "gap": "Insurer company rows, agencies, producers, adjusters, surplus-lines, appointments, examinations and enforcement were not acquired as statewide rosters. No combined insurance census or complaint-as-violation inference."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "7a66e04ab67ec513cf87e8819699269eacd3967f",
+      "url": "https://www.seniortrusthub.com/utah",
+      "summary": "Utah DHHS/UGRC licensed-health-facility infrastructure contains 891 source rows. Senior-relevant observations remain separate: assisted living I and II, nursing, home health, hospice, and personal-care agencies.",
+      "clock": "ArcGIS source edit time 2026-03-07; landing page identifies the February 2026 facility data snapshot.",
+      "gap": "The 891 rows include unrelated healthcare classes and are not a senior-facility census. Current license status, capacity, inspections, CMS certification, and enforcement are separate and not established by this snapshot."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "910940303656917b18eb3e9b9563b2f6880d83db",
+      "url": "https://www.investortrusthub.com/utah",
+      "summary": "September 17, 2026 IAPD jurisdiction feeds report 247 Utah state-IA firm CRDs (242 APPROVED, 5 CONDREST), 1,740 Utah federal notice-filing CRDs, and 90 ACTIVE ERA firm CRDs. Exact CRD overlap between state IA and notice is one; groups are not added.",
+      "clock": "State and SEC IAPD compilation source date 2026-09-17; retained files examined 2026-10-06.",
+      "gap": "Utah jurisdiction fields, not principal-office location, define these cohorts. IAR people, broker-dealer firms and agents, and the complete Utah securities order corpus are NOT_ACQUIRED. DFI/DRE/NMLS mortgage authority and HMDA activity are separate."
+    }
+  ]
+}
