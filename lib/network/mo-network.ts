@@ -15,6 +15,7 @@ export function moReleaseGatePassed(value = manifest): boolean {
 
 const namedStates = US_JURISDICTIONS.map((state) => ({ state, pattern: new RegExp(`\\b${state.name}\\b`, 'i') }));
 export function moGeography(query: string): { stateCode: 'MO'; stateName: 'Missouri'; meaning: string } | undefined {
+  if (!/\bmissouri\b|(?:\bin|\bwithin|\bstate of)\s+MO\b/i.test(query)) return undefined;
   const named = namedStates.map((item) => ({ ...item, at: query.search(item.pattern) })).filter((item) => item.at >= 0).sort((a, b) => a.at - b.at);
   if (named.length && named[0].state.code !== 'MO') return undefined;
   if (!named.length && !/(?:\bin|\bwithin|\bstate of)\s+MO\b/i.test(query)) return undefined;
