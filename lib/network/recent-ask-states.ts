@@ -13,6 +13,7 @@ import { OK_PUBLICATION_MANIFEST } from './ok-network.ts';
 import { AR_PUBLICATION_MANIFEST } from './ar-network.ts';
 import { UT_PUBLICATION_MANIFEST } from './ut-network.ts';
 import { NM_PUBLICATION_MANIFEST } from './nm-network.ts';
+import { IA_PUBLICATION_MANIFEST } from './ia-network.ts';
 import { SC_PUBLICATION_MANIFEST } from './sc-network.ts';
 import { AL_PUBLICATION_MANIFEST } from './al-network.ts';
 import { KY_PUBLICATION_MANIFEST } from './ky-network.ts';
@@ -27,6 +28,7 @@ import { MN_PUBLICATION_MANIFEST } from './mn-network.ts';
 type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
 
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
+  iowa: IA_PUBLICATION_MANIFEST,
   arkansas: AR_PUBLICATION_MANIFEST,
   utah: UT_PUBLICATION_MANIFEST,
   'new-mexico': NM_PUBLICATION_MANIFEST,

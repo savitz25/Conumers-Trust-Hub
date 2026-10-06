@@ -1,0 +1,66 @@
+{
+  "contract": "ath-ia-network-release-v1",
+  "state_code": "IA",
+  "state_name": "Iowa",
+  "ask_canonical": "https://www.asktrusthub.com/iowa",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "5f043521a6ae56393dbad0d1d9418e6eff715bce",
+      "url": "https://www.movetrusthub.com/iowa",
+      "summary": "Iowa DOT places intrastate household-goods carriers in the motor-carrier permit class; passenger certificates, applications, insurance requirements, tariffs and FMCSA authority are separate. No clean issued-permit roster was found.",
+      "clock": "Iowa DOT for-hire guide dated 2022-12-09; application and rules reviewed 2026-10-06.",
+      "gap": "Issued permit rows, current status, carrier insurance filings, tariffs and enforcement are NOT_ACQUIRED; authorized-carrier count is UNKNOWN."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "e5b951d3f2ce900e19c28628ab6bfbc0b2374aa0",
+      "url": "https://www.contractortrusthub.com/iowa",
+      "summary": "Iowa DIAL active construction registration export returned 18,000 rows keyed by 18,000 distinct registration numbers. This is registration evidence across individuals and businesses, not a trade-license or distinct-business census.",
+      "clock": "State export retrieved 2026-10-06; no dataset-wide record-effective date in the CSV.",
+      "gap": "Plumbing, mechanical and electrical trade-license populations, insurance compliance, canonical matches and record attachments are NOT_ACQUIRED."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "749e1b89c75347ecd6b2bad74669ea17bfca53b0",
+      "url": "https://www.lendertrusthub.com/iowa",
+      "summary": "Iowa Division of Banking FY2025 report gives separate historical mortgage banker license, broker license, company registrant and MLO person counts. Current named status is checked through NMLS. The existing 2025 Iowa HMDA slice has 645 LEIs and is market activity.",
+      "clock": "IDOB report year ended 2025-06-30 and submitted 2025-12-01; HMDA reporting year 2025; NMLS lookup page reviewed 2026-10-06.",
+      "gap": "Current bulk NMLS Iowa company, branch and MLO status rows and exact enforcement joins are NOT_ACQUIRED."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "6ab123050231a3c572436dc59dee9dafa6ad1bc1",
+      "url": "https://www.insurancetrusthub.com/iowa",
+      "summary": "Iowa Insurance Division export has 1,585 licensed-company rows keyed by 1,585 Iowa license numbers. A separate producer business-entity export has 13,000 list observations without a stable license identifier, so distinct agencies are UNKNOWN.",
+      "clock": "Both state exports retrieved 2026-10-06; no single record-effective date provided.",
+      "gap": "Individual producers, adjusters, surplus-lines people, appointments, examinations and order attachments are NOT_ACQUIRED."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "bc18dda29bcaa49eeb6ae9ba30a62f29e4d267f3",
+      "url": "https://www.seniortrusthub.com/iowa",
+      "summary": "Iowa DIAL assisted living export contains 335 program rows and 335 distinct certification numbers, including separately printed dementia-specific values. These are program certifications, not a unified facility census.",
+      "clock": "DIAL dataset catalog last updated 2025-10-30; retained CSV retrieved 2026-10-06.",
+      "gap": "Current nursing and residential care licenses, inspections, complaints, sanctions, administrator licenses and CMS overlays are NOT_ACQUIRED as attachments."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "c96f2935d73202ad3b47a0e141e8cf1df9f4ff74",
+      "url": "https://www.investortrusthub.com/iowa",
+      "summary": "September 17 IAPD jurisdiction feeds show 165 approved Iowa state adviser firm CRDs, 17 active ERA firm CRDs and 1,427 filed SEC notice firm CRDs. Two CRDs occur in both state IA and notice sets; no additive firm total is claimed.",
+      "clock": "State and SEC IAPD compilation source date 2026-09-17; retained files examined 2026-10-06.",
+      "gap": "Office address is not registration. Iowa IAR people, broker-dealer firms, securities agents and exact order attachments are NOT_ACQUIRED."
+    }
+  ]
+}

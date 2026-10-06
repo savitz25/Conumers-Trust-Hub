@@ -8,6 +8,7 @@ import { kyIdentifier, kyRefusal, kyCaveat, classifyKyHub, queryLooksLikeKentuck
 import { laIdentifier, laRefusal, laCaveat, classifyLaHub, queryLooksLikeLouisiana, laSpecialistUrl } from './la-network.ts';
 import { msIdentifier, msRefusal, msCaveat, classifyMsHub, queryLooksLikeMississippi, msSpecialistUrl } from './ms-network.ts';
 import { moIdentifier, moRefusal, moCaveat, classifyMoHub, queryLooksLikeMissouri, moSpecialistUrl } from './mo-network.ts';
+import { iaIdentifier, iaRefusal, iaCaveat, classifyIaHub, queryLooksLikeIowa, iaSpecialistUrl } from './ia-network.ts';
 import { okIdentifier, okRefusal, okCaveat, classifyOkHub, queryLooksLikeOklahoma, okSpecialistUrl } from './ok-network.ts';
 import { arIdentifier, arRefusal, arCaveat, classifyArHub, queryLooksLikeArkansas, arSpecialistUrl } from './ar-network.ts';
 import { scIdentifier, scRefusal, scCaveat, classifyScHub, queryLooksLikeSouthCarolina, scSpecialistUrl } from './sc-network.ts';
@@ -255,6 +256,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'MS') return '/mississippi';
   if (parsed.geography?.stateCode === 'OK') return '/oklahoma';
   if (parsed.geography?.stateCode === 'MO') return '/missouri';
+  if (parsed.geography?.stateCode === 'IA') return '/iowa';
   if (parsed.geography?.stateCode === 'AR') return '/arkansas';
   if (parsed.geography?.stateCode === 'SC') return '/south-carolina';
   if (parsed.geography?.stateCode === 'AL') return '/alabama';
@@ -1767,6 +1769,21 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:moId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
     if(moRefused)parsed.interpretationLines.push({label:'Research boundary',value:moRefused});
+  }
+
+  // Iowa has a state gateway; Ask does not execute Iowa provider searches.
+  const iaId=iaIdentifier(parsed.query);
+  const iaRefused=iaRefusal(parsed.query);
+  if(iaId||iaRefused||queryLooksLikeIowa(parsed.query)){
+    const hub=iaId?.hub??classifyIaHub(parsed.query);
+    if(hub){
+      const reason=iaRefused??`${iaId?`Exact ${iaId.type} ${iaId.value}. `:''}${iaCaveat()}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:iaRefused?'unsupported':'handoff',
+        ...(iaRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:iaRefused?undefined:iaSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:iaId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(iaRefused)parsed.interpretationLines.push({label:'Research boundary',value:iaRefused});
   }
 
   // Arkansas is a six-hub gateway. Specialist grains stay separate and are not summed.
