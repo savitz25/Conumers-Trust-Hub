@@ -350,7 +350,7 @@ test('state disambiguation: the first named state wins and other states keep the
 test('Tennessee is cataloged once, gated, and appended after Massachusetts', () => {
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri', 'oklahoma', 'arkansas'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri', 'oklahoma', 'arkansas', 'utah'],
   );
   assert.ok(ASK_NETWORK_STATES.length >= 29);
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='mississippi'));
