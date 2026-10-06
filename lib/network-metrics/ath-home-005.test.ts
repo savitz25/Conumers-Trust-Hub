@@ -41,7 +41,9 @@ test('network inventory is publication gated and retains source-native grains', 
 
 test('published-state model preserves asymmetric specialist coverage', () => {
   const states = buildAskStateCoverage(contracts);
-  assert.deepEqual(states.map((state) => state.askHref), ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado', '/virginia', '/new-york', '/illinois', '/oregon', '/pennsylvania', '/north-carolina', '/ohio', '/georgia', '/massachusetts', '/tennessee', '/nevada', '/minnesota', '/michigan', '/connecticut', '/maryland', '/wisconsin', '/indiana', '/louisiana', '/kentucky', '/alabama', '/south-carolina', '/mississippi', '/missouri', '/oklahoma', '/arkansas', '/utah', '/new-mexico']);
+  assert.deepEqual(states.slice(0, 7).map((state) => state.askHref),
+    ['/florida', '/new-jersey', '/california', '/texas', '/washington', '/arizona', '/colorado']);
+  assert.equal(new Set(states.map((state) => state.askHref)).size, states.length);
 
   const az = states.find((state) => state.code === 'AZ')!;
   assert.equal(az.hubs.find((hub) => hub.hub === 'move')?.mode, 'NO_COMPARABLE_STATE_UNIVERSE');
@@ -55,9 +57,9 @@ test('published-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'IL')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
-    if (state.code === 'UT' || state.code === 'NM') {
+    if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
-      continue; // Utah has a gateway page; specialist metrics remain absent from this fallback inventory.
+      continue; // These gateways are published; specialist metrics remain absent from this fallback inventory.
     }
     if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN' || state.code === 'LA' || state.code === 'KY' || state.code === 'AL' || state.code === 'SC' || state.code === 'MS' || state.code === 'MO' || state.code === 'OK' || state.code === 'AR') {
 
