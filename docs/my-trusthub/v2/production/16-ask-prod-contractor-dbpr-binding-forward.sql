@@ -35,17 +35,17 @@ do $$ begin
          specialist_entity_id in (
            'fl.dbpr.license:CCC057187',
            'fl.dbpr.license:CFC1427249',
-           'fl.dbpr.license:CGC1506243'
+           'fl.dbpr.license:CGC1517216'
          )
-         or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+         or lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1517216')
          or (
            hub = 'contractor'
            and identifier_namespace = 'fl.dbpr.license'
-           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
+           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1517216')
          )
          or (
            identifier_namespace is distinct from 'fl.dbpr.license'
-           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1506243')
+           and source_identifier_normalized in ('ccc057187', 'cfc1427249', 'cgc1517216')
          )
        )
   ) then
@@ -57,7 +57,7 @@ do $$ begin
        and canonical_public_profile_ref in (
          '/contractors/ccc057187-a-r-roofing-inc',
          '/contractors/cfc1427249-a-sunny-plumbing-company',
-         '/contractors/cgc1506243-abs-contracting-inc'
+         '/contractors/cgc1517216-abaco-construction-inc'
        )
   ) then
     raise exception 'Existing canonical profile ref requires steward review; no merge';
@@ -65,7 +65,7 @@ do $$ begin
   if exists (
     select 1 from network.network_entity_bindings
      where (valid_to is null or valid_to > statement_timestamp())
-       and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1506243')
+       and lower(btrim(specialist_entity_id)) in ('fl.dbpr.license:ccc057187', 'fl.dbpr.license:cfc1427249', 'fl.dbpr.license:cgc1517216')
      group by lower(btrim(specialist_entity_id))
     having count(*) > 1
   ) or exists (
@@ -74,7 +74,7 @@ do $$ begin
        and canonical_public_profile_ref in (
          '/contractors/ccc057187-a-r-roofing-inc',
          '/contractors/cfc1427249-a-sunny-plumbing-company',
-         '/contractors/cgc1506243-abs-contracting-inc'
+         '/contractors/cgc1517216-abaco-construction-inc'
        )
      group by canonical_public_profile_ref
     having count(*) > 1
@@ -96,7 +96,7 @@ with inserted_entity as (
   ) values
     ('organization', 'A & R ROOFING INC', 'contractor', 'FL', '/contractors/ccc057187-a-r-roofing-inc', 'active'),
     ('organization', 'A SUNNY PLUMBING COMPANY', 'contractor', 'FL', '/contractors/cfc1427249-a-sunny-plumbing-company', 'active'),
-    ('organization', 'ABS CONTRACTING INC', 'contractor', 'FL', '/contractors/cgc1506243-abs-contracting-inc', 'active')
+    ('organization', 'ABACO CONSTRUCTION INC', 'contractor', 'FL', '/contractors/cgc1517216-abaco-construction-inc', 'active')
   returning id, canonical_public_profile_ref
 ), inserted_binding as (
   insert into network.network_entity_bindings (
@@ -112,7 +112,7 @@ with inserted_entity as (
     from (values
       ('CCC057187', '/contractors/ccc057187-a-r-roofing-inc'),
       ('CFC1427249', '/contractors/cfc1427249-a-sunny-plumbing-company'),
-      ('CGC1506243', '/contractors/cgc1506243-abs-contracting-inc')
+      ('CGC1517216', '/contractors/cgc1517216-abaco-construction-inc')
     ) as v(external_key, return_path)
     join inserted_entity e on e.canonical_public_profile_ref = v.return_path
   returning id, network_entity_id, source_identifier
@@ -132,7 +132,7 @@ do $$ declare n integer; begin
         where (external_key, canonical_public_profile_ref) not in (
           ('CCC057187', '/contractors/ccc057187-a-r-roofing-inc'),
           ('CFC1427249', '/contractors/cfc1427249-a-sunny-plumbing-company'),
-          ('CGC1506243', '/contractors/cgc1506243-abs-contracting-inc')
+          ('CGC1517216', '/contractors/cgc1517216-abaco-construction-inc')
         )
      ) then
     raise exception 'Contractor receipt must be exactly the three created canary bindings, got %', n;

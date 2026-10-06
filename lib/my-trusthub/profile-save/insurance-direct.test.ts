@@ -5,7 +5,7 @@ import { fixture } from './browser.fixture.ts';
 const CANARIES = [
   { nativeId: 'state-license:FL:L106287', slug: 'asfin-llc-l106287', jurisdiction: 'FL' },
   { nativeId: 'state-license:TX:1365714', slug: 'imt-services-llc-1365714', jurisdiction: 'TX' },
-  { nativeId: 'state-license:OH:19068455', slug: 'j-a-sandoval-llc-19068455', jurisdiction: 'OH' },
+  { nativeId: 'state-license:TX:9982', slug: 'bailey-insurance-risk-management-inc-9982', jurisdiction: 'TX' },
 ] as const;
 
 test('signed Save and Unsave return to /providers and do not create a Watch', async () => {

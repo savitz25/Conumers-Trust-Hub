@@ -26,7 +26,7 @@ assert.equal(INSURANCE_SPECIALIST_ENTITY_ID_FORMAT, 'state-license:<STATE>:<COMP
 const CANARIES = [
   { jurisdiction: 'FL', license: 'L106287', slug: 'asfin-llc-l106287' },
   { jurisdiction: 'TX', license: '1365714', slug: 'imt-services-llc-1365714' },
-  { jurisdiction: 'OH', license: '19068455', slug: 'j-a-sandoval-llc-19068455' },
+  { jurisdiction: 'TX', license: '9982', slug: 'bailey-insurance-risk-management-inc-9982' },
 ] as const;
 
 function manifestFor(jurisdiction: string, license: string, slug: string) {
@@ -178,7 +178,7 @@ test('the signed closed manifest derives the state license and rejects tamper, U
 });
 
 test('the profile-save endpoint accepts only a verified closed insurance manifest', async () => {
-  const manifest = manifestFor('OH', '19068455', 'j-a-sandoval-llc-19068455');
+  const manifest = manifestFor('TX', '9982', 'bailey-insurance-risk-management-inc-9982');
   const request = (body: unknown) => new Request('https://www.asktrusthub.com/api/my-trusthub/profile-save', {
     method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
   });

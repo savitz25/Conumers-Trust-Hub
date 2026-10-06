@@ -35,7 +35,7 @@ begin
   if (v_jurisdiction, v_license, v_profile_ref) not in (
     ('FL', 'L106287', '/providers/asfin-llc-l106287'),
     ('TX', '1365714', '/providers/imt-services-llc-1365714'),
-    ('OH', '19068455', '/providers/j-a-sandoval-llc-19068455')
+    ('TX', '9982', '/providers/bailey-insurance-risk-management-inc-9982')
   ) then
     raise exception 'Supply one forward receipt row: state, license, and canonical profile ref must be the same canary';
   end if;
