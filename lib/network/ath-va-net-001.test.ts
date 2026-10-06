@@ -252,7 +252,7 @@ test('claim eligibility surfaces are unchanged', () => {
 });
 
 test('state page count increments exactly once and places/concierge stay gated', () => {
-  assert.equal(ASK_NETWORK_STATES.length, 28);
+  assert.equal(ASK_NETWORK_STATES.length, 29);
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'mississippi');
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'VA').length, 1);

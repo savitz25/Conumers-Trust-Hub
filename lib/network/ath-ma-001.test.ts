@@ -41,7 +41,7 @@ test('Massachusetts manifest rejects a cross-hub total and keeps six hubs', () =
   assert.equal(existsSync('app/massachusetts/boston'), false);
   assert.equal(existsSync('app/boston'), false);
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'mississippi');
-  assert.equal(ASK_NETWORK_STATES.length, 28);
+  assert.equal(ASK_NETWORK_STATES.length, 29);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'louisiana'));
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
 

@@ -103,7 +103,7 @@ test('Alabama manifest retains six frozen grains, independent clocks, and no gra
   assert.doesNotMatch(JSON.stringify(M),/1913|1,913|1804/);
   assert.notEqual(M.hubs[5].certified_release_sha,'0000000000000000000000000000000000000000');
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'mississippi');
-  assert.equal(ASK_NETWORK_STATES.length,28);
+  assert.equal(ASK_NETWORK_STATES.length,29);
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='kentucky'));
   assert.match(askStateExplorerEyebrow(),/^29-state network explorer$/);
 });

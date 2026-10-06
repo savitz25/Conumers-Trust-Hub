@@ -253,7 +253,7 @@ test('claim eligibility surfaces are unchanged', () => {
 test('state page inventory adds Ohio once', () => {
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'OH').length, 1);
   assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'mississippi');
-  assert.equal(ASK_NETWORK_STATES.length, 28);
+  assert.equal(ASK_NETWORK_STATES.length, 29);
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'louisiana'));
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
 
