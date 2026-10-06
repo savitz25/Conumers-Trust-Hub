@@ -1,0 +1,74 @@
+{
+  "contract": "ath-ok-network-release-v1",
+  "state_code": "OK",
+  "state_name": "Oklahoma",
+  "ask_canonical": "https://www.asktrusthub.com/oklahoma",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": {
+    "passed": true
+  },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "97c7380c981b436d38e7d5a1a680925860010073",
+      "url": "https://www.movetrusthub.com/oklahoma",
+      "summary": "Oklahoma Corporation Commission household-goods list printed 2023-11-27 contains 64 PIN rows. Certificates last one year, so that list is not a current authority census.",
+      "clock": "2023-11-27 printed list",
+      "gap": "A current household-goods roster, insurance observations, enforcement orders, and FMCSA joins are NOT_ACQUIRED.",
+      "capability_summary": "Oklahoma Corporation Commission household-goods list printed 2023-11-27 contains 64 PIN rows. Certificates last one year, so that list is not a current authority census."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "9d68bca1d0cc8102eaf00791010763b34399dbf5",
+      "url": "https://www.contractortrusthub.com/oklahoma",
+      "summary": "Oklahoma does not license general contractors statewide. Construction Industries Board electrical, plumbing, mechanical, journeyman, and apprentice credentials stay separate.",
+      "clock": "CIB FAQ last modified 2025-12-30",
+      "gap": "Bulk trade rosters are NOT_ACQUIRED. A bond or liability requirement is not observed coverage.",
+      "capability_summary": "Oklahoma does not license general contractors statewide. Construction Industries Board electrical, plumbing, mechanical, journeyman, and apprentice credentials stay separate."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "3f8c3000930722fb68bb3c8d70c05891074b3889",
+      "url": "https://www.lendertrusthub.com/oklahoma",
+      "summary": "Mortgage broker, lender, company, branch, and originator rosters are NOT_ACQUIRED. ODCC consumer-credit classes stay separate from mortgage and are not added across in-state and all-locations files. Accepted HMDA activity is 136,810 applications.",
+      "clock": "ODCC rosters printed Oct 01, 2026; HMDA is a separate market clock",
+      "gap": "NMLS identity is NOT_ACQUIRED. HMDA is market activity, not a license census.",
+      "capability_summary": "Mortgage broker, lender, company, branch, and originator rosters are NOT_ACQUIRED. ODCC consumer-credit classes stay separate from mortgage and are not added across in-state and all-locations files. Accepted HMDA activity is 136,810 applications."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "29309c70f758e46364e42d9cdfb26f438f803af8",
+      "url": "https://www.insurancetrusthub.com/oklahoma",
+      "summary": "The OID 2025 annual report prints 88 domestic insurers and 1,794 foreign insurers as separate counts. Printed total licensees of 342,456 are not one population. Resident producers and resident adjusters stay separate. A complaint is not a finding.",
+      "clock": "2025 annual report; legal figures are fiscal year 2025",
+      "gap": "Named insurer, agency, appointment, examination, and receivership rosters are NOT_ACQUIRED.",
+      "capability_summary": "The OID 2025 annual report prints 88 domestic insurers and 1,794 foreign insurers as separate counts. Printed total licensees of 342,456 are not one population. Resident producers and resident adjusters stay separate. A complaint is not a finding."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "00aa49aef96d00a246186b78a028164f4c30c1a4",
+      "url": "https://www.seniortrusthub.com/oklahoma",
+      "summary": "OSDH April facility directories and the August 26, 2026 facility-count slide are separate clocks. Nursing, assisted living, residential care, and adult day stay in their source classes and are not added.",
+      "clock": "April 2026 directories and August 26, 2026 slide",
+      "gap": "Continuum and ICF standalone directories, facility-linked survey rows, complaints, and enforcement are NOT_ACQUIRED. CMS is a federal overlay.",
+      "capability_summary": "OSDH April facility directories and the August 26, 2026 facility-count slide are separate clocks. Nursing, assisted living, residential care, and adult day stay in their source classes and are not added."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "ca8829947ca78cc017dfb6315d6ee6a8fb9d7d4b",
+      "url": "https://www.investortrusthub.com/oklahoma",
+      "summary": "IAPD jurisdiction lenses as of 2026-09-17: 157 approved Oklahoma state IA firm CRDs, 1,478 filed SEC notice firm CRDs, and 34 active ERA firm CRDs. Principal-office geography is 91 firms and is not registration.",
+      "clock": "2026-09-17 IAPD compilation",
+      "gap": "IAR, broker-dealer, agent, examination, and order corpora are NOT_ACQUIRED.",
+      "capability_summary": "IAPD jurisdiction lenses as of 2026-09-17: 157 approved Oklahoma state IA firm CRDs, 1,478 filed SEC notice firm CRDs, and 34 active ERA firm CRDs. Principal-office geography is 91 firms and is not registration."
+    }
+  ]
+}

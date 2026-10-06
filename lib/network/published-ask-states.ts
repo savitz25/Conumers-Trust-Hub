@@ -34,6 +34,7 @@ import { alReleaseGatePassed } from './al-network.ts';
 import { scReleaseGatePassed } from './sc-network.ts';
 import { msReleaseGatePassed } from './ms-network.ts';
 import { moReleaseGatePassed } from './mo-network.ts';
+import { okReleaseGatePassed } from './ok-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 
 export type AskPublishedState = {
@@ -74,6 +75,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'SC', slug: 'south-carolina', name: 'South Carolina', gate: scReleaseGatePassed },
   { code: 'MS', slug: 'mississippi', name: 'Mississippi', gate: msReleaseGatePassed },
   { code: 'MO', slug: 'missouri', name: 'Missouri', gate: moReleaseGatePassed },
+  { code: 'OK', slug: 'oklahoma', name: 'Oklahoma', gate: okReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

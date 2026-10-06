@@ -12,6 +12,7 @@ import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { moResearchHandoff, moCaveat } from '../network/mo-network.ts';
+import { okResearchHandoff, okCaveat } from '../network/ok-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -504,6 +505,9 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  const oklahoma=okResearchHandoff(session.researchPlan);
+  if(oklahoma)return {...session,hub:oklahoma.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`${okCaveat(oklahoma.hub)} Continue at ${oklahoma.label} Oklahoma: ${oklahoma.href}. Ask has not executed a provider cohort.`};
   const missouri=moResearchHandoff(session.researchPlan);
   if(missouri)return {...session,hub:missouri.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${moCaveat(missouri.hub)} Continue at ${missouri.label} Missouri: ${missouri.href}. Ask has not executed a provider cohort.`};
