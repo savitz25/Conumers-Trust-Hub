@@ -7,6 +7,7 @@
  * re-counted. A state without that manifest field is skipped, not invented.
  */
 import { listGatedAskStates } from './published-ask-states.ts';
+import { MS_PUBLICATION_MANIFEST } from './ms-network.ts';
 import { SC_PUBLICATION_MANIFEST } from './sc-network.ts';
 import { AL_PUBLICATION_MANIFEST } from './al-network.ts';
 import { KY_PUBLICATION_MANIFEST } from './ky-network.ts';
@@ -21,6 +22,7 @@ import { MN_PUBLICATION_MANIFEST } from './mn-network.ts';
 type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string }> };
 
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
+  mississippi: MS_PUBLICATION_MANIFEST,
   'south-carolina': SC_PUBLICATION_MANIFEST,
   alabama: AL_PUBLICATION_MANIFEST,
   kentucky: KY_PUBLICATION_MANIFEST,

@@ -55,6 +55,7 @@ import { wiGeography, wiIdentifier, wiSpecialistUrl } from './wi-network.ts';
 import { inGeography, inIdentifier, inSpecialistUrl } from './in-network.ts';
 import { kyGeography, kyIdentifier, kySpecialistUrl } from './ky-network.ts';
 import { laGeography, laIdentifier, laSpecialistUrl } from './la-network.ts';
+import { msGeography, msIdentifier, msSpecialistUrl } from './ms-network.ts';
 import { scGeography, scIdentifier, scSpecialistUrl } from './sc-network.ts';
 import { alGeography, alIdentifier, alSpecialistUrl } from './al-network.ts';
 import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
@@ -122,6 +123,8 @@ function geography(q: string): ParsedGeography | undefined {
   if (wiGeo) return wiGeo;
   const inGeo = inGeography(q);
   if (inGeo) return inGeo;
+  const msGeo = msGeography(q);
+  if (msGeo) return msGeo;
   const scGeo = scGeography(q);
   if (scGeo) return scGeo;
   const alGeo = alGeography(q);
@@ -756,12 +759,13 @@ export function parseNetworkAsk(raw: string): ParsedNetworkAsk {
   const mdId = mdIdentifier(query);
   const wiId = wiIdentifier(query);
   const inId = inIdentifier(query);
+  const msId = msIdentifier(query);
   const scId = scIdentifier(query);
   const alId = alIdentifier(query);
   const kyId = kyIdentifier(query);
   const laId = laIdentifier(query);
-  const scopedId = mnId ?? miId ?? ctId ?? mdId ?? wiId ?? inId ?? scId ?? alId ?? kyId ?? laId;
-  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : mdId ? mdSpecialistUrl(mdId.hub) : wiId ? wiSpecialistUrl(wiId.hub) : inId ? inSpecialistUrl(inId.hub) : scId ? scSpecialistUrl(scId.hub) : alId ? alSpecialistUrl(alId.hub) : kyId ? kySpecialistUrl(kyId.hub) : laId ? laSpecialistUrl(laId.hub) : undefined;
+  const scopedId = mnId ?? miId ?? ctId ?? mdId ?? wiId ?? inId ?? msId ?? scId ?? alId ?? kyId ?? laId;
+  const specialistUrl = mnId ? mnSpecialistUrl(mnId.hub) : miId ? miSpecialistUrl(miId.hub) : ctId ? ctSpecialistUrl(ctId.hub) : mdId ? mdSpecialistUrl(mdId.hub) : wiId ? wiSpecialistUrl(wiId.hub) : inId ? inSpecialistUrl(inId.hub) : msId ? msSpecialistUrl(msId.hub) : scId ? scSpecialistUrl(scId.hub) : alId ? alSpecialistUrl(alId.hub) : kyId ? kySpecialistUrl(kyId.hub) : laId ? laSpecialistUrl(laId.hub) : undefined;
 
   const id = scopedId ? { family: { id: scopedId.type, hubId: scopedId.hub, label: scopedId.type, examples: [scopedId.raw], pattern: /./, live: false, destinationHint: specialistUrl!, note: 'Exact source identifier; specialist verification, not a business name.' }, raw: scopedId.raw, ambiguous: false, note: 'Exact source identifier.' } : matchIdentifier(query);
 

@@ -5,6 +5,7 @@ import { mdAmbiguousNumber, mdIdentifier, mdRefusal, mdRankingAsked, queryLooksL
 import { wiAmbiguousNumber, wiIdentifier, wiRefusal, wiRankingAsked, queryLooksLikeWisconsin, classifyWiHub } from './wi-network.ts';
 import { kyAmbiguousNumber, kyIdentifier, kyRefusal, kyRankingAsked, queryLooksLikeKentucky, classifyKyHub } from './ky-network.ts';
 import { laAmbiguousNumber, laIdentifier, laRefusal, laRankingAsked, queryLooksLikeLouisiana, classifyLaHub } from './la-network.ts';
+import { msAmbiguousNumber, msIdentifier, msRefusal, msRankingAsked, queryLooksLikeMississippi, classifyMsHub } from './ms-network.ts';
 import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
 import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
@@ -329,6 +330,25 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const msId=msIdentifier(originalQuestion);
+  const mississippi=queryLooksLikeMississippi(originalQuestion);
+  const msBlocked=msRefusal(originalQuestion);
+  const msHub=msId?.hub??(mississippi?classifyMsHub(originalQuestion):undefined);
+  const msNamed=/\b(llc|inc|corp|named|called)\b|["']/i.test(originalQuestion);
+  const msSeparateTask=Boolean(msId&&EXPLICIT_SECOND_TASK.test(originalQuestion));
+  if(!msSeparateTask&&(msId||msBlocked||(mississippi&&!msNamed&&(msHub||/^(Mississippi|MS)( consumer research)?$/i.test(originalQuestion))))){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:msAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':msRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':msId?'IDENTIFIER_LOOKUP':msHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:msHub,candidateHubs:msHub?[msHub]:[],identifier:msId?{type:msId.type,value:msId.value,raw:msId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:msBlocked?['sourceOrScope']:[],executionAllowed:!msBlocked&&Boolean(msHub),
+      executionMode:msBlocked||!msHub?'CLARIFY':msId?'IDENTIFIER':'COHORT',
+      clarificationReason:msBlocked??(!msHub?'Open /mississippi for six separate specialist research sources. No combined total.':undefined),
+      reasonCodes:[msId?'EXACT_IDENTIFIER_RECOGNIZED':'MISSISSIPPI_RESEARCH_ROUTING',...(msBlocked?['MISSISSIPPI_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED']:[])],
+      legacyQueryType:msId?'EXACT_IDENTIFIER':'COHORT'};
+  }
   const scId=scIdentifier(originalQuestion);
   const southCarolina=queryLooksLikeSouthCarolina(originalQuestion);
   const scBlocked=scRefusal(originalQuestion);

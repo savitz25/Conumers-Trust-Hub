@@ -94,7 +94,7 @@ test('South Carolina manifest retains six frozen grains and the derived catalog 
   assert.match(M.hubs[5].grain,/not South Carolina registration/);
   assert.match(M.hubs[5].grain,/not a finding census/);
   assert.doesNotMatch(JSON.stringify(M),/49,?355|23,?796|73,?151|\b153\b|\b123\b|2,?400|2,?336|\b111\b|-1,?403|AggregateRating|Trust Score/);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'south-carolina');
+  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'mississippi');
   assert.equal(ASK_NETWORK_STATES.length,ASK_PUBLISHED_STATE_CATALOG.length);
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='alabama'));
   assert.match(askStateExplorerEyebrow(),new RegExp(`^${ASK_PUBLISHED_STATE_CATALOG.length}-state network explorer$`));

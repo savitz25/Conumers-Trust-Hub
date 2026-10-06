@@ -10,6 +10,7 @@ import { IDENTIFIER_FILLER_SOURCE } from '../network/identifiers.ts';
 import { SENIOR_PROVIDER_CLASS_LABEL } from '../network/senior-ask.ts';
 import { investorSecHandoff } from './state-handoff.ts';
 import { wiSeniorStateResearch } from '../network/wi-network.ts';
+import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -502,6 +503,9 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  const mississippi=msResearchHandoff(session.researchPlan);
+  if(mississippi)return {...session,hub:mississippi.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
+    nextAction:`${msCaveat(mississippi.hub,question)} Continue at ${mississippi.label} Mississippi: ${mississippi.href}. Ask has not executed a provider cohort.`};
   const southCarolina=scResearchHandoff(session.researchPlan);
   if(southCarolina)return {...session,hub:southCarolina.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${scCaveat(southCarolina.hub,question)} Continue at ${southCarolina.label} South Carolina: ${southCarolina.href}. Ask has not executed a provider cohort.`};
