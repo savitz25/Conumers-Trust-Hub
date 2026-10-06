@@ -651,6 +651,15 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (/\bin id\b/i.test(q) && !/\bindiana\b/i.test(q)) {
+    return {
+      stateCode: 'ID',
+      stateName: 'Idaho',
+      city,
+      meaning: 'Idaho. Geography meaning stays source-specific to the specialist. Ask publishes no Idaho city route.',
+    };
+  }
+
   const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?|I\.?L\.?)\b/i);
   if (postal) {
     const raw = postal[0].replace(/\./g, '').toUpperCase();
