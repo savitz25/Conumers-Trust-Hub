@@ -13,7 +13,7 @@ test('Missouri publishes six verified specialist gateways with separate grains',
   assert.equal(MO_PUBLICATION_MANIFEST.graph_writes, 0);
   assert.equal(listGatedAskStates().filter((state) => state.code === 'MO').length, 1);
   assert.equal(askStateSitemapEntries().filter((state) => state.path === '/missouri').length, 1);
-  for (const hub of MO_PUBLICATION_MANIFEST.hubs) assert.equal(hub.url, moSpecialistUrl(hub.hub_id));
+  for (const hub of MO_PUBLICATION_MANIFEST.hubs) assert.equal(hub.url, moSpecialistUrl(hub.hub_id as Parameters<typeof moSpecialistUrl>[0]));
 });
 
 test('Missouri search hands off without creating a provider cohort', () => {
