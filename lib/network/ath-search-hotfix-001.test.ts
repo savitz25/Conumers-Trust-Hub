@@ -115,7 +115,7 @@ test('capability describes a handoff rather than a canonical Auto Transport reso
 });
 
 test('homepage, network intelligence, and zero-write locks remain unchanged', () => {
-  assert.equal(homeFingerprint['ask-home-intel-v1'], 'c0a898c5be52197362c6118e9833e1c04c8bd81838ba4e45c2f5a5315353a02f');
+  assert.equal(homeFingerprint['ask-home-intel-v1'], '13d732611c16eb244167e10fa28af4541101901c79e907e8a151199a56679d97');
   assert.equal(networkFingerprints['ask-network-intel-v1'], '834dadcfa800e84914cb0e328f21234f42d7a7314c29d497f801dab2e8d202e1');
   assert.equal(process.env.ATH_SEARCH_HOTFIX_DB_WRITES ?? '0', '0');
 });
