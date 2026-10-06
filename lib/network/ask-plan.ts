@@ -7,6 +7,7 @@ import { inIdentifier, inRefusal, inCaveat, classifyInHub, queryLooksLikeIndiana
 import { kyIdentifier, kyRefusal, kyCaveat, classifyKyHub, queryLooksLikeKentucky, kySpecialistUrl } from './ky-network.ts';
 import { laIdentifier, laRefusal, laCaveat, classifyLaHub, queryLooksLikeLouisiana, laSpecialistUrl } from './la-network.ts';
 import { msIdentifier, msRefusal, msCaveat, classifyMsHub, queryLooksLikeMississippi, msSpecialistUrl } from './ms-network.ts';
+import { moIdentifier, moRefusal, moCaveat, classifyMoHub, queryLooksLikeMissouri, moSpecialistUrl } from './mo-network.ts';
 import { scIdentifier, scRefusal, scCaveat, classifyScHub, queryLooksLikeSouthCarolina, scSpecialistUrl } from './sc-network.ts';
 import { alIdentifier, alRefusal, alCaveat, classifyAlHub, queryLooksLikeAlabama, alSpecialistUrl } from './al-network.ts';
 import { rewriteMoveSpecialistHref } from './move-origin.ts';
@@ -250,6 +251,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'WI') return '/wisconsin';
   if (parsed.geography?.stateCode === 'IN') return '/indiana';
   if (parsed.geography?.stateCode === 'MS') return '/mississippi';
+  if (parsed.geography?.stateCode === 'MO') return '/missouri';
   if (parsed.geography?.stateCode === 'SC') return '/south-carolina';
   if (parsed.geography?.stateCode === 'AL') return '/alabama';
   if (parsed.geography?.stateCode === 'KY') return '/kentucky';
@@ -1731,6 +1733,21 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:inId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
     if(inRefused)parsed.interpretationLines.push({label:'Research boundary',value:inRefused});
+  }
+
+  // Missouri is a six-hub gateway. Specialist grains stay separate and are not summed.
+  const moId=moIdentifier(parsed.query);
+  const moRefused=moRefusal(parsed.query);
+  if(moId||moRefused||queryLooksLikeMissouri(parsed.query)){
+    const hub=moId?.hub??classifyMoHub(parsed.query);
+    if(hub){
+      const reason=moRefused??`${moId?`Exact ${moId.type} ${moId.value}. `:''}${moCaveat(hub)}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:moRefused?'unsupported':'handoff',
+        ...(moRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:moRefused?undefined:moSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:moId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(moRefused)parsed.interpretationLines.push({label:'Research boundary',value:moRefused});
   }
 
   // Mississippi is a six-hub gateway. Specialist grains stay separate and are not summed.

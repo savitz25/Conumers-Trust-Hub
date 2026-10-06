@@ -98,7 +98,7 @@ test('Mississippi manifest retains six frozen grains and the derived catalog cou
   assert.match(M.hubs[5].grain,/not Mississippi registration/);
   assert.match(M.hubs[5].grain,/are not added/);
   assert.doesNotMatch(JSON.stringify(M),/12,?774|38,?709|\b1,?304\b|AggregateRating|Trust Score/);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug,'mississippi');
+  assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='mississippi'));
   assert.equal(ASK_NETWORK_STATES.length,ASK_PUBLISHED_STATE_CATALOG.length);
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='south-carolina'));
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='alabama'));

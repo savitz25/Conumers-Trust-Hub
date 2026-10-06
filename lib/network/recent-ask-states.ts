@@ -8,6 +8,7 @@
  */
 import { listGatedAskStates } from './published-ask-states.ts';
 import { MS_PUBLICATION_MANIFEST } from './ms-network.ts';
+import { MO_PUBLICATION_MANIFEST } from './mo-network.ts';
 import { SC_PUBLICATION_MANIFEST } from './sc-network.ts';
 import { AL_PUBLICATION_MANIFEST } from './al-network.ts';
 import { KY_PUBLICATION_MANIFEST } from './ky-network.ts';
@@ -19,9 +20,10 @@ import { CT_PUBLICATION_MANIFEST } from './ct-network.ts';
 import { MI_PUBLICATION_MANIFEST } from './mi-network.ts';
 import { MN_PUBLICATION_MANIFEST } from './mn-network.ts';
 
-type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string }> };
+type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
 
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
+  missouri: MO_PUBLICATION_MANIFEST,
   mississippi: MS_PUBLICATION_MANIFEST,
   'south-carolina': SC_PUBLICATION_MANIFEST,
   alabama: AL_PUBLICATION_MANIFEST,
@@ -48,8 +50,8 @@ export function listRecentAskStates(limit = 4, highlightsPerState = 3): RecentAs
   for (const state of listGatedAskStates().reverse()) {
     if (recent.length >= limit) break;
     const hubs = (MANIFEST_BY_SLUG[state.slug]?.hubs ?? []).flatMap((hub) =>
-      typeof hub.hub_id === 'string' && typeof hub.capability_summary === 'string' && hub.capability_summary.trim()
-        ? [{ hub: hub.hub_id, summary: hub.capability_summary.trim() }]
+      typeof hub.hub_id === 'string' && typeof (hub.capability_summary ?? hub.summary) === 'string' && (hub.capability_summary ?? hub.summary)?.trim()
+        ? [{ hub: hub.hub_id, summary: (hub.capability_summary ?? hub.summary)!.trim() }]
         : [],
     );
     if (hubs.length === 0) continue;

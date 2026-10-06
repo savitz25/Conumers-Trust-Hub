@@ -214,13 +214,13 @@ test('claim eligibility surfaces are unchanged', () => {
 });
 
 test('state page count increments exactly once and places/concierge stay gated', () => {
-  assert.equal(ASK_NETWORK_STATES.length, 29);
-  assert.equal(ASK_NETWORK_STATES.at(-1)?.slug, 'mississippi');
+  assert.ok(ASK_NETWORK_STATES.length >= 29);
+  assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='mississippi'));
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'CO').length, 1);
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri'],
 
   );
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/colorado'), true);
