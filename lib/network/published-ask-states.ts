@@ -43,6 +43,7 @@ import { iaReleaseGatePassed } from './ia-network.ts';
 import { neReleaseGatePassed } from './ne-network.ts';
 import { ksReleaseGatePassed } from './ks-network.ts';
 import { idReleaseGatePassed } from './id-network.ts';
+import { wvReleaseGatePassed } from './wv-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -90,6 +91,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'NE', slug: 'nebraska', name: 'Nebraska', gate: neReleaseGatePassed },
   { code: 'KS', slug: 'kansas', name: 'Kansas', gate: ksReleaseGatePassed },
   { code: 'ID', slug: 'idaho', name: 'Idaho', gate: idReleaseGatePassed },
+  { code: 'WV', slug: 'west-virginia', name: 'West Virginia', gate: wvReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

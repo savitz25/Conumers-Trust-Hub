@@ -663,6 +663,15 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (/\bin wv\b/i.test(q) && !/\bwest virginia\b/i.test(q)) {
+    return {
+      stateCode: 'WV',
+      stateName: 'West Virginia',
+      city,
+      meaning: 'West Virginia. Geography meaning stays source-specific to the specialist. Ask publishes no West Virginia city route.',
+    };
+  }
+
   const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?|I\.?L\.?)\b/i);
   if (postal) {
     const raw = postal[0].replace(/\./g, '').toUpperCase();
