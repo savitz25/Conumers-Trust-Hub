@@ -125,7 +125,7 @@ test('Massachusetts routing preserves grains and does not intercept identifiers'
 test('existing state routes stay registered ahead of Massachusetts', () => {
   assert.deepEqual(
     ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri', 'oklahoma', 'arkansas'],
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri', 'oklahoma', 'arkansas', 'utah'],
 
   );
 });
