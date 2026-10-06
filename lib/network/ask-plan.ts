@@ -9,6 +9,7 @@ import { laIdentifier, laRefusal, laCaveat, classifyLaHub, queryLooksLikeLouisia
 import { msIdentifier, msRefusal, msCaveat, classifyMsHub, queryLooksLikeMississippi, msSpecialistUrl } from './ms-network.ts';
 import { moIdentifier, moRefusal, moCaveat, classifyMoHub, queryLooksLikeMissouri, moSpecialistUrl } from './mo-network.ts';
 import { iaIdentifier, iaRefusal, iaCaveat, classifyIaHub, queryLooksLikeIowa, iaSpecialistUrl } from './ia-network.ts';
+import { neIdentifier, neRefusal, neCaveat, classifyNeHub, queryLooksLikeNebraska, neSpecialistUrl } from './ne-network.ts';
 import { okIdentifier, okRefusal, okCaveat, classifyOkHub, queryLooksLikeOklahoma, okSpecialistUrl } from './ok-network.ts';
 import { arIdentifier, arRefusal, arCaveat, classifyArHub, queryLooksLikeArkansas, arSpecialistUrl } from './ar-network.ts';
 import { scIdentifier, scRefusal, scCaveat, classifyScHub, queryLooksLikeSouthCarolina, scSpecialistUrl } from './sc-network.ts';
@@ -256,6 +257,7 @@ function placeHref(parsed: ParsedNetworkAsk): string | undefined {
   if (parsed.geography?.stateCode === 'MS') return '/mississippi';
   if (parsed.geography?.stateCode === 'OK') return '/oklahoma';
   if (parsed.geography?.stateCode === 'MO') return '/missouri';
+  if (parsed.geography?.stateCode === 'NE') return '/nebraska';
   if (parsed.geography?.stateCode === 'IA') return '/iowa';
   if (parsed.geography?.stateCode === 'AR') return '/arkansas';
   if (parsed.geography?.stateCode === 'SC') return '/south-carolina';
@@ -1769,6 +1771,21 @@ export function buildNetworkAskPlan(query: string): NetworkAskPlan {
         preview:{headline:reason,grain:moId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
     }else hubs=[];
     if(moRefused)parsed.interpretationLines.push({label:'Research boundary',value:moRefused});
+  }
+
+  // Nebraska has a state gateway; Ask does not execute Nebraska provider searches.
+  const neId=neIdentifier(parsed.query);
+  const neRefused=neRefusal(parsed.query);
+  if(neId||neRefused||queryLooksLikeNebraska(parsed.query)){
+    const hub=neId?.hub??classifyNeHub(parsed.query);
+    if(hub){
+      const reason=neRefused??`${neId?`Exact ${neId.type} ${neId.value}. `:''}${neCaveat()}`;
+      hubs=[{hubId:hub,name:NETWORK_PUBLIC_NAMES[hub],capabilityStatus:neRefused?'unsupported':'handoff',
+        ...(neRefused?{mode:'fail_closed',failKind:'hard'}:{}),
+        destination:neRefused?undefined:neSpecialistUrl(hub),reason,whatItCanAnswer:reason,geographyCapability:parsed.geography?.meaning??'Exact identifier; not geography.',
+        preview:{headline:reason,grain:neId?.type??'specialist_source_gateway',limitation:'Source-specific evidence; no provider ranking or combined population.'}}];
+    }else hubs=[];
+    if(neRefused)parsed.interpretationLines.push({label:'Research boundary',value:neRefused});
   }
 
   // Iowa has a state gateway; Ask does not execute Iowa provider searches.
