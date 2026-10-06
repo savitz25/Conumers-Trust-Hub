@@ -41,6 +41,7 @@ import { nmReleaseGatePassed } from './nm-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 import { iaReleaseGatePassed } from './ia-network.ts';
 import { neReleaseGatePassed } from './ne-network.ts';
+import { ksReleaseGatePassed } from './ks-network.ts';
 import { idReleaseGatePassed } from './id-network.ts';
 
 export type AskPublishedState = {
@@ -87,6 +88,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'NM', slug: 'new-mexico', name: 'New Mexico', gate: nmReleaseGatePassed },
   { code: 'IA', slug: 'iowa', name: 'Iowa', gate: iaReleaseGatePassed },
   { code: 'NE', slug: 'nebraska', name: 'Nebraska', gate: neReleaseGatePassed },
+  { code: 'KS', slug: 'kansas', name: 'Kansas', gate: ksReleaseGatePassed },
   { code: 'ID', slug: 'idaho', name: 'Idaho', gate: idReleaseGatePassed },
 ];
 

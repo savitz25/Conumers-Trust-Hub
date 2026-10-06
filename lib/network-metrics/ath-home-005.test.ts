@@ -57,7 +57,7 @@ test('published-state model preserves asymmetric specialist coverage', () => {
   assert.equal(states.find((state) => state.code === 'IL')?.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
-    if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE') {
+    if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE' || state.code === 'KS' || state.code === 'ID') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
       continue; // These gateways are published; specialist metrics remain absent from this fallback inventory.
     }

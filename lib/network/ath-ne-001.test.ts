@@ -8,7 +8,8 @@ import { ASK_PUBLISHED_STATE_CATALOG, askStateExplorerEyebrow, askStateSitemapEn
 import { normalizedPublishedStatePath } from './published-state-path.ts';
 
 test('Nebraska appends after the current catalog and derives the network count', () => {
-  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === 'nebraska' && state.code === 'NE'));
+  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === 'nebraska'));
+  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.code === 'NE'));
   for (const slug of ['iowa', 'new-mexico', 'utah', 'arkansas', 'oklahoma', 'missouri']) {
     assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === slug), slug);
   }

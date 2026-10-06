@@ -9,7 +9,7 @@ import { normalizedPublishedStatePath } from './published-state-path.ts';
 test('Idaho appends after the current catalog and derives the network count', () => {
   assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.slug, 'idaho');
   assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.code, 'ID');
-  for (const slug of ['nebraska', 'iowa', 'new-mexico', 'utah', 'arkansas', 'oklahoma', 'missouri']) {
+  for (const slug of ['kansas', 'nebraska', 'iowa', 'new-mexico', 'utah', 'arkansas', 'oklahoma', 'missouri']) {
     assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === slug), slug);
   }
   assert.equal(listAskNetworkStates().length, ASK_PUBLISHED_STATE_CATALOG.length);
