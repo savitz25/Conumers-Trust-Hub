@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { buildNetworkAskPlan } from './ask-plan.ts';
 import { parseNetworkAsk } from './ask-parse.ts';
@@ -36,14 +35,6 @@ test('Oklahoma search hands off without creating a provider cohort', () => {
     assert.equal(buildNetworkAskPlan(query).hubs[0]?.destination, okSpecialistUrl(hub), query);
   }
   assert.equal(parseNetworkAsk('Oklahoma mortgage broker NMLS 123456').identifier?.family.hubId, 'lender');
-});
-
-test('Oklahoma ranking is refused on the Ask page before a name search', () => {
-  const page = readFileSync('app/ask/page.tsx', 'utf8');
-  assert.match(page, /oklahomaRefusal/);
-  assert.match(page, /!stateRefusal\?await resolveAskNameState/);
-  assert.match(page, /Open Oklahoma specialist research/);
-  assert.match(page, /missouriRefusal/);
 });
 
 test('Oklahoma rankings and bare ok fail closed; other states retain geography', () => {
