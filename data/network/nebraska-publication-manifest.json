@@ -1,0 +1,72 @@
+{
+  "contract": "ath-ne-network-release-v1",
+  "state_code": "NE",
+  "state_name": "Nebraska",
+  "ask_canonical": "https://www.asktrusthub.com/nebraska",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "91e52fa511ee683767051883bb6ca020dcaad095",
+      "url": "https://www.movetrusthub.com/nebraska",
+      "summary": "The Nebraska Public Service Commission household-goods licensees list prints 42 rows and 42 distinct ML numbers. A one-year validity rule is not a printed expiration. Tariffs, insurance observations, orders, and USDOT bridges are NOT_ACQUIRED.",
+      "capability_summary": "The Nebraska Public Service Commission household-goods licensees list prints 42 rows and 42 distinct ML numbers. A one-year validity rule is not a printed expiration. Tariffs, insurance observations, orders, and USDOT bridges are NOT_ACQUIRED.",
+      "clock": "Page retrieved 2026-10-06. HTML Last-Modified 2026-10-06T15:35:45Z. Effective dates are printed on the rows. No expiration column is printed.",
+      "gap": "The license fee and the insurance requirement are not current compliance. Application packets are not licenses. One historical order was not joined to a licensee row. FMCSA interstate authority is not Nebraska state authority."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "6a9d929fafe85d4356e439e733c0c70f2b364b98",
+      "url": "https://www.contractortrusthub.com/nebraska",
+      "summary": "The Nebraska Department of Labor requires contractors and subcontractors doing business in Nebraska to register. Registration is not a quality endorsement. The public search is a lookup, and a bulk roster is NOT_ACQUIRED.",
+      "capability_summary": "The Nebraska Department of Labor requires contractors and subcontractors doing business in Nebraska to register. Registration is not a quality endorsement. The public search is a lookup, and a bulk roster is NOT_ACQUIRED.",
+      "clock": "Registration home and overview examined 2026-10-06. The home prints an annual fee of $40.00 effective 2026-08-01. That fee is not current compliance.",
+      "gap": "Registration number, business or person, status, and workers' compensation certificate observations were NOT_ACQUIRED. Electrical and plumbing stay separate and were NOT_ACQUIRED. Unpaid-fines rows were NOT_ACQUIRED and were not name-joined."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "df35d1a1ca771e9cec570decce43b998fb145826",
+      "url": "https://www.lendertrusthub.com/nebraska",
+      "summary": "The Department of Banking and Finance annual report, as of June 30, 2024, prints 499 mortgage banker company licenses and 3,954 mortgage loan originators. Those counts are not acquired rosters and are not added. Broker, servicer, branch, and NMLS identity rosters are NOT_ACQUIRED. State-chartered banks print 134 and savings and loan associations print 0. HMDA is not licensing.",
+      "capability_summary": "The Department of Banking and Finance annual report, as of June 30, 2024, prints 499 mortgage banker company licenses and 3,954 mortgage loan originators. Those counts are not acquired rosters and are not added. Broker, servicer, branch, and NMLS identity rosters are NOT_ACQUIRED. State-chartered banks print 134 and savings and loan associations print 0. HMDA is not licensing.",
+      "clock": "Annual report PDF Last-Modified 2025-08-21. Counts as of 2024-06-30. The owned 2025 HMDA slice was not reloaded and was not summed.",
+      "gap": "A single accepted statewide HMDA aggregate remains NOT_ACQUIRED. The existing slice has 14 major-county markets, 1,933 lender-county rows, 491 LEI summaries, and 117 high-confidence maps. Company, branch, and person stay separate."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "d9b386216c3b9b7d5d5218c3c933f0443cedd071",
+      "url": "https://www.insurancetrusthub.com/nebraska",
+      "summary": "NAIC 2025 key facts for calendar year 2024 print 1,687 domestic and licensed foreign insurers, with 155 domestic insurers inside that total. Four captives are separate and are not added. Producer, agency, adjuster, surplus-lines, appointment, and administrative-action rosters are NOT_ACQUIRED.",
+      "capability_summary": "NAIC 2025 key facts for calendar year 2024 print 1,687 domestic and licensed foreign insurers, with 155 domestic insurers inside that total. Four captives are separate and are not added. Producer, agency, adjuster, surplus-lines, appointment, and administrative-action rosters are NOT_ACQUIRED.",
+      "clock": "NAIC PDF Last-Modified 2026-03-13. Title year 2025. Data year calendar 2024. The source prints that captives are not included in the 1,687.",
+      "gap": "Statement premiums are a market total, not a licensee census. Captive premium stays separate. Department complaint and inquiry counts are staff resources, not producers. SBS search is not a bulk census."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "cc3efb521bdb569694cb3c3c10d4e578228dd2fa",
+      "url": "https://www.seniortrusthub.com/nebraska",
+      "summary": "Nebraska DHHS publishes separate rosters. Assisted living prints 277 facilities and 13,957 beds. Long-term care prints 188 facilities and 14,601 beds. Adult day prints 20 licensed. Those classes are not added. Home health and hospice are not on the roster index and are NOT_ACQUIRED.",
+      "capability_summary": "Nebraska DHHS publishes separate rosters. Assisted living prints 277 facilities and 13,957 beds. Long-term care prints 188 facilities and 14,601 beds. Adult day prints 20 licensed. Those classes are not added. Home health and hospice are not on the roster index and are NOT_ACQUIRED.",
+      "clock": "Roster index Last-Modified 2026-10-06T16:00:24Z. Assisted-living PDF Last-Modified 2026-10-02T13:48:07Z. Long-term care PDF Last-Modified 2026-10-02T20:47:54Z. Adult-day PDF Last-Modified 2026-10-06T13:50:37Z. Printed roster updates are 2026-09-15.",
+      "gap": "Inspections, complaints, deficiencies, and enforcement are NOT_ACQUIRED. A complaint is not a finding. CMS certification is not the state license. Beds are not facilities. No facility names were published."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "573ec65da0f31768c610966f5c094e6fd56c26be",
+      "url": "https://www.investortrusthub.com/nebraska",
+      "summary": "IAPD feeds dated 2026-09-17 report 124 Nebraska state-IA registration rows and 124 distinct CRDs, including 122 APPROVED. State ERA rows are 15 distinct ACTIVE CRDs, with no overlap onto state IA. Federal notice filings are 2,239 distinct CRDs, all FILED. SEC principal-office Nebraska is 71 firms and is not registration. These groups are not added.",
+      "capability_summary": "IAPD feeds dated 2026-09-17 report 124 Nebraska state-IA registration rows and 124 distinct CRDs, including 122 APPROVED. State ERA rows are 15 distinct ACTIVE CRDs, with no overlap onto state IA. Federal notice filings are 2,239 distinct CRDs, all FILED. SEC principal-office Nebraska is 71 firms and is not registration. These groups are not added.",
+      "clock": "IAPD state and SEC compilation source date 2026-09-17. Retained files examined 2026-10-06. The department annual-report stock as of 2024-06-30 is a separate clock and is not the IAPD cohort.",
+      "gap": "IAR persons, broker-dealer roster, agent roster, and securities orders are NOT_ACQUIRED. Jurisdiction code NE selected the cohorts. Principal-office geography was not used as registration. The annual-report federal-covered count is not the IAPD notice count."
+    }
+  ]
+}
