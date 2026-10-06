@@ -12,6 +12,7 @@ import { MO_PUBLICATION_MANIFEST } from './mo-network.ts';
 import { OK_PUBLICATION_MANIFEST } from './ok-network.ts';
 import { AR_PUBLICATION_MANIFEST } from './ar-network.ts';
 import { UT_PUBLICATION_MANIFEST } from './ut-network.ts';
+import { NM_PUBLICATION_MANIFEST } from './nm-network.ts';
 import { SC_PUBLICATION_MANIFEST } from './sc-network.ts';
 import { AL_PUBLICATION_MANIFEST } from './al-network.ts';
 import { KY_PUBLICATION_MANIFEST } from './ky-network.ts';
@@ -28,6 +29,7 @@ type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_sum
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   arkansas: AR_PUBLICATION_MANIFEST,
   utah: UT_PUBLICATION_MANIFEST,
+  'new-mexico': NM_PUBLICATION_MANIFEST,
   oklahoma: OK_PUBLICATION_MANIFEST,
   missouri: MO_PUBLICATION_MANIFEST,
   mississippi: MS_PUBLICATION_MANIFEST,

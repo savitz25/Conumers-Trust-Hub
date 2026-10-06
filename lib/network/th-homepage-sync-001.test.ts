@@ -87,7 +87,7 @@ test('next-state simulation: catalog helpers would publish a gated slug without 
 });
 
 test('Utah appends six production-verified specialist sources and fails provider searches closed', () => {
-  assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.slug, 'utah');
+  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === 'utah'));
   for (const slug of ['missouri', 'oklahoma', 'arkansas']) assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === slug));
   assert.equal(utReleaseGatePassed(), true);
   assert.equal(UT_PUBLICATION_MANIFEST.hubs.length, 6);

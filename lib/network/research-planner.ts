@@ -10,6 +10,7 @@ import { moAmbiguousNumber, moIdentifier, moRefusal, moRankingAsked, queryLooksL
 import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
 import { arAmbiguousNumber, arIdentifier, arRefusal, arRankingAsked, queryLooksLikeArkansas, classifyArHub } from './ar-network.ts';
 import { utAmbiguousNumber, utIdentifier, utRankingAsked, utRefusal, queryLooksLikeUtah, classifyUtHub } from './ut-network.ts';
+import { nmAmbiguousNumber, nmIdentifier, nmRankingAsked, nmRefusal, queryLooksLikeNewMexico, classifyNmHub } from './nm-network.ts';
 import { scAmbiguousNumber, scIdentifier, scRefusal, scRankingAsked, queryLooksLikeSouthCarolina, classifyScHub } from './sc-network.ts';
 import { alAmbiguousNumber, alIdentifier, alRefusal, alRankingAsked, queryLooksLikeAlabama, classifyAlHub } from './al-network.ts';
 import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksLikeIndiana, classifyInHub } from './in-network.ts';
@@ -334,6 +335,23 @@ function legacyType(intent: AskResearchIntent): UniversalQueryType {
 
 export function planAskResearch(question: string, overrides: PlannerOverrides = {}): AskResearchPlan {
   const originalQuestion = question.trim();
+  const newMexico = queryLooksLikeNewMexico(originalQuestion);
+  if (newMexico) {
+    const identifier = nmIdentifier(originalQuestion);
+    const primaryHub = identifier?.hub ?? classifyNmHub(originalQuestion);
+    const geo = parseNetworkAsk(originalQuestion).geography;
+    const clarificationReason = nmRefusal(originalQuestion)!;
+    return {
+      version: 'ask-research-plan-v1', originalQuestion,
+      intent: nmAmbiguousNumber(originalQuestion) ? 'ENTITY_LOOKUP_MISSING_IDENTITY' : nmRankingAsked(originalQuestion) ? 'RECOMMENDATION_REQUEST' : identifier ? 'IDENTIFIER_LOOKUP' : primaryHub ? 'COHORT_BROWSE' : 'EXPLAINER',
+      primaryHub, candidateHubs: primaryHub ? [primaryHub] : [],
+      identifier: identifier ? { type: identifier.type, value: identifier.value, raw: identifier.raw } : undefined,
+      normalizedGeography: geo,
+      requestedGeography: geo?.stateCode ? { raw: geo.stateName!, display: geo.stateName!, kind: 'state', resolution: 'RESOLVED', stateCode: geo.stateCode, stateName: geo.stateName } : undefined,
+      requestedEvidence: [], missingSlots: ['sourceOrScope'], executionAllowed: false, executionMode: 'CLARIFY',
+      clarificationReason, reasonCodes: ['NEW_MEXICO_SPECIALIST_HANDOFF', 'SPECIALIST_EXECUTION_BLOCKED'], legacyQueryType: identifier ? 'EXACT_IDENTIFIER' : 'COHORT',
+    };
+  }
   const utah = queryLooksLikeUtah(originalQuestion);
   if (utah) {
     const identifier = utIdentifier(originalQuestion);

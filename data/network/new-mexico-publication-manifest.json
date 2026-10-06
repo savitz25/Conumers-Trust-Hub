@@ -1,0 +1,72 @@
+{
+  "contract": "ath-nm-network-release-v1",
+  "state_code": "NM",
+  "state_name": "New Mexico",
+  "ask_canonical": "https://www.asktrusthub.com/new-mexico",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "683a56d88b492f684e12d16addf54f141454cc4f",
+      "url": "https://www.movetrusthub.com/new-mexico",
+      "summary": "The New Mexico Public Regulation Commission household-goods directory, retrieved 2026-10-06, contained no company rows and no tariff links. The current company roster is NOT_ACQUIRED. Missing rows are not a mover count.",
+      "capability_summary": "The New Mexico Public Regulation Commission household-goods directory, retrieved 2026-10-06, contained no company rows and no tariff links. The current company roster is NOT_ACQUIRED. Missing rows are not a mover count.",
+      "clock": "Directory page article:modified_time 2023-06-20T20:58:14+00:00 is a page clock, not a roster clock. Retrieved 2026-10-06. PRCe360 was announced 2026-01-26.",
+      "gap": "Tariffs, insurance filings, complaints, enforcement, and exact USDOT or MC bridges were NOT_ACQUIRED. PRCe360 is a case system. Complaint intake is not a census. FMCSA interstate authority is not New Mexico intrastate authority."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "939233739ae38817823ba7c854b9f35f255d28e8",
+      "url": "https://www.contractortrusthub.com/new-mexico",
+      "summary": "The NMRLD 2026 Strategic Plan prints 61,986 CID licensees as the sum of six lines. That total is not a contractor-company count. Licensee companies 16,769 and LP 664 are the 17,433 contracting businesses. Certificate holders are 44,495. Those groups are not added.",
+      "capability_summary": "The NMRLD 2026 Strategic Plan prints 61,986 CID licensees as the sum of six lines. That total is not a contractor-company count. Licensee companies 16,769 and LP 664 are the 17,433 contracting businesses. Certificate holders are 44,495. Those groups are not added.",
+      "clock": "Strategic-plan file path December 2025; adjacent pages print FY25 actuals; retrieved 2026-10-06. Earlier CID budget form run date Tuesday, September 3, 2024.",
+      "gap": "The named contractor roster, elevator licensee count, separated classifications, observed bond or insurance, and enforcement were NOT_ACQUIRED. A qualifying party is not the company. Manufactured Housing is a separate division. The earlier clock's six lines do not equal its printed total of 59,894."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "6c97db99ebb6217c2559d528b449ba57ecb8895e",
+      "url": "https://www.lendertrusthub.com/new-mexico",
+      "summary": "Mortgage company, branch, and originator bulk rosters are NOT_ACQUIRED. NMLS Consumer Access is a lookup, not a census. The owned HMDA file is an 18-county market slice with 2,556 lender-county rows, 513 LEI summaries, and 146 mappings. It is not all counties and not a license census.",
+      "capability_summary": "Mortgage company, branch, and originator bulk rosters are NOT_ACQUIRED. NMLS Consumer Access is a lookup, not a census. The owned HMDA file is an 18-county market slice with 2,556 lender-county rows, 513 LEI summaries, and 146 mappings. It is not all counties and not a license census.",
+      "clock": "Owned HMDA slice examined with the New Mexico page on 2026-10-06. The RLD strategic plan names the Mortgage Loan Company Act and Mortgage Loan Originator Licensing Act. Those names are statutes, not a roster.",
+      "gap": "A statewide accepted HMDA aggregate was NOT_ACQUIRED. County origination lines are not added. Other Financial Institutions Division classes were not blended into mortgage counts. FDIC institutions were not recounted."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "07da57bd3be3a38c6a825908623c50950e97f559",
+      "url": "https://www.insurancetrusthub.com/new-mexico",
+      "summary": "The Office of Superintendent of Insurance Title Insurance Bureau says it currently regulates 68 licensed title insurance agents and 24 underwriters. Those counts stay separate and are not added. Retrieved 2026-10-06. The page did not print a separate as-of date.",
+      "capability_summary": "The Office of Superintendent of Insurance Title Insurance Bureau says it currently regulates 68 licensed title insurance agents and 24 underwriters. Those counts stay separate and are not added. Retrieved 2026-10-06. The page did not print a separate as-of date.",
+      "clock": "Divisions page retrieved 2026-10-06. No printed as-of date was on that sentence.",
+      "gap": "Insurers, agencies beyond that sentence, individual producers, adjusters, surplus-lines brokers, third-party administrators, appointments, examinations, enforcement, and receivership were NOT_ACQUIRED. Statistical-report PDF links were not counted. A complaint is not a finding."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "ead4ba841c70e1f5356b203db27f07496ff97008",
+      "url": "https://www.seniortrusthub.com/new-mexico",
+      "summary": "The New Mexico Health Care Authority, Division of Health Improvement, is the health-facility regulator. Nursing, assisted living, adult residential care, home health, hospice, adult day, and ICF/IID rosters were each NOT_ACQUIRED. The classes are not added.",
+      "capability_summary": "The New Mexico Health Care Authority, Division of Health Improvement, is the health-facility regulator. Nursing, assisted living, adult residential care, home health, hospice, adult day, and ICF/IID rosters were each NOT_ACQUIRED. The classes are not added.",
+      "clock": "Examined 2026-10-06. The assisted-living public search is interactive and was not downloaded. The Licensed Oversight Bureau resource guide, revised 2.19.25, is a contact and rules document.",
+      "gap": "CMS certification was not downloaded and stays a federal overlay. Temporary or provisional licenses, capacity, surveys, deficiencies, complaints, and enforcement were NOT_ACQUIRED. A public-records path is not a census."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "d1a1ddb95a6bac91e6127525f1b50c6bd2456b21",
+      "url": "https://www.investortrusthub.com/new-mexico",
+      "summary": "September 17, 2026 IAPD jurisdiction feeds report 81 APPROVED New Mexico state-IA firm CRDs, 1,394 FILED federal notice CRDs, and 17 ACTIVE ERA firm CRDs. Exact overlap of state IA and notice is 2. The groups are not added. Principal-office geography is 27 firms and is not registration.",
+      "capability_summary": "September 17, 2026 IAPD jurisdiction feeds report 81 APPROVED New Mexico state-IA firm CRDs, 1,394 FILED federal notice CRDs, and 17 ACTIVE ERA firm CRDs. Exact overlap of state IA and notice is 2. The groups are not added. Principal-office geography is 27 firms and is not registration.",
+      "clock": "State and SEC IAPD compilation source date 2026-09-17. Retained files examined 2026-10-06.",
+      "gap": "IAR persons, broker-dealers, agents, examinations, and securities orders were NOT_ACQUIRED. Jurisdiction code NM selected the cohorts. Principal-office geography was not used as registration."
+    }
+  ]
+}

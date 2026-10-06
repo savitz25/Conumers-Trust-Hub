@@ -633,6 +633,15 @@ function geography(q: string): ParsedGeography | undefined {
     };
   }
 
+  if (/\bin nm\b/i.test(q)) {
+    return {
+      stateCode: 'NM',
+      stateName: 'New Mexico',
+      city,
+      meaning: 'New Mexico. Geography meaning stays source-specific to the specialist. Ask publishes no New Mexico city route.',
+    };
+  }
+
   const postal = q.match(/\b(?:N\.?J\.?|N\.?Y\.?|C\.?A\.?|T\.?X\.?|F\.?L\.?|I\.?L\.?)\b/i);
   if (postal) {
     const raw = postal[0].replace(/\./g, '').toUpperCase();
