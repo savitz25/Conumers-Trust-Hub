@@ -1,0 +1,29 @@
+{
+  "gate": "check:th-search-r1-018",
+  "repo": "Conumers-Trust-Hub",
+  "reranAtUtc": "2026-09-15T01:35:00Z",
+  "command": "node --experimental-strip-types --test lib/guided-research/th-search-r1-018.test.ts lib/network/th-search-r1-016.test.ts lib/network/th-search-r1-008.test.ts lib/guided-research/ath-guided-001.test.ts lib/guided-research/ath-guided-003.test.ts lib/network/ath-search-002.test.ts lib/network/ask-intel-001e.test.ts",
+  "result": { "tests": 132, "pass": 132, "fail": 0, "cancelled": 0, "skipped": 0, "todo": 0 },
+  "newSuiteBreakdown": {
+    "file": "lib/guided-research/th-search-r1-018.test.ts",
+    "groups": [
+      { "name": "INSURANCE SCOPE", "covers": "BLOCKER-INSURANCE-01: ZIP/city-only requests hand off to the local directory instead of returning an unscoped agency cohort; named-insurer requests still resolve via identity_name mode.", "includesMutation": true },
+      { "name": "IDENTIFIER FILLERS", "covers": "BLOCKER-IDENTIFIER-FILLER-WORD-01: 'NAIC code 10064' / 'NPN number ...' / 'CRD number ...' / 'NMLS number ...' style filler words no longer break identifier extraction, across anchored and unanchored entry points.", "includesMutation": true },
+      { "name": "SENIOR DEICTIC", "covers": "BLOCKER-SENIOR-01: 'this nursing home' / 'this assisted living facility' / 'this hospice' style deictic references no longer get fabricated into a literal entity name.", "includesMutation": true },
+      { "name": "CONTRACTOR", "covers": "BLOCKER-CONTRACTOR-01: the stale contractFingerprint version-lock no longer fails closed on a legitimate, correctly-versioned contractor request; contractVersion/schemaFingerprint checks remain enforced.", "includesMutation": true },
+      { "name": "CROSS DOMAIN", "covers": "BLOCKER-CROSS-01: structural multi-domain conjunction detection (e.g. 'a mover and a lender') routes to disclosed clarification instead of silently executing only one domain.", "includesMutation": true }
+    ],
+    "totalNewTests": 33,
+    "mutationChecksEmbedded": 5,
+    "note": "Each group includes at least one positive case, one negative/control case proving the fix does not over-trigger on a superficially similar but legitimately different phrasing, and one mutation-style assertion tied to the specific code change."
+  },
+  "protectedRegressionSuites": [
+    { "file": "lib/network/th-search-r1-016.test.ts", "tests": 14, "status": "all passing, unmodified" },
+    { "file": "lib/network/th-search-r1-008.test.ts", "tests": 9, "status": "all passing, unmodified" },
+    { "file": "lib/guided-research/ath-guided-001.test.ts", "status": "all passing, unmodified" },
+    { "file": "lib/guided-research/ath-guided-003.test.ts", "status": "all passing, unmodified" },
+    { "file": "lib/network/ath-search-002.test.ts", "status": "all passing, unmodified" },
+    { "file": "lib/network/ask-intel-001e.test.ts", "status": "all passing, unmodified" }
+  ],
+  "verifiedFreshBeforeFinalReport": true
+}
