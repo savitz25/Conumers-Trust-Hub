@@ -1,0 +1,18 @@
+{
+  "contract": "ath-mo-network-release-v1",
+  "state_code": "MO",
+  "state_name": "Missouri",
+  "ask_canonical": "https://www.asktrusthub.com/missouri",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    { "hub_id": "move", "hub_name": "MoveTrustHub", "production_sha": "f969ac5900154fe5793705d349de0d091673cb4c", "url": "https://www.movetrusthub.com/missouri", "summary": "MoDOT household-goods authorized-transporter roster: 122 printed USDOT rows, 111 active and 11 suspended as of 2025-09-29. Certificate and permit types are distinct; the roster does not identify the type for each row.", "clock": "2025-09-29", "gap": "Authority class, actual insurance compliance, and exact FMCSA joins are NOT_ACQUIRED." },
+    { "hub_id": "contractor", "hub_name": "ContractorTrustHub", "production_sha": "99c987f31c595bdd88f6c4023f4a1226e47d2ee5", "url": "https://www.contractortrusthub.com/missouri", "summary": "Missouri has no universal statewide general-contractor license. Optional statewide electrical and narrow trade credentials are separate.", "clock": "2026-10-06 source pages checked", "gap": "Electrical active-license file did not download; credential rows are NOT_ACQUIRED." },
+    { "hub_id": "lender", "hub_name": "LenderTrustHub", "production_sha": "cff5297a91ed48fb17056695104ce08b0260bf4d", "url": "https://www.lendertrusthub.com/missouri", "summary": "Division of Finance directory: 550 mortgage broker company rows, 1,799 branch rows and 12,590 MLO person rows. 2025 HMDA is a separate market observation.", "clock": "2026-10-06 directory retrieval", "gap": "Many branch license numbers are blank; NMLS identity and parent joins are NOT_ACQUIRED." },
+    { "hub_id": "insurance", "hub_name": "InsuranceTrustHub", "production_sha": "13fbab872fdceced80c1b88ba855b4e7ac050227", "url": "https://www.insurancetrusthub.com/missouri", "summary": "DCI active company directory: 4,147 distinct detail records across 34 printed license types. It is a mixed regulated-company directory, not an insurer-only count.", "clock": "2026-10-06 retrieval; source-wide effective date UNKNOWN", "gap": "Producer, agency, adjuster, appointments, examination, order and receivership corpora are NOT_ACQUIRED." },
+    { "hub_id": "senior", "hub_name": "SeniorTrustHub", "production_sha": "44e0f8c00349722e6ad91e3f82c1f322ec1f9129", "url": "https://www.seniortrusthub.com/missouri", "summary": "DHSS directory: 1,101 level-of-care rows in six printed classes, 986 distinct facility numbers and 1,093 distinct license numbers. Class rows are not facility counts.", "clock": "2026-10-05 16:26:37 UTC source update", "gap": "Inspection, complaint, deficiency, enforcement, administrator license and CMS overlays are NOT_ACQUIRED." },
+    { "hub_id": "investor", "hub_name": "InvestorTrustHub", "production_sha": "76bda395d4122d0e420e62833a6542224ab2fa17", "url": "https://www.investortrusthub.com/missouri", "summary": "IAPD jurisdiction lenses: 354 approved Missouri state IA firm CRDs, 49 active ERA firm CRDs and 1,999 filed SEC notice firm CRDs. Principal office is a different lens.", "clock": "2026-09-17 IAPD compilation", "gap": "IAR, broker-dealer, agent and securities-order corpora are NOT_ACQUIRED." }
+  ]
+}
