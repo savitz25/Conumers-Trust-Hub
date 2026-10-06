@@ -1,0 +1,72 @@
+{
+  "contract": "ath-wv-network-release-v1",
+  "state_code": "WV",
+  "state_name": "West Virginia",
+  "ask_canonical": "https://www.asktrusthub.com/west-virginia",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "65789fbca2e69a05ccaf23b56f23a70f7247a2ef",
+      "url": "https://www.movetrusthub.com/west-virginia",
+      "summary": "A current Public Service Commission household-goods certificate roster was NOT_ACQUIRED. An application is not issued authority. A tariff is not current authority. An insurance requirement is not observed coverage. UCR is not household-goods authority. Form E observations, USDOT bridges, and PSC orders were NOT_ACQUIRED.",
+      "capability_summary": "A current Public Service Commission household-goods certificate roster was NOT_ACQUIRED. An application is not issued authority. A tariff is not current authority. An insurance requirement is not observed coverage. UCR is not household-goods authority. Form E observations, USDOT bridges, and PSC orders were NOT_ACQUIRED.",
+      "clock": "Reviewed 2026-10-06. No dataset-wide household-goods roster clock was printed.",
+      "gap": "Certificate search was not acquired as a roster. Missing is not zero. Charleston, Morgantown, and Huntington are geography only."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "71c3d9a68a31a7fc08fefbf827cf9f50c15369f4",
+      "url": "https://www.contractortrusthub.com/west-virginia",
+      "summary": "The Division of Labor elevator-inspector list has 23 inspector rows and 17 printed business-name strings. Those strings were not resolved into companies. An elevator inspector is not a contractor license. Contractor, HVAC, plumbing, and manufactured-housing rosters were NOT_ACQUIRED.",
+      "capability_summary": "The Division of Labor elevator-inspector list has 23 inspector rows and 17 printed business-name strings. Those strings were not resolved into companies. An elevator inspector is not a contractor license. Contractor, HVAC, plumbing, and manufactured-housing rosters were NOT_ACQUIRED.",
+      "clock": "HTTP Date Tue, 06 Oct 2026 19:25:04 GMT. Last-Modified was NOT_SENT. The list does not print a list-wide as-of date.",
+      "gap": "Two status notes remain on the list and were not removed from the row count. The verify search is not a bulk roster. No combined contractor denominator is published."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "0c7014c4d498fc566bf897a7161f2d753c1cc401",
+      "url": "https://www.lendertrusthub.com/west-virginia",
+      "summary": "The Division of Financial Institutions FY2025 annual report names 475 licensed mortgage company rows. The report does not print a total. Mortgage examinations were 11 in FY2025 and 15 in FY2024, and those are not licenses. Originators, branches, a separate broker roster, a separate servicer roster, and a current NMLS roster were NOT_ACQUIRED. The existing HMDA slice was not reloaded and is not a license count.",
+      "capability_summary": "The Division of Financial Institutions FY2025 annual report names 475 licensed mortgage company rows. The report does not print a total. Mortgage examinations were 11 in FY2025 and 15 in FY2024, and those are not licenses. Originators, branches, a separate broker roster, a separate servicer roster, and a current NMLS roster were NOT_ACQUIRED. The existing HMDA slice was not reloaded and is not a license count.",
+      "clock": "124th Annual Report, fiscal year ending June 30, 2025. PDF Last-Modified Thu, 03 Sep 2026 14:44:11 GMT. Retrieved 2026-10-06.",
+      "gap": "Examinations are not added to the company rows. State-chartered banks were NOT_RECOUNTED. HMDA is market activity, not licensing."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "ddefdbde5412d2eac9ed16037458780c3e025d87",
+      "url": "https://www.insurancetrusthub.com/west-virginia",
+      "summary": "The Offices of the Insurance Commissioner company-type table, as of 09/11/2026, prints separate classes. Property and Casualty is 887, Life is 440, Surplus Lines is 250, Title is 24, Managing General Agent is 41, and Captive is a printed 0. Surplus Lines is a company type, not an agent roster. Third-party administrator rows stay separate. Producer, agency, adjuster, appointment, and enforcement rosters were NOT_ACQUIRED.",
+      "capability_summary": "The Offices of the Insurance Commissioner company-type table, as of 09/11/2026, prints separate classes. Property and Casualty is 887, Life is 440, Surplus Lines is 250, Title is 24, Managing General Agent is 41, and Captive is a printed 0. Surplus Lines is a company type, not an agent roster. Third-party administrator rows stay separate. Producer, agency, adjuster, appointment, and enforcement rosters were NOT_ACQUIRED.",
+      "clock": "Company Type table as of 09/11/2026. Retrieved 2026-10-06. HTTP Date Tue, 06 Oct 2026 18:48:50 GMT.",
+      "gap": "Appointments are relationships, not licensees. Complaint intake is not a finding. No name-only adverse join was made."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "58c84abfaa8eb459d4a1b1f7622e5651cc66eb12",
+      "url": "https://www.seniortrusthub.com/west-virginia",
+      "summary": "The Office of Health Facility Licensure and Certification lookup is a server-side search, not a downloaded roster. Nursing homes, assisted living, home health, hospice, adult day, ICF/IID, and residential care were each NOT_ACQUIRED. The classes are not added. An administrator is not a facility. A survey is not enforcement. A complaint investigation is not a violation.",
+      "capability_summary": "The Office of Health Facility Licensure and Certification lookup is a server-side search, not a downloaded roster. Nursing homes, assisted living, home health, hospice, adult day, ICF/IID, and residential care were each NOT_ACQUIRED. The classes are not added. An administrator is not a facility. A survey is not enforcement. A complaint investigation is not a violation.",
+      "clock": "Lookup page HTTP Date Tue, 06 Oct 2026 19:03:30 GMT. Last-Modified was NOT_SENT. No class roster clock was acquired.",
+      "gap": "A search form is not a roster. Missing is not zero. CMS was not bridged. Charleston, Morgantown, and Huntington are geography only."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "a7c08a032990adafee8c79f80655f78726b8a568",
+      "url": "https://www.investortrusthub.com/west-virginia",
+      "summary": "IAPD feeds dated 2026-09-17 report 41 West Virginia state-IA registration rows and 41 distinct CRDs, including 40 APPROVED and 1 CONDREST. State ERA rows are a printed 0. Federal notice filings are 1,085 distinct CRDs, all FILED. SEC principal-office West Virginia is 12 firms, and all 12 also notice-filed. State IA and notice filings do not overlap. These groups are not added.",
+      "capability_summary": "IAPD feeds dated 2026-09-17 report 41 West Virginia state-IA registration rows and 41 distinct CRDs, including 40 APPROVED and 1 CONDREST. State ERA rows are a printed 0. Federal notice filings are 1,085 distinct CRDs, all FILED. SEC principal-office West Virginia is 12 firms, and all 12 also notice-filed. State IA and notice filings do not overlap. These groups are not added.",
+      "clock": "IAPD state and SEC compilation source date 2026-09-17. Examined 2026-10-06.",
+      "gap": "IAR persons, broker-dealers, agents, and securities orders were NOT_ACQUIRED. Principal-office geography is not registration. Jurisdiction code WV selected the cohorts."
+    }
+  ]
+}

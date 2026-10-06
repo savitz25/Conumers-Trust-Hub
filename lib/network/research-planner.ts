@@ -11,6 +11,7 @@ import { iaAmbiguousNumber, iaIdentifier, iaRefusal, iaRankingAsked, queryLooksL
 import { neAmbiguousNumber, neIdentifier, neRefusal, neRankingAsked, queryLooksLikeNebraska, classifyNeHub } from './ne-network.ts';
 import { ksRefusal, ksRankingAsked, queryLooksLikeKansas, classifyKsHub } from './ks-network.ts';
 import { idAmbiguousNumber, idIdentifier, idRefusal, idRankingAsked, queryLooksLikeIdaho, classifyIdHub } from './id-network.ts';
+import { wvAmbiguousNumber, wvIdentifier, wvRefusal, wvRankingAsked, queryLooksLikeWestVirginia, classifyWvHub } from './wv-network.ts';
 import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
 import { arAmbiguousNumber, arIdentifier, arRefusal, arRankingAsked, queryLooksLikeArkansas, classifyArHub } from './ar-network.ts';
 import { utAmbiguousNumber, utIdentifier, utRankingAsked, utRefusal, queryLooksLikeUtah, classifyUtHub } from './ut-network.ts';
@@ -477,6 +478,23 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
       clarificationReason:idBlocked??'Open /idaho for six separate specialist research sources. No combined total.',
       reasonCodes:[idId?'EXACT_IDENTIFIER_RECOGNIZED':'IDAHO_RESEARCH_ROUTING','IDAHO_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
       legacyQueryType:idId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const wvId=wvIdentifier(originalQuestion);
+  const westVirginia=queryLooksLikeWestVirginia(originalQuestion);
+  const wvBlocked=wvRefusal(originalQuestion);
+  const wvHub=wvId?.hub??(westVirginia?classifyWvHub(originalQuestion):undefined);
+  if(wvId||wvBlocked||westVirginia){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:wvAmbiguousNumber(originalQuestion)?'ENTITY_LOOKUP_MISSING_IDENTITY':wvRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':wvId?'IDENTIFIER_LOOKUP':wvHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:wvHub,candidateHubs:wvHub?[wvHub]:[],identifier:wvId?{type:wvId.type,value:wvId.value,raw:wvId.raw}:undefined,
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:['sourceOrScope'],executionAllowed:false,
+      executionMode:'CLARIFY',
+      clarificationReason:wvBlocked??'Open /west-virginia for six separate specialist research sources. No combined total.',
+      reasonCodes:[wvId?'EXACT_IDENTIFIER_RECOGNIZED':'WEST_VIRGINIA_RESEARCH_ROUTING','WEST_VIRGINIA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
+      legacyQueryType:wvId?'EXACT_IDENTIFIER':'COHORT'};
   }
   const arId=arIdentifier(originalQuestion);
   const arkansas=queryLooksLikeArkansas(originalQuestion);
