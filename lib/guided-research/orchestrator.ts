@@ -16,6 +16,7 @@ import { wiSeniorStateResearch } from '../network/wi-network.ts';
 import { msResearchHandoff, msCaveat } from '../network/ms-network.ts';
 import { moResearchHandoff, moCaveat } from '../network/mo-network.ts';
 import { okResearchHandoff, okCaveat } from '../network/ok-network.ts';
+import { arResearchHandoff, arCaveat } from '../network/ar-network.ts';
 import { scResearchHandoff, scCaveat } from '../network/sc-network.ts';
 import { alResearchHandoff, alCaveat } from '../network/al-network.ts';
 import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
@@ -316,6 +317,17 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
       destinations:[{type:'STATE_RESEARCH',href:missouri.href,label:`Open ${missouri.label} Missouri`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:missouri.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  const arkansas=arResearchHandoff(session.researchPlan);
+  if(arkansas&&session.hub===arkansas.hub){
+    const message=`${arCaveat(arkansas.hub)} Continue at ${arkansas.label} Arkansas. Ask has not retrieved a provider cohort.`;
+    session=touch({...session,phase:'DEEP_LINK',missingFields:[],availableChoices:[],nextAction:message});
+    result={specialist:arkansas.hub,executionOccurred:false,resultState:'UNSUPPORTED_CAPABILITY',consumerHeading:`Arkansas ${arkansas.label} research`,consumerMessage:message,
+      interpretation:[{label:'Research geography',value:'Arkansas statewide'},...(session.identifier?[{label:session.identifier.type,value:session.identifier.value}]:[])],
+      rows:[],total:0,refinements:[],provenance:{contract:'ath-ar-network-release-v1'},
+      limitations:['Ask is a state research gateway; no specialist rows were retrieved or copied.'],
+      destinations:[{type:'STATE_RESEARCH',href:arkansas.href,label:`Open ${arkansas.label} Arkansas`}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
+    return {session,result,diagnostics:{requestId,hub:arkansas.hub,phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
   }
   const mississippi=msResearchHandoff(session.researchPlan);
   if(mississippi&&session.hub===mississippi.hub){

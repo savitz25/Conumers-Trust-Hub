@@ -1,0 +1,66 @@
+{
+  "contract": "ath-ar-network-release-v1",
+  "state_code": "AR",
+  "state_name": "Arkansas",
+  "ask_canonical": "https://www.asktrusthub.com/arkansas",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "b1c017deb2672e4445d7fee06e4bdb3b57a8304f",
+      "url": "https://www.movetrusthub.com/arkansas",
+      "summary": "Arkansas Department of Transportation Rule 13.1 household-goods application packets exist for an individual and a corporation. The packets print a $50 filing fee and a $5 per-vehicle insurance-filing fee. Those fees are not operating authority.",
+      "clock": "Application packets file-modified 2026-08-12. Examined 2026-10-06.",
+      "gap": "The household-goods roster, issued certificates and permits, current insurance status, orders, complaints, and exact USDOT or MC bridges are NOT_ACQUIRED. An application is not issued authority. FMCSA is not Arkansas state household-goods authority."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "0eec7564977b7884aba4efde41979209d3a9a543",
+      "url": "https://www.contractortrusthub.com/arkansas",
+      "summary": "Arkansas Contractors Licensing Board issuance clocks stay separate: 8,244 commercial licenses issued during 2025; 783 registered commercial subcontractors issued during 2025; 2,762 residential building contractors issued during 2025; 5,822 residential home-improvement specialty credentials issued during 2025; 1,868 residential remodelers at a 2023 point in time; 750 residential roofer registrations issued during 2024.",
+      "clock": "August 2026 Directory of Licensed Occupations. HTTP Last-Modified 2026-09-30.",
+      "gap": "These figures are not added and are not an active roster. The active roster is NOT_ACQUIRED. Qualifying party, company, and person are NOT_SPLIT. Electrical, plumbing, and HVAC boards are NOT_ACQUIRED."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "068c35219e1da746fdb85b75439fa3eafa0a58f9",
+      "url": "https://www.lendertrusthub.com/arkansas",
+      "summary": "Arkansas Securities Department NMLS workbook: 683 approved mortgage companies, 1,536 branch rows, and 11,239 mortgage loan originator person rows. A branch is not a company. A person is not a company. Accepted HMDA applications are 114,072 and are market activity, not licenses.",
+      "clock": "Workbook page label as of September 1, 2026. HTTP Last-Modified 2026-09-29.",
+      "gap": "Control persons, enforcement, complaints, state-bank charters, and money services are NOT_ACQUIRED. The county-file application count does not replace the accepted 114,072."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "9b710fc5cbef09ed564473c7f144ab4773aadf6a",
+      "url": "https://www.insurancetrusthub.com/arkansas",
+      "summary": "NAIC Arkansas scorecard, title year 2025 and data year calendar 2024: 1,642 domestic and licensed foreign insurers. The 69 domestic insurers are inside that 1,642. Sixteen captives are not inside it. Complaints are 2,240 and are not findings.",
+      "clock": "Scorecard HTTP Last-Modified 2026-03-13. Data year calendar 2024.",
+      "gap": "Producer, agency, adjuster, title-agent, surplus-lines, and appointment rosters are NOT_ACQUIRED. Captives are not added to the 1,642."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "195ab46d25905aaee3f977b0f866f74ec0c1c920",
+      "url": "https://www.seniortrusthub.com/arkansas",
+      "summary": "DHS Annual Statistical Report for SFY 2022 says residents live in approximately 224 nursing facilities, 40 ICF/IID facilities, and 13 psychiatric residential care facilities. Those classes are not added.",
+      "clock": "SFY 2022, July 1, 2021 through June 30, 2022. Transmittal July 10, 2023.",
+      "gap": "Current assisted-living, adult-day, residential-care, home-health, and hospice rosters are NOT_ACQUIRED. Surveys and complaints stay separate from facility counts. No CMS bridge."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "6092c8fdf7b661ca3e4d7268eb393ff69a4f5267",
+      "url": "https://www.investortrusthub.com/arkansas",
+      "summary": "IAPD jurisdiction lenses examined 2026-10-06 from the 2026-09-17 compilation: 118 approved Arkansas state investment-adviser firm CRDs, 1,324 filed SEC notice firm CRDs, 8 active ERA firm CRDs, and 60 Arkansas principal-office firm CRDs. The lenses are not added.",
+      "clock": "IAPD compilation as of 2026-09-17. Examined 2026-10-06.",
+      "gap": "Investment-adviser representative, broker-dealer, agent, and securities-order corpora are NOT_ACQUIRED."
+    }
+  ]
+}
