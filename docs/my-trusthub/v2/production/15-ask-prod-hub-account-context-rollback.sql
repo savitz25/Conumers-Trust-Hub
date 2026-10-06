@@ -9,19 +9,28 @@
 -- closed (device Save only). Turn those release gates off first. Investor keeps
 -- prod_investor_issue_context; this rollback does not drop it.
 --
--- The installed function must be the frozen Packet 15 body, with that packet's
--- signature, owner, security definer, search_path, and ACL. Packet 18 replaces
--- the body with the Senior arm and is not a predecessor: dropping it here would
--- remove the function Packet 18 rollback has to restore. Run
--- 18-ask-prod-senior-hub-context-rollback.sql first. Existence alone is not
--- enough. This file does not use DROP CASCADE.
+-- The installed function must be the frozen Packet 15 predecessor. The source
+-- compare is exact prosrc bytes from the reviewed forward installation,
+-- including every character inside string literals. The ACL compare is the
+-- complete reviewed grant list: grantor, grantee, privilege, and grant option,
+-- sorted by the rendered grant so array order does not matter. Role names are
+-- resolved in this database. A null proacl is the default privilege set
+-- (acldefault), not an empty grant list. This guard detects drift. It does not
+-- change privileges or rewrite the function to make the check pass.
+--
+-- Packet 18 replaces the body with the Senior arm and is not a predecessor.
+-- Run 18-ask-prod-senior-hub-context-rollback.sql first. Existence alone is
+-- not enough. This file does not use DROP CASCADE.
 begin;
 set local statement_timeout = '15s';
 set local lock_timeout = '3s';
 do $pre$
 declare
   body text;
-  frozen text := $frozen$
+  -- Exact prosrc installed by 15-ask-prod-hub-account-context-forward.sql.
+  -- The closing delimiter stays on the end line: the reviewed source ends
+  -- with the space that precedes its dollar quote, not with a newline.
+  frozen text := $p15src$
 declare pin v23_private.prod_deployment_pin%rowtype; hub_origin text;
 begin
  hub_origin:=case p_hub when 'lender' then 'https://www.lendertrusthub.com'
@@ -40,8 +49,10 @@ begin
  perform ops.create_consumer_auth_handoff(proof->>'code',subject,p_hub,hub_origin,proof->>'intent',
    (proof->>'creationKey')::uuid,proof->>'rateBucket');
  return true;
-end
-$frozen$;
+end $p15src$;
+  expected_acl text := $p15acl$grantor=myth_v23_foundation grantee=myth_v23_authorizer privilege=EXECUTE grantable=false
+grantor=myth_v23_foundation grantee=myth_v23_foundation privilege=EXECUTE grantable=false$p15acl$;
+  installed_acl text;
   fn oid;
   secdef boolean;
   volatile_kind text;
@@ -67,7 +78,7 @@ begin
     from pg_proc p
     join pg_language l on l.oid = p.prolang
    where p.oid = fn;
-  if md5(regexp_replace(body, '\s+', '', 'g')) is distinct from md5(regexp_replace(frozen, '\s+', '', 'g')) then
+  if body is distinct from frozen then
     raise exception 'V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: installed shared issuer is not the frozen packet 15 body';
   end if;
   if secdef is not true
@@ -75,13 +86,24 @@ begin
      or owner_name is distinct from 'myth_v23_foundation'
      or language_name is distinct from 'plpgsql'
      or config is distinct from 'search_path=pg_catalog,v23_private,ops'
-     or has_function_privilege('public', fn, 'EXECUTE')
-     or has_function_privilege('anon', fn, 'EXECUTE')
-     or has_function_privilege('authenticated', fn, 'EXECUTE')
-     or has_function_privilege('myth_v23_executor', fn, 'EXECUTE')
-     or not has_function_privilege('myth_v23_authorizer', fn, 'EXECUTE')
      or has_schema_privilege('myth_v23_foundation', 'v23_private', 'CREATE') then
     raise exception 'V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: owner, security, or acl drifted';
+  end if;
+  -- Null proacl is default privileges. Do not treat it as an empty grant list.
+  select coalesce(string_agg(line, E'\n' order by line), '')
+    into installed_acl
+    from (
+      select format('grantor=%s grantee=%s privilege=%s grantable=%s',
+               case when a.grantor = 0 then 'public' else a.grantor::regrole::text end,
+               case when a.grantee = 0 then 'public' else a.grantee::regrole::text end,
+               a.privilege_type,
+               a.is_grantable::text) as line
+        from pg_proc p
+        cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+       where p.oid = fn
+    ) grants;
+  if installed_acl is distinct from expected_acl then
+    raise exception 'V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: function acl drifted';
   end if;
 end
 $pre$;

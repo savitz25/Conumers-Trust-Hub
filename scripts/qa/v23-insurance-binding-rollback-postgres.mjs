@@ -32,12 +32,21 @@ const HUB_ROLLBACK = '15-ask-prod-hub-account-context-rollback.sql';
 const HUB = 'v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)';
 const MOVE_ISSUER = 'v23_private.prod_issue_context(jsonb,uuid,uuid)';
 const hubRollback = read(HUB_ROLLBACK);
-assert.equal(createHash('sha256').update(hubRollback).digest('hex'), '3aa8fd356b9f7119607a911502dcb04ce1e5921419efcb28e5704a9f9e71fe77');
+assert.equal(createHash('sha256').update(hubRollback).digest('hex'), '964887905744d06586f4ce27e52a4e90e77dc466a4e3a48372ac962f31b1ad71');
 assert.doesNotMatch(hubRollback, /drop\s+function[\s\S]{0,200}cascade/i);
+assert.match(hubRollback, /body is distinct from frozen/);
+assert.doesNotMatch(hubRollback, /md5\(regexp_replace\(body/);
+assert.doesNotMatch(hubRollback, /regexp_replace\(frozen/);
+assert.match(hubRollback, /acldefault\('f', p\.proowner\)/);
+assert.match(hubRollback, /function acl drifted/);
 assert.match(hubRollback, /installed shared issuer is not the frozen packet 15 body/);
 assert.match(hubRollback, /nothing to remove/);
 assert.match(hubRollback, /owner, security, or acl drifted/);
 assert.match(hubRollback, /signature drifted/);
+assert.match(hubRollback, /'https:\/\/www\.lendertrusthub\.com'\n/);
+assert.doesNotMatch(hubRollback, /lendertrusthub\.com '/);
+assert.doesNotMatch(hubRollback, /\brevoke\b/i);
+assert.doesNotMatch(hubRollback, /\bgrant execute\b/i);
 assert.doesNotMatch(hubRollback, /v23_private\.authority\(\)/);
 assert.doesNotMatch(hubRollback, /seniortrusthub\.com/);
 
@@ -338,7 +347,8 @@ try {
   const before = await preservation(absent);
   assert.equal(before.hub, null);
   assert.ok(before.move);
-  await refuse(absent, HUB_ROLLBACK, /V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: nothing to remove/);
+  const missing = await refuse(absent, HUB_ROLLBACK, /V23_PROD_HUB_CONTEXT_ROLLBACK_PRECONDITION_FAIL: nothing to remove/);
+  assert.equal(missing.code, 'P0001');
   assert.deepEqual(await preservation(absent), before);
   console.log('MISSING_FUNCTION_REFUSED PASS');
 } finally {
@@ -380,6 +390,7 @@ const seniorDb = await open();
 try {
   await apply(seniorDb, '15-ask-prod-hub-account-context-forward.sql');
   const packet15 = await hubMeta(seniorDb);
+  const packet15Source = (await seniorDb.query('select prosrc from pg_proc where oid = to_regprocedure($1)', [HUB])).rows[0].prosrc;
   await apply(seniorDb, '18-ask-prod-senior-hub-context-preflight.sql');
   await apply(seniorDb, '18-ask-prod-senior-hub-context-forward.sql');
   const before = await preservation(seniorDb);
@@ -388,6 +399,7 @@ try {
   assert.deepEqual(await preservation(seniorDb), before);
   console.log('PACKET18_BODY_REFUSED_WITHOUT_CHANGE PASS');
   await apply(seniorDb, '18-ask-prod-senior-hub-context-rollback.sql');
+  assert.equal((await seniorDb.query('select prosrc from pg_proc where oid = to_regprocedure($1)', [HUB])).rows[0].prosrc, packet15Source);
   assert.deepEqual(await hubMeta(seniorDb), packet15);
   await apply(seniorDb, HUB_ROLLBACK);
   assert.equal(await present(seniorDb, HUB), false);
@@ -442,13 +454,93 @@ try {
   const before = await preservation(acl);
   assert.equal(before.hub.authorizer_exec, false);
   assert.equal(before.hub.prosecdef, true);
-  await refuse(acl, HUB_ROLLBACK, /owner, security, or acl drifted/);
+  const removedGrant = await refuse(acl, HUB_ROLLBACK, /function acl drifted/);
+  assert.equal(removedGrant.code, 'P0001');
   assert.deepEqual(await preservation(acl), before);
   assert.equal(await present(acl, HUB), true);
-  console.log('ACL_METADATA_REFUSED_WITHOUT_CHANGE PASS');
+  console.log('REMOVED_GRANT_REFUSED PASS');
 } finally {
   await acl.close();
 }
+
+async function hubSource(db) {
+  return (await db.query('select prosrc, proacl::text as proacl from pg_proc where oid = to_regprocedure($1)', [HUB])).rows[0] ?? null;
+}
+async function replaceHubSource(db, prosrc) {
+  await db.exec(`create or replace function v23_private.prod_hub_issue_context(proof jsonb,subject uuid,session uuid,p_hub text) returns boolean
+    language plpgsql security definer set search_path=pg_catalog,v23_private,ops as $body$${prosrc}$body$`);
+}
+async function refuseHeld(label, mutate, pattern) {
+  const db = await open();
+  try {
+    await apply(db, '15-ask-prod-hub-account-context-forward.sql');
+    await mutate(db);
+    const before = await preservation(db);
+    const sourceBefore = await hubSource(db);
+    assert.ok(sourceBefore);
+    const refusal = await refuse(db, HUB_ROLLBACK, pattern);
+    assert.equal(refusal.code, 'P0001');
+    assert.deepEqual(await hubSource(db), sourceBefore);
+    assert.deepEqual(await preservation(db), before);
+    assert.equal(await present(db, HUB), true);
+    console.log(`${label} PASS`);
+  } finally {
+    await db.close();
+  }
+}
+const reviewedSource = await (async () => {
+  const db = await open();
+  try {
+    await apply(db, '15-ask-prod-hub-account-context-forward.sql');
+    return (await hubSource(db)).prosrc;
+  } finally {
+    await db.close();
+  }
+})();
+await refuseHeld('EXTRA_SERVICE_ROLE_GRANT_REFUSED', async db => {
+  await db.exec(`grant execute on function ${HUB} to service_role`);
+}, /function acl drifted/);
+await refuseHeld('UNRELATED_ROLE_GRANT_REFUSED', async db => {
+  await db.exec('create role gb2_acl_probe nologin');
+  await db.exec(`grant execute on function ${HUB} to gb2_acl_probe`);
+}, /function acl drifted/);
+await refuseHeld('PUBLIC_EXECUTE_REFUSED', async db => {
+  await db.exec(`grant execute on function ${HUB} to public`);
+}, /function acl drifted/);
+await refuseHeld('GRANT_OPTION_REFUSED', async db => {
+  await db.exec(`grant execute on function ${HUB} to myth_v23_authorizer with grant option`);
+}, /function acl drifted/);
+await refuseHeld('NULL_ACL_REFUSED', async db => {
+  await db.exec(`update pg_proc set proacl = null where oid = to_regprocedure('${HUB}')`);
+  const raw = await hubSource(db);
+  assert.equal(raw.proacl, null);
+}, /function acl drifted/);
+await refuseHeld('LENDER_TRAILING_SPACE_REFUSED', async db => {
+  const changed = reviewedSource.replace("'https://www.lendertrusthub.com'", "'https://www.lendertrusthub.com '");
+  assert.notEqual(changed, reviewedSource);
+  await replaceHubSource(db, changed);
+}, /not the frozen packet 15 body/);
+await refuseHeld('LENDER_LEADING_SPACE_REFUSED', async db => {
+  await replaceHubSource(db, reviewedSource.replace("'https://www.lendertrusthub.com'", "' https://www.lendertrusthub.com'"));
+}, /not the frozen packet 15 body/);
+await refuseHeld('INSURANCE_ORIGIN_REFUSED', async db => {
+  await replaceHubSource(db, reviewedSource.replace('https://www.insurancetrusthub.com', 'https://www.insurancetrusthub.com.example'));
+}, /not the frozen packet 15 body/);
+await refuseHeld('CONTRACTOR_ORIGIN_REFUSED', async db => {
+  await replaceHubSource(db, reviewedSource.replace('https://www.contractortrusthub.com', 'https://contractor.example'));
+}, /not the frozen packet 15 body/);
+await refuseHeld('CHANGED_EXCEPTION_REFUSED', async db => {
+  await replaceHubSource(db, reviewedSource.replace("errcode='42501'", "errcode='42502'"));
+}, /not the frozen packet 15 body/);
+await refuseHeld('FORMATTING_REFUSED', async db => {
+  await replaceHubSource(db, reviewedSource.replace('\nbegin\n', '\nbegin\n -- formatting\n'));
+}, /not the frozen packet 15 body/);
+await refuseHeld('WRONG_OWNER_REFUSED', async db => {
+  await db.exec(`alter function ${HUB} owner to service_role`);
+}, /owner, security, or acl drifted/);
+await refuseHeld('SEARCH_PATH_REFUSED', async db => {
+  await db.exec(`alter function ${HUB} set search_path = pg_catalog`);
+}, /owner, security, or acl drifted/);
 
 // Reverse order required by the packets, which matches the operator list:
 // 19 first, because its rollback replaces authority() only while the installed
