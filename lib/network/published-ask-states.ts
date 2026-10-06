@@ -37,6 +37,7 @@ import { moReleaseGatePassed } from './mo-network.ts';
 import { okReleaseGatePassed } from './ok-network.ts';
 import { arReleaseGatePassed } from './ar-network.ts';
 import { utReleaseGatePassed } from './ut-network.ts';
+import { nmReleaseGatePassed } from './nm-network.ts';
 import { nvReleaseGatePassed } from './nv-network.ts';
 
 export type AskPublishedState = {
@@ -80,6 +81,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'OK', slug: 'oklahoma', name: 'Oklahoma', gate: okReleaseGatePassed },
   { code: 'AR', slug: 'arkansas', name: 'Arkansas', gate: arReleaseGatePassed },
   { code: 'UT', slug: 'utah', name: 'Utah', gate: utReleaseGatePassed },
+  { code: 'NM', slug: 'new-mexico', name: 'New Mexico', gate: nmReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
