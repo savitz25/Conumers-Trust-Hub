@@ -253,5 +253,5 @@ test('production only: the Investor origin is in the production registry and pin
   assert.ok(production);
   assert.equal(production.registry.origins.investor, 'https://www.investortrusthub.com');
   assert.equal(production.registry.origins.contractor, 'https://www.contractortrusthub.com');
-  assert.equal(production.registry.origins.senior, '');
+  assert.equal(production.registry.origins.senior, 'https://www.seniortrusthub.com');
 });
