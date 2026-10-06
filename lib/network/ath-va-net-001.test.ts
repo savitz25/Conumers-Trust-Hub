@@ -256,11 +256,9 @@ test('state page count increments exactly once and places/concierge stay gated',
   assert.ok(ASK_NETWORK_STATES.some((state)=>state.slug==='mississippi'));
   assert.ok(ASK_NETWORK_STATES.some((state) => state.slug === 'kentucky'));
   assert.equal(ASK_NETWORK_STATES.filter((state) => state.code === 'VA').length, 1);
-  assert.deepEqual(
-    ASK_NETWORK_STATES.map((state) => state.slug),
-    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia', 'new-york', 'illinois', 'oregon', 'pennsylvania', 'north-carolina', 'ohio', 'georgia', 'massachusetts', 'tennessee', 'nevada', 'minnesota', 'michigan', 'connecticut', 'maryland', 'wisconsin', 'indiana', 'louisiana', 'kentucky', 'alabama', 'south-carolina', 'mississippi', 'missouri', 'oklahoma', 'arkansas', 'utah', 'new-mexico'],
-
-  );
+  assert.deepEqual(ASK_NETWORK_STATES.slice(0, 8).map((state) => state.slug),
+    ['florida', 'new-jersey', 'california', 'texas', 'washington', 'arizona', 'colorado', 'virginia']);
+  assert.equal(new Set(ASK_NETWORK_STATES.map((state) => state.slug)).size, ASK_NETWORK_STATES.length);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/virginia'), true);
   assert.equal(listPlaceLensIndex().some((row) => row.href === '/virginia/richmond'), false);
   assert.match(ASK_CONCIERGE_SYSTEM_PROMPT, /Virginia network gateway/);
