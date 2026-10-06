@@ -9,6 +9,7 @@ import { msAmbiguousNumber, msIdentifier, msRefusal, msRankingAsked, queryLooksL
 import { moAmbiguousNumber, moIdentifier, moRefusal, moRankingAsked, queryLooksLikeMissouri, classifyMoHub } from './mo-network.ts';
 import { iaAmbiguousNumber, iaIdentifier, iaRefusal, iaRankingAsked, queryLooksLikeIowa, classifyIaHub } from './ia-network.ts';
 import { neAmbiguousNumber, neIdentifier, neRefusal, neRankingAsked, queryLooksLikeNebraska, classifyNeHub } from './ne-network.ts';
+import { ksRefusal, ksRankingAsked, queryLooksLikeKansas, classifyKsHub } from './ks-network.ts';
 import { okAmbiguousNumber, okIdentifier, okRefusal, okRankingAsked, queryLooksLikeOklahoma, classifyOkHub } from './ok-network.ts';
 import { arAmbiguousNumber, arIdentifier, arRefusal, arRankingAsked, queryLooksLikeArkansas, classifyArHub } from './ar-network.ts';
 import { utAmbiguousNumber, utIdentifier, utRankingAsked, utRefusal, queryLooksLikeUtah, classifyUtHub } from './ut-network.ts';
@@ -425,6 +426,22 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
       clarificationReason:neBlocked??'Open /nebraska for six separate specialist research sources. No combined total.',
       reasonCodes:[neId?'EXACT_IDENTIFIER_RECOGNIZED':'NEBRASKA_RESEARCH_ROUTING','NEBRASKA_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
       legacyQueryType:neId?'EXACT_IDENTIFIER':'COHORT'};
+  }
+  const kansas=queryLooksLikeKansas(originalQuestion);
+  const ksBlocked=ksRefusal(originalQuestion);
+  if(kansas){
+    const geo=parseNetworkAsk(originalQuestion).geography;
+    const ksHub=classifyKsHub(originalQuestion);
+    return {version:'ask-research-plan-v1',originalQuestion,
+      intent:ksRankingAsked(originalQuestion)?'RECOMMENDATION_REQUEST':ksHub?'COHORT_BROWSE':'EXPLAINER',
+      primaryHub:ksHub,candidateHubs:ksHub?[ksHub]:[],
+      normalizedGeography:geo,
+      requestedGeography:geo?.stateCode?{raw:geo.stateName!,display:geo.stateName!,kind:geo.city?'city':'state',resolution:'RESOLVED',stateCode:geo.stateCode,stateName:geo.stateName,city:geo.city}:undefined,
+      requestedEvidence:[],missingSlots:['sourceOrScope'],executionAllowed:false,
+      executionMode:'CLARIFY',
+      clarificationReason:ksBlocked??'Open /kansas for six separate specialist research sources. No combined total.',
+      reasonCodes:['KANSAS_RESEARCH_ROUTING','KANSAS_SAFETY_REFUSAL','SPECIALIST_EXECUTION_BLOCKED'],
+      legacyQueryType:'COHORT'};
   }
   const iaId=iaIdentifier(originalQuestion);
   const iowa=queryLooksLikeIowa(originalQuestion);

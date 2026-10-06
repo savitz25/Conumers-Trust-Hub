@@ -60,6 +60,7 @@ import { moGeography, moIdentifier, moSpecialistUrl } from './mo-network.ts';
 import { okGeography, okIdentifier, okSpecialistUrl } from './ok-network.ts';
 import { arGeography, arIdentifier, arSpecialistUrl } from './ar-network.ts';
 import { utGeography } from './ut-network.ts';
+import { ksGeography } from './ks-network.ts';
 import { scGeography, scIdentifier, scSpecialistUrl } from './sc-network.ts';
 import { alGeography, alIdentifier, alSpecialistUrl } from './al-network.ts';
 import { detectNvCity, queryLooksLikeNevada, stateCodeNamedBeforeNevada } from './nv-network.ts';
@@ -137,6 +138,8 @@ function geography(q: string): ParsedGeography | undefined {
   if (arGeo) return arGeo;
   const utGeo = utGeography(q);
   if (utGeo) return utGeo;
+  const ksGeo = ksGeography(q);
+  if (ksGeo) return ksGeo;
   const scGeo = scGeography(q);
   if (scGeo) return scGeo;
   const alGeo = alGeography(q);

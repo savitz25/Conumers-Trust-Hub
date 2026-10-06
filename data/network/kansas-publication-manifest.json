@@ -1,0 +1,72 @@
+{
+  "contract": "ath-ks-network-release-v1",
+  "state_code": "KS",
+  "state_name": "Kansas",
+  "ask_canonical": "https://www.asktrusthub.com/kansas",
+  "scope": "STATE_LEVEL_ONLY",
+  "release_gate": { "passed": true },
+  "cross_hub_record_total": null,
+  "graph_writes": 0,
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "production_sha": "31c153bb3ca0e1f007f17ef0bc6ae0a895503f47",
+      "url": "https://www.movetrusthub.com/kansas",
+      "summary": "The Kansas Corporation Commission intrastate household-goods tariff listing contains 89 carrier/tariff rows, 86 distinct nonblank printed MCID/DOT values, and one blank. A tariff listing is not a current certificate or insurance census.",
+      "capability_summary": "The Kansas Corporation Commission intrastate household-goods tariff listing contains 89 carrier/tariff rows, 86 distinct nonblank printed MCID/DOT values, and one blank. A tariff listing is not a current certificate or insurance census.",
+      "clock": "KCC listing retrieved 2026-10-06. The source warns its motor-carrier search is an ongoing project and may contain errors.",
+      "gap": "Current intrastate certificate/authority and actual insurance status were not acquired as statewide rosters. USDOT and FMCSA interstate authority remain separate."
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "production_sha": "38b5ebadca8c232659bd579b6db47cf2dea236f3",
+      "url": "https://www.contractortrusthub.com/kansas",
+      "summary": "Kansas has no universal statewide general-contractor license. State Fire Marshal elevator directories dated 2026-08-17 contain 33 contractor/contact rows, 33 inspector contacts, and 259 mechanic contacts; rows are directory entries, not distinct license totals.",
+      "capability_summary": "Kansas has no universal statewide general-contractor license. State Fire Marshal elevator directories dated 2026-08-17 contain 33 contractor/contact rows, 33 inspector contacts, and 259 mechanic contacts; rows are directory entries, not distinct license totals.",
+      "clock": "State Fire Marshal directory PDFs dated 2026-08-17; Kansas source review retrieved 2026-10-06.",
+      "gap": "No bulk statewide general-contractor, roofing, electrical, plumbing, or HVAC license census was acquired. Local general-contractor licensing remains outside this state gateway."
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "production_sha": "8205163f964a58cae19f5543b93f7f9ea02a4d40",
+      "url": "https://www.lendertrusthub.com/kansas",
+      "summary": "Kansas mortgage-company, branch, and MLO bulk license rosters were NOT_ACQUIRED. Existing HMDA market activity remains separate: the owned Kansas slice contains 2,767 lender-county observations, 677 LEI summaries, and 137 high-confidence directory mappings.",
+      "capability_summary": "Kansas mortgage-company, branch, and MLO bulk license rosters were NOT_ACQUIRED. Existing HMDA market activity remains separate: the owned Kansas slice contains 2,767 lender-county observations, 677 LEI summaries, and 137 high-confidence directory mappings.",
+      "clock": "Existing 2025 HMDA slice examined 2026-10-06. OSBC/NMLS lookup and licensing infrastructure reviewed 2026-10-06.",
+      "gap": "Mortgage company, branch, MLO, supervised-lender, and other consumer-credit rosters were not acquired. HMDA is market activity, not licensing."
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "production_sha": "a0f53e60c42bed1431af745bb98d92185c718b0d",
+      "url": "https://www.insurancetrusthub.com/kansas",
+      "summary": "Kansas DOI's 2024 annual report reports 203,525 agent licenses and 13,730 agency licenses as separate aggregates. These are report aggregates, not a combined insurance census or current named roster.",
+      "capability_summary": "Kansas DOI's 2024 annual report reports 203,525 agent licenses and 13,730 agency licenses as separate aggregates. These are report aggregates, not a combined insurance census or current named roster.",
+      "clock": "2024 data in the Kansas DOI annual report published January 2025; retrieved and reviewed 2026-10-06.",
+      "gap": "Insurer, entity, producer, adjuster, surplus-lines, appointment, exam, and enforcement row-level populations were NOT_ACQUIRED. Complaints are not findings."
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "production_sha": "5485145ae4827144f027c63c05475cdb92f73e59",
+      "url": "https://www.seniortrusthub.com/kansas",
+      "summary": "KDADS directories preserve facility classes separately: the adult-care export has 783 facility IDs, including 271 nursing, 233 assisted-living, 118 residential-health-care, 258 Home Plus, and 20 adult-day type observations. Facilities may have multiple types.",
+      "capability_summary": "KDADS directories preserve facility classes separately: the adult-care export has 783 facility IDs, including 271 nursing, 233 assisted-living, 118 residential-health-care, 258 Home Plus, and 20 adult-day type observations. Facilities may have multiple types.",
+      "clock": "KDADS adult-care and health-facility exports retrieved 2026-10-06; adult-care export prints last survey posting dates through 2025-12-31.",
+      "gap": "Facility capacity, inspection detail, complete survey observations, complaints, enforcement, and CMS certification are not combined and were not acquired in the directory snapshot. Administrator is not facility identity."
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "production_sha": "8e86ef94c920e0acae16430973e3f8c96a5e38c8",
+      "url": "https://www.investortrusthub.com/kansas",
+      "summary": "IAPD jurisdiction filters dated 2026-10-06 identify 224 APPROVED Kansas state-IA firm CRDs, 1,514 FILED federal notice CRDs, and 16 ACTIVE ERA firm CRDs. Exactly one firm CRD overlaps state IA and notice. A separate person feed has 7,442 IAR registration observations across 7,353 people; classes are not added.",
+      "capability_summary": "IAPD jurisdiction filters dated 2026-10-06 identify 224 APPROVED Kansas state-IA firm CRDs, 1,514 FILED federal notice CRDs, and 16 ACTIVE ERA firm CRDs. Exactly one firm CRD overlaps state IA and notice. A separate person feed has 7,442 IAR registration observations across 7,353 people; classes are not added.",
+      "clock": "Official IAPD firm and individual compilation feeds dated 2026-10-06; retained files examined the same date.",
+      "gap": "IAR person registrations remain separate from firms. Broker-dealer, agent, exam, and disposition-level enforcement rosters were not acquired. Principal-office geography is not Kansas registration."
+    }
+  ]
+}
