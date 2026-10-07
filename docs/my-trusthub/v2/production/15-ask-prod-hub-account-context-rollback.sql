@@ -107,7 +107,12 @@ begin
   end if;
 end
 $pre$;
+-- The guard above does not change privileges. The drop needs the owner.
+grant myth_v23_foundation to current_user with admin false,inherit false,set true granted by current_user;
+set local role myth_v23_foundation;
 drop function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text);
+reset role;
+revoke myth_v23_foundation from current_user granted by current_user;
 do $$ begin
   if to_regprocedure('v23_private.prod_issue_context(jsonb,uuid,uuid)') is null then
     raise exception 'V23_PROD_HUB_CONTEXT_ROLLBACK_FAIL: the Move issuer must remain';
