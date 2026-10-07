@@ -1,0 +1,247 @@
+{
+  "evidence_type": "Extract of direct Supabase connector observations; not a raw complete tool-response dump",
+  "project_verification": {
+    "method": "Supabase.get_project",
+    "project_id": "qvvxvbcdmbjzrgvwjatw",
+    "name": "Conumers-Trust-Hub",
+    "database_host": "db.qvvxvbcdmbjzrgvwjatw.supabase.co",
+    "postgres_engine": "17",
+    "reported_project_version": "17.6.1.141"
+  },
+  "catalog_observed_at_utc": "2026-10-07T01:13:09.063377+00:00",
+  "origin_probe_observed_at_utc": "2026-10-07T01:14:10.873662+00:00",
+  "observed_local_date": "2026-10-06",
+  "observed_local_timezone": "America/New_York",
+  "session": {
+    "database": "postgres",
+    "server_version": "17.6",
+    "session_user": "postgres",
+    "current_user": "postgres",
+    "current_role": "postgres",
+    "transaction_read_only": "on",
+    "row_security": "off",
+    "standard_conforming_strings": "on"
+  },
+  "operator_role": {
+    "name": "postgres",
+    "rolsuper": false,
+    "rolbypassrls": true,
+    "rolinherit": true,
+    "rolcreaterole": true,
+    "rolcanlogin": true
+  },
+  "restricted_roles": [
+    {
+      "name": "myth_v23_foundation",
+      "rolsuper": false,
+      "rolbypassrls": false,
+      "rolinherit": false,
+      "rolcreaterole": false
+    },
+    {
+      "name": "myth_v23_prod_reader",
+      "rolsuper": false,
+      "rolbypassrls": false,
+      "rolinherit": false,
+      "rolcreaterole": false
+    },
+    {
+      "name": "myth_v23_authorizer",
+      "rolsuper": false,
+      "rolbypassrls": false,
+      "rolinherit": false,
+      "rolcreaterole": false
+    },
+    {
+      "name": "myth_identity_governor",
+      "rolsuper": false,
+      "rolbypassrls": false,
+      "rolinherit": false,
+      "rolcreaterole": false
+    },
+    {
+      "name": "myth_v23_parent_prod",
+      "rolsuper": false,
+      "rolbypassrls": false,
+      "rolinherit": false,
+      "rolcreaterole": false
+    }
+  ],
+  "relevant_operator_memberships": [
+    {
+      "role": "myth_v23_foundation",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false
+    },
+    {
+      "role": "myth_v23_prod_reader",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false
+    },
+    {
+      "role": "myth_identity_governor",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true,
+      "inherit_option": false,
+      "set_option": false
+    }
+  ],
+  "effective_initial_membership": {
+    "myth_v23_foundation": {
+      "USAGE": false,
+      "SET": false
+    },
+    "myth_v23_prod_reader": {
+      "USAGE": false,
+      "SET": false
+    }
+  },
+  "relations": [
+    {
+      "relation": "network.network_entities",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true
+    },
+    {
+      "relation": "network.network_entity_bindings",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true
+    },
+    {
+      "relation": "ops.consumer_hub_registry",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true
+    }
+  ],
+  "schemas": [
+    {
+      "schema": "network",
+      "owner": "postgres",
+      "operator_usage": true,
+      "operator_create": true,
+      "foundation_create": false,
+      "reader_create": false
+    },
+    {
+      "schema": "ops",
+      "owner": "postgres",
+      "operator_usage": true,
+      "operator_create": true,
+      "foundation_create": false,
+      "reader_create": false
+    },
+    {
+      "schema": "v23_private",
+      "owner": "postgres",
+      "operator_usage": true,
+      "operator_create": true,
+      "foundation_create": false,
+      "reader_create": false
+    }
+  ],
+  "functions": [
+    {
+      "name": "ops.origin_allowed",
+      "identity_arguments": "p_hub text, p_origin text, p_environment text",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, ops"
+      ],
+      "acl": "{postgres=X/postgres}",
+      "raw_source_md5": "ca890d82421f1b2594fefe67ad326c5b",
+      "whitespace_stripped_source_md5": "ace7cb3983a6a5ce9e2c65b63a90f19e"
+    },
+    {
+      "name": "v23_private.authority",
+      "identity_arguments": "",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": false,
+      "config": [
+        "search_path=pg_catalog, v23_private"
+      ],
+      "acl": "{postgres=X/postgres,myth_v23_executor=X/postgres,myth_v23_foundation=X/postgres}",
+      "raw_source_md5": "a495d5192c15a711827a8cc6a92c6762",
+      "whitespace_stripped_source_md5": "691e2f2e05426c60af8fa3a54f38eac9"
+    },
+    {
+      "name": "v23_private.prod_hub_issue_context",
+      "identity_arguments": "proof jsonb, subject uuid, session uuid, p_hub text",
+      "owner": "myth_v23_foundation",
+      "owner_superuser": false,
+      "owner_bypassrls": false,
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, v23_private, ops"
+      ],
+      "acl": "{myth_v23_foundation=X/myth_v23_foundation,myth_v23_authorizer=X/myth_v23_foundation}",
+      "raw_source_md5": "583e39c6e9a0396b7fc2cdfe1d646ba6",
+      "whitespace_stripped_source_md5": "002e9caa9d69f002986ac695222fac3d"
+    },
+    {
+      "name": "v23_private.prod_issue_context",
+      "identity_arguments": "proof jsonb, subject uuid, session uuid",
+      "owner": "myth_v23_foundation",
+      "owner_superuser": false,
+      "owner_bypassrls": false,
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, v23_private, ops"
+      ],
+      "acl": "{myth_v23_foundation=X/myth_v23_foundation,myth_v23_authorizer=X/myth_v23_foundation}",
+      "raw_source_md5": "fbe3f1757de16d8567fed396a9f411f7",
+      "whitespace_stripped_source_md5": "f6eab054780953fa95795cb2a7e40baf"
+    }
+  ],
+  "read_only_origin_probes": [
+    {
+      "call": "ops.origin_allowed('senior','https://www.seniortrusthub.com','production')",
+      "result": true
+    },
+    {
+      "call": "ops.origin_allowed('lender','https://www.lendertrusthub.com','production')",
+      "result": true
+    }
+  ],
+  "scope": {
+    "production_connection": true,
+    "production_data_mutations": false,
+    "production_schema_mutations": false,
+    "role_or_acl_mutations": false,
+    "set_role_executed": false,
+    "forward_or_rollback_packets_executed": false,
+    "insert_attempts": false,
+    "keys_env_or_canaries_changed": false
+  },
+  "limitations": [
+    "Point-in-time current configuration, not a replay of the earlier production apply.",
+    "Metadata shows INSERT privileges and the BYPASSRLS attribute; no production INSERT was attempted.",
+    "Other constraints, triggers, full packet execution and temporary role-grant mechanics still require local testing.",
+    "Initial membership has SET=false and INHERIT=false; reproduce the distinct supabase_admin grantor locally before testing the candidate temporary self-grant/revoke.",
+    "This extract is not a full database or policy inventory and contains no customer rows or credentials.",
+    "No independent certification or production-resume authorization is conveyed."
+  ]
+}

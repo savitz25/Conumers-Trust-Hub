@@ -12,12 +12,14 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { PGlite } from '@electric-sql/pglite';
 import { btree_gist } from '@electric-sql/pglite/contrib/btree_gist';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
+import { OPERATOR, originalOperator, originalDependencies, installSupplement,
+  assertSupplement, assertOperatorPath } from './v23-packet18-metadata-fixture.mjs';
 
 const PRODUCTION = 'qvvxvbcdmbjzrgvwjatw';
-const OPERATOR = 'hosted_operator';
 const REQUEST_ACTOR_MD5 = '043d6f9b6cabdd24c12efd6571c4f64a';
 const BASELINE_FP = '691e2f2e05426c60af8fa3a54f38eac9';
 const PACKET19_FP = '17f464ad69f3d8c7a89dd2cf9229f112';
@@ -32,13 +34,17 @@ const SQL_PINS = {
   '14-ask-prod-investor-crd-binding-forward.sql': '453565ecd5b6ef454fed1979f7ccee6b46027647699f825080940032b0307664',
 };
 for (const [file, pin] of Object.entries(SQL_PINS)) {
+  const currentBlob = execFileSync('git', ['show', `HEAD:${prod}${file}`]);
+  assert.equal(sha256(currentBlob), pin, `Git blob hash: ${file}`);
   assert.equal(sha256(read(file)), pin, file);
 }
 const forwardSql = read('18-ask-prod-senior-hub-context-forward.sql');
 const rollbackSql = read('18-ask-prod-senior-hub-context-rollback.sql');
 const packet15RollbackSql = read('15-ask-prod-hub-account-context-rollback.sql');
 const EXPECTED_MEMBERS = [
+  `${OPERATOR} in myth_identity_governor admin=true inherit=false set=false by supabase_admin`,
   `${OPERATOR} in myth_v23_foundation admin=true inherit=false set=false by supabase_admin`,
+  `${OPERATOR} in myth_v23_parent_prod admin=true inherit=false set=false by supabase_admin`,
   `${OPERATOR} in myth_v23_prod_reader admin=true inherit=false set=false by supabase_admin`,
 ].join(' | ');
 
@@ -111,7 +117,7 @@ async function snap(db) {
         join pg_roles r on r.oid = a.roleid
         join pg_roles m on m.oid = a.member
         join pg_roles g on g.oid = a.grantor
-        where r.rolname in ('myth_v23_foundation', 'myth_v23_prod_reader')
+        where r.rolname in ('myth_identity_governor', 'myth_v23_foundation', 'myth_v23_parent_prod', 'myth_v23_prod_reader')
           and m.rolname = '${OPERATOR}') as members
   `)).rows[0];
   return row;
@@ -236,6 +242,7 @@ await seededDb.exec(`
   alter schema ops owner to ${OPERATOR};
   alter schema v23_private owner to ${OPERATOR};
 `);
+await installSupplement(seededDb);
 await seededDb.exec(`
   grant usage on schema network to hosted_operator_nobypass, hosted_operator_no_actor;
   grant select, insert, update on network.network_entities to hosted_operator_nobypass, hosted_operator_no_actor;
@@ -262,6 +269,7 @@ assert.equal(actor.md5, REQUEST_ACTOR_MD5);
 assert.equal(actor.operator_exec, true);
 assert.equal(actor.public_exec, false);
 assert.match(actor.acl, new RegExp(`${OPERATOR}=X/${OPERATOR}`));
+assert.equal(actor.md5, originalDependencies.functions.find(row => row.signature === 'network.request_actor()').source_md5);
 const ownership = (await seededDb.query(`
   select
     (select nspowner::regrole::text from pg_namespace where nspname = 'consumer') as consumer_schema,
@@ -322,6 +330,9 @@ assert.equal(operatorRole.rolsuper, false);
 assert.equal(operatorRole.rolbypassrls, true);
 assert.equal(operatorRole.rolinherit, true);
 assert.equal(operatorRole.rolcreaterole, true);
+for (const key of ['rolsuper', 'rolbypassrls', 'rolinherit', 'rolcreaterole']) {
+  assert.equal(operatorRole[key], originalOperator.operator_role[key], key);
+}
 for (const name of ['myth_v23_foundation', 'myth_v23_prod_reader', 'supabase_admin']) {
   const role = roles.find(row => row.rolname === name);
   assert.equal(role.rolsuper, false, name);
@@ -330,6 +341,7 @@ for (const name of ['myth_v23_foundation', 'myth_v23_prod_reader', 'supabase_adm
 const issuerOwner = (await seededDb.query(`select proowner::regrole::text as owner
   from pg_proc where oid = to_regprocedure('v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)')`)).rows[0].owner;
 assert.equal(issuerOwner, 'myth_v23_foundation');
+const metadataBaseline = await assertSupplement(seededDb);
 const seeded = await seededDb.dumpDataDir();
 await seededDb.close();
 console.log('THIS_RUN PASS seed: packet 15 installed, six receipts, hosted_operator fixture, no blanket ownership transfer');
@@ -338,6 +350,11 @@ console.log('THIS_RUN REQUEST_ACTOR_OWNER_AND_ACL_MATCH PASS');
 console.log('THIS_RUN AUDIT_TABLE_SEQUENCE_PERMISSIONS_MATCH PASS');
 console.log('THIS_RUN BLANKET_OWNERSHIP_TRANSFER_REMOVED YES');
 console.log('THIS_RUN FIVE_SQL_FILES_UNCHANGED YES');
+console.log('THIS_RUN EVIDENCE_FILES_AND_HASHES_VERIFIED PASS');
+console.log('THIS_RUN GOVERNOR_MEMBERSHIP_MATCH PASS');
+console.log('THIS_RUN RUNTIME_ROLE_AND_MEMBERSHIPS_MATCH PASS');
+console.log('THIS_RUN CONSUMER_SCHEMA_MATCH PASS');
+console.log('THIS_RUN SAVED_TABLE_PERMISSIONS_MATCH PASS');
 
 async function open(role) {
   const db = new PGlite({ database: 'postgres', loadDataDir: seeded, extensions });
@@ -356,6 +373,8 @@ async function bindingCount(db) {
 }
 
 async function assertPrivilegesRestored(db) {
+  await assertOperatorPath(db);
+  assert.deepEqual(await assertSupplement(db), metadataBaseline, 'Pre-existing metadata or ACLs changed');
   const row = await snap(db);
   assert.equal(row.members, EXPECTED_MEMBERS);
   assert.equal(row.foundation_create, false);
@@ -399,6 +418,8 @@ try {
   assert.match(setRefused, /permission denied to set role/);
   const readerRefused = await expectFail(operator, 'set role myth_v23_prod_reader', /42501/);
   assert.match(readerRefused, /permission denied to set role/);
+  await expectFail(operator, 'set role myth_identity_governor', /42501/);
+  await expectFail(operator, 'set role myth_v23_parent_prod', /42501/);
   assert.equal(privilegeView(await snap(operator)), privilegeView(before));
   console.log(`THIS_RUN PASS SET ROLE refused before the temporary grant: ${setRefused}`);
 
@@ -702,6 +723,22 @@ async function installSavedResearch(db) {
     (user_id, client_request_id, project_id, saved_entity_id, note_type, body)
     values ($1::uuid, '33333333-3333-4333-8333-333333333333', $2, $3, 'research', 'Local fixture note on the Florida license')`,
     [userId, projectId, savedId]);
+  // Local preservation sentinel only: the supplied extracts do not inventory
+  // production Watch tables. Packets cannot read or mutate this oracle data.
+  await db.exec(`create table fixture_only.watch_state(id text primary key, state jsonb not null);
+    insert into fixture_only.watch_state values ('existing-watch',
+      '{"status":"active","last_seen":"before-packet18","notifications":false}'::jsonb)`);
+  for (const [subject, expected] of [[userId, 1], ['44444444-4444-4444-8444-444444444444', 0]]) {
+    await db.exec('begin; set local role authenticated');
+    await db.query("select set_config('request.jwt.claim.sub', $1, true)", [subject]);
+    const visible = (await db.query('select count(*)::int as n from consumer.consumer_saved_entities')).rows[0].n;
+    assert.equal(visible, expected, 'Saved-table own-row policy');
+    await db.exec('rollback');
+  }
+  const runtimeAccess = (await db.query(`select
+    has_schema_privilege('myth_v23_parent_prod','consumer','USAGE') as usage,
+    has_table_privilege('myth_v23_parent_prod','consumer.consumer_saved_entities','SELECT') as read`)).rows[0];
+  assert.deepEqual(runtimeAccess, { usage: false, read: false });
   await db.exec(`
     create function fixture_only.saved_research_digest() returns text
     language sql security definer set search_path = pg_catalog, consumer, auth as $$
@@ -711,7 +748,8 @@ async function installSavedResearch(db) {
         'projects', (select coalesce(jsonb_agg(to_jsonb(t) order by t.id), '[]'::jsonb) from consumer.consumer_projects t),
         'memberships', (select coalesce(jsonb_agg(to_jsonb(t) order by t.project_id, t.saved_entity_id), '[]'::jsonb)
           from consumer.consumer_project_saved_entities t),
-        'notes', (select coalesce(jsonb_agg(to_jsonb(t) order by t.id), '[]'::jsonb) from consumer.consumer_notes t)
+        'notes', (select coalesce(jsonb_agg(to_jsonb(t) order by t.id), '[]'::jsonb) from consumer.consumer_notes t),
+        'watch', (select jsonb_agg(to_jsonb(t) order by t.id) from fixture_only.watch_state t)
       )::text, 'UTF8'))
     $$;
     revoke all on function fixture_only.saved_research_digest() from public;
@@ -751,7 +789,10 @@ try {
   const moveAfterForward = await moveMeta(reverse);
   assert.deepEqual(moveAfterForward, moveBefore);
 
+  await assertOperatorPath(reverse);
+  assert.equal((await reverse.query('select count(*)::int as n from consumer.consumer_saved_entities')).rows[0].n, 1);
   await apply(reverse, read('19-ask-prod-network-authority-rollback.sql'), 'packet 19 rollback');
+  console.log('THIS_RUN PACKET19_ROLLBACK_SAVED_TABLE_READ PASS');
   const restoredAuthority = await authorityRow(reverse);
   assert.equal(restoredAuthority.fp, BASELINE_FP);
   assert.equal(restoredAuthority.owner, OPERATOR);
@@ -766,6 +807,7 @@ try {
     for (const row of rows) {
       await loadReceipt(reverse, gucs, shape(row));
       await apply(reverse, read(file), `${hub} rollback ${row.source_identifier}`);
+      await assertPrivilegesRestored(reverse);
       const updated = (await bindingRows(reverse)).find(item => item.id === row.id);
       assert.equal(updated.open, false);
       assert.equal(updated.binding_status, 'accepted');
@@ -800,6 +842,9 @@ try {
   console.log('THIS_RUN FULL_REVERSE_ACTUALLY_RERUN YES');
   console.log('THIS_RUN FULL_REVERSE PASS');
   console.log('THIS_RUN SAVED_RESEARCH_PRESERVED PASS');
+  console.log('THIS_RUN WATCH_SENTINEL_PRESERVED PASS');
+  console.log('THIS_RUN PREEXISTING_MEMBERSHIPS_AND_ACLS_PRESERVED PASS');
+  console.log('THIS_RUN TEMPORARY_PRIVILEGES_RESTORED PASS');
   console.log('THIS_RUN MOVE_PRESERVED PASS');
   console.log(`THIS_RUN BINDING_RECEIPTS_CLOSED ${closedReceipts}`);
   console.log('THIS_RUN prior ca1a58a harness output is not reused as this proof');

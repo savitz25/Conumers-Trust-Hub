@@ -1,0 +1,355 @@
+{
+  "evidence_type": "Selected live catalog extract; transcribed from Supabase tool results, not a raw full-response dump",
+  "project_verification": {
+    "method": "Supabase.get_project",
+    "ref": "qvvxvbcdmbjzrgvwjatw",
+    "name": "Conumers-Trust-Hub",
+    "region": "us-east-1",
+    "database_version": "17.6.1.141"
+  },
+  "catalog_observed_at_utc": "2026-10-07T01:39:02.577918+00:00",
+  "audit_dependency_probe_observed_at_utc": "2026-10-07T01:39:46.404008+00:00",
+  "local_time_description": "October 6, 2026, 9:39 p.m. America/New_York (EDT)",
+  "session": {
+    "database": "postgres",
+    "server_version": "17.6",
+    "session_user": "postgres",
+    "current_user": "postgres",
+    "transaction_read_only": "on",
+    "row_security": "off"
+  },
+  "operator_attributes": {
+    "superuser": false,
+    "bypassrls": true,
+    "inherit": true,
+    "createrole": true
+  },
+  "relevant_memberships": [
+    {
+      "role": "myth_v23_foundation",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin": true,
+      "inherit": false,
+      "set": false
+    },
+    {
+      "role": "myth_v23_prod_reader",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin": true,
+      "inherit": false,
+      "set": false
+    }
+  ],
+  "functions": [
+    {
+      "signature": "network.request_actor()",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": false,
+      "config": [
+        "search_path=pg_catalog"
+      ],
+      "source_md5": "043d6f9b6cabdd24c12efd6571c4f64a",
+      "operator_execute": true,
+      "effective_acl": [
+        {
+          "grantor": "postgres",
+          "grantee": "postgres",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_governor",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_linker",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_move",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_lender",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_insurance",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_contractor",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_senior",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_proposer_investor",
+          "privilege": "EXECUTE",
+          "grantable": false
+        }
+      ],
+      "source": "\n  select coalesce(\n    nullif(current_setting('request.jwt.claim.sub', true), ''),\n    session_user::text\n  );\n"
+    },
+    {
+      "signature": "network.audit_identity_governance()",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, network"
+      ],
+      "source_md5": "f80c615754cf38097069fc013aec033d",
+      "operator_execute": true,
+      "effective_acl": [
+        {
+          "grantor": "postgres",
+          "grantee": "postgres",
+          "privilege": "EXECUTE",
+          "grantable": false
+        }
+      ]
+    },
+    {
+      "signature": "network.set_updated_at()",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": false,
+      "config": [
+        "search_path=pg_catalog"
+      ],
+      "source_md5": "40043976fc2eee8e6d36b3ce6cac72ac",
+      "operator_execute": true,
+      "effective_acl": [
+        {
+          "grantor": "postgres",
+          "grantee": "postgres",
+          "privilege": "EXECUTE",
+          "grantable": false
+        }
+      ],
+      "source": "\nbegin\n  new.updated_at := statement_timestamp();\n  return new;\nend;\n"
+    },
+    {
+      "signature": "network.resolve_canonical_entity(uuid)",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": false,
+      "config": [
+        "search_path=pg_catalog, network"
+      ],
+      "source_md5": "136ce59028da1700c94b33511947d8d4",
+      "operator_execute": true,
+      "effective_acl": [
+        {
+          "grantor": "postgres",
+          "grantee": "postgres",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_identity_governor",
+          "privilege": "EXECUTE",
+          "grantable": false
+        },
+        {
+          "grantor": "postgres",
+          "grantee": "myth_v23_foundation",
+          "privilege": "EXECUTE",
+          "grantable": false
+        }
+      ]
+    },
+    {
+      "signature": "ops.origin_allowed(text,text,text)",
+      "owner": "postgres",
+      "owner_superuser": false,
+      "owner_bypassrls": true,
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, ops"
+      ],
+      "source_md5": "ca890d82421f1b2594fefe67ad326c5b",
+      "operator_execute": true,
+      "effective_acl": [
+        {
+          "grantor": "postgres",
+          "grantee": "postgres",
+          "privilege": "EXECUTE",
+          "grantable": false
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "name": "network.network_entities",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true,
+      "acl_raw": "{postgres=arwdDxtm/postgres,myth_identity_governor=arw/postgres,myth_identity_proposer_move=r/postgres,myth_identity_proposer_lender=r/postgres,myth_identity_proposer_insurance=r/postgres,myth_identity_proposer_contractor=r/postgres,myth_identity_proposer_senior=r/postgres,myth_identity_proposer_investor=r/postgres,myth_v23_foundation=r/postgres,myth_v23_prod_reader=r/postgres}"
+    },
+    {
+      "name": "network.network_entity_bindings",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true,
+      "acl_raw": "{postgres=arwdDxtm/postgres,myth_identity_governor=arw/postgres,myth_identity_proposer_move=ar/postgres,myth_identity_proposer_lender=ar/postgres,myth_identity_proposer_insurance=ar/postgres,myth_identity_proposer_contractor=ar/postgres,myth_identity_proposer_senior=ar/postgres,myth_identity_proposer_investor=ar/postgres,myth_v23_foundation=r/postgres,myth_v23_prod_reader=r/postgres}"
+    },
+    {
+      "name": "network.identity_governance_events",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true,
+      "acl_raw": "{postgres=arwdDxtm/postgres,myth_identity_governor=r/postgres}"
+    },
+    {
+      "name": "network.network_entity_redirects",
+      "owner": "postgres",
+      "rls_enabled": true,
+      "force_rls": true,
+      "operator_select": true,
+      "operator_insert": true,
+      "operator_update": true,
+      "acl_raw": "{postgres=arwdDxtm/postgres,myth_identity_governor=r/postgres,myth_v23_foundation=r/postgres}"
+    }
+  ],
+  "sequence": {
+    "name": "network.identity_governance_events_id_seq",
+    "owner": "postgres",
+    "acl_raw": "{postgres=rwU/postgres,myth_identity_governor=rU/postgres}",
+    "operator_usage": true,
+    "operator_select": true,
+    "operator_update": true
+  },
+  "relevant_defaults": [
+    {
+      "table": "network.network_entity_bindings",
+      "column": "created_by",
+      "expression": "network.request_actor()"
+    },
+    {
+      "table": "network.network_entity_redirects",
+      "column": "created_by",
+      "expression": "network.request_actor()"
+    },
+    {
+      "table": "network.network_entities",
+      "column": "id",
+      "expression": "gen_random_uuid()"
+    },
+    {
+      "table": "network.network_entity_bindings",
+      "column": "id",
+      "expression": "gen_random_uuid()"
+    }
+  ],
+  "relevant_generated_expressions": [
+    {
+      "table": "network.network_entity_bindings",
+      "column": "source_identifier_normalized",
+      "expression": "lower(btrim(source_identifier))"
+    },
+    {
+      "table": "network.network_entity_bindings",
+      "column": "jurisdiction_key",
+      "expression": "lower(COALESCE(NULLIF(btrim(jurisdiction), ''::text), '*'::text))"
+    }
+  ],
+  "user_triggers": [
+    {
+      "table": "network.network_entities",
+      "name": "network_entities_audit",
+      "timing": "AFTER INSERT OR UPDATE",
+      "function": "network.audit_identity_governance()",
+      "enabled": "O"
+    },
+    {
+      "table": "network.network_entities",
+      "name": "network_entities_set_updated_at",
+      "timing": "BEFORE UPDATE",
+      "function": "network.set_updated_at()",
+      "enabled": "O"
+    },
+    {
+      "table": "network.network_entity_bindings",
+      "name": "network_entity_bindings_audit",
+      "timing": "AFTER INSERT OR UPDATE",
+      "function": "network.audit_identity_governance()",
+      "enabled": "O"
+    },
+    {
+      "table": "network.network_entity_bindings",
+      "name": "network_entity_bindings_set_updated_at",
+      "timing": "BEFORE UPDATE",
+      "function": "network.set_updated_at()",
+      "enabled": "O"
+    },
+    {
+      "table": "network.network_entity_redirects",
+      "name": "network_entity_redirects_audit",
+      "timing": "AFTER INSERT",
+      "function": "network.audit_identity_governance()",
+      "enabled": "O"
+    }
+  ],
+  "audit_chain_observed_in_function_source": "network.audit_identity_governance() calls network.request_actor() and inserts into network.identity_governance_events. The audit table has an owned sequence, recorded above. No custom trigger was returned for identity_governance_events.",
+  "safe_scalar_probe": {
+    "request_actor_call_succeeded": true,
+    "request_actor_matches_session_user": true
+  },
+  "state_markers": {
+    "authority_owner": "postgres",
+    "authority_whitespace_stripped_source_md5": "691e2f2e05426c60af8fa3a54f38eac9",
+    "shared_issuer_has_senior_arm": false,
+    "investor_context_installed": false
+  },
+  "execution_boundary": {
+    "production_inserts": 0,
+    "production_role_changes": 0,
+    "production_ddl": 0,
+    "production_packet_execution": false,
+    "transactions": "Both explicit READ ONLY transactions ended with ROLLBACK"
+  },
+  "limitations": [
+    "No production insert or rollback execution was tested.",
+    "No binding-row inventory was re-counted by these probes.",
+    "The first read also inspected constraints, indexes, internal triggers, defaults, and other network functions; this file selects the relevant observations rather than representing the full raw response.",
+    "Catalog dependency data alone does not establish every procedural or dynamic dependency. The corrected local fixture must execute the actual remaining packet path with defaults and triggers enabled.",
+    "This evidence does not certify PR #262 or authorize a production resume."
+  ]
+}
