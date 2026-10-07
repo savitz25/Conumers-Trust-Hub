@@ -17,7 +17,11 @@ do $$ begin
     raise exception 'V23_PROD_INVESTOR_CONTEXT_ROLLBACK_PRECONDITION_FAIL: nothing to remove';
   end if;
 end $$;
+grant myth_v23_foundation to current_user with admin false,inherit false,set true granted by current_user;
+set local role myth_v23_foundation;
 drop function v23_private.prod_investor_issue_context(jsonb,uuid,uuid);
+reset role;
+revoke myth_v23_foundation from current_user granted by current_user;
 do $$ begin
   if to_regprocedure('v23_private.prod_issue_context(jsonb,uuid,uuid)') is null then
     raise exception 'V23_PROD_INVESTOR_CONTEXT_ROLLBACK_FAIL: the Move issuer must remain';

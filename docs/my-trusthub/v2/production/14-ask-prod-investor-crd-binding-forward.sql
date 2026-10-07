@@ -6,6 +6,10 @@
 --   policy   prod_investor_crd_bindings on network.network_entity_bindings (SELECT, myth_v23_prod_reader)
 --   policy   prod_investor_crd_entities on network.network_entities        (SELECT, myth_v23_prod_reader)
 --   function v23_private.prod_investor_crd_binding_for(text)               (owner myth_v23_prod_reader)
+-- The resolution proof assumes myth_v23_prod_reader after that owner change,
+-- because alter owner moves execute off the operator. It resets the role and
+-- revokes the membership before commit. The function body and the ending ACL
+-- are unchanged.
 -- Nothing else. INSERT only on the identity tables: no UPDATE, no DELETE, no
 -- upsert, no merge, no name or slug match. Any existing claim on one of the
 -- three CRDs or the three canonical profile refs aborts the whole transaction.
@@ -148,9 +152,8 @@ grant create on schema v23_private to myth_v23_prod_reader;
 grant myth_v23_prod_reader to current_user with admin false, inherit false, set true granted by current_user;
 alter function v23_private.prod_investor_crd_binding_for(text) owner to myth_v23_prod_reader;
 revoke create on schema v23_private from myth_v23_prod_reader;
-revoke myth_v23_prod_reader from current_user granted by current_user;
 
-do $$ declare n integer; r record; begin
+do $$ declare n integer; r record; crds text[]; binding_ids uuid[]; entity_ids uuid[]; i integer; begin
   if has_function_privilege('public','v23_private.prod_investor_crd_binding_for(text)','EXECUTE')
      or has_function_privilege('anon','v23_private.prod_investor_crd_binding_for(text)','EXECUTE')
      or has_function_privilege('authenticated','v23_private.prod_investor_crd_binding_for(text)','EXECUTE')
@@ -158,24 +161,39 @@ do $$ declare n integer; r record; begin
      or not has_function_privilege('myth_v23_executor','v23_private.prod_investor_crd_binding_for(text)','EXECUTE') then
     raise exception 'V23_PROD_INVESTOR_RESOLVER_ACL_FAIL';
   end if;
+  -- Read the receipt as the operator. The temp table is not visible to the
+  -- resolver owner, and that owner is who must call the function.
+  select coalesce(array_agg(crd order by crd), '{}'),
+         coalesce(array_agg(binding_id order by crd), '{}'),
+         coalesce(array_agg(network_entity_id order by crd), '{}')
+    into crds, binding_ids, entity_ids
+    from pg_temp.v23investor_receipt;
+  if coalesce(array_length(crds, 1), 0) <> 3 then
+    raise exception 'Investor receipt must be exactly the three created canary bindings, got %', coalesce(array_length(crds, 1), 0);
+  end if;
+  -- Same reviewed owner session as packet 02. Alter owner moved execute here.
+  -- The body is security definer and nobypassrls, so this is the RLS proof.
+  set local role myth_v23_prod_reader;
   -- Impossible and malformed identities return nothing.
   for r in select unnest(array['crd-0', 'crd-', '%', 'sec-crd-106176', '106176', 'WEINBERGER ASSET MANAGEMENT, INC']) as bad loop
     select count(*) into n from v23_private.prod_investor_crd_binding_for(r.bad);
     if n <> 0 then raise exception 'V23_PROD_INVESTOR_RESOLVER_FAIL: % matched', r.bad; end if;
   end loop;
   -- Each created binding resolves as exactly one accepted, exact row.
-  for r in select * from pg_temp.v23investor_receipt loop
-    select count(*) into n from v23_private.prod_investor_crd_binding_for('crd-' || r.crd) f
-     where f.id = r.binding_id and f.network_entity_id = r.network_entity_id and f.binding_status = 'accepted'
-       and f.specialist_entity_type = 'official_firm' and f.specialist_entity_id = 'crd-' || r.crd
-       and f.identifier_namespace = 'sec.crd' and f.source_identifier = r.crd and f.jurisdiction = 'US'
-       and f.entity_status = 'active' and f.canonical_public_profile_ref = '/firm/sec-crd-' || r.crd;
-    if n <> 1 or (select count(*) from v23_private.prod_investor_crd_binding_for('crd-' || r.crd)) <> 1 then
-      raise exception 'V23_PROD_INVESTOR_RESOLVER_FAIL: crd % does not resolve to its one created binding', r.crd;
+  for i in 1 .. array_length(crds, 1) loop
+    select count(*) into n from v23_private.prod_investor_crd_binding_for('crd-' || crds[i]) f
+     where f.id = binding_ids[i] and f.network_entity_id = entity_ids[i] and f.binding_status = 'accepted'
+       and f.specialist_entity_type = 'official_firm' and f.specialist_entity_id = 'crd-' || crds[i]
+       and f.identifier_namespace = 'sec.crd' and f.source_identifier = crds[i] and f.jurisdiction = 'US'
+       and f.entity_status = 'active' and f.canonical_public_profile_ref = '/firm/sec-crd-' || crds[i];
+    if n <> 1 or (select count(*) from v23_private.prod_investor_crd_binding_for('crd-' || crds[i])) <> 1 then
+      raise exception 'V23_PROD_INVESTOR_RESOLVER_FAIL: crd % does not resolve to its one created binding', crds[i];
     end if;
   end loop;
+  reset role;
   raise notice 'V23_PROD_INVESTOR_CRD_BINDINGS_APPLIED';
 end $$;
+revoke myth_v23_prod_reader from current_user granted by current_user;
 
 select crd, binding_id, network_entity_id, canonical_public_profile_ref
   from pg_temp.v23investor_receipt

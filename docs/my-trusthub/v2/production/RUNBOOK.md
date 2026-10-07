@@ -229,7 +229,7 @@ can resolve a DBPR profile. Move keeps `prod_issue_context`. Investor keeps
 | File | Purpose | Marker |
 | --- | --- | --- |
 | `15-ask-prod-hub-account-context-forward.sql` | One new function, `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)`, owned by `myth_v23_foundation`, EXECUTE for `myth_v23_authorizer` only. Accepts exactly `lender`, `insurance`, and `contractor`, each mapped to its pinned production origin. Refuses `move`, `investor`, `senior`, empty, unknown, and a proof that carries a hub field. | `V23_PROD_HUB_CONTEXT_APPLIED` |
-| `15-ask-prod-hub-account-context-rollback.sql` | Drops that function only when its source bytes, signature, owner, security definer, search_path, and complete ACL are the frozen Packet 15 predecessor. A different source, including a changed origin literal or the Packet 18 body, is refused. An added, removed, or grant-option-changed privilege is refused. A null ACL is the default privilege set, not an empty grant list. Run the Packet 18 rollback first when the Senior arm is installed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
+| `15-ask-prod-hub-account-context-rollback.sql` | Drops that function only when its source bytes, signature, owner, security definer, search_path, and complete ACL are the frozen Packet 15 predecessor. A different source, including a changed origin literal or the Packet 18 body, is refused. An added, removed, or grant-option-changed privilege is refused. A null ACL is the default privilege set, not an empty grant list. The guard does not change privileges. After it passes, the drop assumes `myth_v23_foundation` and revokes that membership before commit. Run the Packet 18 rollback first when the Senior arm is installed. The Move issuer is untouched. This rollback does not drop `prod_investor_issue_context`. | `V23_PROD_HUB_CONTEXT_ROLLED_BACK` |
 
 Order for a specialist canary: deploy this Ask build, apply packet 15, apply
 that specialist's binding packet, exchange keys, then open that specialist's
@@ -283,14 +283,28 @@ closed with no Saved row and no acknowledgement.
 | File | Purpose | Marker |
 | --- | --- | --- |
 | `18-ask-prod-senior-hub-context-preflight.sql` | Read-only. The installed shared issuer must be the frozen Packet 15 body, Senior must not already be admitted, and the three pinned origins must match. Any other body stops. | `V23_PROD_SENIOR_HUB_CONTEXT_PREFLIGHT_PASS` |
-| `18-ask-prod-senior-hub-context-forward.sql` | Replaces the shared issuer so the exact hubs are lender, insurance, contractor, and senior. | `V23_PROD_SENIOR_HUB_CONTEXT_APPLIED` |
-| `18-ask-prod-senior-hub-context-rollback.sql` | Restores the frozen three-hub function. Senior is denied again. The function is not dropped. Run this before the Packet 15 rollback when the Senior arm is installed. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
+| `18-ask-prod-senior-hub-context-forward.sql` | After the frozen Packet 15 check, assumes `myth_v23_foundation` and replaces the shared issuer so the exact hubs are lender, insurance, contractor, and senior. Resets that role and revokes the temporary membership before commit. | `V23_PROD_SENIOR_HUB_CONTEXT_APPLIED` |
+| `18-ask-prod-senior-hub-context-rollback.sql` | After the Packet 18 body check, assumes `myth_v23_foundation` and restores the frozen three-hub function. Senior is denied again. The function is not dropped. Run this before the Packet 15 rollback when the Senior arm is installed. | `V23_PROD_SENIOR_HUB_CONTEXT_ROLLED_BACK` |
 
 The verified caller hub is still `a.caller.hub`. A browser field cannot select it.
 Apply Packet 15 first. Run the Packet 18 preflight. Apply Packet 18 only when
 that preflight passes. Packet 17 stays a separate operator step.
 
-Local proof: `npm run check:my-trusthub-v2-hub-context`. The full Move widening
+### Resume after the hosted Packet 18 stop
+
+The hosted Packet 18 transaction aborted. Do not rerun Packets 12, 13, or 15.
+Do not apply this corrected Packet 18 until C-B1 has reviewed it and a separate
+authorization names that corrected file.
+
+1. Verify the six already-committed binding receipts: three Lender and three Insurance. Leave those rows as they are.
+2. Verify `v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text)` is still the Packet 15 predecessor: owner `myth_v23_foundation`, the frozen three-hub source, and the reviewed EXECUTE grants for `myth_v23_foundation` and `myth_v23_authorizer`.
+3. Verify `v23_private.authority()` is still the reviewed three-hub baseline.
+4. Resume at the corrected Packet 18 only. Then Investor context and bindings, Contractor bindings (`CGC1517216`), Senior bindings, and Packet 19.
+5. Packet 13 stays the committed Insurance receipt. Do not rerun it. Later local proof uses Insurance `TX 9982` for packets that have not been applied.
+
+The corrected Packet 18 forward and rollback assume `myth_v23_foundation` only around the owned `create or replace`, after the predecessor guard, and revoke that membership before commit. The Packet 15 rollback and the Investor context rollback do the same only around their drop. The Investor binding proof assumes `myth_v23_prod_reader` only for the resolver calls, after ownership has moved, and revokes that membership before commit. Contractor and Senior binding packets do not call their resolvers. Packet 19 replaces `authority()` in place; the applying role must already own that function.
+
+Local proof: `npm run check:my-trusthub-v2-hub-context`. The non-superuser ownership proof is `npm run check:my-trusthub-v2-packet18-operator`. The full Move widening
 suite is `npm run check:my-trusthub-v2-3-widening`.
 
 ## Contractor production SQL (packet 16 bindings, packet 19 authority)

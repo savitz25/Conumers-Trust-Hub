@@ -9,6 +9,8 @@
 --
 -- The installed body must be the Packet 18 four-hub function. Any other body
 -- stops, including a body that is still the untouched Packet 15 function.
+-- The operator assumes myth_v23_foundation only for the restore, after that
+-- check, and revokes the membership before commit.
 begin;
 set local statement_timeout = '15s';
 set local lock_timeout = '3s';
@@ -54,6 +56,11 @@ select set_config('v23.packet18_move_md5', (select md5(prosrc) from pg_proc wher
 select set_config('v23.packet18_authority_md5', (select md5(prosrc) from pg_proc where oid = to_regprocedure('v23_private.authority()')), true);
 select set_config('v23.packet18_investor_md5', coalesce((select md5(prosrc) from pg_proc where oid = to_regprocedure('v23_private.prod_investor_issue_context(jsonb,uuid,uuid)')), ''), true);
 
+-- Same reviewed owner session as packet 02: membership, set role, owned work, reset, revoke.
+grant create on schema v23_private to myth_v23_foundation;
+grant myth_v23_foundation to current_user with admin false,inherit false,set true granted by current_user;
+set local role myth_v23_foundation;
+
 create or replace function v23_private.prod_hub_issue_context(proof jsonb,subject uuid,session uuid,p_hub text) returns boolean
 language plpgsql security definer set search_path=pg_catalog,v23_private,ops as $$
 declare pin v23_private.prod_deployment_pin%rowtype; hub_origin text;
@@ -78,9 +85,8 @@ end $$;
 
 revoke all on function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) from public,anon,authenticated;
 grant execute on function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) to myth_v23_authorizer;
-grant create on schema v23_private to myth_v23_foundation;
-grant myth_v23_foundation to current_user with admin false,inherit false,set true granted by current_user;
 alter function v23_private.prod_hub_issue_context(jsonb,uuid,uuid,text) owner to myth_v23_foundation;
+reset role;
 revoke create on schema v23_private from myth_v23_foundation;
 revoke myth_v23_foundation from current_user granted by current_user;
 
