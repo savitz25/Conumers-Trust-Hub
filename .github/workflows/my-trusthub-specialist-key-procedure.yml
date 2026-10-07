@@ -1,0 +1,19 @@
+name: My TrustHub specialist key procedure
+on:
+  pull_request:
+    paths:
+      - 'scripts/release/mth-v2-specialist-keys*.mjs'
+      - 'docs/my-trusthub/v2/specialist-key-provisioning.md'
+      - '.github/workflows/my-trusthub-specialist-key-procedure.yml'
+permissions:
+  contents: read
+jobs:
+  mocked-provisioning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test scripts/release/mth-v2-specialist-keys.test.mjs
