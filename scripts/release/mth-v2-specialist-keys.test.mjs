@@ -37,6 +37,29 @@ const rejects = async (f, code) => {
   await assert.rejects(run(f.options,f.deps), error=>error.message===code);
   assert.equal(f.calls.length,0,'guard must abort before any Vercel write');
 };
+const rejectsClosed = async (f, code) => {
+  await rejects(f, code);
+  assert.equal(f.generated,0,'guard must abort before key generation');
+};
+// Canonical activation spellings. Parent-save siblings for hubs whose literals
+// are not in this repo are family probes, not newly invented production names.
+const ACTIVATION_CANONICAL = [
+  ...['move','lender','investor','insurance','senior','contractor'].flatMap(hub => [
+    `NEXT_PUBLIC_${hub.toUpperCase()}_PARENT_SAVE_ENABLED`,
+    `MTH_${hub.toUpperCase()}_PARENT_SAVE_MODE`]),
+  'NEXT_PUBLIC_MOVE_PARENT_SAVE_CANARY_SLUGS','NEXT_PUBLIC_INVESTOR_PARENT_SAVE_CANARY_SLUGS',
+  'MTH_MOVE_PARENT_SAVE_ISOLATED_APPROVED','MTH_MOVE_PARENT_SAVE_PARENT_PROTECTION_BYPASS',
+  'NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC','NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED',
+  'MTH_V23_MOVE_ISOLATED_SOURCE','MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED',
+  'MY_TRUSTHUB_ENABLED','MY_TRUSTHUB_SIGNUP_ENABLED','MY_TRUSTHUB_SAVED_ENABLED','MY_TRUSTHUB_PROJECTS_ENABLED',
+  'MY_TRUSTHUB_SESSIONS_ENABLED','MY_TRUSTHUB_WATCH_ENABLED','MY_TRUSTHUB_ALERTS_ENABLED','MY_TRUSTHUB_EMAIL_ENABLED',
+  'MY_TRUSTHUB_EXPORT_ENABLED','MY_TRUSTHUB_DELETE_ENABLED','MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED',
+  'MY_TRUSTHUB_SOURCE_MONITORING_ENABLED','MY_TRUSTHUB_ACCESS_MODE','MY_TRUSTHUB_CANARY_ONLY','MY_TRUSTHUB_CANARY_EMAILS',
+  'MY_TRUSTHUB_CANARY_USER_IDS','MY_TRUSTHUB_INVITED_EMAILS','MY_TRUSTHUB_INVITED_USER_IDS','MY_TRUSTHUB_AUTH_SECURITY_READY',
+  'MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS','MY_TRUSTHUB_NONPRODUCTION_APPROVED','MY_TRUSTHUB_CONTRACTOR_SAVE_ENABLED',
+  'MY_TRUSTHUB_V23_PRODUCTION_HANDOFF_ENABLED','MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED',
+  'ATH_CLAIM_CTA_MODE','ATH_CLAIM_ENABLED_STATES','ATH_CLAIM_CANARY_PROFILE_IDS','CARE_ENABLE_UNLISTED'];
+const caseVariants = canonical => [canonical.toLowerCase(), canonical[0] + canonical.slice(1).toLowerCase()];
 
 test('dry-run defaults offline: names only, no key generation, reads or CLI', async()=>{
   const f=fixture();
@@ -113,6 +136,100 @@ test('complete fresh metadata required; no decrypted values and no missing exist
   const g=fixture(); g.metadata.decrypted=true; await rejects(g,'APPROVED_METADATA_REQUIRED');
   const h=fixture(); h.metadata.projects.ask.env=[{key:'EXAMPLE',type:'config',value:'forbidden'}]; await rejects(h,'NAME_ONLY_METADATA_REQUIRED');
   const j=fixture(); j.metadata.projects.senior.env=[{key:name('senior','KEY_ID'),type:'config'},{key:name('senior','SIGNING_PRIVATE_KEY_PEM'),type:'secret'}]; await rejects(j,'INVENTORY_METADATA_DISAGREE');
+});
+
+test('lowercase and mixed-case inventory names pass; written targets stay uppercase',async()=>{
+  const f=fixture(['lender']);
+  f.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive'}];
+  f.metadata.projects.insurance.env=[{key:'ImprovMX_API',type:'encrypted'}];
+  f.metadata.projects.move.env=[
+    {key:'_leading_underscore',type:'plain'},
+    {key:'a'.repeat(256),type:'config'},
+    {key:'MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED',type:'plain'}];
+  await run(f.options,f.deps);
+  assert.ok(f.calls.length>0);
+  assert.ok(f.calls.every(c=>/^[A-Z0-9_]+$/.test(c.argv[3])));
+  assert.equal(f.calls.some(c=>c.argv[3]==='neon_tech_database'||c.argv[3]==='ImprovMX_API'),false);
+  const existing=fixture(['lender']);
+  existing.metadata.projects.lender.env=[
+    {key:name('lender','KEY_ID'),type:'config'},
+    {key:name('lender','SIGNING_PRIVATE_KEY_PEM'),type:'secret'}];
+  existing.inventory.keys.lender=record('lender',8,'20261001');
+  await rejects(existing,'TARGET_NAME_EXISTS');
+});
+
+test('case-only controlled names, malformed names, and exact duplicates fail closed',async()=>{
+  for(const key of ['my_trusthub_v23_lender_key_id','MY_TRUSTHUB_V23_ask_KEY_ID','my_trusthub_v23_move_verify_public_key_pem','MY_TRUSTHUB_V23_parent_ORIGIN','my_trusthub_v23_profile_save_enabled']) {
+    const f=fixture(['lender']); f.metadata.projects.ask.env=[{key,type:'config'}];
+    await rejects(f,'NAME_ONLY_METADATA_REQUIRED');
+  }
+  for(const key of ['','1PASSWORD','HAS SPACE','HAS=VALUE','has-hyphen','dot.name','a/b','-----BEGIN PUBLIC KEY-----','x'.repeat(257),'quote"name',"quote'name",'line\nbreak','{json:1}','https://example.com',123]) {
+    const f=fixture(['lender']); f.metadata.projects.ask.env=[{key,type:'config'}];
+    await rejects(f,'NAME_ONLY_METADATA_REQUIRED');
+  }
+  const valued=fixture(['lender']);
+  valued.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive',value:'secret'}];
+  await rejects(valued,'NAME_ONLY_METADATA_REQUIRED');
+  const typed=fixture(['lender']);
+  typed.metadata.projects.insurance.env=[{key:'ImprovMX_API',type:'public'}];
+  await rejects(typed,'NAME_ONLY_METADATA_REQUIRED');
+  const dup=fixture(['lender']);
+  dup.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive'},{key:'neon_tech_database',type:'config'}];
+  await rejects(dup,'DUPLICATE_ENV_METADATA');
+});
+
+test('exact uppercase activation controls pass beside unrelated mixed-case names',async()=>{
+  const f=fixture(['lender']);
+  f.metadata.projects.ask.env=[
+    {key:'neon_tech_database',type:'sensitive'},
+    {key:'NEXT_PUBLIC_INSURANCE_PARENT_SAVE_ENABLED',type:'plain'},
+    {key:'MY_TRUSTHUB_ENABLED',type:'plain'},
+    {key:'MY_TRUSTHUB_V23_PRODUCTION_HANDOFF_ENABLED',type:'plain'},
+    {key:'ATH_CLAIM_CTA_MODE',type:'plain'}];
+  f.metadata.projects.insurance.env=[
+    {key:'ImprovMX_API',type:'encrypted'},
+    {key:'MTH_INSURANCE_PARENT_SAVE_MODE',type:'plain'},
+    {key:'NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC',type:'plain'}];
+  await run(f.options,f.deps);
+  assert.ok(f.calls.length>0);
+  assert.ok(f.calls.every(c=>/^[A-Z0-9_]+$/.test(c.argv[3])));
+  assert.equal(f.calls.some(c=>/parent_save|improv|neon_tech|contractor_sync/i.test(c.argv[3])),false);
+});
+
+test('case-only activation controls fail closed before writes or generation',async()=>{
+  const variants=ACTIVATION_CANONICAL.flatMap(caseVariants);
+  assert.ok(variants.length>13);
+  assert.ok(variants.includes('next_public_insurance_parent_save_enabled'));
+  assert.ok(variants.includes('mth_insurance_parent_save_mode'));
+  for(const key of variants) {
+    const f=fixture(['lender']);
+    f.metadata.projects.ask.env=[{key,type:'plain'}];
+    try { await rejectsClosed(f,'NAME_ONLY_METADATA_REQUIRED'); }
+    catch (error) { error.message=`${key}: ${error.message}`; throw error; }
+  }
+});
+
+const MOVE_PRODUCTION_SOURCE = ['MTH_V23_MOVE_PRODUCTION_SOURCE','MTH_V23_MOVE_PRODUCTION_SOURCE_APPROVED'];
+const letterFlips = canonical => [...canonical].flatMap((char, index) => char.toLowerCase() === char ? [] : [canonical.slice(0, index) + char.toLowerCase() + canonical.slice(index + 1)]);
+const productionSourceAliases = canonical => [canonical.toLowerCase(), canonical[0] + canonical.slice(1).toLowerCase(), ...letterFlips(canonical)];
+
+test('Move production-source controls reject case-only aliases and accept exact uppercase',async()=>{
+  const aliases = MOVE_PRODUCTION_SOURCE.flatMap(productionSourceAliases);
+  assert.equal(aliases.length, 60);
+  assert.equal(new Set(aliases).size, 60);
+  for (const key of aliases) {
+    const f = fixture(['lender']);
+    f.metadata.projects.move.env = [{key, type:'plain'}];
+    try { await rejectsClosed(f, 'NAME_ONLY_METADATA_REQUIRED'); }
+    catch (error) { error.message = `${key}: ${error.message}`; throw error; }
+  }
+  const ok = fixture(['lender']);
+  ok.metadata.projects.ask.env = [{key:'neon_tech_database', type:'sensitive'}];
+  ok.metadata.projects.insurance.env = [{key:'ImprovMX_API', type:'encrypted'}];
+  ok.metadata.projects.move.env = MOVE_PRODUCTION_SOURCE.map(key => ({key, type:'plain'}));
+  await run(ok.options, ok.deps);
+  assert.ok(ok.calls.length > 0);
+  assert.equal(ok.calls.some(c => MOVE_PRODUCTION_SOURCE.includes(c.argv[3]) || c.argv[3] === 'neon_tech_database' || c.argv[3] === 'ImprovMX_API'), false);
 });
 
 test('Ask phase uses successful public bundles, no generation, only ten Ask verify names',async()=>{

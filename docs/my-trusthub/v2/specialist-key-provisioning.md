@@ -104,6 +104,25 @@ Empty arrays mean the connector actually observed no production variables, not
 `encrypted`, `plain`, `config`, `system`; signing keys must be `secret`/`sensitive`.
 No `value` property is accepted. Verify types against the connector response.
 
+Inventory names may be any case Vercel already stores. Valid characters are
+letters, digits, and `_`, at most 256 characters, and the name must start with
+a letter or underscore (`^[A-Za-z_][A-Za-z0-9_]{0,255}$`; Vercel
+`env_key_invalid_characters` / `env_key_invalid_length` and the CLI env-name
+schema). A complete list includes pre-existing names such as
+`neon_tech_database` and `ImprovMX_API`; do not omit a real production name.
+A name that case-folds onto a controlled spelling must be that exact uppercase
+spelling, or the script rejects it with `NAME_ONLY_METADATA_REQUIRED`. Exact
+uppercase controls remain valid metadata. Controlled spellings are
+`MY_TRUSTHUB_*` (every V23 target, gate, KID, verify key, and Ask/Move
+protected name), parent-save names matching `^(NEXT_PUBLIC_|MTH_).+PARENT_SAVE`,
+`CARE_ENABLE_*`, `ATH_CLAIM_*`, plus `NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC`,
+`NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED`, `MTH_V23_MOVE_ISOLATED_SOURCE`,
+`MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`, `MTH_V23_MOVE_PRODUCTION_SOURCE`, and
+`MTH_V23_MOVE_PRODUCTION_SOURCE_APPROVED`. The production-source pair is the
+Move publication attestation read by `savitz25/Move-trust-Hub`
+`lib/my-trusthub/publication-resolver.ts`. Empty, duplicate, and value-shaped
+names are rejected.
+
 ### Public inventory input
 
 ```json
