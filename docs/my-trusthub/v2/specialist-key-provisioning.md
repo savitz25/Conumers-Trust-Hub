@@ -116,8 +116,11 @@ uppercase controls remain valid metadata. Controlled spellings are
 `MY_TRUSTHUB_*` (every V23 target, gate, KID, verify key, and Ask/Move
 protected name), parent-save names matching `^(NEXT_PUBLIC_|MTH_).+PARENT_SAVE`,
 `CARE_ENABLE_*`, `ATH_CLAIM_*`, plus `NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC`,
-`NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED`, `MTH_V23_MOVE_ISOLATED_SOURCE`, and
-`MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`. Empty, duplicate, and value-shaped
+`NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED`, `MTH_V23_MOVE_ISOLATED_SOURCE`,
+`MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`, `MTH_V23_MOVE_PRODUCTION_SOURCE`, and
+`MTH_V23_MOVE_PRODUCTION_SOURCE_APPROVED`. The production-source pair is the
+Move publication attestation read by `savitz25/Move-trust-Hub`
+`lib/my-trusthub/publication-resolver.ts`. Empty, duplicate, and value-shaped
 names are rejected.
 
 ### Public inventory input

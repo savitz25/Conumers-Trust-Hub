@@ -209,6 +209,29 @@ test('case-only activation controls fail closed before writes or generation',asy
   }
 });
 
+const MOVE_PRODUCTION_SOURCE = ['MTH_V23_MOVE_PRODUCTION_SOURCE','MTH_V23_MOVE_PRODUCTION_SOURCE_APPROVED'];
+const letterFlips = canonical => [...canonical].flatMap((char, index) => char.toLowerCase() === char ? [] : [canonical.slice(0, index) + char.toLowerCase() + canonical.slice(index + 1)]);
+const productionSourceAliases = canonical => [canonical.toLowerCase(), canonical[0] + canonical.slice(1).toLowerCase(), ...letterFlips(canonical)];
+
+test('Move production-source controls reject case-only aliases and accept exact uppercase',async()=>{
+  const aliases = MOVE_PRODUCTION_SOURCE.flatMap(productionSourceAliases);
+  assert.equal(aliases.length, 60);
+  assert.equal(new Set(aliases).size, 60);
+  for (const key of aliases) {
+    const f = fixture(['lender']);
+    f.metadata.projects.move.env = [{key, type:'plain'}];
+    try { await rejectsClosed(f, 'NAME_ONLY_METADATA_REQUIRED'); }
+    catch (error) { error.message = `${key}: ${error.message}`; throw error; }
+  }
+  const ok = fixture(['lender']);
+  ok.metadata.projects.ask.env = [{key:'neon_tech_database', type:'sensitive'}];
+  ok.metadata.projects.insurance.env = [{key:'ImprovMX_API', type:'encrypted'}];
+  ok.metadata.projects.move.env = MOVE_PRODUCTION_SOURCE.map(key => ({key, type:'plain'}));
+  await run(ok.options, ok.deps);
+  assert.ok(ok.calls.length > 0);
+  assert.equal(ok.calls.some(c => MOVE_PRODUCTION_SOURCE.includes(c.argv[3]) || c.argv[3] === 'neon_tech_database' || c.argv[3] === 'ImprovMX_API'), false);
+});
+
 test('Ask phase uses successful public bundles, no generation, only ten Ask verify names',async()=>{
   const f=fixture(); await run(f.options,f.deps);
   for(const row of plan(HUBS,'specialist')) f.metadata.projects[row.project].env.push({key:row.name,type:row.name.endsWith('_SIGNING_PRIVATE_KEY_PEM')?'secret':'config'});
