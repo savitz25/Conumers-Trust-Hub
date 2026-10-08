@@ -37,6 +37,29 @@ const rejects = async (f, code) => {
   await assert.rejects(run(f.options,f.deps), error=>error.message===code);
   assert.equal(f.calls.length,0,'guard must abort before any Vercel write');
 };
+const rejectsClosed = async (f, code) => {
+  await rejects(f, code);
+  assert.equal(f.generated,0,'guard must abort before key generation');
+};
+// Canonical activation spellings. Parent-save siblings for hubs whose literals
+// are not in this repo are family probes, not newly invented production names.
+const ACTIVATION_CANONICAL = [
+  ...['move','lender','investor','insurance','senior','contractor'].flatMap(hub => [
+    `NEXT_PUBLIC_${hub.toUpperCase()}_PARENT_SAVE_ENABLED`,
+    `MTH_${hub.toUpperCase()}_PARENT_SAVE_MODE`]),
+  'NEXT_PUBLIC_MOVE_PARENT_SAVE_CANARY_SLUGS','NEXT_PUBLIC_INVESTOR_PARENT_SAVE_CANARY_SLUGS',
+  'MTH_MOVE_PARENT_SAVE_ISOLATED_APPROVED','MTH_MOVE_PARENT_SAVE_PARENT_PROTECTION_BYPASS',
+  'NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC','NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED',
+  'MTH_V23_MOVE_ISOLATED_SOURCE','MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED',
+  'MY_TRUSTHUB_ENABLED','MY_TRUSTHUB_SIGNUP_ENABLED','MY_TRUSTHUB_SAVED_ENABLED','MY_TRUSTHUB_PROJECTS_ENABLED',
+  'MY_TRUSTHUB_SESSIONS_ENABLED','MY_TRUSTHUB_WATCH_ENABLED','MY_TRUSTHUB_ALERTS_ENABLED','MY_TRUSTHUB_EMAIL_ENABLED',
+  'MY_TRUSTHUB_EXPORT_ENABLED','MY_TRUSTHUB_DELETE_ENABLED','MY_TRUSTHUB_SPECIALIST_HANDOFF_ENABLED',
+  'MY_TRUSTHUB_SOURCE_MONITORING_ENABLED','MY_TRUSTHUB_ACCESS_MODE','MY_TRUSTHUB_CANARY_ONLY','MY_TRUSTHUB_CANARY_EMAILS',
+  'MY_TRUSTHUB_CANARY_USER_IDS','MY_TRUSTHUB_INVITED_EMAILS','MY_TRUSTHUB_INVITED_USER_IDS','MY_TRUSTHUB_AUTH_SECURITY_READY',
+  'MY_TRUSTHUB_PREVIEW_ACCOUNT_ACCESS','MY_TRUSTHUB_NONPRODUCTION_APPROVED','MY_TRUSTHUB_CONTRACTOR_SAVE_ENABLED',
+  'MY_TRUSTHUB_V23_PRODUCTION_HANDOFF_ENABLED','MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED',
+  'ATH_CLAIM_CTA_MODE','ATH_CLAIM_ENABLED_STATES','ATH_CLAIM_CANARY_PROFILE_IDS','CARE_ENABLE_UNLISTED'];
+const caseVariants = canonical => [canonical.toLowerCase(), canonical[0] + canonical.slice(1).toLowerCase()];
 
 test('dry-run defaults offline: names only, no key generation, reads or CLI', async()=>{
   const f=fixture();
@@ -153,6 +176,37 @@ test('case-only controlled names, malformed names, and exact duplicates fail clo
   const dup=fixture(['lender']);
   dup.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive'},{key:'neon_tech_database',type:'config'}];
   await rejects(dup,'DUPLICATE_ENV_METADATA');
+});
+
+test('exact uppercase activation controls pass beside unrelated mixed-case names',async()=>{
+  const f=fixture(['lender']);
+  f.metadata.projects.ask.env=[
+    {key:'neon_tech_database',type:'sensitive'},
+    {key:'NEXT_PUBLIC_INSURANCE_PARENT_SAVE_ENABLED',type:'plain'},
+    {key:'MY_TRUSTHUB_ENABLED',type:'plain'},
+    {key:'MY_TRUSTHUB_V23_PRODUCTION_HANDOFF_ENABLED',type:'plain'},
+    {key:'ATH_CLAIM_CTA_MODE',type:'plain'}];
+  f.metadata.projects.insurance.env=[
+    {key:'ImprovMX_API',type:'encrypted'},
+    {key:'MTH_INSURANCE_PARENT_SAVE_MODE',type:'plain'},
+    {key:'NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC',type:'plain'}];
+  await run(f.options,f.deps);
+  assert.ok(f.calls.length>0);
+  assert.ok(f.calls.every(c=>/^[A-Z0-9_]+$/.test(c.argv[3])));
+  assert.equal(f.calls.some(c=>/parent_save|improv|neon_tech|contractor_sync/i.test(c.argv[3])),false);
+});
+
+test('case-only activation controls fail closed before writes or generation',async()=>{
+  const variants=ACTIVATION_CANONICAL.flatMap(caseVariants);
+  assert.ok(variants.length>13);
+  assert.ok(variants.includes('next_public_insurance_parent_save_enabled'));
+  assert.ok(variants.includes('mth_insurance_parent_save_mode'));
+  for(const key of variants) {
+    const f=fixture(['lender']);
+    f.metadata.projects.ask.env=[{key,type:'plain'}];
+    try { await rejectsClosed(f,'NAME_ONLY_METADATA_REQUIRED'); }
+    catch (error) { error.message=`${key}: ${error.message}`; throw error; }
+  }
 });
 
 test('Ask phase uses successful public bundles, no generation, only ten Ask verify names',async()=>{

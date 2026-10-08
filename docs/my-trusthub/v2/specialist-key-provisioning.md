@@ -110,10 +110,15 @@ a letter or underscore (`^[A-Za-z_][A-Za-z0-9_]{0,255}$`; Vercel
 `env_key_invalid_characters` / `env_key_invalid_length` and the CLI env-name
 schema). A complete list includes pre-existing names such as
 `neon_tech_database` and `ImprovMX_API`; do not omit a real production name.
-Names this script writes, protects, or checks for absence — every
-`MY_TRUSTHUB_V23_*` target, gate, KID, verify key, and Ask/Move protected name —
-stay strictly uppercase (`/^[A-Z0-9_]+$/`). A name that matches one of those
-only by case is rejected. Empty, duplicate, and value-shaped names are rejected.
+A name that case-folds onto a controlled spelling must be that exact uppercase
+spelling, or the script rejects it with `NAME_ONLY_METADATA_REQUIRED`. Exact
+uppercase controls remain valid metadata. Controlled spellings are
+`MY_TRUSTHUB_*` (every V23 target, gate, KID, verify key, and Ask/Move
+protected name), parent-save names matching `^(NEXT_PUBLIC_|MTH_).+PARENT_SAVE`,
+`CARE_ENABLE_*`, `ATH_CLAIM_*`, plus `NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC`,
+`NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED`, `MTH_V23_MOVE_ISOLATED_SOURCE`, and
+`MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED`. Empty, duplicate, and value-shaped
+names are rejected.
 
 ### Public inventory input
 

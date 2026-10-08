@@ -20,11 +20,21 @@ const protectedName = name => /^MY_TRUSTHUB_V23_(ASK|MOVE)_/.test(name);
 // Vercel stores existing names in any case: letters, digits, and underscore,
 // at most 256 characters, starting with a letter or underscore (CLI env-name
 // schema and REST env_key_invalid_characters / env_key_invalid_length).
-// MY_TRUSTHUB_V23_* names this script writes, protects, or checks stay
-// uppercase, so a case-only variant cannot look absent.
+// A case-only variant of a name this script writes, or of an activation
+// control, must not look absent. Parent-save siblings that live in other hub
+// repos are the PARENT_SAVE family, not invented literals.
 const VERCEL_ENV_NAME = /^[A-Za-z_][A-Za-z0-9_]{0,255}$/;
-const inventoryEnvName = key => typeof key === 'string' && VERCEL_ENV_NAME.test(key)
-  && (!key.toUpperCase().startsWith(PREFIX) || /^[A-Z0-9_]+$/.test(key));
+const PARENT_SAVE_CONTROL = /^(?:NEXT_PUBLIC_|MTH_).+PARENT_SAVE/;
+const ACTIVATION_CONTROL = /^(?:MY_TRUSTHUB_|CARE_ENABLE_|ATH_CLAIM_)/;
+const EXPLICIT_CONTROLS = new Set(['NEXT_PUBLIC_MY_TRUSTHUB_CONTRACTOR_SYNC','NEXT_PUBLIC_MOVE_ISOLATED_AUTH_APPROVED',
+  'MTH_V23_MOVE_ISOLATED_SOURCE','MTH_V23_MOVE_ISOLATED_SOURCE_APPROVED']);
+const inventoryEnvName = key => {
+  if (typeof key !== 'string' || !VERCEL_ENV_NAME.test(key)) return false;
+  const upper = key.toUpperCase();
+  const controlled = upper.startsWith(PREFIX) || PARENT_SAVE_CONTROL.test(upper)
+    || ACTIVATION_CONTROL.test(upper) || EXPLICIT_CONTROLS.has(upper);
+  return !controlled || key === upper;
+};
 const fresh = (value, now) => {
   const age = now - Date.parse(value);
   need(Number.isFinite(age) && age >= 0 && age <= 300_000, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
