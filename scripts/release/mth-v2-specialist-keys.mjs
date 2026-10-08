@@ -17,6 +17,14 @@ const fail = code => { throw new Error(code); };
 const need = (ok, code) => { if (!ok) fail(code); };
 const isPrivateName = name => name.endsWith('_SIGNING_PRIVATE_KEY_PEM');
 const protectedName = name => /^MY_TRUSTHUB_V23_(ASK|MOVE)_/.test(name);
+// Vercel stores existing names in any case: letters, digits, and underscore,
+// at most 256 characters, starting with a letter or underscore (CLI env-name
+// schema and REST env_key_invalid_characters / env_key_invalid_length).
+// MY_TRUSTHUB_V23_* names this script writes, protects, or checks stay
+// uppercase, so a case-only variant cannot look absent.
+const VERCEL_ENV_NAME = /^[A-Za-z_][A-Za-z0-9_]{0,255}$/;
+const inventoryEnvName = key => typeof key === 'string' && VERCEL_ENV_NAME.test(key)
+  && (!key.toUpperCase().startsWith(PREFIX) || /^[A-Z0-9_]+$/.test(key));
 const fresh = (value, now) => {
   const age = now - Date.parse(value);
   need(Number.isFinite(age) && age >= 0 && age <= 300_000, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
@@ -101,7 +109,7 @@ function metadataCheck(metadata, now) {
     const p = metadata.projects[hub];
     need(p?.name === PROJECTS[hub] && typeof p.id === 'string' && /^prj_[A-Za-z0-9]+$/.test(p.id)
       && p.environment === 'production' && Array.isArray(p.env), 'PROJECT_TARGET_MISMATCH');
-    need(p.env.every(e => e && Object.keys(e).sort().join() === 'key,type' && /^[A-Z0-9_]+$/.test(e.key)
+    need(p.env.every(e => e && Object.keys(e).sort().join() === 'key,type' && inventoryEnvName(e.key)
       && ['secret','sensitive','encrypted','plain','config','system'].includes(e.type)), 'NAME_ONLY_METADATA_REQUIRED');
     need(new Set(p.env.map(e => e.key)).size === p.env.length, 'DUPLICATE_ENV_METADATA');
   }

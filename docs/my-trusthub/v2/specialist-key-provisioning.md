@@ -104,6 +104,17 @@ Empty arrays mean the connector actually observed no production variables, not
 `encrypted`, `plain`, `config`, `system`; signing keys must be `secret`/`sensitive`.
 No `value` property is accepted. Verify types against the connector response.
 
+Inventory names may be any case Vercel already stores. Valid characters are
+letters, digits, and `_`, at most 256 characters, and the name must start with
+a letter or underscore (`^[A-Za-z_][A-Za-z0-9_]{0,255}$`; Vercel
+`env_key_invalid_characters` / `env_key_invalid_length` and the CLI env-name
+schema). A complete list includes pre-existing names such as
+`neon_tech_database` and `ImprovMX_API`; do not omit a real production name.
+Names this script writes, protects, or checks for absence — every
+`MY_TRUSTHUB_V23_*` target, gate, KID, verify key, and Ask/Move protected name —
+stay strictly uppercase (`/^[A-Z0-9_]+$/`). A name that matches one of those
+only by case is rejected. Empty, duplicate, and value-shaped names are rejected.
+
 ### Public inventory input
 
 ```json

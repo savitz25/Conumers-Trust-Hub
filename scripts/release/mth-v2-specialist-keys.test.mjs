@@ -115,6 +115,46 @@ test('complete fresh metadata required; no decrypted values and no missing exist
   const j=fixture(); j.metadata.projects.senior.env=[{key:name('senior','KEY_ID'),type:'config'},{key:name('senior','SIGNING_PRIVATE_KEY_PEM'),type:'secret'}]; await rejects(j,'INVENTORY_METADATA_DISAGREE');
 });
 
+test('lowercase and mixed-case inventory names pass; written targets stay uppercase',async()=>{
+  const f=fixture(['lender']);
+  f.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive'}];
+  f.metadata.projects.insurance.env=[{key:'ImprovMX_API',type:'encrypted'}];
+  f.metadata.projects.move.env=[
+    {key:'_leading_underscore',type:'plain'},
+    {key:'a'.repeat(256),type:'config'},
+    {key:'MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED',type:'plain'}];
+  await run(f.options,f.deps);
+  assert.ok(f.calls.length>0);
+  assert.ok(f.calls.every(c=>/^[A-Z0-9_]+$/.test(c.argv[3])));
+  assert.equal(f.calls.some(c=>c.argv[3]==='neon_tech_database'||c.argv[3]==='ImprovMX_API'),false);
+  const existing=fixture(['lender']);
+  existing.metadata.projects.lender.env=[
+    {key:name('lender','KEY_ID'),type:'config'},
+    {key:name('lender','SIGNING_PRIVATE_KEY_PEM'),type:'secret'}];
+  existing.inventory.keys.lender=record('lender',8,'20261001');
+  await rejects(existing,'TARGET_NAME_EXISTS');
+});
+
+test('case-only controlled names, malformed names, and exact duplicates fail closed',async()=>{
+  for(const key of ['my_trusthub_v23_lender_key_id','MY_TRUSTHUB_V23_ask_KEY_ID','my_trusthub_v23_move_verify_public_key_pem','MY_TRUSTHUB_V23_parent_ORIGIN','my_trusthub_v23_profile_save_enabled']) {
+    const f=fixture(['lender']); f.metadata.projects.ask.env=[{key,type:'config'}];
+    await rejects(f,'NAME_ONLY_METADATA_REQUIRED');
+  }
+  for(const key of ['','1PASSWORD','HAS SPACE','HAS=VALUE','has-hyphen','dot.name','a/b','-----BEGIN PUBLIC KEY-----','x'.repeat(257),'quote"name',"quote'name",'line\nbreak','{json:1}','https://example.com',123]) {
+    const f=fixture(['lender']); f.metadata.projects.ask.env=[{key,type:'config'}];
+    await rejects(f,'NAME_ONLY_METADATA_REQUIRED');
+  }
+  const valued=fixture(['lender']);
+  valued.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive',value:'secret'}];
+  await rejects(valued,'NAME_ONLY_METADATA_REQUIRED');
+  const typed=fixture(['lender']);
+  typed.metadata.projects.insurance.env=[{key:'ImprovMX_API',type:'public'}];
+  await rejects(typed,'NAME_ONLY_METADATA_REQUIRED');
+  const dup=fixture(['lender']);
+  dup.metadata.projects.ask.env=[{key:'neon_tech_database',type:'sensitive'},{key:'neon_tech_database',type:'config'}];
+  await rejects(dup,'DUPLICATE_ENV_METADATA');
+});
+
 test('Ask phase uses successful public bundles, no generation, only ten Ask verify names',async()=>{
   const f=fixture(); await run(f.options,f.deps);
   for(const row of plan(HUBS,'specialist')) f.metadata.projects[row.project].env.push({key:row.name,type:row.name.endsWith('_SIGNING_PRIVATE_KEY_PEM')?'secret':'config'});
