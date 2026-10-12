@@ -35,4 +35,3 @@ export function nhReleaseGatePassed(value = manifest): boolean {
     value.publication_limits.claim_eligibility_broadened === false &&
     value.publication_limits.ask_graph_writes === 0;
 }
-
