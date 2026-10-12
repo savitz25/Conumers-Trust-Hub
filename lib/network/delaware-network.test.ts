@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import manifest from '../../data/network/delaware-publication-manifest.json' with { type: 'json' };
 import { deReleaseGatePassed, deSpecialistUrl } from './delaware-network.ts';
+import { ASK_PUBLISHED_STATE_CATALOG, askPublishedStatewideSlugs } from './published-ask-states.ts';
 
 test('Delaware Ask gateway links six production sources without cross-hub totals', () => {
   const page = readFileSync('app/delaware/page.tsx', 'utf8');
@@ -24,4 +25,6 @@ test('Delaware Ask gateway links six production sources without cross-hub totals
   assert.match(component, /Open \{hub\.hub_name\} Delaware/);
   assert.match(component, /NOT_ACQUIRED/);
   assert.match(component, /Trust Scores, provider rankings/);
+  assert.equal(ASK_PUBLISHED_STATE_CATALOG.filter((state) => state.code === 'DE' && state.slug === 'delaware').length, 1);
+  assert.equal(askPublishedStatewideSlugs().filter((slug) => slug === 'delaware').length, 1);
 });
