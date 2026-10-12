@@ -7,7 +7,6 @@ export const DESTINATIONS = Object.freeze([...HUBS, 'ask']);
 export const PARENT_ORIGIN = 'https://www.asktrusthub.com';
 const CREDENTIAL = /^[A-Za-z0-9_]{20,256}$/;
 const PROJECT_ID = /^prj_[A-Za-z0-9]+$/;
-const CODE = /^[A-Z][A-Z0-9_]+$/;
 const PRIVATE_PEM = /^-----BEGIN PRIVATE KEY-----\r?\n[A-Za-z0-9+/=\r\n]+\r?\n-----END PRIVATE KEY-----\s*$/;
 
 const fail = code => { throw new Error(code); };
@@ -57,10 +56,12 @@ function jsonValue(name, value) {
 }
 
 function transportFailure(error) {
-  if (CODE.test(error?.message ?? '')) throw error;
+  // Never rethrow a foreign message, even when it is uppercase or names a
+  // known code. The type name is the only input, and the result is one of
+  // three fixed codes.
   const name = error?.name ?? '';
   if (name === 'AbortError' || name === 'TimeoutError') fail('REST_TIMEOUT');
-  if (/redirect/i.test(String(error?.message ?? ''))) fail('REST_REDIRECT');
+  if (name === 'TypeError' && /redirect/i.test(String(error?.message ?? ''))) fail('REST_REDIRECT');
   fail('REST_NETWORK');
 }
 
@@ -76,14 +77,23 @@ async function conflictCode(response) {
   return 'REST_FORBIDDEN';
 }
 
+function oneCreated(created) {
+  if (Array.isArray(created)) {
+    need(created.length === 1 && created[0] && typeof created[0] === 'object' && !Array.isArray(created[0]), 'REST_AMBIGUOUS');
+    return created[0];
+  }
+  need(created && typeof created === 'object', 'REST_AMBIGUOUS');
+  return created;
+}
+
 function acceptCreated(body, expected) {
   need(body && Array.isArray(body.failed) && body.failed.length === 0, body?.failed?.length ? 'REST_PARTIAL' : 'REST_AMBIGUOUS');
-  const created = body.created;
-  need(created && !Array.isArray(created) && typeof created === 'object', 'REST_AMBIGUOUS');
+  const created = oneCreated(body.created);
   need(created.key === expected.key && created.type === expected.type, 'REST_AMBIGUOUS');
   need(Array.isArray(created.target) && created.target.length === 1 && created.target[0] === 'production', 'REST_TARGET_AMBIGUOUS');
-  need(!created.gitBranch, 'REST_TARGET_AMBIGUOUS');
-  need(!Array.isArray(created.customEnvironmentIds) || created.customEnvironmentIds.length === 0, 'REST_TARGET_AMBIGUOUS');
+  need(created.gitBranch == null, 'REST_TARGET_AMBIGUOUS');
+  const custom = created.customEnvironmentIds;
+  need(custom == null || (Array.isArray(custom) && custom.length === 0), 'REST_TARGET_AMBIGUOUS');
 }
 
 export function createRestEnvWriter({ credential, destination, projectId, fetchImpl }) {

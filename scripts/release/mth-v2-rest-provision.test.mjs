@@ -6,12 +6,12 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { HUBS, PROJECTS, SCOPE, fingerprint } from './mth-v2-specialist-keys.mjs';
 import { createRestEnvWriter } from './mth-v2-rest-env-writer.mjs';
-import { executeRestProvision, parseRestArgs } from './mth-v2-rest-provision.mjs';
+import { MOVE_PROJECT_ID, PINNED_PROJECT_IDS, executeRestProvision, parseRestArgs, reportedCode } from './mth-v2-rest-provision.mjs';
 
 const TOKEN = 'syntheticProjectToken0001';
 const DAY = '2026-10-08T12:00:00.000Z';
 const now = Date.parse(DAY);
-const pairs = Array.from({ length: 4 }, () => generateKeyPairSync('ed25519'));
+const pairs = Array.from({ length: 7 }, () => generateKeyPairSync('ed25519'));
 const publicPem = pair => pair.publicKey.export({ type: 'spki', format: 'pem' }).toString();
 const record = (hub, n) => ({ kid: `${hub}-v23-prod-20261008`, publicKeyPem: publicPem(pairs[n]) });
 const tokenHash = value => createHash('sha256').update(value).digest('hex');
@@ -23,8 +23,9 @@ function gitBlob(path) {
 }
 
 function projects() {
-  return Object.fromEntries(Object.entries(PROJECTS).map(([hub, name], index) => [hub, {
-    name, id: `prj_RESTTEST${index}ID`, environment: 'production', env: [],
+  const ids = { ...PINNED_PROJECT_IDS, move: MOVE_PROJECT_ID };
+  return Object.fromEntries(Object.entries(PROJECTS).map(([hub, name]) => [hub, {
+    name, id: ids[hub], environment: 'production', env: [],
   }]));
 }
 
@@ -93,6 +94,10 @@ test('REST sources do not name a CLI launch, scope lookup, upsert, or saved toke
   const provision = readFileSync(new URL('./mth-v2-rest-provision.mjs', import.meta.url), 'utf8');
   const writer = readFileSync(new URL('./mth-v2-rest-env-writer.mjs', import.meta.url), 'utf8');
   assert.equal(writer.includes('VERCEL_TOKEN'), false);
+  assert.equal(writer.includes('/^[A-Z][A-Z0-9_]+$/'), false);
+  assert.equal(provision.includes('/^[A-Z][A-Z0-9_]+$/'), false);
+  assert.equal(provision.includes('console.error(reportedCode(error))'), true);
+  assert.equal(/console\.error\(error/.test(provision), false);
   assert.equal(provision.includes('REST_SAVED_TOKEN_PRESENT'), true);
   assert.equal(provision.includes('MTH_V23_PROJECT_TOKEN'), true);
 });
@@ -194,6 +199,10 @@ test('ambiguous, conflict, and transport failures are not retried and do not ech
     [429, { error: { message: TOKEN } }, 'REST_RATE_LIMITED'],
     [200, { created: { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['production'] }, failed: [] }, 'REST_AMBIGUOUS'],
     [201, { created: [{ key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID' }], failed: [] }, 'REST_AMBIGUOUS'],
+    [201, { created: [], failed: [] }, 'REST_AMBIGUOUS'],
+    [201, { created: [{ key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['production'] }, { key: 'OTHER', type: 'encrypted', target: ['production'] }], failed: [] }, 'REST_AMBIGUOUS'],
+    [201, { created: { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['production'], gitBranch: 'main' }, failed: [] }, 'REST_TARGET_AMBIGUOUS'],
+    [201, { created: { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['production'], customEnvironmentIds: ['env_custom'] }, failed: [] }, 'REST_TARGET_AMBIGUOUS'],
     [201, { created: { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['preview'] }, failed: [] }, 'REST_TARGET_AMBIGUOUS'],
     [201, { created: { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted', target: ['production'], value: secretPem }, failed: [{ error: { message: TOKEN } }] }, 'REST_PARTIAL'],
   ];
@@ -237,32 +246,158 @@ test('a failed specialist write leaves the pending receipt and does not generate
   assert.equal(/PRIVATE KEY/.test(JSON.stringify(state.receipt)), false);
 });
 
-test('Ask placement writes only Ask public names and does not generate a key', async () => {
+function askConfig() {
   const config = baseConfig('ask');
   config.placement = 'ask';
-  config.hubs = ['lender'];
-  config.bundles = ['lender-public.json'];
-  const specialist = record('lender', 2);
-  config.inventoryObject.keys.lender = specialist;
-  config.inventoryObject.askCopies.lender = { kid: config.inventoryObject.keys.ask.kid, publicKeyPem: config.inventoryObject.keys.ask.publicKeyPem };
-  config.metadataObject.projects.lender.env = [
-    { key: 'MY_TRUSTHUB_V23_LENDER_KEY_ID', type: 'encrypted' },
-    { key: 'MY_TRUSTHUB_V23_LENDER_SIGNING_PRIVATE_KEY_PEM', type: 'sensitive' },
-    { key: 'MY_TRUSTHUB_V23_ASK_KEY_ID', type: 'encrypted' },
-    { key: 'MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM', type: 'encrypted' },
-  ];
-  const bundle = {
-    version: 1, scope: SCOPE, state: 'specialists-written', askFingerprint: config.askFingerprint,
-    keys: { lender: { kid: specialist.kid, publicKeyPem: specialist.publicKeyPem } },
+  config.hubs = [...HUBS];
+  config.bundles = HUBS.map(hub => `${hub}-public.json`);
+  config.bundleObjects = {};
+  for (const [index, hub] of HUBS.entries()) {
+    const specialist = record(hub, index + 2);
+    config.inventoryObject.keys[hub] = specialist;
+    config.inventoryObject.askCopies[hub] = {
+      kid: config.inventoryObject.keys.ask.kid,
+      publicKeyPem: config.inventoryObject.keys.ask.publicKeyPem,
+    };
+    const env = [
+      { key: `MY_TRUSTHUB_V23_${hub.toUpperCase()}_KEY_ID`, type: 'encrypted' },
+      { key: `MY_TRUSTHUB_V23_${hub.toUpperCase()}_SIGNING_PRIVATE_KEY_PEM`, type: 'sensitive' },
+      { key: 'MY_TRUSTHUB_V23_ASK_KEY_ID', type: 'encrypted' },
+      { key: 'MY_TRUSTHUB_V23_ASK_VERIFY_PUBLIC_KEY_PEM', type: 'encrypted' },
+    ];
+    if (hub === 'insurance') env.push({ key: 'MY_TRUSTHUB_V23_PARENT_ORIGIN', type: 'encrypted' });
+    config.metadataObject.projects[hub].env = env;
+    config.bundleObjects[`${hub}-public.json`] = {
+      version: 1, scope: SCOPE, state: 'specialists-written', askFingerprint: config.askFingerprint,
+      keys: { [hub]: { kid: specialist.kid, publicKeyPem: specialist.publicKeyPem } },
+    };
+  }
+  return config;
+}
+
+function attachAskReads(state, config) {
+  state.deps.readJson = path => {
+    if (path === 'metadata') return structuredClone(config.metadataObject);
+    if (path === 'inventory') return structuredClone(config.inventoryObject);
+    const bundle = config.bundleObjects[path];
+    if (!bundle) throw new Error(`UPPERCASE_LEAK_${TOKEN}_BEGIN PRIVATE KEY`);
+    return structuredClone(bundle);
   };
+}
+
+test('pinned project ids reject swaps, lookalikes, and the Move id before generation', async () => {
+  const swapped = harness();
+  swapped.config.metadataObject.projects.lender.id = PINNED_PROJECT_IDS.investor;
+  await rejects(() => executeRestProvision(swapped.config, swapped.deps), 'PROJECT_TARGET_MISMATCH', swapped);
+  const lookalike = harness();
+  lookalike.config.metadataObject.projects.lender.id = 'prj_ValidLookingButWrong0001';
+  await rejects(() => executeRestProvision(lookalike.config, lookalike.deps), 'PROJECT_TARGET_MISMATCH', lookalike);
+  const unauthorized = harness();
+  unauthorized.config.metadataObject.projects.lender.id = 'prj_UnauthorizedProject0001';
+  await rejects(() => executeRestProvision(unauthorized.config, unauthorized.deps), 'PROJECT_TARGET_MISMATCH', unauthorized);
+  const move = harness();
+  move.config.metadataObject.projects.lender.id = MOVE_PROJECT_ID;
+  await rejects(() => executeRestProvision(move.config, move.deps), 'MOVE_WRITE_FORBIDDEN', move);
+  const wrongName = harness();
+  wrongName.config.metadataObject.projects.lender.name = 'conumers-trust-hub';
+  await rejects(() => executeRestProvision(wrongName.config, wrongName.deps), 'PROJECT_TARGET_MISMATCH', wrongName);
+  const preview = harness();
+  preview.config.metadataObject.projects.lender.environment = 'preview';
+  await rejects(() => executeRestProvision(preview.config, preview.deps), 'PROJECT_TARGET_MISMATCH', preview);
+});
+
+test('Ask placement requires five ordered hubs and matching bundles, then writes exactly ten public records', async () => {
+  const single = harness(askConfig());
+  single.config.hubs = ['lender'];
+  single.config.bundles = ['lender-public.json'];
+  await rejects(() => executeRestProvision(single.config, single.deps), 'REST_ASK_HUBS_REQUIRED', single);
+  const reversedHubs = harness(askConfig());
+  reversedHubs.config.hubs = [...HUBS].reverse();
+  await rejects(() => executeRestProvision(reversedHubs.config, reversedHubs.deps), 'REST_ASK_HUBS_REQUIRED', reversedHubs);
+  const missing = harness(askConfig());
+  missing.config.bundles = missing.config.bundles.slice(0, 4);
+  await rejects(() => executeRestProvision(missing.config, missing.deps), 'REST_ASK_BUNDLES_REQUIRED', missing);
+  const reversedBundles = harness(askConfig());
+  reversedBundles.config.bundles = [...reversedBundles.config.bundles].reverse();
+  attachAskReads(reversedBundles, reversedBundles.config);
+  await rejects(() => executeRestProvision(reversedBundles.config, reversedBundles.deps), 'REST_BUNDLE_HUB_MISMATCH', reversedBundles);
+  const misassociated = harness(askConfig());
+  misassociated.config.bundleObjects['investor-public.json'] = structuredClone(misassociated.config.bundleObjects['lender-public.json']);
+  attachAskReads(misassociated, misassociated.config);
+  await rejects(() => executeRestProvision(misassociated.config, misassociated.deps), 'REST_BUNDLE_HUB_MISMATCH', misassociated);
+  const duplicated = harness(askConfig());
+  duplicated.config.bundleObjects['investor-public.json'].keys = {
+    investor: duplicated.config.bundleObjects['lender-public.json'].keys.lender,
+    lender: duplicated.config.bundleObjects['lender-public.json'].keys.lender,
+  };
+  attachAskReads(duplicated, duplicated.config);
+  await rejects(() => executeRestProvision(duplicated.config, duplicated.deps), 'REST_BUNDLE_HUB_MISMATCH', duplicated);
+  const differs = harness(askConfig());
+  differs.config.bundleObjects['investor-public.json'].keys.investor.publicKeyPem = publicPem(pairs[0]);
+  attachAskReads(differs, differs.config);
+  await rejects(() => executeRestProvision(differs.config, differs.deps), 'BUNDLE_DIFFERS_FROM_INSTALLED_SPECIALIST', differs);
+
+  const config = askConfig();
   const state = harness(config);
-  state.deps.readJson = path => path === 'metadata' ? structuredClone(config.metadataObject)
-    : path === 'inventory' ? structuredClone(config.inventoryObject) : structuredClone(bundle);
+  attachAskReads(state, config);
   await executeRestProvision(config, state.deps);
   assert.equal(state.generated, 0);
-  assert.equal(state.calls.length, 2);
+  assert.equal(state.calls.length, 10);
   const names = state.calls.map(call => JSON.parse(call.init.body).key);
-  assert.deepEqual(names, ['MY_TRUSTHUB_V23_LENDER_KEY_ID', 'MY_TRUSTHUB_V23_LENDER_VERIFY_PUBLIC_KEY_PEM']);
-  assert.equal(state.calls.every(call => call.url.endsWith(`/projects/${config.metadataObject.projects.ask.id}/env`)), true);
-  assert.equal(state.calls.every(call => JSON.parse(call.init.body).type === 'encrypted'), true);
+  assert.deepEqual(names, HUBS.flatMap(hub => [
+    `MY_TRUSTHUB_V23_${hub.toUpperCase()}_KEY_ID`,
+    `MY_TRUSTHUB_V23_${hub.toUpperCase()}_VERIFY_PUBLIC_KEY_PEM`,
+  ]));
+  assert.equal(state.calls.every(call => call.url === `https://api.vercel.com/v10/projects/${PINNED_PROJECT_IDS.ask}/env`), true);
+  assert.equal(state.calls.every(call => JSON.parse(call.init.body).type === 'encrypted' && !JSON.parse(call.init.body).key.includes('PRIVATE')), true);
+  assert.equal(state.logs.some(line => line.includes(TOKEN) || line.includes('PRIVATE KEY')), false);
+});
+
+test('a created object or one created record succeeds once, and untrusted errors stay redacted', async () => {
+  const projectId = PINNED_PROJECT_IDS.lender;
+  const recordToWrite = {
+    projectId, project: PROJECTS.lender, name: 'MY_TRUSTHUB_V23_LENDER_KEY_ID',
+    value: 'lender-v23-prod-20261008', replace: false,
+  };
+  for (const shape of ['object', 'array', 'empty-custom']) {
+    let calls = 0;
+    const fetch = async (_url, init) => {
+      calls += 1;
+      const payload = JSON.parse(init.body);
+      const created = { key: payload.key, type: payload.type, target: ['production'] };
+      if (shape === 'array') {
+        created.gitBranch = null;
+        created.customEnvironmentIds = null;
+      }
+      if (shape === 'empty-custom') created.customEnvironmentIds = [];
+      return Response.json({ created: shape === 'array' ? [created] : created, failed: [] }, { status: 201 });
+    };
+    const writer = createRestEnvWriter({ credential: TOKEN, destination: 'lender', projectId, fetchImpl: fetch });
+    await writer(recordToWrite);
+    assert.equal(calls, 1);
+    assert.equal(writer.toString().includes('upsert'), false);
+  }
+  const leaked = `UPPERCASE_LEAK_${TOKEN}_BEGIN PRIVATE KEY`;
+  let calls = 0;
+  const fetch = async () => {
+    calls += 1;
+    throw new Error(calls === 1 ? leaked : 'REST_UNAUTHORIZED');
+  };
+  const writer = createRestEnvWriter({ credential: TOKEN, destination: 'lender', projectId, fetchImpl: fetch });
+  await assert.rejects(writer(recordToWrite), error => error.message === 'REST_NETWORK' && hidden(error, TOKEN) && hidden(error, 'PRIVATE KEY'));
+  await assert.rejects(writer(recordToWrite), error => error.message === 'REST_NETWORK' && hidden(error, 'REST_UNAUTHORIZED'));
+  assert.equal(calls, 2);
+  assert.equal(reportedCode(new Error(leaked)), 'PROVISIONING_FAILED');
+  assert.equal(reportedCode(new Error(`REST_UNAUTHORIZED ${TOKEN}`)), 'PROVISIONING_FAILED');
+  assert.equal(reportedCode(new Error('REST_NETWORK')), 'REST_NETWORK');
+  assert.equal(reportedCode(new Error('REST_NETWORK')).includes(TOKEN), false);
+
+  const state = harness();
+  state.deps.readJson = () => { throw new Error(leaked); };
+  await rejects(() => executeRestProvision(state.config, state.deps), 'INPUT_FILE_INVALID', state);
+  assert.equal(JSON.stringify(state.logs).includes(TOKEN), false);
+  assert.equal(JSON.stringify(state.receipt ?? {}).includes('PRIVATE KEY'), false);
+  const coded = harness();
+  coded.deps.readJson = () => { throw new Error(`REST_UNAUTHORIZED ${TOKEN} BEGIN PRIVATE KEY`); };
+  await rejects(() => executeRestProvision(coded.config, coded.deps), 'INPUT_FILE_INVALID', coded);
 });

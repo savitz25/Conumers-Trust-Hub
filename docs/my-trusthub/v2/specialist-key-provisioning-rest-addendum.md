@@ -27,6 +27,29 @@ set, the process stops with `REST_SAVED_TOKEN_PRESENT`. The token is not an
 argument. A missing, empty, or non-token credential stops before
 `run()` and therefore before key generation.
 
+The project id is not taken from operator metadata alone. The wrapper holds
+this reviewed map for team `savitz25-s-projects`. Before key generation it
+requires the selected destination, the pinned id, and the fresh Production
+metadata (name, id, and `environment: "production"`) to be the same value.
+Any other id stops the process. Move is not a destination.
+
+| Destination | Pinned project id |
+| --- | --- |
+| Ask | `prj_925ZdSHjPhPU7pH9WiwyNOK1MrZB` |
+| Lender | `prj_Il28Mv0ebRiIrumFO7iBX6JrSbdD` |
+| Investor | `prj_Qu2DT0AIy8R7XYTQiHgNcDYjE9i8` |
+| Insurance | `prj_ARBlfWYNhpJWBtaPO4vUJlraa5BK` |
+| Senior | `prj_k9GyyXn28JZkyYKqLhBJ4rUQcpUb` |
+| Contractor | `prj_OYmhfgBxZvRAKBPJv5zqshJnJwgq` |
+
+Forbidden Move write destination: `prj_gudPGeW9SZBkgiL8zxvi3Swfo6T0`.
+
+An eventual authorized execution must read project identity again through the
+approved connection and compare it with this map before any key generation.
+This draft does not perform that live read and does not call Vercel. The
+certified five-minute freshness check still applies to the metadata and the
+public inventory supplied at execution time.
+
 | Process | `--destination` | Project token may write |
 | --- | --- | --- |
 | 1 | `lender` | `lender-trust-hub` only |
@@ -37,10 +60,32 @@ argument. A missing, empty, or non-token credential stops before
 | 6 | `ask` | `conumers-trust-hub` only |
 
 Move is not a destination. Specialist processes use `--placement specialist`
-and exactly one `--hub` equal to that destination. The Ask process uses
-`--placement ask` and the five hubs only after the five public receipts exist.
-`--replace`, `--force`, and `--vercel-cli` are rejected. This transport does
-not overwrite an existing name.
+and exactly one `--hub` equal to that destination, plus one public-bundle
+file. `--replace`, `--force`, and `--vercel-cli` are rejected. This transport
+does not overwrite an existing name.
+
+## Ask requires all five hubs
+
+The Ask process is valid only when `--destination ask`, `--placement ask`, and
+the hubs are exactly this order:
+
+`lender`, `investor`, `insurance`, `senior`, `contractor`
+
+It also requires exactly five `--public-bundle` files in that same order.
+File 1 is Lender, file 2 is Investor, file 3 is Insurance, file 4 is Senior,
+and file 5 is Contractor. Each file must be one public receipt for that hub
+only: version 1, scope `savitz25-s-projects`, state `specialists-written`,
+the expected Ask fingerprint, and one `kid` plus `publicKeyPem`.
+
+A single hub, a missing file, a duplicate hub or bundle, a reversed list, or
+a file associated with a different hub stops the process before the first
+REST write and before any key generation. The Ask process generates zero
+keys. When the checks pass it writes exactly ten public records on Ask: each
+hub's `KEY_ID` and `VERIFY_PUBLIC_KEY_PEM`.
+
+That precheck does not replace the certified script. `run()` still verifies
+each bundle, compares it with the installed specialist public key, and
+requires the specialist placement records before `writeEnv`.
 
 The wrapper also stops unless `--date` is the current UTC day and more than
 five minutes remain before UTC midnight (`REST_KID_DATE_NOT_UTC_TODAY`,
@@ -60,18 +105,34 @@ puts the resulting PEM text in the JSON `value` field. That string is not
 written to disk, returned to the caller, or copied into an error. A JavaScript
 string cannot be zeroed; the Buffer zeroing remains the certified cleanup.
 
-Success requires HTTP 201, an empty `failed` array, and one `created` object
-whose key, type, and target match the request. Any other response, including
-401, 403, 409, 429, 5xx, a redirect, a timeout, a non-JSON body, a partial
-`failed` entry, or a non-production target, throws one constant code and does
-not send another request. The certified pending receipt is left pending. Do
-not retry, repair the receipt, or roll back from this wrapper.
+Success requires HTTP 201, an empty `failed` array, and a `created` value
+that is either one object or a one-element array of one object. That entry
+must match the requested key and type, and `target` must be exactly
+`["production"]`. `gitBranch` must be absent or null. `customEnvironmentIds`
+must be absent, null, or an empty array. Any other response, including a
+malformed array, more than one created record, a nonempty `failed` array, a
+mismatched key or type, a git branch, a custom environment, HTTP 401, 403,
+409, 429, 5xx, a redirect, a timeout, or a non-JSON body, throws one constant
+code and does not send another request. There is no upsert and no second POST
+for the same variable. The certified pending receipt is left pending. Do not
+retry, repair the receipt, or roll back from this wrapper.
+
+## Errors that may be printed
+
+The process prints an error only when its message is one exact member of a
+finite allowlist of internal codes. Every other thrown message, including an
+uppercase string, a token, or a private key, is printed as
+`PROVISIONING_FAILED`. A file that cannot be read becomes
+`INPUT_FILE_INVALID` and the original message is discarded. A failed fetch
+becomes only `REST_NETWORK`, `REST_REDIRECT`, or `REST_TIMEOUT`. The foreign
+message is not rethrown.
 
 ## Future command shape
 
 Do not run these commands under this draft. They show the intended process
 boundary only. Refresh the certified name-only metadata and public inventory
-within five minutes of each process, in Lender, Investor, Insurance, Senior,
+within five minutes of each process, and confirm the live project id still
+equals the pinned id above, in Lender, Investor, Insurance, Senior,
 Contractor order, then Ask.
 
 ```powershell
@@ -81,9 +142,17 @@ Remove-Item Env:MTH_V23_PROJECT_TOKEN
 ```
 
 Repeat with a new process and that project's token for Investor, Insurance,
-Senior, and Contractor. The Ask process is separate and uses only the Ask
-token plus the five `--public-bundle` receipts. Clear the token before the
-next process. Offline proof:
+Senior, and Contractor. The Ask process is a sixth process. It uses only the
+Ask token, all five hubs in the order above, and the five public-bundle files
+in that same order. Clear the token before the next process.
+
+```powershell
+$env:MTH_V23_PROJECT_TOKEN = '<ask project token>'
+node scripts/release/mth-v2-rest-provision.mjs --destination ask --placement ask --hub lender --hub investor --hub insurance --hub senior --hub contractor --date YYYYMMDD --metadata C:\operator\metadata.json --public-inventory C:\operator\public-inventory.json --ask-spki-sha256 EXPECTED_ASK_SHA256 --public-bundle C:\operator\lender-public.json --public-bundle C:\operator\investor-public.json --public-bundle C:\operator\insurance-public.json --public-bundle C:\operator\senior-public.json --public-bundle C:\operator\contractor-public.json --closed-gates-confirmed
+Remove-Item Env:MTH_V23_PROJECT_TOKEN
+```
+
+Offline proof:
 
 ```powershell
 node --test scripts/release/mth-v2-specialist-keys.test.mjs scripts/release/mth-v2-rest-provision.test.mjs
