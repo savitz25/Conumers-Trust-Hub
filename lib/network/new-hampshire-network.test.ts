@@ -25,7 +25,7 @@ test('New Hampshire Ask gateway exposes six live specialists without combined to
   assert.match(component, /Open \{hub\.hub_name\} New Hampshire/);
   assert.match(component, /NOT_ACQUIRED/);
   assert.match(component, /Trust Scores, provider rankings/);
-  assert.deepEqual(ASK_PUBLISHED_STATE_CATALOG.at(-1), {
+  assert.deepEqual(ASK_PUBLISHED_STATE_CATALOG.find((state) => state.slug === 'new-hampshire'), {
     code: 'NH', slug: 'new-hampshire', name: 'New Hampshire', gate: nhReleaseGatePassed,
   });
 });
