@@ -58,9 +58,9 @@ test('published-state model preserves asymmetric specialist coverage', () => {
   assert.match(nextConfig, /source: '\/florida', destination: '\/places\/florida'/);
   for (const state of states) {
     if (state.code === 'ME') continue; // Maine gateway publication does not imply Maine entries in the older fallback coverage artifact.
-    if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE' || state.code === 'KS' || state.code === 'ID' || state.code === 'WV' || state.code === 'NH') {
+    if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE' || state.code === 'KS' || state.code === 'ID' || state.code === 'WV' || state.code === 'NH' || state.code === 'DE') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
-      continue; // These gateways are published; specialist metrics remain absent from this fallback inventory.
+      continue; // These gateways are published; state specialist metrics remain absent from this fallback inventory.
     }
     if (state.code === 'MD' || state.code === 'WI' || state.code === 'IN' || state.code === 'LA' || state.code === 'KY' || state.code === 'AL' || state.code === 'SC' || state.code === 'MS' || state.code === 'MO' || state.code === 'OK' || state.code === 'AR') {
 

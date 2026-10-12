@@ -46,6 +46,7 @@ import { idReleaseGatePassed } from './id-network.ts';
 import { wvReleaseGatePassed } from './wv-network.ts';
 import { meReleaseGatePassed } from './maine-network.ts';
 import { nhReleaseGatePassed } from './new-hampshire-network.ts';
+import { deReleaseGatePassed } from './delaware-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -96,6 +97,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'WV', slug: 'west-virginia', name: 'West Virginia', gate: wvReleaseGatePassed },
   { code: 'ME', slug: 'maine', name: 'Maine', gate: meReleaseGatePassed },
   { code: 'NH', slug: 'new-hampshire', name: 'New Hampshire', gate: nhReleaseGatePassed },
+  { code: 'DE', slug: 'delaware', name: 'Delaware', gate: deReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
