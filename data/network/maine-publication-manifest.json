@@ -1,0 +1,105 @@
+{
+  "state": "Maine",
+  "code": "ME",
+  "slug": "maine",
+  "ask_canonical": "https://www.asktrusthub.com/maine",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-12",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/moving-to/maine",
+      "production_sha": "7fdf94cad7b14aba7ddded3a984895c81d97c122",
+      "clock": "Maine statute text current through 2025-10-01; state framework and guidance checked 2026-10-12.",
+      "summary": "Maine motor-carrier and household-goods authority framework; 29-A M.R.S. §552 is repealed. No state HHG roster identified.",
+      "grain": "State regulatory requirements and consumer guidance; no mover license rows or Maine-address FMCSA census.",
+      "gap": "USDOT, UCR, FMCSA interstate authority, insurance, tariffs, and complaints are separate populations; no Maine HHG-specific count.",
+      "sources": [
+        { "label": "Maine Title 29-A, Chapter 5", "url": "https://legislature.maine.gov/statutes/29-A/title29-Ach5sec0.html" },
+        { "label": "Maine BMV USDOT-number guidance", "url": "https://www.maine.gov/sos/bmv/vehicles/commercial-vehicles-motor-carrier-services/united-states-department-of-transportation-number" },
+        { "label": "Maine AG mover guidance", "url": "https://www.maine.gov/ag/consumer-protection/consumer-help-topics/housing/movers-and-self-service-storage" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/maine",
+      "production_sha": "9c3ce9a6398bc9d3c7c7af1d54b82bb7d629461a",
+      "clock": "Maine PFR electrician and plumber license-list portals checked 2026-10-12; export rows NOT_ACQUIRED.",
+      "summary": "Maine does not license general contractors statewide. Electrician and plumber credentials have separate statewide PFR board sources.",
+      "grain": "Distinct trade/license classes; no combined Maine contractor census.",
+      "gap": "The official download routes did not yield reconciled bulk rows in this pass. No zero counts inferred.",
+      "sources": [
+        { "label": "Maine electrician licensee search and list download", "url": "https://www.pfr.maine.gov/ALMSOnline/ALMSQuery/Welcome.aspx?board=4220" },
+        { "label": "Maine plumber licensee search and list download", "url": "https://www.pfr.maine.gov/ALMSOnline/ALMSQuery/Welcome.aspx?board=4460" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/maine",
+      "production_sha": "5ffa1766ae6e57958e87b7d96519ec4ccc1ee10e",
+      "clock": "HMDA 2025 snapshot freeze 2026-06-02; BCCP and NMLS source paths checked 2026-10-12.",
+      "summary": "HMDA: 16 county market rows, 56,760 applications, 35,441 originations, 9,103 denials; 455 LEI summaries and 2,531 lender-county activity rows.",
+      "grain": "HMDA market/application observations and LEI/NMLS crosswalk are not licensing. Company, branch, and MLO person remain distinct.",
+      "gap": "Current Maine BCCP/NMLS supervised-lender, broker, mortgage-company, branch, MLO, and other license snapshots NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Maine BCCP licensee search", "url": "https://www.maine.gov/pfr/consumercredit/license_search.htm" },
+        { "label": "CFPB 2025 HMDA snapshot", "url": "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/maine",
+      "production_sha": "012abdaa6c1411b964d15f38fd0b60f3c9af10dd",
+      "clock": "Maine Bureau of Insurance active nonresident producer workbook dated 2026-08-01; retrieved 2026-10-12.",
+      "summary": "Active nonresident producer workbook: 225,804 license rows, 225,804 distinct license numbers, 225,570 distinct NPNs.",
+      "grain": "Producer license rows and NPN identities; producer license classes remain distinct.",
+      "gap": "This is nonresident producers only. Resident producers, agencies, adjusters, surplus-lines, appointments, insurers, and enforcement are NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Maine Bureau of Insurance active nonresident producer workbook, 2026-08-01", "url": "https://www.maine.gov/pfr/insurance/sites/maine.gov.pfr.insurance/files/inline-files/active-nonres-producers.xlsx" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/maine",
+      "production_sha": "9e7e38fc2de03acdc47afc6a0a4d5ebde3a350b0",
+      "clock": "Maine DHHS Licensed Provider Search displayed Updated 2026-10-11; checked 2026-10-12.",
+      "summary": "DHHS source classes include nursing home, assisted housing (including distinct assisted living, residential care, adult day), home health, hospice, and personal care agency.",
+      "grain": "State-defined provider/license classes; CMS remains separate.",
+      "gap": "Raw provider extracts, validated class counts, inspection observations, and enforcement orders NOT_ACQUIRED. No combined senior denominator.",
+      "sources": [
+        { "label": "Maine DHHS Licensed Provider Search", "url": "https://gateway.maine.gov/dhhs-apps/aspen/index.asp" },
+        { "label": "Maine DHHS Assisted Housing licensing", "url": "https://www.maine.gov/dhhs/dlc/licensing-certification/assisted-housing" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/maine",
+      "production_sha": "cd76f4b9815d5f212638e309ca3ca63c8bb70a18",
+      "clock": "Maine Office of Securities licensing sources checked 2026-10-12; enforcement index last updated 2026-06-11.",
+      "summary": "Maine state IA, federal covered/notice, ERA, IAR person, broker-dealer firm, agent person, branch office, and enforcement classes are distinct.",
+      "grain": "IARD/CRD regulator jurisdiction and source records; no principal-office geography inference or name-only adverse joins.",
+      "gap": "Dated IARD/CRD snapshots and Maine jurisdiction-specific registration/enforcement rows NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Maine Office of Securities Licensing & Registration", "url": "https://www.maine.gov/pfr/securities/licensing/" },
+        { "label": "Maine Securities enforcement index", "url": "https://www.maine.gov/pfr/securities/enforcement.shtml" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
