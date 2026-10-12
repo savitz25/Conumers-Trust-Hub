@@ -87,10 +87,19 @@ That precheck does not replace the certified script. `run()` still verifies
 each bundle, compares it with the installed specialist public key, and
 requires the specialist placement records before `writeEnv`.
 
-The wrapper also stops unless `--date` is the current UTC day and more than
-five minutes remain before UTC midnight (`REST_KID_DATE_NOT_UTC_TODAY`,
-`REST_MIDNIGHT_WINDOW`). The certified script's own calendar and freshness
-checks still run.
+The wrapper stops unless `--date` is the current UTC day and more than five
+minutes remain before UTC midnight (`REST_KID_DATE_NOT_UTC_TODAY`,
+`REST_MIDNIGHT_WINDOW`). It repeats both checks immediately before every REST
+POST. Production reads `Date.now()` again for each POST. An injected clock is
+only for offline tests and must not be reused from the start of the process.
+
+Before every POST, the wrapper also checks the metadata `capturedAt` and the
+public-inventory `capturedAt` on the same snapshots `run()` reads. Each
+timestamp must parse, must not be in the future, and must be no older than
+five minutes (`STALE_OR_INVALID_CONNECTOR_SNAPSHOT`). If any check fails, that
+POST is not sent, later POSTs are not sent, and there is no retry. A
+specialist receipt stays pending. The certified script's own calendar and
+freshness checks still run.
 
 ## Payload and private PEM boundary
 
@@ -114,8 +123,10 @@ malformed array, more than one created record, a nonempty `failed` array, a
 mismatched key or type, a git branch, a custom environment, HTTP 401, 403,
 409, 429, 5xx, a redirect, a timeout, or a non-JSON body, throws one constant
 code and does not send another request. There is no upsert and no second POST
-for the same variable. The certified pending receipt is left pending. Do not
-retry, repair the receipt, or roll back from this wrapper.
+for the same variable. The UTC-day, midnight, metadata-freshness, and
+inventory-freshness checks run again before every later POST. The certified
+pending receipt is left pending. Do not retry, repair the receipt, or roll
+back from this wrapper.
 
 ## Errors that may be printed
 

@@ -401,3 +401,74 @@ test('a created object or one created record succeeds once, and untrusted errors
   coded.deps.readJson = () => { throw new Error(`REST_UNAUTHORIZED ${TOKEN} BEGIN PRIVATE KEY`); };
   await rejects(() => executeRestProvision(coded.config, coded.deps), 'INPUT_FILE_INVALID', coded);
 });
+
+function arm(state, advance) {
+  state.deps.fetch = async (url, init) => {
+    state.calls.push({ url, init });
+    const payload = JSON.parse(init.body);
+    const response = Response.json({
+      created: { key: payload.key, type: payload.type, target: ['production'] },
+      failed: [],
+    }, { status: 201 });
+    advance();
+    return response;
+  };
+}
+
+async function stopped(state, code) {
+  await assert.rejects(
+    () => executeRestProvision(state.config, state.deps),
+    error => error.message === code && hidden(error, TOKEN) && hidden(error, 'PRIVATE KEY'),
+  );
+  assert.equal(state.calls.length, 1);
+  assert.equal(state.receipt?.state, 'pending');
+  assert.equal(JSON.stringify(state.receipt).includes('PRIVATE KEY'), false);
+  assert.equal(state.logs.some(line => String(line).includes(TOKEN) || String(line).includes('PRIVATE KEY')), false);
+}
+
+test('snapshot expiration blocks the next POST and leaves the pending receipt', async () => {
+  let current = now;
+  let reads = 0;
+  const both = harness();
+  both.deps.now = () => { reads += 1; return current; };
+  arm(both, () => { current = now + 300_001; });
+  await stopped(both, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+  assert.equal(reads >= 3, true);
+
+  current = now;
+  const metadataOnly = harness();
+  metadataOnly.config.metadataObject.capturedAt = new Date(now - 200_000).toISOString();
+  metadataOnly.deps.now = () => current;
+  arm(metadataOnly, () => { current = now + 150_000; });
+  await stopped(metadataOnly, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+
+  current = now;
+  const inventoryOnly = harness();
+  inventoryOnly.config.inventoryObject.capturedAt = new Date(now - 200_000).toISOString();
+  inventoryOnly.deps.now = () => current;
+  arm(inventoryOnly, () => { current = now + 150_000; });
+  await stopped(inventoryOnly, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+});
+
+test('the UTC midnight window blocks the next POST and leaves the pending receipt', async () => {
+  let current = now;
+  const state = harness();
+  state.deps.now = () => current;
+  arm(state, () => { current = Date.parse('2026-10-08T23:56:00.000Z'); });
+  await stopped(state, 'REST_MIDNIGHT_WINDOW');
+});
+
+test('fresh timestamps and a stable UTC window allow every specialist write', async () => {
+  let current = now;
+  let reads = 0;
+  const state = harness();
+  state.deps.now = () => { reads += 1; return current; };
+  await executeRestProvision(state.config, state.deps);
+  assert.equal(state.calls.length, 4);
+  assert.equal(state.receipt.state, 'specialists-written');
+  assert.equal(state.generated, 1);
+  assert.equal(reads >= 5, true);
+  assert.equal(JSON.stringify(state.receipt).includes('PRIVATE KEY'), false);
+  const source = readFileSync(new URL('./mth-v2-rest-provision.mjs', import.meta.url), 'utf8');
+  assert.equal(source.includes('return () => Date.now()'), true);
+});

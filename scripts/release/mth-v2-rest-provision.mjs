@@ -65,6 +65,32 @@ function msUntilUtcMidnight(ms) {
   return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1) - ms;
 }
 
+function createClock(deps) {
+  if (typeof deps.now === 'function') return deps.now;
+  if (typeof deps.now === 'number' && Number.isFinite(deps.now)) return () => deps.now;
+  need(deps.now == null, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+  return () => Date.now();
+}
+
+function readClock(clock) {
+  const at = clock();
+  need(Number.isFinite(at), 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+  return at;
+}
+
+function assertSnapshotFresh(capturedAt, at) {
+  const age = at - Date.parse(capturedAt);
+  need(Number.isFinite(age) && age >= 0 && age <= 300_000, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+}
+
+function assertPostWindow(config, snapshots, clock) {
+  const at = readClock(clock);
+  need(config.date === utcDay(at), 'REST_KID_DATE_NOT_UTC_TODAY');
+  need(msUntilUtcMidnight(at) > 300_000, 'REST_MIDNIGHT_WINDOW');
+  assertSnapshotFresh(snapshots.metadata, at);
+  assertSnapshotFresh(snapshots.inventory, at);
+}
+
 export function parseRestArgs(args) {
   const options = { hubs: [], bundles: [] };
   const values = {
@@ -151,8 +177,9 @@ function assertAskBundles(config, readJson) {
 
 export async function executeRestProvision(config, deps = {}) {
   assertCredential(config?.credential);
-  const now = deps.now ?? Date.now();
-  assertInvocation(config, now);
+  const clock = createClock(deps);
+  const started = readClock(clock);
+  assertInvocation(config, started);
   need(!Object.hasOwn(deps, 'writeEnv'), 'REST_WRITER_INJECTION_FORBIDDEN');
   need(typeof deps.fetch === 'function', 'REST_FETCH_REQUIRED');
   const readJson = deps.readJson ?? (path => {
@@ -160,15 +187,29 @@ export async function executeRestProvision(config, deps = {}) {
   });
   const metadata = readChecked(readJson, config.metadata);
   const projectId = bindProject(metadata, config.destination);
+  const inventory = readChecked(readJson, config.inventory);
+  const snapshots = { metadata: metadata?.capturedAt, inventory: inventory?.capturedAt };
+  assertSnapshotFresh(snapshots.metadata, started);
+  assertSnapshotFresh(snapshots.inventory, started);
   assertAskBundles(config, readJson);
+  const trackingRead = path => {
+    const value = readJson(path);
+    if (path === config.metadata) need(value?.capturedAt === snapshots.metadata, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+    if (path === config.inventory) need(value?.capturedAt === snapshots.inventory, 'STALE_OR_INVALID_CONNECTOR_SNAPSHOT');
+    return value;
+  };
   const writeEnv = createRestEnvWriter({
     credential: config.credential, destination: config.destination, projectId, fetchImpl: deps.fetch,
   });
+  const guardedWrite = async record => {
+    assertPostWindow(config, snapshots, clock);
+    await writeEnv(record);
+  };
   await run({
     mode: 'apply', hubs: config.hubs, replace: [], bundles: config.bundles, placement: config.placement,
     date: config.date, metadata: config.metadata, inventory: config.inventory,
     askFingerprint: config.askFingerprint, closedGates: true,
-  }, { ...deps, now, writeEnv });
+  }, { ...deps, now: started, readJson: trackingRead, writeEnv: guardedWrite });
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
