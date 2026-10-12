@@ -29,6 +29,7 @@ import { CT_PUBLICATION_MANIFEST } from './ct-network.ts';
 import { MI_PUBLICATION_MANIFEST } from './mi-network.ts';
 import { MN_PUBLICATION_MANIFEST } from './mn-network.ts';
 import { ME_PUBLICATION_MANIFEST } from './maine-network.ts';
+import { NH_PUBLICATION_MANIFEST } from './new-hampshire-network.ts';
 
 type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
 
@@ -55,6 +56,7 @@ const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   michigan: MI_PUBLICATION_MANIFEST,
   minnesota: MN_PUBLICATION_MANIFEST,
   maine: ME_PUBLICATION_MANIFEST,
+  'new-hampshire': NH_PUBLICATION_MANIFEST,
 };
 
 export type RecentAskState = {
