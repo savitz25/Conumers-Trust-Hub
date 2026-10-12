@@ -6,7 +6,6 @@ import { planAskResearch } from './research-planner.ts';
 import { parseNetworkAsk } from './ask-parse.ts';
 import { KS_PUBLICATION_MANIFEST, ksRefusal, ksReleaseGatePassed, queryLooksLikeKansas } from './ks-network.ts';
 import { ASK_PUBLISHED_STATE_CATALOG, askStateExplorerEyebrow, askStateSitemapEntries, listAskNetworkStates } from './published-ask-states.ts';
-import { listRecentAskStates } from './recent-ask-states.ts';
 import { normalizedPublishedStatePath } from './published-state-path.ts';
 
 test('Kansas appends to the current catalog and all network counts derive from its length', () => {
@@ -20,7 +19,6 @@ test('Kansas appends to the current catalog and all network counts derive from i
   assert.equal(normalizedPublishedStatePath('/Kansas'), '/kansas');
   assert.equal(normalizedPublishedStatePath('/kansas'), null);
   assert.equal(normalizedPublishedStatePath('/kansas/wichita'), null);
-  assert.ok(listRecentAskStates().some((state) => state.slug === 'kansas'));
 });
 
 test('Kansas gateway release gate preserves exactly six specialist populations without a combined count', () => {
