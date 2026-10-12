@@ -6,9 +6,8 @@ import { WV_PUBLICATION_MANIFEST, queryLooksLikeWestVirginia, wvRefusal, wvRelea
 import { ASK_PUBLISHED_STATE_CATALOG, askStateExplorerEyebrow, askStateSitemapEntries, listAskNetworkStates } from './published-ask-states.ts';
 import { normalizedPublishedStatePath } from './published-state-path.ts';
 
-test('West Virginia appends after the current catalog and derives the network count', () => {
-  assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.slug, 'west-virginia');
-  assert.equal(ASK_PUBLISHED_STATE_CATALOG.at(-1)?.code, 'WV');
+test('West Virginia remains published as the catalog grows and derives the network count', () => {
+  assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === 'west-virginia' && state.code === 'WV'));
   for (const slug of ['idaho', 'kansas', 'nebraska', 'iowa', 'new-mexico', 'utah']) {
     assert.ok(ASK_PUBLISHED_STATE_CATALOG.some((state) => state.slug === slug), slug);
   }
