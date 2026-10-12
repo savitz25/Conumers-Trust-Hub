@@ -1,0 +1,116 @@
+{
+  "state": "New Hampshire",
+  "code": "NH",
+  "slug": "new-hampshire",
+  "ask_canonical": "https://www.asktrusthub.com/new-hampshire",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-12",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/moving-to/new-hampshire",
+      "production_sha": "483c3a9dd1208f2891ff7c68403a68bcd3c3b7db",
+      "clock": "RSA 359-T and Saf-C 4600 checked 2026-10-12; application and annual-report forms revised 2023-12.",
+      "summary": "New Hampshire RSA 359-T requires intrastate household-goods carrier authority; a current state certificate-holder roster was not acquired.",
+      "grain": "State certificate or contract-carrier permit is separate from FMCSA interstate authority, USDOT identity, carrier insurance, vehicle, complaint, tariff, and enforcement records.",
+      "gap": "Current certificate/permit rows, carrier-specific insurance filings, filed tariffs, complaints, and orders NOT_ACQUIRED; NH-address FMCSA records are not substituted.",
+      "sources": [
+        { "label": "RSA 359-T household-goods carriers", "url": "https://gc.nh.gov/RSA/html/XXXI/359-T/359-T-mrg.htm" },
+        { "label": "Saf-C 4600 household-goods carrier rules", "url": "https://gc.nh.gov/rules/state_agencies/saf-c4600.html" },
+        { "label": "Bureau of Road Toll Operations application checklist", "url": "https://www.nh.gov/safety/divisions/administration/roadtoll/documents/NewOperationsHouseholdGoodsCarrierApplicationChecklist-2023-10-05-INTERIMRULES.pdf" },
+        { "label": "Household Goods Carrier Annual Report form", "url": "https://www.nh.gov/safety/divisions/administration/roadtoll/documents/DSAD5-HARHouseholdGoodsCarrierAnnualReport-2023-12.pdf" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/new-hampshire",
+      "production_sha": "51ade774039889ea5da1036fe1ca3e9d4a787b5a",
+      "clock": "OPLC verification guidance and current board rules checked 2026-10-12.",
+      "summary": "State electrician and plumbing/gas-fitting credentials are distinct person classes; some trades separately license business entities.",
+      "grain": "OPLC/board license classes by person, business entity, and profession; no universal general-contractor denominator inferred.",
+      "gap": "Dated class-level OPLC licensee rows and counts NOT_ACQUIRED. No local permitting census.",
+      "sources": [
+        { "label": "New Hampshire OPLC license verification guidance", "url": "https://www.oplc.nh.gov/sites/g/files/ehbemt441/files/inline-documents/verification-letter-request.pdf" },
+        { "label": "Electricians rules", "url": "https://gc.nh.gov/rules/state_agencies/elec100-400.html" },
+        { "label": "Mechanical safety and licensing rules", "url": "https://gc.nh.gov/rules/state_agencies/mec300.html" },
+        { "label": "Office of Professional Licensure and Certification", "url": "https://www.oplc.nh.gov/" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/new-hampshire",
+      "production_sha": "97152f40c810ca8f2c19fbc773aa234a382a3561",
+      "clock": "HMDA vintage 2025; Banking Department FY2024 annual report; sources checked 2026-10-12.",
+      "summary": "Existing NH HMDA slice reports 57,640 applications, 35,576 originations, and 9,485 denials across 10 county market rows; these are property-market activity, not licenses.",
+      "grain": "HMDA application/origination/denial observations and lender-county activity remain separate from company, branch, MLO person, servicer, and other consumer-finance license classes.",
+      "gap": "Current New Hampshire Banking Department/NMLS company, branch, mortgage lender/broker/servicer, and MLO license rows NOT_ACQUIRED.",
+      "sources": [
+        { "label": "New Hampshire Banking Department", "url": "https://www.banking.nh.gov/" },
+        { "label": "New Hampshire Banking Department FY2024 annual report", "url": "https://www.banking.nh.gov/sites/g/files/ehbemt621/files/inline-documents/sonh/fy24-annual-report.pdf" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "CFPB/FFIEC 2025 HMDA data browser", "url": "https://ffiec.cfpb.gov/data-browser/data/2025?actions_taken=1&category=states" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/new-hampshire",
+      "production_sha": "fbbaa158dd8b1ac36c5f754336ce7e0fa4188470",
+      "clock": "New Hampshire Insurance Department and State Based Systems guidance checked 2026-10-12; SBS is live and was not snapshotted.",
+      "summary": "NHID/SBS source paths distinguish insurers, agencies/business entities, producers, adjusters, surplus-lines, appointments, and enforcement.",
+      "grain": "Insurer, entity, person-license, appointment relationship, and dated enforcement record remain separate.",
+      "gap": "Dated SBS/Department license rosters, insurer class rows, appointments, and normalized enforcement attachments NOT_ACQUIRED.",
+      "sources": [
+        { "label": "New Hampshire Insurance Department", "url": "https://www.insurance.nh.gov/" },
+        { "label": "Department State Based Systems Connect guidance", "url": "https://www.insurance.nh.gov/producersadjusters/state-based-systems-sbs-connect" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/new-hampshire",
+      "production_sha": "6239a368211155038aa15cc0d73b5509cc496300",
+      "clock": "RSA 151 and DHHS sources checked 2026-10-12; DHHS facility-list PDF located is dated 2024-09-06 and is excluded as stale.",
+      "summary": "RSA 151/DHHS define separate nursing, residential/supported residential, adult-day, home-health, hospice, personal-care, and other facility/provider license classes.",
+      "grain": "State class is facility or service-provider type; administrator, inspection, enforcement, and CMS certification are separate records.",
+      "gap": "Current DHHS class-level rows, administrator records, inspections, enforcement orders, and CMS facility data NOT_ACQUIRED.",
+      "sources": [
+        { "label": "RSA 151 residential care and health facility licensing", "url": "https://gc.nh.gov/rsa/html/xi/151/151-mrg.htm" },
+        { "label": "RSA 151:2 facilities requiring a license", "url": "https://gc.nh.gov/rsa/html/XI/151/151-2.htm" },
+        { "label": "RSA 151:5 annual license classes", "url": "https://gc.nh.gov/rsa/html/XI/151/151-5.htm" },
+        { "label": "NH DHHS facility verification", "url": "https://forms.nh.gov/licenseverification/Search.aspx?facility=" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/new-hampshire",
+      "production_sha": "f0e41724c439d1abceabbec9f879094c8641b017",
+      "clock": "NH Secretary of State Bureau of Securities Regulation source pages checked 2026-10-12; no dated IARD/CRD extract acquired.",
+      "summary": "State IA, federal covered-adviser notice, ERA, IAR person, broker-dealer, agent, branch, and enforcement populations remain distinct.",
+      "grain": "IARD/CRD regulator-jurisdiction filing status and source records; no principal-office geography inference or name-only adverse joins.",
+      "gap": "Dated New Hampshire jurisdiction-specific IARD/CRD firm/person/branch rows, ERA snapshot, and normalized enforcement attachments NOT_ACQUIRED.",
+      "sources": [
+        { "label": "NH Bureau of Securities Regulation", "url": "https://www.sos.nh.gov/securities-regulation" },
+        { "label": "NH firms and industry professionals", "url": "https://www.sos.nh.gov/securities-regulation/firms-and-industry-professionals" },
+        { "label": "NH state investment advisers and agents", "url": "https://www.sos.nh.gov/state-investment-advisers-and-agents" },
+        { "label": "NH federal investment advisers and agents", "url": "https://www.sos.nh.gov/federal-investment-advisers-and-agents" },
+        { "label": "NH securities enforcement actions", "url": "https://www.sos.nh.gov/bureau-securities-enforcement-actions" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
