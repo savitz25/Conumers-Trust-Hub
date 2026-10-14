@@ -12,7 +12,7 @@ export async function getEnabledAdapter() {
   return ProductionMyTrustHubAdapter.create();
 }
 
-export async function requireWorkspace() {
+export async function requireWorkspace(returnPath?: "/my/saved" | "/my/projects") {
   await cookies();
   const featureEnabled = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ENABLED");
   const adapter = featureEnabled ? await ProductionMyTrustHubAdapter.create() : null;
@@ -22,7 +22,12 @@ export async function requireWorkspace() {
     adapterAvailable: Boolean(adapter),
     userPresent: Boolean(user),
   });
-  if (gate.kind === "redirect") redirect(gate.href);
-  if (!adapter || !user) redirect("/my/sign-in");
+  if (gate.kind === "redirect" || !adapter || !user) {
+    const href = gate.kind === "redirect" ? gate.href : "/my/sign-in";
+    // Only fixed workspace destinations may continue through sign-in. Do not
+    // forward query notices or accept an arbitrary caller-provided redirect.
+    const next = returnPath === "/my/saved" || returnPath === "/my/projects" ? returnPath : null;
+    redirect(next ? `${href}${href.includes("?") ? "&" : "?"}next=${encodeURIComponent(next)}` : href);
+  }
   return { adapter, user };
 }

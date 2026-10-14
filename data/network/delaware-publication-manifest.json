@@ -1,0 +1,125 @@
+{
+  "state": "Delaware",
+  "code": "DE",
+  "slug": "delaware",
+  "ask_canonical": "https://www.asktrusthub.com/delaware",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-12",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/moving-to/delaware",
+      "production_sha": "ac640794a214049b2344e962845b8b779bb5ea99",
+      "clock": "Delaware Code Title 2 and Title 21, DMV Motor Carrier Services, and FMCSA sources checked 2026-10-12.",
+      "summary": "No Delaware household-goods-specific state certificate or public mover roster was identified. Title 2 Chapter 18 covers passenger public-carrier classes; Title 21 Chapter 47 and DMV motor-carrier accounts are distinct safety and registration frameworks.",
+      "grain": "State motor-carrier safety, passenger certificates, DMV IRP/IFTA/UCR, federal FMCSA authority, USDOT, insurance, complaints, and tariffs remain separate records.",
+      "gap": "No state HHG license census is published. Current HHG complaint/tariff extracts and carrier-specific compliance observations NOT_ACQUIRED; FMCSA-address results are not substituted.",
+      "sources": [
+        { "label": "Delaware Code Title 2 Chapter 18", "url": "https://delcode.delaware.gov/title2/c018/index.html" },
+        { "label": "Delaware Code Title 21 Chapter 47", "url": "https://delcode.delaware.gov/title21/c047/" },
+        { "label": "Delaware DMV Motor Carrier Services", "url": "https://dmv.de.gov/VehicleServices/MC/index.shtml" },
+        { "label": "Delaware new-carrier application packet", "url": "https://dmv.de.gov/VehicleServices/MC/docs/irp/pdfs/Motor_Carrier_New_Application_Package.pdf" },
+        { "label": "FMCSA USDOT registration guidance", "url": "https://www.fmcsa.dot.gov/registration/do-i-need-usdot-number" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/delaware",
+      "production_sha": "21c72f24d95a18dc0f72cfbae39a97687e3e896a",
+      "clock": "Delaware Department of Labor public lookup observed 2026-10-12; DPR roster sources checked 2026-10-12.",
+      "summary": "The statewide contractor registry showed 518 live construction-service business search results. Electrician, inspection-agency, plumbing, and HVACR professional license classes remain separate.",
+      "grain": "Business construction-service certificates are distinct from DPR trade-license persons and agencies; the 518 result count is a live search observation, not a reconciled distinct census.",
+      "gap": "No dated registry extract or current DPR license roster was acquired. Trade-row totals and distinct businesses/persons are NOT_ACQUIRED; no local permitting population is included.",
+      "sources": [
+        { "label": "Delaware Office of Contractor Registration public lookup", "url": "https://contractorregistry.delaware.gov/Certification_PublicLookup?f=name&t=j" },
+        { "label": "Delaware contractor operating requirements", "url": "https://onestop.delaware.gov/Operate_Contractors" },
+        { "label": "Delaware Board of Electrical Examiners", "url": "https://dpr.delaware.gov/boards/electrician/" },
+        { "label": "Delaware Board of Plumbing, HVACR Examiners", "url": "https://dpr.delaware.gov/boards/plumbers/" },
+        { "label": "Delaware DPR license-roster request instructions", "url": "https://dpr.delaware.gov/aboutagency/roster_request_insts/" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/delaware",
+      "production_sha": "66c4a9c3ad9f2e3ea97e5d1f5de670f615060ce3",
+      "clock": "OSBC lender and broker reports dated 2026-09-30; MLO report dated 2026-10-01; existing HMDA 2025 slice.",
+      "summary": "OSBC reports 486 licensed-lender company rows, 174 mortgage-loan-broker company rows, and 6,309 approved-MLO person records. Separate existing 2025 HMDA activity has 45,536 applications, 26,905 originations, and 8,221 denials.",
+      "grain": "Companies, branches, MLO persons, other consumer-credit license classes, HMDA applications, lender-county observations, and LEI mappings are separate grains; HMDA is not licensing.",
+      "gap": "Unique MLO identities and branch counts were not independently reconciled. Current rows for other finance classes and a servicing-only population NOT_ACQUIRED.",
+      "sources": [
+        { "label": "OSBC licensed lender report, 2026-09-30", "url": "https://banking.delaware.gov/wp-content/uploads/sites/73/2026/10/WEB-SEPT-30-Licensed-Lender.pdf" },
+        { "label": "OSBC mortgage loan broker report, 2026-09-30", "url": "https://banking.delaware.gov/wp-content/uploads/sites/73/2026/10/WEB-SEPT-30-Mortgage-Loan-Broker.pdf" },
+        { "label": "OSBC approved mortgage loan originator report, 2026-10-01", "url": "https://banking.delaware.gov/wp-content/uploads/sites/73/2026/10/WEB-SEPT-30-Delaware-Approved-Mortgage-Loan-Originator-Report.pdf" },
+        { "label": "OSBC non-depository institutions", "url": "https://banking.delaware.gov/non-depository-institutions/" },
+        { "label": "CFPB and FFIEC HMDA 2025 data browser", "url": "https://ffiec.cfpb.gov/data-browser/data/2025?actions_taken=1&category=states" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/delaware",
+      "production_sha": "dadb0c1b2a119e09f60454384d15e2a51176e29b",
+      "clock": "Delaware DOI active-company workbook marked Active Company 2026-10-01, retrieved 2026-10-12.",
+      "summary": "The active-company workbook contains 2,279 rows across 26 company types and 2,274 distinct SBS company identifiers; five identifiers repeat across rows.",
+      "grain": "Company-type rows and SBS company identifiers remain separate. Producer persons, agency entities, adjusters, surplus-lines brokers, appointments, examinations, complaints, and enforcement are distinct populations.",
+      "gap": "The SBS report generator returned HTTP 403, so dated producer/entity, adjuster, surplus-lines, appointment, complaint, and enforcement extracts NOT_ACQUIRED. The company workbook is not a combined insurance census.",
+      "sources": [
+        { "label": "Delaware DOI active-company workbook", "url": "https://insurance.delaware.gov/divisions/berg/authorizedcompanies/" },
+        { "label": "Delaware DOI licensee lookup", "url": "https://insurance.delaware.gov/services/licenseelookup/" },
+        { "label": "Delaware DOI producer licensing services", "url": "https://insurance.delaware.gov/divisions/renewlicense/" },
+        { "label": "Delaware DOI enforcement actions and fines", "url": "https://insurance.delaware.gov/information/actions/" },
+        { "label": "Delaware DOI consumer services", "url": "https://insurance.delaware.gov/divisions/consumerhp/" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/delaware",
+      "production_sha": "2aae4a5c564545c488b7646cd23108ae428c62c3",
+      "clock": "Seven Delaware DHSS facility/service directory pages checked and captured 2026-10-12.",
+      "summary": "DHSS directory observations remain in seven classes: nursing 47, assisted living 38, adult day 10, home-health aides-only 13, skilled home health 35, hospice 13 entries, and personal assistance services 91.",
+      "grain": "Facility and service-provider directory rows remain class-specific. Hospice has 13 entries and 11 distinct displayed identifiers; personal-care and other repeated IDs are retained as observed. CMS stays separate.",
+      "gap": "Displayed expiration dates at or before the snapshot are not proof of inactive status; current validity is NOT_RECONCILED. No standalone residential-care roster was identified in the reviewed index. Administrators, inspections, enforcement, and CMS rows NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Delaware DHSS facility-class index", "url": "https://dhss.delaware.gov/dhcq/index/" },
+        { "label": "Licensed nursing homes", "url": "https://dhss.delaware.gov/dhcq/dhcq/licensed-nursing-homes/" },
+        { "label": "Licensed assisted living facilities", "url": "https://dhss.delaware.gov/dhcq/dhcq/licensed-assisted-living-facilities/" },
+        { "label": "Adult day care centers", "url": "https://dhss.delaware.gov/dhcq/dhcq/adult-day-care-centers/" },
+        { "label": "Home-health agencies, aides only", "url": "https://dhss.delaware.gov/dhcq/dhcq/home-health-agencies-aides-only/" },
+        { "label": "Skilled home-health agencies", "url": "https://dhss.delaware.gov/dhcq/dhcq/home-health-agencies-skilled/" },
+        { "label": "Hospice providers", "url": "https://dhss.delaware.gov/dhcq/dhcq/hospice-providers/" },
+        { "label": "Personal assistance services agencies", "url": "https://dhss.delaware.gov/dhcq/dhcq/personal-assistance-services-agencies/" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/delaware",
+      "production_sha": "98f77ad4668c0dfd90061f5e18fc6d614474c3fc",
+      "clock": "Delaware DOJ Investor Protection Unit and registration guidance checked 2026-10-12; no dated IARD/CRD extract acquired.",
+      "summary": "State IA, federal covered-adviser notice filing, ERA, IAR, broker-dealer, agent, branch, and enforcement records remain separate Delaware-jurisdiction populations.",
+      "grain": "IARD/CRD jurisdiction records for firms, people, offices, and actions. No principal-office geography inference or name-only adverse join.",
+      "gap": "Current Delaware-jurisdiction firm/person/branch and enforcement extracts NOT_ACQUIRED; no Delaware securities total is asserted.",
+      "sources": [
+        { "label": "Delaware DOJ Investor Protection Unit", "url": "https://attorneygeneral.delaware.gov/fraud/ipu/" },
+        { "label": "Industry professional registration guidance", "url": "https://attorneygeneral.delaware.gov/fraud/ipu/industry-professionals/" },
+        { "label": "Delaware Securities Act, Title 6 Chapter 73", "url": "https://delcode.delaware.gov/title6/c073/" },
+        { "label": "Delaware IARD registration requirements", "url": "https://attorneygeneral.delaware.gov/wp-content/uploads/sites/50/2022/06/9.13.2021-Registration-Requirements.pdf" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}

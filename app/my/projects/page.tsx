@@ -16,7 +16,7 @@ const templates = [
 ] as const;
 
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { adapter, user } = await requireWorkspace();
+  const { adapter, user } = await requireWorkspace("/my/projects");
   const [projects, { error }] = await Promise.all([adapter.listProjects(), searchParams]);
   const canCreate = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_PROJECTS_ENABLED");
   return (
