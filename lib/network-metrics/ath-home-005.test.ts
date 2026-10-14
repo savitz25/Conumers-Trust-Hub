@@ -62,6 +62,10 @@ test('published-state model preserves asymmetric specialist coverage', () => {
       assert.equal(state.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
       continue; // Rhode Island is manifest-backed; the older fallback artifact has no RI rows.
     }
+    if (state.code === 'MT') {
+      assert.equal(state.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
+      continue; // Montana is manifest-backed; the older fallback artifact has no MT rows.
+    }
     if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE' || state.code === 'KS' || state.code === 'ID' || state.code === 'WV' || state.code === 'NH' || state.code === 'DE' || state.code === 'HI') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
       continue; // These gateways are published; state specialist metrics remain absent from this fallback inventory.
