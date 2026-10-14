@@ -1,0 +1,107 @@
+﻿{
+  "state": "Rhode Island",
+  "code": "RI",
+  "slug": "rhode-island",
+  "ask_canonical": "https://www.asktrusthub.com/rhode-island",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/rhode-island",
+      "production_sha": "35fdc62ca8bb06678c7588fe0e4ef8a11357a16a",
+      "clock": "DPUC public licensed-mover PDF dated 2025-12-17; regulator pages checked 2026-10-14.",
+      "summary": "DPUC's dated public mover-list snapshot has 43 carrier entries and 43 distinct MC certificate identifiers. Current HHG status roster NOT_ACQUIRED.",
+      "grain": "Intrastate HHG certificate, carrier entry, application, tariff, insurance filing, complaint, order, FMCSA authority, USDOT, and MC identifier remain distinct.",
+      "gap": "The public PDF is not real-time. Current authority and carrier-level federal crosswalks were not reconciled; no current active count is asserted.",
+      "sources": [
+        { "label": "Rhode Island DPUC moving information and licensed mover list", "url": "https://ripuc.ri.gov/utility-information/motor-carriers/moving-information" },
+        { "label": "DPUC Motor Carriers Division jurisdiction", "url": "https://ripuc.ri.gov/utility-information/motor-carriers/responsibilities-and-jurisdiction-motor-carriers-division" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/rhode-island",
+      "production_sha": "7dbd3b2e0a8382a167a166016caf6d8a22a39fe1",
+      "clock": "CRLB source pages and available quarterly file reviewed for the already-closed state publication; current full-roster acquisition remains unavailable without the board's paid list.",
+      "summary": "Rhode Island requires CRLB contractor registration and regulates specified construction trades. The free quarterly file's 2,169 records (including 2,123 general-contractor records) are partial application-quarter observations, not an active statewide census. The full electronic roster is NOT_ACQUIRED — PAID $100 LIST / FOUNDER DECLINED.",
+      "grain": "General-contractor registration and each distinct CRLB trade-license class remain separate. Quarterly completed-application records are not active registrations.",
+      "gap": "No free full current statewide active-registration roster was acquired; no 2,169 or 2,123 statewide census claim is made.",
+      "sources": [
+        { "label": "Rhode Island Contractors' Registration and Licensing Board", "url": "https://crb.ri.gov/" },
+        { "label": "DBR CRLB information and public enforcement search", "url": "https://dbr.ri.gov/contractors-and-building-design-fire-professionals-board-accountancy/contractors-registration-and" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/rhode-island",
+      "production_sha": "13181cf9f4326baa2a8d27e13dcf3d90d4c8774a",
+      "clock": "Rhode Island DBR and NMLS public lookup sources checked 2026-10-14; existing 2025 HMDA slice is present in repository data.",
+      "summary": "DBR/NMLS company, branch, and MLO current rosters are NOT_ACQUIRED. Separate 2025 HMDA county market data contain 43,488 applications and 25,984 originations; HMDA is property-market activity, not licensing.",
+      "grain": "Mortgage lender, broker, servicer, company, branch, MLO person, NMLS identity, consumer-credit class, HMDA application, LEI, and lender-county observation remain distinct.",
+      "gap": "No complete current statewide DBR/NMLS license roster was acquired. LEI-to-NMLS mapping candidates do not verify state authority.",
+      "sources": [
+        { "label": "Rhode Island DBR Banking", "url": "https://dbr.ri.gov/banking-securities-and-charitable-organizations/banking" },
+        { "label": "DBR all other licensees", "url": "https://dbr.ri.gov/banking-securities-and-charitable-organizations/banking/all-other-licensees" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "CFPB/FFIEC 2025 HMDA snapshot", "url": "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/rhode-island",
+      "production_sha": "fb7dd4394e26376454eba77bd43cd5b78af5de5f",
+      "clock": "DBR insurer report date 2026-10-02; retrieved 2026-10-14. Professional roster links checked 2026-10-14.",
+      "summary": "DBR's separate October 2, 2026 company reports cover fraternal, health, life, mortgage-guaranty, property/casualty, and title insurer classes. Producer and adjuster exports were NOT_ACQUIRED after a managed verification challenge.",
+      "grain": "Insurer company classes, agency/business entity, producer person, adjuster, surplus-lines authority, appointment relationship, examination, enforcement/order, and complaint remain separate.",
+      "gap": "Producer, agency, adjuster, appraiser, surplus-lines, appointment, examination, enforcement, and complaint row extracts were not acquired; insurer class counts are not summed.",
+      "sources": [
+        { "label": "Rhode Island DBR licensed and approved insurance-company reports", "url": "https://dbr.ri.gov/insurance/insurance-companies/licensed-and-approved-insurance-companies" },
+        { "label": "Rhode Island DBR insurance professionals", "url": "https://dbr.ri.gov/insurance/insurance-professionals" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/rhode-island",
+      "production_sha": "fef7faf289fb6a0a99db9f7e737b3039c6d9c611",
+      "clock": "Rhode Island DOH facility licensing/list source clocks are maintained by the Senior specialist publication; route checked 2026-10-14.",
+      "summary": "The SeniorTrustHub page presents Rhode Island senior-care licensing evidence in separate facility and service classes; no combined senior denominator is asserted.",
+      "grain": "Nursing, assisted living, residential care, adult day, home health, hospice, personal-care agencies, other state facility classes, inspections, enforcement, administrators, and CMS records remain separate.",
+      "gap": "Source-class coverage, inspection, and enforcement gaps are described on the specialist page. CMS remains separate from state licensure.",
+      "sources": [
+        { "label": "Rhode Island Department of Health active licensee lists", "url": "https://health.ri.gov/licensing/licensee-lists" },
+        { "label": "Rhode Island assisted living licensing", "url": "https://health.ri.gov/licensing/assisted-living" },
+        { "label": "Rhode Island facility inspections and disciplinary actions", "url": "https://health.ri.gov/licensing/disciplinaryactions" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/rhode-island",
+      "production_sha": "1fc594d867209f0328187409ae03d403da821c0e",
+      "clock": "Rhode Island DBR Securities Division, IARD/IAPD/CRD source clocks are reported on the existing Investor specialist page; route checked 2026-10-14.",
+      "summary": "Rhode Island securities evidence keeps state IA, federal notice filing, ERA, IAR, broker-dealer, agent, and enforcement populations separate; no geography-based registration inference.",
+      "grain": "Firm, person, broker-dealer, agent, jurisdiction/filing status, and order/enforcement are separate source-native records. No name-only adverse join.",
+      "gap": "Current jurisdiction-specific bulk registration and enforcement observations are disclosed by the specialist page; no combined securities total is asserted.",
+      "sources": [
+        { "label": "Rhode Island DBR Securities Division", "url": "https://dbr.ri.gov/banking-securities-and-charitable-organizations/securities-and-charities/securities" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
