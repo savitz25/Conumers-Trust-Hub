@@ -52,6 +52,7 @@ import { riReleaseGatePassed } from './rhode-island-network.ts';
 import { mtReleaseGatePassed } from './montana-network.ts';
 import { akReleaseGatePassed } from './alaska-network.ts';
 import { ndReleaseGatePassed } from './north-dakota-network.ts';
+import { vtReleaseGatePassed } from './vermont-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -108,6 +109,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'MT', slug: 'montana', name: 'Montana', gate: mtReleaseGatePassed },
   { code: 'AK', slug: 'alaska', name: 'Alaska', gate: akReleaseGatePassed },
   { code: 'ND', slug: 'north-dakota', name: 'North Dakota', gate: ndReleaseGatePassed },
+  { code: 'VT', slug: 'vermont', name: 'Vermont', gate: vtReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
