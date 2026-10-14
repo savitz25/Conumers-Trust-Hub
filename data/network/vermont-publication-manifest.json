@@ -1,0 +1,115 @@
+{
+  "state": "Vermont",
+  "code": "VT",
+  "slug": "vermont",
+  "ask_canonical": "https://www.asktrusthub.com/vermont",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/vermont",
+      "production_sha": "a1fabf82b7dfc7ef5fa127ec356587ee9e76907c",
+      "clock": "Vermont Title 5 Chapters 24 and 29, DMV CVO, and motor-carrier sources checked 2026-10-14.",
+      "summary": "Vermont statewide carrier and safety requirements are documented; no distinct household-goods authority roster was identified in the reviewed free sources.",
+      "grain": "State carrier/safety rules, any service-specific certificate, interstate FMCSA authority, USDOT identity, insurance, tariff, complaints, applications, and orders are distinct.",
+      "gap": "Current statewide household-goods authority roster NOT_ACQUIRED; FMCSA or address-based records are not a state license census.",
+      "sources": [
+        { "label": "Vermont Title 5 Chapter 24", "url": "https://legislature.vermont.gov/statutes/fullchapter/05/024" },
+        { "label": "Vermont DMV Commercial Vehicle Operations", "url": "https://dmv.vermont.gov/CVO" },
+        { "label": "Vermont Title 5 Chapter 29", "url": "https://legislature.vermont.gov/statutes/chapter/05/029" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/vermont",
+      "production_sha": "00725e0c843d330d63a89a12a50b0d99b6a72991",
+      "clock": "Vermont Department of Fire Safety dataset metadata updated 2026-10-14 20:00:09 UTC; retrieved 2026-10-14. OPR public source checked 2026-10-14.",
+      "summary": "Vermont does not universally license general contractors; statewide residential-contractor registration and separate fire-safety trade license classes are documented.",
+      "grain": "Residential contractor registrations, firms, individual trade licenses, and the eight fire-safety license classes remain separate populations.",
+      "gap": "OPR registration roster NOT_ACQUIRED (public portal returned HTTP 403). Free fire-safety data are published by distinct class; not a combined contractor census.",
+      "sources": [
+        { "label": "Vermont Residential Contractors", "url": "https://sos.vermont.gov/residential-contractors/" },
+        { "label": "Vermont Division of Fire Safety licensing", "url": "https://firesafety.vermont.gov/licensing" },
+        { "label": "Vermont Open Data: Fire Safety license master list", "url": "https://data.vermont.gov/api/views/cy8e-89cz/rows.csv?accessType=DOWNLOAD" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/vermont",
+      "production_sha": "2a929dad5de2b89e717b425f95da54fde8593d1d",
+      "clock": "Vermont DFR and NMLS sources checked 2026-10-14. Reused existing 2025 HMDA vintage; no lender-licensing snapshot acquired.",
+      "summary": "Vermont mortgage-regulator and NMLS pathways are documented; existing HMDA activity is retained as market evidence, not licensing.",
+      "grain": "Mortgage companies, branches, brokers, servicers, MLO persons, NMLS identities, and HMDA market observations are separate.",
+      "gap": "Dated free lender, broker, servicer, branch, and MLO roster NOT_ACQUIRED. Existing HMDA evidence is not a license denominator.",
+      "sources": [
+        { "label": "Vermont DFR lender services", "url": "https://dfr.vermont.gov/banking/financial-services/lender" },
+        { "label": "Vermont DFR loan servicers", "url": "https://dfr.vermont.gov/banking/financial-services/loan-servicers" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "CFPB/FFIEC HMDA data", "url": "https://ffiec.cfpb.gov/data-publication/modified-lar" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/vermont",
+      "production_sha": "f7cdbe8ba5dba6e52946b475159e700816241f5d",
+      "clock": "Vermont DFR insurance sources checked 2026-10-14; no dated current row snapshot acquired.",
+      "summary": "Vermont DFR public insurance sources establish the regulator and distinct insurer, entity, producer, adjuster, surplus-lines, appointment, examination, and enforcement classes.",
+      "grain": "Insurers, agencies/business entities, individual producers, adjusters, surplus-lines eligibility, appointments, examinations, enforcement, and receivership are separate.",
+      "gap": "Dated free row-level rosters NOT_ACQUIRED; regulator portal returned HTTP 403 in this environment. No access controls were bypassed.",
+      "sources": [
+        { "label": "Vermont DFR Insurance", "url": "https://dfr.vermont.gov/insurance" },
+        { "label": "Producer and individual licensing", "url": "https://dfr.vermont.gov/insurance/producer-and-individual-licensing" },
+        { "label": "Licensed company information", "url": "https://dfr.vermont.gov/insurance/company-licensing/licensed-company-information" },
+        { "label": "Vermont Insurance Statutes Chapter 138", "url": "https://legislature.vermont.gov/statutes/fullchapter/08/138" },
+        { "label": "NIPR licensing center", "url": "https://nipr.com/licensing-center" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/vermont",
+      "production_sha": "da0c1a3fd1be3f7b6700af0297cca7f8743a87ad",
+      "clock": "Vermont DLP/DAIL sources checked 2026-10-14; public list file endpoints returned HTTP 403; Adult Day Services page reports 11 providers.",
+      "summary": "Vermont facility licensing classifications and public survey sources are documented; the DAIL adult-day page separately reports 11 providers.",
+      "grain": "Nursing homes, assisted living residences, residential care homes, therapeutic communities, home health agencies, hospice, adult-day providers, facility IDs, inspections, and enforcement remain distinct.",
+      "gap": "Current facility row files NOT_ACQUIRED due HTTP 403. The page-reported adult-day count is not an acquired roster. CMS data remain separate; no combined denominator.",
+      "sources": [
+        { "label": "Vermont DLP facilities list", "url": "https://dlp.vermont.gov/survey-cert/facilities-list" },
+        { "label": "Vermont facility survey statements", "url": "https://dlp.vermont.gov/survey-cert/survey-statements" },
+        { "label": "Vermont Home Health Agencies", "url": "https://dlp.vermont.gov/survey-cert/home-health-agencies" },
+        { "label": "Vermont DAIL Adult Day Services", "url": "https://asd.vermont.gov/services/adult-day-services" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/vermont",
+      "production_sha": "faf2250382a3598ce8d3e947b56eb76de0bf8522",
+      "clock": "Vermont DFR Securities, IAPD, and BrokerCheck sources checked 2026-10-14; no dated Vermont-jurisdiction extract acquired.",
+      "summary": "Vermont securities regulator and IARD/IAPD/CRD research pathways distinguish state advisers, federal notice filers, ERAs, IAR persons, broker-dealers, agents, and enforcement.",
+      "grain": "State IA firms, notice filings, ERA firms, IAR persons, broker-dealer firms, agent persons, office records, and proceedings remain distinct; office geography alone does not establish jurisdiction.",
+      "gap": "Dated Vermont-jurisdiction firm/person/branch rows NOT_ACQUIRED; no name-only adverse joins.",
+      "sources": [
+        { "label": "Vermont DFR Securities", "url": "https://dfr.vermont.gov/securities" },
+        { "label": "Vermont investment advisers", "url": "https://dfr.vermont.gov/securities/investment-advisers" },
+        { "label": "Vermont license verification", "url": "https://dfr.vermont.gov/consumers/verify-license" },
+        { "label": "SEC IAPD", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
