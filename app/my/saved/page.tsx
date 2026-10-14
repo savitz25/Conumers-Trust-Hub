@@ -38,7 +38,7 @@ export default async function SavedPage({
     const { unsaved, error } = await searchParams;
     return <IsolatedSaved query={{ unsaved, error }} />;
   }
-  const { adapter, user } = await requireWorkspace();
+  const { adapter, user } = await requireWorkspace("/my/saved");
   const [query, saved, projects, notes, sessions] = await Promise.all([
     searchParams,
     adapter.listSavedEntities(),
