@@ -1,0 +1,115 @@
+{
+  "state": "Hawaii",
+  "code": "HI",
+  "slug": "hawaii",
+  "ask_canonical": "https://www.asktrusthub.com/hawaii",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/hawaii",
+      "production_sha": "17cfb6f8eec8a0d31a29e9f33242da6c8ad38ba6",
+      "clock": "Hawaii PUC motor-carrier and tariff materials checked 2026-10-14; FY2025 annual report covers the fiscal year ended 2025-06-30.",
+      "summary": "Hawaii regulates intrastate motor carriers. The PUC annual report records 50 newly certificated or licensed property carriers and 9 property-carrier surrender or revocation observations in FY2025; these annual flows are not a current household-goods carrier census.",
+      "grain": "Household-goods authority, other property-carrier authority, applications, certificates or permits, tariffs, insurance requirements, actual insurance observations, complaints, orders, FMCSA authority, USDOT, and MC identifiers remain separate.",
+      "gap": "A reproducible current statewide household-goods roster was NOT_ACQUIRED. Annual report flow observations do not establish current authority or HHG class membership.",
+      "sources": [
+        { "label": "Hawaii PUC Motor Carriers", "url": "https://puc.hawaii.gov/motor_carriers/" },
+        { "label": "Hawaii PUC FY2025 Annual Report", "url": "https://puc.hawaii.gov/wp-content/uploads/2026/01/PUC-Annual-Report-Fiscal-Year-2025.pdf" },
+        { "label": "Hawaii PUC tariff FAQ", "url": "https://puc.hawaii.gov/wp-content/uploads/2021/08/MC-FAQ-Tariff.pdf" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/hawaii",
+      "production_sha": "d9d03d752a62b1668e3cfd42ac321678ee362662",
+      "clock": "Hawaii DCCA Contractors License Board roster dated 2026-04-06 11:22:16 HST.",
+      "summary": "The official roster contains 8,667 classification observations and 5,628 distinct CT IDs/licensees. Among observations with current good status, 8,254 are C and 413 are CM.",
+      "grain": "Classification observations and distinct licensees are separate. General contractor, specialty classes, individual or business identity, qualifying persons, and discipline are not combined.",
+      "gap": "The roster does not establish a deduplicated count across unlike classes; person/business type, responsible managing employee, and discipline details were not provided in the acquired roster.",
+      "sources": [
+        { "label": "Hawaii DCCA Professional and Vocational Licensing", "url": "https://pvl.ehawaii.gov/pvlsearch/" },
+        { "label": "Hawaii Contractors License Board", "url": "https://cca.hawaii.gov/pvl/boards/contractor/" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/hawaii",
+      "production_sha": "2c0513ec36674ee7c9b856ec2a130c6550041db7",
+      "clock": "Hawaii DFI, NMLS, and HMDA source paths reviewed 2026-10-14; no dated statewide licensing extract acquired.",
+      "summary": "Hawaii mortgage and financial oversight involves the Department of Commerce and Consumer Affairs, Division of Financial Institutions, with NMLS-backed licensing and federal HMDA market data as separate evidence systems.",
+      "grain": "Mortgage lender, broker, servicer, company, branch, MLO person, NMLS identity, state-chartered institution, other consumer-finance class, and HMDA activity remain separate.",
+      "gap": "Current statewide licensee and branch extracts and Hawaii HMDA row counts were NOT_ACQUIRED. HMDA is market activity, not licensing.",
+      "sources": [
+        { "label": "Hawaii DFI", "url": "https://cca.hawaii.gov/dfi/" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "FFIEC HMDA data browser", "url": "https://ffiec.cfpb.gov/data-browser/" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/hawaii",
+      "production_sha": "5bfc2dab360d195cc208d2430134a88c2ddd14d2",
+      "clock": "Hawaii Insurance Division source pages checked 2026-10-14; current dated bulk extracts were not available in the acquired evidence.",
+      "summary": "The Hawaii Insurance Division licenses and oversees distinct insurer and insurance-professional populations.",
+      "grain": "Insurers, agencies, individual producers, adjusters, surplus-lines licensees, appointments, examinations, complaints, and enforcement remain separate populations or relationship records.",
+      "gap": "Current statewide insurer, agency, producer, adjuster, and surplus-lines bulk rosters were NOT_ACQUIRED. Appointments and complaints are not licensee counts or findings of wrongdoing.",
+      "sources": [
+        { "label": "Hawaii Insurance Division", "url": "https://www.cca.hawaii.gov/ins/" },
+        { "label": "Insurance license categories", "url": "https://cca.hawaii.gov/ins/insurance-license-categories/" },
+        { "label": "Insurance company licensing", "url": "https://www.cca.hawaii.gov/ins/insurance-company-license/" },
+        { "label": "Hawaii Business Check", "url": "https://cca.hawaii.gov/business-check/" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/hawaii",
+      "production_sha": "fef7faf289fb6a0a99db9f7e737b3039c6d9c611",
+      "clock": "Hawaii OHCA facility-class and inspection source pages checked 2026-10-14; source pages have separate update clocks.",
+      "summary": "Hawaii OHCA publishes licensing and oversight information across distinct senior-care and home-care facility classes.",
+      "grain": "Nursing, assisted living, adult residential care, expanded adult residential care, home health, hospice, adult day, other facility classes, inspections, complaints, enforcement, and CMS certification remain separate.",
+      "gap": "A current unified facility census and source-native row counts were NOT_ACQUIRED. Facility identity, license, inspection, complaint, enforcement, capacity, and federal CMS records are not combined.",
+      "sources": [
+        { "label": "Hawaii OHCA State Licensing", "url": "https://health.hawaii.gov/ohca/state-licensing-section/" },
+        { "label": "Nursing and intermediate care facilities", "url": "https://health.hawaii.gov/ohca/medicare-facilities/skilled-nursingintermediate-care-facilities/" },
+        { "label": "Home health agencies", "url": "https://health.hawaii.gov/ohca/medicare-facilities/home-health-agencies/" },
+        { "label": "Hospice", "url": "https://health.hawaii.gov/ohca/medicare-facilities/hospice/" },
+        { "label": "Adult day health centers", "url": "https://health.hawaii.gov/ohca/medicare-facilities/adult-day-health-centers/" },
+        { "label": "Home care agencies", "url": "https://health.hawaii.gov/ohca/state-licensing-section/hcal/agencies/" },
+        { "label": "Inspection reports", "url": "https://health.hawaii.gov/ohca/inspection-reports/" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/hawaii",
+      "production_sha": "1fc594d867209f0328187409ae03d403da821c0e",
+      "clock": "Hawaii Securities Compliance Branch, IAPD, and FINRA source paths checked 2026-10-14; no dated jurisdiction extract acquired.",
+      "summary": "Hawaii securities jurisdiction and federal adviser or broker-dealer registration are separate regulatory populations.",
+      "grain": "State investment adviser firms, federal covered-adviser notice filings, exempt reporting advisers, investment adviser representatives, broker-dealers, agents, offices, and orders remain separate.",
+      "gap": "Current Hawaii jurisdiction-based IARD/CRD populations and exact CRD reconciliation were NOT_ACQUIRED. Principal-office geography and name-only adverse joins are not used.",
+      "sources": [
+        { "label": "Hawaii Securities Compliance Branch", "url": "https://www.cca.hawaii.gov/sec/" },
+        { "label": "Hawaii securities compliance and enforcement", "url": "https://www.cca.hawaii.gov/sec/securities-compliance-branch/" },
+        { "label": "Hawaii enforcement actions and orders", "url": "https://cca.hawaii.gov/sec/enforcement-actions-and-orders/" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
