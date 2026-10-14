@@ -1,0 +1,116 @@
+{
+  "state": "North Dakota",
+  "code": "ND",
+  "slug": "north-dakota",
+  "scope": "STATE_LEVEL_ONLY",
+  "ask_canonical": "https://www.asktrusthub.com/north-dakota",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/north-dakota",
+      "production_sha": "83335fd266d295d3d47f3ba34ef3ab96a308e341",
+      "summary": "North Dakota administers an intrastate household-goods carrier permit through the Department of Transportation. The current source-native permit roster was not acquired.",
+      "clock": "Official North Dakota DOT source pages checked 2026-10-14; permit roster rows, holder counts, and current-status counts NOT_ACQUIRED.",
+      "grain": "State household-goods permit authority and applications are separate from general motor-carrier authority, insurance observations, tariffs, complaints, orders, and federal FMCSA/USDOT records.",
+      "gap": "No current statewide permit roster or distinct permit-holder count was acquired. NOT_ACQUIRED does not mean no permitted carriers exist.",
+      "sources": [
+        { "label": "North Dakota DOT motor-vehicle forms", "url": "https://www.dot.nd.gov/dot/view/forms.aspx" },
+        { "label": "North Dakota DOT household-goods carrier permit application", "url": "https://www.dot.nd.gov/forms/sfn10539.pdf" },
+        { "label": "FMCSA SAFER (federal carrier records)", "url": "https://safer.fmcsa.dot.gov/" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/north-dakota",
+      "production_sha": "f46de6d34a2be95fb56240fc879bf92760d3b15d",
+      "summary": "North Dakota has a statewide contractor-registration framework and separate electrical, plumbing, and asbestos credentials. The DEQ source reports 55 licensed asbestos companies and more than 600 certified people as separate grains.",
+      "clock": "Regulator pages checked 2026-10-14; DEQ asbestos summary is undated and was observed 2026-10-14.",
+      "grain": "Asbestos company licenses (55 reported) and individual certifications (more than 600 reported) remain separate; electrical and plumbing credentials are separate regulated classes.",
+      "gap": "A current statewide contractor roster and status distribution were NOT_ACQUIRED. No combined contractor total is asserted.",
+      "sources": [
+        { "label": "North Dakota Secretary of State contractor registration", "url": "https://www.sos.nd.gov/business/licensing-registration/contractors" },
+        { "label": "North Dakota FirstStop contractor search", "url": "https://firststop.sos.nd.gov/search/contractor" },
+        { "label": "North Dakota State Electrical Board", "url": "https://www.ndseb.com/" },
+        { "label": "North Dakota State Plumbing Board", "url": "https://www.ndplumbingboard.gov/" },
+        { "label": "North Dakota DEQ asbestos program", "url": "https://deq.nd.gov/WM/asbestos/" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/north-dakota",
+      "production_sha": "5986ce3f4f755453efce68232a5d66e9126df457",
+      "summary": "North Dakota Department of Financial Institutions administers state non-depository mortgage licensing through NMLS. Existing HMDA evidence is a market-activity overlay, not a licensing census.",
+      "clock": "DFI/NMLS source pages checked 2026-10-14. The retained HMDA slice is reporting vintage 2025; CFPB announced availability 2026-03-31.",
+      "grain": "Mortgage companies, branches, servicers, MLO persons, state-chartered institutions, and HMDA market observations remain separate.",
+      "gap": "Current company, branch, servicer, and MLO license roster counts were NOT_ACQUIRED. HMDA and FDIC observations are not used as licensing counts.",
+      "sources": [
+        { "label": "North Dakota Department of Financial Institutions", "url": "https://www.nd.gov/dfi/" },
+        { "label": "DFI non-depository licensing FAQ", "url": "https://www.nd.gov/dfi/about-dfi/non-depository/frequently-asked-questions-non-depository" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "FFIEC 2025 HMDA data", "url": "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/north-dakota",
+      "production_sha": "0063ad8051d7c8a270cc58400a1864ec887fe02a",
+      "summary": "The North Dakota Insurance Department provides separate company and producer lookup pathways and announced a LicenseHub transition. No dated statewide bulk roster was acquired.",
+      "clock": "Official Department pages and lookup paths checked 2026-10-14; NAIC external company lookup returned HTTP 403 during that retrieval.",
+      "grain": "Insurers, agencies/business entities, individual producers, adjusters, surplus-lines, appointments, examinations, and enforcement remain separate.",
+      "gap": "Current row-level populations, status distributions, and distinct entity counts are NOT_ACQUIRED. No access control was bypassed and no name-by-name census was reconstructed.",
+      "sources": [
+        { "label": "North Dakota Insurance Department producers", "url": "https://www.insurance.nd.gov/producers" },
+        { "label": "North Dakota Insurance Department companies", "url": "https://www.insurance.nd.gov/companies" },
+        { "label": "North Dakota Department company information", "url": "https://www.insurance.nd.gov/consumers/company-information" },
+        { "label": "NAIC State Based Systems external lookup", "url": "https://sbs.naic.org/solar-external-lookup/" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/north-dakota",
+      "production_sha": "257f11c49591cb95d9cd65c328e7bcc97d985c1c",
+      "summary": "North Dakota HHS's April 16, 2026 Basic Care report contains 67 facility-ID observations, all shown as 01-ACTIVE on that report date. A separate federal CMS report contains 72 nursing-facility CCNs and 4,909 CMS-certified beds.",
+      "clock": "Basic Care report printed 2026-04-16; CMS iQIES report run 2026-07-29; assisted-living list marked updated 2025-08-28.",
+      "grain": "Basic Care facility IDs (67 observations/67 distinct IDs), CMS-certified nursing CCNs (72 distinct CCNs/4,909 beds), and assisted-living location entries (70) are separate source-defined populations.",
+      "gap": "The assisted-living entries do not establish current license status. Current home-health, hospice state-license, adult-day, and other senior-class rosters were NOT_ACQUIRED; CMS is a federal overlay, not a state-license census.",
+      "sources": [
+        { "label": "North Dakota HHS Health Facilities Unit", "url": "https://www.hhs.nd.gov/health/health-facilities-unit" },
+        { "label": "North Dakota Basic Care facility report", "url": "https://www.hhs.nd.gov/sites/www/files/documents/DOH%20Legacy/HF/Facility%20Reports/ND-basic-care-facilities-exclusion.pdf" },
+        { "label": "North Dakota skilled nursing facility report", "url": "https://www.hhs.nd.gov/sites/www/files/documents/DOH%20Legacy/HF/Facility%20Reports/ND-skilled-nursing-facilities.pdf" },
+        { "label": "North Dakota assisted living information", "url": "https://www.hhs.nd.gov/adults-and-aging/assisted-living" },
+        { "label": "CMS certification and compliance", "url": "https://www.cms.gov/medicare/provider-enrollment-and-certification/certificationandcomplianc" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/north-dakota",
+      "production_sha": "6b341654c2aa7cdd9f9afb2e2fbd1fa4394a97a2",
+      "summary": "2026-10-14 SEC IAPD jurisdiction feeds show 44 APPROVED state IA firm CRDs, 920 FILED federal notice firm CRDs, 3 ACTIVE ERA firm CRDs, and 1,888 distinct IAR person CRDs with APPROVED registration status.",
+      "clock": "SEC IAPD state, federal adviser, and individual feeds dated and retrieved 2026-10-14.",
+      "grain": "State IA firms, federal notice firms, ERAs, and IAR persons are separate jurisdiction-filtered CRD populations; no principal-office inference is used.",
+      "gap": "Broker-dealer and agent row-level rosters and the North Dakota orders/enforcement corpus are NOT_ACQUIRED. Feed statuses are not findings or endorsements.",
+      "sources": [
+        { "label": "North Dakota Insurance and Securities Department", "url": "https://www.insurance.nd.gov/securities" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "SEC IAPD North Dakota state adviser feed (2026-10-14)", "url": "https://reports.adviserinfo.sec.gov/reports/CompilationReports/IA_FIRM_STATE_Feed_10_14_2026.xml.gz" },
+        { "label": "SEC IAPD federal adviser feed (2026-10-14)", "url": "https://reports.adviserinfo.sec.gov/reports/CompilationReports/IA_FIRM_SEC_Feed_10_14_2026.xml.gz" },
+        { "label": "SEC IAPD individual feed (2026-10-14)", "url": "https://reports.adviserinfo.sec.gov/reports/CompilationReports/IA_INDVL_Feed_10_14_2026.xml.zip" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
