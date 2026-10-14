@@ -1,0 +1,117 @@
+{
+  "state": "Montana",
+  "code": "MT",
+  "slug": "montana",
+  "ask_canonical": "https://www.asktrusthub.com/montana",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/montana",
+      "production_sha": "00cce4d061a4af10b8a00c367a7fb753a25a97a2",
+      "clock": "Montana PSC authority list dated 2026-03-05; regulator and PCN guidance reviewed 2026-10-14.",
+      "summary": "PSC authority list contains 60 authority entries; those are authority records, not 60 distinct companies. A focused review did not establish a defensible household-goods PCN subset.",
+      "capability_summary": "60 PSC authority entries; HHG-specific authority population NOT_ACQUIRED / NOT_RECONCILED.",
+      "grain": "Intrastate authority records and household-goods PCN framework; authority record is not a company.",
+      "gap": "HHG-specific authority population is NOT_ACQUIRED / NOT_RECONCILED. Insurance, annual reports, tariffs, complaints, orders, and FMCSA remain separate.",
+      "sources": [
+        { "label": "Montana PSC motor-carrier authority", "url": "https://psc.mt.gov/regulated-industries/transportation/motor-carriers" },
+        { "label": "Montana household-goods / garbage PCN guide", "url": "https://psc.mt.gov/_docs/Transportation/pdf/Guide-for-Application-Process-Household-Goods-or-Garbage-2015.pdf" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/montana",
+      "production_sha": "4739417ae9094222ff161d06e21298406392656e",
+      "clock": "Montana DLI statewide program effective 2026-01-01; public roster access checked in October 2026.",
+      "summary": "Montana's statewide Construction Contractor License program took effect 2026-01-01. Electrical, plumbing, ICEC worker/person credentials, and statutory exemptions are separate.",
+      "capability_summary": "Construction Contractor License effective 2026-01-01; current licensee rows NOT_ACQUIRED after public portal HTTP 403.",
+      "grain": "Construction contractor license, regulated trade credentials, worker/person certificates, and exemptions are separate populations.",
+      "gap": "Official licensee-list portal returned HTTP 403. Current row-level counts, status, expiration, classifications, and business/person grain are NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Montana Construction Contractor License", "url": "https://boards.bsd.dli.mt.gov/construction-contractor/" },
+        { "label": "Montana Construction Contractor Licensing Act", "url": "https://leg.mt.gov/bills/mca/title_0370/chapter_0450/part_0020/section_0010/0370-0450-0020-0010.html" },
+        { "label": "Montana electrical contractor licensing", "url": "https://boards.bsd.dli.mt.gov/electrical/" },
+        { "label": "Montana Board of Plumbers", "url": "https://boards.bsd.dli.mt.gov/plumbers/" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/montana",
+      "production_sha": "196e99d33bb62eb18c00d44933652d5f07e744d5",
+      "clock": "2025 HMDA activity; DBFI enforcement table reviewed through 2026-10-07; regulator paths checked October 2026.",
+      "summary": "2025 HMDA: 37,122 applications, 22,968 originations, and 5,479 denials across 56 county rows; 482 LEI rows. Separate DBFI enforcement table: 259 observations.",
+      "capability_summary": "37,122 Montana-property HMDA applications in 2025; this is market activity, not lender licensing.",
+      "grain": "HMDA market/application and LEI observations are not licensing. Enforcement actions are separate. Company, branch, and MLO person records remain distinct.",
+      "gap": "Current mortgage lender, broker, servicer, branch, MLO, consumer-lender, and NMLS license populations are NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Montana DBFI mortgage and consumer-finance licensing", "url": "https://banking.mt.gov/BFID/mortgage-consumer-finance/mortgage" },
+        { "label": "NMLS Consumer Access", "url": "https://www.nmlsconsumeraccess.org/" },
+        { "label": "CFPB 2025 HMDA data", "url": "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/montana",
+      "production_sha": "482bf9685cf142cd091f6f6bd7ab0c5fc94fcd37",
+      "clock": "Montana CSI and SBS source pathways reviewed 2026-10-14; no source-native roster as-of date acquired.",
+      "summary": "Montana CSI identifies State Based Systems (SBS) lookup paths for producers and companies. No unrestricted statewide roster export was acquired.",
+      "capability_summary": "CSI/SBS licensing paths verified; statewide insurance license rows NOT_ACQUIRED.",
+      "grain": "Insurers, agencies/business entities, producers, adjusters, surplus-lines, appointments, examinations, and enforcement are separate.",
+      "gap": "Current row-level license populations and distinct counts are NOT_ACQUIRED. Appointment and market-conduct examination observations were not converted into licensee totals.",
+      "sources": [
+        { "label": "Montana State Auditor, Commissioner of Securities and Insurance", "url": "https://csimt.gov/insurance/" },
+        { "label": "CSI insurance licensing", "url": "https://csimt.gov/insurance/licensing/" },
+        { "label": "NAIC State Based Systems lookup", "url": "https://sbs.naic.org/solar-external-lookup/" },
+        { "label": "CSI market-conduct examinations", "url": "https://csimt.gov/insurance/market-conduct/" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/montana",
+      "production_sha": "5e46bbdbac1f4d300def4f2da5717e974326b3c8",
+      "clock": "DPHHS long-term-care location list reviewed 2026-10-14; source publishes no as-of date.",
+      "summary": "The DPHHS long-term-care locations page displayed 61 location rows and 61 exact-distinct displayed names; this is not a verified active-license count or all-senior denominator.",
+      "capability_summary": "61 DPHHS long-term-care location observations; not a verified active-license count.",
+      "grain": "Displayed facility/location observations. License status, beds, surveys, enforcement, and CMS certification are separate.",
+      "gap": "Nursing, assisted living, adult foster care, home health, hospice, ICF/IID, adult day, and other BOUNDS class-specific current rosters are NOT_ACQUIRED.",
+      "sources": [
+        { "label": "Montana DPHHS Licensure Bureau", "url": "https://dphhs.mt.gov/oig/licensure/" },
+        { "label": "DPHHS long-term-care facility locations", "url": "https://www.dphhs.mt.gov/oig/Licensure/HealthCareFacilityLicensure/CertificateofNeed/longtermcarefacilities" },
+        { "label": "BOUNDS facility search", "url": "https://mt-reports.com/portal/SearchFacility.aspx" },
+        { "label": "CMS Care Compare data", "url": "https://data.cms.gov/provider-data/" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/montana",
+      "production_sha": "ea57ff374b87c3cf63febc70369684b52369cfdb",
+      "clock": "Official IAPD feeds dated 2026-10-14; retrieved 2026-10-14. Montana CSI broker-dealer summary as of 2026-06-30.",
+      "summary": "IAPD jurisdiction counts: 101 APPROVED state IA firms, 1,270 FILED federal notice firms, 15 ACTIVE ERAs, and 2,857 APPROVED IAR persons. CSI separately reports 1,229 broker-dealer firms as of 2026-06-30.",
+      "capability_summary": "101 APPROVED state IA firms and 1,270 FILED notice firms; categories and person records remain separate.",
+      "grain": "State IA, federal notice, ERA, IAR persons, broker-dealer firms, agents, and enforcement are separate; jurisdiction fields, not principal-office geography, determine adviser counts.",
+      "gap": "Broker-dealer/agent row-level roster and Montana securities enforcement order corpus are NOT_ACQUIRED. Summary broker-dealer count is not combined with adviser populations.",
+      "sources": [
+        { "label": "Montana CSI securities licensing", "url": "https://csimt.gov/securities/licensing/" },
+        { "label": "SEC Investment Adviser Public Disclosure", "url": "https://adviserinfo.sec.gov/" },
+        { "label": "FINRA BrokerCheck", "url": "https://brokercheck.finra.org/" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
