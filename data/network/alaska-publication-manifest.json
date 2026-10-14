@@ -1,0 +1,179 @@
+{
+  "state": "Alaska",
+  "code": "AK",
+  "slug": "alaska",
+  "ask_canonical": "https://www.asktrusthub.com/alaska",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/alaska",
+      "production_sha": "a02ff5af06bcfd5727912cffe179a7b8855b9570",
+      "clock": "Alaska DOT&PF motor-carrier rules and compliance sources checked 2026-10-14; current HHG-specific roster not acquired.",
+      "summary": "Alaska intrastate-only motor carriers have carrier-identification and intrastate USDOT requirements; no distinct statewide HHG certificate roster was identified.",
+      "grain": "State motor-carrier safety/identification requirements are distinct from federal interstate HHG authority, USDOT identity, insurance, tariffs, complaints, applications, and orders.",
+      "gap": "Current Alaska HHG certificate/authority roster NOT_ACQUIRED; Alaska-address FMCSA records are not substituted as a state license census.",
+      "sources": [
+        {
+          "label": "Alaska DOT&PF Commercial Vehicle Compliance",
+          "url": "https://dot.alaska.gov/mscvc/pages/cve.shtml"
+        },
+        {
+          "label": "Alaska 17 AAC 25 motor-carrier regulations",
+          "url": "https://dot.alaska.gov/mscvc/webdocs/17AAC25.pdf"
+        },
+        {
+          "label": "FMCSA operating-authority types",
+          "url": "https://www.fmcsa.dot.gov/registration/types-operating-authority"
+        }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/alaska",
+      "production_sha": "f46de6d34a2be95fb56240fc879bf92760d3b15d",
+      "clock": "Alaska CBPL contractor and database download sources and Alaska DOL trade certificate sources checked 2026-10-14.",
+      "summary": "Alaska has separate statewide construction-contractor business classes and electrical, plumbing, and mechanical trade credentials; no generic contractor census is asserted.",
+      "grain": "Contractor firms, license classes, individual trade certificates, qualifying administrators, and discipline are distinct populations.",
+      "gap": "CBPL public bulk-license endpoint returned HTTP 403; current class-level rows and totals NOT_ACQUIRED. No access control was bypassed.",
+      "sources": [
+        {
+          "label": "Alaska CBPL public records and database downloads",
+          "url": "https://www.commerce.alaska.gov/cbp/main/"
+        },
+        {
+          "label": "Alaska construction contractor licensing",
+          "url": "https://www.commerce.alaska.gov/web/CBPL/ProfessionalLicensing/ConstructionContractors.aspx"
+        },
+        {
+          "label": "Alaska DOL electrical and plumbing certificates",
+          "url": "https://labor.alaska.gov/lss/plumbing_electrical.htm"
+        }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/alaska",
+      "production_sha": "a61e42dc678a323ecf62951058cc4ed6f7425e07",
+      "clock": "HMDA data year 2025; source freeze 2026-06-02. Alaska Division of Banking and Securities and NMLS sources checked 2026-10-14. Existing Alaska rows were reused.",
+      "summary": "Existing HMDA slices: 17 county-market rows, 19,396 applications, 11,797 originations; separate state-summary and lender-county observations remain market activity, not licensing.",
+      "grain": "HMDA applications and property-market activity, LEI identities, NMLS identities, company licenses, branch registrations, MLO persons, and FDIC bank records are separate grains.",
+      "gap": "Current dated Alaska mortgage-company, broker, servicer, branch, and MLO license rosters NOT_ACQUIRED; HMDA and FDIC populations are not license substitutes.",
+      "sources": [
+        {
+          "label": "Alaska mortgage brokers, lenders, and originators",
+          "url": "https://www.commerce.alaska.gov/web/dbs/ConsumerFinance/MortgageBrokerLendersOriginators"
+        },
+        {
+          "label": "Alaska mortgage licensing highlights",
+          "url": "https://www.commerce.alaska.gov/web/dbs/ConsumerFinance/MortgageLicensingHighlights"
+        },
+        {
+          "label": "NMLS Consumer Access",
+          "url": "https://www.nmlsconsumeraccess.org/"
+        },
+        {
+          "label": "CFPB/FFIEC 2025 HMDA snapshot",
+          "url": "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025"
+        }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/alaska",
+      "production_sha": "42da85d4fd53b77334ac1e1b82dc14bb04a9d434",
+      "clock": "Alaska Division of Insurance lookup and resource pages checked 2026-10-14; eligible surplus-lines bulletin dated 2026-02-05; latest annual report covers calendar 2024/fiscal 2025.",
+      "summary": "Alaska regulator sources include live company/licensee lookup, an eligible surplus-lines listing, annual reporting, examinations, orders, and dated license actions.",
+      "grain": "Insurers, agencies/business entities, producer and adjuster persons, surplus-lines eligibility, appointments, complaints, examinations, orders, and enforcement are separate.",
+      "gap": "A dated free statewide bulk roster for current insurers, entities, producers, adjusters, and appointments was NOT_ACQUIRED; live lookup is not a frozen census.",
+      "sources": [
+        {
+          "label": "Alaska Division of Insurance",
+          "url": "https://www.commerce.alaska.gov/web/ins/"
+        },
+        {
+          "label": "Alaska company and licensee search",
+          "url": "https://www.commerce.alaska.gov/web/ins/Consumers/ConsumerTools/ResearchaCompany.aspx"
+        },
+        {
+          "label": "Alaska Division of Insurance resources and reports",
+          "url": "https://www.commerce.alaska.gov/web/ins/Resources"
+        },
+        {
+          "label": "Eligible surplus-lines insurer bulletin B26-01",
+          "url": "https://www.commerce.alaska.gov/web/Portals/11/Pub/B26-01.pdf"
+        }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/alaska",
+      "production_sha": "1517988745e5ff7c557a65d4c6b116af77235c5b",
+      "clock": "Alaska open assisted-living roster updated 2026-08-31; Health Facilities Licensing and Certification list dated 2026-09-24; both retrieved 2026-10-14.",
+      "summary": "Assisted living: 814 open homes and 814 distinct license numbers. Separate HFLC observations include 20 long-term-care rows, 18 home-health rows, 8 full-service hospice rows, and 6 volunteer-hospice rows.",
+      "grain": "Assisted living, long-term care, home health, hospice, CMS certification, survey/inspection, complaint, administrator, and enforcement records remain source-class specific; no combined senior denominator.",
+      "gap": "The HFLC list contains additional unrelated state facility classes; current inspection/enforcement attachments and other possible senior-service classes were not acquired as row-level populations.",
+      "sources": [
+        {
+          "label": "Alaska assisted-living licensing and open-home roster",
+          "url": "https://health.alaska.gov/en/services/assisted-living-licensing-and-renewals/"
+        },
+        {
+          "label": "Alaska Health Facilities Licensing and Certification",
+          "url": "https://health.alaska.gov/en/division-of-health-care-services/health-facilities-licensing/"
+        },
+        {
+          "label": "Alaska long-term-care facility licensing",
+          "url": "https://health.alaska.gov/en/services/health-care-facilities-licensing-certification-all/long-term-care-ltc-facilities/"
+        }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/alaska",
+      "production_sha": "7ac738697fb789351fdadcdb6db416fcc0b473c4",
+      "clock": "Alaska Division of Banking and Securities, IAPD, and CRD source pages checked 2026-10-14; no date-stamped jurisdiction roster acquired.",
+      "summary": "Alaska regulator/IARD/CRD pathways distinguish state investment advisers, federal notice filers, ERAs, IAR persons, broker-dealers, agents, and enforcement.",
+      "grain": "Firm registration, person registration, notice status, ERA reporting, office records, and proceedings remain separate; principal-office geography alone does not establish Alaska registration.",
+      "gap": "Current dated Alaska-jurisdiction firm/person/branch rows and normalized enforcement records NOT_ACQUIRED; no name-only adverse joins.",
+      "sources": [
+        {
+          "label": "Alaska Division of Banking and Securities: securities",
+          "url": "https://www.commerce.alaska.gov/web/dbs/Securities"
+        },
+        {
+          "label": "Alaska state investment adviser compliance and IARD",
+          "url": "https://www.commerce.alaska.gov/web/dbs/Securities/ComplianceforStateInvestmentAdvisers.aspx"
+        },
+        {
+          "label": "Alaska de minimis jurisdiction rules",
+          "url": "https://www.commerce.alaska.gov/web/dbs/Securities/DeMinimisRules.aspx"
+        },
+        {
+          "label": "SEC Investment Adviser Public Disclosure",
+          "url": "https://adviserinfo.sec.gov/"
+        },
+        {
+          "label": "FINRA BrokerCheck",
+          "url": "https://brokercheck.finra.org/"
+        }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}

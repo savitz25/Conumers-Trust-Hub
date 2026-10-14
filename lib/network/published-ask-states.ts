@@ -50,6 +50,7 @@ import { deReleaseGatePassed } from './delaware-network.ts';
 import { hiReleaseGatePassed } from './hawaii-network.ts';
 import { riReleaseGatePassed } from './rhode-island-network.ts';
 import { mtReleaseGatePassed } from './montana-network.ts';
+import { akReleaseGatePassed } from './alaska-network.ts';
 
 export type AskPublishedState = {
   code: string;
@@ -104,6 +105,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'HI', slug: 'hawaii', name: 'Hawaii', gate: hiReleaseGatePassed },
   { code: 'RI', slug: 'rhode-island', name: 'Rhode Island', gate: riReleaseGatePassed },
   { code: 'MT', slug: 'montana', name: 'Montana', gate: mtReleaseGatePassed },
+  { code: 'AK', slug: 'alaska', name: 'Alaska', gate: akReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
