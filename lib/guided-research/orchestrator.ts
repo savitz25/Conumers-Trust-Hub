@@ -24,6 +24,7 @@ import { kyResearchHandoff, kyCaveat } from '../network/ky-network.ts';
 import { laResearchHandoff, laCaveat } from '../network/la-network.ts';
 import { inResearchHandoff, inCaveat } from '../network/in-network.ts';
 import { rewriteMoveSpecialistHref } from '../network/move-origin.ts';
+import { moveAskUrl } from '../network/move-ask.ts';
 
 function touch(session: GuidedResearchSession): GuidedResearchSession {
   return { ...session, updatedAt: new Date().toISOString() };
@@ -431,6 +432,36 @@ export async function orchestrateGuidedResearch(input: { session?: unknown; acti
       provenance:{contract:'ath-md-network-release-v1'},limitations:['Ask is a gateway; no provider records were retrieved or copied.'],
       destinations:[{type:'STATE_RESEARCH',href,label:'Open Maryland assisted living research'}],latencyMs:0,firstUsefulResult:true,nextActions:[]};
     return {session,result,diagnostics:{requestId,hub:'senior',phase:session.phase,resultState:result.resultState,latencyMs:Math.round(performance.now()-started),resultCount:0,specialistCalls:0}};
+  }
+  // A client EXECUTE must not force this population into a headquarters search.
+  // planRequiresImmediateClarification also blocks that override; this return is what
+  // tells the customer the roster was not retrieved.
+  if (session.researchPlan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE')) {
+    const message = session.researchPlan.clarificationReason ?? 'This Move population is not available here. Ask did not retrieve a recorded-headquarters cohort.';
+    const href = rewriteMoveSpecialistHref(moveAskUrl(session.originalQuestion));
+    session = touch({ ...session, hub: 'move', phase: 'CLARIFY', availableChoices: [], nextAction: message });
+    result = {
+      specialist: 'move',
+      executionOccurred: false,
+      resultState: 'UNSUPPORTED_CAPABILITY',
+      consumerHeading: 'This source does not currently support that research',
+      consumerMessage: message,
+      interpretation: [
+        { label: 'Requested research', value: session.originalQuestion },
+        { label: 'Population', value: 'Not available in this Ask search' },
+      ],
+      rows: [],
+      total: 0,
+      refinements: [],
+      provenance: { contract: 'move-ask-v1' },
+      limitations: ['No recorded-headquarters cohort was substituted. Search-only is not zero, and a missing roster is not a clean record.'],
+      destinations: [{ type: 'DIRECTORY', href, label: 'Open MoveTrustHub Ask for this question' }],
+      error: { code: 'move_population_unavailable', retryable: false },
+      latencyMs: 0,
+      firstUsefulResult: true,
+      nextActions: [],
+    };
+    return { session, result, diagnostics: { requestId, hub: 'move', phase: session.phase, resultState: result.resultState, latencyMs: Math.round(performance.now() - started), resultCount: 0, specialistCalls: 0 } };
   }
   const shouldRestoreResults = (input.action.type === 'RESUME' || input.action.type === 'BACK') && (session.phase === 'REFINE' || session.phase === 'ERROR_RECOVERY' || session.phase === 'CLARIFY' && Boolean(session.lastExecution));
   const executionRequested = session.phase==='EXECUTE' || input.action.type==='EXECUTE' || shouldRestoreResults;

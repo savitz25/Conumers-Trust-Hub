@@ -4980,17 +4980,20 @@
       },
       {
         "query": "RC29027885 Florida",
-        "expected": "florida registered roofing (unchanged)",
+        "expected": "florida registered roofing identifier",
         "actual": {
           "version": "ask-research-plan-v1",
           "originalQuestion": "RC29027885 Florida",
-          "intent": "ENTITY_LOOKUP_MISSING_IDENTITY",
+          "intent": "IDENTIFIER_LOOKUP",
+          "primaryHub": "contractor",
           "candidateHubs": [
-            "contractor",
-            "lender",
-            "insurance",
-            "move"
+            "contractor"
           ],
+          "identifier": {
+            "type": "state_contractor_license",
+            "value": "RC29027885",
+            "raw": "RC29027885"
+          },
           "requestedGeography": {
             "raw": "Florida",
             "display": "Florida",
@@ -5005,17 +5008,13 @@
             "meaning": "Florida. State licensing is not physical location; principal office is not client geography."
           },
           "requestedEvidence": [],
-          "missingSlots": [
-            "entityName"
-          ],
-          "executionAllowed": false,
-          "executionMode": "CLARIFY",
-          "clarificationReason": "Provide the entity name or a recognized source identifier before specialist research runs.",
+          "missingSlots": [],
+          "executionAllowed": true,
+          "executionMode": "IDENTIFIER",
           "reasonCodes": [
-            "IDENTITY_EVIDENCE_INSUFFICIENT",
-            "SPECIALIST_EXECUTION_BLOCKED"
+            "EXACT_IDENTIFIER_RECOGNIZED"
           ],
-          "legacyQueryType": "MISSING_SLOTS"
+          "legacyQueryType": "EXACT_IDENTIFIER"
         }
       },
       {

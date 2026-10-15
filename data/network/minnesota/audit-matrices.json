@@ -589,7 +589,7 @@
     },
     {
       "query": "RC29027885 Florida",
-      "expected": "florida registered roofing (unchanged)"
+      "expected": "florida registered roofing identifier"
     },
     {
       "query": "RC123456 Minnesota",
