@@ -81,10 +81,10 @@ export const IDENTIFIER_FAMILIES: IdentifierFamily[] = [
     hubId: 'contractor',
     label: 'State contractor credential',
     examples: ['Florida CBC license', 'RC29027885'],
-    pattern: /^(?:crc|cac|cfc|cbc|cgc|ccc|rc)\s*[-#]?\s*\d+/i,
+    pattern: /^(?:(?:cbc|cgc|ccc)\s*[-#]?\s*\d+|(?:rc)\s*[-#]?\s*\d{8}(?!\d))/i,
     live: true,
     destinationHint: 'https://www.contractortrusthub.com/verify',
-    note: 'Florida CILB prefixes (CRC/CAC/CFC/CBC/CGC/CCC/RC, including the published registered-roofing prefix RC) route to ContractorTrustHub Verify. Longer prefixes are listed before RC so CRC is not read as RC. Other states need an explicit state. Pattern match is not a national license.',
+    note: 'Florida CILB prefixes CBC/CGC/CCC, plus the published registered-roofing key RC plus eight digits, route to ContractorTrustHub Verify. A shorter RC token is not this family. Other states need an explicit state. Pattern match is not a national license.',
   },
   {
     id: 'pa_hic',

@@ -35,10 +35,11 @@ test('RC29027885 is a contractor credential and keeps the RC prefix', () => {
   assert.equal(session?.identifier?.value, 'RC29027885');
 });
 
-test('published CBC/CGC/CCC licenses and CRC stay contractor credentials', () => {
+test('published CBC/CGC/CCC licenses stay contractor credentials, and a short RC token does not', () => {
   assert.equal(parseNetworkAsk('CCC1337629').identifier?.raw, 'CCC1337629');
   assert.equal(parseNetworkAsk('CBC015082').identifier?.family.id, 'state_contractor_license');
-  assert.equal(parseNetworkAsk('verify contractor license CRC1337629').identifier?.raw, 'CRC1337629');
+  assert.notEqual(parseNetworkAsk('RC123456').identifier?.family.id, 'state_contractor_license');
+  assert.notEqual(parseNetworkAsk('CRC123456').identifier?.family.id, 'state_contractor_license');
   assert.equal(parseNetworkAsk('USDOT 125563').identifier?.family.id, 'usdot');
   assert.equal(planAskResearch('USDOT 125563').identifier?.value, '125563');
 });

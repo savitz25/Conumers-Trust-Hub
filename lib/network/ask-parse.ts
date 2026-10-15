@@ -700,7 +700,7 @@ const SPACED_DIGITS = String.raw`\d(?:[ -]?\d){2,9}`;
 
 /** Keep a Florida CILB prefix on the credential key. "RC 29027885" and "RC29027885" both stay RC29027885. */
 function compactFloridaContractorLicense(raw: string): string {
-  return raw.trim().replace(/^(crc|cac|cfc|cbc|cgc|ccc|rc)\s*[-#]?\s*(\d+)/i, (_match, prefix: string, digits: string) => `${prefix.toUpperCase()}${digits}`);
+  return raw.trim().replace(/^(cbc|cgc|ccc|rc)\s*[-#]?\s*(\d+)/i, (_match, prefix: string, digits: string) => `${prefix.toUpperCase()}${digits}`);
 }
 
 function matchIdentifier(q: string): ParsedIdentifier | undefined {
@@ -765,20 +765,21 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
   // trimmed query. Extract it in-sentence, mirroring the NMLS/LEI/CCN/CRD/NPN/NAIC
   // in-sentence matches above, so an embedded identifier takes precedence over
   // fuzzy name/vocabulary interpretation per the ticket's explicit requirement.
-  // Longer prefixes precede RC so CRC is not captured as RC.
-  const contractorLicenseInSentence = trimmed.match(/\b(crc|cac|cfc|cbc|cgc|ccc|rc)\s*[-#]?\s*(\d{5,8})\b/i);
+  const contractorLicenseInSentence = trimmed.match(/\b(cbc|cgc|ccc)\s*[-#]?\s*(\d{5,8})\b|\brc\s*[-#]?\s*(\d{8})\b/i);
   if (contractorLicenseInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'state_contractor_license');
     if (family) {
+      const prefix = contractorLicenseInSentence[1] ?? 'RC';
+      const digits = contractorLicenseInSentence[2] ?? contractorLicenseInSentence[3];
       return {
         family,
-        raw: compactFloridaContractorLicense(`${contractorLicenseInSentence[1]}${contractorLicenseInSentence[2]}`),
+        raw: compactFloridaContractorLicense(`${prefix}${digits}`),
         ambiguous: false,
         note: family.note,
       };
     }
   }
-  const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|crc|cac|cfc|cbc|cgc|ccc|rc)\b/i.test(trimmed));
+  const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc|rc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
     const raw = labeled.id === 'state_contractor_license' ? compactFloridaContractorLicense(trimmed) : trimmed;
