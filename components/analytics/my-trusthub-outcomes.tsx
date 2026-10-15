@@ -13,11 +13,9 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { shouldEnablePosthog } from '@/lib/analytics/environment';
 import { captureTrustEvent } from '@/lib/analytics/trusthub';
 import {
-  CONTINUATION_REASON_STORAGE_KEY, MY_TRUSTHUB_EVENTS, createOnceGuard, decodeContinuationReason, encodeContinuationReason,
+  CONTINUATION_REASON_STORAGE_KEY, MY_TRUSTHUB_EVENTS, decodeContinuationReason, encodeContinuationReason,
   resolveMyTrustHubOutcomes, stripConsumedMarkers,
 } from '@/lib/analytics/my-trusthub-contract';
-
-const once = createOnceGuard();
 
 function readReason(): string | null {
   try { return decodeContinuationReason(window.localStorage.getItem(CONTINUATION_REASON_STORAGE_KEY), Date.now()); } catch { return null; }
@@ -31,12 +29,14 @@ export function MyTrustHubOutcomes() {
     try {
       if (!shouldEnablePosthog() || !pathname?.startsWith('/my')) return;
       const params = new URLSearchParams(searchParams?.toString() ?? '');
+      // The first effect consumes the marker synchronously. Ignore stale renders
+      // after consumption, but allow a new action to return to the same URL immediately.
+      if (window.location.pathname !== pathname || new URLSearchParams(window.location.search).toString() !== params.toString()) return;
       const outcomes = resolveMyTrustHubOutcomes(pathname, params, { continuationReason: readReason() });
       if (!outcomes.length) return;
       const consumed: string[] = [];
       for (const outcome of outcomes) {
         consumed.push(...outcome.consumeParams);
-        if (!once(`${outcome.event}|${pathname}?${params.toString()}`)) continue;
         captureTrustEvent(outcome.event, outcome.properties);
         try {
           if (outcome.event === MY_TRUSTHUB_EVENTS.AUTH_CONTINUATION_STARTED && outcome.properties.continuation_reason) {

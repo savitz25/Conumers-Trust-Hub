@@ -12,8 +12,9 @@ done anything yet. A **success** or **failure** event fires only after the serve
 | Event | Meaning | Fires from |
 |---|---|---|
 | `profile_save_intent` | Customer clicked Save | client, on submit |
-| `profile_saved` | Save **confirmed** by the server | client, from a server-set URL marker |
-| `profile_save_failed` | Save rejected/failed | client, from a server-set URL marker |
+| `profile_saved` | Save **confirmed** by the server | client, from a server-set URL marker or guest-import acknowledgment |
+| `profile_save_failed` | Save rejected/failed | client, from a server-set URL marker or failed guest-import commit |
+| `profile_unsaved` | Profile removal **confirmed** by the server | client, from the existing `?unsaved=1` redirect without an error marker |
 | `auth_continuation_started` | Guest routed to sign-in to finish a Save | client, from `?continue=save` |
 | `auth_continuation_completed` | Sign-in confirmed, customer back on `/my` | client, from `?auth=complete` |
 | `auth_continuation_failed` | Sign-in/link/callback failed | client, from a bounded `?error=` code |
@@ -74,9 +75,22 @@ forwarded as a property — the event and its properties come entirely from the 
 mapping table.
 
 This is also what prevents double-counting: refresh or Back re-request the URL, but the marker is
-already gone, so nothing re-fires. A `createOnceGuard` additionally collapses a same-marker,
-same-URL React double-render (Strict Mode) within a 2-second window, while still counting a
-genuinely later repeat of the same action.
+already gone, so nothing re-fires. The outcome effect checks that its search-parameter snapshot
+still matches the current browser URL. A stale Strict Mode effect cannot reuse a consumed marker;
+a genuine retry can return to the same marker immediately and count once without a timed cooldown.
+
+`profile_unsaved` follows the existing `profile_saved` taxonomy. It uses `surface: my_saved`,
+`action_source: my_saved_form`, `auth_state: authenticated`, and `outcome: success`. Removing a
+Project membership is not an Unsave. No Unsave failure event is added: the existing contract does
+not require one, and `error=unsave` must never count as success.
+
+Guest profile imports emit `profile_save_failed` once when the attempted commit rejects, throws,
+or returns no acknowledgment. They use the same bounded context as a successful guest import,
+plus `failure_reason: unable`; project context is only a boolean. Empty selections, review-only
+actions and session imports do not emit profile Save failures. A confirmed Save remains a success
+if subsequent device storage access fails. Local-only success is not reclassified as failure.
+Neither error messages nor account IDs, item IDs, project IDs, payloads or tokens are sent.
+The legacy `import=none` marker no longer represents a failed Save.
 
 For an action that does NOT redirect (adding saved research to a project), the "confirmed" event is
 captured directly from the resolved server-action promise (`components/analytics/tracked-action-form.tsx`)

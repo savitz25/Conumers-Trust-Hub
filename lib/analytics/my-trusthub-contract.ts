@@ -15,6 +15,7 @@ export const MY_TRUSTHUB_EVENTS = {
   /** Pre-existing name. Now emitted only after a confirmed Save. */
   PROFILE_SAVED: 'profile_saved',
   PROFILE_SAVE_FAILED: 'profile_save_failed',
+  PROFILE_UNSAVED: 'profile_unsaved',
   AUTH_CONTINUATION_STARTED: 'auth_continuation_started',
   AUTH_CONTINUATION_COMPLETED: 'auth_continuation_completed',
   AUTH_CONTINUATION_FAILED: 'auth_continuation_failed',
@@ -105,11 +106,12 @@ export function resolveMyTrustHubOutcomes(pathname: string, params: URLSearchPar
     else if (params.get('handoff') === 'failed') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'specialist_handoff', handoff_type: 'contractor_save', specialist_hub: 'contractor', failure_reason: 'handoff_unavailable' }, ['handoff']);
     if (params.get('saved') === '1') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { ...saved, action_source: 'my_saved_form' }, ['saved']);
     if (params.get('failed') === 'save') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'my_saved_form', failure_reason: 'unable' }, ['failed', 'error']);
+    if (params.get('unsaved') === '1' && !params.has('error')) add(MY_TRUSTHUB_EVENTS.PROFILE_UNSAVED, { ...saved, action_source: 'my_saved_form' }, ['unsaved']);
     const imported = params.get('import');
     // V2-2 cutover: import success is emitted from the durable action receipt,
     // never from an old/bookmarked/forged import=complete URL.
     if (imported === 'invalid') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'guest_import', failure_reason: 'import_invalid' }, ['import']);
-    else if (imported === 'none') add(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { ...failed, action_source: 'guest_import', failure_reason: 'import_none_selected' }, ['import']);
+    // An empty selection is not an attempted Save and must not count as a failure.
   }
   if (PROJECT_DETAIL.test(path) && params.get('created') === '1') add(MY_TRUSTHUB_EVENTS.PROJECT_CREATED, { ...authed, surface: 'my_project_detail', outcome: 'success' }, ['created']);
   if (path === '/my/projects' && params.get('failed') === 'project') add(MY_TRUSTHUB_EVENTS.PROJECT_CREATE_FAILED, { ...authed, surface: 'my_projects', outcome: 'failure', failure_reason: 'unable' }, ['failed', 'error']);

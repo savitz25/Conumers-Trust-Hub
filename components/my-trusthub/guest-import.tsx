@@ -29,23 +29,31 @@ export function GuestImport({ storageKey, sessions, projects, ownerId, ownerLabe
     const selected = form.getAll('selectedItemId').map(String);
     const project = String(form.get('projectId') ?? '');
     if (!selected.length) { setMessage('Select the research you want to import.'); return; }
+    const captureFailure = () => {
+      try {
+        if (!sessions) captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, { surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'failure', failure_reason: 'unable', project_context_present: Boolean(project) });
+      } catch { /* optional analytics must not change the import result */ }
+    };
     try {
       // Snapshot shown in the preview stays fixed. New edits are retained at acknowledgment.
       form.set('payload', payload); form.set('expectedUserId', ownerId);
       form.set('idempotencyKey', await importRequestKey(ownerId, payload, selected, project));
       try { if (!sessions) captureGuestImportSaveIntent(Boolean(project)); } catch { /* optional analytics */ }
-      const result = await (sessions ? commitGuestSessionImportAction(form) : commitGuestImportAction(form));
-      if (!result.ok || !result.acknowledgment) { setMessage(result.error ?? 'Import could not be confirmed. Local research is unchanged.'); return; }
+      const result = await (sessions ? commitGuestSessionImportAction(form) : commitGuestImportAction(form)).catch(error => {
+        captureFailure();
+        throw error;
+      });
+      if (!result.ok || !result.acknowledgment) { captureFailure(); setMessage(result.error ?? 'Import could not be confirmed. Local research is unchanged.'); return; }
+      const accepted = result.acknowledgment.itemIds.filter(id => selected.includes(id));
+      try {
+        if (!sessions && accepted.length) captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'success', project_context_present: Boolean(project) });
+      } catch { /* receipt handling must not depend on analytics */ }
       const current = localStorage.getItem(storageKey) ?? '';
       // Legacy bundle writers have no shared transaction/lock. A cross-tab write
       // can land between getItem/setItem even in synchronous code. Keep the local
       // copy until all producers support atomic per-item revision retirement.
       setPayload(current); setPreview(null);
-      const accepted = result.acknowledgment.itemIds.filter(id => selected.includes(id));
       setMessage(`${accepted.length} selected item(s) confirmed in the displayed account. Local copies were kept on this device to protect research edited in other tabs.`);
-      try {
-        if (!sessions && accepted.length) captureMyTrustHubJourneyEvent(MY_TRUSTHUB_EVENTS.PROFILE_SAVED, { surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'success', project_context_present: Boolean(project) });
-      } catch { /* receipt handling must not depend on analytics */ }
       router.refresh();
     } catch { setMessage('Import or local cleanup could not be confirmed. Research was not intentionally removed. Review your Saved research and retry safely.'); }
   });
