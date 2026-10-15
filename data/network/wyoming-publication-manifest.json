@@ -1,0 +1,191 @@
+{
+    "state":  "Wyoming",
+    "code":  "WY",
+    "slug":  "wyoming",
+    "ask_canonical":  "https://www.asktrusthub.com/wyoming",
+    "scope":  "STATE_LEVEL_ONLY",
+    "reviewed_at":  "2026-10-14",
+    "hubs":  [
+                 {
+                     "hub_id":  "move",
+                     "hub_name":  "MoveTrustHub",
+                     "url":  "https://www.movetrusthub.com/wyoming",
+                     "production_sha":  "f9a6dfc62b623e767c60bc7200da74d12ac71a77",
+                     "clock":  "WYDOT operating-authority sources checked 2026-10-14; HHG-only roster not acquired.",
+                     "summary":  "WYDOT regulates for-hire contract motor carriers; no current HHG-only roster was acquired.",
+                     "grain":  "Intrastate authority, HHG-specific authority, applications, insurance, tariffs, complaints, orders, FMCSA authority, and USDOT identities are distinct.",
+                     "gap":  "HHG-only authority roster NOT_ACQUIRED; FMCSA/USDOT does not establish Wyoming intrastate authority.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://dot.state.wy.us/home/trucking_commercial_vehicles/operating_authority.html",
+                                         "label":  "Wyoming DOT operating authority"
+                                     },
+                                     {
+                                         "url":  "https://www.dot.state.wy.us/files/live/sites/wydot/files/shared/Motor%20Vehicle%20Services/IRP_IFTA/MC-100%20Wyoming%20Operating%20Authority%20Application%202026-01.pdf",
+                                         "label":  "MC-100 Wyoming application"
+                                     },
+                                     {
+                                         "url":  "https://psc.wyo.gov/home/utility-tariffs",
+                                         "label":  "Wyoming PSC tariffs"
+                                     },
+                                     {
+                                         "url":  "https://www.fmcsa.dot.gov/registration/types-operating-authority",
+                                         "label":  "FMCSA operating authority"
+                                     }
+                                 ]
+                 },
+                 {
+                     "hub_id":  "contractor",
+                     "hub_name":  "ContractorTrustHub",
+                     "url":  "https://www.contractortrusthub.com/wyoming",
+                     "production_sha":  "53fa2efb7316f157e5c6ff2709811031490195b1",
+                     "clock":  "Wyoming Secretary of State and State Fire Marshal sources checked 2026-10-14.",
+                     "summary":  "No universal statewide general-contractor license; statewide electrical license classes remain distinct.",
+                     "grain":  "Electrical contractor businesses, individual trade credentials, public-works certificates, and local GC requirements are separate.",
+                     "gap":  "Dated statewide electrical roster NOT_ACQUIRED; local rules excluded.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://sos.wyo.gov/FAQS.aspx?root=BUS",
+                                         "label":  "Wyoming SOS business FAQ"
+                                     },
+                                     {
+                                         "url":  "https://wsfm.wyo.gov/electrical-safety/licensing",
+                                         "label":  "State Fire Marshal electrical licensing"
+                                     },
+                                     {
+                                         "url":  "https://wyelectrician.imagetrendlicense.com/lms/public/portal",
+                                         "label":  "Wyoming electrical license portal"
+                                     },
+                                     {
+                                         "url":  "https://dws.wyo.gov/dws-division/labor-standards/resident-contractor-resources/",
+                                         "label":  "Wyoming DWS resident contractor resources"
+                                     }
+                                 ]
+                 },
+                 {
+                     "hub_id":  "lender",
+                     "hub_name":  "LenderTrustHub",
+                     "url":  "https://www.lendertrusthub.com/wyoming",
+                     "production_sha":  "3fd889611eceb87e707bc5cd19954e4e68094947",
+                     "clock":  "Wyoming Division of Banking/NMLS checked 2026-10-14; existing 2025 HMDA vintage reused.",
+                     "summary":  "Mortgage and consumer-credit regulator pathways are documented; HMDA observations are market activity, not licensees.",
+                     "grain":  "Mortgage companies, branches, MLO persons, NMLS identities, consumer-credit licenses, and HMDA observations are distinct.",
+                     "gap":  "Current free dated company, branch, and MLO rosters NOT_ACQUIRED. HMDA is not licensing; no broad NMLS scrape.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://wyomingbankingdivision.wyo.gov/mortgage-lending/licensing-and-renewal",
+                                         "label":  "Mortgage licensing"
+                                     },
+                                     {
+                                         "url":  "https://wyomingbankingdivision.wyo.gov/mortgage-lending/mortgage-loan-originators",
+                                         "label":  "Mortgage loan originators"
+                                     },
+                                     {
+                                         "url":  "https://wyomingbankingdivision.wyo.gov/consumer-lending/licensee-list",
+                                         "label":  "Consumer lending licensees"
+                                     },
+                                     {
+                                         "url":  "https://www.nmlsconsumeraccess.org/",
+                                         "label":  "NMLS Consumer Access"
+                                     },
+                                     {
+                                         "url":  "https://ffiec.cfpb.gov/data-publication/modified-lar",
+                                         "label":  "CFPB/FFIEC HMDA"
+                                     }
+                                 ]
+                 },
+                 {
+                     "hub_id":  "insurance",
+                     "hub_name":  "InsuranceTrustHub",
+                     "url":  "https://www.insurancetrusthub.com/wyoming",
+                     "production_sha":  "597762ccbd8bccea4478d73496f36c35207f8d01",
+                     "clock":  "Wyoming DOI licensing and company sources checked 2026-10-14; no dated row snapshot acquired.",
+                     "summary":  "DOI sources establish separate insurer, agency, producer, adjuster, surplus-lines, appointment, examination, and enforcement classes.",
+                     "grain":  "Insurers, entities, producers, adjusters, surplus-lines, appointments, examinations, orders, and complaints remain separate.",
+                     "gap":  "Free dated row-level rosters NOT_ACQUIRED. Sircon is a licensing-services portal, not a frozen census.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://doi.wyo.gov/",
+                                         "label":  "Wyoming DOI"
+                                     },
+                                     {
+                                         "url":  "https://doi.wyo.gov/licensing",
+                                         "label":  "DOI licensing"
+                                     },
+                                     {
+                                         "url":  "https://doi.wyo.gov/licensing/producers",
+                                         "label":  "Producer licensing"
+                                     },
+                                     {
+                                         "url":  "https://doi.wyo.gov/companies",
+                                         "label":  "Insurance companies"
+                                     },
+                                     {
+                                         "url":  "https://www.sircon.com/",
+                                         "label":  "Sircon licensing portal linked by DOI"
+                                     }
+                                 ]
+                 },
+                 {
+                     "hub_id":  "senior",
+                     "hub_name":  "SeniorTrustHub",
+                     "url":  "https://www.seniortrusthub.com/wyoming",
+                     "production_sha":  "d396897785a1ed67d21b92469796d0887a0900f1",
+                     "clock":  "Wyoming DPHHS 2026?2027 Facility Directory updated 2026-10-12; retrieved 2026-10-14.",
+                     "summary":  "DPHHS directory supports separate current facility-class counts for adult day, assisted living, home health, hospice, ICF/IID, and nursing.",
+                     "grain":  "Directory rows and distinct license IDs by class: adult day 3, assisted living 31, home health 61, hospice 21, ICF/IID 1, nursing 36; classes are not summed.",
+                     "gap":  "Directory has no status field; inspections and enforcement are separate. CMS remains separate.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://health.wyo.gov/aging/hls/healthcare-facility-directory/",
+                                         "label":  "DPHHS facility directory"
+                                     },
+                                     {
+                                         "url":  "https://health.wyo.gov/wp-content/uploads/2026/09/2026-2027-Facility-Directory.xlsx",
+                                         "label":  "2026?2027 Facility Directory XLSX"
+                                     }
+                                 ]
+                 },
+                 {
+                     "hub_id":  "investor",
+                     "hub_name":  "InvestorTrustHub",
+                     "url":  "https://www.investortrusthub.com/wyoming",
+                     "production_sha":  "6f1cbfe821d1e7a2f75e0f78b3133673a2bdd6b4",
+                     "clock":  "Wyoming Secretary of State securities and IAPD/FINRA sources checked 2026-10-14; no Wyoming-jurisdiction extract acquired.",
+                     "summary":  "Securities pathways distinguish state advisers, federal notice filings, ERAs, IAR persons, broker-dealers, agents, and proceedings.",
+                     "grain":  "State IA, notice filings, ERA, IAR persons, broker-dealer firms, agent persons, and enforcement are separate; principal-office geography does not establish jurisdiction.",
+                     "gap":  "Dated Wyoming-jurisdiction firm/person rows NOT_ACQUIRED; no geography inference or name-only adverse joins.",
+                     "sources":  [
+                                     {
+                                         "url":  "https://sos.wyo.gov/Investing/",
+                                         "label":  "Wyoming securities"
+                                     },
+                                     {
+                                         "url":  "https://sos.wyo.gov/Investing/InvestmentAdvisers.aspx",
+                                         "label":  "Investment advisers"
+                                     },
+                                     {
+                                         "url":  "https://sos.wyo.gov/Investing/BrokerDealerAgent.aspx",
+                                         "label":  "Broker-dealer and agent"
+                                     },
+                                     {
+                                         "url":  "https://adviserinfo.sec.gov/",
+                                         "label":  "SEC IAPD"
+                                     },
+                                     {
+                                         "url":  "https://brokercheck.finra.org/",
+                                         "label":  "FINRA BrokerCheck"
+                                     }
+                                 ]
+                 }
+             ],
+    "publication_limits":  {
+                               "cross_hub_record_total":  null,
+                               "cross_hub_record_total_status":  "REJECTED",
+                               "ratings":  "NOT_ESTABLISHED",
+                               "trust_score":  "NOT_ESTABLISHED",
+                               "county_or_local_routes":  "NONE",
+                               "claim_eligibility_broadened":  false,
+                               "ask_graph_writes":  0
+                           }
+}
