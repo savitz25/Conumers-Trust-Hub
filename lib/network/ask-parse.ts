@@ -698,6 +698,11 @@ function geography(q: string): ParsedGeography | undefined {
 // normalization, never a loosening of which digit strings count as a match.
 const SPACED_DIGITS = String.raw`\d(?:[ -]?\d){2,9}`;
 
+/** Keep a Florida CILB prefix on the credential key. "RC 29027885" and "RC29027885" both stay RC29027885. */
+function compactFloridaContractorLicense(raw: string): string {
+  return raw.trim().replace(/^(crc|cac|cfc|cbc|cgc|ccc|rc)\s*[-#]?\s*(\d+)/i, (_match, prefix: string, digits: string) => `${prefix.toUpperCase()}${digits}`);
+}
+
 function matchIdentifier(q: string): ParsedIdentifier | undefined {
   const trimmed = q.trim();
   const nmlsInSentence = trimmed.match(new RegExp(String.raw`\bnmls\b${IDENTIFIER_FILLER_SOURCE}(\d{4,12})\b`, 'i'));
@@ -756,26 +761,28 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
   }
   // POST-R1-ASK-INTENT-001 Problem B: "verify contractor license CBC015082" carries
   // the license code inside a full sentence, not as the whole query -- the FL
-  // CBC/CGC/CCC pattern below only ever matched when the code WAS the entire
+  // contractor-prefix pattern below only ever matched when the code WAS the entire
   // trimmed query. Extract it in-sentence, mirroring the NMLS/LEI/CCN/CRD/NPN/NAIC
   // in-sentence matches above, so an embedded identifier takes precedence over
   // fuzzy name/vocabulary interpretation per the ticket's explicit requirement.
-  const contractorLicenseInSentence = trimmed.match(/\b(cbc|cgc|ccc)\s*[-#]?\s*(\d{5,8})\b/i);
+  // Longer prefixes precede RC so CRC is not captured as RC.
+  const contractorLicenseInSentence = trimmed.match(/\b(crc|cac|cfc|cbc|cgc|ccc|rc)\s*[-#]?\s*(\d{5,8})\b/i);
   if (contractorLicenseInSentence) {
     const family = IDENTIFIER_FAMILIES.find((f) => f.id === 'state_contractor_license');
     if (family) {
       return {
         family,
-        raw: `${contractorLicenseInSentence[1].toUpperCase()}${contractorLicenseInSentence[2]}`,
+        raw: compactFloridaContractorLicense(`${contractorLicenseInSentence[1]}${contractorLicenseInSentence[2]}`),
         ambiguous: false,
         note: family.note,
       };
     }
   }
-  const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|cbc|cgc|ccc|crc|cac|cfc)\b/i.test(trimmed));
+  const labeled = IDENTIFIER_FAMILIES.find((f) => f.pattern.test(trimmed) && /^(?:dot|usdot|mc|nmls|npn|ccn|crd|crc|cac|cfc|cbc|cgc|ccc|rc)\b/i.test(trimmed));
   if (labeled) {
     const ambiguous = false;
-    return { family: labeled, raw: trimmed, ambiguous, note: labeled.note };
+    const raw = labeled.id === 'state_contractor_license' ? compactFloridaContractorLicense(trimmed) : trimmed;
+    return { family: labeled, raw, ambiguous, note: labeled.note };
   }
   const bare = IDENTIFIER_FAMILIES.filter((f) => f.pattern.test(trimmed));
   if (bare.length === 1 && /^(?:dot|usdot|mc|nmls|npn|ccn|crd)/i.test(trimmed)) {
@@ -791,7 +798,7 @@ function matchIdentifier(q: string): ParsedIdentifier | undefined {
   }
   const flLicense = IDENTIFIER_FAMILIES.find((f) => f.id === 'state_contractor_license');
   if (flLicense && flLicense.pattern.test(trimmed)) {
-    return { family: flLicense, raw: trimmed, ambiguous: false, note: flLicense.note };
+    return { family: flLicense, raw: compactFloridaContractorLicense(trimmed), ambiguous: false, note: flLicense.note };
   }
   for (const f of IDENTIFIER_FAMILIES) {
     if (f.pattern.test(trimmed) && f.id !== 'usdot' && f.id !== 'mc' && f.id !== 'cms_ccn') {

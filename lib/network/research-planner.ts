@@ -22,6 +22,7 @@ import { inAmbiguousNumber, inIdentifier, inRefusal, inRankingAsked, queryLooksL
 import { parseNetworkAsk, type ParsedGeography } from './ask-parse.ts';
 import {careTask,careLocation,planCareResearch,type CareSetting} from './care-task.ts';
 import { investorFailClosedReason, isInvestorAdviserSeekingQuery, isUnsupportedSecuritiesAdviceQuery } from './investor-ask.ts';
+import { moveFailClosedReason } from './move-ask.ts';
 import type { SpecialistHubId } from './registry.ts';
 import { classifyTnHub, queryLooksLikeTennessee, tnBareLicenseAmbiguous, tnExactCredentialRoute, tnLabeledIdentifier } from './tn-network.ts';
 import { classifyNvHub, nvBareLicenseAmbiguous, nvExactCredentialRoute, nvIdentifierRoute, nvLabeledIdentifier, queryLooksLikeNevada } from './nv-network.ts';
@@ -826,9 +827,40 @@ export function planAskResearch(question: string, overrides: PlannerOverrides = 
     executionMode, clarificationReason, reasonCodes: dedupe(reasons), legacyQueryType: legacyType(intent),
   };
   const care=careTask(originalQuestion);
-  if(care?.kind==='care'&&!plan.entityName&&!/\b(?:CMS\s+)?CCN\s*#?\s*\d{6}\b/i.test(originalQuestion))return planCareResearch(plan,care.setting,careLocation(originalQuestion));
-  if(care?.kind==='care_and_move')return {...plan,intent:'MULTI_HUB_JOURNEY',primaryHub:undefined,candidateHubs:['senior','move'],requestedGeography:careLocation(originalQuestion),executionAllowed:false,executionMode:'CLARIFY'};
-  return plan;
+  if(care?.kind==='care'&&!plan.entityName&&!/\b(?:CMS\s+)?CCN\s*#?\s*\d{6}\b/i.test(originalQuestion))return applyMovePopulationGate(planCareResearch(plan,care.setting,careLocation(originalQuestion)));
+  if(care?.kind==='care_and_move')return applyMovePopulationGate({...plan,intent:'MULTI_HUB_JOURNEY',primaryHub:undefined,candidateHubs:['senior','move'],requestedGeography:careLocation(originalQuestion),executionAllowed:false,executionMode:'CLARIFY'});
+  return applyMovePopulationGate(plan);
+}
+
+/**
+ * NYSDOT roster and complaint populations are not acquired. Guided research must not
+ * substitute a recorded-headquarters cohort and then describe those rows as the answer.
+ * Ranking and service-territory wording stay on their existing guided paths: a "best mover"
+ * question still browses headquarters with that limitation disclosed, and "movers serving"
+ * already returns unsupported from the execution-scope check.
+ */
+function movePopulationUnavailableReason(question: string): string | undefined {
+  const reason = moveFailClosedReason(question);
+  if (!reason) return undefined;
+  if (/NYSDOT household-goods roster is not acquired|NYSDOT complaint corpus is not acquired/.test(reason)) return reason;
+  return undefined;
+}
+
+function applyMovePopulationGate(plan: AskResearchPlan): AskResearchPlan {
+  const reason = movePopulationUnavailableReason(plan.originalQuestion);
+  if (!reason) return plan;
+  const onlyMove = plan.primaryHub === 'move' || (plan.primaryHub === undefined && (plan.candidateHubs.length === 0 || plan.candidateHubs.every((hub) => hub === 'move')));
+  if (!onlyMove) return plan;
+  return {
+    ...plan,
+    primaryHub: 'move',
+    candidateHubs: plan.candidateHubs.includes('move') ? plan.candidateHubs : ['move'],
+    executionAllowed: false,
+    executionMode: 'CLARIFY',
+    clarificationReason: reason,
+    missingSlots: plan.missingSlots.includes('sourceOrScope') ? plan.missingSlots : [...plan.missingSlots, 'sourceOrScope'],
+    reasonCodes: dedupe([...plan.reasonCodes, 'MOVE_POPULATION_UNAVAILABLE', 'SPECIALIST_EXECUTION_BLOCKED']),
+  };
 }
 
 export function validateAskResearchPlan(plan: AskResearchPlan): AskResearchPlan {
@@ -844,5 +876,6 @@ export function planRequiresImmediateClarification(plan: AskResearchPlan): boole
     'UNSUPPORTED_SECURITIES_ADVICE', 'MINNESOTA_SAFETY_REFUSAL',
     'MICHIGAN_SAFETY_REFUSAL',
     'CONNECTICUT_SAFETY_REFUSAL',
+    'MOVE_POPULATION_UNAVAILABLE',
   ].includes(code));
 }
