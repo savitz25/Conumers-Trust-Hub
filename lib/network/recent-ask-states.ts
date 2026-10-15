@@ -40,7 +40,15 @@ import { ND_PUBLICATION_MANIFEST } from './north-dakota-network.ts';
 import { WY_PUBLICATION_MANIFEST } from './wyoming-network.ts';
 import { SD_PUBLICATION_MANIFEST } from './south-dakota-network.ts';
 
-type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
+type ManifestHub = { hub_id?: string; capability_summary?: string; summary?: string; grain?: string };
+type ManifestWithHubs = { hubs?: ReadonlyArray<ManifestHub> };
+
+function manifestHighlight(hub: ManifestHub): string | null {
+  const summary = (hub.capability_summary ?? hub.summary)?.trim() || null;
+  const grain = hub.grain?.trim() || null;
+  if (grain && /^\d/.test(grain) && !(summary && /^\d/.test(summary))) return grain;
+  return summary ?? grain;
+}
 
 const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   'west-virginia': WV_PUBLICATION_MANIFEST,
@@ -89,11 +97,10 @@ export function listRecentAskStates(limit = 4, highlightsPerState = 3): RecentAs
   const recent: RecentAskState[] = [];
   for (const state of listGatedAskStates().reverse()) {
     if (recent.length >= limit) break;
-    const hubs = (MANIFEST_BY_SLUG[state.slug]?.hubs ?? []).flatMap((hub) =>
-      typeof hub.hub_id === 'string' && typeof (hub.capability_summary ?? hub.summary) === 'string' && (hub.capability_summary ?? hub.summary)?.trim()
-        ? [{ hub: hub.hub_id, summary: (hub.capability_summary ?? hub.summary)!.trim() }]
-        : [],
-    );
+    const hubs = (MANIFEST_BY_SLUG[state.slug]?.hubs ?? []).flatMap((hub) => {
+      const summary = manifestHighlight(hub);
+      return typeof hub.hub_id === 'string' && summary ? [{ hub: hub.hub_id, summary }] : [];
+    });
     if (hubs.length === 0) continue;
     // Prefer summaries that lead with a source-native count; fall back to manifest order.
     const counted = hubs.filter((hub) => /^\d/.test(hub.summary));

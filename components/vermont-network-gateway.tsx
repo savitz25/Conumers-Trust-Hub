@@ -14,7 +14,7 @@ export function VermontNetworkGateway() {
         <ul className="mt-4 grid gap-4 md:grid-cols-2">
           {manifest.hubs.map((hub) => <li key={hub.hub_id} className="min-w-0 rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border, boxShadow: ASK_SHADOW.soft }}>
             <h3 className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>{hub.hub_name}</h3>
-            <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p>
+            <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p><p className="mt-2 text-sm leading-relaxed">{hub.grain}</p>
             <details className="mt-3 text-xs leading-relaxed"><summary className="flex min-h-11 cursor-pointer items-center font-semibold">Source clock and coverage limits</summary>
               <p><strong>Source clock:</strong> {hub.clock}</p><p className="mt-2"><strong>Source grain:</strong> {hub.grain}</p><p className="mt-2"><strong>Material gap:</strong> {hub.gap}</p>
               <p className="mt-2 font-semibold">Authoritative sources</p><ul className="mt-1 list-disc space-y-1 pl-4">{hub.sources.map((source) => <li key={source.url}><a className="underline" href={source.url}>{source.label}</a></li>)}</ul>

@@ -50,7 +50,7 @@ export function AlaskaNetworkGateway() {
               >
                 {hub.hub_name}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p>
+              <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p><p className="mt-2 text-sm leading-relaxed">{hub.grain}</p>
               <details className="mt-3 text-xs leading-relaxed">
                 <summary className="flex min-h-11 cursor-pointer items-center font-semibold">
                   Source clock and coverage limits

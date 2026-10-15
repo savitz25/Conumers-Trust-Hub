@@ -72,9 +72,22 @@ function MetricBlock({ metric, size }: { metric: NetworkMetric; size: 'lg' | 'md
       <p className="mt-1 text-sm leading-snug" style={{ color: ASK_BRAND.ink }}>
         {metric.label}
       </p>
+      <p className="mt-1 text-xs leading-snug text-slate-600">{metric.description}</p>
+      <p className="mt-1 text-xs leading-snug text-slate-600">Grain: {metric.grain}</p>
+      <p className="mt-1 text-xs leading-snug text-slate-600">Official source date: {dateLabel(metric.sourceAsOf)}</p>
       <Trace metric={metric} />
     </div>
   );
+}
+
+function signatureMetrics(card: SpecialistHubPresentation): NetworkMetric[] {
+  const lead = card.universes.length > 0 ? card.universes : card.primary;
+  return lead.slice(0, 3);
+}
+
+function remainingMetrics(card: SpecialistHubPresentation): NetworkMetric[] {
+  const shown = new Set(signatureMetrics(card).map((metric) => metric.key));
+  return [...card.universes, ...card.primary, ...card.secondary].filter((metric) => !shown.has(metric.key));
 }
 
 export function SpecialistNetworkCard({
@@ -117,33 +130,27 @@ export function SpecialistNetworkCard({
         </a>
       ) : null}
 
-      {card.universes.length > 0 ? (
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-          {card.universes.map((metric) => (
-            <div key={metric.key} className="min-w-0 rounded-xl bg-slate-50 px-3 py-3">
-              <MetricValue value={metric.value} size="md" />
-              <p className="mt-1 text-xs font-semibold leading-snug">{metric.label}</p>
-              <Trace metric={metric} />
-            </div>
-          ))}
-        </div>
-      ) : null}
-
       <div className={`grid gap-5 sm:gap-6 ${card.universes.length ? 'mt-5' : 'mt-4'} sm:grid-cols-2`}>
-        {card.primary.map((metric) => (
+        {signatureMetrics(card).map((metric) => (
           <MetricBlock key={metric.key} metric={metric} size={card.universes.length ? 'md' : 'lg'} />
         ))}
       </div>
 
-      {card.secondary.length > 0 ? (
-        <ul className="mt-5 space-y-1 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-          {card.secondary.map((metric) => (
-            <li key={metric.key} className="min-w-0">
-              <MetricValue value={metric.value} size="inline" /> {metric.label}
-              <Trace metric={metric} />
-            </li>
-          ))}
-        </ul>
+      {remainingMetrics(card).length > 0 ? (
+        <details className="mt-5 rounded-xl border px-3" style={{ borderColor: ASK_BRAND.border }}>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold">More published measures</summary>
+          <ul className="space-y-3 border-t py-3 text-sm leading-relaxed" style={{ borderColor: ASK_BRAND.border, color: ASK_BRAND.ink }}>
+            {remainingMetrics(card).map((metric) => (
+              <li key={metric.key} className="min-w-0">
+                <MetricValue value={metric.value} size="inline" /> {metric.label}
+                <p className="text-xs leading-snug text-slate-600">{metric.description}</p>
+                <p className="text-xs leading-snug text-slate-600">Grain: {metric.grain}</p>
+                <p className="text-xs leading-snug text-slate-600">Official source date: {dateLabel(metric.sourceAsOf)}</p>
+                <Trace metric={metric} />
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : null}
 
       <ul className="mt-4 space-y-1 text-xs leading-relaxed text-slate-600">
