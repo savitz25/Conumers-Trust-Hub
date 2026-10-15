@@ -1,5 +1,5 @@
 /**
- * ASK-B1 — recently added network states for the homepage strip.
+ * ASK-B1 ? recently added network states for the homepage strip.
  *
  * Derived from the canonical catalog (new gateways are appended there) and each
  * state's accepted publication manifest. Highlights are the manifest's own
@@ -37,6 +37,7 @@ import { MT_PUBLICATION_MANIFEST } from './montana-network.ts';
 import { AK_PUBLICATION_MANIFEST } from './alaska-network.ts';
 import { VT_PUBLICATION_MANIFEST } from './vermont-network.ts';
 import { ND_PUBLICATION_MANIFEST } from './north-dakota-network.ts';
+import { WY_PUBLICATION_MANIFEST } from './wyoming-network.ts';
 
 type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
 
@@ -71,6 +72,7 @@ const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   alaska: AK_PUBLICATION_MANIFEST,
   vermont: VT_PUBLICATION_MANIFEST,
   'north-dakota': ND_PUBLICATION_MANIFEST,
+  wyoming: WY_PUBLICATION_MANIFEST,
 };
 
 export type RecentAskState = {

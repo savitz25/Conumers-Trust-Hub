@@ -1,5 +1,5 @@
 /**
- * TH-HOMEPAGE-SYNC-001 — canonical Ask published-state catalog.
+ * TH-HOMEPAGE-SYNC-001 ? canonical Ask published-state catalog.
  *
  * Adding an accepted Ask state gateway means adding ONE entry here (plus the
  * specialist network module/page/manifest). Homepage explorer, Places, footer,
@@ -52,6 +52,7 @@ import { riReleaseGatePassed } from './rhode-island-network.ts';
 import { mtReleaseGatePassed } from './montana-network.ts';
 import { akReleaseGatePassed } from './alaska-network.ts';
 import { ndReleaseGatePassed } from './north-dakota-network.ts';
+import { wyReleaseGatePassed } from './wyoming-network.ts';
 import { vtReleaseGatePassed } from './vermont-network.ts';
 
 export type AskPublishedState = {
@@ -110,6 +111,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'AK', slug: 'alaska', name: 'Alaska', gate: akReleaseGatePassed },
   { code: 'ND', slug: 'north-dakota', name: 'North Dakota', gate: ndReleaseGatePassed },
   { code: 'VT', slug: 'vermont', name: 'Vermont', gate: vtReleaseGatePassed },
+  { code: 'WY', slug: 'wyoming', name: 'Wyoming', gate: wyReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {
@@ -186,6 +188,6 @@ export function askStatePlaceEntries(): Array<{ href: string; label: string; det
     .map((state) => ({
       href: state.href,
       label: state.name,
-      detail: `Network gateway to specialist ${state.name} research pages. State-level only — not a city or county page.`,
+      detail: `Network gateway to specialist ${state.name} research pages. State-level only ? not a city or county page.`,
     }));
 }
