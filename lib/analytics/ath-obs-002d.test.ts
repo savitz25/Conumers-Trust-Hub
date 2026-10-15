@@ -3,6 +3,11 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
+import ts from 'typescript';
+import * as journeyContract from './my-trusthub-contract.ts';
+import { TRUSTHUB_EVENTS } from './trusthub-events.ts';
 import {
   MY_TRUSTHUB_EVENTS,
   boundedJourneyProperties,
@@ -69,7 +74,7 @@ test('SAVE FAILURE via guest handoff: an expired/consumed/tampered handoff never
 test('V2-2: guest import success requires a receipt, while legacy failure markers stay bounded', () => {
   none('/my/saved', 'import=complete');
   assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=invalid'))).properties.failure_reason, 'import_invalid');
-  assert.equal(only(resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('import=none'))).properties.failure_reason, 'import_none_selected');
+  none('/my/saved', 'import=none');
 });
 
 test('V2-2: a project marker cannot manufacture a durable import outcome', () => {
@@ -169,7 +174,7 @@ test('a marker never fires outside the exact surface path it belongs to', () => 
 });
 
 test('multiple simultaneous markers on one URL each produce their own event with their own consumeParams', () => {
-  const outcomes = resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('failed=save&error=unable&import=none'));
+  const outcomes = resolveMyTrustHubOutcomes('/my/saved', new URLSearchParams('failed=save&error=unable&import=invalid'));
   assert.equal(outcomes.length, 2);
   assert.deepEqual(outcomes.map((o) => o.event).sort(), [MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED, MY_TRUSTHUB_EVENTS.PROFILE_SAVE_FAILED].sort());
 });
@@ -194,4 +199,183 @@ test('a trailing slash and a querystring embedded in pathname do not change the 
 test('the project-detail route pattern requires a UUID segment, not an arbitrary path', () => {
   none('/my/projects/not-a-uuid', 'created=1');
   none('/my/projects', 'created=1');
+});
+
+// Run the actual client handlers with isolated hooks, server actions and transport.
+// No account, database, browser SDK or live analytics call is involved.
+function clientModule(path: string, modules: Record<string, unknown>, globals: Record<string, unknown> = {}) {
+  const code = ts.transpileModule(readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
+  }).outputText;
+  const exports: Record<string, unknown> = {};
+  runInNewContext(code, {
+    exports, URLSearchParams,
+    require: (name: string) => {
+      if (!(name in modules)) throw new Error(`Unexpected fixture import: ${name}`);
+      return modules[name];
+    },
+    ...globals,
+  });
+  return exports;
+}
+
+type Capture = { event: string; properties: Record<string, unknown> };
+function mockTransport() {
+  const events: Capture[] = [];
+  return { events, captureTrustEvent: (event: string, properties: Record<string, unknown>) => {
+    events.push({ event, properties: JSON.parse(JSON.stringify(properties)) });
+  } };
+}
+
+test('actual outcome effect captures Save failure and Unsave once, consumes markers, and counts immediate retries', () => {
+  const transport = mockTransport();
+  let enabled = true;
+  let snapshot = '';
+  const location = { pathname: '/my/saved', search: '' };
+  const history = { state: null, replaceState: (_state: unknown, _title: string, url: string) => {
+    location.search = url.includes('?') ? url.slice(url.indexOf('?')) : '';
+  } };
+  const outcomeModule = clientModule('components/analytics/my-trusthub-outcomes.tsx', {
+    react: { useEffect: (effect: () => void) => effect() },
+    'next/navigation': { usePathname: () => location.pathname, useSearchParams: () => new URLSearchParams(snapshot) },
+    '@/lib/analytics/environment': { shouldEnablePosthog: () => enabled },
+    '@/lib/analytics/trusthub': transport,
+    '@/lib/analytics/my-trusthub-contract': journeyContract,
+  }, { window: { location, history, localStorage: { getItem: () => null } } });
+  const effect = outcomeModule.MyTrustHubOutcomes as () => void;
+  const navigate = (search: string) => { snapshot = search; location.search = search; effect(); effect(); };
+  navigate('?saved=1');
+  assert.deepEqual(transport.events.map(x => x.event), ['profile_saved']);
+  navigate('?failed=save&error=unable');
+  navigate('?failed=save&error=unable'); // genuine retry, no artificial two-second wait
+  assert.equal(transport.events.filter(x => x.event === 'profile_save_failed').length, 2);
+  navigate('?unsaved=1&utm_source=fixture');
+  assert.equal(transport.events.filter(x => x.event === 'profile_unsaved').length, 1);
+  assert.equal(location.search, '?utm_source=fixture');
+  navigate(location.search); // refresh after consumption
+  assert.equal(transport.events.length, 4);
+  assert.deepEqual(transport.events[3].properties, {
+    surface: 'my_saved', action_source: 'my_saved_form', auth_state: 'authenticated', outcome: 'success',
+  });
+  navigate('?error=unsave');
+  navigate('?unsaved=1&error=unsave');
+  navigate('?import=none');
+  navigate('?outcome=local_only');
+  assert.equal(transport.events.length, 4, 'no success for failed Unsave; cancellation/local-only is not a failed Save');
+  enabled = false;
+  navigate('?unsaved=1');
+  assert.equal(location.search, '?unsaved=1');
+  assert.equal(transport.events.length, 4, 'analytics gate remains respected');
+});
+
+type FixtureElement = { type: string; props: { children?: unknown; onClick?: () => void; action?: (form: FormData) => void } };
+function element(tree: unknown, type: string): FixtureElement | undefined {
+  if (!tree || typeof tree !== 'object') return undefined;
+  if (Array.isArray(tree)) return tree.map(node => element(node, type)).find(Boolean);
+  const node = tree as FixtureElement;
+  return node.type === type ? node : element(node.props?.children, type);
+}
+
+type ImportResult = { ok: boolean; error?: string; acknowledgment?: { itemIds: string[] } };
+async function guestFixture(commit: () => Promise<ImportResult>, options: { sessions?: boolean; storageFailsAfterCommit?: boolean } = {}) {
+  const transport = mockTransport();
+  const states: unknown[] = [];
+  let cursor = 0;
+  let work = Promise.resolve();
+  let committed = false;
+  let calls = 0;
+  const react = {
+    useEffect: (effect: () => void) => effect(),
+    useRef: () => ({ current: null }),
+    useState: (initial: unknown) => {
+      const index = cursor++;
+      if (!(index in states)) states[index] = initial;
+      return [states[index], (value: unknown) => { states[index] = value; }];
+    },
+    useTransition: () => [false, (action: () => Promise<void>) => { work = action(); }],
+  };
+  const shared = {
+    react,
+    '@/lib/analytics/trusthub': transport,
+    '@/lib/analytics/trusthub-events': { TRUSTHUB_EVENTS },
+    '@/lib/analytics/my-trusthub-contract': journeyContract,
+  };
+  const instrumentation = clientModule('components/analytics/ask-instrumentation.tsx', shared);
+  const commitAction = async () => { calls++; const result = await commit(); committed = result.ok; return result; };
+  const previewAction = async () => ({ ok: true, items: [{ client_item_id: 'private-item-fixture', item_status: 'new', importable: true }] });
+  const jsx = (type: string, props: FixtureElement['props']) => ({ type, props });
+  const guestModule = clientModule('components/my-trusthub/guest-import.tsx', {
+    ...shared,
+    'react/jsx-runtime': { jsx, jsxs: jsx },
+    'next/navigation': { useRouter: () => ({ refresh: () => {} }) },
+    '@/app/my/actions': { commitGuestImportAction: commitAction, commitGuestSessionImportAction: commitAction, previewGuestImportAction: previewAction, previewGuestSessionImportAction: previewAction },
+    '@/lib/my-trusthub/guest-retirement': { importRequestKey: async () => 'private-request-fixture' },
+    '@/components/analytics/ask-instrumentation': instrumentation,
+  }, { localStorage: { getItem: () => {
+    if (committed && options.storageFailsAfterCommit) throw new Error('Fixture storage refused');
+    return '{"email":"private@example.invalid","token":"fixture-secret","body":"private research"}';
+  } } });
+  const render = () => {
+    cursor = 0;
+    return (guestModule.GuestImport as (props: unknown) => unknown)({
+      storageKey: 'fixture', sessions: options.sessions ?? false, projects: [], ownerId: 'private-owner-fixture', ownerLabel: 'private@example.invalid',
+    });
+  };
+  render(); // storage hydration
+  const inspect = element(render(), 'button')?.props.onClick;
+  assert.ok(inspect);
+  inspect(); await work;
+  const submit = element(render(), 'form')?.props.action;
+  assert.ok(submit);
+  return { events: transport.events, calls: () => calls, submit: async (selected = true) => {
+    const form = new FormData();
+    if (selected) form.set('selectedItemId', 'private-item-fixture');
+    form.set('projectId', 'private-project-fixture');
+    submit(form); await work;
+  } };
+}
+
+const acknowledged = { ok: true, acknowledgment: { itemIds: ['private-item-fixture'] } };
+
+test('guest profile Save success emits no failure, even if subsequent device read fails', async () => {
+  for (const storageFailsAfterCommit of [false, true]) {
+    const fixture = await guestFixture(async () => acknowledged, { storageFailsAfterCommit });
+    await fixture.submit();
+    assert.deepEqual(fixture.events.map(x => x.event), ['profile_save_intent', 'profile_saved']);
+  }
+});
+
+test('rejected and thrown guest profile Save each emit exactly one failure with safe matching context', async () => {
+  for (const commit of [
+    async () => ({ ok: false, error: 'private@example.invalid fixture-secret' }),
+    async () => { throw new Error('private@example.invalid fixture-secret'); },
+    async () => ({ ok: true }), // missing receipt is not confirmed success
+  ]) {
+    const fixture = await guestFixture(commit);
+    await fixture.submit();
+    assert.deepEqual(fixture.events.map(x => x.event), ['profile_save_intent', 'profile_save_failed']);
+    assert.deepEqual(fixture.events[1].properties, {
+      surface: 'my_saved', action_source: 'guest_import', auth_state: 'authenticated', outcome: 'failure', failure_reason: 'unable', project_context_present: true,
+    });
+    assert.doesNotMatch(JSON.stringify(fixture.events), /private|fixture-secret|email|token|payload|body|ownerId|projectId|itemIds/);
+  }
+});
+
+test('guest selection cancellation and session import are not profile Save failures', async () => {
+  const empty = await guestFixture(async () => ({ ok: false }));
+  await empty.submit(false);
+  assert.equal(empty.calls(), 0);
+  assert.deepEqual(empty.events, []);
+  const session = await guestFixture(async () => ({ ok: false }), { sessions: true });
+  await session.submit();
+  assert.deepEqual(session.events, []);
+});
+
+test('failed guest Save then successful retry emits one event per outcome without duplicate failures', async () => {
+  let attempt = 0;
+  const fixture = await guestFixture(async () => ++attempt === 1 ? { ok: false } : acknowledged);
+  await fixture.submit();
+  await fixture.submit();
+  assert.equal(fixture.calls(), 2);
+  assert.deepEqual(fixture.events.map(x => x.event), ['profile_save_intent', 'profile_save_failed', 'profile_save_intent', 'profile_saved']);
 });

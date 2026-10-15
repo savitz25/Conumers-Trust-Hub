@@ -9,6 +9,7 @@ export const TRUSTHUB_EVENTS = {
   SPECIALIST_HANDOFF_STARTED: 'specialist_handoff_started',
   PROFILE_VIEWED: 'profile_viewed',
   PROFILE_SAVED: MY_TRUSTHUB_EVENTS.PROFILE_SAVED,
+  PROFILE_UNSAVED: MY_TRUSTHUB_EVENTS.PROFILE_UNSAVED,
   ACCOUNT_SIGNUP_STARTED: 'account_signup_started',
   ACCOUNT_LOGIN_STARTED: 'account_login_started',
   ACCOUNT_CREATED: 'account_created',
