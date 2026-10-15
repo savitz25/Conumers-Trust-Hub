@@ -115,7 +115,7 @@ test('homepage removes stale geography and preserves semantic firewalls', () => 
   const home = readFileSync(join(process.cwd(), 'components/network-intelligence-home.tsx'), 'utf8');
   assert.doesNotMatch(home, /Florida is the current proof market/);
   assert.match(home, /No fake grand total/);
-  assert.match(home, /complaint ? violation/);
+  assert.match(home, /complaint ≠ violation/);
   assert.match(home, /claiming permits corrections/i);
   assert.doesNotMatch(home, /AggregateRating|Trust Score|best provider|safest|vetted/i);
   assert.match(seoSchemas, /'@type': 'WebPage'/);
