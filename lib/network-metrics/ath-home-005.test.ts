@@ -74,9 +74,9 @@ test('published-state model preserves asymmetric specialist coverage', () => {
       assert.equal(state.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
       continue; // Vermont is manifest-backed; the older fallback artifact has no VT rows.
     }
-    if (state.code === 'ND') {
+    if (state.code === 'ND' || state.code === 'WY') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'SPECIALIST_PUBLISHED'), true);
-      continue; // North Dakota is manifest-backed; the older fallback artifact has no ND rows.
+      continue; // These state gateways are manifest-backed; the older fallback artifact has no rows.
     }
     if (state.code === 'UT' || state.code === 'NM' || state.code === 'IA' || state.code === 'NE' || state.code === 'KS' || state.code === 'ID' || state.code === 'WV' || state.code === 'NH' || state.code === 'DE' || state.code === 'HI') {
       assert.equal(state.hubs.every((hub) => hub.mode === 'NATIONAL_ONLY'), true);
@@ -115,7 +115,7 @@ test('homepage removes stale geography and preserves semantic firewalls', () => 
   const home = readFileSync(join(process.cwd(), 'components/network-intelligence-home.tsx'), 'utf8');
   assert.doesNotMatch(home, /Florida is the current proof market/);
   assert.match(home, /No fake grand total/);
-  assert.match(home, /complaint ≠ violation/);
+  assert.match(home, /complaint ? violation/);
   assert.match(home, /claiming permits corrections/i);
   assert.doesNotMatch(home, /AggregateRating|Trust Score|best provider|safest|vetted/i);
   assert.match(seoSchemas, /'@type': 'WebPage'/);
