@@ -1,0 +1,116 @@
+{
+  "state": "South Dakota",
+  "code": "SD",
+  "slug": "south-dakota",
+  "ask_canonical": "https://www.asktrusthub.com/south-dakota",
+  "scope": "STATE_LEVEL_ONLY",
+  "reviewed_at": "2026-10-14",
+  "hubs": [
+    {
+      "hub_id": "move",
+      "hub_name": "MoveTrustHub",
+      "url": "https://www.movetrusthub.com/south-dakota",
+      "production_sha": "3a6e82b0c73be0e2135b2e2c742a26c65c17d9bd",
+      "clock": "South Dakota codified law, SDTruckInfo, and consumer moving guidance checked 2026-10-14. Household-goods roster not acquired.",
+      "summary": "Intrastate commercial-vehicle guidance does not provide a household-goods carrier roster.",
+      "grain": "Vehicle registration, single-trip permits, repealed certificate provisions, and FMCSA interstate authority are distinct.",
+      "gap": "Statewide household-goods company roster NOT_ACQUIRED. FMCSA does not establish South Dakota intrastate authority.",
+      "sources": [
+        { "url": "https://sdlegislature.gov/Statutes/49", "label": "SDCL Title 49" },
+        { "url": "https://sdtruckinfo.sd.gov/intrastate-carriers/", "label": "SDTruckInfo intrastate carriers" },
+        { "url": "https://dor.sd.gov/businesses/motor-vehicle/motor-carrier-services/", "label": "Department of Revenue motor carrier services" },
+        { "url": "https://consumer.sd.gov/fastfacts/moving.aspx", "label": "South Dakota consumer moving guidance" }
+      ]
+    },
+    {
+      "hub_id": "contractor",
+      "hub_name": "ContractorTrustHub",
+      "url": "https://www.contractortrusthub.com/south-dakota",
+      "production_sha": "afab1ef01ccb2770c6d5d7b68cccbbb076841908",
+      "clock": "Plumbing Commission lists dated July 31, 2026 and February 4, 2026, and Department of Revenue tax-license guidance, checked 2026-10-14.",
+      "summary": "Plumbing source lists, electrical licensure, and the contractor excise-tax license stay separate.",
+      "grain": "Plumber, specialty, and onsite-wastewater source rows are not electrical credentials or tax-license records.",
+      "gap": "Current electrical roster, contractor tax-license rows, and a general-contractor census NOT_ACQUIRED.",
+      "sources": [
+        { "url": "https://dlr.sd.gov/plumbing/documents/List_of_licensed_plumbers.pdf", "label": "Licensed plumbers list" },
+        { "url": "https://dlr.sd.gov/plumbing/documents/list_of_specialty_licensees.pdf", "label": "Specialty licensees list" },
+        { "url": "https://dlr.sd.gov/electrical/default.aspx", "label": "Electrical Commission" },
+        { "url": "https://dor.sd.gov/businesses/taxes/contractors-excise-tax/", "label": "Contractor excise-tax license" }
+      ]
+    },
+    {
+      "hub_id": "lender",
+      "hub_name": "LenderTrustHub",
+      "url": "https://www.lendertrusthub.com/south-dakota",
+      "production_sha": "76f7d6a5297ff1225e4b24806db15cb19c12f31a",
+      "clock": "Division of Banking and NMLS checked 2026-10-14. Existing 2025 HMDA slice reused.",
+      "summary": "Mortgage company, broker, originator, and money-lender classes stay separate. HMDA is market activity.",
+      "grain": "Company licenses, branches, MLO persons, money lenders, 56 stored FDIC bank records, and HMDA observations are distinct.",
+      "gap": "Current mortgage company, broker, branch, and MLO rosters NOT_ACQUIRED. HMDA is not licensing.",
+      "sources": [
+        { "url": "https://dlr.sd.gov/banking/mortgage_licenses/default.aspx", "label": "Mortgage license classes" },
+        { "url": "https://dlr.sd.gov/banking/money_lenders/default.aspx", "label": "Money-lender licensing" },
+        { "url": "https://www.nmlsconsumeraccess.org/", "label": "NMLS Consumer Access" },
+        { "url": "https://ffiec.cfpb.gov/data-publication/modified-lar", "label": "CFPB/FFIEC HMDA" }
+      ]
+    },
+    {
+      "hub_id": "insurance",
+      "hub_name": "InsuranceTrustHub",
+      "url": "https://www.insurancetrusthub.com/south-dakota",
+      "production_sha": "88442dfb950cfd1d86af9247c8aadec4726a9003",
+      "clock": "Division of Insurance company tables checked 2026-10-14. Domestic table as of October 2023. Farm mutual table as of September 2026.",
+      "summary": "Dated company tables stay at their source scopes and are not a current insurer census.",
+      "grain": "22 domestic company observations exclude farm mutuals and captives. 7 farm-mutual observations are a separate class. The March 27, 2024 foreign-insurer file returned HTTP 404.",
+      "gap": "Agencies, producers, adjusters, surplus lines, appointments, examinations, and enforcement rosters NOT_ACQUIRED.",
+      "sources": [
+        { "url": "https://dlr.sd.gov/insurance/", "label": "South Dakota Division of Insurance" },
+        { "url": "https://dlr.sd.gov/insurance/company_listings/domestics.aspx", "label": "Domestic company table" },
+        { "url": "https://dlr.sd.gov/insurance/company_listings/farm_mutuals.aspx", "label": "Farm mutual company table" },
+        { "url": "https://sbs.naic.org/solar-external-lookup/", "label": "State Based Systems lookup" }
+      ]
+    },
+    {
+      "hub_id": "senior",
+      "hub_name": "SeniorTrustHub",
+      "url": "https://www.seniortrusthub.com/south-dakota",
+      "production_sha": "32566052408a4dc83108abd5a946d40ad5020dc4",
+      "clock": "Department of Health licensure pages and the SDHLS lookup checked 2026-10-14. No dated bulk roster acquired.",
+      "summary": "License and registration classes stay separate. The public lookup was not acquired as a roster.",
+      "grain": "Nursing facilities, assisted living centers, adult foster care, community living homes, and inpatient hospice are license classes. Residential living centers are a registration class.",
+      "gap": "Dated statewide facility rows NOT_ACQUIRED. Survey pages are not a license roster. CMS certification is separate.",
+      "sources": [
+        { "url": "https://doh.sd.gov/healthcare-professionals/health-facility-licensure/", "label": "Office of Health Facilities Licensure and Certification" },
+        { "url": "https://doh.sd.gov/healthcare-professionals/health-facility-licensure/healthcare-facility-licensure/", "label": "License and registration eligibility" },
+        { "url": "https://www.sdhls.org/verify/", "label": "SDHLS provider lookup" },
+        { "url": "https://doh.sd.gov/topics/long-term-care/levels-of-long-term-care/", "label": "Levels of long-term care" }
+      ]
+    },
+    {
+      "hub_id": "investor",
+      "hub_name": "InvestorTrustHub",
+      "url": "https://www.investortrusthub.com/south-dakota",
+      "production_sha": "8f03fd525806aa7ec06219b17ecebbc5f6e6583f",
+      "clock": "Division of Insurance securities pages checked 2026-10-14. No South Dakota jurisdiction extract acquired.",
+      "summary": "Securities Regulation distinguishes state advisers, notice filings, representatives, broker-dealers, agents, franchises, and enforcement.",
+      "grain": "State IA, federal notice, ERA, IAR persons, broker-dealer firms, agents, and franchise filings are separate. Principal-office geography does not establish registration.",
+      "gap": "Dated South Dakota jurisdiction firm and person rows NOT_ACQUIRED. No name-only adverse joins.",
+      "sources": [
+        { "url": "https://dlr.sd.gov/securities", "label": "Securities Regulation" },
+        { "url": "https://dlr.sd.gov/securities/investment_adviser_licensing.aspx", "label": "Investment adviser licensing" },
+        { "url": "https://dlr.sd.gov/securities/forms.aspx", "label": "Broker-dealer and adviser forms" },
+        { "url": "https://dlr.sd.gov/securities/complaints.aspx", "label": "Enforcement and complaints" },
+        { "url": "https://adviserinfo.sec.gov/", "label": "SEC IAPD" }
+      ]
+    }
+  ],
+  "publication_limits": {
+    "cross_hub_record_total": null,
+    "cross_hub_record_total_status": "REJECTED",
+    "ratings": "NOT_ESTABLISHED",
+    "trust_score": "NOT_ESTABLISHED",
+    "county_or_local_routes": "NONE",
+    "claim_eligibility_broadened": false,
+    "ask_graph_writes": 0
+  }
+}
