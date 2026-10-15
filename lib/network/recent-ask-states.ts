@@ -38,6 +38,7 @@ import { AK_PUBLICATION_MANIFEST } from './alaska-network.ts';
 import { VT_PUBLICATION_MANIFEST } from './vermont-network.ts';
 import { ND_PUBLICATION_MANIFEST } from './north-dakota-network.ts';
 import { WY_PUBLICATION_MANIFEST } from './wyoming-network.ts';
+import { SD_PUBLICATION_MANIFEST } from './south-dakota-network.ts';
 
 type ManifestWithHubs = { hubs?: ReadonlyArray<{ hub_id?: string; capability_summary?: string; summary?: string }> };
 
@@ -73,6 +74,7 @@ const MANIFEST_BY_SLUG: Record<string, ManifestWithHubs> = {
   vermont: VT_PUBLICATION_MANIFEST,
   'north-dakota': ND_PUBLICATION_MANIFEST,
   wyoming: WY_PUBLICATION_MANIFEST,
+  'south-dakota': SD_PUBLICATION_MANIFEST,
 };
 
 export type RecentAskState = {

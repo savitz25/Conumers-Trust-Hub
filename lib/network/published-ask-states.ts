@@ -53,6 +53,7 @@ import { mtReleaseGatePassed } from './montana-network.ts';
 import { akReleaseGatePassed } from './alaska-network.ts';
 import { ndReleaseGatePassed } from './north-dakota-network.ts';
 import { wyReleaseGatePassed } from './wyoming-network.ts';
+import { sdReleaseGatePassed } from './south-dakota-network.ts';
 import { vtReleaseGatePassed } from './vermont-network.ts';
 
 export type AskPublishedState = {
@@ -112,6 +113,7 @@ export const ASK_PUBLISHED_STATE_CATALOG: readonly AskPublishedState[] = [
   { code: 'ND', slug: 'north-dakota', name: 'North Dakota', gate: ndReleaseGatePassed },
   { code: 'VT', slug: 'vermont', name: 'Vermont', gate: vtReleaseGatePassed },
   { code: 'WY', slug: 'wyoming', name: 'Wyoming', gate: wyReleaseGatePassed },
+  { code: 'SD', slug: 'south-dakota', name: 'South Dakota', gate: sdReleaseGatePassed },
 ];
 
 export function listAskNetworkStates(): Array<{ code: string; slug: string; name: string }> {

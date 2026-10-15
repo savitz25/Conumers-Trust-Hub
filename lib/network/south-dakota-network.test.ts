@@ -1,0 +1,30 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import manifest from "../../data/network/south-dakota-publication-manifest.json" with { type: "json" };
+import { sdReleaseGatePassed, sdSpecialistUrl } from "./south-dakota-network.ts";
+import { ASK_PUBLISHED_STATE_CATALOG, askPublishedStatewideSlugs, askStateExplorerEyebrow } from "./published-ask-states.ts";
+
+test("South Dakota Ask gateway links six live specialists without combined totals", () => {
+  const page = readFileSync("app/south-dakota/page.tsx", "utf8");
+  const component = readFileSync("components/south-dakota-network-gateway.tsx", "utf8");
+  assert.equal(sdReleaseGatePassed(), true);
+  assert.equal(manifest.hubs.length, 6);
+  assert.equal(new Set(manifest.hubs.map((hub) => hub.hub_id)).size, 6);
+  assert.equal(sdSpecialistUrl("move"), "https://www.movetrusthub.com/south-dakota");
+  assert.equal(sdSpecialistUrl("senior"), "https://www.seniortrusthub.com/south-dakota");
+  assert.equal(sdSpecialistUrl("investor"), "https://www.investortrusthub.com/south-dakota");
+  assert.equal(manifest.publication_limits.cross_hub_record_total, null);
+  assert.equal(manifest.publication_limits.cross_hub_record_total_status, "REJECTED");
+  assert.equal(manifest.publication_limits.ratings, "NOT_ESTABLISHED");
+  assert.equal(manifest.publication_limits.trust_score, "NOT_ESTABLISHED");
+  assert.equal(manifest.publication_limits.ask_graph_writes, 0);
+  assert.equal(askPublishedStatewideSlugs().filter((slug) => slug === "south-dakota").length, 1);
+  assert.equal(askStateExplorerEyebrow(), `${ASK_PUBLISHED_STATE_CATALOG.length}-state network explorer`);
+  assert.equal(ASK_PUBLISHED_STATE_CATALOG.length, 50);
+  assert.match(page, /path: "\/south-dakota"/);
+  assert.match(component, /manifest\.hubs\.map/);
+  assert.match(component, /Open \{hub\.hub_name\} South Dakota/);
+  assert.match(component, /NOT_ACQUIRED/);
+  assert.equal(ASK_PUBLISHED_STATE_CATALOG.filter((state) => state.slug === "south-dakota").length, 1);
+});
