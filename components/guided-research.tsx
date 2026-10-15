@@ -10,6 +10,7 @@ import { captureTrustEvent } from '@/lib/analytics/trusthub';
 import { TRUSTHUB_EVENTS } from '@/lib/analytics/trusthub-events';
 import {bucketLatency,bucketResultCount,guidedSearchTerminalOutcome} from '@/lib/network/ask-intel-observability';
 import {isAskReplayMaskedEchoLabel} from '@/lib/analytics/privacy';
+import {moveAskUrl} from '@/lib/network/move-ask';
 import {rewriteMoveSpecialistHref} from '@/lib/network/move-origin';
 
 const STORAGE_PREFIX='ath-guided-research-v1:';
@@ -73,11 +74,12 @@ export function GuidedResearch({query,initialSession,initialResult=null,routeDes
       <h2 ref={headingRef} tabIndex={-1} className="mt-5 text-xl font-semibold outline-none sm:text-2xl" style={{color:ASK_BRAND.navy}}>{question}</h2>
       {session?<p className="mt-2 text-sm" style={{color:ASK_BRAND.ink}}>{progress} · Specialist: {specialistName}</p>:null}
       {currentResearch||session?.geography?<p className="mt-1 text-sm" style={{color:ASK_BRAND.ink}}>Current research: {currentResearch??'Credential class not selected'}{session?.geography?<> · <span data-ph-mask>{session.geography.value}</span></>:null}</p>:null}
-      {session?.executionScope.requestedGeography?<div className="mt-4 rounded-xl border p-3 text-sm" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.ink}}>
+      {session?.executionScope.requestedGeography&&!session.researchPlan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE')?<div className="mt-4 rounded-xl border p-3 text-sm" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.ink}}>
         <p><span className="font-semibold" style={{color:ASK_BRAND.navy}}>You asked:</span> <span data-ph-mask>{session.executionScope.requestedGeography.display}</span></p>
         {session.executionScope.executionGeography?<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>{session.lastExecution?'Research executed:':'Selected research scope:'}</span> <span data-ph-mask>{session.executionScope.executionGeography.display}</span></p>:<p className="mt-1"><span className="font-semibold" style={{color:ASK_BRAND.navy}}>Available research:</span> {session.hub==='senior'&&session.entityClass==='assisted_living'&&session.researchPlan.requestedGeography?.stateCode==='MD'?'Maryland statewide Assisted Living Program evidence is available at SeniorTrustHub.':'This local scope has not been executed.'}</p>}
         {session.executionScope.disclosure?<p className="mt-1" data-ph-mask>{session.executionScope.disclosure}</p>:null}
       </div>:null}
+      {session?.researchPlan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE')?<a href={rewriteMoveSpecialistHref(moveAskUrl(session.originalQuestion))} className="mt-4 inline-flex min-h-11 items-center rounded-xl border px-4 font-semibold" data-ath-event="specialist_handoff_started" data-ath-hub="move" data-ath-surface="GUIDED" style={{borderColor:ASK_BRAND.border,color:ASK_BRAND.indigo}}>Open MoveTrustHub Ask for this question</a>:null}
       {busy?<p className="mt-4 text-sm" role="status" style={{color:ASK_BRAND.ink}}>Route confirmed — researching {specialistName} public records…</p>:null}
       {error?<p className="mt-4 rounded-xl border p-3 text-sm" role="alert" style={{borderColor:'#b91c1c',color:'#991b1b'}}>{error}</p>:null}
       {error&&!resumeRecovery?<button type="button" disabled={busy} onClick={()=>{const retry=retryRef.current;if(retry)void send(retry.action,retry.session);}} className="mt-3 min-h-11 rounded-xl border px-4 text-sm font-semibold" style={{borderColor:ASK_BRAND.indigo,color:ASK_BRAND.indigo}}>Retry request</button>:null}

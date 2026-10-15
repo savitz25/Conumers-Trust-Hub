@@ -506,6 +506,10 @@ function guidedGeographyFromExecution(scope:GuidedResearchSession['executionScop
 
 export function createGuidedSession(question:string):GuidedResearchSession|null{
   const session=createUnscopedGuidedSession(question);if(!session)return null;
+  // A missing Move population is already an immediate clarification. Later scope
+  // narrowing would replace that sentence with the generic headquarters disclosure
+  // and present New York as a selected research scope.
+  if(session.researchPlan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE'))return session;
   const oklahoma=okResearchHandoff(session.researchPlan);
   if(oklahoma)return {...session,hub:oklahoma.hub,phase:'DEEP_LINK',missingFields:[],availableChoices:[],
     nextAction:`${okCaveat(oklahoma.hub)} Continue at ${oklahoma.label} Oklahoma: ${oklahoma.href}. Ask has not executed a provider cohort.`};
