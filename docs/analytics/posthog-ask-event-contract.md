@@ -89,7 +89,10 @@ or returns no acknowledgment. They use the same bounded context as a successful 
 plus `failure_reason: unable`; project context is only a boolean. Empty selections, review-only
 actions and session imports do not emit profile Save failures. A confirmed Save remains a success
 if subsequent device storage access fails. Local-only success is not reclassified as failure.
-Neither error messages nor account IDs, item IDs, project IDs, payloads or tokens are sent.
+The `profile_save_failed` / `profile_unsaved` custom event properties contain no account ID,
+item ID, project ID, email, token, raw payload or raw exception. Existing PostHog reserved identity
+fields, including the pre-existing `distinct_id` behavior, are unchanged and remain governed by
+the existing analytics identity contract (`docs/analytics/posthog-ask-reference.md`).
 The legacy `import=none` marker no longer represents a failed Save.
 
 For an action that does NOT redirect (adding saved research to a project), the "confirmed" event is
