@@ -235,14 +235,14 @@ test('actual outcome effect captures Save failure and Unsave once, consumes mark
   const history = { state: null, replaceState: (_state: unknown, _title: string, url: string) => {
     location.search = url.includes('?') ? url.slice(url.indexOf('?')) : '';
   } };
-  const module = clientModule('components/analytics/my-trusthub-outcomes.tsx', {
+  const outcomeModule = clientModule('components/analytics/my-trusthub-outcomes.tsx', {
     react: { useEffect: (effect: () => void) => effect() },
     'next/navigation': { usePathname: () => location.pathname, useSearchParams: () => new URLSearchParams(snapshot) },
     '@/lib/analytics/environment': { shouldEnablePosthog: () => enabled },
     '@/lib/analytics/trusthub': transport,
     '@/lib/analytics/my-trusthub-contract': journeyContract,
   }, { window: { location, history, localStorage: { getItem: () => null } } });
-  const effect = module.MyTrustHubOutcomes as () => void;
+  const effect = outcomeModule.MyTrustHubOutcomes as () => void;
   const navigate = (search: string) => { snapshot = search; location.search = search; effect(); effect(); };
   navigate('?saved=1');
   assert.deepEqual(transport.events.map(x => x.event), ['profile_saved']);
@@ -304,7 +304,7 @@ async function guestFixture(commit: () => Promise<ImportResult>, options: { sess
   const commitAction = async () => { calls++; const result = await commit(); committed = result.ok; return result; };
   const previewAction = async () => ({ ok: true, items: [{ client_item_id: 'private-item-fixture', item_status: 'new', importable: true }] });
   const jsx = (type: string, props: FixtureElement['props']) => ({ type, props });
-  const module = clientModule('components/my-trusthub/guest-import.tsx', {
+  const guestModule = clientModule('components/my-trusthub/guest-import.tsx', {
     ...shared,
     'react/jsx-runtime': { jsx, jsxs: jsx },
     'next/navigation': { useRouter: () => ({ refresh: () => {} }) },
@@ -317,7 +317,7 @@ async function guestFixture(commit: () => Promise<ImportResult>, options: { sess
   } } });
   const render = () => {
     cursor = 0;
-    return (module.GuestImport as (props: unknown) => unknown)({
+    return (guestModule.GuestImport as (props: unknown) => unknown)({
       storageKey: 'fixture', sessions: options.sessions ?? false, projects: [], ownerId: 'private-owner-fixture', ownerLabel: 'private@example.invalid',
     });
   };
