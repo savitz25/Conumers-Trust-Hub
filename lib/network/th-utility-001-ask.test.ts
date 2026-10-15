@@ -52,6 +52,10 @@ test('NYSDOT intrastate research does not become an executable headquarters coho
   assert.ok(plan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE'));
   assert.equal(planRequiresImmediateClarification(plan), true);
   assert.equal(decideNameCandidateSearch(NYSDOT).operation, 'NOT_NAME_SEARCH');
+  const guided = createGuidedSession(NYSDOT);
+  assert.equal(guided?.phase, 'CLARIFY');
+  assert.equal(guided?.nextAction, NYSDOT_REASON);
+  assert.equal(guided?.researchPlan.reasonCodes.includes('MOVE_POPULATION_UNAVAILABLE'), true);
 });
 
 test('supported Move research stays executable', () => {
