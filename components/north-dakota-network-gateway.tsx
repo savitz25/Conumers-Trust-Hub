@@ -29,7 +29,7 @@ export function NorthDakotaNetworkGateway() {
           {manifest.hubs.map((hub) => (
             <li key={hub.hub_id} className="min-w-0 rounded-2xl border p-5" style={{ borderColor: ASK_BRAND.border, boxShadow: ASK_SHADOW.soft }}>
               <h3 className="text-lg font-semibold" style={{ color: ASK_BRAND.navy }}>{hub.hub_name}</h3>
-              <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p>
+              <p className="mt-2 text-sm leading-relaxed">{hub.summary}</p><p className="mt-2 text-sm leading-relaxed">{hub.grain}</p>
               <details className="mt-3 text-xs leading-relaxed">
                 <summary className="flex min-h-11 cursor-pointer items-center font-semibold">Source clock, grain, and coverage limits</summary>
                 <p><strong>Source clock:</strong> {hub.clock}</p>
