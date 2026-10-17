@@ -65,9 +65,14 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
     store:{put:async(k,v)=>{records.set(k,v);},withRecord:async(k,work)=>work(records.get(k)??null,async()=>{const c=records.get(k);if(c)checkpoints.push(structuredClone(c));})},
     runtime:async(_r,c,p)=>{caller={...caller,parent:{subject:p.subject,sessionBinding:p.session,admitted:true},exchange:c.contextCandidateRef??'fixture-exchange',selectionConfirmed:true,confirmedTransferRef:c.source.transferRef,confirmedAccountContextRef:c.contextCandidateRef};return runtime;},
     acknowledge:async(_s,receipts)=>{acks++;if(receipts.every(r=>r.parent.outcome==='local_only'))released.push(receipts[0]!.requestKey);},
-    // Owner-scoped removal stand-in: only the verified parent's own row.
-    unsave:async(_r,_c,p)=>{unsaves++;if(filed)return 'in_project';if(refuseUnsave)throw new Error('My TrustHub data request failed');
-      return Number(backend.db.prepare('DELETE FROM saves WHERE subject=?').run(p.subject).changes)>0?'removed':'not_saved';}};
+    // LOCAL stand-in only. Removes the verified subject's row for the one
+    // selected profile's accepted network entity. Not production deletion or RLS.
+    unsave:async(_r,c,p)=>{unsaves++;if(filed)return 'in_project';if(refuseUnsave)throw new Error('My TrustHub data request failed');
+      const selected=c.source.manifest.selected;
+      const profile=selected.length===1?backend.profiles.get(profileKey(selected[0].profile)):undefined;
+      const entity=profile?.binding?.status==='accepted'?profile.binding.networkEntityId:'';
+      if(!p.subject||!entity)return 'not_saved';
+      return Number(backend.db.prepare('DELETE FROM saves WHERE subject=? AND entity=?').run(p.subject,entity).changes)>0?'removed':'not_saved';}};
   const post=(body:string,cookie='',from=origin)=>new Request(origin+PROFILE_CONFIRM_PATH,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded',origin:from,cookie},body});
   const arrivalBody=(ref:string,intent?:string)=>new URLSearchParams({continuationRef:ref,...(intent?{intent}:{})}).toString();
   const arrival=await handleProfileConfirmation(post(arrivalBody(continuation.continuationRef,options.intent),'',sourceOrigin),b);

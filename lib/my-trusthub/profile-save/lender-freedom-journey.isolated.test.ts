@@ -7,7 +7,9 @@
  * Packet 12 row, not a hosted Ask Postgres row, and not the live
  * Lender parent-sync gate. Device localStorage is the in-memory
  * confirmation map; the fresh read uses a new SQLite connection
- * after that map is cleared.
+ * after that map is cleared. The local Unsave stand-in removes one
+ * selected network entity for the verified subject. That is not
+ * production deletion semantics or Postgres RLS.
  */
 import assert from 'node:assert/strict';
 import { mkdtempSync } from 'node:fs';
@@ -199,5 +201,61 @@ test('two synthetic subjects persist, isolate, and remove one mocked nmls:2767 S
     } finally { after.close(); }
   } finally {
     try { first.close(); } catch { /* already closed for the fresh-session read */ }
+  }
+});
+
+test('Unsave removes only the selected item for the verified subject', async () => {
+  const databasePath = join(mkdtempSync(join(tmpdir(), 'b4-freedom-2767-unsave-')), 'qa.sqlite');
+  const unrelated = { subject: USER_A, entity: 'unrelated-entity-a', ref: 'unrelated-ref-a' };
+  const otherAccount = { subject: USER_B, entity: 'b-item-entity', ref: 'b-item-ref' };
+  const first = await fixture({ ...journey, intent: 'save', databasePath });
+  const kept = () => {
+    const target = savedBy(first.backend.db, USER_A).filter((row) => row.entity === BINDING.networkEntityId);
+    const aside = savedBy(first.backend.db, USER_A).filter((row) => row.entity === unrelated.entity);
+    const theirs = savedBy(first.backend.db, USER_B);
+    return { target, aside, theirs };
+  };
+  try {
+    first.login(USER_A, SESSION_A);
+    assert.equal((await first.get()).headers.get('location'), RETURN);
+    first.backend.db.prepare('INSERT INTO saves(subject,entity,ref) VALUES(?,?,?)').run(unrelated.subject, unrelated.entity, unrelated.ref);
+    first.backend.db.prepare('INSERT INTO saves(subject,entity,ref) VALUES(?,?,?)').run(otherAccount.subject, otherAccount.entity, otherAccount.ref);
+    const before = kept();
+    assert.equal(before.target.length, 1);
+    assert.equal(before.aside[0]!.ref, unrelated.ref);
+    assert.equal(before.theirs[0]!.ref, otherAccount.ref);
+    const targetRef = before.target[0]!.ref;
+
+    first.login(USER_B, SESSION_B);
+    assert.equal((await (await first.again('unsave')).get()).status, 303);
+    const afterIntruder = kept();
+    assert.equal(afterIntruder.target[0]!.ref, targetRef);
+    assert.equal(afterIntruder.aside[0]!.ref, unrelated.ref);
+    assert.equal(afterIntruder.theirs[0]!.ref, otherAccount.ref);
+
+    first.login(USER_A, SESSION_A);
+    assert.equal((await (await first.again('unsave')).get()).headers.get('location'), RETURN);
+    const afterOwner = kept();
+    assert.equal(afterOwner.target.length, 0);
+    assert.equal(afterOwner.aside.length, 1);
+    assert.equal(afterOwner.aside[0]!.ref, unrelated.ref);
+    assert.equal(afterOwner.theirs.length, 1);
+    assert.equal(afterOwner.theirs[0]!.ref, otherAccount.ref);
+    first.close();
+
+    const fresh = new SqliteHarnessBackend(databasePath);
+    try {
+      const target = savedBy(fresh.db, USER_A).filter((row) => row.entity === BINDING.networkEntityId);
+      const aside = savedBy(fresh.db, USER_A).filter((row) => row.entity === unrelated.entity);
+      const theirs = savedBy(fresh.db, USER_B);
+      assert.equal(target.length, 0);
+      assert.equal(aside.length, 1);
+      assert.equal(aside[0]!.ref, unrelated.ref);
+      assert.equal(theirs.length, 1);
+      assert.equal(theirs[0]!.entity, otherAccount.entity);
+      assert.equal(theirs[0]!.ref, otherAccount.ref);
+    } finally { fresh.close(); }
+  } finally {
+    try { first.close(); } catch { /* closed before the fresh read */ }
   }
 });
