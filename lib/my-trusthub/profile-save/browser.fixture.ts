@@ -6,7 +6,7 @@ import {handleProfileConfirmation,PROFILE_CONFIRM_PATH,type BrowserBindings,type
 import {ParentProfileSaveRuntime,type VerifiedCaller} from './runtime.ts';
 import {SqliteHarnessBackend} from '../../../scripts/qa/v23-sqlite-backend.ts';
 import {TRANSFER_VERSION,TRANSFER_VERSION_V3,profileKey,type GuestStageInput,type GuestStageRef} from '../contracts/v2-3-profile-transfer.ts';
-export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance'|'investor'|'contractor'|'senior';slug?:string;beforeConsume?:(caller:VerifiedCaller)=>void}={}){
+export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroProjects?:boolean;nativeId?:string;environment?:'isolated'|'production';isolatedBackendVerified?:boolean;intent?:DirectIntent;hub?:'move'|'lender'|'insurance'|'investor'|'contractor'|'senior';slug?:string;databasePath?:string;binding?:{id:string;networkEntityId:string;status:'accepted'|'review_required'};beforeConsume?:(caller:VerifiedCaller)=>void}={}){
   let now=1000,parent:BrowserParent|null=null;
   const environment=options.environment??'isolated';
   const hub=options.hub??'move';
@@ -41,8 +41,10 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
         : hub==='contractor'
           ? {version:TRANSFER_VERSION_V3,sourceHub:'contractor',audience:'ask',selected:[{localItemId:slug,revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'contractor',canonicalSlug:slug,profile:identity,returnPath:`/contractors/${slug}`}}
           : {version:TRANSFER_VERSION,sourceHub:'move',audience:'ask',selected:[{localItemId:'fixture-mover',revision:'1',digest:'a'.repeat(64),profile:identity}],returnTask:{kind:'profile',hub:'move',canonicalSlug:identity.nativeId,profile:identity}};
-  const backend=new SqliteHarnessBackend(join(mkdtempSync(join(tmpdir(),'b4-browser-')),'qa.sqlite'));
-  backend.profiles.set(profileKey(identity),{...identity,published:true,supportedClass:true,binding:{id:'fixture-binding',networkEntityId:'fixture-entity',status:'accepted'}});
+  const databasePath=options.databasePath??join(mkdtempSync(join(tmpdir(),'b4-browser-')),'qa.sqlite');
+  const backend=new SqliteHarnessBackend(databasePath);
+  const binding=options.binding??{id:'fixture-binding',networkEntityId:'fixture-entity',status:'accepted' as const};
+  backend.profiles.set(profileKey(identity),{...identity,published:true,supportedClass:true,binding});
   if(hub==='lender'||hub==='insurance'||hub==='investor'||hub==='contractor'||hub==='senior')backend.slugs.set(profileKey(identity),slug);
   let caller:VerifiedCaller={hub,browserBinding:'b'.repeat(43),environment,scopes:['transfer:stage','saved:write','receipt:verify']};
   if(options.beforeConsume){
@@ -86,7 +88,7 @@ export async function fixture(options:{origin?:string;sourceOrigin?:string;zeroP
     assert.equal(r.status,303);const next=r.headers.get('set-cookie')!.split(';')[0];
     return {cookie:next,get:()=>handleProfileConfirmation(new Request(origin+PROFILE_CONFIRM_PATH,{headers:{cookie:next}}),b)};
   };
-  return {b,backend,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,stage:stage2,get acks(){return acks;},get unsaves(){return unsaves;},
+  return {b,backend,databasePath,get,confirm,post,cookie,records,origin,sourceOrigin,continuation,checkpoints,again,arrivalBody,stage:stage2,get acks(){return acks;},get unsaves(){return unsaves;},
     /** Request keys the parent acknowledged as no longer saved in the account. */
     released,refuseUnsave(value=true){refuseUnsave=value;},fileInProject(value=true){filed=value;},
     login(subject='consumer-a',session='session-a'){parent={subject,session,label:'Test account'};},logout(){parent=null;},expire(){now=700000;},close(){backend.close();}};
