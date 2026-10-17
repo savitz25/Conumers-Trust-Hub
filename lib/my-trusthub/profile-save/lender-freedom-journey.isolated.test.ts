@@ -16,6 +16,7 @@ import { mkdtempSync } from 'node:fs';
 import test from 'node:test';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import type { DatabaseSync } from 'node:sqlite';
 import { handleProfileConfirmation } from './browser.ts';
 import { fixture } from './browser.fixture.ts';
 import { RuntimeError } from './runtime.ts';
@@ -39,8 +40,20 @@ const journey = {
   binding: BINDING,
 };
 
-function savedBy(db: { prepare: (sql: string) => { all: (...args: string[]) => unknown } }, subject: string) {
-  return db.prepare('SELECT subject, entity, ref FROM saves WHERE subject=? ORDER BY ref').all(subject) as Array<{ subject: string; entity: string; ref: string }>;
+type SavedRow = { subject: string; entity: string; ref: string };
+
+function savedRow(value: Record<string, unknown>): SavedRow {
+  const subject = value.subject;
+  const entity = value.entity;
+  const ref = value.ref;
+  if (typeof subject !== 'string' || typeof entity !== 'string' || typeof ref !== 'string') {
+    assert.fail('save row is missing subject, entity, or ref');
+  }
+  return { subject, entity, ref };
+}
+
+function savedBy(db: DatabaseSync, subject: string): SavedRow[] {
+  return db.prepare('SELECT subject, entity, ref FROM saves WHERE subject=? ORDER BY ref').all(subject).map(savedRow);
 }
 
 test('sign-in preserves a Lender Save for freedom-mortgage / nmls:2767', async () => {
@@ -83,11 +96,14 @@ test('two synthetic subjects persist, isolate, and remove one mocked nmls:2767 S
     assert.equal(saved.headers.get('location'), RETURN);
     const confirmation = [...first.records.values()].find((row) => row.receipts?.length);
     assert.ok(confirmation?.accountContextRef);
+    if (!confirmation) assert.fail('missing confirmation');
     assert.equal(confirmation.source.manifest.selected[0]!.profile.nativeId, 'nmls:2767');
     assert.equal(confirmation.source.manifest.selected[0]!.profile.profileClass, 'marketplace_company');
     assert.notEqual(confirmation.source.manifest.selected[0]!.profile.nativeId, 'nmls:1984721');
     assert.equal(confirmation.source.manifest.returnTask.canonicalSlug, 'freedom-mortgage');
-    assert.equal(confirmation.source.manifest.returnTask.returnPath, '/lenders/freedom-mortgage');
+    const returnTask = confirmation.source.manifest.returnTask;
+    if (!('returnPath' in returnTask)) assert.fail('expected a version 3 return task');
+    assert.equal(returnTask.returnPath, '/lenders/freedom-mortgage');
     assert.equal(confirmation.receipts![0]!.parent.outcome, 'saved');
     const original = savedBy(first.backend.db, USER_A);
     assert.equal(original.length, 1);
