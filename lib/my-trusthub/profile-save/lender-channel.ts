@@ -1,5 +1,5 @@
 import { ASSERTION_HEADER, boundedBody } from './service-assertion.ts';
-import { API_PATH, type DeploymentTarget } from './isolated-config.ts';
+import { API_PATH, exactIsolatedLenderOrigin, type DeploymentTarget } from './isolated-config.ts';
 import { RuntimeError } from './runtime.ts';
 import { LENDER_PRODUCTION_PINS, signLenderAssertion, type LenderPins } from './lender-assertion.ts';
 import { LENDER_PROFILE_CLASS, parseLenderNativeId } from './lender-binding.ts';
@@ -67,4 +67,15 @@ export function lenderPinsFor(target: DeploymentTarget): LenderPins | null {
   if (target.kind !== 'production') return null;
   if (target.parentOrigin !== LENDER_PRODUCTION_PINS.parentOrigin) return null;
   return LENDER_PRODUCTION_PINS;
+}
+
+/** Explicit isolated pilot only. An empty or rejected Lender origin stays closed. */
+export function isolatedLenderPins(config: {
+  target: DeploymentTarget;
+  parentOrigin: string;
+  registry: { origins: { lender: string } };
+}): LenderPins | null {
+  const lenderOrigin = exactIsolatedLenderOrigin(config.registry.origins.lender);
+  if (config.target.kind !== 'isolated' || !lenderOrigin || config.parentOrigin !== config.target.parentOrigin) return null;
+  return { parentOrigin: config.parentOrigin, lenderOrigin, project: config.target.project, assertionEnvironment: 'isolated' };
 }

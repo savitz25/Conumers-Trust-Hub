@@ -76,6 +76,35 @@ export function isolatedConfig(env: Env) {
       origins: { move: MOVE_PREVIEW, insurance: '', lender: '', contractor: '', senior: '', investor: '' } }, admittedIds: ids };
 }
 
+/** One exact https origin. Production hosts, the existing Ask/Move preview
+ * hosts, wildcards, credentials, queries, hashes and non-root paths are rejected.
+ */
+export function exactIsolatedLenderOrigin(value: string | undefined): string | null {
+  if (!value || value !== value.trim() || value.includes('*')) return null;
+  try {
+    const url = new URL(value);
+    if (url.username || url.password || url.search || url.hash || url.pathname !== '/' || url.protocol !== 'https:' || url.hostname.endsWith('.')) return null;
+    const forbidden = new Set([
+      new URL(PARENT_ORIGIN).hostname,
+      new URL(PRODUCTION_ORIGINS.lender).hostname,
+      new URL(PRODUCTION_ORIGINS.move).hostname,
+      new URL(ASK_PREVIEW).hostname,
+      new URL(MOVE_PREVIEW).hostname,
+    ]);
+    if (forbidden.has(url.hostname)) return null;
+    return url.origin;
+  } catch { return null; }
+}
+
+/** Same isolated Ask/Move target and admission. Adds one explicit Lender origin.
+ * Absent or rejected origins leave the Move configuration unchanged. */
+export function isolatedLenderPilotConfig(env: Env) {
+  const base = isolatedConfig(env);
+  const lender = exactIsolatedLenderOrigin(env.MY_TRUSTHUB_V23_LENDER_ORIGIN);
+  if (!base || !lender) return null;
+  return { ...base, registry: { ...base.registry, origins: { ...base.registry.origins, lender } } };
+}
+
 /** Production parent config. Admission is the production account policy
  * (canary or invitation lists), never a preview invite list. Watch stays a
  * separate consumer choice: this config does not require the Watch flag off,
@@ -90,7 +119,18 @@ export function productionConfig(env: Env) {
 export type DeploymentConfig = NonNullable<ReturnType<typeof isolatedConfig>> | NonNullable<ReturnType<typeof productionConfig>>;
 /** The single resolved config for this deployment, or null. */
 export function deploymentConfig(env: Env): DeploymentConfig | null {
-  return env.VERCEL_ENV === 'production' ? productionConfig(env) : isolatedConfig(env);
+  if (env.VERCEL_ENV === 'production') return productionConfig(env);
+  return isolatedLenderPilotConfig(env) ?? isolatedConfig(env);
+}
+
+/** The hosted preview pin remains the existing Ask/Move singleton. A Lender
+ * origin is not part of this comparison and cannot replace either value. */
+export function previewDeploymentPinMatches(
+  pin: { project_ref?: string; version?: string; ask_origin?: string; move_origin?: string } | null | undefined,
+  config: { target: DeploymentTarget; parentOrigin: string; moveOrigin: string },
+): boolean {
+  return !!pin && pin.project_ref === config.target.project && pin.version === config.target.pinVersion
+    && pin.ask_origin === config.parentOrigin && pin.move_origin === config.moveOrigin;
 }
 
 export const uuid = (v: unknown): v is string => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);

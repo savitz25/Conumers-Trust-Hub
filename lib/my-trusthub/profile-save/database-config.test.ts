@@ -19,6 +19,8 @@ test('transaction pooler, wrong identity, host, project and implicit mode fail c
     `postgres://${PARENT_LOGIN}.${ISOLATED_PROJECT}:secret@evil.example:5432/postgres`,
     `postgres://postgres.${ISOLATED_PROJECT}:secret@${host}:5432/postgres`,
     `postgres://${PARENT_LOGIN}.${ISOLATED_PROJECT}:secret@${host}:5432/postgres?pgbouncer=true`,
+    `postgres://${PARENT_LOGIN}.${ISOLATED_PROJECT}:secret@${host}:5432/postgres?sslmode=require`,
+    `postgres://${PARENT_LOGIN}.${ISOLATED_PROJECT}:secret@${host}:5432/postgres?sslmode=require&application_name=pilot`,
   ]) assert.equal(make(url),null);
   assert.equal(databaseConnectionConfig({...base,MY_TRUSTHUB_V23_PARENT_DATABASE_URL:`postgres://${PARENT_LOGIN}:secret@db.${ISOLATED_PROJECT}.supabase.co:5432/postgres`}),null);
 });

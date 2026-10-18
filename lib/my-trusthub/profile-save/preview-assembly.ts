@@ -316,7 +316,8 @@ export class PreviewAssembly {
       source: async (r, ref) => {
         const origin = r.headers.get('origin');
         const move = origin === this.target.moveOrigin;
-        const lender = Boolean(this.lenderSource) && origin === PRODUCTION_ORIGINS.lender;
+        const lenderOrigin = this.lenderSource?.pins.lenderOrigin;
+        const lender = Boolean(this.lenderSource) && !!lenderOrigin && origin === lenderOrigin;
         const insurance = origin === PRODUCTION_ORIGINS.insurance;
         const investor = Boolean(this.investorSource) && origin === PRODUCTION_ORIGINS.investor;
         const senior = Boolean(this.seniorSource) && origin === PRODUCTION_ORIGINS.senior;
@@ -412,8 +413,9 @@ export class PreviewAssembly {
       claims = await verifyAssertion(request, bytes, this.moveKey, 'move', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), this.target);
     } catch (moveError) {
       try {
-        if (!this.lenderKey || !lenderPinsFor(this.target)) throw moveError;
-        claims = await verifyLenderAssertion(request, bytes, this.lenderKey, 'lender', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), lenderPinsFor(this.target)!);
+        const lenderPins = this.lenderSource?.pins ?? lenderPinsFor(this.target);
+        if (!this.lenderKey || !lenderPins) throw moveError;
+        claims = await verifyLenderAssertion(request, bytes, this.lenderKey, 'lender', stage ? 'transfer:stage' : 'receipt:verify', this.store, Date.now(), lenderPins);
         serviceHub = 'lender';
       } catch (lenderError) {
         try {

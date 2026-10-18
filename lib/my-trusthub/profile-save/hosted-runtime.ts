@@ -4,13 +4,13 @@ import { createPrivateKey, createPublicKey } from 'node:crypto';
 import { PreviewAssembly } from './preview-assembly.ts';
 import { PreviewStore } from './preview-store.ts';
 import { SourceChannel } from './source-channel.ts';
-import { LenderSourceChannel, lenderPinsFor } from './lender-channel.ts';
+import { LenderSourceChannel, isolatedLenderPins, lenderPinsFor } from './lender-channel.ts';
 import { insurancePinsFor } from './insurance-assertion.ts';
 import { InsuranceAckChannel } from './insurance-channel.ts';
 import { InvestorSourceChannel, investorPinsFor } from './investor-channel.ts';
 import { SeniorSourceChannel, seniorPinsFor } from './senior-channel.ts';
 import { ContractorSourceChannel, contractorPinsFor } from './contractor-channel.ts';
-import { deploymentConfig, sqlName, type Env } from './isolated-config.ts';
+import { deploymentConfig, previewDeploymentPinMatches, sqlName, type Env } from './isolated-config.ts';
 import { databaseConnectionConfig, RUNTIME_POOL_MAX } from './database-config.ts';
 import { verifiedParent } from './verified-parent.ts';
 import { sessionMac } from './session-authority.ts';
@@ -78,7 +78,7 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
     } finally { db.release(); }
     const scoped = pool as unknown as TransactionPool, store = new PreviewStore(scoped, target);
     const pin = await store.authorized(async db => (await db.query<{ project_ref: string; version: string; ask_origin: string; move_origin: string }>(`select * from ${sqlName(target, 'deployment_pin')} where singleton`, [])).rows[0]);
-    if (!pin || pin.project_ref !== target.project || pin.version !== target.pinVersion || pin.ask_origin !== c.parentOrigin || pin.move_origin !== c.moveOrigin) return null;
+    if (!previewDeploymentPinMatches(pin, c)) return null;
     // Check all named deployment functions and durable tables, including EXECUTE.
     const ports = await store.authorized(async db => (await db.query<{ ready: boolean }>(`select ${sqlName(target, 'ports_ready')}() as ready`, [])).rows[0]?.ready);
     if (!ports) return null;
@@ -112,7 +112,7 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
       return rows.length > 0;
     });
     // Optional. A missing or unusable lender key leaves Move running and rejects lender handoffs.
-    const lenderPins = lenderPinsFor(target);
+    const lenderPins = lenderPinsFor(target) ?? isolatedLenderPins(c);
     const lenderKid = (env.MY_TRUSTHUB_V23_LENDER_KEY_ID ?? '').trim();
     const lenderPem = env.MY_TRUSTHUB_V23_LENDER_VERIFY_PUBLIC_KEY_PEM ?? '';
     if (lenderPins && /^[A-Za-z0-9_-]{1,64}$/.test(lenderKid) && lenderPem.includes('PUBLIC KEY')) {
