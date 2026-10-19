@@ -1,6 +1,6 @@
 import type { ProfileIdentity, TrustedProfile } from '../contracts/v2-3-profile-save.ts';
 import type { FoundationSql } from './p12-p13.ts';
-import { sqlName, type DeploymentTarget } from './isolated-config.ts';
+import { ISOLATED_PROJECT, PRODUCTION_PROJECT, type DeploymentTarget } from './isolated-config.ts';
 import { RuntimeError } from './runtime.ts';
 import type { PublicationRegistry } from './identity.ts';
 
@@ -56,15 +56,15 @@ export function classifyLenderRows(nativeId: string, rows: readonly LenderBindin
 }
 
 /** Security-definer read. The runtime role cannot select network tables.
- * Packet 12 creates the production function. It is not applied by the deploy.
- * The isolated target uses the same name under the preview prefix. */
+ * The issued CoS package names v23_private.prod_lender_nmls_binding_for(text).
+ * The isolated caller uses that name. The deployment target still selects the
+ * database connection. This function does not create or rename the package. */
 export const LENDER_BINDING_SQL = `select id, network_entity_id, binding_status, specialist_entity_type,
   specialist_entity_id, identifier_namespace, source_identifier, jurisdiction, entity_status
  from v23_private.prod_lender_nmls_binding_for($1)`;
 export function lenderBindingSql(target: DeploymentTarget): string {
-  return `select id, network_entity_id, binding_status, specialist_entity_type,
-  specialist_entity_id, identifier_namespace, source_identifier, jurisdiction, entity_status
- from ${sqlName(target, 'lender_nmls_binding_for')}($1)`;
+  if (target.project !== ISOLATED_PROJECT && target.project !== PRODUCTION_PROJECT) throw new Error('unavailable');
+  return LENDER_BINDING_SQL;
 }
 
 export async function resolveLenderMarketplaceProfile(

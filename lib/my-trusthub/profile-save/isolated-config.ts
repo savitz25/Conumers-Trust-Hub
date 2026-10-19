@@ -76,22 +76,35 @@ export function isolatedConfig(env: Env) {
       origins: { move: MOVE_PREVIEW, insurance: '', lender: '', contractor: '', senior: '', investor: '' } }, admittedIds: ids };
 }
 
-/** One exact https origin. Production hosts, the existing Ask/Move preview
- * hosts, wildcards, credentials, queries, hashes and non-root paths are rejected.
+/** Production hub registrable domains. Apex and every subdomain are rejected. */
+const PRODUCTION_HUB_ROOTS = [
+  'asktrusthub.com',
+  'consumerstrusthub.com',
+  'movetrusthub.com',
+  'lendertrusthub.com',
+  'insurancetrusthub.com',
+  'contractortrusthub.com',
+  'seniortrusthub.com',
+  'investortrusthub.com',
+] as const;
+
+function productionHubHost(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  return PRODUCTION_HUB_ROOTS.some(root => host === root || host.endsWith('.' + root));
+}
+
+/** One exact https origin for the Lender Preview. Production hub hosts, the
+ * pinned Ask and Move preview hosts, wildcards, credentials, queries, hashes
+ * and non-root paths are rejected. A missing value stays closed.
  */
 export function exactIsolatedLenderOrigin(value: string | undefined): string | null {
   if (!value || value !== value.trim() || value.includes('*')) return null;
   try {
     const url = new URL(value);
     if (url.username || url.password || url.search || url.hash || url.pathname !== '/' || url.protocol !== 'https:' || url.hostname.endsWith('.')) return null;
-    const forbidden = new Set([
-      new URL(PARENT_ORIGIN).hostname,
-      new URL(PRODUCTION_ORIGINS.lender).hostname,
-      new URL(PRODUCTION_ORIGINS.move).hostname,
-      new URL(ASK_PREVIEW).hostname,
-      new URL(MOVE_PREVIEW).hostname,
-    ]);
-    if (forbidden.has(url.hostname)) return null;
+    if (productionHubHost(url.hostname)) return null;
+    const pinnedPreview = new Set([new URL(ASK_PREVIEW).hostname, new URL(MOVE_PREVIEW).hostname]);
+    if (pinnedPreview.has(url.hostname)) return null;
     return url.origin;
   } catch { return null; }
 }

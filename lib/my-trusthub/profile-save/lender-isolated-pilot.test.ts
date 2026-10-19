@@ -64,7 +64,13 @@ test('one exact lender origin fills only the isolated registry and leaves admiss
     'http://lender-pilot.preview.example', 'https://lender-pilot.preview.example.',
     'https://user:secret@lender-pilot.preview.example',
     ASK_PREVIEW, MOVE_PREVIEW, PRODUCTION_ORIGINS.lender, PRODUCTION_ORIGINS.move, 'https://www.asktrusthub.com',
+    'https://asktrusthub.com', 'https://www.consumerstrusthub.com', 'https://movetrusthub.com',
+    'https://lendertrusthub.com', 'https://www.insurancetrusthub.com', 'https://insurancetrusthub.com',
+    'https://www.contractortrusthub.com', 'https://contractortrusthub.com',
+    'https://www.seniortrusthub.com', 'https://seniortrusthub.com',
+    'https://www.investortrusthub.com', 'https://investortrusthub.com',
   ]) assert.equal(exactIsolatedLenderOrigin(rejected), null, String(rejected));
+  assert.equal(deploymentConfig({ ...fixtureEnv, MY_TRUSTHUB_V23_LENDER_ORIGIN: 'https://lendertrusthub.com' })?.registry.origins.lender, '');
   assert.equal(isolatedLenderPilotConfig(fixtureEnv), null);
   const pilot = deploymentConfig({ ...fixtureEnv, MY_TRUSTHUB_V23_LENDER_ORIGIN: LENDER });
   assert.ok(pilot);
@@ -83,9 +89,13 @@ test('one exact lender origin fills only the isolated registry and leaves admiss
   assert.equal(admittedPreviewUser({ id: '33333333-3333-4333-8333-333333333333', email_confirmed_at: '2026-09-01' }, { ...fixtureEnv, MY_TRUSTHUB_V23_LENDER_ORIGIN: LENDER }), false);
 });
 
-test('lender binding SQL follows the deployment prefix', () => {
+test('lender binding SQL uses the issued function on the isolated project', () => {
+  assert.equal(ISOLATED_TARGET.project, ISOLATED_PROJECT);
   assert.equal(lenderBindingSql(PRODUCTION_TARGET), LENDER_BINDING_SQL);
-  assert.equal(lenderBindingSql(ISOLATED_TARGET), LENDER_BINDING_SQL.replace('v23_private.prod_', 'v23_private.preview_'));
+  assert.equal(lenderBindingSql(ISOLATED_TARGET), LENDER_BINDING_SQL);
+  assert.match(LENDER_BINDING_SQL, /v23_private\.prod_lender_nmls_binding_for\(\$1\)/);
+  assert.equal(LENDER_BINDING_SQL.includes('preview_lender_nmls_binding_for'), false);
+  assert.throws(() => lenderBindingSql({ ...ISOLATED_TARGET, project: 'other-project' }), /unavailable/);
 });
 
 test('the stored preview pin still compares only the Ask and Move pair', () => {
