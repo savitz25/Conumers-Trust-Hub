@@ -5,6 +5,7 @@ import { fixtureEnv, A } from './final-wiring.test.ts';
 import { accountRuntime } from '../account-policy.ts';
 import { ASK_PREVIEW, ISOLATED_PROJECT, ISOLATED_TARGET, MOVE_PREVIEW, PRODUCTION_TARGET, admittedPreviewUser, deploymentConfig, exactIsolatedLenderOrigin, isolatedConfig, isolatedLenderPilotConfig, previewDeploymentPinMatches } from './isolated-config.ts';
 import { ASSERTION_HEADER, LENDER_PRODUCTION_PINS, signLenderAssertion, verifyLenderAssertion } from './lender-assertion.ts';
+import { lenderBindingSql, LENDER_BINDING_SQL } from './lender-binding.ts';
 import { LenderSourceChannel, isolatedLenderPins, lenderPinsFor } from './lender-channel.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 
@@ -80,6 +81,11 @@ test('one exact lender origin fills only the isolated registry and leaves admiss
   });
   assert.equal(admittedPreviewUser({ id: A, email_confirmed_at: '2026-09-01' }, { ...fixtureEnv, MY_TRUSTHUB_V23_LENDER_ORIGIN: LENDER }), true);
   assert.equal(admittedPreviewUser({ id: '33333333-3333-4333-8333-333333333333', email_confirmed_at: '2026-09-01' }, { ...fixtureEnv, MY_TRUSTHUB_V23_LENDER_ORIGIN: LENDER }), false);
+});
+
+test('lender binding SQL follows the deployment prefix', () => {
+  assert.equal(lenderBindingSql(PRODUCTION_TARGET), LENDER_BINDING_SQL);
+  assert.equal(lenderBindingSql(ISOLATED_TARGET), LENDER_BINDING_SQL.replace('v23_private.prod_', 'v23_private.preview_'));
 });
 
 test('the stored preview pin still compares only the Ask and Move pair', () => {

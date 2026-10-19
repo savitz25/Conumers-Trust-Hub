@@ -9,7 +9,7 @@ import { API_PATH, GRANT_API_PATH, deploymentConfig, opaque, sqlName, type Deplo
 import { verifyAssertion, boundedBody, type AssertionKey } from './service-assertion.ts';
 import { verifyLenderAssertion } from './lender-assertion.ts';
 import { LenderSourceChannel, isLenderMarketplaceIdentity, isLenderMarketplaceStage, lenderPinsFor } from './lender-channel.ts';
-import { LENDER_BINDING_SQL, classifyLenderRows, type LenderBindingRow } from './lender-binding.ts';
+import { lenderBindingSql, classifyLenderRows, type LenderBindingRow } from './lender-binding.ts';
 import { verifyInsuranceAssertion, insurancePinsFor } from './insurance-assertion.ts';
 import { INSURANCE_BINDING_SQL, classifyInsuranceRows, parseInsuranceSpecialistEntityId, type InsuranceBindingRow } from './insurance-binding.ts';
 import { guestStageFromInsuranceManifest, isClosedInsuranceManifest, isInsuranceProviderStage } from './insurance-manifest.ts';
@@ -104,7 +104,7 @@ export class PreviewAssembly {
   async lenderBinding(profile: ProfileIdentity, db?: Awaited<ReturnType<TransactionPool['connect']>>): Promise<NonNullable<TrustedProfile['binding']>> {
     if (!isLenderMarketplaceIdentity(profile)) throw new RuntimeError('unavailable');
     const query = async (d: Pick<NonNullable<typeof db>, 'query'>) => {
-      const found = await d.query<LenderBindingRow>(LENDER_BINDING_SQL, [profile.nativeId]);
+      const found = await d.query<LenderBindingRow>(lenderBindingSql(this.target), [profile.nativeId]);
       const decision = classifyLenderRows(profile.nativeId, found.rows);
       if (decision.outcome !== 'eligible') throw new RuntimeError('unavailable');
       return { id: decision.id, networkEntityId: decision.networkEntityId, status: 'accepted' as const };
