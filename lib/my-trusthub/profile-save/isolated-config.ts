@@ -2,7 +2,9 @@ import { accountRuntime, admitted, PARENT_BACKEND, PARENT_ORIGIN, type AccountUs
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 
 export const ISOLATED_PROJECT = 'xkkiicsassizmakcvxml';
-export const ASK_PREVIEW = 'https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app';
+/** Retained parent-runtime Ask alias. It stays rejected as a Lender destination. */
+export const RETAINED_PARE_ASK_ORIGIN = 'https://conumers-trust-hub-git-mth-v2-3-pare-3127df-savitz25-s-projects.vercel.app';
+export const ASK_PREVIEW = 'https://conumers-trust-hub-git-b4-lender-ask-710157-savitz25-s-projects.vercel.app';
 export const MOVE_PREVIEW = 'https://move-trust-hub-git-mth-v2-3-move-cur-0a05f1-savitz25-s-projects.vercel.app';
 export const PARENT_LOGIN = 'myth_v23_parent_preview';
 export const API_PATH = '/api/my-trusthub/profile-save';
@@ -94,8 +96,9 @@ function productionHubHost(hostname: string): boolean {
 }
 
 /** One exact https origin for the Lender Preview. Production hub hosts, the
- * pinned Ask and Move preview hosts, wildcards, credentials, queries, hashes
- * and non-root paths are rejected. A missing value stays closed.
+ * B4 Ask host, the retained pare Ask host, the Move preview host, wildcards,
+ * credentials, queries, hashes and non-root paths are rejected. A missing
+ * value stays closed.
  */
 export function exactIsolatedLenderOrigin(value: string | undefined): string | null {
   if (!value || value !== value.trim() || value.includes('*')) return null;
@@ -103,7 +106,11 @@ export function exactIsolatedLenderOrigin(value: string | undefined): string | n
     const url = new URL(value);
     if (url.username || url.password || url.search || url.hash || url.pathname !== '/' || url.protocol !== 'https:' || url.hostname.endsWith('.')) return null;
     if (productionHubHost(url.hostname)) return null;
-    const pinnedPreview = new Set([new URL(ASK_PREVIEW).hostname, new URL(MOVE_PREVIEW).hostname]);
+    const pinnedPreview = new Set([
+      new URL(ASK_PREVIEW).hostname,
+      new URL(RETAINED_PARE_ASK_ORIGIN).hostname,
+      new URL(MOVE_PREVIEW).hostname,
+    ]);
     if (pinnedPreview.has(url.hostname)) return null;
     return url.origin;
   } catch { return null; }
