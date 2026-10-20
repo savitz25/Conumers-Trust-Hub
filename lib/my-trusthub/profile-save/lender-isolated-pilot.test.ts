@@ -6,7 +6,7 @@ import { accountRuntime } from '../account-policy.ts';
 import { ASK_PREVIEW, ISOLATED_PROJECT, ISOLATED_TARGET, MOVE_PREVIEW, PRODUCTION_TARGET, admittedPreviewUser, deploymentConfig, exactIsolatedLenderOrigin, isolatedConfig, isolatedLenderPilotConfig, previewDeploymentPinMatches } from './isolated-config.ts';
 import { ASSERTION_HEADER, LENDER_PRODUCTION_PINS, signLenderAssertion, verifyLenderAssertion } from './lender-assertion.ts';
 import { lenderBindingSql, LENDER_BINDING_SQL } from './lender-binding.ts';
-import { LenderSourceChannel, isolatedLenderPins, lenderPinsFor } from './lender-channel.ts';
+import { LenderSourceChannel, isolatedLenderPins, lenderPinsFor, lenderProtectionHeader } from './lender-channel.ts';
 import { PRODUCTION_ORIGINS } from '../contracts/v2-3-profile-transfer.ts';
 
 const LENDER = 'https://lender-pilot.preview.example';
@@ -130,4 +130,39 @@ test('isolated lender assertions and the source call use the explicit origin', a
   }, pins);
   assert.deepEqual(await channel.call({ action: 'resolve' }, 'source:read', browser), { posted: true });
   assert.equal(seen, LENDER + '/api/my-trusthub/profile-save/source');
+});
+
+test('the lender bypass header stays on the exact isolated origin', async () => {
+  const pair = keys();
+  const pins = { parentOrigin: ASK_PREVIEW, lenderOrigin: LENDER, project: ISOLATED_PROJECT, assertionEnvironment: 'isolated' as const };
+  const ok = () => new Response(JSON.stringify({ ok: true, result: { posted: true } }), { status: 200, headers: { 'content-type': 'application/json' } });
+  let isolated: RequestInit | undefined;
+  const channel = new LenderSourceChannel(pair.privateKey, async (_input, init) => {
+    isolated = init;
+    return ok();
+  }, pins, 'fixture-lender-bypass');
+  assert.deepEqual(await channel.call({ action: 'resolve' }, 'source:read', browser), { posted: true });
+  assert.equal(isolated?.redirect, 'error');
+  const headers = isolated?.headers as Record<string, string>;
+  assert.equal(headers['x-vercel-protection-bypass'], 'fixture-lender-bypass');
+  assert.equal(typeof headers[ASSERTION_HEADER], 'string');
+  assert.equal(headers[ASSERTION_HEADER].length > 20, true);
+  let omitted = 'present';
+  const closed = new LenderSourceChannel(pair.privateKey, async (_input, init) => {
+    omitted = (init?.headers as Record<string, string>)['x-vercel-protection-bypass'] ?? '';
+    return ok();
+  }, pins, '   ');
+  await closed.call({ action: 'resolve' }, 'source:ack', browser);
+  assert.equal(omitted, '');
+  let production = 'present';
+  const prod = new LenderSourceChannel(pair.privateKey, async (_input, init) => {
+    production = (init?.headers as Record<string, string>)['x-vercel-protection-bypass'] ?? '';
+    return ok();
+  }, LENDER_PRODUCTION_PINS, 'fixture-lender-bypass');
+  await prod.call({ action: 'resolve' }, 'source:read', browser);
+  assert.equal(production, '');
+  assert.deepEqual(lenderProtectionHeader(pins, 'https://other.preview.example/api/my-trusthub/profile-save/source', 'fixture-lender-bypass'), {});
+  assert.deepEqual(lenderProtectionHeader(pins, LENDER + '/api/my-trusthub/profile-save/source', 'fixture-lender-bypass'), {
+    'x-vercel-protection-bypass': 'fixture-lender-bypass',
+  });
 });

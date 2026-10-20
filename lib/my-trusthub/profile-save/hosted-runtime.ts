@@ -123,7 +123,7 @@ export async function hostedRuntime(env: Env = process.env): Promise<PreviewAsse
         const moveSpki = String(movePublic.export({ type: 'spki', format: 'pem' }));
         if (lenderPublic.asymmetricKeyType === 'ed25519' && lenderSpki !== askSpki && lenderSpki !== moveSpki) {
           runtime.lenderKey = { kid: lenderKid, pem: lenderPem };
-          runtime.lenderSource = new LenderSourceChannel(key, fetch, lenderPins);
+          runtime.lenderSource = new LenderSourceChannel(key, fetch, lenderPins, target.kind === 'isolated' ? env.MY_TRUSTHUB_V23_LENDER_PROTECTION_BYPASS : undefined);
         }
       } catch { /* lender verify key is absent or not ed25519 */ }
     }

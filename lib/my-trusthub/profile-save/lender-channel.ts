@@ -31,20 +31,36 @@ export type LenderPublication = {
   checkedAt: number;
 };
 
+/** Isolated Lender destination only. Production pins, a blank secret, and any
+ * other origin receive no header. The browser never sees this value. */
+export function lenderProtectionHeader(pins: LenderPins, target: string, bypass: string | undefined): Record<string, string> {
+  const secret = bypass?.trim();
+  if (!secret || pins.assertionEnvironment !== 'isolated') return {};
+  try {
+    const url = new URL(target);
+    if (url.origin !== pins.lenderOrigin || url.protocol !== 'https:') return {};
+  } catch {
+    return {};
+  }
+  return { 'x-vercel-protection-bypass': secret };
+}
+
 /** Ask calls Lender. The browser never carries the NMLS or the signing key. */
 export class LenderSourceChannel {
   readonly key: AssertionKey;
   readonly send: typeof fetch;
   readonly pins: LenderPins;
-  constructor(key: AssertionKey, send: typeof fetch = fetch, pins: LenderPins = LENDER_PRODUCTION_PINS) {
-    this.key = key; this.send = send; this.pins = pins;
+  readonly bypass?: string;
+  constructor(key: AssertionKey, send: typeof fetch = fetch, pins: LenderPins = LENDER_PRODUCTION_PINS, bypass?: string) {
+    this.key = key; this.send = send; this.pins = pins; this.bypass = bypass;
   }
   async call(body: unknown, scope: Scope, browser: string, session: string | null = null): Promise<unknown> {
     const bytes = Buffer.from(JSON.stringify(body));
     const target = this.pins.lenderOrigin + LENDER_SOURCE_PATH;
     const response = await this.send(target, { method: 'POST', body: bytes, cache: 'no-store', redirect: 'error',
       signal: AbortSignal.timeout(5000), headers: { 'Content-Type': 'application/json',
-        [ASSERTION_HEADER]: signLenderAssertion(this.key, 'ask', target, scope, bytes, browser, session, null, Date.now(), this.pins) } });
+        [ASSERTION_HEADER]: signLenderAssertion(this.key, 'ask', target, scope, bytes, browser, session, null, Date.now(), this.pins),
+        ...lenderProtectionHeader(this.pins, target, this.bypass) } });
     if (!response.ok || response.headers.get('content-type')?.split(';')[0] !== 'application/json') throw new RuntimeError('unavailable');
     const result = JSON.parse((await boundedBody(response)).toString('utf8'));
     if (result?.ok !== true) throw new RuntimeError('unavailable');
