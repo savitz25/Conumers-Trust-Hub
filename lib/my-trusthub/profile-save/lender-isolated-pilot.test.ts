@@ -101,7 +101,8 @@ test('lender binding SQL uses the issued function on the isolated project', () =
 test('the stored preview pin still compares only the Ask and Move pair', () => {
   const config = { target: ISOLATED_TARGET, parentOrigin: ASK_PREVIEW, moveOrigin: MOVE_PREVIEW };
   assert.equal(previewDeploymentPinMatches(pin, config), true);
-  assert.equal(previewDeploymentPinMatches({ ...pin, lender_origin: LENDER }, config), true);
+  const pinWithLenderOrigin = { ...pin, lender_origin: LENDER };
+  assert.equal(previewDeploymentPinMatches(pinWithLenderOrigin, config), true);
   assert.equal(previewDeploymentPinMatches({ ...pin, move_origin: OLDER_MOVE }, config), false);
   assert.equal(previewDeploymentPinMatches({ ...pin, ask_origin: LENDER }, config), false);
   assert.equal(previewDeploymentPinMatches({ ...pin, project_ref: 'qvvxvbcdmbjzrgvwjatw' }, config), false);
