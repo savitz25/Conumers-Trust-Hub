@@ -5,7 +5,6 @@ import { SampleRequestForm } from '@/components/research-services/sample-request
 import { BRAND } from '@/lib/brand';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_LINE } from '@/lib/network/standard-version';
-import { RESEARCH_SERVICES_INQUIRY } from '@/lib/research-services/inquiry';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { buildWebPageSchema } from '@/lib/seo/schemas';
@@ -127,17 +126,18 @@ export default function ResearchServicesPage() {
           <dl className="mt-6 grid gap-4 md:grid-cols-3">
             <div className="card-surface p-5">
               <dt className="text-base font-semibold" style={{ color: ASK_BRAND.navy }}>Verified findings</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Facts tied to a confirmed identity and a cited source, with the check date.</dd>
+              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Facts tied to a confirmed vendor identity and cited evidence.</dd>
             </div>
             <div className="card-surface p-5">
               <dt className="text-base font-semibold" style={{ color: ASK_BRAND.navy }}>Items needing review</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Records that match part of the identity, or gaps your team should resolve before relying on them.</dd>
+              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Confirmed vendor records or documented gaps requiring follow-up.</dd>
             </div>
             <div className="card-surface p-5">
               <dt className="text-base font-semibold" style={{ color: ASK_BRAND.navy }}>Unverified information</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Details supplied by the vendor or found without a reliable source match. These stay labeled as unverified.</dd>
+              <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">Unresolved identities or information supported by insufficient evidence.</dd>
             </div>
           </dl>
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">An adverse record is never associated with a vendor based on a partial identity match.</p>
         </section>
 
         <section aria-labelledby="how-it-works-heading" className="mt-14 scroll-mt-24">
@@ -185,9 +185,6 @@ export default function ResearchServicesPage() {
         </section>
 
         <section id="sample-request" aria-labelledby="sample-request-heading" className="mt-14 scroll-mt-24">
-          <p className="mb-4 max-w-3xl text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-            {RESEARCH_SERVICES_INQUIRY.reason} There is no inquiry submission endpoint on this page.
-          </p>
           <SampleRequestForm />
           <noscript>
             <p className="mt-4 text-sm" style={{ color: ASK_BRAND.ink }}>
@@ -205,9 +202,6 @@ export default function ResearchServicesPage() {
           </p>
           <p className="mt-3 max-w-3xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
             {ASK_NETWORK_OWNERSHIP_LINE}
-          </p>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Public display name: {BRAND.name}. The formal registered entity name, mailing address, and formation jurisdiction are published on Who we are when they are finalized.
           </p>
           <ul className="mt-6 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap">
             <li><Link className="link-inline" href="/who-we-are">Who we are</Link></li>

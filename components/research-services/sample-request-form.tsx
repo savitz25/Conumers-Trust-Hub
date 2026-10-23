@@ -8,6 +8,7 @@ import {
   RESEARCH_SERVICE_VENDOR_COUNTS,
   RESEARCH_SERVICES_INQUIRY,
   researchServicesMailto,
+  researchServicesRequestDetails,
   validateResearchInquiry,
   type ResearchInquiryErrors,
   type ResearchInquiryField,
@@ -31,11 +32,15 @@ export function SampleRequestForm() {
   const [values, setValues] = useState<ResearchInquiryInput>(EMPTY);
   const [errors, setErrors] = useState<ResearchInquiryErrors>({});
   const [mailto, setMailto] = useState('');
+  const [requestDetails, setRequestDetails] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
   const fields = useRef<Partial<Record<ResearchInquiryField, HTMLElement | null>>>({});
 
   function update(name: ResearchInquiryField, value: string) {
     setValues((current) => ({ ...current, [name]: value }));
     setMailto('');
+    setRequestDetails('');
+    setCopyStatus('');
   }
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -44,6 +49,8 @@ export function SampleRequestForm() {
     if (!result.ok) {
       setErrors(result.errors);
       setMailto('');
+      setRequestDetails('');
+      setCopyStatus('');
       const order: ResearchInquiryField[] = ['name', 'email', 'organization', 'role', 'vendorCount', 'message'];
       const first = order.find((name) => result.errors[name]);
       if (first) fields.current[first]?.focus();
@@ -51,8 +58,20 @@ export function SampleRequestForm() {
     }
     setErrors({});
     const href = researchServicesMailto(result.value);
+    setRequestDetails(researchServicesRequestDetails(result.value));
+    setCopyStatus('');
     setMailto(href);
     window.location.href = href;
+  }
+
+  async function copyRequestDetails() {
+    if (!requestDetails) return;
+    try {
+      await navigator.clipboard.writeText(requestDetails);
+      setCopyStatus('Request details copied. Paste them into an email to hello@asktrusthub.com and send it to complete your request.');
+    } catch {
+      setCopyStatus('Could not copy request details. Select and copy the prepared details below, then email them to hello@asktrusthub.com.');
+    }
   }
 
   const errorItems = (
@@ -72,8 +91,7 @@ export function SampleRequestForm() {
         Request a complimentary sample
       </h2>
       <p id={`${formId}-dependency`} className="mt-3 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-        {RESEARCH_SERVICES_INQUIRY.reason} This form checks your answers, then opens an email to{' '}
-        <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>. The page does not receive the form on its own.
+        This form prepares an email to <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>. Please send it from your email application to complete your request.
       </p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Include your contact details and an approximate vendor count. Leave vendor lists, insurance documents, and sensitive numbers out of this first message.
@@ -207,16 +225,22 @@ export function SampleRequestForm() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button type="submit" className="btn-primary w-full sm:w-auto">Email this request</button>
         <a className="btn-secondary w-full sm:w-auto" href={`mailto:${BRAND.email}`}>Email {BRAND.email}</a>
+        {requestDetails ? <button type="button" className="btn-secondary w-full sm:w-auto" onClick={copyRequestDetails}>Copy request details</button> : null}
       </div>
 
       <p id="sample-request-status" role="status" aria-live="polite" className="mt-4 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
         {mailto ? (
           <>
-            Your email application should open a message to {BRAND.email}. Send that message to deliver the request.{' '}
+            Your request is ready as an email to {BRAND.email}. It is delivered only when you send the email.{' '}
             <a className="link-inline" href={mailto}>Open the email again</a>.
           </>
         ) : 'The request is delivered only when you send the email.'}
       </p>
+      {copyStatus ? <p role="status" aria-live="polite" className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{copyStatus}</p> : null}
+      {requestDetails ? <details className="mt-4 rounded-lg border border-border p-4">
+        <summary className="cursor-pointer font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4F46E5]">View request details to copy manually</summary>
+        <pre className="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap break-words text-sm">{requestDetails}</pre>
+      </details> : null}
     </form>
   );
 }

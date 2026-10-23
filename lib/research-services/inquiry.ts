@@ -1,10 +1,7 @@
 /** Public inbox shared with Contact and Corrections. Keep aligned with BRAND.email. */
 export const RESEARCH_SERVICES_INQUIRY = {
   delivery: 'mailto',
-  endpoint: null,
   inbox: 'hello@asktrusthub.com',
-  reason:
-    'Ask Trust Hub has no inquiry submission endpoint. Contact and corrections are sent by email.',
 } as const;
 
 export const RESEARCH_SERVICE_ROLES = [
@@ -83,9 +80,11 @@ export function validateResearchInquiry(input: ResearchInquiryInput):
   return { ok: true, value };
 }
 
-export function researchServicesMailto(value: ResearchInquiryInput, inbox = RESEARCH_SERVICES_INQUIRY.inbox): string {
-  const subject = 'Trust Hub Research Services sample request';
-  const body = [
+export function researchServicesRequestDetails(value: ResearchInquiryInput): string {
+  return [
+    'To: hello@asktrusthub.com',
+    'Subject: Trust Hub Research Services sample request',
+    '',
     'Trust Hub Research Services',
     'Florida vendor-review sample request',
     '',
@@ -100,5 +99,12 @@ export function researchServicesMailto(value: ResearchInquiryInput, inbox = RESE
     '',
     'This first email does not include vendor documents.',
   ].join('\n');
+}
+
+export function researchServicesMailto(value: ResearchInquiryInput, inbox = RESEARCH_SERVICES_INQUIRY.inbox): string {
+  const details = researchServicesRequestDetails(value);
+  const [, subjectLine, , ...bodyLines] = details.split('\n');
+  const subject = subjectLine.replace(/^Subject: /, '');
+  const body = bodyLines.join('\n');
   return `mailto:${inbox}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
