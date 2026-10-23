@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
+  RESEARCH_INQUIRY_LIMITS,
   RESEARCH_SERVICES_INQUIRY,
+  researchInquiryDevPreview,
+  researchInquiryReceiptCopy,
+  researchInquiryUnsavedCopy,
   researchServicesMailto,
   researchServicesRequestDetails,
   validateResearchInquiry,
@@ -24,8 +28,15 @@ test('a complete sample request is valid and uses the public email inbox', () =>
   assert.equal(result.ok, true);
   if (!result.ok) return;
   const href = researchServicesMailto(result.value);
-  assert.equal(RESEARCH_SERVICES_INQUIRY.delivery, 'mailto');
+  assert.equal(RESEARCH_SERVICES_INQUIRY.fallback, 'mailto');
+  assert.equal(RESEARCH_SERVICES_INQUIRY.storage, 'ask_customer_postgres');
   assert.equal(RESEARCH_SERVICES_INQUIRY.inbox, 'hello@asktrusthub.com');
+  assert.equal(RESEARCH_INQUIRY_LIMITS.attempt.max, 10);
+  assert.equal(RESEARCH_INQUIRY_LIMITS.email.max, 3);
+  assert.equal(researchInquiryDevPreview({ NODE_ENV: 'production', RESEARCH_SERVICES_INQUIRY_UI: 'server' }), false);
+  assert.equal(researchInquiryDevPreview({ NODE_ENV: 'development', VERCEL_ENV: 'preview', RESEARCH_SERVICES_INQUIRY_UI: 'server' }), false);
+  assert.doesNotMatch(researchInquiryReceiptCopy('11111111-1111-4111-8111-111111111111'), /email was sent|successfully submitted|request received/i);
+  assert.match(researchInquiryUnsavedCopy(), /not saved/);
   assert.match(href, /^mailto:hello@asktrusthub\.com\?/);
   assert.match(href, /Florida%20vendor-review%20sample%20request/);
   assert.doesNotMatch(href, /received|submitted/i);
@@ -65,9 +76,13 @@ test('the page uses precise finding definitions and protects against partial ide
   assert.doesNotMatch(page, /formal registered entity name.*published.*finalized/i);
   assert.doesNotMatch(page, /\$\d|testimonial|turnaround|monitoring|certified compliant|guaranteed/i);
   assert.match(form, /This form prepares an email to/);
+  assert.match(form, /Save this request/);
+  assert.match(form, /Email \{BRAND\.email\}/);
+  assert.match(form, /researchInquiryReceiptCopy\(receiptId\)/);
   assert.match(form, /Copy request details/);
   assert.match(form, /role="status" aria-live="polite"/);
   assert.match(form, /Could not copy request details/);
   assert.match(form, /View request details to copy manually/);
-  assert.doesNotMatch(form, /request received|successfully submitted/i);
+  assert.doesNotMatch(form, /request received|successfully submitted|email was sent/i);
+  assert.doesNotMatch(form, /trackEvent|posthog|data-analytics/i);
 });

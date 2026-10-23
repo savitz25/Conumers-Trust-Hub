@@ -5,9 +5,14 @@ import { SampleRequestForm } from '@/components/research-services/sample-request
 import { BRAND } from '@/lib/brand';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import { ASK_NETWORK_OWNERSHIP_LINE } from '@/lib/network/standard-version';
+import { researchInquiryStorageAvailable } from '@/lib/research-services/availability';
+import { researchInquiryDevPreview } from '@/lib/research-services/inquiry';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { buildWebPageSchema } from '@/lib/seo/schemas';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export const metadata = createPageMetadata({
   title: 'Trust Hub Research Services',
@@ -69,7 +74,8 @@ const FAQ = [
   },
 ];
 
-export default function ResearchServicesPage() {
+export default async function ResearchServicesPage() {
+  const storageEnabled = researchInquiryDevPreview(process.env) || await researchInquiryStorageAvailable();
   return (
     <>
       <JsonLd
@@ -185,7 +191,7 @@ export default function ResearchServicesPage() {
         </section>
 
         <section id="sample-request" aria-labelledby="sample-request-heading" className="mt-14 scroll-mt-24">
-          <SampleRequestForm />
+          <SampleRequestForm storageEnabled={storageEnabled} />
           <noscript>
             <p className="mt-4 text-sm" style={{ color: ASK_BRAND.ink }}>
               Email {BRAND.email} with your name, work email, organization, role, and approximate vendor count.
