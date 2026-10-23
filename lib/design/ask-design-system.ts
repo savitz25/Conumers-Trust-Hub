@@ -301,6 +301,7 @@ export const ASK_FOOTER_COLUMNS = [
       { href: '/trust', label: 'Trust Center' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },
+      { href: '/research-services', label: 'Research Services' },
     ],
   },
   {
