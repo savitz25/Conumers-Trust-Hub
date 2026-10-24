@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { PageHeader } from '@/components/page-header';
+import { ResearchServicesPublicHero, ResearchServicesSampleLinks } from '@/components/research-services/public-sample-kit';
 import { SampleRequestForm } from '@/components/research-services/sample-request-form';
 import { BRAND } from '@/lib/brand';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
@@ -17,7 +17,7 @@ export const runtime = 'nodejs';
 export const metadata = createPageMetadata({
   title: 'Trust Hub Research Services',
   description:
-    'Source-dated vendor research for Florida HOA, condominium, and property-management teams reviewing contractor identities, license records, disciplinary history, and follow-up items.',
+    'A source-dated contractor report for Florida property managers and associations. The free first inquiry is a three-vendor identity and license-status screen. Vendor identities are requested after contact.',
   path: '/research-services',
 });
 
@@ -58,7 +58,7 @@ const FAQ = [
   },
   {
     q: 'What information is needed to identify a vendor?',
-    a: 'The business name used on the license or contract, any license number you already have, and the Florida city or county where the work is performed. This first request does not collect vendor documents.',
+    a: 'Vendor identities are requested after contact. This first request collects your contact details and an approximate vendor count. It does not collect vendor names, license numbers, or vendor documents.',
   },
   {
     q: 'What happens when an identity cannot be confirmed?',
@@ -82,15 +82,11 @@ export default async function ResearchServicesPage() {
         data={buildWebPageSchema({
           name: 'Trust Hub Research Services | Ask Trust Hub',
           description:
-            'Source-dated vendor research for Florida property-management and association teams.',
+            'Source-dated contractor research for Florida property managers and associations. The first inquiry collects contact and scope only.',
           path: '/research-services',
         })}
       />
-      <PageHeader
-        label="Trust Hub Research Services"
-        title="Know more about the contractors working on your properties."
-        description="Source-dated vendor research that helps property managers and association boards review contractor identities, license records, relevant disciplinary history and information requiring follow-up."
-      />
+      <ResearchServicesPublicHero />
 
       <div className="container-page py-10 sm:py-14">
         <Breadcrumbs
@@ -101,7 +97,6 @@ export default async function ResearchServicesPage() {
         />
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <a href="#sample-request" className="btn-primary w-full sm:w-auto">Request a complimentary sample</a>
           <a href="#what-we-review" className="btn-secondary w-full sm:w-auto">See what we review</a>
         </div>
 
@@ -121,7 +116,11 @@ export default async function ResearchServicesPage() {
             ))}
           </ul>
         </section>
+      </div>
 
+      <ResearchServicesSampleLinks />
+
+      <div className="container-page pb-14">
         <section aria-labelledby="what-you-receive-heading" className="mt-14 scroll-mt-24">
           <h2 id="what-you-receive-heading" className="text-2xl font-semibold tracking-tight" style={{ color: ASK_BRAND.navy }}>
             What you receive
@@ -165,12 +164,15 @@ export default async function ResearchServicesPage() {
         <section aria-labelledby="pilot-heading" className="mt-14 scroll-mt-24">
           <div className="rounded-2xl border p-6 sm:p-8" style={{ borderColor: ASK_BRAND.border, backgroundColor: ASK_BRAND.periwinkle }}>
             <h2 id="pilot-heading" className="text-2xl font-semibold tracking-tight" style={{ color: ASK_BRAND.navy }}>
-              Florida vendor-review pilot
+              Three-vendor license screen
             </h2>
             <p className="mt-4 max-w-3xl text-base leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              We are accepting inquiries for an initial Florida vendor-review pilot. Request a complimentary sample and a quote for your vendor list.
+              For Florida property managers and associations. Includes identity and license-status checks for up to three vendors. Detailed enforcement research and broader reviews are quoted separately.
             </p>
-            <a href="#sample-request" className="btn-primary mt-6 w-full sm:w-auto">Request a complimentary sample</a>
+            <a href="#sample-request" className="btn-primary mt-6 w-full sm:w-auto">Request a free three-vendor license screen</a>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+              The initial inquiry is for contact and scope only. Vendor identities are requested after contact; do not enter them in this inquiry form.
+            </p>
           </div>
         </section>
 

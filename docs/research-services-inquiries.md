@@ -4,7 +4,7 @@ Sample requests from `/research-services` are saved in the Ask customer Postgres
 
 The public page keeps the mailto link. Until migration `020_ath_research_service_inquiries.sql` is present and `ATH_HANDOFF_SECRET` is set, the page keeps preparing that email instead of showing a save button.
 
-The offer, independence statement, and finding definitions on the page are unchanged.
+The public offer is the free three-vendor identity and license-status screen. The independence statement and finding definitions are unchanged. The fictional sample report is linked from the page and is not indexed.
 
 ## Configuration
 

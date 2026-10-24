@@ -178,7 +178,7 @@ export function SampleRequestForm({ storageEnabled = false }: { storageEnabled?:
   return (
     <form className="card-surface p-5 sm:p-8" method="post" onSubmit={onSubmit} noValidate aria-describedby={`${formId}-dependency`}>
       <h2 id="sample-request-heading" className="text-2xl font-semibold tracking-tight" style={{ color: ASK_BRAND.navy }}>
-        Request a complimentary sample
+        Request a free three-vendor license screen
       </h2>
       <p id={`${formId}-dependency`} className="mt-3 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
         {storageEnabled ? (

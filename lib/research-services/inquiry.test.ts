@@ -63,7 +63,20 @@ test('missing and unsafe answers fail closed', () => {
 test('the page uses precise finding definitions and protects against partial identity attribution', () => {
   const page = readFileSync('app/research-services/page.tsx', 'utf8');
   const form = readFileSync('components/research-services/sample-request-form.tsx', 'utf8');
-  assert.match(page, /Know more about the contractors working on your properties/);
+  const kit = readFileSync('components/research-services/public-sample-kit.tsx', 'utf8');
+  const sample = readFileSync('public/research-services/sample-report.html', 'utf8');
+  assert.match(page, /ResearchServicesPublicHero/);
+  assert.match(page, /ResearchServicesSampleLinks/);
+  assert.match(page, /id="sample-request"/);
+  assert.match(kit, /Your contractor vendor list\. One clear, source-dated report\./);
+  assert.match(kit, /Request a free three-vendor license screen/);
+  assert.match(kit, /href="#sample-request"/);
+  assert.match(kit, /\/research-services\/sample-report\.html/);
+  assert.match(kit, /\/research-services\/sample-report\.pdf/);
+  assert.match(kit, /do not enter them in this inquiry form/);
+  assert.equal(sample.match(/Illustrative example — fictional business and findings\./g)?.length, 3);
+  assert.match(sample, /Fictional Example Vendor — Not a Real Business/);
+  assert.match(sample, /noindex, nofollow, noarchive/);
   assert.match(page, /Verified findings/);
   assert.match(page, /Items needing review/);
   assert.match(page, /Unverified information/);
