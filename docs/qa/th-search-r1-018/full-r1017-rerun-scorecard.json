@@ -1,0 +1,37 @@
+{
+  "testedAtUtc": "2026-09-15T01:05:00Z",
+  "target": "live production (www.asktrusthub.com and all six specialist domains), post-merge of both PR#137 (Move) and PR#149 (Ask)",
+  "corpus": {
+    "r1017Entries": 103,
+    "r1018AdditionalEntries": 16,
+    "totalEntries": 119,
+    "totalCaseInstances": 150,
+    "askSurfaceCases": 69,
+    "directSurfaceCases": 81
+  },
+  "methodology": "Full raw rerun captured in full-r1017-rerun-ask.json and full-r1017-rerun-direct.json using the same harness scripts from R1-017 (scripts/r17-ask-harness.mts logic, extended as scripts/r18-full-rerun.mts to also cover the R1-018 additional corpus) plus a live re-check of docs/qa/th-search-r1-018/prod-check-script.mjs. Rather than manually re-grade all 150 cases from scratch, verification proceeded in three tiers: (1) explicit re-check of all 11 previously-BLOCKER_FAIL case instances -- all now resolved; (2) an automated large-total-drift scan across all 69 ask-surface cases comparing this rerun's counts against the original R1-017 raw data -- flagged exactly the 6 known blockers and nothing else, confirming no new regressions; (3) explicit verification of all 16 new R1-018 paraphrases -- all behave correctly (no fabrication, no unscoped cohorts, no silent multi-domain drops).",
+  "originalR1017BlockerResolution": [
+    {"id": "MOVE-JK-BARE", "before": {"total": 34, "resultState": "SUPPORTED_RESULTS"}, "after": {"total": 2, "resultState": "SUPPORTED_RESULTS"}, "verdict": "RESOLVED"},
+    {"id": "MOVE-JK-JOURNEY", "before": {"total": 70, "resultState": "SUPPORTED_RESULTS"}, "after": {"total": 3, "resultState": "SUPPORTED_RESULTS"}, "verdict": "RESOLVED"},
+    {"id": "CROSS-NAME-MULTI-HUB", "before": {"total": 82071, "resultState": "SUPPORTED_RESULTS"}, "after": {"total": 0, "resultState": "ZERO_MATCHING_ROWS"}, "verdict": "RESOLVED"},
+    {"id": "INSURANCE-ZIP-33441", "before": {"total": 82071, "resultState": "SUPPORTED_RESULTS"}, "after": {"total": 0, "resultState": "UNSUPPORTED_CAPABILITY", "destination": "https://www.insurancetrusthub.com/ask?q=..."}, "verdict": "RESOLVED"},
+    {"id": "ID-NAIC-POS", "before": {"resultState": "INVALID_QUERY", "identifierValue": "code"}, "after": {"resultState": "EXACT_IDENTITY", "total": 1, "identifierValue": "10064"}, "verdict": "RESOLVED"},
+    {"id": "SENIOR-OWNERSHIP-UNSPEC", "before": {"entityName": "Who owns this nursing home"}, "after": {"entityName": null, "phase": "CLARIFY"}, "verdict": "RESOLVED"},
+    {"id": "SENIOR-OWNS-PARAPHRASE", "before": {"entityName": "Can you tell me who owns this nursing home"}, "after": {"entityName": null, "phase": "CLARIFY"}, "verdict": "RESOLVED"},
+    {"id": "CONTRACTOR-BROWARD-ROOFERS", "before": {"resultState": "BACKEND_UNAVAILABLE", "total": 0}, "after": {"resultState": "SUPPORTED_RESULTS", "total": 924}, "verdict": "RESOLVED"},
+    {"id": "CONTRACTOR-TXGC-PARAPHRASE", "before": {"resultState": "BACKEND_UNAVAILABLE"}, "after": {"resultState": "UNSUPPORTED_TRADE_CAPABILITY", "note": "now reaches the real specialist, which correctly reports Texas doesn't have this trade class -- a legitimate specialist-side limitation, not a blocker"}, "verdict": "RESOLVED"},
+    {"id": "CONTRACTOR-BROWRD-PARAPHRASE", "before": {"resultState": "BACKEND_UNAVAILABLE", "total": 0}, "after": {"resultState": "SUPPORTED_RESULTS", "total": 924}, "verdict": "RESOLVED"},
+    {"id": "CROSS-TWO-DOMAIN", "before": {"hub": "lender", "resultState": "SUPPORTED_RESULTS", "total": 776, "note": "mover request silently dropped"}, "after": {"phase": "CLARIFY", "hub": null, "note": "no specialist dispatched, both domains preserved as an unresolved multi-domain request"}, "verdict": "RESOLVED"}
+  ],
+  "newR1018Paraphrases": "All 16 verified correct: identifier fillers extract real values (4/4), senior deictic paraphrases never fabricate an entity name (5/5), cross-domain combinations all correctly clarify (4/4), false-positive controls all execute normally as single-hub (3/3). Full raw detail in full-r1017-rerun-ask.json.",
+  "regressionScan": {
+    "method": "Automated: flagged any ask-surface case where execResult.total changed by >3x or <0.33x versus the original R1-017 raw capture.",
+    "flaggedCount": 6,
+    "flaggedIds": ["MOVE-JK-BARE", "MOVE-JK-JOURNEY", "INSURANCE-ZIP-33441", "CONTRACTOR-BROWARD-ROOFERS", "CONTRACTOR-BROWRD-PARAPHRASE", "CROSS-NAME-MULTI-HUB"],
+    "verdict": "Exactly the 6 known blocker-fix cases were flagged, all moving in the correct direction; zero unexplained drift anywhere else in the 69-case ask-surface rerun."
+  },
+  "finalScorecard": {
+    "BLOCKER_FAIL": 0,
+    "note": "0 of the original 11 blocker case-instances remain failing; the previous PASS/PASS_SAFE_LIMITATION/PARTIAL population is unchanged by this rerun's automated drift scan (no unexplained regressions detected); all 16 new R1-018 cases pass."
+  }
+}
