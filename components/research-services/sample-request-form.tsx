@@ -1,12 +1,15 @@
 'use client';
 
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { BRAND } from '@/lib/brand';
 import { ASK_BRAND } from '@/lib/design/ask-design-system';
 import {
+  RESEARCH_INQUIRY_HONEYPOT,
   RESEARCH_SERVICE_ROLES,
   RESEARCH_SERVICE_VENDOR_COUNTS,
-  RESEARCH_SERVICES_INQUIRY,
+  researchInquiryRateLimitCopy,
+  researchInquiryReceiptCopy,
+  researchInquiryUnsavedCopy,
   researchServicesMailto,
   researchServicesRequestDetails,
   validateResearchInquiry,
@@ -27,23 +30,55 @@ const EMPTY: ResearchInquiryInput = {
 const controlClass =
   'mt-1 min-h-11 w-full rounded-lg border border-border bg-white px-3 text-base text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4F46E5]';
 
-export function SampleRequestForm() {
+function newIdempotencyKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return '';
+}
+
+export function SampleRequestForm({ storageEnabled = false }: { storageEnabled?: boolean }) {
   const formId = useId();
   const [values, setValues] = useState<ResearchInquiryInput>(EMPTY);
   const [errors, setErrors] = useState<ResearchInquiryErrors>({});
+  const [honeypot, setHoneypot] = useState('');
   const [mailto, setMailto] = useState('');
   const [requestDetails, setRequestDetails] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
+  const [receiptId, setReceiptId] = useState('');
+  const [failure, setFailure] = useState<'rate' | 'unsaved' | ''>('');
+  const [submitting, setSubmitting] = useState(false);
+  const [interactive, setInteractive] = useState(false);
+  const idempotencyKey = useRef(newIdempotencyKey());
   const fields = useRef<Partial<Record<ResearchInquiryField, HTMLElement | null>>>({});
+  const statusRef = useRef<HTMLParagraphElement | null>(null);
+  const focusStatus = useRef(false);
+
+  useEffect(() => {
+    setInteractive(true);
+  }, []);
+
+  useEffect(() => {
+    if (!focusStatus.current) return;
+    focusStatus.current = false;
+    statusRef.current?.focus();
+  }, [receiptId, failure]);
 
   function update(name: ResearchInquiryField, value: string) {
     setValues((current) => ({ ...current, [name]: value }));
     setMailto('');
     setRequestDetails('');
     setCopyStatus('');
+    setReceiptId('');
+    setFailure('');
+    idempotencyKey.current = newIdempotencyKey();
   }
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function focusFirst(nextErrors: ResearchInquiryErrors) {
+    const order: ResearchInquiryField[] = ['name', 'email', 'organization', 'role', 'vendorCount', 'message'];
+    const first = order.find((name) => nextErrors[name]);
+    if (first) fields.current[first]?.focus();
+  }
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const result = validateResearchInquiry(values);
     if (!result.ok) {
@@ -51,17 +86,60 @@ export function SampleRequestForm() {
       setMailto('');
       setRequestDetails('');
       setCopyStatus('');
-      const order: ResearchInquiryField[] = ['name', 'email', 'organization', 'role', 'vendorCount', 'message'];
-      const first = order.find((name) => result.errors[name]);
-      if (first) fields.current[first]?.focus();
+      setReceiptId('');
+      setFailure('');
+      focusFirst(result.errors);
       return;
     }
     setErrors({});
-    const href = researchServicesMailto(result.value);
-    setRequestDetails(researchServicesRequestDetails(result.value));
+    if (!storageEnabled || !idempotencyKey.current) {
+      const href = researchServicesMailto(result.value);
+      setRequestDetails(researchServicesRequestDetails(result.value));
+      setCopyStatus('');
+      setMailto(href);
+      window.location.href = href;
+      return;
+    }
+    setSubmitting(true);
+    setFailure('');
     setCopyStatus('');
-    setMailto(href);
-    window.location.href = href;
+    try {
+      const response = await fetch('/api/research-services/inquiries', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify({
+          idempotencyKey: idempotencyKey.current,
+          [RESEARCH_INQUIRY_HONEYPOT]: honeypot,
+          ...result.value,
+        }),
+      });
+      const payload = await response.json().catch(() => null) as { ok?: boolean; stored?: boolean; receiptId?: string; error?: string; fields?: ResearchInquiryErrors } | null;
+      if (payload?.ok === true && payload.stored === true && typeof payload.receiptId === 'string' && payload.receiptId) {
+        setReceiptId(payload.receiptId);
+        setFailure('');
+        setRequestDetails('');
+        focusStatus.current = true;
+        return;
+      }
+      setReceiptId('');
+      setRequestDetails(researchServicesRequestDetails(result.value));
+      if (payload?.error === 'invalid' && payload.fields) {
+        setErrors(payload.fields);
+        setFailure('');
+        focusFirst(payload.fields);
+        return;
+      }
+      focusStatus.current = true;
+      setFailure(payload?.error === 'rate_limited' ? 'rate' : 'unsaved');
+    } catch {
+      setReceiptId('');
+      focusStatus.current = true;
+      setFailure('unsaved');
+      setRequestDetails(researchServicesRequestDetails(result.value));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function copyRequestDetails() {
@@ -85,17 +163,45 @@ export function SampleRequestForm() {
     ] as const
   ).filter(([name]) => errors[name]);
 
+  const statusText = receiptId
+    ? researchInquiryReceiptCopy(receiptId)
+    : failure === 'rate'
+      ? researchInquiryRateLimitCopy()
+      : failure === 'unsaved'
+        ? researchInquiryUnsavedCopy()
+        : mailto
+          ? ''
+          : storageEnabled
+            ? 'The request is confirmed here only after it is saved. You can also email hello@asktrusthub.com.'
+            : 'The request is delivered only when you send the email.';
+
   return (
-    <form className="card-surface p-5 sm:p-8" onSubmit={onSubmit} noValidate aria-describedby={`${formId}-dependency`}>
+    <form className="card-surface p-5 sm:p-8" method="post" onSubmit={onSubmit} noValidate aria-describedby={`${formId}-dependency`}>
       <h2 id="sample-request-heading" className="text-2xl font-semibold tracking-tight" style={{ color: ASK_BRAND.navy }}>
-        Request a complimentary sample
+        Request a free three-vendor license screen
       </h2>
       <p id={`${formId}-dependency`} className="mt-3 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-        This form prepares an email to <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>. Please send it from your email application to complete your request.
+        {storageEnabled ? (
+          <>Save this request with Ask Trust Hub. It is confirmed here only after it is saved. You can also email <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>.</>
+        ) : (
+          <>This form prepares an email to <a className="link-inline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>. Please send it from your email application to complete your request.</>
+        )}
       </p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Include your contact details and an approximate vendor count. Leave vendor lists, insurance documents, and sensitive numbers out of this first message.
       </p>
+
+      <div className="absolute -left-[10000px] h-0 overflow-hidden" aria-hidden="true">
+        <label htmlFor={`${formId}-website`}>Leave this field blank</label>
+        <input
+          id={`${formId}-website`}
+          name={RESEARCH_INQUIRY_HONEYPOT}
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+        />
+      </div>
 
       {errorItems.length > 0 ? (
         <div role="alert" className="mt-6 rounded-lg border border-destructive/40 bg-white p-4">
@@ -222,19 +328,21 @@ export function SampleRequestForm() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <button type="submit" className="btn-primary w-full sm:w-auto">Email this request</button>
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <button type="submit" className="btn-primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60" disabled={!interactive || submitting} aria-busy={!interactive || submitting || undefined}>
+          {storageEnabled ? (submitting ? 'Saving request' : 'Save this request') : 'Email this request'}
+        </button>
         <a className="btn-secondary w-full sm:w-auto" href={`mailto:${BRAND.email}`}>Email {BRAND.email}</a>
         {requestDetails ? <button type="button" className="btn-secondary w-full sm:w-auto" onClick={copyRequestDetails}>Copy request details</button> : null}
       </div>
 
-      <p id="sample-request-status" role="status" aria-live="polite" className="mt-4 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
+      <p id="sample-request-status" ref={statusRef} tabIndex={-1} role="status" aria-live="polite" className="mt-4 break-words text-sm leading-relaxed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4F46E5]" style={{ color: ASK_BRAND.ink }}>
         {mailto ? (
           <>
             Your request is ready as an email to {BRAND.email}. It is delivered only when you send the email.{' '}
             <a className="link-inline" href={mailto}>Open the email again</a>.
           </>
-        ) : 'The request is delivered only when you send the email.'}
+        ) : statusText}
       </p>
       {copyStatus ? <p role="status" aria-live="polite" className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>{copyStatus}</p> : null}
       {requestDetails ? <details className="mt-4 rounded-lg border border-border p-4">

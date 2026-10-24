@@ -46,7 +46,7 @@ const CORE: {
   { path: '/guides', priority: 0.85, changeFrequency: 'weekly', lastmod: '2026-08-07' },
   // Personal overview is noindex; omit from sitemap
   { path: '/contact', priority: 0.4, changeFrequency: 'monthly', lastmod: '2026-07-01' },
-  { path: '/research-services', priority: 0.6, changeFrequency: 'monthly', lastmod: '2026-10-23' },
+  { path: '/research-services', priority: 0.6, changeFrequency: 'monthly', lastmod: '2026-10-24' },
   { path: '/privacy', priority: 0.25, changeFrequency: 'yearly', lastmod: '2026-09-07' },
   { path: '/terms', priority: 0.25, changeFrequency: 'yearly', lastmod: '2026-09-07' },
 ];
