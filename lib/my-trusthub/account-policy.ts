@@ -55,6 +55,13 @@ export function registrationAllowed(email: string, env: AccountEnv): boolean {
   if (!enabled(env.MY_TRUSTHUB_ENABLED) || !enabled(env.MY_TRUSTHUB_SIGNUP_ENABLED)) return false;
   return accessMode(env) === 'public' || (accessMode(env) === 'invitation' && list(env.MY_TRUSTHUB_INVITED_EMAILS).includes(email.toLowerCase()));
 }
+/** Whether public entry points should advertise the registration route. */
+export function registrationInvitationAvailable(env: AccountEnv): boolean {
+  if (isolatedSaveAccount(env)) return false;
+  if (!enabled(env.MY_TRUSTHUB_ENABLED) || !enabled(env.MY_TRUSTHUB_SIGNUP_ENABLED)) return false;
+  const mode = accessMode(env);
+  return mode === 'public' || (mode === 'invitation' && list(env.MY_TRUSTHUB_INVITED_EMAILS).length > 0);
+}
 export function emailRequestAllowed(email: string, env: AccountEnv): boolean {
   if (!enabled(env.MY_TRUSTHUB_ENABLED)) return false;
   const mode = accessMode(env);

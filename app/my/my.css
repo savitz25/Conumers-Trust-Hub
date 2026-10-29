@@ -191,8 +191,8 @@
 .myth-danger { border-color: #e3c8c8; }
 .myth-danger button { min-height: 44px; border: 1px solid #9a5555; border-radius: 6px; padding: 8px 12px; color: #7f3737; background: white; }
 .myth-danger small { display: block; margin-top: 8px; color: var(--myth-muted); }
-.myth-auth-page, .myth-lander { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(145deg, #f7f9f8, #e8f0ed); }
-.myth-auth-card, .myth-lander-inner { width: min(620px, 100%); padding: clamp(28px, 7vw, 58px); border: 1px solid var(--myth-line); border-radius: 16px; background: white; box-shadow: 0 20px 70px rgb(16 45 67 / 9%); }
+.myth-auth-page, .myth-lander { box-sizing: border-box; width: 100%; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(145deg, #f7f9f8, #e8f0ed); }
+.myth-auth-card, .myth-lander-inner { box-sizing: border-box; width: min(620px, calc(100vw - 48px)); padding: clamp(28px, 7vw, 58px); border: 1px solid var(--myth-line); border-radius: 16px; background: white; box-shadow: 0 20px 70px rgb(16 45 67 / 9%); }
 .myth-auth-card h1, .myth-lander h1 { margin: 10px 0 16px; font-size: clamp(34px, 7vw, 55px); line-height: 1.06; letter-spacing: -.05em; }
 .myth-auth-card > p, .myth-lander-inner > p { color: var(--myth-muted); line-height: 1.75; }
 .myth-auth-card .myth-form { margin: 24px 0; }
