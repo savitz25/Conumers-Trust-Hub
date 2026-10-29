@@ -6,6 +6,7 @@ import { EMAIL_MESSAGE, RECOVERY_MESSAGE, runAccountOperation, type AuthApi, typ
 import { exchangeAccountCode } from './account-callback.ts';
 import { importRequestKey, retireAcknowledged } from './guest-retirement.ts';
 import { applySessionCookieWrite } from './cookie-writes.ts';
+import { turnstileSizeForViewport } from './turnstile-layout.ts';
 
 const env: AccountEnv = { MY_TRUSTHUB_ENABLED: 'true', MY_TRUSTHUB_ACCESS_MODE: 'public', MY_TRUSTHUB_SIGNUP_ENABLED: 'true', MY_TRUSTHUB_AUTH_SECURITY_READY: 'true', NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY: 'fixture-key-not-a-provider-token', VERCEL_ENV: 'production', NEXT_PUBLIC_SITE_URL: PARENT_ORIGIN, NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: PARENT_BACKEND };
 const user = { id: '10000000-0000-4000-8000-000000000001', email: 'ordinary@example.test', email_confirmed_at: '2026-09-19T00:00:00Z', app_metadata: {} };
@@ -225,10 +226,15 @@ test('UI privacy/accessibility and event cutover contracts', () => {
   const ui = read('components/my-trusthub/account-form.tsx');
   for (const expected of ['autoComplete="username"', "'new-password' : 'current-password'", 'aria-pressed={show}', 'data-ph-mask="true"', 'feedback.current?.focus()', "operation === 'signup' ? 'account_signup_started'", "'account_login_started'"]) assert.ok(ui.includes(expected), expected);
   const captcha = read('components/my-trusthub/turnstile-field.tsx');
-  for (const expected of ['resetKey', "'expired-callback'", "'error-callback'", "size: 'flexible'"]) assert.ok(captcha.includes(expected));
+  for (const expected of ['resetKey', "'expired-callback'", "'error-callback'", "size: compact ? 'compact' : 'flexible'", "turnstileSizeForViewport(window.innerWidth)", "compactViewport.addEventListener('change', resize)"]) assert.ok(captcha.includes(expected));
   assert.ok(!read('components/my-trusthub/account-entry.tsx').includes('canonical account'));
   assert.ok(read('lib/supabase/middleware.ts').includes('auth.getUser()'));
   assert.ok(read('lib/supabase/server.ts').includes('cookieStore.set(name, value, options)'));
+});
+
+test('Turnstile uses compact mode only when the flexible widget cannot fit the auth card', () => {
+  for (const width of [320, 360, 390, 406]) assert.equal(turnstileSizeForViewport(width), 'compact');
+  for (const width of [407, 768, 1440]) assert.equal(turnstileSizeForViewport(width), 'flexible');
 });
 
 test('V2-2R security-readiness errors cannot reveal invitation eligibility', async () => {
