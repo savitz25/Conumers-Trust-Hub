@@ -15,6 +15,7 @@ import { getEnabledAdapter } from "@/lib/my-trusthub/page-data";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { homeWorkspaceGate } from "@/lib/my-trusthub/workspace-gate";
 import { SessionCard } from "@/components/my-trusthub/session-card";
+import { registrationInvitationAvailable } from "@/lib/my-trusthub/account-policy";
 
 export default async function MyTrustHubHome() {
   const featureEnabled = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ENABLED");
@@ -27,6 +28,7 @@ export default async function MyTrustHubHome() {
   });
   if (gate.kind === "redirect") redirect(gate.href);
   const canaryOnly = isMyTrustHubCanaryOnly();
+  const registrationAvailable = registrationInvitationAvailable(process.env);
 
   if (gate.kind === "lander" || !adapter || !user) {
     return (
@@ -47,7 +49,7 @@ export default async function MyTrustHubHome() {
             Sign in to My TrustHub
             <ArrowRight aria-hidden="true" size={18} />
           </Link>
-          <Link className="myth-secondary" href="/my/create-account">Create account</Link>
+          {registrationAvailable ? <Link className="myth-secondary" href="/my/create-account">Create account</Link> : null}
           <p className="myth-disclosure">
             TrustHub organizes research. It does not approve, rank, or recommend
             your selection.

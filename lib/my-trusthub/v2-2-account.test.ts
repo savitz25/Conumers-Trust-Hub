@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { accessMode, accountFormAvailable, accountRuntime, admitted, captchaState, emailRequestAllowed, PARENT_BACKEND, PARENT_ORIGIN, previewAccountAccess, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
+import { accessMode, accountFormAvailable, accountRuntime, admitted, captchaState, emailRequestAllowed, PARENT_BACKEND, PARENT_ORIGIN, previewAccountAccess, recentVerifiedAuthentication, registrationAllowed, registrationInvitationAvailable, safeReturn, type AccountEnv } from './account-policy.ts';
 import { EMAIL_MESSAGE, RECOVERY_MESSAGE, runAccountOperation, type AuthApi, type Diagnostic, type AccountResult } from './account-service.ts';
 import { exchangeAccountCode } from './account-callback.ts';
 import { importRequestKey, retireAcknowledged } from './guest-retirement.ts';
@@ -9,6 +9,32 @@ import { applySessionCookieWrite } from './cookie-writes.ts';
 
 const env: AccountEnv = { MY_TRUSTHUB_ENABLED: 'true', MY_TRUSTHUB_ACCESS_MODE: 'public', MY_TRUSTHUB_SIGNUP_ENABLED: 'true', MY_TRUSTHUB_AUTH_SECURITY_READY: 'true', NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY: 'fixture-key-not-a-provider-token', VERCEL_ENV: 'production', NEXT_PUBLIC_SITE_URL: PARENT_ORIGIN, NEXT_PUBLIC_MY_TRUSTHUB_SUPABASE_URL: PARENT_BACKEND };
 const user = { id: '10000000-0000-4000-8000-000000000001', email: 'ordinary@example.test', email_confirmed_at: '2026-09-19T00:00:00Z', app_metadata: {} };
+
+test('closed registration is not advertised while permitted account routes remain available', () => {
+  const closed = { ...env, MY_TRUSTHUB_SIGNUP_ENABLED: 'false' };
+  assert.equal(registrationInvitationAvailable(closed), false);
+  assert.equal(registrationInvitationAvailable({ ...closed, MY_TRUSTHUB_SIGNUP_ENABLED: 'true', MY_TRUSTHUB_ACCESS_MODE: 'internal' }), false);
+  assert.equal(registrationInvitationAvailable({ ...env, MY_TRUSTHUB_ACCESS_MODE: 'invitation', MY_TRUSTHUB_INVITED_EMAILS: 'invite@example.test' }), true);
+  assert.equal(registrationInvitationAvailable({ ...env, VERCEL_ENV: 'preview', MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED: 'true' }), false);
+  assert.equal(registrationInvitationAvailable(env), true);
+  assert.equal(accountFormAvailable('login', closed), true);
+  assert.equal(accountFormAvailable('link', closed), true);
+  assert.equal(accountFormAvailable('recovery', closed), true);
+  assert.equal(registrationAllowed(user.email, closed), false);
+
+  const read = (path: string) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
+  const home = read('app/my/page.tsx');
+  const entry = read('components/my-trusthub/account-entry.tsx');
+  assert.match(home, /registrationAvailable\s*\?\s*<Link[^>]*href="\/my\/create-account"/);
+  assert.match(entry, /!saveOnly\s*&&\s*registrationAvailable\s*\?\s*<Link[^>]*href=\{href\('\/my\/create-account'\)\}/);
+  assert.match(entry, /href\('\/my\/sign-in'\)/);
+  assert.match(entry, /href\('\/my\/email-link'\)/);
+  assert.match(entry, /href\('\/my\/recover'\)/);
+  assert.match(entry, /operation === 'signup' && !registrationAvailable/);
+  assert.match(read('app/my/my.css'), /\.myth-auth-page, \.myth-lander \{ box-sizing: border-box; width: 100%/);
+  assert.match(read('app/my/my.css'), /\.myth-auth-card, \.myth-lander-inner \{ box-sizing: border-box; width: min\(620px, calc\(100vw - 48px\)\)/);
+  assert.match(read('app/my/my.css'), /@media \(max-width: 520px\)/);
+});
 function form(extra: Record<string, string> = {}) {
   const f = new FormData();
   for (const [key, value] of Object.entries({ email: user.email, password: 'long fixture password', confirmPassword: 'long fixture password', captchaToken: 'mock-only-token', next: '/my/saved', expectedUserId: user.id, ...extra })) f.set(key, value);
