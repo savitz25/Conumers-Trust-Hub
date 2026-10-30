@@ -226,7 +226,7 @@ test('UI privacy/accessibility and event cutover contracts', () => {
   const ui = read('components/my-trusthub/account-form.tsx');
   for (const expected of ['autoComplete="username"', "'new-password' : 'current-password'", 'aria-pressed={show}', 'data-ph-mask="true"', 'feedback.current?.focus()', "operation === 'signup' ? 'account_signup_started'", "'account_login_started'"]) assert.ok(ui.includes(expected), expected);
   const captcha = read('components/my-trusthub/turnstile-field.tsx');
-  for (const expected of ['resetKey', "'expired-callback'", "'error-callback'", "size: compact ? 'compact' : 'flexible'", "turnstileSizeForViewport(window.innerWidth)", "compactViewport.addEventListener('change', resize)"]) assert.ok(captcha.includes(expected));
+  for (const expected of ['resetKey', "'expired-callback'", "'error-callback'", "size: compact ? 'compact' : 'flexible'", "turnstileSizeForViewport(window.innerWidth)", "compactViewport.addEventListener('change', resize)", 'let generation = 0', 'const isCurrent = () => renderGeneration === generation']) assert.ok(captcha.includes(expected));
   assert.ok(!read('components/my-trusthub/account-entry.tsx').includes('canonical account'));
   assert.ok(read('lib/supabase/middleware.ts').includes('auth.getUser()'));
   assert.ok(read('lib/supabase/server.ts').includes('cookieStore.set(name, value, options)'));
