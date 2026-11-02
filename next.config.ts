@@ -21,6 +21,14 @@ const nextConfig: NextConfig = {
     return [
       { source: '/my/:path*', headers: privateHeaders },
       { source: '/auth/:path*', headers: privateHeaders },
+      {
+        source: '/research-services/sample-report.html',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
+      {
+        source: '/research-services/sample-report.pdf',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
     ];
   },
   async redirects() {
