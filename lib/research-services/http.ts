@@ -5,7 +5,7 @@ import {
 } from './inquiry.ts';
 import { submitResearchInquiry, type SubmitDeps, type SubmitResult } from './submit.ts';
 
-const MAX_BODY = 8_000;
+const MAX_BODY_BYTES = 8_000;
 
 const PRIVATE_HEADERS = {
   'Cache-Control': 'no-store',
@@ -40,8 +40,9 @@ export async function handleResearchInquiryPost(request: Request, deps: SubmitDe
   if (!sameOrigin(request)) return json({ ok: false, error: 'rejected' }, 403);
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.toLowerCase().startsWith('application/json')) return json({ ok: false, error: 'rejected' }, 415);
-  const raw = await request.text();
-  if (raw.length > MAX_BODY) return json({ ok: false, error: 'payload_too_large' }, 413);
+  const payload = new Uint8Array(await request.arrayBuffer());
+  if (payload.byteLength > MAX_BODY_BYTES) return json({ ok: false, error: 'payload_too_large' }, 413);
+  const raw = new TextDecoder().decode(payload);
   let body: unknown;
   try {
     body = JSON.parse(raw);

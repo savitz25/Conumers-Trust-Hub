@@ -56,6 +56,23 @@ async function lock(sql: SqlClient, key: string) {
   await sql.query(`SELECT pg_advisory_xact_lock(hashtext($1)::bigint)`, [key]);
 }
 
+async function matchingInquiry(sql: SqlClient, idempotencyKey: string, fingerprint: string, since: string): Promise<string | null> {
+  const existing = await one<{ id: string }>(
+    sql,
+    `SELECT id::text AS id FROM ath_research_service_inquiries WHERE idempotency_key = $1`,
+    [idempotencyKey]
+  );
+  if (existing?.id) return existing.id;
+  const duplicate = await one<{ id: string }>(
+    sql,
+    `SELECT id::text AS id FROM ath_research_service_inquiries
+      WHERE content_fingerprint = $1 AND created_at >= $2
+      ORDER BY created_at DESC LIMIT 1`,
+    [fingerprint, since]
+  );
+  return duplicate?.id ?? null;
+}
+
 async function countSince(sql: SqlClient, bucket: string, rateKey: string, since: string): Promise<number> {
   const row = await one<{ n: string }>(
     sql,
@@ -104,26 +121,16 @@ export async function submitResearchInquiry(
   let stored: StoredRow;
   try {
     stored = await deps.transaction(async (sql) => {
-      const existing = await one<{ id: string }>(
-        sql,
-        `SELECT id::text AS id FROM ath_research_service_inquiries WHERE idempotency_key = $1`,
-        [request.idempotencyKey]
-      );
-      if (existing?.id) return { id: existing.id, created: false };
       const sinceDuplicate = new Date(deps.now().getTime() - limits.duplicateWindowMs).toISOString();
-      const duplicate = await one<{ id: string }>(
-        sql,
-        `SELECT id::text AS id FROM ath_research_service_inquiries
-          WHERE content_fingerprint = $1 AND created_at >= $2
-          ORDER BY created_at DESC LIMIT 1`,
-        [fingerprint, sinceDuplicate]
-      );
-      if (duplicate?.id) return { id: duplicate.id, created: false };
+      const prior = await matchingInquiry(sql, request.idempotencyKey, fingerprint, sinceDuplicate);
+      if (prior) return { id: prior, created: false };
 
       await lock(sql, 'research_inquiry_global');
       await lock(sql, `research_inquiry_ip:${ipKey}`);
       await lock(sql, `research_inquiry_email:${emailKey}`);
       await lock(sql, `research_inquiry_attempt:${attemptKey}`);
+      const lockedPrior = await matchingInquiry(sql, request.idempotencyKey, fingerprint, sinceDuplicate);
+      if (lockedPrior) return { id: lockedPrior, created: false };
       if (await countSince(sql, 'research_inquiry_global', 'all', new Date(deps.now().getTime() - limits.global.windowMs).toISOString()) >= limits.global.max) {
         throw new RateLimited();
       }

@@ -315,6 +315,23 @@ describe('research inquiry storage', { concurrency: false }, () => {
       body: 'x'.repeat(8001),
     }), gate);
     assert.equal(huge.status, 413);
+    const withinBytes = await handleResearchInquiryPost(new Request('https://www.asktrusthub.com/api/research-services/inquiries', {
+      method: 'POST',
+      headers: { origin: 'https://www.asktrusthub.com', 'content-type': 'application/json' },
+      body: 'x'.repeat(8000),
+    }), gate);
+    assert.equal(withinBytes.status, 400);
+    const multibyte = 'é'.repeat(4001);
+    assert.ok(multibyte.length < 8_000);
+    assert.ok(new TextEncoder().encode(multibyte).byteLength > 8_000);
+    const wide = await handleResearchInquiryPost(new Request('https://www.asktrusthub.com/api/research-services/inquiries', {
+      method: 'POST',
+      headers: { origin: 'https://www.asktrusthub.com', 'content-type': 'application/json' },
+      body: multibyte,
+    }), gate);
+    assert.equal(wide.status, 413);
+    const wideBody = await wide.json() as { error?: string };
+    assert.equal(wideBody.error, 'payload_too_large');
     const honeypot = await handleResearchInquiryPost(new Request('https://www.asktrusthub.com/api/research-services/inquiries', {
       method: 'POST',
       headers: { origin: 'https://www.asktrusthub.com', 'content-type': 'application/json' },
@@ -326,5 +343,89 @@ describe('research inquiry storage', { concurrency: false }, () => {
     assert.equal(honeypotBody.error, 'rejected');
     assert.equal(calls.length, 1);
     assert.equal(await storedCount(db), 0);
+  });
+
+  test('same content from two concurrent requests stores one inquiry', async () => {
+    const committed: Array<{ id: string; idempotencyKey: string; fingerprint: string; createdAt: string }> = [];
+    const tails = new Map<string, Promise<void>>();
+    const notices: InquiryNotice[] = [];
+    let inserts = 0;
+
+    function acquire(lockKey: string): Promise<() => void> {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => {
+        release = () => resolve();
+      });
+      const previous = tails.get(lockKey) ?? Promise.resolve();
+      tails.set(lockKey, previous.then(() => gate));
+      return previous.then(() => release);
+    }
+
+    const transaction: SubmitDeps['transaction'] = async (fn) => {
+      const staged: typeof committed = [];
+      const releases: Array<() => void> = [];
+      const visible = () => [...committed, ...staged];
+      const sql: SqlClient = {
+        async query(text, params = []) {
+          if (text.includes('pg_advisory_xact_lock')) {
+            releases.push(await acquire(String(params[0])));
+            return { rows: [] };
+          }
+          if (text.includes('COUNT(*)')) return { rows: [{ n: '0' }] };
+          if (text.includes('content_fingerprint = $1')) {
+            const found = visible()
+              .filter((row) => row.fingerprint === params[0] && row.createdAt >= String(params[1]))
+              .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
+            return { rows: found ? [{ id: found.id }] : [] };
+          }
+          if (text.includes('WHERE idempotency_key = $1')) {
+            const found = visible().find((row) => row.idempotencyKey === params[0]);
+            return { rows: found ? [{ id: found.id }] : [] };
+          }
+          if (text.includes('INSERT INTO ath_rate_events')) return { rows: [] };
+          if (text.includes('INSERT INTO ath_research_service_inquiries')) {
+            if (visible().some((row) => row.idempotencyKey === params[0])) return { rows: [] };
+            const row = {
+              id: `receipt-${inserts + 1}`,
+              idempotencyKey: String(params[0]),
+              fingerprint: String(params[1]),
+              createdAt: String(params[9]),
+            };
+            inserts += 1;
+            staged.push(row);
+            return { rows: [{ id: row.id }] };
+          }
+          if (text.includes('UPDATE ath_research_service_inquiries')) return { rows: [{ id: String(params[0]) }] };
+          throw new Error(`unexpected sql: ${text}`);
+        },
+      };
+      try {
+        const value = await fn(sql);
+        committed.push(...staged);
+        return value;
+      } finally {
+        for (const release of releases.reverse()) release();
+      }
+    };
+
+    const concurrentDeps: SubmitDeps = {
+      transaction,
+      mailer: async (notice) => {
+        notices.push(notice);
+        return { delivered: true, providerRef: 'concurrent' };
+      },
+      now: () => new Date('2026-10-23T15:00:00.000Z'),
+      secret: SECRET,
+    };
+    const [first, second] = await Promise.all([
+      submitResearchInquiry({ idempotencyKey: key(20), honeypot: '', input: base, ip: '203.0.113.50' }, concurrentDeps),
+      submitResearchInquiry({ idempotencyKey: key(21), honeypot: '', input: base, ip: '203.0.113.51' }, concurrentDeps),
+    ]);
+    assert.equal(first.ok && second.ok, true);
+    if (!first.ok || !second.ok) return;
+    assert.equal(first.receiptId, second.receiptId);
+    assert.equal(committed.length, 1);
+    assert.equal(inserts, 1);
+    assert.equal(notices.length, 1);
   });
 });
