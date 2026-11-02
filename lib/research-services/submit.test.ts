@@ -366,25 +366,26 @@ describe('research inquiry storage', { concurrency: false }, () => {
       const releases: Array<() => void> = [];
       const visible = () => [...committed, ...staged];
       const sql: SqlClient = {
-        async query(text, params = []) {
+        async query<T extends Record<string, unknown>>(text: string, params: unknown[] = []) {
+          const rows = (value: Record<string, unknown>[]): { rows: T[] } => ({ rows: value as T[] });
           if (text.includes('pg_advisory_xact_lock')) {
             releases.push(await acquire(String(params[0])));
-            return { rows: [] };
+            return rows([]);
           }
-          if (text.includes('COUNT(*)')) return { rows: [{ n: '0' }] };
+          if (text.includes('COUNT(*)')) return rows([{ n: '0' }]);
           if (text.includes('content_fingerprint = $1')) {
             const found = visible()
               .filter((row) => row.fingerprint === params[0] && row.createdAt >= String(params[1]))
               .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
-            return { rows: found ? [{ id: found.id }] : [] };
+            return rows(found ? [{ id: found.id }] : []);
           }
           if (text.includes('WHERE idempotency_key = $1')) {
             const found = visible().find((row) => row.idempotencyKey === params[0]);
-            return { rows: found ? [{ id: found.id }] : [] };
+            return rows(found ? [{ id: found.id }] : []);
           }
-          if (text.includes('INSERT INTO ath_rate_events')) return { rows: [] };
+          if (text.includes('INSERT INTO ath_rate_events')) return rows([]);
           if (text.includes('INSERT INTO ath_research_service_inquiries')) {
-            if (visible().some((row) => row.idempotencyKey === params[0])) return { rows: [] };
+            if (visible().some((row) => row.idempotencyKey === params[0])) return rows([]);
             const row = {
               id: `receipt-${inserts + 1}`,
               idempotencyKey: String(params[0]),
@@ -393,9 +394,9 @@ describe('research inquiry storage', { concurrency: false }, () => {
             };
             inserts += 1;
             staged.push(row);
-            return { rows: [{ id: row.id }] };
+            return rows([{ id: row.id }]);
           }
-          if (text.includes('UPDATE ath_research_service_inquiries')) return { rows: [{ id: String(params[0]) }] };
+          if (text.includes('UPDATE ath_research_service_inquiries')) return rows([{ id: String(params[0]) }]);
           throw new Error(`unexpected sql: ${text}`);
         },
       };
