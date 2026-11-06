@@ -48,6 +48,9 @@ function stripLeadingSqlComments(raw: string): string {
     .trim();
 }
 
+// Splits each file on semicolons when the client has no exec. Those statements
+// autocommit. Migration 020 is seven statements and has to travel as one
+// simple-query body. Use lib/customer/research-020-body.ts for that file.
 export async function applyCustomerMigrations(client: SqlClient): Promise<void> {
   const migrationDir = join(process.cwd(), 'schema/migrations');
   const paths = readdirSync(migrationDir)

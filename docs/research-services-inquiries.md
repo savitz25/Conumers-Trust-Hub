@@ -23,13 +23,9 @@ No inquiry field is sent to product analytics.
 
 ## Migration
 
-Apply only after this change is approved. The existing customer migration command is idempotent and applies every file in `schema/migrations`, including `020_ath_research_service_inquiries.sql`:
+Leave `scripts/ath-cust-002-migrate.ts` and `npm run migrate:ath-cust-002` unused for migration 020. That command replays every customer migration and splits each file into separate statements. Migration 020 has to be one SQL body in one transaction on the Neon direct connection.
 
-```powershell
-node --experimental-strip-types scripts/ath-cust-002-migrate.ts
-```
-
-Run it with `neon_tech_database` or `ASK_DATABASE_URL` pointing at the Ask customer database. Do not run it while production is required to stay unchanged.
+The unapplied plan is `docs/research-services-020-single-migration-plan.md`. Build, test, and deploy do not run that plan.
 
 The migration enables and forces row level security, allows only `ath.app_role = server`, and revokes the table from `PUBLIC`, `anon`, and `authenticated`. There is no browser read policy and no public list API.
 
@@ -55,4 +51,4 @@ The same script refuses to run unless `RESEARCH_SERVICES_OPERATOR=1`.
 
 ## Rollback
 
-Export with `list` first. Then run `schema/migrations/020_ath_research_service_inquiries.down.sql` against the Ask customer database. That drops `ath_research_service_inquiries` and deletes saved requests. Revert the application commit to restore the mailto-only form. Leave production on the previous deployment until that revert is deployed.
+The default rollback is an application reversal to the previous production deployment. It keeps `ath_research_service_inquiries` and its rows. `schema/migrations/020_ath_research_service_inquiries.down.sql` drops the table. Leave that file unused unless a separate approval follows an operator export. The procedure is in `docs/research-services-020-single-migration-plan.md`.

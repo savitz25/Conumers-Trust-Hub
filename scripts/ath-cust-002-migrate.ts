@@ -1,3 +1,6 @@
+// Replays every customer migration through applyCustomerMigrations.
+// Do not use this script for migration 020. The single-body plan is
+// docs/research-services-020-single-migration-plan.md.
 import { join } from 'node:path';
 import { Pool } from 'pg';
 import { loadEnvFile } from './load-env.mjs';
