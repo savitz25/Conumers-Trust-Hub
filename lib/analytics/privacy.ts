@@ -260,3 +260,71 @@ export function stripForbiddenProperties(
   }
   return cleaned;
 }
+
+const APPROVED_PROPERTY_KEYS = new Set([
+  'hub',
+  'environment',
+  'surface',
+  'authenticated',
+  'specialist_hub',
+  'state',
+  'capability',
+  'result_count',
+  'capability_state',
+  'success',
+  'profile_type',
+  'provider_class',
+  'action_source',
+  'failure_reason',
+  'failurereason',
+  'auth_state',
+  'outcome',
+  'profile_class',
+]);
+
+const PROTOCOL_PROPERTY_KEYS = new Set(['token', 'api_key', 'distinct_id', '$device_id']);
+const EMAIL_SHAPED = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
+
+function isApprovedPropertyKey(key: string): boolean {
+  if (PROTOCOL_PROPERTY_KEYS.has(key)) return true;
+  if (key.startsWith('$')) {
+    if (key === '$ip' || key.startsWith('$exception') || key.startsWith('$snapshot') || key === '$heatmap') return false;
+    return true;
+  }
+  return APPROVED_PROPERTY_KEYS.has(key.toLowerCase());
+}
+
+function scrubPropertyBag(bag: Record<string, unknown>, personBag: boolean): void {
+  for (const key of Object.keys(bag)) {
+    if (PROTOCOL_PROPERTY_KEYS.has(key)) {
+      if (personBag) delete bag[key];
+      continue;
+    }
+    if (!isApprovedPropertyKey(key) || (!key.startsWith('$') && isSensitiveQueryKey(key))) {
+      delete bag[key];
+      continue;
+    }
+    const value = bag[key];
+    if (typeof value === 'string' && EMAIL_SHAPED.test(value)) {
+      delete bag[key];
+      continue;
+    }
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      scrubPropertyBag(value as Record<string, unknown>, key === '$set' || key === '$set_once');
+    }
+  }
+}
+
+/** Allowlisted events only. Replay, exceptions, and unknown names are dropped. */
+export function prepareOutboundCapture<T extends { event?: string; properties?: Record<string, unknown> } | null>(
+  event: T,
+  allowedEvents: ReadonlySet<string>,
+): T | null {
+  if (!event?.event || !allowedEvents.has(event.event)) return null;
+  const sanitized = sanitizeCaptureResult(event);
+  if (!sanitized?.properties) return sanitized;
+  scrubPropertyBag(sanitized.properties, false);
+  sanitized.properties.$geoip_disable = true;
+  delete sanitized.properties.$ip;
+  return sanitized;
+}
