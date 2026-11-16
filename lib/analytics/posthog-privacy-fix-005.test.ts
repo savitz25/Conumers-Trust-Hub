@@ -23,6 +23,7 @@ function closedPolicy(): string {
     includeTurnstile: true,
     includeGoogleIdentity: false,
     includeJsdelivr: false,
+    formActionOrigins: ['https://www.contractortrusthub.com'],
   });
 }
 

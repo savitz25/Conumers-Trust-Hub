@@ -427,8 +427,62 @@ const JOURNEY_ENUMS: Record<string, ReadonlySet<string>> = {
   handoff_type: new Set(['contractor_save']),
 };
 const BOOLEAN_KEYS = new Set(['authenticated', 'success', 'project_context_present']);
-const CLASSIFICATION_KEYS = new Set(['capability', 'capability_state', 'profile_type', 'provider_class', 'profile_class']);
-const CLASSIFICATION = /^[A-Z][A-Z0-9_]{0,48}$/;
+/**
+ * Finite analytics codes owned by the application.
+ * Ask research intents, Ask result classes, guided result states, and Move
+ * specialist-search intents. Unknown strings are dropped. They are not rewritten.
+ */
+export const CLASSIFICATION_ENUMS: Record<string, ReadonlySet<string>> = {
+  capability: new Set([
+    'IDENTIFIER_LOOKUP',
+    'ENTITY_LOOKUP',
+    'ENTITY_LOOKUP_MISSING_IDENTITY',
+    'COHORT_BROWSE',
+    'HOW_TO',
+    'EXPLAINER',
+    'COMPARE',
+    'RECOMMENDATION_REQUEST',
+    'MULTI_HUB_JOURNEY',
+    'IDENTITY',
+    'DISCOVERY',
+    'EVIDENCE',
+    'EXPLAIN',
+    'COUNT',
+    'UNKNOWN',
+  ]),
+  capability_state: new Set([
+    'SUPPORTED_RESULTS',
+    'ZERO_MATCHING_ROWS',
+    'CLARIFICATION_REQUIRED',
+    'INVALID_GEOGRAPHY',
+    'UNSUPPORTED_STATE_CAPABILITY',
+    'UNSUPPORTED_TRADE_CAPABILITY',
+    'PUBLICATION_RESTRICTED',
+    'EXACT_IDENTITY',
+    'NO_CONFIDENT_MATCH',
+    'AMBIGUOUS_IDENTITIES',
+    'IDENTITY_COLLISION',
+    'UNSUPPORTED_CAPABILITY',
+    'INVALID_QUERY',
+    'BACKEND_UNAVAILABLE',
+    'TIMEOUT',
+    'ROUTE_READY',
+    'RESEARCH_COHORT',
+    'MARKET_OR_PLACE_RESEARCH',
+    'HANDOFF',
+    'UNSUPPORTED_QUERY',
+    'KNOWN',
+    'UNKNOWN',
+    'PARTIAL',
+    'NOT_ACQUIRED',
+    'REQUEST_ONLY',
+    'UNSUPPORTED',
+  ]),
+  profile_type: new Set(['BUSINESS', 'moving_company']),
+  provider_class: new Set(['LICENSED']),
+  profile_class: new Set(['VERIFIED']),
+};
+const CLASSIFICATION_KEYS = new Set(Object.keys(CLASSIFICATION_ENUMS));
 const STATE_CODE = /^[A-Z]{2}$/;
 const PROJECT_CREDENTIAL = /^phc_[A-Za-z0-9_]{1,120}$/;
 const SAFE_TITLES = new Set(['Ask Trust Hub', 'Move Trust Hub']);
@@ -442,11 +496,6 @@ function isIdentityPropertyKey(key: string): boolean {
 
 function isProjectCredential(value: unknown): value is string {
   return typeof value === 'string' && PROJECT_CREDENTIAL.test(value);
-}
-
-function classificationRejected(value: string): boolean {
-  if (!CLASSIFICATION.test(value)) return true;
-  return /password|secret|token|private|email|ssn|bearer|phc_/i.test(value);
 }
 
 /** Finite types only. Objects and arrays are not accepted here. */
@@ -487,7 +536,8 @@ function acceptProperty(key: string, value: unknown): unknown {
   const choices = JOURNEY_ENUMS[key];
   if (choices) return typeof value === 'string' && choices.has(value) ? value : undefined;
   if (CLASSIFICATION_KEYS.has(key)) {
-    return typeof value === 'string' && !classificationRejected(value) ? value : undefined;
+    const allowed = CLASSIFICATION_ENUMS[key];
+    return typeof value === 'string' && allowed.has(value) ? value : undefined;
   }
   return undefined;
 }
