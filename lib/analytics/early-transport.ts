@@ -1,8 +1,8 @@
 /**
- * Parser-blocking transport block. It runs from the root layout before any analytics
- * chunk, dynamic import, or SDK init. The gate stays closed until shouldEnablePosthog()
- * installs the module guard and opens it. Originals are saved so that later guard can
- * forward only when activation is actually on.
+ * Parser-blocking transport block. The root layout places it in `<head>` so it runs
+ * before the body exists and before any application chunk, dynamic import, or SDK init.
+ * The gate stays closed until shouldEnablePosthog() installs the module guard and opens
+ * it. Originals are saved so that later guard can forward only when activation is actually on.
  */
 export function analyticsTransportBlockScript(rawHost: string): string {
   let configured = '';

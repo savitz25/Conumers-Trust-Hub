@@ -28,13 +28,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: analyticsTransportBlockScript(posthogHost()) }} />
+      </head>
       <body
         className={`${inter.variable} font-sans antialiased`}
         data-hub="ask"
         data-network-standard={ASK_NETWORK_STANDARD_VERSION}
         data-th-chassis={TH_CHASSIS_VERSION}
       >
-        <script dangerouslySetInnerHTML={{ __html: analyticsTransportBlockScript(posthogHost()) }} />
         {/* network-standard: {ASK_NETWORK_STANDARD_VERSION} */}
         <AskChatShell>
           <ClickTracker />

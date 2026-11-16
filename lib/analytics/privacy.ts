@@ -104,6 +104,38 @@ function looksLikeNestedUrl(value: string): boolean {
   return /^(?:https?:)?\/\//i.test(value) || /%3A%2F%2F/i.test(value);
 }
 
+const privacyDiagnosticCounts = {
+  dropped_event: 0,
+  rejected_property: 0,
+  malformed_url: 0,
+};
+
+function notePrivacyDiagnostic(kind: keyof typeof privacyDiagnosticCounts): void {
+  privacyDiagnosticCounts[kind] += 1;
+}
+
+/** Counts only. Values and property names are not recorded. */
+export function privacyDiagnostics(): { dropped_event: number; rejected_property: number; malformed_url: number } {
+  return { ...privacyDiagnosticCounts };
+}
+
+/** A `%` that is not two hex digits is rejected before any URL parser can normalize it. */
+function hasMalformedPercentEncoding(value: string): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    if (value.charCodeAt(index) !== 37) continue;
+    const pair = value.slice(index + 1, index + 3);
+    if (!/^[0-9A-Fa-f]{2}$/.test(pair)) return true;
+    index += 2;
+  }
+  return false;
+}
+
+/** Allowlisted query values are a single case, so mixed-case secrets cannot hide in them. */
+function isSafeQueryValue(value: string): boolean {
+  if (!/^[A-Za-z0-9._~-]{1,64}$/.test(value)) return false;
+  return !(/[A-Z]/.test(value) && /[a-z]/.test(value));
+}
+
 export const FORBIDDEN_EVENT_KEYS = [
   'q',
   'query',
@@ -246,29 +278,51 @@ export function sanitizeCaptureResult<T extends { event?: string; properties?: R
 export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0): string | undefined {
   if (!raw) return undefined;
   if (depth > MAX_NESTED_DEPTH || raw.length > MAX_URL_LENGTH) return undefined;
+  if (hasMalformedPercentEncoding(raw) || raw.includes('\uFFFD')) {
+    notePrivacyDiagnostic('malformed_url');
+    return undefined;
+  }
   try {
     const url = new URL(raw, 'https://www.asktrusthub.com');
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return undefined;
-    const kept: Array<[string, string]> = [];
+    const kept = new Map<string, string>();
+    const ambiguous = new Set<string>();
     for (const [rawKey, rawValue] of url.searchParams.entries()) {
+      if (hasMalformedPercentEncoding(rawKey) || hasMalformedPercentEncoding(rawValue) || rawValue.includes('\uFFFD')) {
+        notePrivacyDiagnostic('malformed_url');
+        return undefined;
+      }
       const key = decodeBounded(rawKey);
       if (key == null || /[=&\s#]/.test(key)) continue;
       const canonical = canonicalQueryKey(key);
-      if (!canonical || isSensitiveQueryKey(key) || !SAFE_QUERY_KEYS.has(canonical)) continue;
+      if (!canonical || isSensitiveQueryKey(key) || !SAFE_QUERY_KEYS.has(canonical) || ambiguous.has(canonical)) continue;
       const decodedValue = decodeBounded(rawValue);
-      if (decodedValue == null || decodedValue.length > MAX_QUERY_VALUE_LENGTH) continue;
+      if (decodedValue == null || decodedValue.length > MAX_QUERY_VALUE_LENGTH || decodedValue.includes('\uFFFD')) continue;
       if (EMAIL_SHAPED_VALUE.test(decodedValue) || valueHidesSensitivePair(decodedValue)) continue;
+      let nextValue = decodedValue;
       if (looksLikeNestedUrl(decodedValue) || looksLikeNestedUrl(rawValue)) {
         const nested = sanitizeAnalyticsUrl(decodedValue, depth + 1);
         if (!nested || valueHidesSensitivePair(nested) || nested.length > MAX_QUERY_VALUE_LENGTH) continue;
-        kept.push([canonical, nested]);
+        nextValue = nested;
+      } else if (!isSafeQueryValue(decodedValue)) {
         continue;
       }
-      kept.push([canonical, decodedValue]);
+      const previous = kept.get(canonical);
+      if (previous !== undefined && previous !== nextValue) {
+        kept.delete(canonical);
+        ambiguous.add(canonical);
+        continue;
+      }
+      kept.set(canonical, nextValue);
     }
     const cleaned = new URL(`${url.origin}${url.pathname}`);
     for (const [key, value] of kept) cleaned.searchParams.append(key, value);
-    return `${cleaned.origin}${cleaned.pathname}${cleaned.search}`;
+    const result = `${cleaned.origin}${cleaned.pathname}${cleaned.search}`;
+    if (result.includes('\uFFFD') || hasMalformedPercentEncoding(result)) {
+      notePrivacyDiagnostic('malformed_url');
+      return undefined;
+    }
+    return result;
   } catch {
     return undefined;
   }
@@ -352,70 +406,213 @@ export function stripForbiddenProperties(
   return cleaned;
 }
 
-const APPROVED_PROPERTY_KEYS = new Set([
-  'hub',
-  'environment',
-  'surface',
-  'authenticated',
-  'specialist_hub',
-  'state',
-  'capability',
-  'result_count',
-  'capability_state',
-  'success',
-  'profile_type',
-  'provider_class',
-  'action_source',
-  'failure_reason',
-  'failurereason',
-  'auth_state',
-  'outcome',
-  'profile_class',
+const HUBS = new Set(['ask', 'move', 'lender', 'insurance', 'contractor', 'senior', 'investor']);
+const ENVIRONMENTS = new Set(['production', 'preview', 'development']);
+const SURFACES = new Set([
+  'my_saved',
+  'my_projects',
+  'my_project_detail',
+  'my_watches',
+  'my_sign_in',
+  'my_home',
+  'ask_form',
+  'ask_results',
+  'search',
+  'app_router',
+  'claim',
+  'homepage',
+  'GUIDED',
+  'ASK_SSR',
+  'NAME_CANDIDATES',
+  'JOURNEY',
+  'move_destination',
+  'move_plan_completion',
 ]);
-
-const ENVELOPE_PROPERTY_KEYS = new Set(['token', 'api_key']);
-const EMAIL_SHAPED = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
-const URL_PROPERTY_KEY = /url|referrer|href/i;
+const JOURNEY_ENUMS: Record<string, ReadonlySet<string>> = {
+  action_source: new Set(['my_saved_form', 'guest_import', 'specialist_handoff']),
+  auth_state: new Set(['guest', 'authenticated']),
+  outcome: new Set(['intent', 'success', 'failure']),
+  failure_reason: new Set([
+    'unable',
+    'handoff_unavailable',
+    'import_invalid',
+    'import_none_selected',
+    'coverage_required',
+    'invalid_email',
+    'signin_unavailable',
+    'link_delivery',
+    'captcha_required',
+    'callback_missing_code',
+    'callback_exchange',
+    'callback_session',
+    'callback_unavailable',
+    'access_restricted',
+  ]),
+  continuation_reason: new Set(['save_handoff', 'direct']),
+  handoff_type: new Set(['contractor_save']),
+};
+const BOOLEAN_KEYS = new Set(['authenticated', 'success', 'project_context_present']);
+const CLASSIFICATION_KEYS = new Set(['capability', 'capability_state', 'profile_type', 'provider_class', 'profile_class']);
+const CLASSIFICATION = /^[A-Z][A-Z0-9_]{0,48}$/;
+const STATE_CODE = /^[A-Z]{2}$/;
+const PROJECT_CREDENTIAL = /^phc_[A-Za-z0-9_]{1,120}$/;
+const PATHNAME = /^\/[A-Za-z0-9/_.-]{0,180}$/;
+const SAFE_TITLES = new Set(['Ask Trust Hub', 'Move Trust Hub']);
+const TITLE_KEYS = new Set(['title', '$title', '$document_title']);
+const NESTED_BAGS = new Set(['$set', '$set_once']);
+const URL_KEYS = new Set<string>(PAGE_URL_PROPERTY_KEYS);
 
 function isIdentityPropertyKey(key: string): boolean {
-  return /distinct_id|device_id|user_id|anonymous_id|person_id/i.test(key);
+  return /distinct_id|device_id|user_id|anonymous_id|person_id|session_id/i.test(key);
 }
 
-function isApprovedPropertyKey(key: string): boolean {
-  if (isIdentityPropertyKey(key)) return false;
-  if (ENVELOPE_PROPERTY_KEYS.has(key)) return true;
-  if (key.startsWith('$')) {
-    if (key === '$ip' || key.startsWith('$exception') || key.startsWith('$snapshot') || key === '$heatmap') return false;
-    return true;
+function isProjectCredential(value: unknown): value is string {
+  return typeof value === 'string' && PROJECT_CREDENTIAL.test(value);
+}
+
+function classificationRejected(value: string): boolean {
+  if (!CLASSIFICATION.test(value)) return true;
+  return /password|secret|token|private|email|ssn|bearer|phc_/i.test(value);
+}
+
+/** Finite types only. Objects and arrays are not accepted here. */
+function acceptProperty(key: string, value: unknown): unknown {
+  if (value == null) return undefined;
+  if (typeof value === 'object') return undefined;
+  if (URL_KEYS.has(key)) {
+    if (typeof value !== 'string') return undefined;
+    return sanitizeAnalyticsUrl(value);
   }
-  return APPROVED_PROPERTY_KEYS.has(key.toLowerCase());
+  if (key === '$pathname') {
+    return typeof value === 'string' && PATHNAME.test(value) ? value : undefined;
+  }
+  if (TITLE_KEYS.has(key)) {
+    return typeof value === 'string' && SAFE_TITLES.has(value) ? value : undefined;
+  }
+  if (key === '$geoip_disable') return value === true ? true : undefined;
+  if (key === 'hub' || key === 'specialist_hub') {
+    return typeof value === 'string' && HUBS.has(value) ? value : undefined;
+  }
+  if (key === 'environment') {
+    return typeof value === 'string' && ENVIRONMENTS.has(value) ? value : undefined;
+  }
+  if (key === 'surface') {
+    return typeof value === 'string' && SURFACES.has(value) ? value : undefined;
+  }
+  if (key === 'state') {
+    return typeof value === 'string' && STATE_CODE.test(value) ? value : undefined;
+  }
+  if (key === 'result_count') {
+    return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 1000 ? value : undefined;
+  }
+  if (BOOLEAN_KEYS.has(key)) return typeof value === 'boolean' ? value : undefined;
+  const choices = JOURNEY_ENUMS[key];
+  if (choices) return typeof value === 'string' && choices.has(value) ? value : undefined;
+  if (CLASSIFICATION_KEYS.has(key)) {
+    return typeof value === 'string' && !classificationRejected(value) ? value : undefined;
+  }
+  return undefined;
 }
 
-/** New object. Caller identity and unknown keys cannot survive by merging the original bag back. */
-function rebuildOutboundProperties(bag: Record<string, unknown>, personBag = false): Record<string, unknown> {
+/**
+ * New object. Unknown keys, arbitrary `$` keys, arrays, and unschema'd objects are dropped.
+ * Person bags cannot carry the project credential or another nested bag.
+ */
+function schemaProperties(bag: Record<string, unknown>, mode: 'event' | 'person'): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(bag)) {
-    if (isIdentityPropertyKey(key)) continue;
+    if (isIdentityPropertyKey(key)) {
+      notePrivacyDiagnostic('rejected_property');
+      continue;
+    }
     if (key === 'token' || key === 'api_key') {
-      if (!personBag && (typeof value === 'string' || typeof value === 'number')) out[key] = value;
+      if (mode === 'event' && isProjectCredential(value)) out[key] = value;
+      else notePrivacyDiagnostic('rejected_property');
       continue;
     }
-    if (!isApprovedPropertyKey(key) || (!key.startsWith('$') && isSensitiveQueryKey(key))) continue;
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      out[key] = rebuildOutboundProperties(value as Record<string, unknown>, personBag || key === '$set' || key === '$set_once');
-      continue;
-    }
-    if (typeof value === 'string') {
-      if (EMAIL_SHAPED.test(value)) continue;
-      if (URL_PROPERTY_KEY.test(key)) {
-        const cleaned = sanitizeAnalyticsUrl(value);
-        if (cleaned) out[key] = cleaned;
+    if (NESTED_BAGS.has(key)) {
+      if (mode === 'person' || !value || typeof value !== 'object' || Array.isArray(value)) {
+        notePrivacyDiagnostic('rejected_property');
         continue;
       }
-      out[key] = value;
+      const nested = schemaProperties(value as Record<string, unknown>, 'person');
+      if (Object.keys(nested).length > 0) out[key] = nested;
       continue;
     }
-    if (typeof value === 'number' || typeof value === 'boolean') out[key] = value;
+    const accepted = acceptProperty(key, value);
+    if (accepted === undefined) {
+      notePrivacyDiagnostic('rejected_property');
+      continue;
+    }
+    out[key] = accepted;
+  }
+  return out;
+}
+
+function sealEventProperties(properties: Record<string, unknown>): Record<string, unknown> {
+  const rebuilt = schemaProperties(properties, 'event');
+  rebuilt.$geoip_disable = true;
+  delete rebuilt.$ip;
+  return rebuilt;
+}
+
+function envelopeEvent(value: unknown, allowedEvents: ReadonlySet<string>): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    notePrivacyDiagnostic('dropped_event');
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  if (typeof record.event !== 'string' || !allowedEvents.has(record.event)) {
+    notePrivacyDiagnostic('dropped_event');
+    return null;
+  }
+  const out: Record<string, unknown> = { event: record.event };
+  if (record.properties == null) return out;
+  if (typeof record.properties !== 'object' || Array.isArray(record.properties)) {
+    notePrivacyDiagnostic('dropped_event');
+    return null;
+  }
+  out.properties = sealEventProperties(record.properties as Record<string, unknown>);
+  return out;
+}
+
+/**
+ * Final capture envelope. The project credential stays only at the transport
+ * slots PostHog requires. Every other field is rebuilt from the event schema.
+ */
+export function sanitizeCaptureEnvelope(value: unknown, allowedEvents: ReadonlySet<string>): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    notePrivacyDiagnostic('dropped_event');
+    return {};
+  }
+  const record = value as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  if (isProjectCredential(record.api_key)) out.api_key = record.api_key;
+  else if (record.api_key !== undefined) notePrivacyDiagnostic('rejected_property');
+  if (isProjectCredential(record.token)) out.token = record.token;
+  else if (record.token !== undefined) notePrivacyDiagnostic('rejected_property');
+  if (Array.isArray(record.batch)) {
+    const events: Record<string, unknown>[] = [];
+    for (const item of record.batch) {
+      const event = envelopeEvent(item, allowedEvents);
+      if (event) events.push(event);
+    }
+    if (events.length > 0) out.batch = events;
+    return out;
+  }
+  if (Array.isArray(record.events)) {
+    const events: Record<string, unknown>[] = [];
+    for (const item of record.events) {
+      const event = envelopeEvent(item, allowedEvents);
+      if (event) events.push(event);
+    }
+    if (events.length > 0) out.events = events;
+    return out;
+  }
+  if (record.event !== undefined || record.properties !== undefined) {
+    const event = envelopeEvent(record, allowedEvents);
+    if (!event) return out;
+    return { ...out, ...event };
   }
   return out;
 }
@@ -425,12 +622,21 @@ export function prepareOutboundCapture<T extends { event?: string; properties?: 
   event: T,
   allowedEvents: ReadonlySet<string>,
 ): T | null {
-  if (!event?.event || !allowedEvents.has(event.event)) return null;
+  if (!event?.event || !allowedEvents.has(event.event)) {
+    if (event) notePrivacyDiagnostic('dropped_event');
+    return null;
+  }
+  if (event.properties != null && (typeof event.properties !== 'object' || Array.isArray(event.properties))) {
+    notePrivacyDiagnostic('dropped_event');
+    return null;
+  }
   const sanitized = sanitizeCaptureResult(event);
-  if (!sanitized?.properties) return sanitized;
-  const rebuilt = rebuildOutboundProperties(sanitized.properties);
-  rebuilt.$geoip_disable = true;
-  delete rebuilt.$ip;
-  sanitized.properties = rebuilt;
+  if (!sanitized) return null;
+  const carrier = sanitized as T & Record<string, unknown>;
+  for (const key of Object.keys(carrier)) {
+    if (key !== 'event' && key !== 'properties' && isIdentityPropertyKey(key)) delete carrier[key];
+  }
+  if (!sanitized.properties) return sanitized;
+  sanitized.properties = sealEventProperties(sanitized.properties);
   return sanitized;
 }

@@ -3,7 +3,8 @@
  * Installed on import in the browser so a direct posthog-js call cannot skip it.
  */
 import { shouldEnablePosthog } from './environment.ts';
-import { sanitizeAnalyticsUrl } from './privacy.ts';
+import { sanitizeCaptureEnvelope } from './privacy.ts';
+import { TRUSTHUB_EVENTS } from './trusthub-events.ts';
 
 const KNOWN_POSTHOG_HOSTS = new Set([
   'us.i.posthog.com',
@@ -14,11 +15,8 @@ const KNOWN_POSTHOG_HOSTS = new Set([
 ]);
 
 const ANALYTICS_PATH = /\/(?:flags|decide|e|capture|batch|engage|s|config)(?:\/|$)|\/i\/v|\/array\//i;
-const SENSITIVE_KEY = /email|password|token|ssn|phone|secret|otp|authorization|cookie|credential|address|^notes?$|^name$|first_name|last_name|^q$|^query$|^question$|^search$|searchterm/i;
 const EMAIL_SHAPED = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
-const ENVELOPE_FIELDS = new Set(['token', 'api_key']);
-const IDENTITY_FIELD = /distinct_id|device_id|user_id|anonymous_id|person_id/i;
-const PERSON_BAGS = new Set(['person_properties', '$set', '$set_once', '$groups', 'user_properties', '$user_properties']);
+const ALLOWED_EVENTS = new Set<string>(Object.values(TRUSTHUB_EVENTS));
 
 let installed = false;
 
@@ -49,37 +47,9 @@ function emptyAnalyticsResponse(): Response {
   return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
 }
 
-function sanitizeOutbound(value: unknown, where: 'root' | 'event' | 'person' | 'other'): unknown {
-  if (Array.isArray(value)) {
-    return value.map((item) => sanitizeOutbound(item, where === 'root' ? 'event' : 'other'));
-  }
-  if (value && typeof value === 'object') {
-    const out: Record<string, unknown> = {};
-    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
-      const envelope = where === 'root' || where === 'event';
-      if (IDENTITY_FIELD.test(key)) continue;
-      if (ENVELOPE_FIELDS.has(key)) {
-        if (envelope) out[key] = child;
-        continue;
-      }
-      if (SENSITIVE_KEY.test(key) && !key.startsWith('$')) continue;
-      let nextWhere: 'root' | 'event' | 'person' | 'other' = 'other';
-      if (key === 'batch' || key === 'events') nextWhere = 'root';
-      else if (PERSON_BAGS.has(key)) nextWhere = 'person';
-      else if (where === 'person') nextWhere = 'person';
-      const next = sanitizeOutbound(child, nextWhere);
-      if (next !== undefined) out[key] = next;
-    }
-    return out;
-  }
-  if (typeof value === 'string' && EMAIL_SHAPED.test(value)) return '';
-  if (typeof value === 'string' && value.includes('://')) return sanitizeAnalyticsUrl(value) ?? '';
-  return value;
-}
-
 export function sanitizeAnalyticsRequestBody(body: string): string | null {
   try {
-    const encoded = JSON.stringify(sanitizeOutbound(JSON.parse(body), 'root'));
+    const encoded = JSON.stringify(sanitizeCaptureEnvelope(JSON.parse(body), ALLOWED_EVENTS));
     if (EMAIL_SHAPED.test(encoded) || /PRIVATE_/i.test(encoded)) return null;
     return encoded;
   } catch {
