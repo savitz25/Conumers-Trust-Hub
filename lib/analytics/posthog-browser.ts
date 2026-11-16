@@ -16,8 +16,8 @@ function sanitizeEvent<T extends { event?: string; properties?: Record<string, u
 async function loadPosthog(): Promise<PostHog | null> {
   if (!shouldEnablePosthog()) return null;
   installAnalyticsTransportGuard();
-  const posthog = (await import('posthog-js')).default;
-  posthog.init(posthogProjectToken(), {
+  const { loadPosthogSdk } = await import('./posthog-sdk');
+  return loadPosthogSdk(posthogProjectToken(), {
     api_host: posthogHost(),
     person_profiles: 'identified_only',
     capture_pageview: false,
@@ -47,7 +47,6 @@ async function loadPosthog(): Promise<PostHog | null> {
       });
     },
   });
-  return posthog;
 }
 
 const gate = createPosthogClientGate<PostHog>(loadPosthog);

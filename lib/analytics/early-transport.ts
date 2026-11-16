@@ -1,8 +1,8 @@
 /**
- * Parser-blocking transport block. The root layout places it in `<head>` so it runs
- * before the body exists and before any application chunk, dynamic import, or SDK init.
- * The gate stays closed until shouldEnablePosthog() installs the module guard and opens
- * it. Originals are saved so that later guard can forward only when activation is actually on.
+ * Secondary transport block. The response Content-Security-Policy is the control that
+ * applies before any script. This script remains in head so a later open gate can forward
+ * only approved calls, and so a missed host still fails closed after the module loads.
+ * It is not the document-start network boundary.
  */
 export function analyticsTransportBlockScript(rawHost: string): string {
   let configured = '';
