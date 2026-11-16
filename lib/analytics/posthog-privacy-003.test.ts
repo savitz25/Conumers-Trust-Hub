@@ -161,6 +161,7 @@ test('sensitive event properties and unknown events are removed', () => {
   assert.equal(event?.properties?.password, undefined);
   assert.equal(event?.properties?.accountId, undefined);
   assert.equal(event?.properties?.token, 'phc_test');
+  assert.equal(event?.properties?.distinct_id, undefined);
   assert.equal(event?.properties?.hub, 'ask');
   assert.equal(event?.properties?.$ip, undefined);
   assert.equal((event?.properties as { $geoip_disable?: boolean } | undefined)?.$geoip_disable, true);

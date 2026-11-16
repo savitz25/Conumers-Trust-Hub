@@ -10,6 +10,8 @@ import { Footer } from '@/components/footer';
 import { rootLayoutMetadata } from '@/lib/seo/metadata';
 import { ASK_NETWORK_STANDARD_VERSION } from '@/lib/network/standard-version';
 import { TH_CHASSIS_VERSION } from '@/lib/design/trusthub-visual-standard';
+import { analyticsTransportBlockScript } from '@/lib/analytics/early-transport';
+import { posthogHost } from '@/lib/analytics/environment';
 import './globals.css';
 
 const inter = Inter({
@@ -32,6 +34,7 @@ export default function RootLayout({
         data-network-standard={ASK_NETWORK_STANDARD_VERSION}
         data-th-chassis={TH_CHASSIS_VERSION}
       >
+        <script dangerouslySetInnerHTML={{ __html: analyticsTransportBlockScript(posthogHost()) }} />
         {/* network-standard: {ASK_NETWORK_STANDARD_VERSION} */}
         <AskChatShell>
           <ClickTracker />
