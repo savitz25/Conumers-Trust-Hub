@@ -243,7 +243,8 @@ export function sanitizePageviewProperties(properties: Record<string, unknown>):
     if (nested && typeof nested === 'object' && !Array.isArray(nested)) sanitizeUrlProperties(nested as Record<string, unknown>);
   }
   if (typeof properties.$pathname === 'string') {
-    properties.$pathname = String(properties.$pathname).split('?')[0];
+    const bare = String(properties.$pathname).split('#')[0].split('?')[0];
+    properties.$pathname = bare.startsWith('/') ? publicAnalyticsPath(bare) : '/';
   }
   sanitizeReplaySnapshotHrefs(properties.$snapshot_data);
   sanitizeAutocaptureUrls(properties);
@@ -271,20 +272,62 @@ export function sanitizeCaptureResult<T extends { event?: string; properties?: R
 }
 
 /**
- * Fail closed. Sensitive names are removed in any case or encoding. Only an explicit
- * allowlist of campaign and navigation keys can remain. Malformed, ambiguous, or
- * excessively nested input is dropped instead of forwarded.
+ * Exact public routes only. No account, business, profile, search-text, or other
+ * caller-controlled pathname segments. Anything else becomes `/`.
+ */
+const PUBLIC_ANALYTICS_PATHS = new Set([
+  '/',
+  '/ask',
+  '/search',
+  '/claim',
+  '/privacy',
+  '/privacy-policy',
+  '/verify-dot',
+  '/companies',
+]);
+
+function publicAnalyticsPath(rawPath: string): string {
+  if (!rawPath.startsWith('/') || rawPath.includes('\\') || rawPath.includes('?') || rawPath.includes('#') || rawPath.includes('@')) {
+    return '/';
+  }
+  if (hasMalformedPercentEncoding(rawPath) || rawPath.includes('\uFFFD')) return '/';
+  const decoded = decodeBounded(rawPath);
+  if (
+    decoded == null
+    || !decoded.startsWith('/')
+    || decoded.includes('%')
+    || decoded.includes('\\')
+    || decoded.includes('?')
+    || decoded.includes('#')
+    || decoded.includes('@')
+    || decoded.includes('\uFFFD')
+    || decoded.split('/').some((segment) => segment === '.' || segment === '..')
+  ) {
+    return '/';
+  }
+  let path = decoded.replace(/\/{2,}/g, '/');
+  if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+  return PUBLIC_ANALYTICS_PATHS.has(path) ? path : '/';
+}
+
+/**
+ * Fail closed. Relative inputs are rejected instead of resolved against the hub.
+ * Pathnames must be an enumerated public route. Sensitive query names are removed.
+ * Malformed, ambiguous, or excessively nested input is dropped.
  */
 export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0): string | undefined {
   if (!raw) return undefined;
-  if (depth > MAX_NESTED_DEPTH || raw.length > MAX_URL_LENGTH) return undefined;
-  if (hasMalformedPercentEncoding(raw) || raw.includes('\uFFFD')) {
+  const trimmed = raw.trim();
+  if (depth > MAX_NESTED_DEPTH || trimmed.length > MAX_URL_LENGTH) return undefined;
+  if (hasMalformedPercentEncoding(trimmed) || trimmed.includes('\uFFFD')) {
     notePrivacyDiagnostic('malformed_url');
     return undefined;
   }
+  if (!/^https?:\/\//i.test(trimmed)) return undefined;
   try {
-    const url = new URL(raw, 'https://www.asktrusthub.com');
+    const url = new URL(trimmed);
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return undefined;
+    if (url.username || url.password) return undefined;
     const kept = new Map<string, string>();
     const ambiguous = new Set<string>();
     for (const [rawKey, rawValue] of url.searchParams.entries()) {
@@ -315,7 +358,7 @@ export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0):
       }
       kept.set(canonical, nextValue);
     }
-    const cleaned = new URL(`${url.origin}${url.pathname}`);
+    const cleaned = new URL(`${url.origin}${publicAnalyticsPath(url.pathname)}`);
     for (const [key, value] of kept) cleaned.searchParams.append(key, value);
     const result = `${cleaned.origin}${cleaned.pathname}${cleaned.search}`;
     if (result.includes('\uFFFD') || hasMalformedPercentEncoding(result)) {
@@ -334,7 +377,7 @@ export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0):
  */
 export function sanitizeCapturedNetworkRequest<T extends { name?: string }>(request: T): T {
   if (typeof request.name === 'string') {
-    request.name = sanitizeAnalyticsUrl(request.name) ?? request.name.replace(/\?[^#]*/, '');
+    request.name = sanitizeAnalyticsUrl(request.name) ?? '/';
   }
   return request;
 }
@@ -456,7 +499,6 @@ const CLASSIFICATION_KEYS = new Set(['capability', 'capability_state', 'profile_
 const CLASSIFICATION = /^[A-Z][A-Z0-9_]{0,48}$/;
 const STATE_CODE = /^[A-Z]{2}$/;
 const PROJECT_CREDENTIAL = /^phc_[A-Za-z0-9_]{1,120}$/;
-const PATHNAME = /^\/[A-Za-z0-9/_.-]{0,180}$/;
 const SAFE_TITLES = new Set(['Ask Trust Hub', 'Move Trust Hub']);
 const TITLE_KEYS = new Set(['title', '$title', '$document_title']);
 const NESTED_BAGS = new Set(['$set', '$set_once']);
@@ -484,7 +526,9 @@ function acceptProperty(key: string, value: unknown): unknown {
     return sanitizeAnalyticsUrl(value);
   }
   if (key === '$pathname') {
-    return typeof value === 'string' && PATHNAME.test(value) ? value : undefined;
+    if (typeof value !== 'string') return undefined;
+    const bare = value.split('#')[0].split('?')[0];
+    return bare.startsWith('/') ? publicAnalyticsPath(bare) : '/';
   }
   if (TITLE_KEYS.has(key)) {
     return typeof value === 'string' && SAFE_TITLES.has(value) ? value : undefined;
