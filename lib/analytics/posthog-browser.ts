@@ -3,22 +3,33 @@
 import type { PostHog } from 'posthog-js';
 import { analyticsEnvironment, posthogHost, posthogProjectToken, shouldEnablePosthog } from './environment';
 import { createPosthogClientGate } from './posthog-gate';
-import { sanitizeCapturedNetworkRequest, sanitizeCaptureResult } from './privacy';
-import { TRUSTHUB_HUB } from './trusthub-events';
+import { prepareOutboundCapture, sanitizeCapturedNetworkRequest } from './privacy';
+import { installAnalyticsTransportGuard } from './sdk-guard';
+import { TRUSTHUB_EVENTS, TRUSTHUB_HUB } from './trusthub-events';
 
-function sanitizeEvent<T extends { event?: string; properties?: Record<string, unknown> } | null>(event: T): T {
-  return sanitizeCaptureResult(event);
+const APPROVED_POSTHOG_EVENTS = new Set<string>(Object.values(TRUSTHUB_EVENTS));
+
+function sanitizeEvent<T extends { event?: string; properties?: Record<string, unknown> } | null>(event: T): T | null {
+  return prepareOutboundCapture(event, APPROVED_POSTHOG_EVENTS);
 }
 
 async function loadPosthog(): Promise<PostHog | null> {
-  const posthog = (await import('posthog-js')).default;
-  posthog.init(posthogProjectToken(), {
+  if (!shouldEnablePosthog()) return null;
+  installAnalyticsTransportGuard();
+  const { loadPosthogSdk } = await import('./posthog-sdk');
+  return loadPosthogSdk(posthogProjectToken(), {
     api_host: posthogHost(),
     person_profiles: 'identified_only',
     capture_pageview: false,
-    capture_pageleave: true,
+    capture_pageleave: false,
+    capture_exceptions: false,
+    respect_dnt: true,
     persistence: 'localStorage+cookie',
-    autocapture: true,
+    disable_session_recording: true,
+    enable_heatmaps: false,
+    capture_heatmaps: false,
+    capture_dead_clicks: false,
+    autocapture: false,
     before_send: (event) => sanitizeEvent(event),
     session_recording: {
       maskAllInputs: true,
@@ -36,7 +47,6 @@ async function loadPosthog(): Promise<PostHog | null> {
       });
     },
   });
-  return posthog;
 }
 
 const gate = createPosthogClientGate<PostHog>(loadPosthog);
@@ -50,3 +60,5 @@ export async function getPosthogBrowser(): Promise<PostHog | null> {
 export function resetPosthogBrowserForTests(): void {
   gate.reset();
 }
+
+if (typeof window !== 'undefined') installAnalyticsTransportGuard();

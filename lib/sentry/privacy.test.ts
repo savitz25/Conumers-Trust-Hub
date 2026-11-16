@@ -35,7 +35,8 @@ test('ATH-REL-001A: beforeSend strips Ask query, auth headers, and bodies', () =
     exception: { values: [{ type: 'Error', value: 'failed Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.aaa.bbb' }] },
   });
 
-  assert.equal(event.request?.url, 'https://www.asktrusthub.com/ask?utm_source=x');
+  assert.equal(event.request?.url, 'https://www.asktrusthub.com/ask');
+  assert.equal(String(event.request?.url).includes('?'), false);
   assert.doesNotMatch(String(event.request?.query_string), /who/);
   assert.equal(event.request?.headers?.Authorization, '[Filtered]');
   assert.equal(event.request?.headers?.cookie, '[Filtered]');

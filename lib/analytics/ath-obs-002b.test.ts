@@ -83,7 +83,7 @@ test('ATH-OBS-002B remainder: recording start_url / player URL scrub is wired', 
   const startUrl = sanitizeCapturedNetworkRequest({
     name: 'https://www.asktrusthub.com/ask?q=nursing+homes+in+boca+raton&utm_source=x',
   });
-  assert.equal(startUrl.name, 'https://www.asktrusthub.com/ask?utm_source=x');
+  assert.equal(startUrl.name, 'https://www.asktrusthub.com/ask');
   assert.doesNotMatch(startUrl.name ?? '', /q=/);
   assert.doesNotMatch(startUrl.name ?? '', /boca/i);
 
@@ -141,7 +141,7 @@ test('ATH-OBS-002B: event analytics still strip raw q and leave search_submitted
 test('ATH-OBS-002B: URL sanitization remains intact', () => {
   assert.equal(
     sanitizeAnalyticsUrl('https://www.asktrusthub.com/ask?q=who%20owns%20this%20house&utm_source=x'),
-    'https://www.asktrusthub.com/ask?utm_source=x',
+    'https://www.asktrusthub.com/ask',
   );
   const page = sanitizePageviewProperties({
     $pathname: '/ask',
