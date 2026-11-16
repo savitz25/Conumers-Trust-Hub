@@ -51,6 +51,9 @@ export function sanitizeAnalyticsRequestBody(body: string): string | null {
   try {
     const encoded = JSON.stringify(sanitizeCaptureEnvelope(JSON.parse(body), ALLOWED_EVENTS));
     if (EMAIL_SHAPED.test(encoded) || /PRIVATE_/i.test(encoded)) return null;
+    if (/"\$(?:current_url|referrer|initial_current_url|session_entry_url|entry_current_url|initial_referrer|session_entry_referrer|prev_pageview_url)":"[^"]*[?#]/.test(encoded)) {
+      return null;
+    }
     return encoded;
   } catch {
     return null;

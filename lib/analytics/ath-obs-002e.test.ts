@@ -104,10 +104,10 @@ test('pageview URL through the full before_send path is safe, and safe UNRELATED
     },
   });
   const url = String(event?.properties?.$current_url);
+  assert.equal(url, 'https://www.asktrusthub.com/');
   assert.doesNotMatch(url, /auth_error/i);
   assert.doesNotMatch(url, /handoff=/i);
-  assert.match(url, /utm_source=newsletter/);
-  assert.match(url, /ref=email/);
+  assert.equal(url.includes('?'), false);
   assert.equal(event?.properties?.token, 'phc_test_token', 'PostHog reserved keys still survive before_send');
 });
 
@@ -147,23 +147,22 @@ test('redactSensitiveParamsInText handles malformed/encoded fragments without th
   assert.doesNotThrow(() => redactSensitiveParamsInText(''));
   const cleaned = redactSensitiveParamsInText('href="/x?auth_error=user@example.com&ok=1" other text');
   assert.doesNotMatch(cleaned, /example\.com/);
-  assert.match(cleaned, /ok=1/);
+  assert.doesNotMatch(cleaned, /ok=1/);
+  assert.match(cleaned, /other text/);
 });
 
 // ---------------------------------------------------------------- existing ATH-OBS-002C protections, not regressed
 test('existing q/query/question search-text scrubbing still passes (ATH-OBS-002C)', () => {
   const url = sanitizeAnalyticsUrl('https://www.asktrusthub.com/ask?q=who%20owns%20this%20house&question=raw&query=raw2&utm_source=x');
   assert.ok(url);
-  assert.doesNotMatch(url, /who%20owns|owns\+this|question=raw|query=raw2/);
-  assert.match(url, /utm_source=x/);
+  assert.equal(url, 'https://www.asktrusthub.com/ask');
+  assert.doesNotMatch(url, /who%20owns|owns\+this|question=raw|query=raw2|\?/);
 });
 
-test('legitimate unrelated query parameters are not destroyed alongside auth_error', () => {
+test('campaign and navigation query parameters are removed from analytics URLs', () => {
   const url = sanitizeAnalyticsUrl('https://www.asktrusthub.com/claim/continue?auth_error=HANDOFF_EXPIRED&utm_campaign=spring&page=2&sort=recent');
-  assert.ok(url);
-  assert.match(url, /utm_campaign=spring/);
-  assert.match(url, /page=2/);
-  assert.match(url, /sort=recent/);
+  assert.equal(url, 'https://www.asktrusthub.com/');
+  assert.equal(url?.includes('?'), false);
 });
 
 test('sanitizeAnalyticsUrl handles an unparseable value safely (relative text resolves against the app origin)', () => {

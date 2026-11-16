@@ -29,30 +29,13 @@ export const SENSITIVE_QUERY_KEYS = [
 
 /**
  * Name match, not a value blacklist. Variants (authError, auth_code, id_token, searchTerm)
- * are covered. Query forwarding uses an allowlist as well; this only decides what is unsafe.
+ * are covered. Analytics URLs no longer forward any query string.
  */
 const SENSITIVE_QUERY_KEY_PATTERN = /token|email|code|password|note|error|handoff|secret|otp|search|phone|address|ssn|authorization/i;
-
-const SAFE_QUERY_KEYS = new Set([
-  'utm_source',
-  'utm_medium',
-  'utm_campaign',
-  'utm_content',
-  'utm_term',
-  'utm_id',
-  'page',
-  'sort',
-  'ref',
-  'next',
-  'view',
-  'form',
-]);
 
 const MAX_URL_LENGTH = 2048;
 const MAX_DECODES = 3;
 const MAX_NESTED_DEPTH = 3;
-const MAX_QUERY_VALUE_LENGTH = 256;
-const EMAIL_SHAPED_VALUE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 
 function canonicalQueryKey(key: string): string {
   return key.trim().toLowerCase().replace(/-/g, '_');
@@ -89,21 +72,6 @@ function decodeBounded(value: string): string | null {
   return /%[0-9A-Fa-f]{2}/.test(current) ? null : current;
 }
 
-function valueHidesSensitivePair(value: string): boolean {
-  if (!value.includes('=')) return false;
-  for (const piece of value.split(/[?&#]/)) {
-    const eq = piece.indexOf('=');
-    if (eq <= 0) continue;
-    const decoded = decodeBounded(piece.slice(0, eq));
-    if (decoded == null || isSensitiveQueryKey(decoded)) return true;
-  }
-  return false;
-}
-
-function looksLikeNestedUrl(value: string): boolean {
-  return /^(?:https?:)?\/\//i.test(value) || /%3A%2F%2F/i.test(value);
-}
-
 const privacyDiagnosticCounts = {
   dropped_event: 0,
   rejected_property: 0,
@@ -128,12 +96,6 @@ function hasMalformedPercentEncoding(value: string): boolean {
     index += 2;
   }
   return false;
-}
-
-/** Allowlisted query values are a single case, so mixed-case secrets cannot hide in them. */
-function isSafeQueryValue(value: string): boolean {
-  if (!/^[A-Za-z0-9._~-]{1,64}$/.test(value)) return false;
-  return !(/[A-Z]/.test(value) && /[a-z]/.test(value));
 }
 
 export const FORBIDDEN_EVENT_KEYS = [
@@ -312,8 +274,8 @@ function publicAnalyticsPath(rawPath: string): string {
 
 /**
  * Fail closed. Relative inputs are rejected instead of resolved against the hub.
- * Pathnames must be an enumerated public route. Sensitive query names are removed.
- * Malformed, ambiguous, or excessively nested input is dropped.
+ * Pathnames must be an enumerated public route. Every query string and fragment is removed.
+ * Malformed percent encoding drops the URL.
  */
 export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0): string | undefined {
   if (!raw) return undefined;
@@ -323,45 +285,19 @@ export function sanitizeAnalyticsUrl(raw: string | undefined | null, depth = 0):
     notePrivacyDiagnostic('malformed_url');
     return undefined;
   }
-  if (!/^https?:\/\//i.test(trimmed)) return undefined;
+  if (!/^https:\/\//i.test(trimmed)) return undefined;
   try {
     const url = new URL(trimmed);
-    if (url.protocol !== 'http:' && url.protocol !== 'https:') return undefined;
+    if (url.protocol !== 'https:') return undefined;
     if (url.username || url.password) return undefined;
-    const kept = new Map<string, string>();
-    const ambiguous = new Set<string>();
-    for (const [rawKey, rawValue] of url.searchParams.entries()) {
-      if (hasMalformedPercentEncoding(rawKey) || hasMalformedPercentEncoding(rawValue) || rawValue.includes('\uFFFD')) {
-        notePrivacyDiagnostic('malformed_url');
-        return undefined;
-      }
-      const key = decodeBounded(rawKey);
-      if (key == null || /[=&\s#]/.test(key)) continue;
-      const canonical = canonicalQueryKey(key);
-      if (!canonical || isSensitiveQueryKey(key) || !SAFE_QUERY_KEYS.has(canonical) || ambiguous.has(canonical)) continue;
-      const decodedValue = decodeBounded(rawValue);
-      if (decodedValue == null || decodedValue.length > MAX_QUERY_VALUE_LENGTH || decodedValue.includes('\uFFFD')) continue;
-      if (EMAIL_SHAPED_VALUE.test(decodedValue) || valueHidesSensitivePair(decodedValue)) continue;
-      let nextValue = decodedValue;
-      if (looksLikeNestedUrl(decodedValue) || looksLikeNestedUrl(rawValue)) {
-        const nested = sanitizeAnalyticsUrl(decodedValue, depth + 1);
-        if (!nested || valueHidesSensitivePair(nested) || nested.length > MAX_QUERY_VALUE_LENGTH) continue;
-        nextValue = nested;
-      } else if (!isSafeQueryValue(decodedValue)) {
-        continue;
-      }
-      const previous = kept.get(canonical);
-      if (previous !== undefined && previous !== nextValue) {
-        kept.delete(canonical);
-        ambiguous.add(canonical);
-        continue;
-      }
-      kept.set(canonical, nextValue);
-    }
-    const cleaned = new URL(`${url.origin}${publicAnalyticsPath(url.pathname)}`);
-    for (const [key, value] of kept) cleaned.searchParams.append(key, value);
-    const result = `${cleaned.origin}${cleaned.pathname}${cleaned.search}`;
-    if (result.includes('\uFFFD') || hasMalformedPercentEncoding(result)) {
+    const result = `${url.origin}${publicAnalyticsPath(url.pathname)}`;
+    if (
+      result.includes('?')
+      || result.includes('#')
+      || result.includes('@')
+      || result.includes('\uFFFD')
+      || hasMalformedPercentEncoding(result)
+    ) {
       notePrivacyDiagnostic('malformed_url');
       return undefined;
     }
@@ -389,12 +325,8 @@ export function sanitizeCapturedNetworkRequest<T extends { name?: string }>(requ
 const AUTOCAPTURE_URL_KEYS = ['$external_click_url', '$el_href', 'attr__href', 'attr__action', 'attr__formaction', 'attr__src'] as const;
 
 export function redactSensitiveParamsInText(text: string): string {
-  // name=value pairs inside arbitrary text (a serialized element chain is not a parseable URL).
-  return text.replace(/([?&]|&amp;)([^=&;"'\s]+)=([^&;"'\s]*)/g, (match, lead: string, key: string) => {
-    const decoded = decodeBounded(key);
-    if (decoded == null || isSensitiveQueryKey(decoded)) return `${lead}${key}=[redacted]`;
-    return match;
-  });
+  // Element chains are not parseable URLs. Drop the whole query component.
+  return text.replace(/\?[^;"'\s]*/g, '');
 }
 
 function sanitizeAutocaptureUrls(properties: Record<string, unknown>): void {
@@ -523,7 +455,9 @@ function acceptProperty(key: string, value: unknown): unknown {
   if (typeof value === 'object') return undefined;
   if (URL_KEYS.has(key)) {
     if (typeof value !== 'string') return undefined;
-    return sanitizeAnalyticsUrl(value);
+    const cleaned = sanitizeAnalyticsUrl(value);
+    if (!cleaned || cleaned.includes('?') || cleaned.includes('#')) return undefined;
+    return cleaned;
   }
   if (key === '$pathname') {
     if (typeof value !== 'string') return undefined;
@@ -595,6 +529,15 @@ function schemaProperties(bag: Record<string, unknown>, mode: 'event' | 'person'
 
 function sealEventProperties(properties: Record<string, unknown>): Record<string, unknown> {
   const rebuilt = schemaProperties(properties, 'event');
+  for (const key of PAGE_URL_PROPERTY_KEYS) {
+    const value = rebuilt[key];
+    if (typeof value !== 'string' || !value.startsWith('https://') || value.includes('?') || value.includes('#')) {
+      delete rebuilt[key];
+    }
+  }
+  if (typeof rebuilt.$pathname === 'string' && (rebuilt.$pathname.includes('?') || rebuilt.$pathname.includes('#'))) {
+    rebuilt.$pathname = '/';
+  }
   rebuilt.$geoip_disable = true;
   delete rebuilt.$ip;
   return rebuilt;

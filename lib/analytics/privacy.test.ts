@@ -13,7 +13,8 @@ test('sanitizeAnalyticsUrl strips Ask search and auth query keys', () => {
   const url = sanitizeAnalyticsUrl(
     'https://www.asktrusthub.com/ask?q=who%20owns%20this%20house&utm_source=x',
   );
-  assert.equal(url, 'https://www.asktrusthub.com/ask?utm_source=x');
+  assert.equal(url, 'https://www.asktrusthub.com/ask');
+  assert.equal(url?.includes('?'), false);
   const auth = sanitizeAnalyticsUrl('https://www.asktrusthub.com/auth/callback?code=secret&next=/my');
   assert.ok(auth);
   assert.doesNotMatch(auth, /secret/);

@@ -63,7 +63,8 @@ test('C3 sanitizer probes and nested encodings do not forward sensitive values',
   assert.equal(set.token, undefined);
   assert.equal(set.hub, 'ask');
   const nested = sanitizeAnalyticsUrl(urls[6]);
-  assert.match(nested ?? '', /utm_source=newsletter/);
+  assert.equal(nested, 'https://qa.invalid/search');
+  assert.equal(nested?.includes('?'), false);
   assert.doesNotMatch(nested ?? '', /auth_code|C3Auth739201/i);
   assert.equal(sanitizeAnalyticsUrl('https://qa.invalid/' + 'a'.repeat(2100)), undefined);
   assert.doesNotThrow(() => sanitizeAnalyticsUrl('not a url at all'));
