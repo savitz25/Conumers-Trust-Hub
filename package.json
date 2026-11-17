@@ -193,7 +193,6 @@
     "@sentry/nextjs": "^10.75.0",
     "@supabase/ssr": "0.12.0",
     "@supabase/supabase-js": "2.110.0",
-    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.22.0",
     "next": "16.3.3",
