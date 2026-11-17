@@ -7,6 +7,7 @@ import {
   assertMyTrustHubFeature,
 } from "@/lib/my-trusthub/feature-flags";
 import { ProductionMyTrustHubAdapter } from "@/lib/my-trusthub/production-adapter";
+import { ResumeCapabilityAbsentError } from "@/lib/my-trusthub/saved-session-load";
 import { accountAction, signOutAccountAction } from './account-actions';
 import { DBPR_LOOKUP_CONSENT } from "@/lib/my-trusthub/dbpr-lookup";
 import type { ImportCommitResult } from '@/lib/my-trusthub/guest-retirement';
@@ -78,6 +79,11 @@ async function safeMutation<T>(event: string, errorPath: string, mutation: () =>
     console.warn(JSON.stringify({ level: "warn", event }));
     redirect(errorPath);
   }
+}
+
+function redirectWhenResumeCapabilityAbsent(error: unknown, sessionId: string): never {
+  if (error instanceof ResumeCapabilityAbsentError) redirect(`/my/sessions/${sessionId}?resume=unsupported`);
+  throw error;
 }
 
 export async function requestMagicLinkAction(formData: FormData) {
@@ -299,7 +305,12 @@ export async function updateMoveInventorySessionAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
   const adapter = await requiredAdapter();
   const sessionId = uuidField(formData, "sessionId");
-  const current = await adapter.getSavedSession(sessionId);
+  let current;
+  try {
+    current = await adapter.getSavedSession(sessionId);
+  } catch (error) {
+    redirectWhenResumeCapabilityAbsent(error, sessionId);
+  }
   if (!current || current.schema_key !== "move.inventory/v1" || current.schema_version !== 1) redirect("/my/saved?session_error=unsupported");
   const rooms = boundedInteger(formData, "rooms", 1, 20);
   const estimatedCubicFeet = boundedInteger(formData, "estimatedCubicFeet", 50, 20000);
@@ -336,7 +347,12 @@ export async function resumeSavedSessionAction(formData: FormData) {
   assertMyTrustHubFeature("MY_TRUSTHUB_SESSIONS_ENABLED");
   const adapter = await requiredAdapter();
   const sessionId = uuidField(formData, "sessionId");
-  const session = await adapter.getSavedSession(sessionId);
+  let session;
+  try {
+    session = await adapter.getSavedSession(sessionId);
+  } catch (error) {
+    redirectWhenResumeCapabilityAbsent(error, sessionId);
+  }
   if (!session) redirect("/my/saved?session_error=not-found");
   await safeMutation("my_trusthub_session_resume_validation_failed", `/my/sessions/${sessionId}?resume=unsupported`, () => adapter.validateSessionForResume(session.resume_ref));
   // Cross-hub handoff remains deliberately disabled. Validation proves the preserved
