@@ -2,11 +2,33 @@ import { notFound } from "next/navigation";
 import { addSessionToProjectAction, removeSessionFromProjectAction, resumeSavedSessionAction, updateMoveInventorySessionAction } from "@/app/my/actions";
 import { MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
+import { absorbResumeCapabilityAbsence, savedSessionPageModel } from "@/lib/my-trusthub/saved-session-load";
+
+function ResumeUnavailableState({ email, copy }: { email: string; copy: string }) {
+  return (
+    <MyTrustHubShell active="Saved" email={email}>
+      <PageHeading eyebrow="SAVED RESEARCH" title="Saved research session">This is private planning state, not current regulatory evidence.</PageHeading>
+      <p className="myth-warning" role="alert">{copy}</p>
+    </MyTrustHubShell>
+  );
+}
 
 export default async function SavedSessionPage({ params, searchParams }: { params: Promise<{ sessionId: string }>; searchParams: Promise<{ updated?: string; resume?: string; error?: string }> }) {
   const [{ sessionId }, query, { adapter, user }] = await Promise.all([params, searchParams, requireWorkspace()]);
-  const [session, summaries, projects] = await Promise.all([adapter.getSavedSession(sessionId), adapter.listSavedSessions(), adapter.listProjects()]);
-  if (!session) notFound();
+  const [loaded, summaries, projects] = await Promise.all([
+    adapter.getSavedSession(sessionId).then(
+      (session) => ({ absent: false as const, session }),
+      (error: unknown) => absorbResumeCapabilityAbsence(error),
+    ),
+    adapter.listSavedSessions(),
+    adapter.listProjects(),
+  ]);
+  const model = savedSessionPageModel(loaded);
+  if (model.kind === "resume-unavailable") {
+    return <ResumeUnavailableState email={user.email ?? "Signed in"} copy={model.copy} />;
+  }
+  if (model.kind === "not-found") notFound();
+  const session = model.session;
   const summary = summaries.find((item) => item.saved_session_id === sessionId);
   if (!summary) notFound();
   const assigned = new Set(summary.project_memberships.map((item) => item.project_ref));

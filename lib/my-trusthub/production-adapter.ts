@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { hasMyTrustHubCanaryAccess } from "@/lib/my-trusthub/canary-access";
 import { createMyTrustHubSupabaseClient } from "@/lib/supabase/server";
 import { savedProjectIds } from "@/lib/my-trusthub/saved-project-ids";
+import { readOwnedSavedSession, rejectResumeRpc } from "@/lib/my-trusthub/saved-session-load";
 import type { AlertDetail, AlertListRequest, AlertsOverview, ConsumerAlert, SetAlertReadStateRequest, WatchCheckState, WatchObservationHistoryEntry } from "@/lib/my-trusthub/alert-contract";
 import type { NotificationPreferences, WatchNotificationOverride } from "@/lib/my-trusthub/notification-contract";
 
@@ -646,18 +647,12 @@ export class ProductionMyTrustHubAdapter {
   }
 
   async getSavedSession(sessionId: string): Promise<SavedSessionDetailRow | null> {
-    const summary = (await this.listSavedSessions()).find((item) => item.saved_session_id === sessionId);
-    if (!summary || !summary.resume_available) return null;
-    const resumable = one<Record<string, unknown>>(await this.rpc("get_saved_session_for_resume", { p_resume_ref: summary.resume_ref }));
-    if (!resumable) return null;
-    return {
-      id: sessionId, hub: summary.hub, session_type: summary.session_type,
-      schema_key: summary.schema_key, schema_version: summary.schema_version,
-      payload: resumable.payload as Record<string, unknown>, summary: summary.summary,
-      status: summary.status, resume_ref: summary.resume_ref,
-      row_version: Number(resumable.row_version), created_at: summary.last_activity_at,
-      updated_at: summary.last_activity_at, last_resumed_at: null,
-    };
+    const summaries = await this.listSavedSessions();
+    return readOwnedSavedSession(sessionId, summaries, async (resumeRef) => {
+      const result = await this.client.schema("consumer").rpc("get_saved_session_for_resume", { p_resume_ref: resumeRef });
+      if (result.error) rejectResumeRpc(result.error);
+      return result.data;
+    });
   }
 
   async saveSession(input: {
