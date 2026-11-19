@@ -50,7 +50,7 @@ test('ATH-REL-001A: PostHog client init is unchanged', () => {
   assert.match(init, /before_send: \(event\) => sanitizeEvent\(event\)/);
   const rootLayout = read('app/layout.tsx');
   assert.match(rootLayout, /PosthogRoot/);
-  assert.match(rootLayout, /@vercel\/analytics\/react/);
+  assert.doesNotMatch(rootLayout, /@vercel\/analytics\/react/);
   assert.doesNotMatch(rootLayout, /@sentry\/nextjs/);
 });
 
