@@ -22,6 +22,8 @@ const CORE: {
   { path: '/places/florida', priority: 0.8, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/places/florida/broward', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
   { path: '/places/florida/palm-beach', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-08-29' },
+  { path: '/places/florida/miami-dade', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-11-23' },
+  { path: '/places/florida/pinellas', priority: 0.75, changeFrequency: 'weekly', lastmod: '2026-11-23' },
   ...askStateSitemapEntries(),
   ...(njReleaseGatePassed()
     ? listNjPilotCounties().map((c) => ({

@@ -66,7 +66,7 @@ const ROWS: Cell[] = [
   { hubId: 'contractor', familyId: 'compensation', status: 'not_applicable', why: 'Not Form ADV compensation research.' },
   { hubId: 'contractor', familyId: 'pricing', status: 'not_applicable', why: 'Quote tools are educational. Not a price ranking.' },
   { hubId: 'contractor', familyId: 'permits', status: 'planned', why: 'Selected Florida local research only. Missing export is not zero events.', destination: 'https://www.contractortrusthub.com/florida/broward' },
-  { hubId: 'contractor', familyId: 'local_regulatory', status: 'partial', why: 'Broward and Palm Beach county intelligence pages exist. HQ/mailing county is not service area.', destination: 'https://www.contractortrusthub.com/florida/broward', sourceFamilyId: 'fl-dbpr' },
+  { hubId: 'contractor', familyId: 'local_regulatory', status: 'partial', why: 'Miami-Dade, Broward, Palm Beach, and Pinellas county intelligence pages exist. HQ/mailing county is not service area.', destination: 'https://www.contractortrusthub.com/florida/broward', sourceFamilyId: 'fl-dbpr' },
 
   { hubId: 'senior', familyId: 'identity', status: 'deep', why: 'CMS CCN identities by class: nursing homes, home health, hospice stay separate. Structured Ask is live (senior-ask-v1).', destination: 'https://www.seniortrusthub.com/ask', sourceFamilyId: 'cms-care-compare' },
   { hubId: 'senior', familyId: 'credential', status: 'available', why: 'CMS provider identity is the credential key. Assisted living is not a CMS national class.', destination: 'https://www.seniortrusthub.com', sourceFamilyId: 'cms-care-compare' },

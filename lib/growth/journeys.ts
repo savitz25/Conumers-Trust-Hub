@@ -90,7 +90,7 @@ export const JOURNEY_PAGES: JourneyPage[] = [
         title: 'Florida contractor / property research',
         hubLabel: 'Contractor Trust Hub',
         why: 'A purchase often triggers roof, HVAC, or inspection-related contractor decisions. Those are state-board credentials, not a national ranking.',
-        body: 'ContractorTrustHub currently has enhanced Florida state intelligence plus Broward and Palm Beach county pages. Structured Ask is live. Mailing county is not service territory. Active credentials are not endorsements. Open Florida intelligence or county Place Lens rather than a parent-invented contractor count.',
+        body: 'ContractorTrustHub currently has enhanced Florida state intelligence plus Miami-Dade, Broward, Palm Beach, and Pinellas county pages. Structured Ask is live. Mailing county is not service territory. Active credentials are not endorsements. Open Florida intelligence or county Place Lens rather than a parent-invented contractor count.',
         href: 'https://www.contractortrusthub.com/florida',
         cta: 'Open Florida Contractor Intelligence',
         relatedGuides: [],

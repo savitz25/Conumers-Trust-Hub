@@ -90,7 +90,6 @@ export const rootLayoutMetadata: Metadata = {
       },
     ],
   },
-  robots: { index: true, follow: true },
   alternates: { canonical: `${siteUrl}/` },
 };
 
