@@ -17,6 +17,9 @@ const rejects = [
   ["encoded slash slash upper", "https://www.movetrusthub.com/companies/%2F%2F"],
   ["encoded dots", "https://www.movetrusthub.com/companies/%2e%2e/secret"],
   ["encoded dots upper", "https://www.movetrusthub.com/%2E%2E/companies"],
+  ["mixed dot encoding .%2e", "https://www.lendertrusthub.com/lenders/.%2e/my-lending"],
+  ["mixed dot encoding %2e.", "https://www.lendertrusthub.com/lenders/%2e./my-lending"],
+  ["mixed dot encoding .%2E", "https://www.lendertrusthub.com/lenders/.%2E/local-lenders"],
   ["backslash", "https://www.movetrusthub.com/companies\\evil"],
   ["encoded backslash", "https://www.movetrusthub.com/companies/%5c/evil"],
   ["crlf", "https://www.movetrusthub.com/companies/acme%0d%0aLocation:%20https://evil.example"],
@@ -77,6 +80,12 @@ test("registered production returns match a segment boundary and keep next uncha
   assert.equal(carried.startsWith("/my/saved?"), true);
   assert.equal(withHubReturn("/my/saved", "https://evil.example", true), "/my/saved");
   assert.equal(withHubReturn("https://evil.example", move, true), "https://evil.example");
+  const profileSave = withHubReturn("/my/profile-save?auth=complete", move, true);
+  assert.equal(profileSave, "/my/profile-save?auth=complete");
+  const profileParams = new URL(profileSave, "https://www.asktrusthub.com").searchParams;
+  assert.equal(profileParams.size, 1);
+  assert.equal(profileParams.get("auth"), "complete");
+  assert.equal(withHubReturn("/my/profile-save", lender, true), "/my/profile-save");
 });
 
 test("staging and development origins are eligible only outside Production", () => {

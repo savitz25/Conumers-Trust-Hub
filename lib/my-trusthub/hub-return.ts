@@ -56,7 +56,8 @@ export function validateHubReturn(value: unknown, options: { production: boolean
   if (!/^https?:\/\//i.test(value) || value.startsWith("//")) return { ok: false };
   const rawPath = value.slice(value.indexOf("/", value.indexOf("://") + 3));
   const rawSegments = rawPath.split(/[?#]/)[0]?.split("/") ?? [];
-  if (rawSegments.some((segment) => segment === "." || segment === ".." || /^%2e$/i.test(segment) || /^%2e%2e$/i.test(segment))) return { ok: false };
+  // WHATWG treats ".", "..", "%2e", "%2e%2e", ".%2e", and "%2e." as dot segments.
+  if (rawSegments.some((segment) => /^(\.|%2e){1,2}$/i.test(segment))) return { ok: false };
   let url: URL;
   try {
     url = new URL(value);
@@ -85,6 +86,8 @@ export function validateHubReturn(value: unknown, options: { production: boolean
 /** Carry a validated hub URL on an Ask path. Never returns the hub URL as the destination. */
 export function withHubReturn(path: string, value: unknown, production: boolean): string {
   if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//")) return path;
+  // profile-save accepts only auth=complete. A return parameter makes that request invalid.
+  if (path.split(/[?#]/)[0] === "/my/profile-save") return path;
   const result = validateHubReturn(value, { production });
   if (!result.ok) return path;
   const join = path.includes("?") ? "&" : "?";
