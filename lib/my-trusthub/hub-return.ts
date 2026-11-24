@@ -1,9 +1,5 @@
 /** HUB-RETURN v1. `next` and safeReturn() stay path-only. This module validates `return` only. */
-import { readFileSync } from "node:fs";
-
-const hubRegistry = JSON.parse(readFileSync(new URL("./hub-registry.json", import.meta.url), "utf8")) as {
-  hubs: HubRecord[];
-};
+import hubRegistry from "./hub-registry.json" with { type: "json" };
 
 export const HUB_RETURN_CONTRACT = "CONTRACT-HUB-RETURN-v1" as const;
 export const HUB_RETURN_MAX_LENGTH = 512;
@@ -16,15 +12,6 @@ const LABELS: Record<string, string> = {
   contractor: "Contractor Trust Hub",
   senior: "Senior Trust Hub",
   investor: "Investor Trust Hub",
-};
-
-type HubRecord = {
-  key: string;
-  enabled?: boolean;
-  productionOrigins: string[];
-  stagingOrigins: string[];
-  developmentOrigins: string[];
-  returnPrefixes: string[];
 };
 
 export type HubReturnResult =
