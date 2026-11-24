@@ -13,10 +13,10 @@ function dateTime(value: string | null) {
 
 export const dynamic = "force-dynamic";
 
-export default async function AlertsPage({ searchParams }: { searchParams: Promise<{ filter?: string; severity?: string; error?: string }> }) {
+export default async function AlertsPage({ searchParams }: { searchParams: Promise<{ filter?: string; severity?: string; error?: string; return?: string | string[] }> }) {
   if (!isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ALERTS_ENABLED")) notFound();
-  const { adapter, user } = await requireWorkspace();
   const query = await searchParams;
+  const { adapter, user } = await requireWorkspace(undefined, query.return);
   const filter = query.filter === "unread" ? "unread" : "all";
   const severity = ["P0", "P1", "P2"].includes(query.severity ?? "") ? query.severity as AlertSeverity : undefined;
   const [alerts, overview] = await Promise.all([
@@ -24,7 +24,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
     adapter.getAlertsOverview(),
   ]);
   return (
-    <MyTrustHubShell active="Alerts" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Alerts" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow="PRIVATE CHANGE HISTORY" title="Alerts">
         Notifications about accepted changes in the public-record fields you explicitly Watch. They are factual records, not recommendations or verdicts.
       </PageHeading>

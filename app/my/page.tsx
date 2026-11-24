@@ -16,8 +16,12 @@ import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
 import { homeWorkspaceGate } from "@/lib/my-trusthub/workspace-gate";
 import { SessionCard } from "@/components/my-trusthub/session-card";
 import { registrationInvitationAvailable } from "@/lib/my-trusthub/account-policy";
+import { HubReturnLink } from "@/components/my-trusthub/hub-return-link";
+import { withHubReturn } from "@/lib/my-trusthub/hub-return";
 
-export default async function MyTrustHubHome() {
+export default async function MyTrustHubHome({ searchParams }: { searchParams: Promise<{ return?: string | string[] }> }) {
+  const hubReturn = (await searchParams).return;
+  const production = process.env.VERCEL_ENV === "production";
   const featureEnabled = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ENABLED");
   const adapter = await getEnabledAdapter();
   const user = adapter ? await adapter.getUser() : null;
@@ -26,7 +30,7 @@ export default async function MyTrustHubHome() {
     adapterAvailable: Boolean(adapter),
     userPresent: Boolean(user),
   });
-  if (gate.kind === "redirect") redirect(gate.href);
+  if (gate.kind === "redirect") redirect(withHubReturn(gate.href, hubReturn, production));
   const canaryOnly = isMyTrustHubCanaryOnly();
   const registrationAvailable = registrationInvitationAvailable(process.env);
 
@@ -45,7 +49,8 @@ export default async function MyTrustHubHome() {
               ? "My TrustHub is available only to approved internal test accounts during this launch gate."
               : "Keep private research and organize life-event Projects."}
           </p>
-          <Link className="myth-primary" href="/my/sign-in">
+          <HubReturnLink value={hubReturn} production={production} />
+          <Link className="myth-primary" href={withHubReturn("/my/sign-in", hubReturn, production)}>
             Sign in to My TrustHub
             <ArrowRight aria-hidden="true" size={18} />
           </Link>
@@ -86,7 +91,7 @@ export default async function MyTrustHubHome() {
   ].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 5);
 
   return (
-    <MyTrustHubShell active="Home" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Home" email={user.email ?? "Signed in"} hubReturn={hubReturn}>
       <PageHeading eyebrow="MY TRUSTHUB" title="Your research workspace">
         Your Saved Research and Projects—kept together privately.
       </PageHeading>

@@ -12,7 +12,7 @@ const HUB_LABEL: Record<string, string> = {
 };
 const hubLabel = (hub: string) => HUB_LABEL[hub] ?? hub;
 
-export type IsolatedSavedQuery = { unsaved?: string; error?: string };
+export type IsolatedSavedQuery = { unsaved?: string; error?: string; return?: string | string[] };
 
 /** Save-only preview surface. Does not load absent Sessions/Watch/Alert schemas
  * or expose the internal canary binding form. Production keeps its own page. */
@@ -59,7 +59,7 @@ export async function IsolatedSaved({ query = {} }: { query?: IsolatedSavedQuery
     );
   }
   return (
-    <MyTrustHubShell active="Saved" email={parent.label}>
+    <MyTrustHubShell active="Saved" email={parent.label} hubReturn={query.return}>
       <PageHeading eyebrow="PRIVATE RESEARCH LIBRARY" title="Saved Research">
         Profiles you keep from any TrustHub site stay here when you return. Save never starts a Watch.
       </PageHeading>

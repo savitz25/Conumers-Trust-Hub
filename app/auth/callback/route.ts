@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   if (!runtime || request.nextUrl.origin !== runtime.origin) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
   const client = await createMyTrustHubSupabaseClient(true);
   if (!client) return new NextResponse('Account callback unavailable.', { status: 503, headers: privateHeaders });
-  const destination = await exchangeAccountCode(client.auth, request.nextUrl.searchParams.get('code'), request.nextUrl.searchParams.get('next'), process.env, request.nextUrl.searchParams.get('flow') === 'password');
+  const destination = await exchangeAccountCode(client.auth, request.nextUrl.searchParams.get('code'), request.nextUrl.searchParams.get('next'), process.env, request.nextUrl.searchParams.get('flow') === 'password', request.nextUrl.searchParams.get('return'));
   console.info(JSON.stringify(destination.includes('error=')
     ? { event: 'my_trusthub_auth_callback', outcome: 'exchange_failed' }
     : { event: 'auth_continuation_completed', method: 'verified_email_exchange', outcome: 'authenticated' }));

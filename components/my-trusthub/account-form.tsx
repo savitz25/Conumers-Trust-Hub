@@ -7,7 +7,7 @@ import { TurnstileField } from './turnstile-field';
 import { AnalyticsForm } from '@/components/analytics/analytics-form';
 
 const LABELS: Record<AccountOperation, string> = { signup: 'Create account', login: 'Sign in', link: 'Email me a sign-in link', recovery: 'Send recovery instructions', password: 'Save password and sign out' };
-export function AccountForm({ operation, next, siteKey, expectedUserId }: { operation: AccountOperation; next: string; siteKey?: string; expectedUserId?: string }) {
+export function AccountForm({ operation, next, hubReturnHref, siteKey, expectedUserId }: { operation: AccountOperation; next: string; hubReturnHref?: string | null; siteKey?: string; expectedUserId?: string }) {
   const [state, action, pending] = useActionState<AccountResult, FormData>(accountAction.bind(null, operation), {});
   const [show, setShow] = useState(false);
   const feedback = useRef<HTMLParagraphElement>(null);
@@ -16,6 +16,7 @@ export function AccountForm({ operation, next, siteKey, expectedUserId }: { oper
   const newPassword = operation !== 'login';
   const body = <>
     <input type="hidden" name="next" value={next} />
+    {hubReturnHref ? <input type="hidden" name="hubReturn" value={hubReturnHref} /> : null}
     {expectedUserId ? <input type="hidden" name="expectedUserId" value={expectedUserId} /> : null}
     {operation !== 'password' ? <><label htmlFor={`${operation}-email`}>Email</label><input id={`${operation}-email`} name="email" type="email" autoComplete="username" required maxLength={254} data-ph-mask="true" /></> : null}
     {hasPassword ? <>

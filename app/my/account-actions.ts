@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createMyTrustHubSupabaseClient } from '@/lib/supabase/server';
 import { accountRuntime, safeReturn } from '@/lib/my-trusthub/account-policy';
+import { withHubReturn } from '@/lib/my-trusthub/hub-return';
 import { runAccountOperation, type AccountOperation, type AccountResult } from '@/lib/my-trusthub/account-service';
 
 export async function accountAction(operation: AccountOperation, _previous: AccountResult, form: FormData): Promise<AccountResult> {
@@ -18,7 +19,8 @@ export async function accountAction(operation: AccountOperation, _previous: Acco
   });
   if (result.destination) {
     if (result.completion === 'login') console.info(JSON.stringify({ event: 'auth_continuation_completed', method: 'password', outcome: 'authenticated' }));
-    redirect(result.completion === 'login' ? `${result.destination}?auth=complete` : result.destination);
+    const destination = result.destination ?? '/my';
+    redirect(result.completion === 'login' ? `${destination}${destination.includes('?') ? '&' : '?'}auth=complete` : destination);
   }
   return result;
 }
@@ -28,6 +30,7 @@ export async function signOutAccountAction(form?: FormData) {
   let failed = !client;
   try { if (client) failed = Boolean((await client.auth.signOut({ scope: 'local' })).error); }
   catch { failed = true; }
-  if (failed) redirect(`/my/sign-in?error=signout&next=${encodeURIComponent(safeReturn(form?.get('next')))}`);
-  redirect(`/my/sign-in?next=${encodeURIComponent(safeReturn(form?.get('next')))}`);
+  const next = encodeURIComponent(safeReturn(form?.get('next')));
+  const base = failed ? `/my/sign-in?error=signout&next=${next}` : `/my/sign-in?next=${next}`;
+  redirect(withHubReturn(base, form?.get('hubReturn'), process.env.VERCEL_ENV === 'production'));
 }

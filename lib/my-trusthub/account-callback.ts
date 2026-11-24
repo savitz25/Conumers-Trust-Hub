@@ -1,9 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { admitted, safeReturn, type AccountEnv } from './account-policy.ts';
+import { withHubReturn } from './hub-return.ts';
 
-export async function exchangeAccountCode(auth: Pick<SupabaseClient['auth'], 'exchangeCodeForSession' | 'getUser' | 'signOut'>, code: string | null, next: unknown, env: AccountEnv, passwordDestination = false): Promise<string> {
+export async function exchangeAccountCode(auth: Pick<SupabaseClient['auth'], 'exchangeCodeForSession' | 'getUser' | 'signOut'>, code: string | null, next: unknown, env: AccountEnv, passwordDestination = false, hubReturn?: unknown): Promise<string> {
   const returnTo = safeReturn(next);
-  const failed = `/my/sign-in?error=callback_exchange&next=${encodeURIComponent(returnTo)}`;
+  const carry = (path: string) => withHubReturn(path, hubReturn, env.VERCEL_ENV === 'production');
+  const failed = carry(`/my/sign-in?error=callback_exchange&next=${encodeURIComponent(returnTo)}`);
   if (!code || code.length > 4096) return failed;
   try {
     const current = await auth.getUser();
@@ -17,7 +19,7 @@ export async function exchangeAccountCode(auth: Pick<SupabaseClient['auth'], 'ex
     }
     // Destination is only a routing hint AFTER a verified PKCE exchange. It grants
     // no password authority; mutation independently checks fresh signed AMR + user.
-    if (passwordDestination) return `/my/reset-password?next=${encodeURIComponent(returnTo)}`;
-    return `${returnTo}?auth=complete`;
+    if (passwordDestination) return carry(`/my/reset-password?next=${encodeURIComponent(returnTo)}`);
+    return carry(`${returnTo}?auth=complete`);
   } catch { return failed; }
 }

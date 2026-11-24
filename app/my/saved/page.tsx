@@ -32,15 +32,15 @@ const HUB_LABEL: Record<string, string> = {
 export default async function SavedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string; unsaved?: string }>;
+  searchParams: Promise<{ import?: string; error?: string; session?: string; session_error?: string; session_import?: string; handoff?: string; unsaved?: string; return?: string | string[] }>;
 }) {
+  const query = await searchParams;
   if (process.env.VERCEL_ENV === 'preview' && process.env.MY_TRUSTHUB_V23_PROFILE_SAVE_ENABLED === 'true') {
-    const { unsaved, error } = await searchParams;
-    return <IsolatedSaved query={{ unsaved, error }} />;
+    const { unsaved, error } = query;
+    return <IsolatedSaved query={{ unsaved, error, return: query.return }} />;
   }
-  const { adapter, user } = await requireWorkspace("/my/saved");
-  const [query, saved, projects, notes, sessions] = await Promise.all([
-    searchParams,
+  const { adapter, user } = await requireWorkspace("/my/saved", query.return);
+  const [saved, projects, notes, sessions] = await Promise.all([
     adapter.listSavedEntities(),
     adapter.listProjects(),
     adapter.listNotes(),
@@ -53,7 +53,7 @@ export default async function SavedPage({
   const canUseSessions = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_SESSIONS_ENABLED");
 
   return (
-    <MyTrustHubShell active="Saved" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Saved" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow="PRIVATE RESEARCH LIBRARY" title="Saved Research">
         Saved profiles stay available whether or not they belong to a Project.
       </PageHeading>

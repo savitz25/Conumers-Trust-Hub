@@ -20,10 +20,11 @@ function dateTime(value: string | null) {
 
 export const dynamic = "force-dynamic";
 
-export default async function WatchesPage({ searchParams }: { searchParams: Promise<{ started?: string; upgraded?: string; error?: string }> }) {
+export default async function WatchesPage({ searchParams }: { searchParams: Promise<{ started?: string; upgraded?: string; error?: string; return?: string | string[] }> }) {
   if (!isMyTrustHubFeatureEnabled("MY_TRUSTHUB_WATCH_ENABLED")) notFound();
-  const { adapter, user } = await requireWorkspace();
-  const [query, saved] = await Promise.all([searchParams, adapter.listSavedEntities()]);
+  const query = await searchParams;
+  const { adapter, user } = await requireWorkspace(undefined, query.return);
+  const saved = await adapter.listSavedEntities();
   const items = await Promise.all(saved.filter((item) => !item.removed_at).map(async (item) => {
     const [capabilities, watch] = await Promise.all([
       adapter.listAvailableWatchCapabilities(item.saved_entity_id),
@@ -37,7 +38,7 @@ export default async function WatchesPage({ searchParams }: { searchParams: Prom
   const watchable = items.filter(({ capabilities, watch }) => watch || capabilities.some((capability) => capability.eligible));
 
   return (
-    <MyTrustHubShell active="Watches" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Watches" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow="EXPLICIT MONITORING" title="Watches">
         Choose the exact public-record fields you want re-checked. Saving research never starts a Watch.
       </PageHeading>
