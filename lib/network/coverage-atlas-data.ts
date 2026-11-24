@@ -26,6 +26,13 @@ export const ENHANCED_COUNTIES: Array<{
   {
     hubId: 'contractor',
     state: 'FL',
+    countySlug: 'miami-dade',
+    countyName: 'Miami-Dade County',
+    destination: 'https://www.contractortrusthub.com/florida/miami-dade',
+  },
+  {
+    hubId: 'contractor',
+    state: 'FL',
     countySlug: 'broward',
     countyName: 'Broward County',
     destination: 'https://www.contractortrusthub.com/florida/broward',
@@ -36,6 +43,13 @@ export const ENHANCED_COUNTIES: Array<{
     countySlug: 'palm-beach',
     countyName: 'Palm Beach County',
     destination: 'https://www.contractortrusthub.com/florida/palm-beach',
+  },
+  {
+    hubId: 'contractor',
+    state: 'FL',
+    countySlug: 'pinellas',
+    countyName: 'Pinellas County',
+    destination: 'https://www.contractortrusthub.com/florida/pinellas',
   },
 ];
 
@@ -158,7 +172,7 @@ function cellFor(hubId: SpecialistHubId, j: UsJurisdiction): CoverageAtlasCell {
         geographyType: 'state',
         geographyCode: j.code,
         status: 'enhanced_state_intelligence',
-        why: 'Florida Contractor Intelligence (DBPR) plus enhanced county pages for Broward and Palm Beach. Mailing county is not service territory.',
+        why: 'Florida Contractor Intelligence (DBPR) plus enhanced county pages for Miami-Dade, Broward, Palm Beach, and Pinellas. Mailing county is not service territory.',
         destination,
         dedicatedPage: true,
       };

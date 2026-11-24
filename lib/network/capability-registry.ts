@@ -142,7 +142,7 @@ export const HUB_CAPABILITY_REGISTRY: Record<SpecialistHubId, HubCapabilityRecor
     notes: [
       'Production structured Ask is live at /ask. Parent constructs the Ask URL with interpreted filters; it does not query the contractor database.',
       'Live researched states: FL, TX, NJ, OR, WA, CA, AZ, LA, MS, KY.',
-      'Enhanced county intelligence currently published for Broward and Palm Beach, Florida.',
+      'Enhanced county intelligence currently published for Miami-Dade, Broward, Palm Beach, and Pinellas, Florida.',
     ],
   },
   senior: {

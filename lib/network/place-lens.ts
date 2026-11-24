@@ -33,7 +33,7 @@ export type PlaceLens = {
   summary: string;
   geographyType: 'state' | 'county';
   stateCode: 'FL';
-  countySlug?: 'broward' | 'palm-beach';
+  countySlug?: 'miami-dade' | 'broward' | 'palm-beach' | 'pinellas';
   hubs: PlaceHubCard[];
   indexable: boolean;
 };
@@ -165,7 +165,7 @@ export function floridaPlaceLens(): PlaceLens {
         metrics: [
           {
             label: 'Enhanced county pages currently published',
-            value: 'Broward · Palm Beach',
+            value: 'Miami-Dade · Broward · Palm Beach · Pinellas',
             grain: 'County Intelligence OS pages, not a 67-county census.',
             officialAsOf: dbpr?.officialAsOf ?? '2026-08-28',
             limitation: 'Other Florida counties vary. Permit exports are pending on county pages.',
@@ -442,17 +442,169 @@ export function palmBeachPlaceLens(): PlaceLens {
   };
 }
 
+function floridaPublishedCountyLens(input: {
+  slug: 'miami-dade' | 'pinellas';
+  name: string;
+  countyCode: string;
+  credentials: string;
+  activeCredentials: string;
+  activeRoofing: string;
+  permitLimitation: string;
+}): PlaceLens {
+  const dbpr = src('contractor', 'fl-dbpr');
+  return {
+    slug: input.slug,
+    title: `What does TrustHub know about ${input.name} County?`,
+    kicker: `${input.name} County Place Lens`,
+    summary: `ContractorTrustHub publishes ${input.name} county credential intelligence. Other hubs currently have state or federal research — not ${input.name}-specific Intelligence OS pages. Missing county capability is not zero activity.`,
+    geographyType: 'county',
+    stateCode: 'FL',
+    countySlug: input.slug,
+    indexable: true,
+    hubs: [
+      {
+        hubId: 'contractor',
+        name: NETWORK_PUBLIC_NAMES.contractor,
+        capability: 'enhanced_county_intelligence',
+        capabilityLabel: capLabel('enhanced_county_intelligence'),
+        geographyMeaning: `Florida DBPR mailing/HQ county_code ${input.countyCode} (${input.name}). Not service territory, not local authorization, not permit activity.`,
+        metrics: [
+          {
+            label: `Credentials with ${input.name} mailing/base county`,
+            value: input.credentials,
+            grain: `Florida contractor credentials whose DBPR license mailing county_code is ${input.countyCode}.`,
+            officialAsOf: '2026-08-10',
+            limitation: 'Credentials, not companies. HQ county is not jobsites.',
+            sourceFamilyId: 'fl-dbpr',
+          },
+          {
+            label: 'Active credentials, same county grain',
+            value: input.activeCredentials,
+            grain: 'Active is DBPR secondary status Active on that mailing-county universe.',
+            officialAsOf: '2026-08-10',
+            limitation: 'Not an active-business count and not local authorization.',
+            sourceFamilyId: 'fl-dbpr',
+          },
+          {
+            label: 'Active roofing credentials (CCC + RC)',
+            value: input.activeRoofing,
+            grain: 'Certified CCC and registered RC, DBPR secondary status Active. RR is residential, not roofing.',
+            officialAsOf: dbpr?.officialAsOf ?? '2026-08-10',
+            limitation: `${input.activeRoofing} active roofing credential records on the county page. Ask does not rewrite this as trusted roofers.`,
+            sourceFamilyId: 'fl-dbpr',
+          },
+        ],
+        destination: `https://www.contractortrusthub.com/florida/${input.slug}`,
+        destinationLabel: `Open ${input.name} Contractor Intelligence`,
+        limitation: input.permitLimitation,
+        researchAvailable: true,
+      },
+      {
+        hubId: 'lender',
+        name: NETWORK_PUBLIC_NAMES.lender,
+        capability: 'state_research',
+        capabilityLabel: 'State-level research available; county-specific intelligence not currently published.',
+        geographyMeaning: 'HMDA property geography is not lender headquarters. Florida intelligence does not publish county market pages.',
+        metrics: [],
+        destination: 'https://www.lendertrusthub.com/florida',
+        destinationLabel: 'Open Florida Mortgage Intelligence',
+        limitation: `County mortgage intelligence pages are not published. Ask can execute county HMDA property-geography queries separately. Do not invent ${input.name} HMDA rankings on this lens.`,
+        researchAvailable: true,
+      },
+      {
+        hubId: 'insurance',
+        name: NETWORK_PUBLIC_NAMES.insurance,
+        capability: 'state_research',
+        capabilityLabel: 'State-level research available; county-specific intelligence not currently published.',
+        geographyMeaning: 'Florida DFS/OIR research is statewide. No county inference from addresses or appointments.',
+        metrics: [],
+        destination: 'https://www.insurancetrusthub.com/florida',
+        destinationLabel: 'Open Florida Insurance Intelligence',
+        limitation: `Directory ZIP search is not ${input.name} Intelligence OS.`,
+        researchAvailable: true,
+      },
+      {
+        hubId: 'move',
+        name: NETWORK_PUBLIC_NAMES.move,
+        capability: 'state_research',
+        capabilityLabel: 'Statewide research only — not Enhanced Local Research.',
+        geographyMeaning: `${input.name} local-movers landing. A landing page is not a county mover census.`,
+        metrics: [],
+        destination: `https://www.movetrusthub.com/local-movers/florida/${input.slug}`,
+        destinationLabel: `Open ${input.name} moving landing`,
+        limitation: 'A landing page is not a mover count and is not quality.',
+        researchAvailable: true,
+      },
+      {
+        hubId: 'senior',
+        name: NETWORK_PUBLIC_NAMES.senior,
+        capability: 'federal_core',
+        capabilityLabel: 'State-level research available; county-specific intelligence not currently published.',
+        geographyMeaning: 'CMS directories are national; Florida AHCA overlays are state-level.',
+        metrics: [],
+        destination: 'https://www.seniortrusthub.com/florida',
+        destinationLabel: 'Open Florida senior-care intelligence',
+        limitation: `No ${input.name} SeniorTrustHub Intelligence OS page is published.`,
+        researchAvailable: true,
+      },
+      {
+        hubId: 'investor',
+        name: NETWORK_PUBLIC_NAMES.investor,
+        capability: 'basic_discovery',
+        capabilityLabel: 'State-level research available; county-specific intelligence not currently published.',
+        geographyMeaning: 'Principal office is not county service territory.',
+        metrics: [],
+        destination: 'https://www.investortrusthub.com/firms?state=FL',
+        destinationLabel: 'Search Florida principal-office firms',
+        limitation: `No ${input.name} investor intelligence page.`,
+        researchAvailable: true,
+      },
+    ],
+  };
+}
+
+/** Published ContractorTrustHub county intelligence as of the 2026-08-10 DBPR mailing-county extract. */
+export function miamiDadePlaceLens(): PlaceLens {
+  return floridaPublishedCountyLens({
+    slug: 'miami-dade',
+    name: 'Miami-Dade',
+    countyCode: '23',
+    credentials: '18,369',
+    activeCredentials: '14,817',
+    activeRoofing: '1,156',
+    permitLimitation:
+      'Confirmed county-issued permit records are published on the specialist page. That census is not 34 municipal histories. Local credential export is pending. Missing export is not zero events.',
+  });
+}
+
+/** Published ContractorTrustHub county intelligence as of the 2026-08-10 DBPR mailing-county extract. */
+export function pinellasPlaceLens(): PlaceLens {
+  return floridaPublishedCountyLens({
+    slug: 'pinellas',
+    name: 'Pinellas',
+    countyCode: '62',
+    credentials: '7,249',
+    activeCredentials: '5,539',
+    activeRoofing: '343',
+    permitLimitation: 'Local permit and local credential exports are pending. Missing export is not zero events.',
+  });
+}
+
 export function placeLensBySlug(slug: string): PlaceLens | undefined {
   if (slug === 'florida') return floridaPlaceLens();
+  if (slug === 'miami-dade') return miamiDadePlaceLens();
   if (slug === 'broward') return browardPlaceLens();
   if (slug === 'palm-beach') return palmBeachPlaceLens();
+  if (slug === 'pinellas') return pinellasPlaceLens();
   return undefined;
 }
 
 export const PLACE_LENS_INDEX = [
   { href: '/places/florida', label: 'Florida', detail: 'What can TrustHub research in Florida?' },
+  { href: '/places/florida/miami-dade', label: 'Miami-Dade County', detail: 'County lens — contractor enhanced; others state/federal.' },
   { href: '/places/florida/broward', label: 'Broward County', detail: 'County lens — contractor enhanced; others state/federal.' },
   { href: '/places/florida/palm-beach', label: 'Palm Beach County', detail: 'County lens — same contractor grain, different page, no copied Broward counts.' },
+  { href: '/places/florida/pinellas', label: 'Pinellas County', detail: 'County lens — contractor enhanced; others state/federal.' },
   { href: '/new-jersey', label: 'New Jersey', detail: 'Network gateway to specialist New Jersey research pages. Not a county page.' },
 ] as const;
 

@@ -218,7 +218,7 @@ export function CoverageAtlasView({
         </h2>
         <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
           Example: Florida × Contractor is enhanced state intelligence because Florida DBPR Intelligence OS
-          exists, plus Broward and Palm Beach county pages. New Jersey × Contractor is specialty Verify — state
+          exists, plus Miami-Dade, Broward, Palm Beach, and Pinellas county pages. New Jersey × Contractor is specialty Verify — state
           research, no enhanced county intelligence.
         </p>
         <p className="mt-2 text-sm" style={{ color: ASK_BRAND.ink }}>

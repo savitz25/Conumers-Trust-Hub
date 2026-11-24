@@ -41,7 +41,7 @@ export function HomePrompt2Previews() {
               Place Lens
             </h3>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: ASK_BRAND.ink }}>
-              Florida, Broward, and Palm Beach Place Lens, plus the New Jersey network gateway — each
+              Florida and the Miami-Dade, Broward, Palm Beach, and Pinellas Place Lenses, plus the New Jersey network gateway — each
               hub’s actual capability, not a county grade.
             </p>
             <ul className="mt-3 space-y-1 text-sm">
