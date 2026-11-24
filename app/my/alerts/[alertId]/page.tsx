@@ -15,15 +15,16 @@ function valueEntries(value: Record<string, unknown> | null) {
 
 export const dynamic = "force-dynamic";
 
-export default async function AlertDetailPage({ params }: { params: Promise<{ alertId: string }> }) {
+export default async function AlertDetailPage({ params, searchParams }: { params: Promise<{ alertId: string }>; searchParams: Promise<{ return?: string | string[] }> }) {
   if (!isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ALERTS_ENABLED")) notFound();
-  const { adapter, user } = await requireWorkspace();
+  const query = await searchParams;
+  const { adapter, user } = await requireWorkspace(undefined, query.return);
   const { alertId } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(alertId)) notFound();
   const alert = await adapter.getAlertDetail(alertId);
   if (!alert) notFound();
   return (
-    <MyTrustHubShell active="Alerts" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Alerts" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow="ALERT DETAIL" title={alert.headline}>
         A traceable change in the public-record field you asked My TrustHub to Watch.
       </PageHeading>

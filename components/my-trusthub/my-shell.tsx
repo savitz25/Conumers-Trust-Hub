@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { signOutAction } from "@/app/my/actions";
 import { isMyTrustHubFeatureEnabled } from "@/lib/my-trusthub/feature-flags";
+import { validateHubReturn } from "@/lib/my-trusthub/hub-return";
+import { HubReturnLink } from "@/components/my-trusthub/hub-return-link";
 
 const nav = [
   ["Home", "/my", Home],
@@ -25,11 +27,16 @@ export function MyTrustHubShell({
   children,
   active,
   email,
+  hubReturn,
 }: {
   children: ReactNode;
   active: (typeof nav)[number][0];
   email: string;
+  hubReturn?: unknown;
 }) {
+  const production = process.env.VERCEL_ENV === "production";
+  const link = validateHubReturn(hubReturn, { production });
+  const carry = (href: string) => link.ok ? `${href}${href.includes("?") ? "&" : "?"}return=${encodeURIComponent(link.href)}` : href;
   const visibleNav = nav.filter(([label]) =>
     (label !== "Watches" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_WATCH_ENABLED")) &&
     (label !== "Alerts" || isMyTrustHubFeatureEnabled("MY_TRUSTHUB_ALERTS_ENABLED")),
@@ -39,7 +46,7 @@ export function MyTrustHubShell({
       <a className="myth-skip" href="#myth-content">Skip to content</a>
       <header className="myth-header">
         <div className="myth-header-inner">
-          <Link className="myth-brand" href="/my" aria-label="My TrustHub home">
+          <Link className="myth-brand" href={carry("/my")} aria-label="My TrustHub home">
             <ShieldCheck aria-hidden="true" size={24} />
             <span>My TrustHub</span>
           </Link>
@@ -47,7 +54,7 @@ export function MyTrustHubShell({
             {visibleNav.map(([label, href]) => (
               <Link
                 key={href}
-                href={href}
+                href={carry(href)}
                 aria-current={active === label ? "page" : undefined}
               >
                 {label}
@@ -60,12 +67,12 @@ export function MyTrustHubShell({
           </form>
         </div>
       </header>
-      <div id="myth-content" className="myth-main" tabIndex={-1}>{children}</div>
+      <div id="myth-content" className="myth-main" tabIndex={-1}><HubReturnLink value={hubReturn} production={production} />{children}</div>
       <nav className="myth-mobile-nav" aria-label="My TrustHub mobile navigation">
         {visibleNav.map(([label, href, Icon]) => (
           <Link
             key={href}
-            href={href}
+            href={carry(href)}
             aria-current={active === label ? "page" : undefined}
           >
             <Icon aria-hidden="true" size={19} />

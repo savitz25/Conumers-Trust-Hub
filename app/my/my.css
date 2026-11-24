@@ -12,6 +12,7 @@
 /* V2-2 account forms: flexible challenge and controls at narrow widths. */
 .myth-account-options { display: grid; gap: 0.75rem; margin-block: 1rem; }
 .myth-auth-card { min-width: 0; overflow-wrap: anywhere; }
+.myth-hub-return { display: inline-block; margin: 0 0 12px; font-weight: 650; }
 .myth-auth-card input, .myth-auth-card button, .myth-auth-card form { max-width: 100%; min-width: 0; }
 .myth-auth-card button { white-space: normal; }
 .myth-auth-card :focus-visible { outline: 3px solid #2164c4; outline-offset: 3px; }

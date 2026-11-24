@@ -7,20 +7,20 @@ import { MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell"
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 
 export default async function YouPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const { user } = await requireWorkspace();
+  const query = await searchParams;
+  const { user } = await requireWorkspace(undefined, query.return);
   const adapter = await ProductionMyTrustHubAdapter.create();
   if (!adapter) notFound();
   const preferences = adapter ? await adapter.getNotificationPreferences() : null;
   const saved = adapter ? await adapter.listSavedEntities() : [];
   const watches = (await Promise.all(saved.filter((row) => !row.removed_at).map(async (row) => ({ saved: row, watch: adapter ? await adapter.getWatch(row.saved_entity_id) : null })))).filter((row) => row.watch);
   const email = user.email ?? "Email unavailable";
-  const query = await searchParams;
   const exportRef = typeof query.export === "string" ? query.export : null;
   const deletionRef = typeof query.deletion === "string" ? query.deletion : null;
   const existingDeletion = deletionRef ? await adapter.getWorkspaceDeletionStatus(deletionRef) : null;
 
   return (
-    <MyTrustHubShell active="You" email={email}>
+    <MyTrustHubShell active="You" email={email} hubReturn={query.return}>
       <PageHeading eyebrow="ACCOUNT / PRIVACY" title="You">
         Your consumer research account and the privacy boundaries that protect it.
       </PageHeading>

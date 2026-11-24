@@ -21,13 +21,10 @@ export default async function ProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ error?: string; updated?: string }>;
+  searchParams: Promise<{ error?: string; updated?: string; return?: string | string[] }>;
 }) {
-  const [{ projectId }, workspace, query] = await Promise.all([
-    params,
-    requireWorkspace(),
-    searchParams,
-  ]);
+  const [{ projectId }, query] = await Promise.all([params, searchParams]);
+  const workspace = await requireWorkspace(undefined, query.return);
   const { adapter, user } = workspace;
   const [project, memberships, saved, sessions] = await Promise.all([
     adapter.getProject(projectId),
@@ -49,7 +46,7 @@ export default async function ProjectPage({
   const rowVersion = Number(project.row_version);
 
   return (
-    <MyTrustHubShell active="Projects" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Projects" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading
         eyebrow={`${status.toUpperCase()} PROJECT`}
         title={String(project.name)}

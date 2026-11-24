@@ -1,13 +1,18 @@
 import Link from 'next/link';
 import { accountFormAvailable, accessMode, admitted, safeReturn, isolatedSaveAccount, registrationInvitationAvailable } from '@/lib/my-trusthub/account-policy';
 import type { AccountOperation } from '@/lib/my-trusthub/account-service';
+import { validateHubReturn, withHubReturn } from '@/lib/my-trusthub/hub-return';
 import { createMyTrustHubSupabaseClient } from '@/lib/supabase/server';
 import { signOutAccountAction } from '@/app/my/account-actions';
 import { AccountForm } from './account-form';
+import { HubReturnLink, InviteOnlyNotice } from './hub-return-link';
 
 export type AccountQuery = Record<string, string | string[] | undefined>;
 export async function AccountEntry({ operation, query }: { operation: AccountOperation; query: AccountQuery }) {
   const next = safeReturn(query.next);
+  const production = process.env.VERCEL_ENV === 'production';
+  const hubReturn = validateHubReturn(query.return, { production });
+  const hubReturnHref = hubReturn.ok ? hubReturn.href : null;
   const available = accountFormAvailable(operation, process.env);
   const client = available ? await createMyTrustHubSupabaseClient() : null;
   const user = client ? (await client.auth.getUser()).data.user : null;
@@ -16,9 +21,11 @@ export async function AccountEntry({ operation, query }: { operation: AccountOpe
   const saveOnly = isolatedSaveAccount(process.env);
   const registrationAvailable = registrationInvitationAvailable(process.env);
   const titles: Record<AccountOperation, string> = { signup: registrationAvailable ? 'Create your My TrustHub account' : 'Account access', login: 'Sign in to My TrustHub', link: 'Sign in with an email link', recovery: 'Recover your account', password: 'Set your password' };
-  const href = (path: string) => `${path}?next=${encodeURIComponent(next)}`;
+  const href = (path: string) => withHubReturn(`${path}?next=${encodeURIComponent(next)}`, hubReturnHref, production);
   return <main className="myth-auth-page"><section className="myth-auth-card" aria-labelledby="account-title">
     <p className="myth-eyebrow">MY TRUSTHUB</p><h1 id="account-title">{titles[operation]}</h1>
+    <HubReturnLink value={query.return} production={production} />
+    <InviteOnlyNotice show={!registrationAvailable} />
     <p>{registrationAvailable ? 'Keep your research in your private workspace. Creating an account does not automatically copy research from other TrustHub sites.' : 'Keep your research in your private workspace.'}</p>
     {registrationAvailable && mode === 'invitation' ? <p>Access is by approved invitation. Existing eligible users can sign in while new registration is paused.</p> : null}
     {query.sent === '1' ? <p role="status">If this address is eligible, we&apos;ll email a sign-in link.</p> : null}
@@ -26,10 +33,10 @@ export async function AccountEntry({ operation, query }: { operation: AccountOpe
     {operation === 'signup' && !registrationAvailable ? <p role="status">New account registration is unavailable.</p> : !available || !client ? <p role="status">Account access is unavailable in this environment. You can continue researching without an account.</p> : user && operation !== 'password' ? <>
       <p data-ph-mask="true">You are signed in as {user.email ?? 'an existing account'}.</p>
       {allowed ? <Link href={next}>Continue to your task</Link> : <p>This account is not eligible for this workspace.</p>}
-      <form action={signOutAccountAction}><input type="hidden" name="next" value={next} /><button className="myth-secondary">Sign out to use another account</button></form>
+      <form action={signOutAccountAction}><input type="hidden" name="next" value={next} />{hubReturnHref ? <input type="hidden" name="hubReturn" value={hubReturnHref} /> : null}<button className="myth-secondary">Sign out to use another account</button></form>
     </> : operation === 'password' && !allowed ? <p>Sign in again or use a fresh recovery email before setting a password.</p> : <>
       {operation === 'password' ? <p data-ph-mask="true">Changing the password for {user?.email}. Your account and saved research stay the same. A recent verified sign-in is required.</p> : null}
-      <AccountForm operation={operation} next={next} expectedUserId={operation === 'password' ? user?.id : undefined} siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} />
+      <AccountForm operation={operation} next={next} hubReturnHref={hubReturnHref} expectedUserId={operation === 'password' ? user?.id : undefined} siteKey={process.env.NEXT_PUBLIC_MY_TRUSTHUB_TURNSTILE_SITE_KEY} />
     </>}
     <nav aria-label="Account options" className="myth-account-options">
       {!saveOnly && registrationAvailable ? <Link href={href('/my/create-account')}>Create account</Link> : null}

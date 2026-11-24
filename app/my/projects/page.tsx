@@ -15,12 +15,14 @@ const templates = [
   ["Blank Project", "blank"],
 ] as const;
 
-export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { adapter, user } = await requireWorkspace("/my/projects");
-  const [projects, { error }] = await Promise.all([adapter.listProjects(), searchParams]);
+export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ error?: string; return?: string | string[] }> }) {
+  const query = await searchParams;
+  const { adapter, user } = await requireWorkspace("/my/projects", query.return);
+  const projects = await adapter.listProjects();
+  const { error } = query;
   const canCreate = isMyTrustHubFeatureEnabled("MY_TRUSTHUB_PROJECTS_ENABLED");
   return (
-    <MyTrustHubShell active="Projects" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Projects" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow="PROJECTS / LIFE EVENTS" title="Projects">
         Organize saved research around a decision. A Project is optional.
       </PageHeading>

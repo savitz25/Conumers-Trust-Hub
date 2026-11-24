@@ -3,8 +3,9 @@ import { addSessionToProjectAction, removeSessionFromProjectAction, resumeSavedS
 import { MyTrustHubShell, PageHeading } from "@/components/my-trusthub/my-shell";
 import { requireWorkspace } from "@/lib/my-trusthub/page-data";
 
-export default async function SavedSessionPage({ params, searchParams }: { params: Promise<{ sessionId: string }>; searchParams: Promise<{ updated?: string; resume?: string; error?: string }> }) {
-  const [{ sessionId }, query, { adapter, user }] = await Promise.all([params, searchParams, requireWorkspace()]);
+export default async function SavedSessionPage({ params, searchParams }: { params: Promise<{ sessionId: string }>; searchParams: Promise<{ updated?: string; resume?: string; error?: string; return?: string | string[] }> }) {
+  const [{ sessionId }, query] = await Promise.all([params, searchParams]);
+  const { adapter, user } = await requireWorkspace(undefined, query.return);
   const [session, summaries, projects] = await Promise.all([adapter.getSavedSession(sessionId), adapter.listSavedSessions(), adapter.listProjects()]);
   if (!session) notFound();
   const summary = summaries.find((item) => item.saved_session_id === sessionId);
@@ -15,7 +16,7 @@ export default async function SavedSessionPage({ params, searchParams }: { param
   const volume = Number(session.payload.estimated_cubic_feet ?? 50);
 
   return (
-    <MyTrustHubShell active="Saved" email={user.email ?? "Signed in"}>
+    <MyTrustHubShell active="Saved" email={user.email ?? "Signed in"} hubReturn={query.return}>
       <PageHeading eyebrow={`${session.hub.toUpperCase()} · SAVED ${session.session_type.toUpperCase()}`} title={String(session.summary.title ?? "Saved research session")}>Last worked on {new Date(session.updated_at).toLocaleDateString()}. This is private planning state, not current regulatory evidence.</PageHeading>
       {query.updated ? <p className="myth-notice" role="status">Research session updated.</p> : null}
       {query.error ? <p className="myth-warning" role="alert">That change could not be completed safely.</p> : null}

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { accountFormAvailable, accountRuntime, admitted, captchaState, emailRequestAllowed, enabled, recentVerifiedAuthentication, registrationAllowed, safeReturn, type AccountEnv } from './account-policy.ts';
+import { withHubReturn } from './hub-return.ts';
 
 export type AccountOperation = 'signup' | 'login' | 'link' | 'recovery' | 'password';
 export type AccountResult = { message?: string; error?: string; destination?: string; completion?: 'login' | 'password' };
@@ -16,6 +17,8 @@ export async function runAccountOperation(operation: AccountOperation, form: For
   const runtime = accountRuntime(env);
   if (!accountFormAvailable(operation, env) || !runtime) return { error: 'Account access is unavailable in this environment.' };
   const next = safeReturn(form.get('next'));
+  const production = env.VERCEL_ENV === 'production';
+  const carry = (path: string) => withHubReturn(path, form.get('hubReturn'), production);
   const email = String(form.get('email') ?? '').trim().toLowerCase();
   const password = String(form.get('password') ?? ''); // Never trim a password.
   const token = String(form.get('captchaToken') ?? '');
@@ -37,7 +40,7 @@ export async function runAccountOperation(operation: AccountOperation, form: For
         diagnostic('provider_failure');
         return { error: 'Your password changed, but sign-out could not be confirmed. Try signing out again before switching accounts.' };
       }
-      return { destination: `/my/sign-in?next=${encodeURIComponent(next)}`, completion: 'password' };
+      return { destination: carry(`/my/sign-in?next=${encodeURIComponent(next)}`), completion: 'password' };
     }
     if (!email || email.length > 254 || !/^\S+@\S+\.\S+$/.test(email)) return { error: 'Enter a valid email address.' };
     const challenge = captchaState(env, token);
@@ -46,7 +49,7 @@ export async function runAccountOperation(operation: AccountOperation, form: For
     const current = await auth.getUser();
     if (current.error && current.error.name !== 'AuthSessionMissingError') return { error: 'We could not verify the current account. Please reload and try again.' };
     if (current.data.user) return { error: 'Sign out before using a different account. Your saved research will stay in its current account.' };
-    const redirectTo = `${runtime.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+    const redirectTo = `${runtime.origin}${carry(`/auth/callback?next=${encodeURIComponent(next)}`)}`;
     if (operation === 'signup') {
       if (password.length < 12 || password.length > 128 || password !== form.get('confirmPassword')) return { error: 'Use 12–128 characters and enter the same new password twice.' };
       // Operator attests confirmation/CAPTCHA/password security settings only at a reviewed release.
@@ -67,7 +70,7 @@ export async function runAccountOperation(operation: AccountOperation, form: For
         return { error: LOGIN_ERROR };
       }
       diagnostic('request_accepted');
-      return { destination: next, completion: 'login' };
+      return { destination: carry(next), completion: 'login' };
     }
     const message = operation === 'recovery' ? RECOVERY_MESSAGE : EMAIL_MESSAGE;
     if (!emailRequestAllowed(email, env)) { diagnostic('admission_blocked'); return { message }; }
