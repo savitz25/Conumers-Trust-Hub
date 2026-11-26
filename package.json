@@ -191,7 +191,7 @@
     "check:th-utility-001-ask": "node --experimental-strip-types --test lib/network/th-utility-001-ask.test.ts"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.75.0",
+    "@sentry/nextjs": "^10.75.2",
     "@supabase/ssr": "0.12.0",
     "@supabase/supabase-js": "2.110.0",
     "clsx": "^2.1.1",
