@@ -217,5 +217,8 @@
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@sentry/core": "10.75.2"
   }
 }
