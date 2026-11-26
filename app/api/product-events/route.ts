@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { clientProductEventsAllowed } from '@/lib/analytics/product-events-hold';
 import { acceptClientProductEvent } from '@/lib/control-plane/product-events';
 import { readSessionToken, withPlatform } from '@/lib/customer/server';
 
@@ -6,6 +7,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  if (!clientProductEventsAllowed()) {
+    return NextResponse.json({ ok: false, held: true }, { status: 403, headers: { 'Cache-Control': 'no-store' } });
+  }
   if (Number(request.headers.get('content-length') ?? 0) > 4096) return NextResponse.json({ok:false},{status:413});
   try {
     const body = await request.json() as {eventName?:unknown;properties?:unknown};
