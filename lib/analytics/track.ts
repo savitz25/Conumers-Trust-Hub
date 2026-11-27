@@ -1,4 +1,5 @@
 import type { AnalyticsEventName } from '@/lib/analytics/events';
+import { clientProductEventsAllowed } from './product-events-hold.ts';
 
 type Props = Record<string, string | number | boolean | null | undefined>;
 const FIRST_PARTY_EVENTS = new Set(['claim_cta_clicked','claim_cta_viewed','claim_cta_activated','claim_continue_confirmed','claim_handoff_received','claim_auth_required','claim_auth_returned','claim_validation_started','claim_validation_failed','claim_started','claim_completed','claim_recovery_viewed','claim_review_requested','manage_business_opened','business_info_saved','business_info_reconfirmed','record_issue_submitted','business_reply_submitted','monitoring_enabled','my_trust_hub_viewed']);
@@ -16,7 +17,7 @@ export function trackEvent(name: AnalyticsEventName | string, props?: Props): vo
         cleaned[key] = value;
       }
     }
-    if (typeof window !== 'undefined' && FIRST_PARTY_EVENTS.has(name)) {
+    if (clientProductEventsAllowed() && typeof window !== 'undefined' && FIRST_PARTY_EVENTS.has(name)) {
       void fetch(`/api/product-events?route=${encodeURIComponent(window.location.pathname)}`, {
         method: 'POST', headers: {'content-type':'application/json'}, keepalive: true,
         body: JSON.stringify({eventName:name,properties:cleaned}),
